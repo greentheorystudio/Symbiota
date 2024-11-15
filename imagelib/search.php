@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ImageLibraryManager.php');
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $queryId = array_key_exists('queryId',$_REQUEST)?(int)$_REQUEST['queryId']:0;
@@ -30,7 +30,11 @@ if($stArrJson){
     }
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Search</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -41,17 +45,14 @@ if($stArrJson){
 	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-	<script src="../js/images.index.js?ver=20221115" type="text/javascript"></script>
-    <script src="../js/search.term.manager.js?ver=20221110" type="text/javascript"></script>
-	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script src="../js/images.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 	<script type="text/javascript">
-        $('html').hide();
         let stArr = {};
-        let phArr = new Array();
+        let phArr = [];
         let selectedFamily = '';
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			let qtaxaArr;
             $('#tabs').tabs({
                 beforeLoad: function( event, ui ) {
@@ -176,8 +177,7 @@ if($stArrJson){
 				}
                 processPhotographerChange();
 			});
-            $('html').show();
-		});
+        });
 
         function processParamsForm(){
             const f = document.getElementById('imagesearchform');
@@ -556,8 +556,9 @@ if($stArrJson){
 		
 		</div>
 	</div>
-	<?php 
-	include(__DIR__ . '/../footer.php');
+	<?php
+    include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

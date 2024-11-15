@@ -1,8 +1,8 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbService.php');
 include_once(__DIR__ . '/../../classes/DichoManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $nodeId = array_key_exists('nodeid',$_REQUEST)?(int)$_REQUEST['nodeid']:0;
@@ -43,14 +43,17 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS'])
 $MsxmlStr = 'Msxml2.XMLHTTP';
 $MicrosoftStr = 'Microsoft.XMLHTTP';
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Dichotomous Key Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script>
+    <script>
         let targetStr;
 
         function checkScinameExistance(inputObj,tStr){
@@ -62,7 +65,7 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
             const http = new XMLHttpRequest();
 			const url = "../../api/taxa/gettid.php";
             const params = 'sciname=' + sciname;
-            //console.log(occTaxonomyApi+'?'+params);
+            //console.log(url+'?'+params);
             http.open("POST", url, true);
             http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             http.onreadystatechange = function() {
@@ -214,8 +217,9 @@ $MicrosoftStr = 'Microsoft.XMLHTTP';
 		<?php } ?> 
 		</ul>
 	</div>
-	<?php 
-		include(__DIR__ . '/../../footer.php');
+	<?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

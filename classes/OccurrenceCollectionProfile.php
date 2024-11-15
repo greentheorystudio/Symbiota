@@ -1,8 +1,8 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceCollectionProfile {
 
@@ -16,7 +16,7 @@ class OccurrenceCollectionProfile {
     private $idigbioKey;
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -39,64 +39,73 @@ class OccurrenceCollectionProfile {
 	{
 		$retArr = array();
         $sql = 'SELECT c.collid, c.institutioncode, c.CollectionCode, c.CollectionName, c.collectionid, '.
-			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, '.
-			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.publicedits, '.
-			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.sortseq, c.securitykey, c.collectionguid, s.uploaddate '.
-			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid ';
+			'c.FullDescription, c.Homepage, c.individualurl, c.Contact, c.email, c.datarecordingmethod, c.defaultRepCount, '.
+			'c.latitudedecimal, c.longitudedecimal, c.icon, c.colltype, c.managementtype, c.isPublic, '.
+			'c.guidtarget, c.rights, c.rightsholder, c.accessrights, c.dwcaurl, c.securitykey, c.collectionguid, s.uploaddate '.
+			'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid ';
 		if($this->collid){
-			$sql .= 'WHERE (c.collid = '.$this->collid.') ';
+			$sql .= 'WHERE c.collid = '.$this->collid.' ';
 		}
 		else{
-			$sql .= 'ORDER BY c.SortSeq, c.CollectionName';
+            if(!$GLOBALS['IS_ADMIN']){
+                $sql .= 'WHERE c.isPublic = 1 ';
+                if($GLOBALS['PERMITTED_COLLECTIONS']){
+                    $sql .= 'OR c.collid IN('.implode(',', $GLOBALS['PERMITTED_COLLECTIONS']).') ';
+                }
+            }
+            $sql .= 'ORDER BY c.SortSeq, c.CollectionName';
 		}
 		//echo $sql;
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			$retArr[$row->collid]['collid'] = $row->collid;
-			$retArr[$row->collid]['institutioncode'] = $row->institutioncode;
-			$retArr[$row->collid]['collectioncode'] = $row->CollectionCode;
-			$retArr[$row->collid]['collectionname'] = $row->CollectionName;
-            $retArr[$row->collid]['collectionid'] = $row->collectionid;
-			$retArr[$row->collid]['fulldescription'] = $row->FullDescription;
-			$retArr[$row->collid]['homepage'] = $row->Homepage;
-			$retArr[$row->collid]['individualurl'] = $row->individualurl;
-			$retArr[$row->collid]['contact'] = $row->Contact;
-			$retArr[$row->collid]['email'] = $row->email;
-			$retArr[$row->collid]['latitudedecimal'] = $row->latitudedecimal;
-			$retArr[$row->collid]['longitudedecimal'] = $row->longitudedecimal;
-			$retArr[$row->collid]['icon'] = $row->icon;
-			$retArr[$row->collid]['colltype'] = $row->colltype;
-			$retArr[$row->collid]['managementtype'] = $row->managementtype;
-			$retArr[$row->collid]['publicedits'] = $row->publicedits;
-			$retArr[$row->collid]['guidtarget'] = $row->guidtarget;
-			$retArr[$row->collid]['rights'] = $row->rights;
-			$retArr[$row->collid]['rightsholder'] = $row->rightsholder;
-			$retArr[$row->collid]['accessrights'] = $row->accessrights;
-			$retArr[$row->collid]['dwcaurl'] = $row->dwcaurl;
-			$retArr[$row->collid]['sortseq'] = $row->sortseq;
-			$retArr[$row->collid]['skey'] = $row->securitykey;
-			$retArr[$row->collid]['guid'] = $row->collectionguid;
-			$uDate = '';
-			if($row->uploaddate){
-				$uDate = $row->uploaddate;
-				$month = substr($uDate,5,2);
-				$day = substr($uDate,8,2);
-				$year = substr($uDate,0,4);
-				$uDate = date('j F Y',mktime(0,0,0,$month,$day,$year));
-			}
-			$retArr[$row->collid]['uploaddate'] = $uDate;
+			if(!$this->collid || $GLOBALS['IS_ADMIN'] || (int)$row->isPublic === 1 || in_array((int)$this->collid, $GLOBALS['PERMITTED_COLLECTIONS'], true)){
+                $retArr[$row->collid]['collid'] = $row->collid;
+                $retArr[$row->collid]['institutioncode'] = $row->institutioncode;
+                $retArr[$row->collid]['collectioncode'] = $row->CollectionCode;
+                $retArr[$row->collid]['collectionname'] = $row->CollectionName;
+                $retArr[$row->collid]['collectionid'] = $row->collectionid;
+                $retArr[$row->collid]['fulldescription'] = $row->FullDescription;
+                $retArr[$row->collid]['homepage'] = $row->Homepage;
+                $retArr[$row->collid]['individualurl'] = $row->individualurl;
+                $retArr[$row->collid]['contact'] = $row->Contact;
+                $retArr[$row->collid]['email'] = $row->email;
+                $retArr[$row->collid]['latitudedecimal'] = $row->latitudedecimal;
+                $retArr[$row->collid]['longitudedecimal'] = $row->longitudedecimal;
+                $retArr[$row->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->icon) : $row->icon;
+                $retArr[$row->collid]['colltype'] = $row->colltype;
+                $retArr[$row->collid]['managementtype'] = $row->managementtype;
+                $retArr[$row->collid]['datarecordingmethod'] = $row->datarecordingmethod;
+                $retArr[$row->collid]['defaultRepCount'] = $row->defaultRepCount;
+                $retArr[$row->collid]['guidtarget'] = $row->guidtarget;
+                $retArr[$row->collid]['rights'] = $row->rights;
+                $retArr[$row->collid]['rightsholder'] = $row->rightsholder;
+                $retArr[$row->collid]['accessrights'] = $row->accessrights;
+                $retArr[$row->collid]['dwcaurl'] = $row->dwcaurl;
+                $retArr[$row->collid]['skey'] = $row->securitykey;
+                $retArr[$row->collid]['guid'] = $row->collectionguid;
+                $retArr[$row->collid]['isPublic'] = $row->isPublic;
+                $uDate = '';
+                if($row->uploaddate){
+                    $uDate = $row->uploaddate;
+                    $month = substr($uDate,5,2);
+                    $day = substr($uDate,8,2);
+                    $year = substr($uDate,0,4);
+                    $uDate = date('j F Y',mktime(0,0,0,$month,$day,$year));
+                }
+                $retArr[$row->collid]['uploaddate'] = $uDate;
+            }
 		}
 		$rs->free();
 		if($this->collid){
 			if(!$retArr[$this->collid]['guid']){
-				$guid= UuidFactory::getUuidV4();
+				$guid= UuidService::getUuidV4();
 				$retArr[$this->collid]['guid'] = $guid;
 				$sql = 'UPDATE omcollections SET collectionguid = "'.$guid.'" '.
 					'WHERE collectionguid IS NULL AND collid = '.$this->collid;
 				$this->conn->query($sql);
 			}
 			if(!$retArr[$this->collid]['skey']){
-				$guid2 = UuidFactory::getUuidV4();
+				$guid2 = UuidService::getUuidV4();
 				$retArr[$this->collid]['skey'] = $guid2;
 				$sql = 'UPDATE omcollections SET securitykey = "'.$guid2.'" '.
 					'WHERE securitykey IS NULL AND collid = '.$this->collid;
@@ -120,163 +129,34 @@ class OccurrenceCollectionProfile {
 		return $retArr;
 	}
 
-	public function getMetadataHtml($collArr): string
-	{
-        $outStr = '';
-        if($collArr['fulldescription']){
-            $outStr .= '<div>'.$collArr['fulldescription'].'</div>';
-        }
-		if($collArr['contact'] || $collArr['email']){
-            $outStr .= '<div style="margin-top:5px;"><b>Contact:</b> '.$collArr['contact'].($collArr['email']? ' (' .str_replace('@', '&#64;',$collArr['email']). ')' : '').'</div>';
-        }
-		if($collArr['homepage']){
-			$outStr .= '<div style="margin-top:5px;"><b>Home Page:</b> ';
-			$outStr .= '<a href="'.$collArr['homepage'].'" target="_blank">'.$collArr['homepage'].'</a>';
-			$outStr .= '</div>';
-		}
-		$outStr .= '<div style="margin-top:5px;">';
-		$outStr .= '<b>Collection Type:</b> '.$collArr['colltype'];
-		$outStr .= '</div>';
-		$outStr .= '<div style="margin-top:5px;">';
-		$outStr .= '<b>Management:</b> ';
-		if($collArr['managementtype'] === 'Live Data'){
-			$outStr .= 'Live Data managed directly within data portal';
-		}
-		else{
-			if($collArr['managementtype'] === 'Aggregate'){
-				$outStr .= 'Data harvested from a data aggregator';
-			}
-			else{
-				$outStr .= 'Data snapshot of local collection database ';
-			}
-			$outStr .= '<div style="margin-top:5px;"><b>Last Update:</b> '.$collArr['uploaddate'].'</div>';
-		}
-		$outStr .= '</div>';
-		if($collArr['managementtype'] === 'Live Data'){
-			$outStr .= '<div style="margin-top:5px;">';
-			$outStr .= '<b>Global Unique Identifier:</b> '.$collArr['guid'];
-			$outStr .= '</div>';
-		}
-		if($collArr['dwcaurl']){
-			$dwcaUrl = $collArr['dwcaurl'];
-			if(strpos($dwcaUrl, '/content/dwca/')){
-				$dwcaUrl = substr($dwcaUrl,0,strpos($dwcaUrl, '/content/dwca/'));
-				$dwcaUrl .= '/collections/datasets/datapublisher.php';
-			}
-			$outStr .= '<div style="margin-top:5px;">';
-			$outStr .= '<b>DwC-Archive Publishing:</b> ';
-			$outStr .= '<a href="'.$dwcaUrl.'">'.$dwcaUrl.'</a>';
-			$outStr .= '</div>';
-		}
-		$outStr .= '<div style="margin-top:5px;">';
-		if($collArr['managementtype'] === 'Live Data'){
-			$outStr .= '<b>Live Data Download:</b> ';
-			if($GLOBALS['SYMB_UID']){
-				$outStr .= '<a href="../../webservices/dwc/dwcapubhandler.php?collid='.$collArr['collid'].'">DwC-Archive File</a>';
-			}
-			else{
-				$outStr .= '<a href="../../profile/index.php?refurl=../collections/misc/collprofiles.php?collid='.$collArr['collid'].'">Login for access</a>';
-			}
-		}
-		elseif($collArr['managementtype'] === 'Snapshot'){
-			$pathArr = $this->getDwcaPath($collArr['collid']);
-			if($pathArr){
-				$outStr .= '<div style="float:left"><b>IPT / DwC-A Source:</b> </div>';
-				$outStr .= '<div style="float:left;margin-left:3px;">';
-				$delimiter = '';
-				foreach($pathArr as $pArr){
-					$outStr .= $delimiter.'<a href="'.$pArr['path'].'" target="_blank">'.$pArr['title'].'</a>';
-					$delimiter = ', ';
-				}
-				$outStr .= '</div>';
-			}
-		}
-		$outStr .= '</div>';
-		$outStr .= '<div style="clear:both;margin-top:5px;"><b>Digital Metadata:</b> <a href="../datasets/emlhandler.php?collid='.$collArr['collid'].'" target="_blank">EML File</a></div>';
-		$outStr .= '<div style="margin-top:5px;"><b>Usage Rights:</b> ';
-		if($collArr['rights']){
-			$rights = $collArr['rights'];
-			$rightsUrl = '';
-            if(strncmp($rights, 'http', 4) === 0){
-                $rightsUrl = $rights;
-                if(array_key_exists('RIGHTS_TERMS',$GLOBALS)) {
-                    foreach($GLOBALS['RIGHTS_TERMS'] as $name => $url){
-                        if($url === $rights){
-                            $rights = $name;
-                        }
-                    }
-                }
-            }
-			if($rightsUrl) {
-				$outStr .= '<a href="' . $rightsUrl . '" target="_blank">';
-			}
-			$outStr .= $rights;
-			if($rightsUrl) {
-				$outStr .= '</a>';
-			}
-		}
-		elseif(file_exists('../../misc/usagepolicy.php')){
-			$outStr .= '<a href="../../misc/usagepolicy.php" target="_blank">Usage policy</a>';
-		}
-		$outStr .= '</div>';
-		if($collArr['rightsholder']){
-			$outStr .= '<div style="margin-top:5px;">';
-			$outStr .= '<b>Rights Holder:</b> ';
-			$outStr .= $collArr['rightsholder'];
-			$outStr .= '</div>';
-		}
-		if($collArr['accessrights']){
-			$outStr .= '<div style="margin-top:5px;">'.
-				'<b>Access Rights:</b> '.
-				$collArr['accessrights'].
-				'</div>';
-		}
-		return $outStr;
-	}
-
-	private function getDwcaPath($collid): array
-	{
-		$retArr = array();
-		$sql = 'SELECT uspid, title, path FROM uploadspecparameters WHERE (collid = '.$collid.') AND (uploadtype = 8)';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			if(trim($r->path)){
-				$retArr[$r->uspid]['title'] = $r->title;
-				$retStr = $r->path;
-				$retStr = str_replace('/archive.do', '/resource.do', $retStr);
-				$retArr[$r->uspid]['path'] = $retStr;
-			}
-		}
-		$rs->free();
-		return $retArr;
-	}
-
 	public function submitCollEdits($postArr): string
     {
         $status = 'Edits saved';
 		if($this->collid){
-			$instCode = Sanitizer::cleanInStr($this->conn,$postArr['institutioncode']);
-			$collCode = Sanitizer::cleanInStr($this->conn,$postArr['collectioncode']);
-            $collGUID = Sanitizer::cleanInStr($this->conn,$postArr['collectionid']);
-			$coleName = Sanitizer::cleanInStr($this->conn,$postArr['collectionname']);
-			$fullDesc = Sanitizer::cleanInStr($this->conn,$postArr['fulldescription']);
-			$homepage = Sanitizer::cleanInStr($this->conn,$postArr['homepage']);
-			$contact = Sanitizer::cleanInStr($this->conn,$postArr['contact']);
-			$email = Sanitizer::cleanInStr($this->conn,$postArr['email']);
-			$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
+			$instCode = SanitizerService::cleanInStr($this->conn,$postArr['institutioncode']);
+			$collCode = SanitizerService::cleanInStr($this->conn,$postArr['collectioncode']);
+            $collGUID = SanitizerService::cleanInStr($this->conn,$postArr['collectionid']);
+			$coleName = SanitizerService::cleanInStr($this->conn,$postArr['collectionname']);
+			$fullDesc = SanitizerService::cleanInStr($this->conn,$postArr['fulldescription']);
+			$homepage = SanitizerService::cleanInStr($this->conn,$postArr['homepage']);
+			$contact = SanitizerService::cleanInStr($this->conn,$postArr['contact']);
+			$email = SanitizerService::cleanInStr($this->conn,$postArr['email']);
+            $dataRecordingMethod = SanitizerService::cleanInStr($this->conn,$postArr['datarecordingmethod']);
+            $defaultRepCount = (array_key_exists('defaultRepCount',$postArr) && (int)$postArr['defaultRepCount'] > 0)?$postArr['defaultRepCount']:'0';
 			$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:'NULL');
             $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:'NULL');
 			$guidTarget = (array_key_exists('guidtarget',$postArr)?$postArr['guidtarget']:'');
-			$rights = Sanitizer::cleanInStr($this->conn,$postArr['rights']);
-			$rightsHolder = Sanitizer::cleanInStr($this->conn,$postArr['rightsholder']);
-			$accessRights = Sanitizer::cleanInStr($this->conn,$postArr['accessrights']);
+			$rights = SanitizerService::cleanInStr($this->conn,$postArr['rights']);
+			$rightsHolder = SanitizerService::cleanInStr($this->conn,$postArr['rightsholder']);
+			$accessRights = SanitizerService::cleanInStr($this->conn,$postArr['accessrights']);
+            $isPublic = ((array_key_exists('isPublic',$postArr) && (int)$postArr['isPublic'] === 1)?'1':'0');
 			if($_FILES['iconfile']['name']){
 				$icon = $this->addIconImageFile();
 			}
 			else{
-				$icon = Sanitizer::cleanInStr($this->conn,$postArr['iconurl']);
+				$icon = SanitizerService::cleanInStr($this->conn,$postArr['iconurl']);
 			}
-			$indUrl = Sanitizer::cleanInStr($this->conn,$postArr['individualurl']);
+			$indUrl = SanitizerService::cleanInStr($this->conn,$postArr['individualurl']);
 
 			$sql = 'UPDATE omcollections '.
 				'SET institutioncode = '.($instCode?'"'.$instCode.'"':'NULL').','.
@@ -288,14 +168,16 @@ class OccurrenceCollectionProfile {
 				'contact = '.($contact?'"'.$contact.'"':'NULL').','.
 				'email = '.($email?'"'.$email.'"':'NULL').','.
 				'latitudedecimal = '.($postArr['latitudedecimal']?:'NULL').','.
-				'longitudedecimal = '.($postArr['longitudedecimal']?:'NULL').',';
+				'longitudedecimal = '.($postArr['longitudedecimal']?:'NULL').','.
+                'datarecordingmethod = "'.$dataRecordingMethod.'",'.
+                'defaultRepCount = "'.$defaultRepCount.'",';
             if(array_key_exists('publishToGbif',$postArr)){
                 $sql .= 'publishToGbif = '.$gbifPublish.',';
             }
             if(array_key_exists('publishToIdigbio',$postArr)){
                 $sql .= 'publishToIdigbio = '.$idigPublish.',';
             }
-            $sql .= 'publicedits = '.$publicEdits.','.
+            $sql .= 'isPublic = '.$isPublic.','.
                 'guidtarget = '.($guidTarget?'"'.$guidTarget.'"':'NULL').','.
 				'rights = '.($rights?'"'.$rights.'"':'NULL').','.
 				'rightsholder = '.($rightsHolder?'"'.$rightsHolder.'"':'NULL').','.
@@ -304,8 +186,7 @@ class OccurrenceCollectionProfile {
 				'individualurl = '.($indUrl?'"'.$indUrl.'"':'NULL').' ';
 			if(array_key_exists('colltype',$postArr)){
 				$sql .= ',managementtype = "'.$postArr['managementtype'].'",'.
-					'colltype = "'.$postArr['colltype'].'",'.
-					'sortseq = '.($postArr['sortseq']?:'NULL').' ';
+					'colltype = "'.$postArr['colltype'].'" ';
 			}
 			$sql .= 'WHERE (collid = '.$this->collid.')';
 			//echo $sql; exit;
@@ -334,61 +215,66 @@ class OccurrenceCollectionProfile {
 
     public function submitCollAdd($postArr): string
     {
-		$instCode = Sanitizer::cleanInStr($this->conn,$postArr['institutioncode']);
-		$collCode = Sanitizer::cleanInStr($this->conn,$postArr['collectioncode']);
-        $collGUID = Sanitizer::cleanInStr($this->conn,$postArr['collectionid']);
-		$coleName = Sanitizer::cleanInStr($this->conn,$postArr['collectionname']);
-		$fullDesc = Sanitizer::cleanInStr($this->conn,$postArr['fulldescription']);
-		$homepage = Sanitizer::cleanInStr($this->conn,$postArr['homepage']);
-		$contact = Sanitizer::cleanInStr($this->conn,$postArr['contact']);
-		$email = Sanitizer::cleanInStr($this->conn,$postArr['email']);
-		$rights = Sanitizer::cleanInStr($this->conn,$postArr['rights']);
-		$rightsHolder = Sanitizer::cleanInStr($this->conn,$postArr['rightsholder']);
-		$accessRights = Sanitizer::cleanInStr($this->conn,$postArr['accessrights']);
-		$publicEdits = (array_key_exists('publicedits',$postArr)?$postArr['publicedits']:0);
-        $gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:0);
+		$instCode = SanitizerService::cleanInStr($this->conn,$postArr['institutioncode']);
+		$collCode = SanitizerService::cleanInStr($this->conn,$postArr['collectioncode']);
+        $collGUID = SanitizerService::cleanInStr($this->conn,$postArr['collectionid']);
+		$coleName = SanitizerService::cleanInStr($this->conn,$postArr['collectionname']);
+		$fullDesc = SanitizerService::cleanInStr($this->conn,$postArr['fulldescription']);
+		$homepage = SanitizerService::cleanInStr($this->conn,$postArr['homepage']);
+		$contact = SanitizerService::cleanInStr($this->conn,$postArr['contact']);
+		$email = SanitizerService::cleanInStr($this->conn,$postArr['email']);
+		$rights = SanitizerService::cleanInStr($this->conn,$postArr['rights']);
+		$rightsHolder = SanitizerService::cleanInStr($this->conn,$postArr['rightsholder']);
+		$accessRights = SanitizerService::cleanInStr($this->conn,$postArr['accessrights']);
+		$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:0);
         $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:0);
         $guidTarget = (array_key_exists('guidtarget',$postArr)?$postArr['guidtarget']:'');
 		if($_FILES['iconfile']['name']){
 			$icon = $this->addIconImageFile();
 		}
 		else{
-			$icon = array_key_exists('iconurl',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['iconurl']):'';
+			$icon = array_key_exists('iconurl',$postArr)?SanitizerService::cleanInStr($this->conn,$postArr['iconurl']):'';
 		}
-		$managementType = array_key_exists('managementtype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['managementtype']):'';
-		$collType = array_key_exists('colltype',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['colltype']):'';
-		$guid = array_key_exists('collectionguid',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['collectionguid']):'';
+		$managementType = array_key_exists('managementtype',$postArr)?SanitizerService::cleanInStr($this->conn,$postArr['managementtype']):'';
+        $dataRecordingMethod = array_key_exists('datarecordingmethod',$postArr)?SanitizerService::cleanInStr($this->conn,$postArr['datarecordingmethod']):'';
+        $defaultRepCount = (array_key_exists('defaultRepCount',$postArr) && (int)$postArr['defaultRepCount'] > 0)?$postArr['defaultRepCount']:'0';
+		$collType = array_key_exists('colltype',$postArr)?SanitizerService::cleanInStr($this->conn,$postArr['colltype']):'';
+		$guid = array_key_exists('collectionguid',$postArr)?SanitizerService::cleanInStr($this->conn,$postArr['collectionguid']):'';
 		if(!$guid) {
-			$guid = UuidFactory::getUuidV4();
+			$guid = UuidService::getUuidV4();
 		}
-		$indUrl = array_key_exists('individualurl',$postArr)?Sanitizer::cleanInStr($this->conn,$postArr['individualurl']):'';
-		$sortSeq = array_key_exists('sortseq',$postArr)?$postArr['sortseq']:'';
+		$indUrl = array_key_exists('individualurl',$postArr)?SanitizerService::cleanInStr($this->conn,$postArr['individualurl']):'';
+		$isPublic = ((array_key_exists('isPublic',$postArr) && (int)$postArr['isPublic'] === 1)?'1':'0');
 
 		$sql = 'INSERT INTO omcollections(institutioncode,collectioncode,collectionname,fulldescription,collectionid,homepage,'.
-			'contact,email,latitudedecimal,longitudedecimal,publicedits,publishToGbif,'.
+			'contact,email,latitudedecimal,longitudedecimal,publishToGbif,'.
             (array_key_exists('publishToIdigbio',$postArr)?'publishToIdigbio,':'').
             'guidtarget,rights,rightsholder,accessrights,icon,'.
-			'managementtype,colltype,collectionguid,individualurl,sortseq) '.
-			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').',"'.
-			($collCode?'"'.$collCode.'"':'NULL').',"'.
-			$coleName.'",'.
+			'managementtype,datarecordingmethod,defaultRepCount,colltype,collectionguid,isPublic,individualurl) '.
+			'VALUES ('.($instCode?'"'.$instCode.'"':'NULL').','.
+			($collCode?'"'.$collCode.'"':'NULL').','.
+            '"'.$coleName.'",'.
 			($fullDesc?'"'.$fullDesc.'"':'NULL').','.
             ($collGUID?'"'.$collGUID.'"':'NULL').','.
 			($homepage?'"'.$homepage.'"':'NULL').','.
 			($contact?'"'.$contact.'"':'NULL').','.
 			($email?'"'.$email.'"':'NULL').','.
 			($postArr['latitudedecimal']?:'NULL').','.
-			($postArr['longitudedecimal']?:'NULL').','.$publicEdits.','.$gbifPublish.','.
+			($postArr['longitudedecimal']?:'NULL').','.
+            $gbifPublish.','.
             (array_key_exists('publishToIdigbio',$postArr)?$idigPublish.',':'').
 			($guidTarget?'"'.$guidTarget.'"':'NULL').','.
 			($rights?'"'.$rights.'"':'NULL').','.
 			($rightsHolder?'"'.$rightsHolder.'"':'NULL').','.
 			($accessRights?'"'.$accessRights.'"':'NULL').','.
 			($icon?'"'.$icon.'"':'NULL').','.
-			($managementType?'"'.$managementType.'"':'Snapshot').','.
-			($collType?'"'.$collType.'"':'Preserved Specimens').',"'.
-			$guid.'",'.($indUrl?'"'.$indUrl.'"':'NULL').','.
-			($sortSeq?:'NULL').') ';
+			($managementType?'"'.$managementType.'"':'"Snapshot"').','.
+            ($dataRecordingMethod?'"'.$dataRecordingMethod.'"':'"specimen"').','.
+            ($defaultRepCount?'"'.$defaultRepCount.'"':'NULL').','.
+			($collType?'"'.$collType.'"':'PreservedSpecimen').','.
+			'"'.$guid.'",'.
+            $isPublic.','.
+            ($indUrl?'"'.$indUrl.'"':'NULL').') ';
 		//echo "<div>$sql</div>";
 		if($this->conn->query($sql)){
 			$cid = $this->conn->insert_id;
@@ -413,17 +299,7 @@ class OccurrenceCollectionProfile {
 	private function addIconImageFile(): string
 	{
 		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
-		$urlBase = $GLOBALS['CLIENT_ROOT'].'/content/collicon/';
-		$urlPrefix = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-			$urlPrefix = 'https://';
-		}
-		$urlPrefix .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-			$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-		}
-		$urlBase = $urlPrefix.$urlBase;
-
+		$urlBase = '/content/collicon/';
 		$fileName = basename($_FILES['iconfile']['name']);
 		$imgExt = '';
 		if($p = strrpos($fileName, '.')) {
@@ -645,37 +521,20 @@ class OccurrenceCollectionProfile {
         return '';
     }
 
-    public function findIdigbioKey($guid){
-        $url = 'http://search.idigbio.org/v2/search/recordsets?rsq={%22recordids%22:%22';
-        $url .= (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://');
-        $url .= $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'];
-        $url .= '/webservices/dwc/'.$guid.'%22}';
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
-        $returnArr = json_decode($result, true);
-
-        if(isset($returnArr['items'][0]['uuid'])){
-            $this->idigbioKey = $returnArr['items'][0]['uuid'];
-        }
-        return $this->idigbioKey;
-    }
-
-	public function getGeographyStats($country,$state): array
+    public function getGeographyStats($country,$state): array
 	{
 		$retArr = array();
 		if($state){
 			$sql = 'SELECT o.county as termstr, Count(*) AS cnt '.
 				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') '.($country?'AND (o.country = "'.Sanitizer::cleanInStr($this->conn,$country).'") ':'').
-				'AND (o.stateprovince = "'.Sanitizer::cleanInStr($this->conn,$state).'") AND (o.county IS NOT NULL) '.
+				'WHERE (o.CollID = '.$this->collid.') '.($country?'AND (o.country = "'.SanitizerService::cleanInStr($this->conn,$country).'") ':'').
+				'AND (o.stateprovince = "'.SanitizerService::cleanInStr($this->conn,$state).'") AND (o.county IS NOT NULL) '.
 				'GROUP BY o.StateProvince, o.county';
 		}
 		elseif($country){
 			$sql = 'SELECT o.stateprovince as termstr, Count(*) AS cnt '.
 				'FROM omoccurrences o '.
-				'WHERE (o.CollID = '.$this->collid.') AND (o.StateProvince IS NOT NULL) AND (o.country = "'.Sanitizer::cleanInStr($this->conn,$country).'") '.
+				'WHERE (o.CollID = '.$this->collid.') AND (o.StateProvince IS NOT NULL) AND (o.country = "'.SanitizerService::cleanInStr($this->conn,$country).'") '.
 				'GROUP BY o.StateProvince, o.country';
 		}
 		else{
@@ -768,11 +627,10 @@ class OccurrenceCollectionProfile {
 
 	public function getStatCollectionList($catId = null): array
 	{
-		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, ccl.ccpk, '.
+		$sql = 'SELECT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.icon, c.colltype, c.ccpk, '.
 			'cat.category, cat.icon AS caticon, cat.acronym '.
-			'FROM omcollections c LEFT JOIN omcollcatlink ccl ON c.collid = ccl.collid '.
-			'LEFT JOIN omcollcategories cat ON ccl.ccpk = cat.ccpk '.
-			'ORDER BY ccl.sortsequence, cat.category, c.sortseq, c.CollectionName ';
+			'FROM omcollections c LEFT JOIN omcollcategories cat ON c.ccpk = cat.ccpk '.
+			'ORDER BY cat.category, c.CollectionName ';
 		//echo "<div>SQL: ".$sql."</div>";
 		$result = $this->conn->query($sql);
 		$collArr = array();
@@ -794,13 +652,13 @@ class OccurrenceCollectionProfile {
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['instcode'] = $r->institutioncode;
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collcode'] = $r->collectioncode;
 					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['collname'] = $r->collectionname;
-					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = $r->icon;
+					$collArr[$collType]['cat'][$r->ccpk][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
 				}
 				else{
 					$collArr[$collType]['coll'][$r->collid]['instcode'] = $r->institutioncode;
 					$collArr[$collType]['coll'][$r->collid]['collcode'] = $r->collectioncode;
 					$collArr[$collType]['coll'][$r->collid]['collname'] = $r->collectionname;
-					$collArr[$collType]['coll'][$r->collid]['icon'] = $r->icon;
+					$collArr[$collType]['coll'][$r->collid]['icon'] = ($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->icon) : $r->icon;
 				}
 			}
 		}

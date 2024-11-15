@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/GPoint.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
 
 class OccurrenceUtilities {
 
@@ -615,7 +615,7 @@ class OccurrenceUtilities {
             }
         }
         if(isset($recMap['elevationnumber']) && $recMap['elevationnumber']){
-            $elevStr = $recMap['elevationnumber'].$recMap['elevationunits'];
+            $elevStr = $recMap['elevationnumber'].((isset($recMap['elevationunits']) && $recMap['elevationunits'])?$recMap['elevationunits']:'');
             $eArr = self::parseVerbatimElevation($elevStr);
             if($eArr && array_key_exists('minelev', $eArr)) {
                 $recMap['minimumelevationinmeters'] = $eArr['minelev'];
@@ -691,7 +691,7 @@ class OccurrenceUtilities {
             $recMap['sciname'] = trim($sciName);
         }
         elseif(array_key_exists('scientificname',$recMap)){
-            $parsedArr = (new TaxonomyUtilities)->parseScientificName($recMap['scientificname']);
+            $parsedArr = (new TaxonomyService)->parseScientificName($recMap['scientificname']);
             $scinameStr = '';
             if(array_key_exists('unitname1',$parsedArr)){
                 $scinameStr = $parsedArr['unitname1'];

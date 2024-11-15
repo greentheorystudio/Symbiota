@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistManager {
 
@@ -33,7 +33,7 @@ class ChecklistManager {
 	private $basicSql;
 
 	public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -145,13 +145,13 @@ class ChecklistManager {
             }
             $result = $this->conn->query($this->basicSql);
             while($row = $result->fetch_object()){
-                $family = strtoupper($row->family);
+                $family = $row->family ? strtoupper($row->family) : null;
                 if(!$family) {
                     $family = 'Family Incertae Sedis';
                 }
                 $this->filterArr[$family] = '';
                 $tid = $row->tid;
-                $sciName = Sanitizer::cleanOutStr($row->sciname);
+                $sciName = SanitizerService::cleanOutStr($row->sciname);
                 $taxonTokens = explode(' ',$sciName);
                 if($taxonTokens){
                     if(in_array('x', $taxonTokens, true) || in_array('X', $taxonTokens, true)){
@@ -191,7 +191,7 @@ class ChecklistManager {
                         $this->taxaList[$tid]['family'] = $family;
                         $tidReturn[] = $tid;
                         if($this->showAuthors){
-                            $this->taxaList[$tid]['author'] = Sanitizer::cleanOutStr($row->author);
+                            $this->taxaList[$tid]['author'] = SanitizerService::cleanOutStr($row->author);
                         }
                     }
                     if(!in_array($family, $familyCntArr, true)){
@@ -281,15 +281,14 @@ class ChecklistManager {
 			$sql = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images AS i INNER JOIN '.
 				'(SELECT t.tidaccepted AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
 				'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
-				'WHERE i.sortsequence < 500 '.
-				'AND t.tidaccepted IN('.implode(',',$tidReturn).') '.
+				'WHERE i.sortsequence < 500 AND t.tidaccepted IN('.implode(',',$tidReturn).') '.
 				'GROUP BY t.tidaccepted) AS i2 ON i.imgid = i2.imgid';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			$matchedArr = array();
 			while($row = $rs->fetch_object()){
-				$this->taxaList[$row->tid]['url'] = $row->url;
-				$this->taxaList[$row->tid]['tnurl'] = $row->thumbnailurl;
+				$this->taxaList[$row->tid]['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+				$this->taxaList[$row->tid]['tnurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
 				$matchedArr[] = $row->tid;
 			}
 			$rs->free();
@@ -298,14 +297,13 @@ class ChecklistManager {
 				$sql2 = 'SELECT i2.tid, i.url, i.thumbnailurl FROM images AS i INNER JOIN '.
 					'(SELECT t.parenttid AS tid, SUBSTR(MIN(CONCAT(LPAD(i.sortsequence,6,"0"),i.imgid)),7) AS imgid '.
 					'FROM taxa AS t INNER JOIN images AS i ON t.tid = i.tid '.
-					'WHERE i.sortsequence < 500 '.
-					'AND t.parenttid IN('.implode(',',$missingArr).') '.
+					'WHERE i.sortsequence < 500 AND t.parenttid IN('.implode(',',$missingArr).') '.
 					'GROUP BY t.tid) AS i2 ON i.imgid = i2.imgid';
 				//echo $sql;
 				$rs2 = $this->conn->query($sql2);
 				while($row2 = $rs2->fetch_object()){
-					$this->taxaList[$row2->tid]['url'] = $row2->url;
-					$this->taxaList[$row2->tid]['tnurl'] = $row2->thumbnailurl;
+					$this->taxaList[$row2->tid]['url'] = ($row2->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row2->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row2->url) : $row2->url;
+					$this->taxaList[$row2->tid]['tnurl'] = ($row2->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row2->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row2->thumbnailurl) : $row2->thumbnailurl;
 				}
 				$rs2->free();
 			}
@@ -323,7 +321,7 @@ class ChecklistManager {
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
 				if($r->vernacularname) {
-					$this->taxaList[$r->tid]['vern'] = Sanitizer::cleanOutStr($r->vernacularname);
+					$this->taxaList[$r->tid]['vern'] = SanitizerService::cleanOutStr($r->vernacularname);
 				}
 			}
 			$rs->free();
@@ -334,10 +332,10 @@ class ChecklistManager {
     {
         if($this->taxaList){
             $tempArr = array();
-            $sql = 'SELECT t.tid, t2.sciname, t2.author '.
-                'FROM taxa AS t INNER JOIN taxa AS t2 ON t.tidaccepted = t2.tid '.
-                'WHERE t.tid IN('.implode(',',array_keys($this->taxaList)).') AND t.tid <> t2.tid '.
-                'ORDER BY t2.sciname';
+            $sql = 'SELECT t2.tid, t.sciname, t.author '.
+                'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.tid '.
+                'WHERE t2.tid IN('.implode(',',array_keys($this->taxaList)).') AND t.tid <> t2.tid '.
+                'ORDER BY t.sciname';
             //echo $sql;
             $rs = $this->conn->query($sql);
             while($r = $rs->fetch_object()){
@@ -448,7 +446,7 @@ class ChecklistManager {
 		$sql = 'SELECT p.pid, p.projname, p.ispublic, c.clid, c.name, c.access, c.LatCentroid, c.LongCentroid '.
 			'FROM fmchecklists AS c LEFT JOIN fmchklstprojlink AS cpl ON c.clid = cpl.clid '.
 			'LEFT JOIN fmprojects AS p ON cpl.pid = p.pid '.
-			'WHERE ((c.access LIKE "public%") ';
+			'WHERE ((c.access = "public") ';
 		if(isset($GLOBALS['USER_RIGHTS']['ClAdmin']) && $GLOBALS['USER_RIGHTS']['ClAdmin']) {
 			$sql .= 'OR (c.clid IN(' . implode(',', $GLOBALS['USER_RIGHTS']['ClAdmin']) . '))';
 		}
@@ -482,9 +480,9 @@ class ChecklistManager {
                 $retArr[$pid]['coords'] = json_encode($projCoordArr);
             }
 			if($projName){
-                $retArr[$pid]['name'] = Sanitizer::cleanOutStr($projName);
+                $retArr[$pid]['name'] = SanitizerService::cleanOutStr($projName);
             }
-			$retArr[$pid]['clid'][$row->clid] = Sanitizer::cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
+			$retArr[$pid]['clid'][$row->clid] = SanitizerService::cleanOutStr($row->name).($row->access === 'private'?' (Private)':'');
 		}
 		$rs->free();
 		if(isset($retArr[0])){
@@ -497,7 +495,7 @@ class ChecklistManager {
 
 	public function setTaxonFilter($tFilter): void
 	{
-		$this->taxonFilter = Sanitizer::cleanInStr($this->conn,strtolower($tFilter));
+		$this->taxonFilter = SanitizerService::cleanInStr($this->conn,strtolower($tFilter));
 	}
 
     public function setThesFilter(): void
@@ -565,13 +563,13 @@ class ChecklistManager {
 			$sql .= 'WHERE (pid = '.$pValue.')';
 		}
 		else{
-			$sql .= 'WHERE (projname = "'.Sanitizer::cleanInStr($this->conn,$pValue).'")';
+			$sql .= 'WHERE (projname = "'.SanitizerService::cleanInStr($this->conn,$pValue).'")';
 		}
 		$rs = $this->conn->query($sql);
 		if($rs){
 			if($r = $rs->fetch_object()){
 				$this->pid = $r->pid;
-				$this->projName = Sanitizer::cleanOutStr($r->projname);
+				$this->projName = SanitizerService::cleanOutStr($r->projname);
 			}
 			$rs->free();
 		}

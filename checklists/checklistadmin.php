@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
@@ -63,7 +63,11 @@ if($clArray['defaultsettings']){
 
 $voucherProjects = $clManager->getVoucherProjects();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -77,8 +81,7 @@ $voucherProjects = $clManager->getVoucherProjects();
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
-	<script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript" src="../js/checklists.checklistadmin.js?ver=20210218"></script>
+	<script type="text/javascript" src="../js/checklists.checklistadmin.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 
 <body>
@@ -249,6 +252,7 @@ else {
 ?>
 </div>
 <?php
+include_once(__DIR__ . '/../config/footer-includes.php');
 include(__DIR__ . '/../footer.php');
 ?>
 

@@ -43,9 +43,14 @@ These configurations are recommended for the php and MySQL/MariaDB installations
 
 ### MySQL/MariaDB configurations (usually made in the mysqld.cnf file)
 
-- `character-set-server=utf8` - replace utf8 with your desired character set
-- `collation-server=utf8_general_ci` - replace utf8_general_ci with your desired collation
-- `skip-character-set-client-handshake`
+- `character_set_client=utf8mb4`
+- `character_set_connection=utf8mb4`
+- `character_set_database=utf8mb4`
+- `character_set_filesystem=utf8mb4`
+- `character_set_results=utf8mb4`
+- `character_set_server=utf8mb4`
+- `collation_connection=utf8mb4_0900_ai_ci`
+- `skip-character-set-client-handshake=1`
 - `sql_mode=IGNORE_SPACE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION`
 - `key_buffer_size=100M`
 - `max_allowed_packet=100M`
@@ -67,7 +72,7 @@ These configurations are recommended for the php and MySQL/MariaDB installations
 ### Setup the database
 
 - Create a new database for the portal using the utf8 character set and utf8_general_ci collation.
-- Execute the `config/schema-1.0/utf8/db_schema_compiled-1.x.sql` file within your new installation on your database to setup 
+- Execute the `config/schema-1.0/utf8/db_schema-1.2.sql` file within your new installation on your database to setup 
   the initial schema.
 - Create a new user in your database server and grant them DELETE, EXECUTE, INSERT, SELECT, and UPDATE 
   privileges on the new database. 
@@ -85,17 +90,3 @@ These configurations are recommended for the php and MySQL/MariaDB installations
 - Edit the `misc/usagepolicy.php` file within your new installation to customize the usage policy for your portal.
 - An initial admin user has been installed with the login: `admin` and the password: `admin`. Use this initial user account to 
   create new admin users and then delete the initial user account.
-
-### Converting a database from the original Symbiota
-
-If you would like to use a database created using the original Symbiota, follow these steps to upgrade the database:
-- Ensure that your database is using schema 1.0 or higher. If it isn't, run the necessary database patches in the original 
-  Symbiota installation to upgrade to schema version 1.0.
-- Execute the `config/schema-1.0/utf8/greentheorystudio_patch.sql` file within your new portal installation on your database 
-  to make necessary schema adjustments.
-- If your database schema is version 1.0, execute the `config/schema-1.0/utf8/db_schema_patch-1.1.sql` file within your original Symbiota 
-  installation on your database to upgrade the schema version to 1.1.
-- If your database schema is version 1.1, execute the `config/schema-1.0/utf8/db_schema_patch-1.2.sql` file within your original Symbiota installation on your database to 
-  upgrade the schema version to 1.2.
-
-[Go to the Documentation site](https://greentheorystudio.github.io/Symbiota/)

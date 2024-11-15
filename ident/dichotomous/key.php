@@ -1,8 +1,8 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbService.php');
 include_once(__DIR__ . '/../../classes/DichoKeyManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
@@ -10,7 +10,11 @@ $taxon = array_key_exists('taxon',$_REQUEST)?$_REQUEST['taxon']: '';
 
 $dichoKeyManager = new DichoKeyManager();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Dichotomous Key</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -29,8 +33,9 @@ $dichoKeyManager = new DichoKeyManager();
 		?>	
 	
 	</div>
-	<?php 
-		include(__DIR__ . '/../../footer.php');
+	<?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

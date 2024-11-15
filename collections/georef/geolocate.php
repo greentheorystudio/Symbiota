@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $locality = $_REQUEST['locality'];
@@ -29,21 +29,6 @@ elseif(preg_match('/R\d{1,2}[EW]\sS\d{1,2}/i',$locality)){
 	$locality = preg_replace('/\sS(\d{1,2})/', ' Sec$1', $locality);
 }
 
-if(strtolower($GLOBALS['CHARSET']) === 'iso-8859-1'){
-	if(mb_detect_encoding($country,'UTF-8,ISO-8859-1') === 'UTF-8'){
-		$country = utf8_encode($country);
-	}
-	if(mb_detect_encoding($state,'UTF-8,ISO-8859-1') === 'UTF-8'){
-		$state = utf8_encode($state);
-	}
-	if(mb_detect_encoding($county,'UTF-8,ISO-8859-1') === 'UTF-8'){
-		$county = utf8_encode($county);
-	}
-	if(mb_detect_encoding($locality,'UTF-8,ISO-8859-1') === 'UTF-8'){
-		$locality = utf8_encode($locality);
-	}
-}
-
 $country = removeAccents($country);
 $state = removeAccents($state);
 $county = removeAccents($county);
@@ -54,7 +39,11 @@ if(isset($GLOBALS['PORTAL_GUID']) && $GLOBALS['PORTAL_GUID']){
 }
 
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title>GEOLocate Tool</title>
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -100,6 +89,9 @@ if(isset($GLOBALS['PORTAL_GUID']) && $GLOBALS['PORTAL_GUID']){
 			<iframe id="Iframe1" src="//www.geo-locate.org/web/WebGeoreflight.aspx?v=1&georef=run&tab=locality&<?php echo $urlVariables; ?>"></iframe>
 		</div>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>
 <?php

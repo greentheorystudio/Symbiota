@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('action',$_REQUEST)?htmlspecialchars($_REQUEST['action']): '';
@@ -71,10 +71,14 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
 }
 if($collid){
     $collDataFull = $collManager->getCollectionMetadata();
-    $collData = Sanitizer::cleanOutArray($collDataFull[$collid]);
+    $collData = SanitizerService::cleanOutArray($collDataFull[$collid]);
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE'].' '.($collid?'Edit Collection Metadata':'Create New Collection Profile'); ?></title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -98,10 +102,9 @@ if($collid){
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script>
-        $(document).ready(function() {
-            const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "sort", "collectionid"];
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const dialogArr = ["instcode", "collcode", "pedits", "pubagg", "rights", "rightsholder", "accessrights", "guid", "colltype", "management", "icon", "collectionguid", "sourceurl", "collectionid"];
             let dialogStr = "";
             for(let i=0;i<dialogArr.length;i++){
 				dialogStr = dialogArr[i]+"info";
@@ -120,7 +123,7 @@ if($collid){
 		});
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -147,13 +150,6 @@ if($collid){
 				alert("Rights field (e.g. Creative Commons license) must have a selection");
 				return false;
 			}
-			try{
-				if(isNaN(f.sortseq.value)){
-					alert("Sort sequence must be numeric only");
-					return false;
-				}
-			}
-			catch(ex){}
 			return true;
 		}
 
@@ -190,7 +186,7 @@ if($collid){
 		function verifyIconImage(){
             const iconImageFile = document.getElementById("iconfile").value;
             if(iconImageFile){
-                let iconExt = iconImageFile.substr(iconImageFile.length - 4);
+                let iconExt = iconImageFile.substring(iconImageFile.length - 4);
                 iconExt = iconExt.toLowerCase();
 				if((iconExt !== '.jpg') && (iconExt !== 'jpeg') && (iconExt !== '.png') && (iconExt !== '.gif')){
 					document.getElementById("iconfile").value = '';
@@ -216,11 +212,22 @@ if($collid){
 		
 		function verifyIconURL(){
             const iconImageFile = document.getElementById("iconurl").value;
-            if((iconImageFile.substr(iconImageFile.length-4) !== '.jpg') && (iconImageFile.substr(iconImageFile.length-4) !== '.png') && (iconImageFile.substr(iconImageFile.length-4) !== '.gif')){
+            if((iconImageFile.substring(iconImageFile.length-4) !== '.jpg') && (iconImageFile.substring(iconImageFile.length-4) !== '.png') && (iconImageFile.substring(iconImageFile.length-4) !== '.gif')){
 				document.getElementById("iconurl").value = '';
 				alert("The url you have entered is not for a supported image file. Please enter a url for a jpg, png, or gif file.");
 			}
 		}
+
+        function processDataCollectionMethodChange(){
+            const selectedValue = document.getElementById("datarecordingmethod").value;
+            if(selectedValue === 'benthic'){
+                document.getElementById('defaultRepCountBlock').style.display = "block";
+            }
+            else{
+                document.getElementById('defaultRepCountBlock').style.display = "none";
+                document.getElementById("defaultRepCount").value = '';
+            }
+        }
     </script>
 </head>
 <body>
@@ -355,21 +362,6 @@ if($collid){
                             }
                             ?>
                             <div class="field-block">
-                                <span class="field-label">Allow Public Edits:</span>
-                                <span class="field-elem">
-									<input type="checkbox" name="publicedits" value="1" <?php echo ($collData && $collData['publicedits']?'CHECKED':''); ?> />
-                                    <a id="peditsinfo" href="#" onclick="return false" title="More information about Public Edits">
-                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                    </a>
-									<span id="peditsinfodialog">
-										Checking public edits will allow any user logged into the system to modify occurrence records
-                                        and resolve errors found within the collection. However, if the user does not have explicit
-                                        authorization for the given collection, edits will not be applied until they are
-                                        reviewed and approved by collection administrator.
-									</span>
-								</span>
-                            </div>
-                            <div class="field-block">
                                 <span class="field-label">License:</span>
                                 <span class="field-elem">
 									<?php
@@ -426,53 +418,61 @@ if($collid){
 									</span>
 								</span>
                             </div>
-                            <?php
-                            if($GLOBALS['IS_ADMIN']){
-                                ?>
-                                <div class="field-block">
-                                    <span class="field-label">Dataset Type:</span>
-                                    <span class="field-elem">
-                                        <select name="colltype">
-                                            <option>Preserved Specimens</option>
-                                            <option <?php echo ($collid && $collData['colltype'] === 'Observations'?'SELECTED':''); ?>>Observations</option>
-                                            <option <?php echo ($collid && $collData['colltype'] === 'General Observations'?'SELECTED':''); ?>>Personal Observation Management</option>
-                                        </select>
-                                        <a id="colltypeinfo" href="#" onclick="return false" title="More information about Collection Type">
-                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                        </a>
-                                        <span id="colltypeinfodialog">
-                                            Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts.
-                                            Use Observations when the record is not based on a physical specimen.
-                                            General Observations are used for setting up group projects where registered users
-                                            can independently manage their own dataset directly within the single collection. General Observation
-                                            collections are typically used by field researchers to manage their collection data and print labels
-                                            prior to depositing the physical material within a collection. Even though personal collections
-                                            are represented by a physical sample, they are classified as &quot;observations&quot; until the
-                                            physical material is deposited within a publicly available collection with active curation.
-                                        </span>
+                            <div class="field-block">
+                                <span class="field-label">Dataset Type:</span>
+                                <span class="field-elem">
+                                    <select name="colltype">
+                                        <option value="PreservedSpecimen" <?php echo ($collid && ($collData['colltype'] === 'PreservedSpecimen')?'SELECTED':''); ?>>Preserved Specimens</option>
+                                        <option value="HumanObservation" <?php echo ($collid && ($collData['colltype'] === 'HumanObservation')?'SELECTED':''); ?>>Observations</option>
+                                        <option value="FossilSpecimen" <?php echo ($collid && $collData['colltype'] === 'FossilSpecimen'?'SELECTED':''); ?>>Fossil Specimens</option>
+                                        <option value="LivingSpecimen" <?php echo ($collid && $collData['colltype'] === 'LivingSpecimen'?'SELECTED':''); ?>>Living Specimens</option>
+                                        <option value="MaterialSample" <?php echo ($collid && $collData['colltype'] === 'MaterialSample'?'SELECTED':''); ?>>Material Samples</option>
+                                    </select>
+                                    <a id="colltypeinfo" href="#" onclick="return false" title="More information about Collection Type">
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
+                                    </a>
+                                    <span id="colltypeinfodialog">
+                                        Preserved Specimens signify a collection type that contains physical samples that are available for inspection by researchers and taxonomic experts.
+                                        Observations are collections where records are not based on a physical specimens.
                                     </span>
-                                </div>
-                                <div class="field-block">
-                                    <span class="field-label">Management:</span>
-                                    <span class="field-elem">
-                                        <select name="managementtype" onchange="mtypeguidChanged(this.form)">
-                                            <option>Snapshot</option>
-                                            <option <?php echo ($collid && $collData['managementtype'] === 'Live Data'?'SELECTED':''); ?>>Live Data</option>
-                                            <option <?php echo ($collid && $collData['managementtype'] === 'Aggregate'?'SELECTED':''); ?>>Aggregate</option>
-                                        </select>
-                                        <a id="managementinfo" href="#" onclick="return false" title="More information about Management Type">
-                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                        </a>
-                                        <span id="managementinfodialog">
-                                            Use Snapshot when there is a separate in-house database maintained in the collection and the dataset
-                                            within the portal is only a periodically updated snapshot of the central database.
-                                            A Live dataset is when the data is managed directly within the portal and the central database is the portal data.
-                                        </span>
+                                </span>
+                            </div>
+                            <div class="field-block">
+                                <span class="field-label">Management:</span>
+                                <span class="field-elem">
+                                    <select name="managementtype" onchange="mtypeguidChanged(this.form)">
+                                        <option>Snapshot</option>
+                                        <option <?php echo ($collid && $collData['managementtype'] === 'Live Data'?'SELECTED':''); ?>>Live Data</option>
+                                        <option <?php echo ($collid && $collData['managementtype'] === 'Aggregate'?'SELECTED':''); ?>>Aggregate</option>
+                                    </select>
+                                    <a id="managementinfo" href="#" onclick="return false" title="More information about Management Type">
+                                        <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
+                                    </a>
+                                    <span id="managementinfodialog">
+                                        Use Snapshot when there is a separate in-house database maintained in the collection and the dataset
+                                        within the portal is only a periodically updated snapshot of the central database.
+                                        A Live dataset is when the data is managed directly within the portal and the central database is the portal data.
                                     </span>
-                                </div>
-                                <?php
-                            }
-                            ?>
+                                </span>
+                            </div>
+                            <div class="field-block">
+                                <span class="field-label">Occurrence Recording Format:</span>
+                                <span class="field-elem">
+                                    <select name="datarecordingmethod" id="datarecordingmethod" onchange="processDataCollectionMethodChange();">
+                                        <option value="specimen" <?php echo ($collid && $collData['datarecordingmethod'] === 'specimen'?'SELECTED':''); ?>>Specimen</option>
+                                        <option value="observation" <?php echo ($collid && $collData['datarecordingmethod'] === 'observation'?'SELECTED':''); ?>>Observation</option>
+                                        <option value="skeletal" <?php echo ($collid && $collData['datarecordingmethod'] === 'skeletal'?'SELECTED':''); ?>>Skeletal</option>
+                                        <option value="lot" <?php echo ($collid && $collData['datarecordingmethod'] === 'lot'?'SELECTED':''); ?>>Lot</option>
+                                        <option value="benthic" <?php echo ($collid && $collData['datarecordingmethod'] === 'benthic'?'SELECTED':''); ?>>Benthic</option>
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="field-block" id="defaultRepCountBlock" style="display:<?php echo (($collid && $collData['datarecordingmethod'] === 'benthic')?'block':'none'); ?>;">
+                                <span class="field-label">Default Rep Count:</span>
+                                <span class="field-elem">
+                                    <input type="text" name="defaultRepCount" id="defaultRepCount" value="<?php echo ($collid?$collData['defaultRepCount']:'');?>" />
+                                </span>
+                            </div>
                             <div class="field-block">
                                 <span class="field-label" title="Source of Global Unique Identifier">GUID source:</span>
                                 <span class="field-elem">
@@ -556,24 +556,6 @@ if($collid){
 									<a href="#" onclick="toggle('targetelem','inline-block');return false;">Upload Local Image</a>
 								</span>
                             </div>
-                            <?php
-                            if($GLOBALS['IS_ADMIN']){
-                                ?>
-                                <div class="field-block">
-                                    <span class="field-label">Sort Sequence:</span>
-                                    <span class="field-elem">
-                                        <input type="text" name="sortseq" value="<?php echo ($collid?$collData['sortseq']:'');?>" />
-                                        <a id="sortinfo" href="#" onclick="return false" title="More information about Sorting">
-                                            <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
-                                        </a>
-                                        <span id="sortinfodialog">
-                                            Leave this field empty if you want the collections to sort alphabetically (default)
-                                        </span>
-                                    </span>
-                                </div>
-                                <?php
-                            }
-                            ?>
                             <div class="field-block">
                                 <span class="field-label">Collection ID (GUID):</span>
                                 <span class="field-elem">
@@ -582,10 +564,16 @@ if($collid){
                                         <i style="height:15px;width:15px;color:green;" class="fas fa-info-circle"></i>
                                     </a>
                                     <span id="collectionidinfodialog">
-                                        If your collection already has a previously assigned GUID, that identifier should be represented here.
+                                        If your collection already has a previously assigned GUID, that identifier should be entered here.
 										For physical specimens, the recommended best practice is to use an identifier from a collections registry such as the
 										Global Registry of Biodiversity Repositories (<a href="http://grbio.org" target="_blank">http://grbio.org</a>).
                                     </span>
+                                </span>
+                            </div>
+                            <div class="field-block">
+                                <span class="field-label">Is Public:</span>
+                                <span class="field-elem">
+									<input type="checkbox" name="isPublic" value="1" <?php echo ((!$collid || (int)$collData['isPublic'] === 1)?'CHECKED':''); ?> />
                                 </span>
                             </div>
                             <?php
@@ -711,7 +699,8 @@ if($collid){
         </div>
 	</div>
 	<?php
-	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

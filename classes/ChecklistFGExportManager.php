@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistFGExportManager {
 
@@ -22,7 +22,7 @@ class ChecklistFGExportManager {
     private $maxPhoto = 0;
 
 	public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -94,7 +94,7 @@ class ChecklistFGExportManager {
         $taxaArr = array();
         $sql = 'SELECT DISTINCT t2.tid, t2.family, t2.sciname, t2.author '.
             'FROM '.$this->linkTable.' AS ctl LEFT JOIN taxa AS t1 ON ctl.tid = t1.tid '.
-            'LEFT JOIN taxa AS t2 ON t1.tidaccepted = t.TID '.
+            'LEFT JOIN taxa AS t2 ON t1.tidaccepted = t2.TID '.
             'WHERE '.$this->sqlWhereVar.' '.
             'ORDER BY t2.family, t2.sciname ';
         if($this->index || $this->recLimit) {
@@ -210,11 +210,11 @@ class ChecklistFGExportManager {
                 }
                 if($i < $this->maxPhoto){
                     $imgUrl = $row->thumbnailurl;
-                    if((!$imgUrl || $imgUrl === 'empty') && $row->url) {
+                    if(!$imgUrl && $row->url) {
                         $imgUrl = $row->url;
                     }
                     $this->dataArr[$row->tid]['img'][$row->imgid]['id'] = $row->imgid;
-                    $this->dataArr[$row->tid]['img'][$row->imgid]['url'] = $imgUrl;
+                    $this->dataArr[$row->tid]['img'][$row->imgid]['url'] = ($imgUrl && $GLOBALS['CLIENT_ROOT'] && strncmp($imgUrl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $imgUrl) : $imgUrl;
                     $this->dataArr[$row->tid]['img'][$row->imgid]['owner'] = $row->owner;
                     $this->dataArr[$row->tid]['img'][$row->imgid]['photographer'] = $this->cleanOutStr(htmlspecialchars_decode($row->photographer));
                 }
@@ -230,9 +230,11 @@ class ChecklistFGExportManager {
         //echo $sql; exit;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $imgUrl = $row->thumbnailurl;
-            if((!$imgUrl || $imgUrl === 'empty') && $row->url) {
-                $imgUrl = $row->url;
+            if($row->thumbnailurl){
+                $imgUrl = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+            }
+            if(!$imgUrl && $row->url) {
+                $imgUrl = ($GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
             }
         }
         $result->free();

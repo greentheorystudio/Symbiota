@@ -30,8 +30,6 @@ else{
 
 $dwcaHandler->setVerboseMode(0);
 $dwcaHandler->setSchemaType($schema);
-$dwcaHandler->setCharSetOut($cSet);
-$dwcaHandler->setDelimiter($format);
 $dwcaHandler->setRedactLocalities($redactLocalities);
 if($rareReaderArr) {
     $dwcaHandler->setRareReaderArr($rareReaderArr);
@@ -41,7 +39,6 @@ $dwcaHandler->setCustomWhereSql('v.clid='.$clid);
 
 $outputFile = null;
 if($zip){
-	//Ouput file is a zip file
 	$includeIdent = (array_key_exists('identifications',$_POST)?1:0);
 	$dwcaHandler->setIncludeDets($includeIdent);
 	$includeImages = (array_key_exists('images',$_POST)?1:0);
@@ -53,7 +50,6 @@ if($zip){
 
 }
 else{
-	//Output file is a flat occurrence file (not a zip file)
 	$outputFile = $dwcaHandler->getOccurrenceFile();
 }
 if($outputFile){
@@ -75,10 +71,10 @@ if($outputFile){
 		header('Content-Type: application/zip');
 	}
 	elseif($format === 'csv'){
-		header('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
+		header('Content-Type: text/csv; charset=UTF-8');
 	}
 	else{
-		header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
+		header('Content-Type: text/html; charset=UTF-8' );
 	}
 
 	header('Content-Disposition: attachment; filename='.basename($outputFile));

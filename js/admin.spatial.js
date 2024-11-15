@@ -130,15 +130,15 @@ function createLayer(layerName,filename){
     layerData[newLayerId]['sourceURL'] = document.getElementById('addLayerSourceURL').value;
     layerData[newLayerId]['dateAquired'] = document.getElementById('addLayerDateAquired').value;
     layerData[newLayerId]['dateUploaded'] = date.toISOString().split('T')[0];
-    layerData[newLayerId]['opacity'] = dragDropOpacity;
+    layerData[newLayerId]['opacity'] = SPATIAL_DRAGDROP_OPACITY;
     if(fileType === 'tif'){
-        layerData[newLayerId]['colorScale'] = dragDropRasterColorScale;
+        layerData[newLayerId]['colorScale'] = SPATIAL_DRAGDROP_RASTER_COLOR_SCALE;
     }
     else{
-        layerData[newLayerId]['fillColor'] = dragDropFillColor;
-        layerData[newLayerId]['borderColor'] = dragDropBorderColor;
-        layerData[newLayerId]['borderWidth'] = dragDropBorderWidth;
-        layerData[newLayerId]['pointRadius'] = dragDropPointRadius;
+        layerData[newLayerId]['fillColor'] = SPATIAL_DRAGDROP_FILL_COLOR;
+        layerData[newLayerId]['borderColor'] = SPATIAL_DRAGDROP_BORDER_COLOR;
+        layerData[newLayerId]['borderWidth'] = SPATIAL_DRAGDROP_BORDER_WIDTH;
+        layerData[newLayerId]['pointRadius'] = SPATIAL_DRAGDROP_POINT_RADIUS;
     }
     const layerLiId = 'layer-' + newLayerId;
     const layerLi = document.createElement('li');
@@ -461,15 +461,15 @@ function processLayerDataFromLayerArr(lArr,id) {
     layerData[id]['sourceURL'] = lArr.hasOwnProperty('sourceURL') ? lArr['sourceURL'] : '';
     layerData[id]['dateAquired'] = lArr.hasOwnProperty('dateAquired') ? lArr['dateAquired'] : '';
     layerData[id]['dateUploaded'] = lArr.hasOwnProperty('dateUploaded') ? lArr['dateUploaded'] : '';
-    layerData[id]['opacity'] = (lArr.hasOwnProperty('opacity') && lArr['opacity']) ? lArr['opacity'] : dragDropOpacity;
+    layerData[id]['opacity'] = (lArr.hasOwnProperty('opacity') && lArr['opacity']) ? lArr['opacity'] : SPATIAL_DRAGDROP_OPACITY;
     if(lArr['fileType'] === 'tif'){
-        layerData[id]['colorScale'] = (lArr.hasOwnProperty('colorScale') && lArr['colorScale']) ? lArr['colorScale'] : dragDropRasterColorScale;
+        layerData[id]['colorScale'] = (lArr.hasOwnProperty('colorScale') && lArr['colorScale']) ? lArr['colorScale'] : SPATIAL_DRAGDROP_RASTER_COLOR_SCALE;
     }
     else{
-        layerData[id]['fillColor'] = (lArr.hasOwnProperty('fillColor') && lArr['fillColor']) ? lArr['fillColor'] : dragDropFillColor;
-        layerData[id]['borderColor'] = (lArr.hasOwnProperty('borderColor') && lArr['borderColor']) ? lArr['borderColor'] : dragDropBorderColor;
-        layerData[id]['borderWidth'] = (lArr.hasOwnProperty('borderWidth') && lArr['borderWidth']) ? lArr['borderWidth'] : dragDropBorderWidth;
-        layerData[id]['pointRadius'] = (lArr.hasOwnProperty('pointRadius') && lArr['pointRadius']) ? lArr['pointRadius'] : dragDropPointRadius;
+        layerData[id]['fillColor'] = (lArr.hasOwnProperty('fillColor') && lArr['fillColor']) ? lArr['fillColor'] : SPATIAL_DRAGDROP_FILL_COLOR;
+        layerData[id]['borderColor'] = (lArr.hasOwnProperty('borderColor') && lArr['borderColor']) ? lArr['borderColor'] : SPATIAL_DRAGDROP_BORDER_COLOR;
+        layerData[id]['borderWidth'] = (lArr.hasOwnProperty('borderWidth') && lArr['borderWidth']) ? lArr['borderWidth'] : SPATIAL_DRAGDROP_BORDER_WIDTH;
+        layerData[id]['pointRadius'] = (lArr.hasOwnProperty('pointRadius') && lArr['pointRadius']) ? lArr['pointRadius'] : SPATIAL_DRAGDROP_POINT_RADIUS;
     }
 }
 
@@ -643,7 +643,7 @@ function saveLayerConfigChanges(){
     const newLayerConfigArr = setNewLayerConfigArr();
     if(newLayerConfigArr.length > 0){
         const newLayerConfig = {};
-        newLayerConfig['layerConfig'] = newLayerConfigArr;
+        newLayerConfig['spatialLayerConfig'] = newLayerConfigArr;
         const http = new XMLHttpRequest();
         const url = "../../api/configurations/mapServerConfigurationController.php";
         const jsonData = JSON.stringify(newLayerConfig).replaceAll('&','%<amp>%');

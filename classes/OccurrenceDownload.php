@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceDownload{
 
@@ -10,20 +10,16 @@ class OccurrenceDownload{
 	private $rareReaderArr = array();
 	private $schemaType = 'native';
 	private $extended = 0;
-	private $delimiter = ',';
-	private $charSetSource;
-	private $charSetOut;
 	private $zipFile = false;
  	private $sqlWhere = '';
  	private $conditionArr = array();
-    private $taxonFilter;
     private $errorArr = array();
     private $tidArr = array();
     private $isPublicDownload = false;
     private $occArr = array();
 
  	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->conn = $connection->getConnection();
 
 		if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
@@ -35,10 +31,7 @@ class OccurrenceDownload{
 		if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
 			$this->rareReaderArr = array_unique(array_merge($this->rareReaderArr,$GLOBALS['USER_RIGHTS']['RareSppReader']));
 		}
-
-		$this->charSetSource = strtoupper($GLOBALS['CHARSET']);
-		$this->charSetOut = $this->charSetSource;
-	}
+    }
 
 	public function __destruct(){
  		if($this->conn) {
@@ -48,7 +41,6 @@ class OccurrenceDownload{
 
 	public function downloadData(): void
 	{
-		$outstream = null;
 		$contentDesc = '';
 		$filePath = $this->getOutputFilePath();
 		$fileName = $this->getOutputFileName();
@@ -80,18 +72,8 @@ class OccurrenceDownload{
 					$tempName = 'occurrence';
 				}
 				$tempPath = $filePath.$tempName.'_'.time();
-				if($this->delimiter === "\t"){
-					$tempPath .= '.tab';
-					$tempName .= '.tab';
-				}
-				elseif($this->delimiter === ','){
-					$tempPath .= '.csv';
-					$tempName .= '.csv';
-				}
-				else{
-					$tempPath .= '.txt';
-					$tempName .= '.txt';
-				}
+                $tempPath .= '.csv';
+                $tempName .= '.csv';
 				$fh = fopen($tempPath, 'wb');
 				$this->writeOutData($fh);
 				fclose($fh);
@@ -110,7 +92,7 @@ class OccurrenceDownload{
 		header('Content-Description: '.$contentDesc);
 		header('Content-Type: '.$this->getContentType());
 		header('Content-Disposition: attachment; filename='.$fileName);
-		header('Content-Transfer-Encoding: '.$this->charSetOut);
+		header('Content-Transfer-Encoding: UTF-8');
 		header('Expires: 0');
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
@@ -133,21 +115,10 @@ class OccurrenceDownload{
 				$outputHeader = true;
 				while($row = $result->fetch_assoc()){
 					if($outputHeader){
-						if($this->delimiter === ','){
-							fputcsv($outstream, array_keys($row));
-						}
-						else{
-							fwrite($outstream, implode($this->delimiter, array_keys($row))."\n");
-						}
+                        fputcsv($outstream, array_keys($row));
 						$outputHeader = false;
 					}
-					$this->encodeArr($row);
-					if($this->delimiter === ','){
-						fputcsv($outstream, $row);
-					}
-					else{
-						fwrite($outstream, implode($this->delimiter,$row)."\n");
-					}
+                    fputcsv($outstream, $row);
 					if($this->isPublicDownload && $this->schemaType !== 'checklist' && array_key_exists('occid', $row)) {
 						$statsManager->recordAccessEvent($row['occid'], 'download');
 					}
@@ -175,7 +146,7 @@ class OccurrenceDownload{
 
 	private function getDataEntryXML($days, $limit): string
 	{
-		$newDoc = new DOMDocument('1.0',$this->charSetOut);
+		$newDoc = new DOMDocument('1.0','UTF-8');
 
 		$rootElem = $newDoc->createElement('rss');
 		$rootAttr = $newDoc->createAttribute('version');
@@ -195,12 +166,9 @@ class OccurrenceDownload{
 			$serverDomain = 'https://';
 		}
 		$serverDomain .= $_SERVER['HTTP_HOST'];
-		if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-			$serverDomain .= ':' . $_SERVER['SERVER_PORT'];
-		}
 		$urlPathPrefix = '';
 		if($serverDomain){
-			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
+			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'];
 		}
 
 		$linkElem = $newDoc->createElement('link');
@@ -219,7 +187,7 @@ class OccurrenceDownload{
 			'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid '.
 			'INNER JOIN images i ON o.occid = i.occid '.
 			'INNER JOIN guidoccurrences g ON o.occid = g.occid '.
-			'WHERE c.colltype = "Preserved Specimens" '.
+			'WHERE c.colltype = "PreservedSpecimen" '.
 			'AND o.processingstatus IN("pending review","reviewed", "closed") AND (o.localitysecurity IS NULL OR o.localitysecurity = 0) ';
 		if($days && is_numeric($days)) {
 			$sql .= 'AND (o.datelastmodified > DATE_SUB(NOW(), INTERVAL ' . $days . ' DAY)) ';
@@ -261,17 +229,12 @@ class OccurrenceDownload{
 			}
 
 			$itemLinkElem = $newDoc->createElement('link');
-			$itemLinkElem->appendChild($newDoc->createTextNode($serverDomain.'/collections/individual/index.php?occid='.$r->occid));
+			$itemLinkElem->appendChild($newDoc->createTextNode($urlPathPrefix.'/collections/individual/index.php?occid='.$r->occid));
 			$itemElem->appendChild($itemLinkElem);
 
 			$tnUrl = $r->thumbnailurl;
 			if(strncmp($tnUrl, '/', 1) === 0){
-				if(isset($GLOBALS['IMAGE_DOMAIN'])){
-					$tnUrl = $GLOBALS['IMAGE_DOMAIN'].$tnUrl;
-				}
-				else{
-					$tnUrl = $serverDomain.$tnUrl;
-				}
+                $tnUrl = $urlPathPrefix.$tnUrl;
 			}
 			$tnLinkElem = $newDoc->createElement('thumbnailUri');
 			$tnLinkElem->appendChild($newDoc->createTextNode($tnUrl));
@@ -310,7 +273,7 @@ class OccurrenceDownload{
 				$cond = 'EQUALS';
 			}
 			if($value || ($cond === 'NULL' || $cond === 'NOTNULL')){
-				$this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($this->conn,$value);
+				$this->conditionArr[$field][$cond][] = SanitizerService::cleanInStr($this->conn,$value);
 			}
 		}
 	}
@@ -510,14 +473,8 @@ class OccurrenceDownload{
 		if($this->zipFile){
 			$retStr .= '.zip';
 		}
-		elseif($this->delimiter === "\t"){
-			$retStr .= '.tab';
-		}
-		elseif($this->delimiter === ','){
-			$retStr .= '.csv';
-		}
 		else{
-			$retStr .= '.txt';
+            $retStr .= '.csv';
 		}
 		return $retStr;
 	}
@@ -585,39 +542,16 @@ class OccurrenceDownload{
 		$this->extended = $e;
 	}
 
-	public function setDelimiter($d): void
-	{
-		if($d === 'tab' || $d === "\t"){
-			$this->delimiter = "\t";
-		}
-		elseif($d === 'csv' || $d === 'comma' || $d === ','){
-			$this->delimiter = ',';
-		}
-		else{
-			$this->delimiter = $d;
-		}
-	}
-
 	private function getContentType(): ?string
 	{
-		$retStr = 'text/html; charset='.$this->charSetOut;
-	    if ($this->zipFile) {
-            $retStr = 'application/zip; charset='.$this->charSetOut;
+		if($this->zipFile) {
+            $retStr = 'application/zip; charset=UTF-8';
 		}
-
-		if($this->delimiter === 'comma' || $this->delimiter === ',') {
-            $retStr = 'text/csv; charset='.$this->charSetOut;
+        else{
+            $retStr = 'text/csv; charset=UTF-8';
 		}
 
 		return $retStr;
-	}
-
-	public function setCharSetOut($cs): void
-	{
-		$cs = strtoupper($cs);
-		if($cs === 'ISO-8859-1' || $cs === 'UTF-8'){
-			$this->charSetOut = $cs;
-		}
 	}
 
 	public function setZipFile($c): void
@@ -655,31 +589,4 @@ class OccurrenceDownload{
             $this->occArr = $occArr;
         }
     }
-
-	private function encodeArr(&$inArr): void
-	{
-		if($this->charSetSource && $this->charSetOut !== $this->charSetSource){
-			foreach($inArr as $k => $v){
-				$inArr[$k] = $this->encodeStr($v);
-			}
-		}
-	}
-
-	private function encodeStr($inStr): string
-	{
-		$retStr = $inStr;
-		if($this->charSetSource){
-			if($this->charSetOut === 'UTF-8' && $this->charSetSource === 'ISO-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-					$retStr = utf8_encode($inStr);
-				}
-			}
-			elseif($this->charSetOut === 'ISO-8859-1' && $this->charSetSource === 'UTF-8'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-					$retStr = utf8_decode($inStr);
-				}
-			}
-		}
-		return $retStr;
-	}
 }

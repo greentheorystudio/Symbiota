@@ -6,5 +6,5 @@ $GLOBALS['DB_SERVER'] = array(
     'database' => '',
     'port' => '3306',
     'charset' => 'utf8',
-    'version' => '5.7'
+    'version' => '8.0'
 );

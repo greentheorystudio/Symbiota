@@ -6,7 +6,6 @@
 /** @var string $eMode */
 $specList = $loanManager->getSpecList($loanId);
 ?>
-<script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
 <div id="tabs" style="margin:0;">
     <ul>
 		<li><a href="#outloandetaildiv"><span>Loan Details</span></a></li>
@@ -66,7 +65,7 @@ $specList = $loanManager->getSpecList($loanId);
 							<?php 
 							$instArr = $loanManager->getInstitutionArr();
 							foreach($instArr as $k => $v){
-								echo '<option value="'.$k.'" '.($loanArr['iidborrower'] === $k?'SELECTED':'').'>'.$v.'</option>';
+                                echo '<option value="'.$k.'" '.((int)$loanArr['iidborrower'] === (int)$k?'SELECTED':'').'>'.$v.'</option>';
 							}
 							?>
 						</select>
@@ -321,14 +320,6 @@ $specList = $loanManager->getSpecList($loanId);
 									<div style='margin:3px;'>
 										<b>Author:</b> 
 										<input type="text" name="scientificnameauthorship" style="width:200px;" />
-									</div>
-									<div style='margin:3px;'>
-										<b>Confidence of Determination:</b> 
-										<select name="confidenceranking">
-											<option value="8">High</option>
-											<option value="5" selected>Medium</option>
-											<option value="2">Low</option>
-										</select>
 									</div>
 									<div style='margin:3px;'>
 										<b>Determiner:</b> 

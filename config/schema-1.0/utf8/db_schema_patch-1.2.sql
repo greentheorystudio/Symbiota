@@ -1,6 +1,3 @@
-ALTER TABLE `adminlanguages`
-    ADD COLUMN `ISO 639-3` varchar(3) NULL AFTER `iso639_2`;
-
 CREATE TABLE `configurations`
 (
     `id`                    int(11) NOT NULL AUTO_INCREMENT,

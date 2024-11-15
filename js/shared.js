@@ -26,78 +26,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 });
 
-function arrayIndexSort(obj){
-	const keys = [];
-	for(const key in obj){
-		if(obj.hasOwnProperty(key)){
-			keys.push(key);
-		}
-	}
-	return keys;
-}
-
-function checkObjectNotEmpty(obj){
-	for(const i in obj){
-		if(obj.hasOwnProperty(i) && obj[i]){
-			return true;
-		}
-	}
-	return false;
-}
-
-function formatCheckDate(dateStr){
-	if(dateStr !== ""){
-		const dateArr = parseDate(dateStr);
-		if(dateArr['y'] === 0){
-			alert("Please use the following date formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
-			return false;
-		}
-		else{
-			if(dateArr['m'] > 12){
-				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
-				return false;
-			}
-
-			if(dateArr['d'] > 28){
-				if(dateArr['d'] > 31
-					|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-					|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
-					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
-					return false;
-				}
-			}
-
-			let mStr = dateArr['m'];
-			if(mStr.length === 1){
-				mStr = "0" + mStr;
-			}
-			let dStr = dateArr['d'];
-			if(dStr.length === 1){
-				dStr = "0" + dStr;
-			}
-			return dateArr['y'] + "-" + mStr + "-" + dStr;
-		}
-	}
-}
-
-function generateRandColor(){
-	let hexColor = '';
-	const x = Math.round(0xffffff * Math.random()).toString(16);
-	const y = (6 - x.length);
-	const z = '000000';
-	const z1 = z.substring(0, y);
-	hexColor = z1 + x;
-	return hexColor;
-}
-
-function getISOStrFromDateObj(dObj){
-	const dYear = dObj.getFullYear();
-	const dMonth = ((dObj.getMonth() + 1) > 9 ? (dObj.getMonth() + 1) : '0' + (dObj.getMonth() + 1));
-	const dDay = (dObj.getDate() > 9 ? dObj.getDate() : '0' + dObj.getDate());
-
-	return dYear+'-'+dMonth+'-'+dDay;
-}
-
 function getRgbaStrFromHexOpacity(hex,opacity) {
 	const rgbArr = hexToRgb(hex);
 	let retStr = '';
@@ -171,7 +99,7 @@ function getVineWorkingSpinnerHtml(size = null){
 		'        <path d="M 79.151652,43.368082 78.230962,43.385117 76.979402,43.834018 75.712871,44.882717 74.864704,46.001877 74.602829,46.875596 74.732303,47.298947 75.345611,47.574328 76.531702,47.343858 77.830234,46.616047 78.57095,45.794291 78.967289,45.143993 79.219184,44.670142 79.215657,44.009863 Z" />' +
 		'        <path d="M 79.796198,49.682159 78.910949,49.428595 77.582783,49.490962 76.064507,50.122396 74.925571,50.943815 74.419117,51.702408 74.418822,52.145117 74.924483,52.588161 76.126034,52.715443 77.580858,52.400185 78.529894,51.831619 79.099426,51.326045 79.47914,50.94683 79.669292,50.314513 Z" />' +
 		'    </clipPath>' +
-		'    <path class="path" clip-path="url(#vinePath)" d="M 66.249976,61.659254 C 59.810751,70.633869 47.315358,72.689205 38.340746,66.249976 29.366131,59.810751 27.310795,47.315358 33.750024,38.340746 40.189249,29.366131 52.684642,27.310795 61.659254,33.750024 70.633869,40.189249 72.689205,52.684642 66.249976,61.659254" />' +
+		'    <path class="vinepath" clip-path="url(#vinePath)" d="M 66.249976,61.659254 C 59.810751,70.633869 47.315358,72.689205 38.340746,66.249976 29.366131,59.810751 27.310795,47.315358 33.750024,38.340746 40.189249,29.366131 52.684642,27.310795 61.659254,33.750024 70.633869,40.189249 72.689205,52.684642 66.249976,61.659254" />' +
 		'</svg>';
 }
 
@@ -186,64 +114,6 @@ function hexToRgb(hex) {
 
 function hideWorking(){
 	document.body.classList.remove("processing");
-}
-
-function imagePostFunction(image, src) {
-	const img = image.getImage();
-	if(typeof window.btoa === 'function'){
-		const xhr = new XMLHttpRequest();
-		const dataEntries = src.split("&");
-		let url;
-		let params = "";
-		for (let i = 0 ; i< dataEntries.length ; i++){
-			if (i===0){
-				url = dataEntries[i];
-			}
-			else{
-				params = params + "&"+dataEntries[i];
-			}
-		}
-		xhr.open('POST', url, true);
-		xhr.responseType = 'arraybuffer';
-		xhr.onload = function(e) {
-			if (this.status === 200) {
-				const uInt8Array = new Uint8Array(this.response);
-				let i = uInt8Array.length;
-				const binaryString = new Array(i);
-				while (i--) {
-					binaryString[i] = String.fromCharCode(uInt8Array[i]);
-				}
-				const data = binaryString.join('');
-				const type = xhr.getResponseHeader('content-type');
-				if (type.indexOf('image') === 0) {
-					img.src = 'data:' + type + ';base64,' + window.btoa(data);
-				}
-			}
-		};
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhr.send(params);
-	}
-	else {
-		img.src = src;
-	}
-}
-
-function openIndividualPopup(url, occid, clid = 0){
-	let wWidth = 900;
-	if(document.getElementById('innertext')){
-        wWidth = document.getElementById('innertext').offsetWidth*1.05;
-    }
-    else if(document.body.offsetWidth){
-        wWidth = document.body.offsetWidth*0.9;
-    }
-    if(wWidth > 1000) {
-    	wWidth = 1000;
-    }
-	let newWindow = window.open(url + '?occid=' + occid + '&clid=' + clid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
-    if(newWindow.opener == null) {
-    	newWindow.opener = self;
-    }
-    return false;
 }
 
 function openPopup(url){
@@ -265,6 +135,7 @@ function openPopup(url){
 }
 
 function openTutorialWindow(url) {
+	url = CLIENT_ROOT + url;
 	window.open(url, '_blank');
 }
 
@@ -319,50 +190,6 @@ function parseDate(dateStr){
 	retArr["m"] = m.toString();
 	retArr["d"] = d.toString();
 	return retArr;
-}
-
-function sendProxyGetRequest(proxyurl,url,callback,http = null){
-	if(!http){
-		http = new XMLHttpRequest();
-	}
-	const formData = new FormData();
-	formData.append('url', url);
-	formData.append('action', 'get');
-	http.open("POST", proxyurl, true);
-	http.onreadystatechange = function() {
-		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
-		}
-	};
-	http.send(formData);
-}
-
-function sendAPIGetRequest(url,callback,http = null){
-	if(!http){
-		http = new XMLHttpRequest();
-	}
-	http.open("GET", url, true);
-	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	http.onreadystatechange = function() {
-		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
-		}
-	};
-	http.send();
-}
-
-function sendAPIPostRequest(url,params,callback,http = null){
-	if(!http){
-		http = new XMLHttpRequest();
-	}
-	http.open("POST", url, true);
-	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	http.onreadystatechange = function() {
-		if(http.readyState === 4) {
-			callback(http.status,http.responseText);
-		}
-	};
-	http.send(params);
 }
 
 function showWorking(){

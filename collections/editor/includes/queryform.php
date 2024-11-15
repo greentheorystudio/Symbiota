@@ -4,7 +4,7 @@
 /** @var int $crowdSourceMode */
 /** @var int $isGenObs */
 /** @var string $collId */
-include_once(__DIR__ . '/../../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../../services/SanitizerService.php');
 if(!$displayQuery && array_key_exists('displayquery',$_REQUEST) && $_REQUEST['displayquery']) {
     $displayQuery = true;
 }
@@ -101,16 +101,10 @@ if($qryArr){
 	$qOrderByDir = (array_key_exists('orderbydir',$qryArr)?$qryArr['orderbydir']:'');
 }
 
-$processingStatusArr = array();
-if(isset($PROCESSINGSTATUS) && $PROCESSINGSTATUS){
-	$processingStatusArr = $PROCESSINGSTATUS;
-}
-else{
-	$processingStatusArr = array('unprocessed','unprocessed/NLP','stage 1','stage 2','stage 3','pending review-nfn','pending review','expert required','reviewed','closed');
-}
+$processingStatusArr = $GLOBALS['PROCESSING_STATUS_OPTIONS'];
 ?>
 <div id="querydiv" style="clear:both;width:830px;display:<?php echo ($displayQuery?'block':'none'); ?>;">
-	<form name="queryform" id="queryform" action="<?php echo Sanitizer::getCleanedRequestPath(); ?>" method="post" onsubmit="return verifyQueryForm()">
+	<form name="queryform" id="queryform" action="<?php echo SanitizerService::getCleanedRequestPath(); ?>" method="post" onsubmit="return verifyQueryForm()">
 		<fieldset style="padding:5px;">
 			<legend><b>Record Search Form</b></legend>
 			<?php 
@@ -247,7 +241,7 @@ else{
 					'otherCatalogNumbers'=>'Other Catalog Numbers','ownerInstitutionCode'=>'Owner Code','preparations'=>'Preparations',
 					'reproductiveCondition'=>'Reproductive Condition','samplingEffort'=>'Sampling Effort','samplingProtocol'=>'Sampling Protocol',
 					'sciname'=>'Scientific Name','sex'=>'Sex','specificEpithet'=>'Specific Epithet','stateProvince'=>'State/Province',
-					'substrate'=>'Substrate','taxonRemarks'=>'Taxon Remarks','typeStatus'=>'Type Status','verbatimCoordinates'=>'Verbatim Coordinates',
+					'substrate'=>'Substrate','tid'=>'Taxon ID','taxonRemarks'=>'Taxon Remarks','typeStatus'=>'Type Status','verbatimCoordinates'=>'Verbatim Coordinates',
 					'verbatimEventDate'=>'Verbatim Date','verbatimDepth'=>'Verbatim Depth','verbatimElevation'=>'Verbatim Elevation','`year`'=>'Year');
 			}
 			?>

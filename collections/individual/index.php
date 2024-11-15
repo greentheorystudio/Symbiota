@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceIndividualManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $occid = array_key_exists('occid',$_REQUEST)?(int)$_REQUEST['occid']:0;
@@ -80,30 +80,7 @@ if($GLOBALS['SYMB_UID']){
     if(array_key_exists('delvouch', $_GET) && $occid && !$indManager->deleteVoucher($occid, $_GET['delvouch'])) {
         $statusStr = $indManager->getErrorMessage();
     }
-    if(array_key_exists('commentstr',$_POST)){
-        if(!$indManager->addComment($_POST['commentstr'])){
-            $statusStr = $indManager->getErrorMessage();
-        }
-    }
-    elseif($submit === 'Delete Comment'){
-        if(!$indManager->deleteComment($_POST['comid'])){
-            $statusStr = $indManager->getErrorMessage();
-        }
-    }
-    elseif(array_key_exists('repcomid',$_GET)){
-        if($indManager->reportComment($_GET['repcomid'])){
-            $statusStr = 'Comment reported as inappropriate. Comment will remain unavailable to public until reviewed by an administrator.';
-        }
-        else{
-            $statusStr = $indManager->getErrorMessage();
-        }
-    }
-    elseif(array_key_exists('publiccomid',$_GET)){
-        if(!$indManager->makeCommentPublic($_GET['publiccomid'])){
-            $statusStr = $indManager->getErrorMessage();
-        }
-    }
-    elseif($submit === 'Add Voucher'){
+    if($submit === 'Add Voucher'){
         if(!$indManager->linkVoucher($_POST)){
             $statusStr = $indManager->getErrorMessage();
         }
@@ -123,10 +100,12 @@ $displayMap = false;
 if($displayLocality && ((is_numeric($occArr['decimallatitude']) && is_numeric($occArr['decimallongitude'])) || $occArr['footprintwkt'])) {
     $displayMap = true;
 }
-$dupClusterArr = $indManager->getDuplicateArr();
-$commentArr = $indManager->getCommentArr($isEditor);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Detailed Collection Record Information</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -144,14 +123,13 @@ $commentArr = $indManager->getCommentArr($isEditor);
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script src="../../js/shared.js?ver=20221207" type="text/javascript"></script>
     <?php
     if($displayMap){
         ?>
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20220209" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20210415" rel="stylesheet" type="text/css" />
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol/ol.js?ver=20220926" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=20221126" type="text/javascript"></script>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/spatialviewerbase.css?ver=20230105" rel="stylesheet" type="text/css" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/spatial.module.core.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <?php
     }
     ?>
@@ -162,7 +140,7 @@ $commentArr = $indManager->getCommentArr($isEditor);
         const coordUncertainty = <?php echo $occArr['coordinateuncertaintyinmeters'] ?: 0; ?>;
         const footprintWKT = '<?php echo $occArr['footprintwkt']; ?>';
 
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $('#tabs').tabs({
                 <?php
                 if($displayMap){
@@ -220,14 +198,6 @@ $commentArr = $indManager->getCommentArr($isEditor);
             return true;
         }
 
-        function verifyCommentForm(f){
-            if(f.commentstr.value.replaceAll(/^\s+|\s+$/g,"")){
-                return true;
-            }
-            alert("Please enter a comment");
-            return false;
-        }
-
         function openIndividual(target) {
             let occWindow = open("index.php?occid="+target,"occdisplay","resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
             if (occWindow.opener == null) {
@@ -237,16 +207,6 @@ $commentArr = $indManager->getCommentArr($isEditor);
     </script>
 </head>
 <body <?php echo ($fullWindow ? '' : 'style="border:0;width:950px;"'); ?>>
-<div id="fb-root"></div>
-<script>
-    (function(d, s, id) {
-        let js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-</script>
 <?php
 if($fullWindow){
     include(__DIR__ . '/../../header.php');
@@ -277,13 +237,7 @@ if($fullWindow){
                 if($genticArr) {
                     echo '<li><a href="#genetictab"><span>Genetic Data</span></a></li>';
                 }
-                if($dupClusterArr){
-                    ?>
-                    <li><a href="#dupestab"><span>Duplicates</span></a></li>
-                    <?php
-                }
                 ?>
-                <li id="indCommentsTab"><a href="#commenttab"><span><?php echo ($commentArr?count($commentArr).' ':''); ?>Comments</span></a></li>
                 <li id="indLinkedResourcesTab"><a href="linkedresources.php?occid=<?php echo $occid.'&tid='.$occArr['tid'].'&clid='.$clid.'&collid='.$collid; ?>"><span>Linked Resources</span></a></li>
                 <?php
                 if($isEditor){
@@ -294,29 +248,14 @@ if($fullWindow){
                 ?>
             </ul>
             <div id="occurtab">
-                <div style="float:right;">
-                    <div style="float:right;">
-                        <a class="twitter-share-button" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid.'&clid='.$clid; ?>">Tweet</a>
-                        <script>
-                            window.twttr=(function(d,s,id){
-                                let js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};
-                                if(d.getElementById(id))return;js=d.createElement(s);
-                                js.id=id;js.src="https://platform.twitter.com/widgets.js";
-                                fjs.parentNode.insertBefore(js,fjs);t._e=[];
-                                t.ready=function(f){t._e.push(f);};
-                                return t;
-                            }(document,"script","twitter-wjs"));
-                        </script>
-                    </div>
-                    <div style="float:right;margin-right:10px;">
-                        <div class="fb-share-button" data-href="" data-layout="button_count"></div>
-                    </div>
-                </div>
                 <div style="float:left;margin:15px 0;text-align:center;font-weight:bold;width:120px;">
                     <?php
                     if($collMetadata['icon']){
+                        if($GLOBALS['CLIENT_ROOT'] && strncmp($collMetadata['icon'], '/', 1) === 0){
+                            $collMetadata['icon'] = $GLOBALS['CLIENT_ROOT'] . $collMetadata['icon'];
+                        }
                         ?>
-                        <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo (strncmp($collMetadata['icon'], 'images', 6) === 0 ?'../../':'').$collMetadata['icon']; ?>'/><br/>
+                        <img style='height:50px;width:50px;border:1px solid black;' src='<?php echo $collMetadata['icon']; ?>'/><br/>
                         <?php
                     }
                     $collCode = '';
@@ -509,9 +448,6 @@ if($fullWindow){
                         if($occArr['eventdate']){
                             echo '<div><b>Date: </b>';
                             echo $occArr['eventdate'];
-                            if($occArr['eventdateend']){
-                                echo ' - '.$occArr['eventdateend'];
-                            }
                             echo '</div>';
                         }
                         if($occArr['verbatimeventdate']){
@@ -790,62 +726,6 @@ if($fullWindow){
                                                     }
                                                     ?>
                                                 </div>
-                                                <div style="margin-left:25px;">
-                                                    <?php
-                                                    $photographer = '';
-                                                    if($imgArr['photographer']){
-                                                        $photographer = $imgArr['photographer'];
-                                                    }
-                                                    elseif($imgArr['photographeruid']){
-                                                        $pArr = $indManager->getPhotographerArr();
-                                                        $photographer = $pArr[$imgArr['photographeruid']];
-                                                    }
-                                                    if($photographer){
-                                                        echo '<div><b>Photographer:</b> '.wordwrap($photographer, 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['caption']){
-                                                        echo '<div><b>Caption:</b> '.wordwrap($imgArr['caption'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['locality']){
-                                                        echo '<div><b>Locality:</b> '.wordwrap($imgArr['locality'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['notes']){
-                                                        echo '<div><b>Notes:</b> '.wordwrap($imgArr['notes'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['anatomy']){
-                                                        echo '<div><b>Anatomy:</b> '.wordwrap($imgArr['anatomy'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['dynamicProperties']){
-                                                        echo '<div><b>Dynamic Properties:</b> '.wordwrap($imgArr['dynamicProperties'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['owner']){
-                                                        echo '<div><b>Owner:</b> '.wordwrap($imgArr['owner'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['sourceurl']){
-                                                        $urlDisplay = $imgArr['sourceurl'];
-                                                        if(strlen($urlDisplay) > 57) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
-                                                        }
-                                                        echo '<div><b>Source URL:</b> <a href="'.$imgArr['sourceurl'].'" target="_blank">'.$urlDisplay.'</a></div>';
-                                                    }
-                                                    if($imgArr['referenceUrl']){
-                                                        $urlDisplay = $imgArr['referenceUrl'];
-                                                        if(strlen($urlDisplay) > 57) {
-                                                            $urlDisplay = '...' . substr($urlDisplay, -57);
-                                                        }
-                                                        echo '<div><b>Reference URL:</b> <a href="'.$imgArr['referenceUrl'].'" target="_blank">'.$urlDisplay.'</a></div>';
-                                                    }
-                                                    if($imgArr['copyright']){
-                                                        echo '<div><b>Copyright:</b> '.wordwrap($imgArr['copyright'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['rights']){
-                                                        echo '<div><b>Rights:</b> '.wordwrap($imgArr['rights'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    if($imgArr['accessrights']){
-                                                        echo '<div><b>Access Rights:</b> '.wordwrap($imgArr['accessrights'], 50, '<br />\n', true).'</div>';
-                                                    }
-                                                    ?>
-                                                </div>
                                             </div>
                                             <?php
                                         }
@@ -868,10 +748,6 @@ if($fullWindow){
                                                     <?php
                                                     $medUrl = $medArr['accessuri'];
                                                     $medFormat = $medArr['format'];
-                                                    if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($medUrl, '/', 1) === 0) {
-                                                        $medUrl = $GLOBALS['IMAGE_DOMAIN'].$medUrl;
-                                                    }
-
                                                     if(strncmp($medFormat, 'video/', 6) === 0){
                                                         echo '<video width="250" controls>';
                                                         echo '<source src="'.$medUrl.'" type="'.$medFormat.'">';
@@ -1031,29 +907,6 @@ if($fullWindow){
                             <?php echo $collMetadata['contact'].' ('.$collMetadata['email'].')'; ?>
                         </a>
                     </div>
-                    <?php
-                    if($isEditor || ($displayLocality && $collMetadata['publicedits'])){
-                        ?>
-                        <div style="margin-bottom:10px;">
-                            <?php
-                            if($GLOBALS['SYMB_UID']){
-                                ?>
-                                Do you see an error? If so, errors can be fixed using the
-                                <a href="../editor/occurrenceeditor.php?occid=<?php echo $occArr['occid'];?>">
-                                    Occurrence Editor.
-                                </a>
-                                <?php
-                            }
-                            else{
-                                ?>
-                                See an error? <a href="../../profile/index.php?refurl=../collections/individual/index.php?occid=<?php echo $occid; ?>">Login</a> to edit data
-                                <?php
-                            }
-                            ?>
-                        </div>
-                        <?php
-                    }
-                    ?>
                 </div>
             </div>
             <?php
@@ -1086,176 +939,6 @@ if($fullWindow){
                 </div>
                 <?php
             }
-            if($dupClusterArr){
-                ?>
-                <div id="dupestab">
-                    <div style="margin:20px;">
-                        <div style="font-weight:bold;margin-bottom:10px;"><u>Current Record</u></div>
-                        <?php
-                        echo '<div style="font-weight:bold;">'.$collMetadata['collectionname'].' ('.$collMetadata['institutioncode'].($collMetadata['collectioncode']?':'.$collMetadata['collectioncode']:'').')</div>';
-                        echo '<div style="margin:5px 15px">';
-                        if($occArr['recordedby']) {
-                            echo '<div>' . $occArr['recordedby'] . ' ' . $occArr['recordnumber'] . '<span style="margin-left:40px;">' . $occArr['eventdate'] . '</span></div>';
-                        }
-                        if($occArr['catalognumber']) {
-                            echo '<div><b>Catalog Number:</b> ' . $occArr['catalognumber'] . '</div>';
-                        }
-                        if($occArr['occurrenceid']) {
-                            echo '<div><b>GUID:</b> ' . $occArr['occurrenceid'] . '</div>';
-                        }
-                        if($occArr['sciname']) {
-                            echo '<div><b>Latest Identification:</b> ' . $occArr['sciname'] . '</div>';
-                        }
-                        if($occArr['identifiedby']) {
-                            echo '<div><b>Identified by:</b> ' . $occArr['identifiedby'] . '<span style="margin-left:30px;">' . $occArr['dateidentified'] . '</span></div>';
-                        }
-                        echo '</div>';
-                        echo '<div style="margin:20px 0;clear:both"><hr/><hr/></div>';
-                        foreach($dupClusterArr as $dupid => $dArr){
-                            $innerDupArr = $dArr['o'];
-                            foreach($innerDupArr as $dupOccid => $dupArr){
-                                if($dupOccid !== $occid){
-                                    $collCode = '';
-                                    if($dupArr['instcode']){
-                                        $collCode .= $dupArr['instcode'];
-                                    }
-                                    if($dupArr['collcode']){
-                                        $collCode .= ($collCode?':':'') . $dupArr['collcode'];
-                                    }
-                                    echo '<div style="clear:both;margin:15px;">';
-                                    echo '<div style="font-weight:bold;">'.$dupArr['collname'].($collCode?' ('.$collCode.')':'').'</div>';
-                                    echo '<div style="float:left;margin:5px 15px">';
-                                    if($dupArr['recordedby']) {
-                                        echo '<div>' . $dupArr['recordedby'] . ' ' . $dupArr['recordnumber'] . '<span style="margin-left:40px;">' . $dupArr['eventdate'] . '</span></div>';
-                                    }
-                                    if($dupArr['catnum']) {
-                                        echo '<div><b>Catalog Number:</b> ' . $dupArr['catnum'] . '</div>';
-                                    }
-                                    if($dupArr['occurrenceid']) {
-                                        echo '<div><b>GUID:</b> ' . $dupArr['occurrenceid'] . '</div>';
-                                    }
-                                    if($dupArr['sciname']) {
-                                        echo '<div><b>Latest Identification:</b> ' . $dupArr['sciname'] . '</div>';
-                                    }
-                                    if($dupArr['identifiedby']) {
-                                        echo '<div><b>Identified by:</b> ' . $dupArr['identifiedby'] . '<span style="margin-left:30px;">' . $dupArr['dateidentified'] . '</span></div>';
-                                    }
-                                    if($dupArr['notes']) {
-                                        echo '<div>' . $dupArr['notes'] . '</div>';
-                                    }
-                                    echo '<div><a href="#" onclick="openIndividual('.$dupOccid. ')">Show Full Details</a></div>';
-                                    echo '</div>';
-                                    if($dupArr['url']){
-                                        $url = $dupArr['url'];
-                                        $tnUrl = $dupArr['tnurl'];
-                                        if(!$tnUrl) {
-                                            $tnUrl = $url;
-                                        }
-                                        if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                                            if(strncmp($url, '/', 1) === 0) {
-                                                $url = $GLOBALS['IMAGE_DOMAIN'] . $url;
-                                            }
-                                            if(strncmp($tnUrl, '/', 1) === 0) {
-                                                $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $tnUrl;
-                                            }
-                                        }
-                                        echo '<div style="float:left;margin:10px;">';
-                                        echo '<a href="'.$url.'">';
-                                        echo '<img src="'.$tnUrl.'" style="width:100px;border:1px solid grey" />';
-                                        echo '</a>';
-                                        echo '</div>';
-                                    }
-                                    echo '<div style="margin:10px 0;clear:both"><hr/></div>';
-                                    echo '</div>';
-                                }
-                            }
-                        }
-                        ?>
-                    </div>
-                </div>
-                <?php
-            }
-            ?>
-            <div id="commenttab">
-                <?php
-                if($commentArr){
-                    echo '<div><b>'.count($commentArr).' Comments</b></div>';
-                    echo '<hr style="color:gray;"/>';
-                    foreach($commentArr as $comId => $comArr){
-                        ?>
-                        <div style="margin:15px;">
-                            <?php
-                            echo '<div>';
-                            echo '<b>'.$comArr['username'].'</b> <span style="color:gray;">posted '.$comArr['initialtimestamp'].'</span>';
-                            echo '</div>';
-                            if($comArr['reviewstatus'] === 0 || $comArr['reviewstatus'] === 2) {
-                                echo '<div style="color:red;">Comment not public due to pending abuse report (viewable to administrators only)</div>';
-                            }
-                            echo '<div style="margin:10px;">'.$comArr['comment'].'</div>';
-                            if($comArr['reviewstatus']){
-                                if($GLOBALS['SYMB_UID']){
-                                    ?>
-                                    <div><a href="index.php?repcomid=<?php echo $comId.'&occid='.$occid.'&tabindex='.($displayMap?2:1); ?>">Report as inappropriate or abusive</a></div>
-                                    <?php
-                                }
-                            }
-                            else{
-                                ?>
-                                <div><a href="index.php?publiccomid=<?php echo $comId.'&occid='.$occid.'&tabindex='.($displayMap?2:1); ?>">Make comment public</a></div>
-                                <?php
-                            }
-                            if($isEditor || ($GLOBALS['SYMB_UID'] && $comArr['username'] === $GLOBALS['PARAMS_ARR']['un'])){
-                                ?>
-                                <div style="margin:20px;">
-                                    <form name="delcommentform" action="index.php" method="post" onsubmit="return confirm('Are you sure you want to delete comment?')">
-                                        <input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-                                        <input name="comid" type="hidden" value="<?php echo $comId; ?>" />
-                                        <input name="tabindex" type="hidden" value="<?php echo ($displayMap?2:1); ?>" />
-                                        <input name="formsubmit" type="submit" value="Delete Comment" />
-                                    </form>
-                                </div>
-                                <?php
-                            }
-                            ?>
-                        </div>
-                        <hr style="color:gray;"/>
-                        <?php
-                    }
-                }
-                else{
-                    echo '<div style="font-weight:bold;margin:20px;">No comments have been submitted</div>';
-                }
-                ?>
-                <fieldset style="padding:20px;">
-                    <legend><b>New Comment</b></legend>
-                    <?php
-                    if($GLOBALS['VALID_USER']){
-                        ?>
-                        <form name="commentform" action="index.php" method="post" onsubmit="return verifyCommentForm(this);">
-                            <textarea name="commentstr" rows="8" style="width:98%;"></textarea>
-                            <div style="margin:15px;">
-                                <input name="occid" type="hidden" value="<?php echo $occid; ?>" />
-                                <input name="tabindex" type="hidden" value="<?php echo ($displayMap?2:1); ?>" />
-                                <input type="submit" name="formsubmit" value="Submit Comment" />
-                            </div>
-                            <div>
-                                Messages over 500 words long may be automatically truncated. All comments are moderated.
-                            </div>
-                        </form>
-                        <?php
-                    }
-                    else{
-                        ?>
-                        <div style="margin:10px;">
-                            <a href="../../profile/index.php?refurl=../collections/individual/index.php?tabindex=2&occid=<?php echo $occid; ?>">Login</a> to leave a comment.
-                        </div>
-                        <?php
-                    }
-                    ?>
-                </fieldset>
-
-            </div>
-            <?php
             if($isEditor){
                 ?>
                 <div id="edittab">
@@ -1453,6 +1136,7 @@ if($fullWindow){
 </div>
 <?php
 if($fullWindow){
+    include_once(__DIR__ . '/../../config/footer-includes.php');
     include(__DIR__ . '/../../footer.php');
 }
 ?>

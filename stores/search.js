@@ -1,0 +1,523 @@
+const useSearchStore = Pinia.defineStore('search', {
+    state: () => ({
+        baseStore: useBaseStore(),
+        blankSearchTerms: {
+            db: [],
+            taxontype: '1',
+            usethes: true,
+            othercatnum: true,
+            typestatus: false,
+            hasaudio: false,
+            hasimages: false,
+            hasvideo: false,
+            hasmedia: false,
+            hasgenetic: false,
+            withoutimages: false,
+            radiusval: null,
+            radiusunit: 'km',
+            advanced: [],
+            mofextension: []
+        },
+        dateId: null,
+        queryBuilderFieldOptions: [
+            {field: 'associatedcollectors', label: 'Associated Collectors'},
+            {field: 'associatedtaxa', label: 'Associated Taxa'},
+            {field: 'attributes', label: 'Attributes'},
+            {field: 'scientificnameauthorship', label: 'Author'},
+            {field: 'basisofrecord', label: 'Basis Of Record'},
+            {field: 'behavior', label: 'Behavior'},
+            {field: 'catalognumber', label: 'Catalog Number'},
+            {field: 'collectioncode', label: 'Collection Code'},
+            {field: 'recordnumber', label: 'Collection Number'},
+            {field: 'recordedby', label: 'Collector/Observer'},
+            {field: 'continent', label: 'Continent'},
+            {field: 'coordinateuncertaintyinmeters', label: 'Coordinate Uncertainty (m)'},
+            {field: 'country', label: 'Country'},
+            {field: 'county', label: 'County'},
+            {field: 'cultivationstatus', label: 'Cultivation Status'},
+            {field: 'datageneralizations', label: 'Data Generalizations'},
+            {field: 'eventdate', label: 'Date'},
+            {field: 'dateentered', label: 'Date Entered'},
+            {field: 'datelastmodified', label: 'Date Last Modified'},
+            {field: 'day', label: 'Day'},
+            {field: 'dbpk', label: 'dbpk'},
+            {field: 'decimallatitude', label: 'Decimal Latitude'},
+            {field: 'decimallongitude', label: 'Decimal Longitude'},
+            {field: 'maximumdepthinmeters', label: 'Depth Maximum (m)'},
+            {field: 'minimumdepthinmeters', label: 'Depth Minimum (m)'},
+            {field: 'verbatimattributes', label: 'Description'},
+            {field: 'disposition', label: 'Disposition'},
+            {field: 'dynamicproperties', label: 'Dynamic Properties'},
+            {field: 'maximumelevationinmeters', label: 'Elevation Maximum (m)'},
+            {field: 'minimumelevationinmeters', label: 'Elevation Minimum (m)'},
+            {field: 'establishmentmeans', label: 'Establishment Means'},
+            {field: 'family', label: 'Family'},
+            {field: 'fieldnotes', label: 'Field Notes'},
+            {field: 'fieldnumber', label: 'Field Number'},
+            {field: 'genus', label: 'Genus'},
+            {field: 'geodeticdatum', label: 'Geodetic Datum'},
+            {field: 'georeferenceprotocol', label: 'Georeference Protocol'},
+            {field: 'georeferenceremarks', label: 'Georeference Remarks'},
+            {field: 'georeferencesources', label: 'Georeference Sources'},
+            {field: 'georeferenceverificationstatus', label: 'Georeference Verification Status'},
+            {field: 'georeferencedby', label: 'Georeferenced By'},
+            {field: 'habitat', label: 'Habitat'},
+            {field: 'identificationqualifier', label: 'Identification Qualifier'},
+            {field: 'identificationreferences', label: 'Identification References'},
+            {field: 'identificationremarks', label: 'Identification Remarks'},
+            {field: 'identifiedby', label: 'Identified By'},
+            {field: 'individualcount', label: 'Individual Count'},
+            {field: 'informationwithheld', label: 'Information Withheld'},
+            {field: 'institutioncode', label: 'Institution Code'},
+            {field: 'island', label: 'Island'},
+            {field: 'islandgroup', label: 'Island Group'},
+            {field: 'labelproject', label: 'Label Project'},
+            {field: 'lifestage', label: 'Life Stage'},
+            {field: 'locality', label: 'Locality'},
+            {field: 'localitysecurity', label: 'Locality Security'},
+            {field: 'localitysecurityreason', label: 'Locality Security Reason'},
+            {field: 'locationremarks', label: 'Location Remarks'},
+            {field: 'username', label: 'Modified By'},
+            {field: 'month', label: 'Month'},
+            {field: 'municipality', label: 'Municipality'},
+            {field: 'occurrenceremarks', label: 'Occurrence Remarks'},
+            {field: 'othercatalognumbers', label: 'Other Catalog Numbers'},
+            {field: 'ownerinstitutioncode', label: 'Owner Code'},
+            {field: 'preparations', label: 'Preparations'},
+            {field: 'reproductivecondition', label: 'Reproductive Condition'},
+            {field: 'samplingeffort', label: 'Sampling Effort'},
+            {field: 'samplingprotocol', label: 'Sampling Protocol'},
+            {field: 'sciname', label: 'Scientific Name'},
+            {field: 'sex', label: 'Sex'},
+            {field: 'specificepithet', label: 'Specific Epithet'},
+            {field: 'stateprovince', label: 'State/Province'},
+            {field: 'substrate', label: 'Substrate'},
+            {field: 'tid', label: 'Taxon ID'},
+            {field: 'taxonremarks', label: 'Taxon Remarks'},
+            {field: 'typestatus', label: 'Type Status'},
+            {field: 'verbatimcoordinates', label: 'Verbatim Coordinates'},
+            {field: 'verbatimeventdate', label: 'Verbatim Date'},
+            {field: 'verbatimdepth', label: 'Verbatim Depth'},
+            {field: 'verbatimelevation', label: 'Verbatim Elevation'},
+            {field: 'year', label: 'Year'}
+        ],
+        queryId: 0,
+        queryOccidArr: [],
+        searchRecordData: [],
+        searchTerms: {},
+        searchTermsPageNumber: 0,
+        selections: [],
+        selectionsIds: [],
+        solrFields: 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tid,scientificNameAuthorship,identifiedBy,' +
+            'dateIdentified,typeStatus,recordedBy,recordNumber,eventDate,displayDate,coll_year,coll_month,coll_day,habitat,associatedTaxa,' +
+            'cultivationStatus,country,StateProvince,county,municipality,locality,localitySecurity,localitySecurityReason,geo,minimumElevationInMeters,' +
+            'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily'
+    }),
+    getters: {
+        getDateId(state) {
+            return state.dateId;
+        },
+        getDateIdValue() {
+            const day = new Date().getDate().toString();
+            const month = new Date().getMonth() + 1;
+            const year = new Date().getFullYear().toString();
+            return day + month + year;
+        },
+        getDateTimeString() {
+            const now = new Date();
+            let dateTimeString = now.getFullYear().toString();
+            dateTimeString += (((now.getMonth()+1) < 10)?'0':'')+(now.getMonth()+1).toString();
+            dateTimeString += ((now.getDate() < 10)?'0':'')+now.getDate().toString();
+            dateTimeString += ((now.getHours() < 10)?'0':'')+now.getHours().toString();
+            dateTimeString += ((now.getMinutes() < 10)?'0':'')+now.getMinutes().toString();
+            dateTimeString += ((now.getSeconds() < 10)?'0':'')+now.getSeconds().toString();
+            return dateTimeString;
+        },
+        getQueryBuilderFieldOptions(state) {
+            return state.queryBuilderFieldOptions;
+        },
+        getQueryId(state) {
+            return state.queryId;
+        },
+        getSearchOccidArr(state) {
+            return state.queryOccidArr;
+        },
+        getSearchRecCnt(state) {
+            return state.queryOccidArr.length;
+        },
+        getSearchRecordData(state) {
+            return state.searchRecordData;
+        },
+        getSearchRecordDataIdArr(state) {
+            const returnArr = [];
+            state.searchRecordData.forEach((record) => {
+                returnArr.push(Number(record.occid));
+            });
+            return returnArr;
+        },
+        getSearchRecordSelectedCount(state) {
+            return state.searchRecordData.filter((record) => {
+                return record.selected === true;
+            }).length;
+        },
+        getSearchTerms(state) {
+            return state.searchTerms;
+        },
+        getSearchTermsJson(state) {
+            return JSON.stringify(state.searchTerms);
+        },
+        getSearchTermsPageNumber(state) {
+            return state.searchTermsPageNumber;
+        },
+        getSearchTermsValid(state) {
+            let populated = false;
+            if(
+                (state.searchTerms.hasOwnProperty('db') && state.searchTerms['db'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('clid') && state.searchTerms['clid']) ||
+                (state.searchTerms.hasOwnProperty('taxa') && state.searchTerms['taxa']) ||
+                (state.searchTerms.hasOwnProperty('country') && state.searchTerms['country']) ||
+                (state.searchTerms.hasOwnProperty('state') && state.searchTerms['state']) ||
+                (state.searchTerms.hasOwnProperty('county') && state.searchTerms['county']) ||
+                (state.searchTerms.hasOwnProperty('local') && state.searchTerms['local']) ||
+                (state.searchTerms.hasOwnProperty('elevlow') && state.searchTerms['elevlow']) ||
+                (state.searchTerms.hasOwnProperty('elevhigh') && state.searchTerms['elevhigh']) ||
+                (state.searchTerms.hasOwnProperty('collector') && state.searchTerms['collector']) ||
+                (state.searchTerms.hasOwnProperty('collnum') && state.searchTerms['collnum']) ||
+                (state.searchTerms.hasOwnProperty('eventdate1') && state.searchTerms['eventdate1']) ||
+                (state.searchTerms.hasOwnProperty('eventdate2') && state.searchTerms['eventdate2']) ||
+                (state.searchTerms.hasOwnProperty('occurrenceRemarks') && state.searchTerms['occurrenceRemarks']) ||
+                (state.searchTerms.hasOwnProperty('catnum') && state.searchTerms['catnum']) ||
+                (state.searchTerms.hasOwnProperty('upperlat') && state.searchTerms['upperlat']) ||
+                (state.searchTerms.hasOwnProperty('pointlat') && state.searchTerms['pointlat']) ||
+                (state.searchTerms.hasOwnProperty('circleArr') && state.searchTerms['circleArr'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('phuid') && state.searchTerms['phuid']) ||
+                (state.searchTerms.hasOwnProperty('imagetag') && state.searchTerms['imagetag']) ||
+                (state.searchTerms.hasOwnProperty('imagekeyword') && state.searchTerms['imagekeyword']) ||
+                (state.searchTerms.hasOwnProperty('uploaddate1') && state.searchTerms['uploaddate1']) ||
+                (state.searchTerms.hasOwnProperty('uploaddate2') && state.searchTerms['uploaddate2']) ||
+                (state.searchTerms.hasOwnProperty('polyArr') && state.searchTerms['polyArr'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('enteredby') && state.searchTerms['enteredby']) ||
+                (state.searchTerms.hasOwnProperty('dateentered') && state.searchTerms['dateentered']) ||
+                (state.searchTerms.hasOwnProperty('datemodified') && state.searchTerms['datemodified']) ||
+                (state.searchTerms.hasOwnProperty('processingstatus') && state.searchTerms['processingstatus']) ||
+                (state.searchTerms.hasOwnProperty('typestatus') && state.searchTerms['typestatus']) ||
+                (state.searchTerms.hasOwnProperty('hasaudio') && state.searchTerms['hasaudio']) ||
+                (state.searchTerms.hasOwnProperty('hasimages') && state.searchTerms['hasimages']) ||
+                (state.searchTerms.hasOwnProperty('hasvideo') && state.searchTerms['hasvideo']) ||
+                (state.searchTerms.hasOwnProperty('hasmedia') && state.searchTerms['hasmedia']) ||
+                (state.searchTerms.hasOwnProperty('hasgenetic') && state.searchTerms['hasgenetic']) ||
+                (state.searchTerms.hasOwnProperty('withoutimages') && state.searchTerms['withoutimages']) ||
+                (state.searchTerms.hasOwnProperty('advanced') && state.searchTerms['advanced'].length > 0) ||
+                (state.searchTerms.hasOwnProperty('mofextension') && state.searchTerms['mofextension'].length > 0)
+            ){
+                populated = true;
+            }
+            return populated;
+        },
+        getSelections(state) {
+            return state.selections;
+        },
+        getSelectionsIds(state) {
+            return state.selectionsIds;
+        },
+        getSOLRFields(state) {
+            return state.solrFields;
+        },
+        getTimestringIdentifier() {
+            return Date.now().toString();
+        }
+    },
+    actions: {
+        addRecordToSelections(record) {
+            this.selections.push(record);
+            this.selectionsIds.push(Number(record.occid));
+            const currentRecord = this.searchRecordData.find(obj => Number(obj['occid']) === Number(record.occid));
+            if(currentRecord){
+                currentRecord.selected = true;
+            }
+        },
+        clearLocalStorageSearchTerms() {
+            localStorage.removeItem('searchTermsArr');
+        },
+        clearSearchTerms() {
+            this.searchTerms = Object.assign({}, this.blankSearchTerms);
+            this.updateLocalStorageSearchTerms();
+        },
+        clearSelections() {
+            this.selections.length = 0;
+            this.selectionsIds.length = 0;
+            this.searchRecordData.forEach((record) => {
+                record.selected = false;
+            });
+        },
+        copySearchUrlToClipboard(index){
+            const currentSearchTerms = Object.assign({}, this.getSearchTerms);
+            currentSearchTerms.recordPage = index;
+            const searchTermsJson = JSON.stringify(currentSearchTerms);
+            let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');
+            navigator.clipboard.writeText(copyUrl).then();
+        },
+        deselectAllCurrentRecords() {
+            this.searchRecordData.forEach((record) => {
+                if(this.selectionsIds.indexOf(Number(record.occid)) > -1){
+                    this.removeRecordFromSelections(Number(record.occid));
+                }
+            });
+        },
+        getSearchOccidSubArr(options) {
+            const numRows = options.hasOwnProperty('numRows') ? Number(options['numRows']) : 0;
+            const index = options.hasOwnProperty('index') ? Number(options['index']) : 0;
+            const bottomLimit = numRows > 0 ? (index * numRows) : 0;
+            return this.queryOccidArr.slice(bottomLimit, (bottomLimit + (numRows - 1)));
+        },
+        initializeSearchStorage(queryId) {
+            this.dateId = this.getDateIdValue;
+            this.queryId = queryId.toString();
+            this.searchTerms = Object.assign({}, this.blankSearchTerms);
+            if(localStorage.hasOwnProperty('searchTermsArr')){
+                const stArr = JSON.parse(localStorage['searchTermsArr']);
+                if(!stArr.hasOwnProperty(this.dateId.toString())){
+                    this.clearLocalStorageSearchTerms();
+                    this.setLocalStorageSearchTerms();
+                }
+            }
+            else{
+                this.setLocalStorageSearchTerms();
+            }
+            const stArr = JSON.parse(localStorage['searchTermsArr']);
+            if(Number(queryId) === 0 || !stArr.hasOwnProperty(this.dateId.toString())){
+                this.queryId = this.getTimestringIdentifier;
+                this.setQueryIdInLocalStorageSearchTerms(this.queryId);
+            }
+            else if(!stArr[this.dateId.toString()].hasOwnProperty(queryId.toString())){
+                this.setQueryIdInLocalStorageSearchTerms(queryId);
+            }
+            else{
+                this.searchTerms = Object.assign({}, stArr[this.dateId.toString()][this.queryId.toString()]);
+            }
+        },
+        loadSearchTermsArrFromJson(json) {
+            const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
+            const newSearchTerms = JSON.parse(json);
+            if(newSearchTerms.hasOwnProperty('recordPage')){
+                this.searchTermsPageNumber = newSearchTerms.recordPage;
+                delete newSearchTerms['recordPage'];
+            }
+            this.searchTerms = Object.assign({}, newSearchTerms);
+            searchTermsArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, newSearchTerms);
+            localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
+        },
+        processDownloadRequest(options, callback){
+            options.filename = 'occurrence_data_' + (options.type === 'zip' ? 'DwCA_' : '') + this.getDateTimeString + '.' + options.type;
+            const formData = new FormData();
+            if(options.selections){
+                formData.append('starr', JSON.stringify({
+                    occid: this.getSelectionsIds
+                }));
+            }
+            else{
+                formData.append('starr', this.getSearchTermsJson);
+            }
+            formData.append('options', JSON.stringify(options));
+            fetch(dataDownloadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                callback(options.filename, blob);
+            });
+        },
+        processSearch(options, callback){
+            const occidArr = this.getSearchOccidSubArr(options);
+            const formData = new FormData();
+            formData.append('starr', JSON.stringify({occidArr: occidArr}));
+            if(this.baseStore.getSolrMode){
+                let startindex = 0;
+                if(index > 0) {
+                    startindex = index * options.numRows;
+                }
+                formData.append('rows', options.numRows.toString());
+                formData.append('start', startindex.toString());
+                formData.append('fl', this.getSOLRFields);
+                formData.append('wt', 'geojson');
+                fetch(solrConnectorUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    callback(data, options.index, options.numRows);
+                });
+            }
+            else{
+                formData.append('options', JSON.stringify(options));
+                formData.append('action', 'processSearch');
+                fetch(searchServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    callback(data, options.index);
+                });
+            }
+        },
+        processSimpleSearch(starr, options, callback){
+            const formData = new FormData();
+            formData.append('starr', JSON.stringify(starr));
+            formData.append('options', JSON.stringify(options));
+            formData.append('action', 'processSearch');
+            fetch(searchServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
+        },
+        processSpatialPopupData(windowType, data) {
+            if(windowType.includes('box') && data.hasOwnProperty('boundingBoxArr')){
+                this.updateSearchTerms('upperlat', data['boundingBoxArr']['upperlat']);
+                this.updateSearchTerms('bottomlat', data['boundingBoxArr']['bottomlat']);
+                this.updateSearchTerms('leftlong', data['boundingBoxArr']['leftlong']);
+                this.updateSearchTerms('rightlong', data['boundingBoxArr']['rightlong']);
+            }
+            else if(windowType.includes('circle') && data.hasOwnProperty('circleArr') && data['circleArr'].length === 1){
+                this.updateSearchTerms('pointlat', data['circleArr'][0]['pointlat']);
+                this.updateSearchTerms('pointlong', data['circleArr'][0]['pointlong']);
+                this.updateSearchTerms('radius', data['circleArr'][0]['radius']);
+                this.updateSearchTerms('groundradius', data['circleArr'][0]['groundradius']);
+                this.updateSearchTerms('radiusval', (data['circleArr'][0]['radius'] / 1000));
+                this.updateSearchTerms('radiusunit', 'km');
+            }
+            else if(windowType === 'input' && (data.hasOwnProperty('circleArr') || data.hasOwnProperty('polyArr'))){
+                if(data.hasOwnProperty('circleArr')){
+                    this.updateSearchTerms('circleArr', data['circleArr']);
+                }
+                if(data.hasOwnProperty('polyArr')){
+                    this.updateSearchTerms('polyArr', data['polyArr']);
+                }
+            }
+        },
+        redirectWithQueryId(url, addlProp = null, newTab = false) {
+            const baseStore = useBaseStore();
+            if(newTab){
+                window.open((baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '')), '_blank');
+            }
+            else{
+                window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+            }
+        },
+        redirectWithSearchTermsJson(url, addlProp = null, newTab = false) {
+            const baseStore = useBaseStore();
+            if(newTab){
+                window.open((baseStore.getClientRoot + url + '?starr=' + this.getSearchTermsJson + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '')), '_blank');
+            }
+            else{
+                window.location.href = baseStore.getClientRoot + url + '?starr=' + this.getSearchTermsJson + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+            }
+        },
+        removeRecordFromSelections(id) {
+            const selObj = this.selections.find(obj => Number(obj['occid']) === Number(id));
+            const selObjIndex = this.selections.indexOf(selObj);
+            this.selections.splice(selObjIndex, 1);
+            const selObjIdIndex = this.selectionsIds.indexOf(Number(id));
+            this.selectionsIds.splice(selObjIdIndex, 1);
+            const currentRecord = this.searchRecordData.find(obj => Number(obj['occid']) === Number(id));
+            if(currentRecord){
+                currentRecord.selected = false;
+            }
+        },
+        selectAllCurrentRecords() {
+            this.searchRecordData.forEach((record) => {
+                if(this.selectionsIds.indexOf(Number(record.occid)) < 0){
+                    this.addRecordToSelections(record);
+                }
+            });
+        },
+        setLocalStorageSearchTerms() {
+            const newBlankSearchTerms = {};
+            newBlankSearchTerms[this.dateId.toString()] = {};
+            localStorage.setItem('searchTermsArr', JSON.stringify(newBlankSearchTerms));
+        },
+        setQueryIdInLocalStorageSearchTerms(queryId) {
+            const stArr = JSON.parse(localStorage['searchTermsArr']);
+            stArr[this.dateId.toString()][queryId.toString()] = {};
+            localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
+        },
+        setSearchOccidArr(options, callback){
+            this.queryOccidArr.length = 0;
+            const formData = new FormData();
+            formData.append('starr', this.getSearchTermsJson);
+            if(this.baseStore.getSolrMode){
+                formData.append('rows', '0');
+                formData.append('start', '0');
+                formData.append('wt', 'json');
+                fetch(solrConnectorUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    this.queryRecCnt = Number(data['response']['numFound']);
+                    callback();
+                });
+            }
+            else{
+                formData.append('options', JSON.stringify(options));
+                formData.append('action', 'getSearchOccidArr');
+                fetch(searchServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    this.queryOccidArr = data;
+                    callback();
+                });
+            }
+        },
+        setSearchRecordData(options, callback = null) {
+            this.processSearch(options, (res) => {
+                this.searchRecordData = this.setSelectedRecords(res);
+                if(callback){
+                    callback(res.length);
+                }
+            });
+        },
+        setSelectedRecords(recordArr) {
+            recordArr.forEach((record) => {
+                record.selected = (this.selectionsIds.indexOf(Number(record.occid)) > -1);
+            });
+            return recordArr;
+        },
+        updateLocalStorageSearchTerms() {
+            const stArr = JSON.parse(localStorage['searchTermsArr']);
+            stArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, this.searchTerms);
+            localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
+        },
+        updateSearchTerms(prop, value) {
+            if(value && value !== ''){
+                this.searchTerms[prop] = value;
+            }
+            else{
+                delete this.searchTerms[prop];
+            }
+            this.updateLocalStorageSearchTerms();
+        }
+    }
+});

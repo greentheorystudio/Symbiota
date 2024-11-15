@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
@@ -97,7 +97,11 @@ if($glossId){
 	$termImgArr = $glosManager->getImgArr();
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary Management</title>
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -112,10 +116,9 @@ if($glossId){
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript" src="../js/glossary.index.js?ver=20221115"></script>
+    <script type="text/javascript" src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 	<script type="text/javascript">
-		$(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			<?php 
 			if($closeWindow){
 				echo 'window.opener.searchform.submit();';
@@ -650,9 +653,6 @@ if($glossId){
 										<div style="float:left;">
 											<?php
 											$imgUrl = $imgArr['url'];
-											if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgUrl, '/', 1) === 0) {
-                                                $imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-                                            }
 											$displayUrl = $imgUrl;
 											?>
 											<a href="<?php echo $imgUrl;?>" target="_blank">
@@ -769,5 +769,8 @@ if($glossId){
 		}
 		?>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../config/footer-includes.php');
+    ?>
 </body>
 </html>

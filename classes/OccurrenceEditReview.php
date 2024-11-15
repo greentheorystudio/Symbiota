@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceEditReview extends Manager{
 
@@ -43,7 +43,7 @@ class OccurrenceEditReview extends Manager{
 				if($code){
                     $collName .= ' (' . $code . ')';
                 }
-				if($r->colltype === 'General Observations') {
+				if($r->colltype === 'HumanObservation') {
 					$this->obsUid = $GLOBALS['SYMB_UID'];
 				}
 			}
@@ -511,7 +511,7 @@ class OccurrenceEditReview extends Manager{
 
 	public function setEditorFilter($f): void
     {
-		$this->editorFilter = Sanitizer::cleanInStr($this->conn,$f);
+		$this->editorFilter = SanitizerService::cleanInStr($this->conn,$f);
 	}
 	
 	public function setQueryOccidFilter($num): void

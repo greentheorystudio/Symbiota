@@ -1,11 +1,15 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $clid = (int)$_REQUEST['clid'];
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title>Collections Search Download</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -14,8 +18,8 @@ $clid = (int)$_REQUEST['clid'];
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script>
-		$(document).ready(function() {
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
             const dialogArr = ["schemanative", "schemadwc"];
             let dialogStr = "";
             for(let i=0; i<dialogArr.length; i++){
@@ -135,22 +139,6 @@ $clid = (int)$_REQUEST['clid'];
 						<tr>
 							<td style="vertical-align:top">
 								<div style="margin:10px;">
-									<b>Character Set:</b>
-								</div>
-							</td>
-							<td>
-								<div style="margin:10px 0;">
-									<?php
-									$cSet = strtolower($GLOBALS['CHARSET']);
-									?>
-									<input type="radio" name="cset" value="iso-8859-1" <?php echo ($cSet==='iso-8859-1'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
-									<input type="radio" name="cset" value="utf-8" <?php echo ($cSet==='utf-8'?'checked':''); ?> /> UTF-8 (unicode)
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td style="vertical-align:top">
-								<div style="margin:10px;">
 									<b>Compression:</b>
 								</div>
 							</td>
@@ -164,6 +152,7 @@ $clid = (int)$_REQUEST['clid'];
 							<td colspan="2">
 								<div style="margin:10px;">
 									<input name="clid" type="hidden" value="<?php echo $clid; ?>" />
+                                    <input name="cset" type="hidden" value="utf-8" />
 									<input type="submit" name="submitaction" value="Download Data" />
 								</div>
 							</td>
@@ -173,5 +162,8 @@ $clid = (int)$_REQUEST['clid'];
 			</form>
 		</div>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

@@ -59,10 +59,11 @@ if($formatArr){
         $labelManager->exportLabelCsvFile($_POST);
     }
     else{
-        header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+        header('Content-Type: text/html; charset=UTF-8' );
     }
     ?>
-    <html>
+    <!DOCTYPE html>
+<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Labels</title>
     </head>

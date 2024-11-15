@@ -82,7 +82,7 @@ class ImageCleaner extends Manager{
 						'WHERE (imgid = '.$imgId.')';
 					$this->conn->query($tagSql);
 				}
-				elseif($testR->url === 'empty' || (strncmp($testR->url, 'processing', 10) === 0 && $testR->url !== 'processing '.date('Y-m-d'))){
+				elseif($testR->url === '' || (strncmp($testR->url, 'processing', 10) === 0 && $testR->url !== 'processing '.date('Y-m-d'))){
 					$tagSql = 'UPDATE images SET url = "processing '.date('Y-m-d').'" '.
 						'WHERE (imgid = '.$imgId.')';
 					$this->conn->query($tagSql);
@@ -127,7 +127,7 @@ class ImageCleaner extends Manager{
 
 	private function getSqlWhere(): string
 	{
-		$sql = 'WHERE ((i.thumbnailurl IS NULL) OR (i.url = "empty")) ';
+		$sql = 'WHERE ((i.thumbnailurl IS NULL) OR (i.url = "")) ';
 		if($this->collid) {
 			$sql .= 'AND (o.collid = ' . $this->collid . ') ';
 		}
@@ -173,7 +173,7 @@ class ImageCleaner extends Manager{
 
 		$webIsEmpty = false;
 		$imgUrl = trim($recUrlWeb);
-		if((!$imgUrl || $imgUrl === 'empty') && $recUrlOrig){
+		if(!$imgUrl && $recUrlOrig){
 			$imgUrl = trim($recUrlOrig);
 			$webIsEmpty = true;
 		}
@@ -403,21 +403,21 @@ class ImageCleaner extends Manager{
 		}
 	}
 
-	public function setTid($id): void
-	{
-		if(is_numeric($id)){
-			$this->tidArr[] = $id;
-			$sql = 'SELECT DISTINCT tidaccepted FROM taxa '.
-				'WHERE tid = '.$id.' ';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				if($r->tid !== $id) {
-					$this->tidArr[] = $r->tidaccepted;
-				}
-			}
-			$rs->free();
-		}
-	}
+    public function setTid($id): void
+    {
+        if(is_numeric($id) && $id > 0){
+            $this->tidArr[] = $id;
+            $sql = 'SELECT DISTINCT tidaccepted FROM taxa '.
+                'WHERE tid = '.$id.' ';
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                if($r->tid !== $id) {
+                    $this->tidArr[] = $r->tidaccepted;
+                }
+            }
+            $rs->free();
+        }
+    }
 
 	public function getSciname(): string
     {

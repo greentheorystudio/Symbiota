@@ -280,7 +280,7 @@ function buildLayerControllerLayerQueryButtonElement(lArr,active){
 function buildLayerControllerLayerRasterSymbologyElement(lArr){
     const layerSymbologyDivId = 'layerSymbology-' + lArr['id'];
     const layerSymbologyDiv = document.createElement('div');
-    const layerColorScale = (lArr.hasOwnProperty('colorScale') && lArr['colorScale'] !== '') ? lArr['colorScale'] : dragDropRasterColorScale;
+    const layerColorScale = (lArr.hasOwnProperty('colorScale') && lArr['colorScale'] !== '') ? lArr['colorScale'] : SPATIAL_DRAGDROP_RASTER_COLOR_SCALE;
     layerSymbologyDiv.setAttribute("id",layerSymbologyDivId);
     layerSymbologyDiv.setAttribute("style","border:1px solid black;padding:5px;margin-top:5px;display:none;flex-direction:column;width:60%;margin-left:auto;margin-right:auto;");
     const symbologyTopRow = document.createElement('div');
@@ -628,11 +628,11 @@ function changeDraw() {
                 infoArr['fileType'] = 'vector';
                 infoArr['layerName'] = 'Shapes';
                 infoArr['layerDescription'] = "This layer contains all of the features created through using the Draw Tool, and those that have been selected from other layers added to the map.",
-                infoArr['fillColor'] = shapesFillColor;
-                infoArr['borderColor'] = shapesBorderColor;
-                infoArr['borderWidth'] = shapesBorderWidth;
-                infoArr['pointRadius'] = shapesPointRadius;
-                infoArr['opacity'] = shapesOpacity;
+                infoArr['fillColor'] = SPATIAL_SHAPES_FILL_COLOR;
+                infoArr['borderColor'] = SPATIAL_SHAPES_BORDER_COLOR;
+                infoArr['borderWidth'] = SPATIAL_SHAPES_BORDER_WIDTH;
+                infoArr['pointRadius'] = SPATIAL_SHAPES_POINT_RADIUS;
+                infoArr['opacity'] = SPATIAL_SHAPES_OPACITY;
                 infoArr['removable'] = true;
                 infoArr['sortable'] = false;
                 infoArr['symbology'] = false;
@@ -744,7 +744,7 @@ function changeRecordPage(page){
     const http = new XMLHttpRequest();
     const url = "../api/search/changemaprecordpage.php";
     const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
+    if(SOLR_MODE){
         params = 'starr=' + jsonStarr + '&rows='+queryRecCnt+'&page='+page+'&selected='+selJson;
     }
     else{
@@ -1210,7 +1210,7 @@ function createPolysFromPolyArr(polyArr, selected){
     for(let i in polyArr){
         if(polyArr.hasOwnProperty(i)){
             let wktStr = '';
-            if(SOLRMODE){
+            if(SOLR_MODE){
                 wktStr = polyArr[i];
             }
             else{
@@ -1620,7 +1620,7 @@ function getGeographyParams(){
                 const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
                 const simplegeometry = polySimple.getGeometry();
                 const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                if(SOLRMODE) {
+                if(SOLR_MODE) {
                     const wmswktString = wktFormat.writeGeometry(fixedgeometry);
                     geoPolyArr.push(wmswktString);
                 }
@@ -1687,13 +1687,13 @@ function getPointStyle(feature) {
     return style;
 }
 
-function getQueryRecCnt(callback){
+function getSearchRecCnt(callback){
     let params;
     let url;
     let http;
     queryRecCnt = 0;
     const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
+    if(SOLR_MODE){
         let qStr = '';
         http = new XMLHttpRequest();
         url = "../api/search/SOLRConnector.php";
@@ -1826,19 +1826,19 @@ function getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, o
     if(Number(borderWidth) !== 0){
         return new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                color: getRgbaStrFromHexOpacity((fillColor),opacity)
             }),
             stroke: new ol.style.Stroke({
-                color: ('#' + borderColor),
+                color: (borderColor),
                 width: borderWidth
             }),
             image: new ol.style.Circle({
                 radius: pointRadius,
                 fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                    color: getRgbaStrFromHexOpacity((fillColor),opacity)
                 }),
                 stroke: new ol.style.Stroke({
-                    color: ('#' + borderColor),
+                    color: (borderColor),
                     width: borderWidth
                 })
             })
@@ -1847,12 +1847,12 @@ function getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, o
     else{
         return new ol.style.Style({
             fill: new ol.style.Fill({
-                color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                color: getRgbaStrFromHexOpacity((fillColor),opacity)
             }),
             image: new ol.style.Circle({
                 radius: pointRadius,
                 fill: new ol.style.Fill({
-                    color: getRgbaStrFromHexOpacity(('#' + fillColor),opacity)
+                    color: getRgbaStrFromHexOpacity((fillColor),opacity)
                 })
             })
         })
@@ -1897,7 +1897,7 @@ function lazyLoadPoints(index,finalIndex,callback){
     }
     const http = new XMLHttpRequest();
     const jsonStarr = encodeURIComponent(JSON.stringify(searchTermsArr));
-    if(SOLRMODE){
+    if(SOLR_MODE){
         url = "../api/search/SOLRConnector.php";
         params = 'starr=' + jsonStarr + '&rows='+lazyLoadCnt+'&start='+startindex+'&fl='+SOLRFields+'&wt=geojson';
         //console.log(url+'?'+params);
@@ -2573,7 +2573,7 @@ function processInputSelections(){
                     const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
                     const simplegeometry = polySimple.getGeometry();
                     const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                    if(SOLRMODE || INPUTTOOLSARR.includes('wkt')) {
+                    if(SOLR_MODE || INPUTTOOLSARR.includes('wkt')) {
                         const wmswktString = wktFormat.writeGeometry(fixedgeometry);
                         geoPolyArr.push(wmswktString);
                     }
@@ -2993,34 +2993,34 @@ function removeUserLayer(layerID,raster){
         pointActive = false;
     }
     else{
-        if(layerID === 'dragdrop1' || layerID === 'dragdrop2' || layerID === 'dragdrop3'){
+        if(layerID === 'dragDrop1' || layerID === 'dragDrop2' || layerID === 'dragDrop3'){
             layersObj[layerID].setSource(blankdragdropsource);
             const sourceIndex = dragDropTarget + 'Source';
             delete layersObj[sourceIndex];
-            if(layerID === 'dragdrop1') {
+            if(layerID === 'dragDrop1') {
                 dragDrop1 = false;
             }
-            else if(layerID === 'dragdrop2') {
+            else if(layerID === 'dragDrop2') {
                 dragDrop2 = false;
             }
-            else if(layerID === 'dragdrop3') {
+            else if(layerID === 'dragDrop3') {
                 dragDrop3 = false;
             }
         }
-        else if(layerID === 'dragdrop4' || layerID === 'dragdrop5' || layerID === 'dragdrop6') {
+        else if(layerID === 'dragDrop4' || layerID === 'dragDrop5' || layerID === 'dragDrop6') {
             map.removeLayer(layersObj[layerID]);
             layersObj[layerID].setSource(null);
             const sourceIndex = dragDropTarget + 'Source';
             const dataIndex = dragDropTarget + 'Data';
             delete layersObj[sourceIndex];
             delete layersObj[dataIndex];
-            if(layerID === 'dragdrop4') {
+            if(layerID === 'dragDrop4') {
                 dragDrop4 = false;
             }
-            else if(layerID === 'dragdrop5') {
+            else if(layerID === 'dragDrop5') {
                 dragDrop5 = false;
             }
-            else if(layerID === 'dragdrop6') {
+            else if(layerID === 'dragDrop6') {
                 dragDrop6 = false;
             }
             removeRasterLayerFromTargetList(layerID);
@@ -3140,17 +3140,17 @@ function setDragDropTarget(){
     dragDropTarget = '';
     if(!dragDrop1){
         dragDrop1 = true;
-        dragDropTarget = 'dragdrop1';
+        dragDropTarget = 'dragDrop1';
         return true;
     }
     else if(!dragDrop2){
         dragDrop2 = true;
-        dragDropTarget = 'dragdrop2';
+        dragDropTarget = 'dragDrop2';
         return true;
     }
     else if(!dragDrop3){
         dragDrop3 = true;
-        dragDropTarget = 'dragdrop3';
+        dragDropTarget = 'dragDrop3';
         return true;
     }
     else{
@@ -3199,17 +3199,17 @@ function setRasterDragDropTarget(){
     dragDropTarget = '';
     if(!dragDrop4){
         dragDrop4 = true;
-        dragDropTarget = 'dragdrop4';
+        dragDropTarget = 'dragDrop4';
         return true;
     }
     else if(!dragDrop5){
         dragDrop5 = true;
-        dragDropTarget = 'dragdrop5';
+        dragDropTarget = 'dragDrop5';
         return true;
     }
     else if(!dragDrop6){
         dragDrop6 = true;
-        dragDropTarget = 'dragdrop6';
+        dragDropTarget = 'dragDrop6';
         return true;
     }
     else{

@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class MediaShared{
 
@@ -49,7 +49,7 @@ class MediaShared{
 	private $errArr = array();
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->conn = $connection->getConnection();
  		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($this->imageRootPath,-1) !== '/') {
@@ -136,21 +136,13 @@ class MediaShared{
 	{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
-		if(strncmp($url, '/', 1) === 0){
-			if(isset($GLOBALS['IMAGE_DOMAIN'])){
-				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
-			}
-			else{
-				$urlPrefix = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-					$urlPrefix = 'https://';
-				}
-				$urlPrefix .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-				}
-				$url = $urlPrefix.$url;
-			}
+		if($url && strncmp($url, '/', 1) === 0){
+            $urlPrefix = 'http://';
+            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                $urlPrefix = 'https://';
+            }
+            $urlPrefix .= $_SERVER['HTTP_HOST'];
+            $url = $urlPrefix.$url;
 		}
 
 		if($this->uriExists($url)){
@@ -309,6 +301,40 @@ class MediaShared{
 		return $status;
 	}
 
+    public function addMediaRecord($media): int
+    {
+        $retVal = 0;
+        if($media){
+            $sql = 'INSERT INTO media (tid, occid, accessuri, title, creator, `type`, format, owner, furtherinformationurl, '.
+                '`language`, usageterms, rights, bibliographiccitation, publisher, contributor, locationcreated, description, '.
+                'sortsequence) '.
+                'VALUES ('.
+                (isset($media['tid']) ? (int)$media['tid'] :'NULL').','.
+                (isset($media['occid']) ? (int)$media['occid'] :'NULL').','.
+                (isset($media['accessuri']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['accessuri']).'"' :'NULL').','.
+                (isset($media['title']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($media['title'])).'"' :'NULL').','.
+                (isset($media['creator']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['creator']).'"' :'NULL').','.
+                (isset($media['type']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['type']).'"' :'NULL').','.
+                (isset($media['format']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['format']).'"' :'NULL').','.
+                (isset($media['owner']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['owner']).'"' :'NULL').','.
+                (isset($media['furtherinformationurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['furtherinformationurl']).'"' :'NULL').','.
+                (isset($media['language']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['language']).'"' :'NULL').','.
+                (isset($media['usageterms']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['usageterms']).'"' :'NULL').','.
+                (isset($media['rights']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['rights']).'"' :'NULL').','.
+                (isset($media['bibliographiccitation']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['bibliographiccitation']).'"' :'NULL').','.
+                (isset($media['publisher']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['publisher']).'"' :'NULL').','.
+                (isset($media['contributor']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['contributor']).'"' :'NULL').','.
+                (isset($media['locationcreated']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['locationcreated']).'"' :'NULL').','.
+                (isset($media['description']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($media['description'])).'"' :'NULL').','.
+                (isset($media['sortsequence']) ? (int)$media['sortsequence'] : '50').')';
+            //echo $sql; exit;
+            if($this->conn->query($sql)){
+                $retVal = $this->conn->insert_id;
+            }
+        }
+        return $retVal;
+    }
+
 	public function deleteMedia($medIdDel, $removeMed): bool
 	{
 		$medUrl = '';
@@ -332,9 +358,6 @@ class MediaShared{
 					$domain = 'https://';
 				}
 				$domain .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$domain .= ':' . $_SERVER['SERVER_PORT'];
-				}
 				if(stripos($medUrl,$domain) === 0){
 					$medUrl2 = $medUrl;
 					$medUrl = substr($medUrl,strlen($domain));
@@ -379,17 +402,6 @@ class MediaShared{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if(isset($GLOBALS['IMAGE_DOMAIN'])){
-			$urlPrefix = 'http://';
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-				$urlPrefix = 'https://';
-			}
-			$urlPrefix .= $_SERVER['HTTP_HOST'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-				$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-			}
-			$urlBase = $urlPrefix.$urlBase;
-		}
 		return $urlBase;
 	}
 
@@ -410,12 +422,12 @@ class MediaShared{
 
 	public function setTitle($v): void
 	{
-		$this->title = Sanitizer::cleanInStr($this->conn,$v);
+		$this->title = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setCreator($v): void
 	{
-		$this->creator = Sanitizer::cleanInStr($this->conn,$v);
+		$this->creator = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setCreatorUid($v): void
@@ -427,7 +439,7 @@ class MediaShared{
 
 	public function setDescription($v): void
 	{
-		$this->description = Sanitizer::cleanInStr($this->conn,$v);
+		$this->description = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getTargetPath(): string
@@ -441,47 +453,47 @@ class MediaShared{
 
 	public function setOwner($v): void
 	{
-		$this->owner = Sanitizer::cleanInStr($this->conn,$v);
+		$this->owner = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setType($v): void
 	{
-		$this->type = Sanitizer::cleanInStr($this->conn,$v);
+		$this->type = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
     public function setFormat($v): void
     {
-        $this->format = Sanitizer::cleanInStr($this->conn,$v);
+        $this->format = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setUsageTerms($v): void
     {
-        $this->usageterms = Sanitizer::cleanInStr($this->conn,$v);
+        $this->usageterms = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setRights($v): void
     {
-        $this->rights = Sanitizer::cleanInStr($this->conn,$v);
+        $this->rights = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setPublisher($v): void
     {
-        $this->publisher = Sanitizer::cleanInStr($this->conn,$v);
+        $this->publisher = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setContributor($v): void
     {
-        $this->contributor = Sanitizer::cleanInStr($this->conn,$v);
+        $this->contributor = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setBibliographicCitation($v): void
     {
-        $this->bibliographiccitation = Sanitizer::cleanInStr($this->conn,$v);
+        $this->bibliographiccitation = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setFurtherInformationURL($v): void
     {
-        $this->furtherinformationurl = Sanitizer::cleanInStr($this->conn,$v);
+        $this->furtherinformationurl = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setOccid($v): void
@@ -504,7 +516,7 @@ class MediaShared{
 
 	public function setLanguage($v): void
 	{
-		$this->language = Sanitizer::cleanInStr($this->conn,$v);
+		$this->language = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setSortSequence($v): void
@@ -516,7 +528,7 @@ class MediaShared{
 
 	public function setLocationCreated($v): void
 	{
-		$this->locationcreated = Sanitizer::cleanInStr($this->conn,$v);
+		$this->locationcreated = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getErrArr(): array
@@ -577,20 +589,12 @@ class MediaShared{
 					$exists = true;
 				}
 			}
-			if(isset($GLOBALS['IMAGE_DOMAIN'])){
-				$uri = $GLOBALS['IMAGE_DOMAIN'].$uri;
-			}
-			else{
-				$urlPrefix = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-					$urlPrefix = 'https://';
-				}
-				$urlPrefix .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-				}
-				$uri = $urlPrefix.$uri;
-			}
+            $urlPrefix = 'http://';
+            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                $urlPrefix = 'https://';
+            }
+            $urlPrefix .= $_SERVER['HTTP_HOST'];
+            $uri = $urlPrefix.$uri;
 		}
 
 		if(!$exists && function_exists('curl_init')) {

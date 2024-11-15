@@ -1,7 +1,7 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/KeyCharAdmin.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $cid = array_key_exists('cid',$_REQUEST)?(int)$_REQUEST['cid']:0;
@@ -12,7 +12,11 @@ $keyManager->setLangId($langId);
 $keyManager->setCid($cid);
 $tLinks = $keyManager->getTaxonRelevance();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
     <title>Taxonomy Linkage</title>
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -22,7 +26,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 	<script type="text/javascript" src="../../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
 	<script type="text/javascript">
-		$(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
 			$( "#relevanceinput" ).autocomplete({
 				source: "../../api/taxa/speciessuggest.php",
                 level: 'species',
@@ -171,5 +175,8 @@ $tLinks = $keyManager->getTaxonRelevance();
 			</form>
 		</div>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class GamesManager {
 
@@ -12,7 +12,7 @@ class GamesManager {
 	private $lang;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -97,7 +97,7 @@ class GamesManager {
 					'FROM fmchklsttaxalink l INNER JOIN images i ON l.TID = i.tid '.
 					'LEFT JOIN omoccurrences o ON i.occid = o.occid '.
 					'LEFT JOIN omcollections c ON o.collid = c.collid '.
-					'WHERE (l.CLID IN('.$clid.')) AND (i.occid IS NULL OR c.CollType LIKE "%Observations") '.
+					'WHERE (l.CLID IN('.$clid.')) AND (i.occid IS NULL OR c.CollType = "HumanObservation") '.
 					'GROUP BY l.TID';
 				//echo '<div>'.$sql.'</div>';
 				$rs = $this->conn->query($sql);
@@ -137,20 +137,12 @@ class GamesManager {
 					$rs = $this->conn->query($sql3);
 					while(($row = $rs->fetch_object()) && ($cnt < 6)){
 						if(strncmp($row->url, '/', 1) === 0){
-							if(isset($GLOBALS['IMAGE_DOMAIN']) && $GLOBALS['IMAGE_DOMAIN']){
-								$file = $GLOBALS['IMAGE_DOMAIN'].$row->url;
-							}
-							else{
-								$domain = 'http://';
-								if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-									$domain = 'https://';
-								}
-								$domain .= $_SERVER['HTTP_HOST'];
-								if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-									$domain .= ':' . $_SERVER['SERVER_PORT'];
-								}
-								$file = $domain.$row->url;
-							}
+                            $domain = 'http://';
+                            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                                $domain = 'https://';
+                            }
+                            $domain .= $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
+                            $file = $domain . $row->url;
 						}
 						else{
 							$file = $row->url;
@@ -240,10 +232,7 @@ class GamesManager {
 					$iCnt = count($retArr[$rImg->tidaccepted]['url']);
 				}
 				if($iCnt < 5){
-					$url = $rImg->url;
-					if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($url, '/', 1) === 0){
-						$url = $GLOBALS['IMAGE_DOMAIN'].$url;
-					}
+					$url = ($rImg->url && $GLOBALS['CLIENT_ROOT'] && strncmp($rImg->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $rImg->url) : $rImg->url;
 					$retArr[$rImg->tidaccepted]['url'][] = $url;
 				}
 				else{
@@ -264,10 +253,7 @@ class GamesManager {
 						$iCnt = count($retArr[$rImg2->parenttid]['url']);
 					}
 					if($iCnt < 5){
-						$url = $rImg2->url;
-						if(isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($url, '/', 1) === 0){
-							$url = $GLOBALS['IMAGE_DOMAIN'].$url;
-						}
+						$url = ($rImg2->url && $GLOBALS['CLIENT_ROOT'] && strncmp($rImg2->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $rImg2->url) : $rImg2->url;
 						$retArr[$rImg2->parenttid]['url'][] = $url;
 					}
 				}

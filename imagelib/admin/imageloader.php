@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ImageImport.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('action',$_POST)?$_POST['action']: '';
@@ -30,7 +30,11 @@ if($isEditor){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Loader</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -166,7 +170,8 @@ include(__DIR__ . '/../../header.php');
 		</form>
 	</div>
 </div>
-<?php  
+<?php
+include_once(__DIR__ . '/../../config/footer-includes.php');
 include(__DIR__ . '/../../footer.php');
 ?>
 </body>

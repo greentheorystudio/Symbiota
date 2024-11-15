@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDownload.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverCore.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
 ini_set('max_execution_time', 300); //180 seconds = 5 minutes
 
 $schema = array_key_exists('schema',$_REQUEST)?htmlspecialchars($_REQUEST['schema']):'native';
@@ -13,7 +13,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST)?$_REQUEST['starr']:'';
 $dlManager = new OccurrenceDownload();
 $dwcaHandler = new DwcArchiverCore();
 $occurManager = new OccurrenceManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $occWhereStr = '';
 
@@ -47,7 +47,6 @@ if($schema === 'backup'){
 	if($collid){
 		if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 			$dwcaHandler->setSchemaType('backup');
-			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setVerboseMode(0);
 			$dwcaHandler->setIncludeDets(1);
 			$dwcaHandler->setIncludeImgs(1);
@@ -105,8 +104,6 @@ else{
 		}
 		$dlManager->setSchemaType($schema);
 		$dlManager->setExtended($extended);
-		$dlManager->setCharSetOut($cSet);
-		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->addCondition('decimalLatitude','NOTNULL');
 		$dlManager->addCondition('decimalLongitude','NOTNULL');
@@ -126,8 +123,6 @@ else{
 			$dlManager->setSqlWhere($occurManager->getSqlWhere());
 		}
 		$dlManager->setSchemaType($schema);
-		$dlManager->setCharSetOut($cSet);
-		$dlManager->setDelimiter($format);
 		$dlManager->setZipFile($zip);
 		$dlManager->downloadData();
 	}
@@ -135,10 +130,8 @@ else{
 		$dwcaHandler->setVerboseMode(0);
 		if($schema === 'coge'){
 			$dwcaHandler->setCollArr($_POST['collid']);
-			$dwcaHandler->setCharSetOut('UTF-8');
 			$dwcaHandler->setSchemaType('coge');
 			$dwcaHandler->setExtended(false);
-			$dwcaHandler->setDelimiter('csv');
 			$dwcaHandler->setRedactLocalities(0);
 			$dwcaHandler->setIncludeDets(0);
 			$dwcaHandler->setIncludeImgs(0);
@@ -158,10 +151,8 @@ else{
 			}
 		}
 		else{
-			$dwcaHandler->setCharSetOut($cSet);
 			$dwcaHandler->setSchemaType($schema);
 			$dwcaHandler->setExtended($extended);
-			$dwcaHandler->setDelimiter($format);
 			$dwcaHandler->setRedactLocalities($redactLocalities);
 			if($rareReaderArr) {
 				$dwcaHandler->setRareReaderArr($rareReaderArr);
@@ -236,10 +227,10 @@ else{
 				header('Content-Type: application/zip');
 			}
 			elseif($format === 'csv'){
-				header('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
+				header('Content-Type: text/csv; charset=UTF-8');
 			}
 			else{
-				header('Content-Type: text/html; charset='.$GLOBALS['CHARSET']);
+				header('Content-Type: text/html; charset=UTF-8' );
 			}
 
 			header('Content-Disposition: attachment; filename='.basename($outputFile));

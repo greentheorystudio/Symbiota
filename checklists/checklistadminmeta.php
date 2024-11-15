@@ -1,8 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
-header('X-Frame-Options: SAMEORIGIN');
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
@@ -73,7 +71,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 	}
 
 	function openSpatialInputWindow(type) {
-        let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+        let mapWindow = open("../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
         if (mapWindow.opener == null) {
             mapWindow.opener = self;
         }
@@ -98,7 +96,7 @@ if(isset($clArray['defaultsettings']) && $clArray['defaultsettings']){
 <?php
 if(!$clid){
 	?>
-	<div style="float:right;">
+	<div style="width: 100%;display: flex;justify-content: flex-end;">
 		<a href="#" onclick="toggle('checklistDiv')" title="Create a New Checklist"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
 	</div>
 	<?php
@@ -181,7 +179,7 @@ if(!$clid){
 							<a href="#" onclick="openSpatialInputWindow('input-polygon,wkt');" title="Create/Edit Polygon"><i style='width:15px;height:15px;' class="fas fa-globe"></i></a>
 						</div>
 						<div id="polyDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'block':'none'); ?>;">
-                            'Polygon footprint defined<br/>Click globe to view/edit'
+                            Polygon footprint defined<br/>Click globe to view/edit
 						</div>
 						<div id="polyNotDefDiv" style="display:<?php echo ($clArray && $clArray['hasfootprintwkt']?'none':'block'); ?>;">
                             Polygon footprint not defined<br/>Click globe to create polygon
@@ -236,7 +234,7 @@ if(!$clid){
 					</div>
 					<div>
 						<?php
-						$activateKey = $GLOBALS['KEY_MOD_IS_ACTIVE'];
+						$activateKey = (array_key_exists('KEY_MOD_IS_ACTIVE',$GLOBALS) && $GLOBALS['KEY_MOD_IS_ACTIVE']);
 						if(array_key_exists('activatekey', $defaultArr)){
 							$activateKey = $defaultArr['activatekey'];
 						}
@@ -246,13 +244,19 @@ if(!$clid){
 					</div>
 				</fieldset>
 			</div>
-			<div style="clear:both;margin-top:15px;">
-				<b>Access</b><br/>
-				<select name="access">
-					<option value="private">Private</option>
-					<option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
-				</select>
-			</div>
+			<?php
+            if($GLOBALS['PUBLIC_CHECKLIST']){
+                ?>
+                <div style="clear:both;margin-top:15px;">
+                    <b>Access</b><br/>
+                    <select name="access">
+                        <option value="private">Private</option>
+                        <option value="public" <?php echo (($clArray && $clArray['access'] === 'public') ? 'selected' : ''); ?>>Public</option>
+                    </select>
+                </div>
+                <?php
+            }
+            ?>
 			<div style="clear:both;float:left;margin-top:15px;">
 				<?php
 				if($clid){
@@ -274,72 +278,4 @@ if(!$clid){
 			<input type="hidden" name="pid" value="<?php echo $pid; ?>" />
 		</fieldset>
 	</form>
-</div>
-
-<div>
-	<?php
-	if(array_key_exists('userid',$_REQUEST) && $GLOBALS['VALID_USER']){
-		$userId = $_REQUEST['userid'];
-		echo '<div style="font-weight:bold;">Checklists assigned to your account</div>';
-		$listArr = $clManager->getManagementLists($userId);
-		if(array_key_exists('cl',$listArr)){
-			$clArr = $listArr['cl'];
-			?>
-			<ul>
-			<?php
-			foreach($clArr as $kClid => $vName){
-				?>
-				<li>
-					<a href="../checklists/checklist.php?cl=<?php echo $kClid; ?>&emode=0">
-						<?php echo $vName; ?>
-					</a>
-					<a href="../checklists/checklistadmin.php?clid=<?php echo $kClid; ?>&emode=1">
-						<i style='width:15px;height:15px;' title="Edit Checklist" class="far fa-edit"></i>
-					</a>
-				</li>
-				<?php
-			}
-			?>
-			</ul>
-			<?php
-		}
-		else{
-			?>
-			<div style="margin:10px;">
-				<div>You have no personal checklists</div>
-				<div style="margin-top:5px">
-					<a href="#" onclick="toggle('checklistDiv')">Click here to create a new checklist</a>
-				</div>
-			</div>
-			<?php
-		}
-
-		echo '<div style="font-weight:bold;margin-top:25px;">Biotic Inventory Project Administration</div>'."\n";
-		if(array_key_exists('proj',$listArr)){
-			$projArr = $listArr['proj'];
-			?>
-			<ul>
-			<?php
-			foreach($projArr as $pid => $projName){
-				?>
-				<li>
-					<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=0">
-						<?php echo $projName; ?>
-					</a>
-					<a href="../projects/index.php?pid=<?php echo $pid; ?>&emode=1">
-						<i style='width:15px;height:15px;' title="Edit Project" class="far fa-edit"></i>
-					</a>
-				</li>
-				<?php
-			}
-			?>
-			</ul>
-			<?php
-		}
-		else{
-			echo '<div style="margin:10px;">There are no Projects for which you have administrative permissions.<br />';
-            echo '<a href="../projects/index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></div>';
-		}
-	}
-	?>
 </div>

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ImageDetailManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $imgId = (int)$_REQUEST['imgid'];
@@ -43,36 +43,18 @@ if($imgArr){
 	$imgUrl = $imgArr['url'];
 	$origUrl = $imgArr['originalurl'];
 	$metaUrl = $imgArr['url'];
-	if(isset($GLOBALS['IMAGE_DOMAIN'])){
-		if(strncmp($imgUrl, '/', 1) === 0){
-			$imgUrl = $GLOBALS['IMAGE_DOMAIN'].$imgUrl;
-			$metaUrl = $GLOBALS['IMAGE_DOMAIN'].$metaUrl;
-		}
-		if($origUrl && strncmp($origUrl, '/', 1) === 0){
-			$origUrl = $GLOBALS['IMAGE_DOMAIN'].$origUrl;
-		}
-	}
 	if(strncmp($metaUrl, '/', 1) === 0){
 		$metaUrl = 'http://'.$_SERVER['HTTP_HOST'].$metaUrl;
 	}
 }
 
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
-	<?php
-	if($imgArr){
-		?>
-		<meta property="og:title" content="<?php echo $imgArr['sciname']; ?>"/>
-		<meta property="og:site_name" content="<?php echo $GLOBALS['DEFAULT_TITLE']; ?>"/>
-		<meta property="og:image" content="<?php echo $metaUrl; ?>"/>
-		<meta name="twitter:card" content="photo" data-dynamic="true" />
-		<meta name="twitter:title" content="<?php echo $imgArr['sciname']; ?>" />
-		<meta name="twitter:image" content="<?php echo $metaUrl; ?>" />
-		<meta name="twitter:url" content="<?php echo 'http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/imgdetails.php?imgid='.$imgId; ?>" />
-		<?php
-	}
-	?>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']. ' Image Details: #' .$imgId; ?></title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -80,52 +62,14 @@ if($imgArr){
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../js/imagelib.imgdetails.js?ver=20221119" type="text/javascript"></script>
-	<script src="../js/shared.js?ver=20221207" type="text/javascript"></script>
+	<script src="../js/imagelib.imgdetails.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
-	<div id="fb-root"></div>
-	<script>
-		(function(d, s, id) {
-            let js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {
-                return;
-            }
-			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
-	</script>
 	<?php
 	include(__DIR__ . '/../header.php');
 	?>
 	<div id="innertext">
 		<?php
-		if($imgArr){
-			?>
-			<div style="width:100%;float:right;clear:both;margin-top:10px;">
-				<div style="float:right;">
-					<a class="twitter-share-button" data-text="<?php echo $imgArr['sciname']; ?>" href="https://twitter.com/share" data-url="<?php echo $_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/imgdetails.php?imgid='.$imgId; ?>">Tweet</a>
-					<script>
-						window.twttr=(function(d,s,id){
-                            let js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
-                            if(d.getElementById(id)){
-                                return;
-                            }
-                            js=d.createElement(s);
-							js.id=id;js.src="https://platform.twitter.com/widgets.js";
-							fjs.parentNode.insertBefore(js,fjs);t._e=[];
-							t.ready=function(f){t._e.push(f);};
-							return t;
-						}(document,"script","twitter-wjs"));
-					</script>
-				</div>
-				<div style="float:right;margin-right:10px;">
-					<div class="fb-share-button" data-href="" data-layout="button_count"></div>
-				</div>
-			</div>
-			<?php
-		}
 		if($status){
 			?>
 			<hr/>
@@ -399,6 +343,7 @@ if($imgArr){
 		?>
 	</div>
 <?php
+include_once(__DIR__ . '/../config/footer-includes.php');
 include(__DIR__ . '/../footer.php');
 ?>
 </body>

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $collid = (int)$_POST['collid'];
@@ -23,6 +23,7 @@ if($GLOBALS['SYMB_UID']){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
 		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Default Annotations</title>

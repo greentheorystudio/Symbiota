@@ -1,17 +1,21 @@
 <?php
 include_once(__DIR__ . '/config/symbbase.php');
 include_once(__DIR__ . '/classes/SiteMapManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 $submitAction = array_key_exists('submitaction',$_REQUEST)?$_REQUEST['submitaction']:'';
 
 $smManager = new SiteMapManager();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="js/shared.js?ver=20221207"></script>
 </head>
 <body>
 	<?php
@@ -22,7 +26,7 @@ $smManager = new SiteMapManager();
 		<div class="pmargin">
 			<h3>Collections</h3>
 			<ul>
-				<li><a href="collections/index.php">Search Collections</a></li>
+				<li><a href="collections/list.php">Search Collections</a></li>
                 <li><a href="spatial/index.php">Spatial Module</a></li>
 				<li><a href="collections/misc/collprofiles.php">Collections</a></li>
 				<li><a href="collections/misc/collstats.php">Collection Statistics</a></li>
@@ -53,6 +57,15 @@ $smManager = new SiteMapManager();
 
             <h3>Additional Resources</h3>
 			<ul>
+                <li><a href="projects/index.php">Biotic Inventory Projects</a></li>
+                <li><a href="checklists/index.php">Checklists</a></li>
+                <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
+                <?php
+                if(isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']){
+                    echo '<li><a href="checklists/dynamicmap.php?interface=key">Dynamic Key</a></li>';
+                }
+                ?>
+                <li><a href="taxa/dynamictaxalist.php">Dynamic Taxonomy List</a></li>
                 <?php
                 if($smManager->hasGlossary()){
                     ?>
@@ -61,14 +74,7 @@ $smManager = new SiteMapManager();
                 }
                 ?>
                 <li><a href="taxa/taxonomydynamicdisplay.php">Taxonomy Explorer</a></li>
-                <li><a href="checklists/index.php">Checklists</a></li>
-                <li><a href="projects/index.php">Biotic Inventory Projects</a></li>
-                <li><a href="checklists/dynamicmap.php?interface=checklist">Dynamic Checklist</a></li>
-                <?php
-                if(isset($GLOBALS['KEY_MOD_IS_ACTIVE']) && $GLOBALS['KEY_MOD_IS_ACTIVE']){
-                    echo '<li><a href="checklists/dynamicmap.php?interface=key">Dynamic Key</a></li>';
-                }
-                ?>
+                <li><a href="taxa/dynamictreeviewer.php">Interactive Taxonomic Tree</a></li>
 			</ul>
 
 			<?php
@@ -114,21 +120,18 @@ $smManager = new SiteMapManager();
                         <h3>Taxonomy</h3>
                         <ul>
                             <?php
-                            if($GLOBALS['IS_ADMIN']){
-                                ?>
-                                <li><a href="profile/usertaxonomymanager.php">Taxonomic Interest Permissions</a></li>
-                                <?php
-                            }
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
                                 ?>
                                 <li><a href="taxa/thesaurus/index.php">Taxonomic Thesaurus Manager</a></li>
+                                <li><a href="taxa/thesaurus/identifiermanager.php">Taxonomic Identifier Manager</a></li>
                                 <li><a href="taxa/taxonomy/index.php">Taxonomy Editor</a></li>
                                 <?php
                             }
                             if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
                                 ?>
                                 <li><a href="taxa/profile/tpeditor.php">Taxon Profile Manager</a></li>
-                                <li><a href="taxa/media/index.php">Taxa Media Batch Uploader</a></li>
+                                <li><a href="taxa/media/batchimageloader.php">Taxa Media Batch Uploader</a></li>
+                                <li><a href="taxa/media/eolimporter.php">Encyclopedia of Life Media Importer</a></li>
                                 <?php
                             }
                             ?>
@@ -180,7 +183,8 @@ $smManager = new SiteMapManager();
         </div>
 	</div>
 	<?php
-		include(__DIR__ . '/footer.php');
+    include_once(__DIR__ . '/config/footer-includes.php');
+    include(__DIR__ . '/footer.php');
 	?>
 </body>
 </html>

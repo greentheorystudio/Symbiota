@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 require_once __DIR__ . '/../vendor/autoload.php';
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 ini_set('max_execution_time', 240);
 
 use PhpOffice\PhpWord\PhpWord;
@@ -115,7 +115,7 @@ $blankCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borde
 $section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>0,'footerHeight'=>0));
 $title = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clManager->getClName());
 $textrun = $section->addTextRun('defaultPara');
-$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/checklists/checklist.php?cl='.$clValue. '&proj=' .$pid. '&dynclid=' .$dynClid,htmlspecialchars($title),'titleFont');
+$textrun->addLink((((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http') . '://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/checklists/checklist.php?cl='.$clValue. '&proj=' .$pid. '&dynclid=' .$dynClid,htmlspecialchars($title),'titleFont');
 $textrun->addTextBreak();
 if($clArray){
 	if($clArray['type'] === 'rarespp'){
@@ -175,94 +175,93 @@ $textrun->addText(htmlspecialchars($clManager->getTaxaCount().' (including subsp
 $textrun->addTextBreak();
 $prevfam = '';
 if($showImages){
-	$imageCnt = 0;
-	$table = $section->addTable('imageTable');
-	foreach($taxaArray as $tid => $sppArr){
-		$imageCnt++;
-		$family = $sppArr['family'];
-		$tu = (array_key_exists('tnurl',$sppArr)?$sppArr['tnurl']:'');
-		$u = (array_key_exists('url',$sppArr)?$sppArr['url']:'');
-		$imgSrc = ($tu?:$u);
-		if($imageCnt%4 === 1) {
-			$table->addRow();
-		}
-		if($imgSrc){
-			$imgSrc = (isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
-			$cell = $table->addCell(null,$imageCellStyle);
-			$textrun = $cell->addTextRun('imagePara');
-			$textrun->addImage($imgSrc,array('width'=>160,'height'=>160));
-			$textrun->addTextBreak();
-			$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'topicFont');
-			$textrun->addTextBreak();
-			if(array_key_exists('vern',$sppArr)){
-				$vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
-				$textrun->addText(htmlspecialchars($vern),'topicFont');
-				$textrun->addTextBreak();
-			}
+    $imageCnt = 0;
+    $table = $section->addTable('imageTable');
+    foreach($taxaArray as $tid => $sppArr){
+        $imageCnt++;
+        $family = $sppArr['family'];
+        $tu = (array_key_exists('tnurl',$sppArr)?$sppArr['tnurl']:'');
+        $u = (array_key_exists('url',$sppArr)?$sppArr['url']:'');
+        $imgSrc = ($tu?:$u);
+        if($imageCnt % 4 === 1) {
+            $table->addRow();
+        }
+        if($imgSrc && $imgSrc[0] === '/'){
+            $cell = $table->addCell(null,$imageCellStyle);
+            $textrun = $cell->addTextRun('imagePara');
+            $textrun->addImage(($GLOBALS['SERVER_ROOT'] . $imgSrc),array('width'=>160,'height'=>160));
+            $textrun->addTextBreak();
+            $textrun->addLink((((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http') . '://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'topicFont');
+            $textrun->addTextBreak();
+            if(array_key_exists('vern',$sppArr)){
+                $vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
+                $textrun->addText(htmlspecialchars($vern),'topicFont');
+                $textrun->addTextBreak();
+            }
             if(!$showAlphaTaxa && $family !== $prevfam) {
-				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
-				$prevfam = $family;
-			}
-		}
-		else{
-			$cell = $table->addCell(null,$blankCellStyle);
-			$textrun = $cell->addTextRun('imagePara');
-			$textrun->addText(htmlspecialchars('Image'),'topicFont');
-			$textrun->addTextBreak();
-			$textrun->addText(htmlspecialchars('not yet'),'topicFont');
-			$textrun->addTextBreak();
-			$textrun->addText(htmlspecialchars('available'),'topicFont');
-		}
-	}
+                $textrun->addLink((((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http') . '://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$family.'&cl='.$clid,htmlspecialchars('['.$family.']'),'textFont');
+                $prevfam = $family;
+            }
+        }
+        else{
+            $cell = $table->addCell(null,$blankCellStyle);
+            $textrun = $cell->addTextRun('imagePara');
+            $textrun->addText(htmlspecialchars('Image'),'topicFont');
+            $textrun->addTextBreak();
+            $textrun->addText(htmlspecialchars('not yet'),'topicFont');
+            $textrun->addTextBreak();
+            $textrun->addText(htmlspecialchars('available'),'topicFont');
+        }
+    }
 }
 else{
-	$voucherArr = $clManager->getVoucherArr();
-	foreach($taxaArray as $tid => $sppArr){
-		if(!$showAlphaTaxa){
-			$family = $sppArr['family'];
-			if($family !== $prevfam){
-				$textrun = $section->addTextRun('familyPara');
-				$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$family.'&cl='.$clid,htmlspecialchars($family),'familyFont');
-				$prevfam = $family;
-			}
-		}
-		$textrun = $section->addTextRun('scinamePara');
-		$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'scientificnameFont');
-		if(array_key_exists('author',$sppArr)){
-			$sciAuthor = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['author']);
-			$textrun->addText(htmlspecialchars(' '.$sciAuthor),'textFont');
-		}
-		if(array_key_exists('vern',$sppArr)){
-			$vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
-			$textrun->addText(htmlspecialchars(' - '.$vern),'topicFont');
-		}
+    $voucherArr = $clManager->getVoucherArr();
+    foreach($taxaArray as $tid => $sppArr){
+        if(!$showAlphaTaxa){
+            $family = $sppArr['family'];
+            if($family !== $prevfam){
+                $textrun = $section->addTextRun('familyPara');
+                $textrun->addLink((((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http') . '://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$family.'&cl='.$clid,htmlspecialchars($family),'familyFont');
+                $prevfam = $family;
+            }
+        }
+        $textrun = $section->addTextRun('scinamePara');
+        $textrun->addLink((((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http') . '://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/index.php?taxon='.$tid.'&cl='.$clid,htmlspecialchars($sppArr['sciname']),'scientificnameFont');
+        if(array_key_exists('author',$sppArr)){
+            $sciAuthor = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['author']);
+            $textrun->addText(htmlspecialchars(' '.$sciAuthor),'textFont');
+        }
+        if(array_key_exists('vern',$sppArr)){
+            $vern = str_replace(array('&quot;', '&apos;'), array('"', "'"), $sppArr['vern']);
+            $textrun->addText(htmlspecialchars(' - '.$vern),'topicFont');
+        }
         if(isset($sppArr['syn']) && $sppArr['syn']){
             $textrun = $section->addTextRun('synonymPara');
             $textrun->addText('[','textFont');
             $textrun->addText(htmlspecialchars(strip_tags($sppArr['syn'])),'synonymFont');
             $textrun->addText(']','textFont');
         }
-		if($showVouchers){
-			if(array_key_exists('notes',$sppArr) || array_key_exists($tid,$voucherArr)){
-				$textrun = $section->addTextRun('notesvouchersPara');
-			}
-			if(array_key_exists('notes',$sppArr)){
-				$noteStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), trim($sppArr['notes']));
-				$textrun->addText(htmlspecialchars($noteStr.($noteStr && array_key_exists($tid,$voucherArr)?'; ':'')),'textFont');
-			}
-			if(array_key_exists($tid,$voucherArr)){
-				$i = 0;
-				foreach($voucherArr[$tid] as $occid => $collName){
-					if($i > 0) {
-						$textrun->addText(htmlspecialchars(', '), 'textFont');
-					}
-					$voucStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), $collName);
-					$textrun->addLink('http://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid,htmlspecialchars($voucStr),'textFont');
-					$i++;
-				}
-			}
-		}
-	}
+        if($showVouchers){
+            if(array_key_exists('notes',$sppArr) || array_key_exists($tid,$voucherArr)){
+                $textrun = $section->addTextRun('notesvouchersPara');
+            }
+            if(array_key_exists('notes',$sppArr)){
+                $noteStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), trim($sppArr['notes']));
+                $textrun->addText(htmlspecialchars($noteStr.($noteStr && array_key_exists($tid,$voucherArr)?'; ':'')),'textFont');
+            }
+            if(array_key_exists($tid,$voucherArr)){
+                $i = 0;
+                foreach($voucherArr[$tid] as $occid => $collName){
+                    if($i > 0) {
+                        $textrun->addText(htmlspecialchars(', '), 'textFont');
+                    }
+                    $voucStr = str_replace(array('&quot;', '&apos;'), array('"', "'"), $collName);
+                    $textrun->addLink((((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http') . '://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?occid='.$occid,htmlspecialchars($voucStr),'textFont');
+                    $i++;
+                }
+            }
+        }
+    }
 }
 
 $fileName = str_replace(array(' ', '/'), '_', $clManager->getClName());

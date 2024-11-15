@@ -1,19 +1,17 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TPImageEditorManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $tid = (int)$_REQUEST['tid'];
 $category = array_key_exists('cat',$_REQUEST)?$_REQUEST['cat']: '';
-$lang = array_key_exists('lang',$_REQUEST)?$_REQUEST['lang']: '';
 
 $imageEditor = new TPImageEditorManager();
 $editable = false;
 
 if($tid){
 	$imageEditor->setTid($tid);
-	$imageEditor->setLanguage($lang);
 
 	if($GLOBALS['IS_ADMIN'] || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
 		$editable = true;
@@ -36,14 +34,6 @@ if($tid){
 								foreach($images as $imgArr){
 									$webUrl = $imgArr['url'];
 									$tnUrl = $imgArr['thumbnailurl'];
-									if(isset($GLOBALS['IMAGE_DOMAIN'])){
-										if(strncmp($imgArr['url'], '/', 1) === 0) {
-                                            $webUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['url'];
-                                        }
-										if(strncmp($imgArr['thumbnailurl'], '/', 1) === 0) {
-                                            $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['thumbnailurl'];
-                                        }
-									}
 									if(!$tnUrl) {
                                         $tnUrl = $webUrl;
                                     }
@@ -228,14 +218,6 @@ if($tid){
                                 <?php
                                 $webUrl = $imgArr['url'];
                                 $tnUrl = $imgArr['thumbnailurl'];
-                                if(isset($GLOBALS['IMAGE_DOMAIN'])){
-                                    if(strncmp($imgArr['url'], '/', 1) === 0) {
-                                        $webUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['url'];
-                                    }
-                                    if(strncmp($imgArr['thumbnailurl'], '/', 1) === 0) {
-                                        $tnUrl = $GLOBALS['IMAGE_DOMAIN'] . $imgArr['thumbnailurl'];
-                                    }
-                                }
                                 if(!$tnUrl) {
                                     $tnUrl = $webUrl;
                                 }
@@ -245,9 +227,8 @@ if($tid){
                                 </a>
                                 <?php
                                 if($imgArr['originalurl']){
-                                    $origUrl = (isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgArr['originalurl'], '/', 1) === 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgArr['originalurl'];
                                     ?>
-                                    <br /><a href="<?php echo $origUrl;?>">Open Large Image</a>
+                                    <br /><a href="<?php echo $imgArr['originalurl'];?>">Open Large Image</a>
                                     <?php
                                 }
                                 ?>

@@ -113,15 +113,18 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			$itemTitleElem = $newDoc->createElement('title');
 			$itemTitleElem->appendChild($newDoc->createTextNode($title));
 			$itemElem->appendChild($itemTitleElem);
-			if(strncmp($cArr['icon'], 'images/collicons/', 17) === 0){
-				$imgLink = $urlPathPrefix.$cArr['icon'];
-			}
-			elseif(strncmp($cArr['icon'], '/', 1) === 0){
-				$imgLink = $localDomain.$cArr['icon'];
-			}
-			else{
-				$imgLink = $cArr['icon'];
-			}
+            $imgLink = '';
+            if($cArr['icon']){
+                if(strncmp($cArr['icon'], 'images/collicons/', 17) === 0){
+                    $imgLink = $urlPathPrefix.$cArr['icon'];
+                }
+                elseif(strncmp($cArr['icon'], '/', 1) === 0){
+                    $imgLink = $localDomain.$cArr['icon'];
+                }
+                else{
+                    $imgLink = $cArr['icon'];
+                }
+            }
 			$iconElem = $newDoc->createElement('image');
 			$iconElem->appendChild($newDoc->createTextNode($imgLink));
 			$itemElem->appendChild($iconElem);
@@ -224,7 +227,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		$sql = 'SELECT c.collid, c.collectionname, CONCAT_WS("-",c.institutioncode,c.collectioncode) as instcode, c.guidtarget, c.dwcaurl, c.managementtype '.
 			'FROM omcollections c INNER JOIN omcollectionstats s ON c.collid = s.collid '.
 			'LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
-			'WHERE (c.colltype = "Preserved Specimens") AND (s.recordcnt > 0) ';
+			'WHERE (c.colltype = "PreservedSpecimen") AND (s.recordcnt > 0) ';
 		if($catID) {
 			$sql .= 'AND (l.ccpk = ' . $catID . ') ';
 		}
@@ -246,7 +249,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 		}
 		$sql = 'SELECT substring_index(c.dwcaurl,"/content/",1)  as portalDomain, count(c.collid) as cnt '.
 			'FROM omcollections c LEFT JOIN omcollcatlink l ON c.collid = l.collid '.
-			'WHERE (c.colltype = "Preserved Specimens") AND (c.dwcaurl IS NOT NULL) AND (l.ccpk IS NULL OR l.ccpk != '.$catID.') '.
+			'WHERE (c.colltype = "PreservedSpecimen") AND (c.dwcaurl IS NOT NULL) AND (l.ccpk IS NULL OR l.ccpk != '.$catID.') '.
 			'GROUP BY portalDomain';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
@@ -304,7 +307,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	public function humanFileSize($filePath): string
 	{
 		if(strncmp($filePath, 'http', 4) === 0) {
-			$x = array_change_key_case(get_headers($filePath, 1),CASE_LOWER);
+			echo 'file path: ' . $filePath;
+            $x = array_change_key_case(get_headers($filePath, 1),CASE_LOWER);
 			if($x){
                 if( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
                     $x = $x['content-length'][1];

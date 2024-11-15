@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class Manager  {
 	protected $conn;
@@ -11,7 +11,7 @@ class Manager  {
 	protected $verboseMode = 0;
 
     public function __construct($id = null){
-		$connection = new DbConnection();
+		$connection = new DbService();
     	$this->conn = $connection->getConnection();
  		if($id !== null || is_numeric($id)){
 	 		$this->id = $id;
@@ -47,19 +47,7 @@ class Manager  {
 		}
 	}
 
-    public function checkFieldExists($table, $field): bool
-	{
-        $exists = false;
-        $sql = 'SHOW COLUMNS FROM '.$table.' WHERE field = "'.$field.'"';
-        //echo "<div>SQL: ".$sql."</div>";
-        $result = $this->conn->query($sql);
-        if($result->num_rows) {
-			$exists = true;
-		}
-        return $exists;
-    }
-
-	public function setVerboseMode($c): void
+    public function setVerboseMode($c): void
 	{
 		$this->verboseMode = $c;
 	}

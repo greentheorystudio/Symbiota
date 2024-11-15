@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceGeorefTools {
 
@@ -12,7 +12,7 @@ class OccurrenceGeorefTools {
 	private $errorStr;
 
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -26,14 +26,8 @@ class OccurrenceGeorefTools {
 	{
         $retArr = array();
 		if($this->collStr){
-		    if($GLOBALS['BROADGEOREFERENCE']){
-                $sql = 'SELECT occid, country, stateprovince, county, municipality, IFNULL(locality,CONCAT_WS(", ",country,stateProvince,county,municipality,verbatimcoordinates)) AS locality, verbatimcoordinates ,decimallatitude, decimallongitude '.
-                    'FROM omoccurrences WHERE (collid IN('.$this->collStr.')) ';
-            }
-            else{
-                $sql = 'SELECT occid, country, stateprovince, county, municipality, locality, verbatimcoordinates ,decimallatitude, decimallongitude '.
-                  'FROM omoccurrences WHERE (collid IN('.$this->collStr.')) AND (locality IS NOT NULL OR verbatimcoordinates IS NOT NULL) ';
-            }
+            $sql = 'SELECT occid, country, stateprovince, county, municipality, IFNULL(locality,CONCAT_WS(", ",country,stateProvince,county,municipality,verbatimcoordinates)) AS locality, verbatimcoordinates ,decimallatitude, decimallongitude '.
+                'FROM omoccurrences WHERE (collid IN('.$this->collStr.')) ';
 			if(!$this->qryVars || !array_key_exists('qdisplayall',$this->qryVars) || !$this->qryVars['qdisplayall']){
 				$sql .= 'AND (decimalLatitude IS NULL) ';
 			}
@@ -140,9 +134,9 @@ class OccurrenceGeorefTools {
 	{
 		if($this->collStr && is_numeric($geoRefArr['decimallatitude']) && is_numeric($geoRefArr['decimallongitude'])) {
 			set_time_limit(1000);
-			$localStr =  Sanitizer::cleanInStr($this->conn,implode(',',$geoRefArr['locallist']));
+			$localStr =  SanitizerService::cleanInStr($this->conn,implode(',',$geoRefArr['locallist']));
 			unset($geoRefArr['locallist']);
-			$geoRefArr = Sanitizer::cleanInArray($this->conn,$geoRefArr);
+			$geoRefArr = SanitizerService::cleanInArray($this->conn,$geoRefArr);
 			if($localStr){
 				$this->addOccurEdits('decimallatitude',$geoRefArr['decimallatitude'],$localStr);
 				$this->addOccurEdits('decimallongitude',$geoRefArr['decimallongitude'],$localStr);
@@ -265,10 +259,10 @@ class OccurrenceGeorefTools {
 			}
 		}
 		else{
-			$sqlWhere .= 'AND o.locality = "'.trim(Sanitizer::cleanInStr($this->conn,$locality), ' .').'" ';
+			$sqlWhere .= 'AND o.locality = "'.trim(SanitizerService::cleanInStr($this->conn,$locality), ' .').'" ';
 		}
 		if($country){
-			$country = Sanitizer::cleanInStr($this->conn,$country);
+			$country = SanitizerService::cleanInStr($this->conn,$country);
 			$synArr = array('usa','u.s.a', 'united states','united states of america','u.s.');
 			if(in_array(strtolower($country), $synArr, true)) {
 				$country = implode('","', $synArr);
@@ -276,11 +270,11 @@ class OccurrenceGeorefTools {
 			$sqlWhere .= 'AND (o.country IN("'.$country.'")) ';
 		}
 		if($state){
-			$sqlWhere .= 'AND (o.stateprovince = "'.Sanitizer::cleanInStr($this->conn,$state).'") ';
+			$sqlWhere .= 'AND (o.stateprovince = "'.SanitizerService::cleanInStr($this->conn,$state).'") ';
 		}
 		if($county){
 			$county = str_ireplace(array(' county',' parish'),'',$county);
-			$sqlWhere .= 'AND (o.county LIKE "'.Sanitizer::cleanInStr($this->conn,$county).'%") ';
+			$sqlWhere .= 'AND (o.county LIKE "'.SanitizerService::cleanInStr($this->conn,$county).'%") ';
 		}
 		$sql .= $sqlWhere;
 		$sql .= 'GROUP BY o.decimallatitude, o.decimallongitude LIMIT 25';
@@ -317,7 +311,7 @@ class OccurrenceGeorefTools {
 
 	public function setQueryVariables($k,$v): void
 	{
-		$this->qryVars[$k] = Sanitizer::cleanInStr($this->conn,$v);
+		$this->qryVars[$k] = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getCollName(){

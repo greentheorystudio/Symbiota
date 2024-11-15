@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
@@ -17,6 +17,7 @@ $displayMode = (array_key_exists('displaymode',$_REQUEST)?(int)$_REQUEST['displa
 
 $clManager = new ChecklistVoucherAdmin();
 $clManager->setClid($clid);
+$clManager->setCollectionVariables();
 
 $statusStr = '';
 $isEditor = 0;
@@ -37,10 +38,17 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 	elseif($action === 'resolveconflicts'){
 		$clManager->batchAdjustChecklist($_POST);
 	}
+    elseif($action === 'Add All Taxa to Checklist'){
+        $clManager->batchAddAllUnlinkedTaxa();
+    }
 }
 $clManager->setCollectionVariables();
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -49,13 +57,12 @@ $clManager->setCollectionVariables();
     <script src="../js/external/all.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript">
+    <script type="text/javascript">
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -64,8 +71,21 @@ $clManager->setCollectionVariables();
                 mapWindow = null;
             });
         }
+
+        function setPopup(sciname,clid){
+            if(!Number(sciname)){
+                sciname = sciname.replaceAll("'",'%squot;');
+            }
+            const starrObj = {
+                usethes: true,
+                taxa: sciname,
+                clid: clid
+            };
+            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj);
+            openPopup(url);
+        }
     </script>
-	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20221115"></script>
+	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 	<style>
 		li{margin:5px;}
 	</style>
@@ -148,10 +168,12 @@ if($clid && $isEditor){
 									<option value="">Search All Collections</option>
 									<option value="">-------------------------------------</option>
 									<?php
-									$selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
-									foreach($collList as $id => $name){
-										echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
-									}
+									if($termArr){
+                                        $selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
+                                        foreach($collList as $id => $name){
+                                            echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
+                                        }
+                                    }
 									?>
 								</select>
 							</div>
@@ -325,8 +347,7 @@ if($clid && $isEditor){
 								?>
 							</div>
 						</div>
-
-					<?php
+                        <?php
 					}
 					else{
 						?>
@@ -345,7 +366,7 @@ if($clid && $isEditor){
 											?>
 											<div>
 												<a href="#" onclick="openPopup('../taxa/index.php?taxon=<?php echo $tid.'&cl='.$clid; ?>');return false;"><?php echo $sciname; ?></a>
-												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>');return false;">
+												<a href="#" onclick="setPopup(<?php echo $tid . ',' . $clid;?>);">
 													<i style='width:15px;height:15px;' title="Link Voucher Occurrences" class="fas fa-link"></i>
 												</a>
 											</div>
@@ -380,7 +401,7 @@ if($clid && $isEditor){
 								?>
 							</div>
 						</div>
-					<?php
+					    <?php
 					}
 					?>
 				</div>
@@ -415,6 +436,7 @@ else {
 ?>
 </div>
 <?php
+include_once(__DIR__ . '/../config/footer-includes.php');
 include(__DIR__ . '/../footer.php');
 ?>
 </body>

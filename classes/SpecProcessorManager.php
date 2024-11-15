@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class SpecProcessorManager {
 
@@ -12,28 +12,17 @@ class SpecProcessorManager {
 	protected $projectType;
 	protected $managementType;
 	protected $specKeyPattern;
-	protected $patternReplace;
-	protected $replaceStr;
 	protected $coordX1;
 	protected $coordX2;
 	protected $coordY1;
 	protected $coordY2;
 	protected $sourcePath;
-	protected $targetPath;
-	protected $imgUrlBase;
-	protected $webPixWidth = '';
-	protected $tnPixWidth = '';
-	protected $lgPixWidth = '';
-	protected $jpgQuality = 80;
-	protected $webMaxFileSize = 300000;
-	protected $lgMaxFileSize = 3000000;
 	protected $createTnImg = 1;
-	protected $createLgImg = 2;
+	protected $createLgImg = 1;
 	protected $lastRunDate = '';
-	protected $processUsingImageMagick = 0;
 
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -71,8 +60,7 @@ class SpecProcessorManager {
 	{
 		if(is_numeric($editArr['spprid'])){
 			$sqlFrag = '';
-			$targetFields = array('title','projecttype','speckeypattern','patternreplace','replacestr','sourcepath','targetpath','imgurl',
-				'webpixwidth','tnpixwidth','lgpixwidth','jpgcompression','createtnimg','createlgimg','source');
+			$targetFields = array('title','projecttype','speckeypattern','sourcepath','createtnimg','createlgimg','source');
 			if(!isset($editArr['createtnimg'])) {
 				$editArr['createtnimg'] = 0;
 			}
@@ -83,9 +71,6 @@ class SpecProcessorManager {
 				if(in_array($k, $targetFields, true)){
 					if(is_numeric($v)){
 						$sqlFrag .= ','.$k.' = '.$this->cleanInStr($v);
-					}
-					elseif($k === 'replacestr'){
-						$sqlFrag .= ','.$k.' = "'.$this->conn->real_escape_string($v).'"';
 					}
 					elseif($v){
 						$sqlFrag .= ','.$k.' = "'.$this->cleanInStr($v).'"';
@@ -110,20 +95,12 @@ class SpecProcessorManager {
 			if($sourcePath === '-- Use Default Path --') {
 				$sourcePath = '';
 			}
-            $sql = 'INSERT INTO specprocessorprojects(collid,title,speckeypattern,patternreplace,replacestr,projecttype,sourcepath,targetpath,'.
-                'imgurl,webpixwidth,tnpixwidth,lgpixwidth,jpgcompression,createtnimg,createlgimg) '.
+            $sql = 'INSERT INTO specprocessorprojects(collid,title,speckeypattern,projecttype,sourcepath,'.
+                'createtnimg,createlgimg) '.
                 'VALUES('.$this->collid.',"'.$this->cleanInStr($addArr['title']).'","'.
                 $this->cleanInStr($addArr['speckeypattern']).'",'.
-                ($addArr['patternreplace']?'"'.$this->cleanInStr($addArr['patternreplace']).'"':'NULL').','.
-                ($addArr['replacestr']?'"'.$this->conn->real_escape_string($addArr['replacestr']).'"':'NULL').','.
                 ($addArr['projecttype']?'"'.$this->cleanInStr($addArr['projecttype']).'"':'NULL').','.
                 ($sourcePath?'"'.$this->cleanInStr($sourcePath).'"':'NULL').','.
-                (isset($addArr['targetpath'])&&$addArr['targetpath']?'"'.$this->cleanInStr($addArr['targetpath']).'"':'NULL').','.
-                (isset($addArr['imgurl'])&&$addArr['imgurl']?'"'.$addArr['imgurl'].'"':'NULL').','.
-                (isset($addArr['webpixwidth'])&&$addArr['webpixwidth']?$addArr['webpixwidth']:'NULL').','.
-                (isset($addArr['tnpixwidth'])&&$addArr['tnpixwidth']?$addArr['tnpixwidth']:'NULL').','.
-                (isset($addArr['lgpixwidth'])&&$addArr['lgpixwidth']?$addArr['lgpixwidth']:'NULL').','.
-                (isset($addArr['jpgcompression'])&&$addArr['jpgcompression']?$addArr['jpgcompression']:'NULL').','.
                 (isset($addArr['createtnimg'])&&$addArr['createtnimg']?$addArr['createtnimg']:'NULL').','.
                 (isset($addArr['createlgimg'])&&$addArr['createlgimg']?$addArr['createlgimg']:'NULL').')';
 		}
@@ -145,8 +122,8 @@ class SpecProcessorManager {
 			$sqlWhere .= 'WHERE (spprid = '.$crit.')';
 		}
 		if($sqlWhere){
-			$sql = 'SELECT collid, title, projecttype, speckeypattern, patternreplace, replacestr,coordx1, coordx2, coordy1, coordy2, sourcepath, targetpath, '.
-				'imgurl, webpixwidth, tnpixwidth, lgpixwidth, jpgcompression, createtnimg, createlgimg, source '.
+			$sql = 'SELECT collid, title, projecttype, speckeypattern, coordx1, coordx2, coordy1, coordy2, sourcepath, '.
+				'createtnimg, createlgimg, source '.
 				'FROM specprocessorprojects '.$sqlWhere;
 			//echo $sql;
 			$rs = $this->conn->query($sql);
@@ -156,27 +133,11 @@ class SpecProcessorManager {
 				}
 				$this->title = $row->title;
 				$this->specKeyPattern = $row->speckeypattern;
-				$this->patternReplace = $row->patternreplace;
-				$this->replaceStr = $row->replacestr;
 				$this->coordX1 = $row->coordx1;
 				$this->coordX2 = $row->coordx2;
 				$this->coordY1 = $row->coordy1;
 				$this->coordY2 = $row->coordy2;
 				$this->sourcePath = $row->sourcepath;
-				$this->targetPath = $row->targetpath;
-				$this->imgUrlBase = $row->imgurl;
-				if($row->webpixwidth) {
-					$this->webPixWidth = $row->webpixwidth;
-				}
-				if($row->tnpixwidth) {
-					$this->tnPixWidth = $row->tnpixwidth;
-				}
-				if($row->lgpixwidth) {
-					$this->lgPixWidth = $row->lgpixwidth;
-				}
-				if($row->jpgcompression) {
-					$this->jpgQuality = $row->jpgcompression;
-				}
 				$this->createTnImg = $row->createtnimg;
 				$this->createLgImg = $row->createlgimg;
 				$this->lastRunDate = $row->source;
@@ -186,12 +147,6 @@ class SpecProcessorManager {
 
 			if($this->sourcePath && substr($this->sourcePath,-1) !== '/' && substr($this->sourcePath,-1) !== '\\') {
 				$this->sourcePath .= '/';
-			}
-			if($this->targetPath && substr($this->targetPath,-1) !== '/' && substr($this->targetPath,-1) !== '\\') {
-				$this->targetPath .= '/';
-			}
-			if($this->imgUrlBase && substr($this->imgUrlBase,-1) !== '/') {
-				$this->imgUrlBase .= '/';
 			}
 		}
 	}
@@ -294,7 +249,8 @@ class SpecProcessorManager {
 				'WHERE collid = '.$this->collid.' GROUP BY processingstatus';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$psArr[strtolower($r->processingstatus)] = $r->cnt;
+				$key = $r->processingstatus ? strtolower($r->processingstatus) : 'no-status';
+                $psArr[$key] = $r->cnt;
 			}
 			$rs->free();
 			$statusArr = array('unprocessed','stage 1','stage 2','stage 3','pending duplicate','pending review-nfn','pending review','expert required','reviewed','closed','empty status');
@@ -484,8 +440,8 @@ class SpecProcessorManager {
  	public function downloadReportData($target): void
 	{
 		$fileName = 'SymbSpecNoImages_'.time().'.csv';
-		header ('Content-Type: text/csv; charset='.$GLOBALS['CHARSET']);
-		header ('Content-Disposition: attachment; filename="'.$fileName.'"');
+		header('Content-Type: text/csv; charset=UTF-8');
+		header('Content-Disposition: attachment; filename="'.$fileName.'"');
 		$headerArr = array('occid','catalogNumber','sciname','recordedBy','recordNumber','eventDate','country','stateProvince','county');
 		$sqlFrag = '';
 		if($target === 'dlnoimg'){
@@ -525,7 +481,7 @@ class SpecProcessorManager {
 	{
 		$retArr = array();
 		if($this->collid){
-			$GLOBALS['LOG_PATHFrag'] = 'imgProccessing/';
+			$GLOBALS['LOG_PATHFrag'] = '/imgProccessing';
 			if(file_exists($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag']) && $fh = opendir($GLOBALS['LOG_PATH'] . $GLOBALS['LOG_PATHFrag'])) {
 				while($fileName = readdir($fh)){
 					if(strpos($fileName,$this->collid.'_') === 0){
@@ -562,63 +518,8 @@ class SpecProcessorManager {
 		return $this->specKeyPattern;
 	}
 
-	public function getPatternReplace(){
-		return $this->patternReplace;
-	}
-
-	public function getReplaceStr(){
-		return $this->replaceStr;
-	}
-
 	public function getSourcePath(){
 		return $this->sourcePath;
-	}
-
-	public function getSourcePathDefault(){
-		return $this->sourcePath;
-	}
-
-	public function setTargetPath($p): void
-	{
-		$this->targetPath = $p;
-	}
-
-	public function getTargetPath(){
-		return $this->targetPath;
-	}
-
-	public function getImgUrlBase(){
-		return $this->imgUrlBase;
-	}
-
-	public function getWebPixWidth(): string
-	{
-		return $this->webPixWidth;
-	}
-
-	public function getTnPixWidth(): string
-	{
-		return $this->tnPixWidth;
-	}
-
-	public function getLgPixWidth(): string
-	{
-		return $this->lgPixWidth;
-	}
-
-	public function getJpgQuality(): int
-	{
-		return $this->jpgQuality;
-	}
-
-	public function getWebMaxFileSize(): int
-	{
-		return $this->webMaxFileSize;
-	}
-
-	public function getLgMaxFileSize(): int
-	{
-		return $this->lgMaxFileSize;
 	}
 
 	public function getCreateTnImg(): int
@@ -631,25 +532,13 @@ class SpecProcessorManager {
 		return $this->createLgImg;
 	}
 
-	public function getLastRunDate(): string
-	{
-		return $this->lastRunDate;
-	}
-
-	public function getUseImageMagick(): int
-	{
- 		return $this->processUsingImageMagick;
- 	}
-
- 	public function getConn(): mysqli
+	public function getConn(): mysqli
 	{
  		return $this->conn;
  	}
 
  	protected function cleanInStr($str): string
 	{
-		$newStr = trim($str);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
+        return $this->conn->real_escape_string(trim($str));
 	}
 }

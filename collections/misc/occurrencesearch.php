@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $targetId = (int)$_REQUEST['targetid'];
@@ -23,7 +23,11 @@ if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
 $occManager = new OccurrenceSupport();
 $collArr = $occManager->getCollectionArr($GLOBALS['IS_ADMIN']?'all':$collEditorArr);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Search Page</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -172,5 +176,8 @@ $collArr = $occManager->getCollectionArr($GLOBALS['IS_ADMIN']?'all':$collEditorA
 		} 
 		?> 
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageShared{
 
@@ -50,7 +50,7 @@ class ImageShared{
 	private $errArr = array();
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->conn = $connection->getConnection();
  		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'] ?? '';
 		if(substr($this->imageRootPath,-1) !== '/') {
@@ -65,9 +65,6 @@ class ImageShared{
 		}
 		if(isset($GLOBALS['IMG_WEB_WIDTH'])){
 			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
-		}
-		if(isset($GLOBALS['IMG_LG_WIDTH'])){
-			$this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
 		}
 		if(isset($GLOBALS['MAX_UPLOAD_FILESIZE'])){
 			$this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
@@ -198,21 +195,13 @@ class ImageShared{
 	{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
-		if(strncmp($url, '/', 1) === 0){
-			if(isset($GLOBALS['IMAGE_DOMAIN'])){
-				$url = $GLOBALS['IMAGE_DOMAIN'].$url;
-			}
-			else{
-				$urlPrefix = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-					$urlPrefix = 'https://';
-				}
-				$urlPrefix .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-				}
-				$url = $urlPrefix.$url;
-			}
+		if($url && strncmp($url, '/', 1) === 0){
+            $urlPrefix = 'http://';
+            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                $urlPrefix = 'https://';
+            }
+            $urlPrefix .= $_SERVER['HTTP_HOST'];
+            $url = $urlPrefix.$url;
 		}
 
 		$this->sourceUrl = $url;
@@ -332,7 +321,7 @@ class ImageShared{
 				if(strncmp($this->sourcePath, 'http://', 7) === 0 || strncmp($this->sourcePath, 'https://', 8) === 0) {
 					$imgLgUrl = $this->sourcePath;
 				}
-				else if($this->sourceWidth < ($this->lgPixWidth*1.2)){
+				else if($this->sourceWidth < ($this->lgPixWidth * 1.2)){
 					if(copy($this->sourcePath,$this->targetPath.$this->imgName.'_lg'.$this->imgExt, $this->context)){
 						$imgLgUrl = $this->imgName.'_lg'.$this->imgExt;
 					}
@@ -478,8 +467,15 @@ class ImageShared{
 				}
 				$rs1->free();
 			}
-
-			$sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, photographer, photographeruid, format, caption, '.
+            if(!$this->sortSeq){
+                if($this->occid){
+                    $this->sortSeq = 50;
+                }
+                else{
+                    $this->sortSeq = 40;
+                }
+            }
+            $sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, photographer, photographeruid, format, caption, '.
 				'owner, sourceurl, copyright, locality, occid, notes, username, sortsequence, sourceIdentifier, ' .
 				' rights, accessrights) '.
 				'VALUES ('.($this->tid?:'NULL').',"'.$imgWebUrl.'",'.
@@ -495,14 +491,14 @@ class ImageShared{
 				($this->locality?'"'.$this->locality.'"':'NULL').','.
 				($this->occid?:'NULL').','.
 				($this->notes?'"'.$this->notes.'"':'NULL').',"'.
-				Sanitizer::cleanInStr($this->conn,$GLOBALS['USERNAME']).'",'.
-				($this->sortSeq?:'50').','.
+				SanitizerService::cleanInStr($this->conn,$GLOBALS['USERNAME']).'",'.
+                $this->sortSeq.','.
 				($this->sourceIdentifier?'"'.$this->sourceIdentifier.'"':'NULL').','.
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
 				($this->accessRights?'"'.$this->accessRights.'"':'NULL').')';
 			//echo $sql; exit;
 			if($this->conn->query($sql)){
-				$guid = UuidFactory::getUuidV4();
+				$guid = UuidService::getUuidV4();
 				$this->activeImgId = $this->conn->insert_id;
 				if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$this->activeImgId.')')) {
 					$this->errArr[] = ' Warning: GUID mapping failed';
@@ -515,6 +511,51 @@ class ImageShared{
 		}
 		return $status;
 	}
+
+    public function addImageRecord($image): int
+    {
+        $retVal = 0;
+        if($image){
+            $sql = 'INSERT INTO images (tid, url, thumbnailurl, originalurl, archiveurl, photographer, photographeruid, imagetype, '.
+                'format, caption, owner, sourceurl, referenceUrl, copyright, rights, accessrights, locality, occid, notes, '.
+                'anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties, sortsequence) '.
+                'VALUES ('.
+                (isset($image['tid']) ? (int)$image['tid'] :'NULL').','.
+                (isset($image['url']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['url']).'"' :'NULL').','.
+                (isset($image['thumbnailurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['thumbnailurl']).'"' :'NULL').','.
+                (isset($image['originalurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['originalurl']).'"' :'NULL').','.
+                (isset($image['archiveurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['archiveurl']).'"' :'NULL').','.
+                (isset($image['photographer']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['photographer']).'"' :'NULL').','.
+                (isset($image['photographeruid']) ? (int)$image['photographeruid'] :'NULL').','.
+                (isset($image['imagetype']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['imagetype']).'"' :'NULL').','.
+                (isset($image['format']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['format']).'"' :'NULL').','.
+                (isset($image['caption']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($image['caption'])).'"' :'NULL').','.
+                (isset($image['owner']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['owner']).'"' :'NULL').','.
+                (isset($image['sourceurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['sourceurl']).'"' :'NULL').','.
+                (isset($image['referenceurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['referenceurl']).'"' :'NULL').','.
+                (isset($image['copyright']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['copyright']).'"' :'NULL').','.
+                (isset($image['rights']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['rights']).'"' :'NULL').','.
+                (isset($image['accessrights']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['accessrights']).'"' :'NULL').','.
+                (isset($image['locality']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($image['locality'])).'"' :'NULL').','.
+                (isset($image['occid']) ? (int)$image['occid'] :'NULL').','.
+                (isset($image['notes']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($image['notes'])).'"' :'NULL').','.
+                (isset($image['anatomy']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($image['anatomy'])).'"' :'NULL').','.
+                '"'.$GLOBALS['USERNAME'].'",'.
+                (isset($image['sourceidentifier']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['sourceidentifier']).'"' :'NULL').','.
+                (isset($image['mediamd5']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['mediamd5']).'"' :'NULL').','.
+                (isset($image['dynamicproperties']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['dynamicproperties']).'"' :'NULL').','.
+                (isset($image['sortsequence']) ? (int)$image['sortsequence'] : '50').')';
+            //echo $sql; exit;
+            if($this->conn->query($sql)){
+                $guid = UuidService::getUuidV4();
+                $retVal = $this->conn->insert_id;
+                if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$retVal.')')) {
+                    $this->errArr[] = ' Warning: GUID mapping failed';
+                }
+            }
+        }
+        return $retVal;
+    }
 
 	public function deleteImage($imgIdDel, $removeImg): bool
 	{
@@ -536,7 +577,7 @@ class ImageShared{
 				if($v) {
 					$imgArr[$k] = $v;
 				}
-				$imgObj .= '"'.$k.'":"'.Sanitizer::cleanInStr($this->conn,$v).'",';
+				$imgObj .= '"'.$k.'":"'.SanitizerService::cleanInStr($this->conn,$v).'",';
 			}
 			$imgObj = json_encode($imgArr);
 			$sqlArchive = 'UPDATE guidimages '.
@@ -558,9 +599,6 @@ class ImageShared{
 					$domain = 'https://';
 				}
 				$domain .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$domain .= ':' . $_SERVER['SERVER_PORT'];
-				}
 				if(stripos($imgUrl,$domain) === 0){
 					$imgUrl2 = $imgUrl;
 					$imgUrl = substr($imgUrl,strlen($domain));
@@ -661,17 +699,6 @@ class ImageShared{
 	public function getUrlBase(): string
 	{
 		$urlBase = $this->urlBase;
-		if(isset($GLOBALS['IMAGE_DOMAIN'])){
-			$urlPrefix = 'http://';
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-				$urlPrefix = 'https://';
-			}
-			$urlPrefix .= $_SERVER['HTTP_HOST'];
-			if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-				$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-			}
-			$urlBase = $urlPrefix.$urlBase;
-		}
 		return $urlBase;
 	}
 
@@ -707,12 +734,12 @@ class ImageShared{
 
 	public function setCaption($v): void
 	{
-		$this->caption = Sanitizer::cleanInStr($this->conn,$v);
+		$this->caption = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setPhotographer($v): void
 	{
-		$this->photographer = Sanitizer::cleanInStr($this->conn,$v);
+		$this->photographer = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setPhotographerUid($v): void
@@ -724,7 +751,7 @@ class ImageShared{
 
 	public function setSourceUrl($v): void
 	{
-		$this->sourceUrl = Sanitizer::cleanInStr($this->conn,$v);
+		$this->sourceUrl = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getTargetPath(): string
@@ -738,12 +765,12 @@ class ImageShared{
 
 	public function setOwner($v): void
 	{
-		$this->owner = Sanitizer::cleanInStr($this->conn,$v);
+		$this->owner = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setLocality($v): void
 	{
-		$this->locality = Sanitizer::cleanInStr($this->conn,$v);
+		$this->locality = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setOccid($v): void
@@ -766,7 +793,7 @@ class ImageShared{
 
 	public function setNotes($v): void
 	{
-		$this->notes = Sanitizer::cleanInStr($this->conn,$v);
+		$this->notes = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setSortSeq($v): void
@@ -778,7 +805,7 @@ class ImageShared{
 
 	public function setCopyright($v): void
 	{
-		$this->copyright = Sanitizer::cleanInStr($this->conn,$v);
+		$this->copyright = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getErrArr(): array
@@ -839,20 +866,12 @@ class ImageShared{
 					$exists = true;
 				}
 			}
-			if(isset($GLOBALS['IMAGE_DOMAIN'])){
-				$uri = $GLOBALS['IMAGE_DOMAIN'].$uri;
-			}
-			else{
-				$urlPrefix = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-					$urlPrefix = 'https://';
-				}
-				$urlPrefix .= $_SERVER['HTTP_HOST'];
-				if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-					$urlPrefix .= ':' . $_SERVER['SERVER_PORT'];
-				}
-				$uri = $urlPrefix.$uri;
-			}
+            $urlPrefix = 'http://';
+            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
+                $urlPrefix = 'https://';
+            }
+            $urlPrefix .= $_SERVER['HTTP_HOST'];
+            $uri = $urlPrefix.$uri;
 		}
 
 		if(!$exists && function_exists('curl_init')) {
@@ -941,7 +960,7 @@ class ImageShared{
                             $block_size = hexdec($block_size[1]);
                             while(!feof($handle)) {
                                 $i += $block_size;
-                                $new_block .= fread($handle, $block_size);
+                                $new_block .= $block_size > 0?fread($handle, $block_size):'';
                                 if(is_int($i) && isset($new_block[$i]) && $new_block[$i] === "\xFF") {
                                     $sof_marker = array("\xC0", "\xC1", "\xC2", "\xC3", "\xC5", "\xC6", "\xC7", "\xC8", "\xC9", "\xCA", "\xCB", "\xCD", "\xCE", "\xCF");
                                     if(in_array($new_block[$i + 1], $sof_marker, true)) {
@@ -955,7 +974,7 @@ class ImageShared{
                                         }
                                     }
                                     $i += 2;
-                                    $block_size = unpack('H*', $new_block[$i] . $new_block[$i+1]);
+                                    $block_size = strlen($new_block) >= ($i+1)?unpack('H*', $new_block[$i] . $new_block[$i+1]):null;
                                     if($block_size){
                                         $block_size = hexdec($block_size[1]);
                                     }
@@ -969,23 +988,19 @@ class ImageShared{
 		return $retArr;
 	}
 
-	private static function getImgDim2($imgUrl) {
-		$curl = curl_init($imgUrl);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Range: bytes=0-65536'));
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36');
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-		$data = curl_exec($curl);
-		curl_close($curl);
-		$im = @imagecreatefromstring($data);
-		$width = @imagesx($im);
-		$height = @imagesy($im);
-		if($im) {
-			imagedestroy($im);
-		}
-		if(!$width || !$height) {
-			return false;
-		}
-		return array($width,$height);
-	}
+    private static function getImgDim2($imgUrl) {
+        $width = 0;
+        $height = 0;
+        $data = file_get_contents($imgUrl);
+        $im = @imagecreatefromstring($data);
+        if($im) {
+            $width = @imagesx($im);
+            $height = @imagesy($im);
+            imagedestroy($im);
+        }
+        if($width && $height) {
+            return array($width,$height);
+        }
+        return false;
+    }
 }

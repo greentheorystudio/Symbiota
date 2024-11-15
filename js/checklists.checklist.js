@@ -1,4 +1,4 @@
-$(document).ready(function() {
+document.addEventListener("DOMContentLoaded", function() {
 	$("#taxonfilter").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "../api/checklists/clsearchsuggest.php", { term: request.term, cl: clid }, response );
@@ -73,40 +73,3 @@ function changeOptionFormAction(action,target){
 	document.optionform.action = action;
 	document.optionform.target = target;
 }
-
-const timeout = 500;
-let closetimer = 0;
-let ddmenuitem = 0;
-
-function mopen(id)
-{	
-	mcancelclosetime();
-	if(ddmenuitem) {
-		ddmenuitem.style.visibility = 'hidden';
-	}
-	ddmenuitem = document.getElementById(id);
-	ddmenuitem.style.visibility = 'visible';
-
-}
-
-function mclose()
-{
-	if(ddmenuitem) {
-		ddmenuitem.style.visibility = 'hidden';
-	}
-}
-
-function mclosetime()
-{
-	closetimer = window.setTimeout(mclose, timeout);
-}
-
-function mcancelclosetime()
-{
-	if(closetimer){
-		window.clearTimeout(closetimer);
-		closetimer = null;
-	}
-}
-
-document.onclick = mclose;

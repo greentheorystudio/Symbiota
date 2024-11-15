@@ -1,13 +1,12 @@
 <?php
 include_once(__DIR__ . '/SpecUploadBase.php');
-include_once(__DIR__ . '/Utilities.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 
 class SpecUploadDwca extends SpecUploadBase{
 
     private $baseFolderName;
     private $extensionFolderName = '';
     private $metaArr;
-    private $delimiter = ',';
     private $enclosure = '"';
     private $encoding = 'utf-8';
     private $loopCnt = 0;
@@ -258,12 +257,6 @@ class SpecUploadDwca extends SpecUploadBase{
                                 $this->metaArr['occur']['fields'][0] = 'id';
                             }
                             if(($this->metaArr['occur']['ignoreHeaderLines'] === 1) && $this->metaArr['occur']['fieldsTerminatedBy']) {
-                                if($this->metaArr['occur']['fieldsTerminatedBy'] === '\t'){
-                                    $this->delimiter = "\t";
-                                }
-                                else{
-                                    $this->delimiter = $this->metaArr['occur']['fieldsTerminatedBy'];
-                                }
                                 $fullPath = $this->uploadTargetPath.$this->baseFolderName.$this->extensionFolderName.$this->metaArr['occur']['name'];
                                 $fh = fopen($fullPath, 'rb') or die("Can't open occurrence file");
                                 $headerArr = $this->getRecordArr($fh);
@@ -332,12 +325,6 @@ class SpecUploadDwca extends SpecUploadBase{
                                 $this->metaArr[$tagName]['fields'][$extCoreId] = 'coreid';
 
                                 if((int)$this->metaArr[$tagName]['ignoreHeaderLines'] === 1 && $this->metaArr[$tagName]['fieldsTerminatedBy']) {
-                                    if($this->metaArr[$tagName]['fieldsTerminatedBy'] === '\t'){
-                                        $this->delimiter = "\t";
-                                    }
-                                    else{
-                                        $this->delimiter = $this->metaArr[$tagName]['fieldsTerminatedBy'];
-                                    }
                                     $fullPath = $this->uploadTargetPath.$this->baseFolderName.$this->extensionFolderName.$this->metaArr[$tagName]['name'];
                                     $fh = fopen($fullPath, 'rb') or die("Can't open $tagName extension file");
                                     $headerArr = $this->getRecordArr($fh);
@@ -381,17 +368,6 @@ class SpecUploadDwca extends SpecUploadBase{
             $this->readMetaFile();
             if(isset($this->metaArr['occur']['fields'])){
                 $fullPath .= $this->extensionFolderName;
-                if(isset($this->metaArr['occur']['fieldsTerminatedBy']) && $this->metaArr['occur']['fieldsTerminatedBy']){
-                    if($this->metaArr['occur']['fieldsTerminatedBy'] === '\t'){
-                        $this->delimiter = "\t";
-                    }
-                    else{
-                        $this->delimiter = $this->metaArr['occur']['fieldsTerminatedBy'];
-                    }
-                }
-                else{
-                    $this->delimiter = '';
-                }
                 if(isset($this->metaArr['occur']['fieldsEnclosedBy']) && $this->metaArr['occur']['fieldsEnclosedBy']){
                     $this->enclosure = $this->metaArr['occur']['fieldsEnclosedBy'];
                 }
@@ -408,7 +384,7 @@ class SpecUploadDwca extends SpecUploadBase{
                         $this->getRecordArr($fh);
                     }
 
-                    $cset = strtolower(str_replace('-','',$GLOBALS['CHARSET']));
+                    $cset = 'utf8';
                     $this->sourceArr = array();
                     foreach($this->metaArr['occur']['fields'] as $k => $v){
                         $this->sourceArr[$k] = strtolower($v);
@@ -435,7 +411,7 @@ class SpecUploadDwca extends SpecUploadBase{
                             if(strncmp($symbField, 'unmapped', 8) !== 0){
                                 $indexArr = array_keys($this->sourceArr,$sMap['field']);
                                 $index = array_shift($indexArr);
-                                if(array_key_exists($index, $recordArr) && $recordArr) {
+                                if(array_key_exists($index, $recordArr)) {
                                     $valueStr = trim($recordArr[$index]);
                                     if($valueStr){
                                         if($cset !== $this->encoding) {
@@ -531,7 +507,7 @@ class SpecUploadDwca extends SpecUploadBase{
             closedir($handle);
         }
         if(stripos($dirPath,$this->uploadTargetPath) === 0){
-            Utilities::deleteDirectory($dirPath);
+            FileSystemService::deleteDirectory($dirPath);
         }
     }
 
@@ -543,17 +519,6 @@ class SpecUploadDwca extends SpecUploadBase{
         }
         if($fullPathExt && file_exists($fullPathExt)){
             if(isset($this->metaArr[$targetStr]['fields'])){
-                if(isset($this->metaArr[$targetStr]['fieldsTerminatedBy']) && $this->metaArr[$targetStr]['fieldsTerminatedBy']){
-                    if($this->metaArr[$targetStr]['fieldsTerminatedBy'] === '\t'){
-                        $this->delimiter = "\t";
-                    }
-                    else{
-                        $this->delimiter = $this->metaArr[$targetStr]['fieldsTerminatedBy'];
-                    }
-                }
-                else{
-                    $this->delimiter = '';
-                }
                 if(isset($this->metaArr[$targetStr]['fieldsEnclosedBy']) && $this->metaArr[$targetStr]['fieldsEnclosedBy']){
                     $this->enclosure = $this->metaArr[$targetStr]['fieldsEnclosedBy'];
                 }
@@ -565,7 +530,7 @@ class SpecUploadDwca extends SpecUploadBase{
                 if($this->metaArr[$targetStr]['ignoreHeaderLines'] === '1'){
                     $this->getRecordArr($fh);
                 }
-                $cset = strtolower(str_replace('-','',$GLOBALS['CHARSET']));
+                $cset = 'utf8';
 
                 $fieldMap['dbpk']['field'] = 'coreid';
                 while($recordArr = $this->getRecordArr($fh)){
@@ -574,7 +539,7 @@ class SpecUploadDwca extends SpecUploadBase{
                         if(strncmp($symbField, 'unmapped', 8) !== 0){
                             $indexArr = array_keys($sourceArr,$iMap['field']);
                             $index = array_shift($indexArr);
-                            if(array_key_exists($index, $recordArr) && $recordArr) {
+                            if(array_key_exists($index, $recordArr)) {
                                 $valueStr = trim($recordArr[$index]);
                                 if($valueStr){
                                     if($cset !== $this->encoding) {
@@ -609,33 +574,7 @@ class SpecUploadDwca extends SpecUploadBase{
     }
 
     private function getRecordArr($fHandler){
-        if($this->delimiter){
-            $recordArr = fgetcsv($fHandler,0,$this->delimiter,$this->enclosure);
-        }
-        else{
-            $record = fgets($fHandler);
-            if(substr($this->metaArr['occur']['name'],-4) === '.csv'){
-                $this->delimiter = ',';
-            }
-            elseif(strpos($record,"\t") !== false){
-                $this->delimiter = "\t";
-            }
-            elseif(strpos($record, '|') !== false){
-                $this->delimiter = '|';
-            }
-            else{
-                $this->delimiter = ',';
-            }
-            $recordArr = explode($this->delimiter,$record);
-            if($this->enclosure){
-                foreach($recordArr as $k => $v){
-                    if($recordArr && strpos($v, $this->enclosure) === 0 && substr($v, -1) === $this->enclosure) {
-                        $recordArr[$k] = substr($v,1, -1);
-                    }
-                }
-            }
-        }
-        return $recordArr;
+        return fgetcsv($fHandler,0,',',$this->enclosure);
     }
 
     public function setBaseFolderName($name): void

@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']):'';
@@ -9,12 +9,15 @@ $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']):'';
 $clManager = new ChecklistManager();
 $clManager->setProj($pid);
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Species Lists</title>
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialViewerWindow(coordArrJson) {
@@ -84,7 +87,8 @@ $clManager->setProj($pid);
 		</div>
 	</div>
 	<?php
-		include(__DIR__ . '/../footer.php');
+    include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

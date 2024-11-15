@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonomyDynamicListManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 header('Cache-Control: no-cache, must-revalidate, max-age=0');
 
@@ -51,16 +51,21 @@ if($targetTid){
     $urlVars = 'desclimit='.$descLimit.'&orderinput='.$orderInput.'&familyinput='.$familyInput.'&scinameinput='.$scinameInput.'&commoninput='.$commonInput.'&sortSelect='.$sortSelect.'&targettid='.$targetTid.'&desclimit='.$descLimit;
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../config/header-includes.php');
+?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE'] . ($targetTid?' Dynamic Species List: ' . $listManager->getSciName():''); ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
+        document.addEventListener("DOMContentLoaded", function() {
             $("#orderinput").autocomplete({
                 source: function( request, response ) {
                     $.getJSON( "../api/taxa/autofillsciname.php", {
@@ -137,7 +142,7 @@ if($targetTid){
 
         function processSelection(id,value){
             document.getElementById('targettid').value = value;
-            if(id !== 'kingdomSelect'){
+            /*if(id !== 'kingdomSelect'){
                 document.getElementById('kingdomSelect').value = '';
             }
             if(id !== 'phylumSelect'){
@@ -157,7 +162,7 @@ if($targetTid){
             }
             if(id !== 'commoninput'){
                 document.getElementById('commoninput').value = '';
-            }
+            }*/
         }
 
         function verifySubmit(){
@@ -262,7 +267,7 @@ include(__DIR__ . '/../header.php');
                         </div>
                         <div style="margin-top:90px;">
                             <div style="float:left;">
-                                <input type="checkbox" name="desclimit" value="1" <?php echo (((!$_POST && !$_GET) || $descLimit)?'CHECKED':''); ?> /> Limit to species with information
+                                <input type="checkbox" name="desclimit" value="1" <?php echo ($descLimit ? 'CHECKED' : ''); ?> /> Limit to species with information
                             </div>
                             <div style="float:right;">
                                 <input name="targettid" id="targettid" type="hidden" value="<?php echo $targetTid; ?>" />
@@ -365,6 +370,7 @@ include(__DIR__ . '/../header.php');
     </div>
 </div>
 <?php
+include_once(__DIR__ . '/../config/footer-includes.php');
 include(__DIR__ . '/../footer.php');
 ?>
 </body>

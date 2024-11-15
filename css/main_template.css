@@ -1,25 +1,23 @@
-body{
-	width: 80%;
-	min-width:950px;
-	margin-top: 20px;
-	margin-left: auto;
-	margin-right: auto;
-	border: 1px solid black;
+body {
+	font-size: 16px;
 }
-
 .title {
 	font-weight: bold;
 }
 
 #mainContainer{
 	display: block;
-	width: 100%;
+	width: 80%;
+	min-width:950px;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid black;
 }
 
 #bannerContainer{
 	clear: both;
 	padding: 40px;
-	height: 100px;
+	height: 200px;
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
@@ -43,105 +41,33 @@ div.navpath {
 #topNavigation {
 	clear:both;
 	background-color:#c2c2c2;
-	padding: 0;
-	display: flex;
-	justify-content: space-between;
 }
-#rightNavigationLinks{
-	display: flex;
-	align-items: center;
-}
-
-#rightNavigationLinks span{
-	margin-right: 15px;
-}
-#horizontalDropDown{
-	list-style:none;
+.horizontalDropDown{
 	width:auto;
 	background-color:#c2c2c2;
 	margin: 0;
 	padding: 0;
+	clear:both;
 }
-#horizontalDropDown li{
-	float:left;
-	position:relative;
-	padding:0;
-	margin:0;
-}
-#horizontalDropDown a{
-	display:block;
+.horizontalDropDown a{
 	color:#000000;
 	text-decoration: none;
-	padding: 20px 15px;
 }
-#horizontalDropDown a:hover{
-	background-color:#999999;
+.horizontalDropDownButton, .horizontalDropDownIconButton{
+	background-color: #c2c2c2!important;
+	text-decoration: none;
+	font-size: 100%;
 }
-/* Submenu */
-#horizontalDropDown ul {
-	list-style:none;
-	position:absolute;
-	left:0;
-	top: 53px;
-	padding:0;
-	z-index:1000;
-	background-color:#dcdcdc;
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
+.horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
+	background-color: #999999!important;
+	text-decoration: none;
 }
-#horizontalDropDown ul li{
-	float:none;
+.horizontalDropDownButton i {
+	display: none;
 }
-#horizontalDropDown ul a{
-	white-space:nowrap;
-	padding: 10px 15px;
-	text-decoration:none;
-	text-indent:8px;
+.header-username-text {
+	margin-right: 15px;
 }
-#horizontalDropDown li:hover ul {
-	visibility: visible;
-	opacity: 1;
-}
-#horizontalDropDown li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 10px 15px;
-	background-color:#dcdcdc;
-	z-index:1000;
-}
-#horizontalDropDown li:hover ul li a:hover {
-	background:#999999;
-}
-/* Submenu to right */
-#horizontalDropDown li ul li ul {
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-}
-#horizontalDropDown li ul li:hover ul {
-	left:100%;
-	top: 0;
-	visibility: visible;
-	opacity: 1;
-	padding:0;
-	z-index:1000;
-}
-#horizontalDropDown li ul li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 10px 15px;
-	background-color:#dcdcdc;
-	z-index:1000;
-}
-#horizontalDropDown li ul li:hover ul li a:hover {
-	background:#999999;
-}
-
 /* Quick Search Plugin */
 #quicksearchtext{
 	margin-top:0;

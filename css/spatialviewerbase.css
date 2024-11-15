@@ -33,7 +33,7 @@
 	flex-direction: column;
 	position: absolute;
 	width: 200px;
-	height:55px;
+	height:65px;
 	z-index: 3;
 	font-family: Arial, serif;
 	-moz-border-radius: 5px ! important;
@@ -45,7 +45,7 @@
 #maptoolcontainer {
 	position: relative;
 	top: 0;
-	height: 25px;
+	height: 2.45rem;
 	padding: 5px 5px 5px 10px;
 	display: block;
 	font-family: Arial, sans-serif;

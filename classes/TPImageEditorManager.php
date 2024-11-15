@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/TPEditorManager.php');
 include_once(__DIR__ . '/ImageShared.php');
+include_once(__DIR__ . '/MediaShared.php');
 
 class TPImageEditorManager extends TPEditorManager{
 
@@ -18,7 +19,7 @@ class TPImageEditorManager extends TPEditorManager{
         $tidArr = Array($this->tid);
         if($this->rankId === 220){
             $sql1 = 'SELECT DISTINCT tid FROM taxa '.
-                'WHERE (tid = tidaccepted) AND (parenttid = '.$this->tid.')';
+                'WHERE tid = tidaccepted AND parenttid = '.$this->tid.' ';
             $rs1 = $this->taxonCon->query($sql1);
             while($r1 = $rs1->fetch_object()){
                 $tidArr[] = $r1->tid;
@@ -40,9 +41,9 @@ class TPImageEditorManager extends TPEditorManager{
         $imgCnt = 0;
         while($row = $result->fetch_object()){
             $imageArr[$imgCnt]['imgid'] = $row->imgid;
-            $imageArr[$imgCnt]['url'] = $row->url;
-            $imageArr[$imgCnt]['thumbnailurl'] = $row->thumbnailurl;
-            $imageArr[$imgCnt]['originalurl'] = $row->originalurl;
+            $imageArr[$imgCnt]['url'] = ($row->url && $GLOBALS['CLIENT_ROOT'] && strncmp($row->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->url) : $row->url;
+            $imageArr[$imgCnt]['thumbnailurl'] = ($row->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->thumbnailurl) : $row->thumbnailurl;
+            $imageArr[$imgCnt]['originalurl'] = ($row->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($row->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $row->originalurl) : $row->originalurl;
             $imageArr[$imgCnt]['photographer'] = $row->photographer;
             $imageArr[$imgCnt]['photographeruid'] = $row->photographeruid;
             $imageArr[$imgCnt]['photographerdisplay'] = $row->photographerdisplay;
@@ -65,7 +66,7 @@ class TPImageEditorManager extends TPEditorManager{
     public function echoPhotographerSelect($userId = null): void
     {
         $sql = "SELECT u.uid, CONCAT_WS(', ',u.lastname,u.firstname) AS fullname ".
-            'FROM users u ORDER BY u.lastname, u.firstname ';
+            'FROM users AS u ORDER BY u.lastname, u.firstname ';
         $result = $this->taxonCon->query($sql);
         while($row = $result->fetch_object()){
             echo "<option value='".$row->uid."' ".($row->uid === $userId? 'SELECTED' : ''). '>' .$row->fullname."</option>\n";
@@ -97,19 +98,19 @@ class TPImageEditorManager extends TPEditorManager{
         $status = true;
         $imgManager = new ImageShared();
 
-        $imgPath = $postArr['filepath'];
+        $imgPath = $postArr['filepath'] ?? null;
 
         $imgManager->setTid($tid);
-        $imgManager->setCaption($postArr['caption']);
-        $imgManager->setPhotographer($postArr['photographer']);
-        $imgManager->setPhotographerUid($postArr['photographeruid']);
-        $imgManager->setSourceUrl($postArr['sourceurl']);
-        $imgManager->setCopyright($postArr['copyright']);
-        $imgManager->setOwner($postArr['owner']);
-        $imgManager->setLocality($postArr['locality']);
-        $imgManager->setOccid($postArr['occid']);
-        $imgManager->setNotes($postArr['notes']);
-        $sort = $postArr['sortsequence'];
+        $imgManager->setCaption($postArr['caption'] ?? null);
+        $imgManager->setPhotographer($postArr['photographer'] ?? null);
+        $imgManager->setPhotographerUid($postArr['photographeruid'] ?? null);
+        $imgManager->setSourceUrl($postArr['sourceurl'] ?? null);
+        $imgManager->setCopyright($postArr['copyright'] ?? null);
+        $imgManager->setOwner($postArr['owner'] ?? null);
+        $imgManager->setLocality($postArr['locality'] ?? null);
+        $imgManager->setOccid($postArr['occid'] ?? null);
+        $imgManager->setNotes($postArr['notes'] ?? null);
+        $sort = $postArr['sortsequence'] ?? null;
         if(!$sort) {
             $sort = 40;
         }
@@ -140,5 +141,73 @@ class TPImageEditorManager extends TPEditorManager{
             $this->errorStr = implode('<br/>',$imgManager->getErrArr());
         }
         return $status;
+    }
+
+    public function loadMedia($postArr): bool
+    {
+        $medManager = new MediaShared();
+        $medManager->setTargetPath(($this->family?$this->family.'/':'').date('Ym').'/');
+
+        if(array_key_exists('title',$postArr)) {
+            $medManager->setTitle($postArr['title']);
+        }
+        if(array_key_exists('creatoruid',$postArr)) {
+            $medManager->setCreatorUid($postArr['creatoruid']);
+        }
+        if(array_key_exists('creator',$postArr)) {
+            $medManager->setCreator($postArr['creator']);
+        }
+        if(array_key_exists('description',$postArr)) {
+            $medManager->setDescription($postArr['description']);
+        }
+        if(array_key_exists('locationcreated',$postArr)) {
+            $medManager->setLocationCreated($postArr['locationcreated']);
+        }
+        if(array_key_exists('language',$postArr)) {
+            $medManager->setLanguage($postArr['language']);
+        }
+        if(array_key_exists('type',$postArr)) {
+            $medManager->setType($postArr['type']);
+        }
+        if(array_key_exists('format',$postArr)) {
+            $medManager->setFormat($postArr['format']);
+        }
+        if(array_key_exists('usageterms',$postArr)) {
+            $medManager->setUsageTerms($postArr['usageterms']);
+        }
+        if(array_key_exists('rights',$postArr)) {
+            $medManager->setRights($postArr['rights']);
+        }
+        if(array_key_exists('owner',$postArr)) {
+            $medManager->setOwner($postArr['owner']);
+        }
+        if(array_key_exists('publisher',$postArr)) {
+            $medManager->setPublisher($postArr['publisher']);
+        }
+        if(array_key_exists('contributor',$postArr)) {
+            $medManager->setContributor($postArr['contributor']);
+        }
+        if(array_key_exists('bibliographiccitation',$postArr)) {
+            $medManager->setBibliographicCitation($postArr['bibliographiccitation']);
+        }
+        if(array_key_exists('furtherinformationurl',$postArr)) {
+            $medManager->setFurtherInformationURL($postArr['furtherinformationurl']);
+        }
+        if(array_key_exists('sortsequence',$postArr)) {
+            $medManager->setSortSequence($postArr['sortsequence']);
+        }
+
+        $sourceMedUri = array_key_exists('accessuri',$postArr) ? $postArr['accessuri'] : null;
+        if($sourceMedUri){
+            $medManager->parseUrl($sourceMedUri);
+        }
+        else{
+            $medManager->uploadMedia();
+        }
+        $medManager->setTid($postArr['tid']);
+        $medManager->processMedia();
+
+        $this->errorStr = $medManager->getErrStr();
+        return true;
     }
 }

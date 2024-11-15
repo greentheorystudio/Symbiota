@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class SiteMapManager{
 	
@@ -9,7 +9,7 @@ class SiteMapManager{
 	private $genObsArr = array();
 	
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 
@@ -47,13 +47,9 @@ class SiteMapManager{
 				while($row = $rs->fetch_object()){
 					$name = $row->collectionname.($row->ccode? ' (' .$row->ccode. ')' : '');
 					$isCollAdmin = ($GLOBALS['IS_ADMIN']|| in_array($row->collid, $adminArr, true) ?1:0);
-					if($row->colltype === 'Observations'){
+					if($row->colltype === 'HumanObservation'){
 						$this->obsArr[$row->collid]['name'] = $name;
 						$this->obsArr[$row->collid]['isadmin'] = $isCollAdmin; 
-					}
-					elseif($row->colltype === 'General Observations'){
-						$this->genObsArr[$row->collid]['name'] = $name;
-						$this->genObsArr[$row->collid]['isadmin'] = $isCollAdmin; 
 					}
 					else{
 						$this->collArr[$row->collid]['name'] = $name;

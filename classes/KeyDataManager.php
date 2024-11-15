@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class KeyDataManager extends Manager{
 
@@ -29,7 +29,7 @@ class KeyDataManager extends Manager{
 			$this->pid = $projValue;
 		}
 		else{
-			$sql = "SELECT p.pid FROM fmprojects p WHERE (p.projname = '".Sanitizer::cleanInStr($this->conn,$projValue)."')";
+			$sql = "SELECT p.pid FROM fmprojects p WHERE (p.projname = '".SanitizerService::cleanInStr($this->conn,$projValue)."')";
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->pid = $row->pid;
@@ -43,7 +43,7 @@ class KeyDataManager extends Manager{
 	{
         $this->lang = $l;
         $this->langArr[] = $l;
-        $sql = "SELECT iso639_1 FROM adminlanguages WHERE langname = '".Sanitizer::cleanInStr($this->conn,$l)."' ";
+        $sql = "SELECT iso639_1 FROM adminlanguages WHERE langname = '".SanitizerService::cleanInStr($this->conn,$l)."' ";
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
             $this->langArr[] = $row->iso639_1;
@@ -98,7 +98,7 @@ class KeyDataManager extends Manager{
 
 	public function setTaxonFilter($t): void
 	{
-		$this->taxonFilter = Sanitizer::cleanInStr($this->conn,$t);
+		$this->taxonFilter = SanitizerService::cleanInStr($this->conn,$t);
 	}
 
 	public function setClValue($clv){
@@ -222,7 +222,7 @@ class KeyDataManager extends Manager{
 		if($charList){
 			$sqlChar = 'SELECT DISTINCT cs.CID, cs.CS, cs.CharStateName, cs.Description AS csdescr, chars.CharName,' .
 				'chars.description AS chardescr, chars.hid, chead.headingname, chars.helpurl, Count(cs.CS) AS Ct, chars.DifficultyRank,' .
-				($this->checkFieldExists('kmcharacters','display')?'chars.display, ':''). 'chars.defaultlang ' .
+				'chars.display, chars.defaultlang ' .
 				'FROM ((((' .$this->sql. ') AS tList INNER JOIN kmdescr d ON tList.TID = d.TID)' .
 				'INNER JOIN kmcs cs ON (d.CS = cs.CS)	AND (d.CID = cs.CID)) INNER JOIN kmcharacters chars ON chars.cid = cs.CID) ' .
 				'INNER JOIN kmcharheading chead ON chars.hid = chead.hid ' .
@@ -444,7 +444,7 @@ class KeyDataManager extends Manager{
         if(!$this->sql){
             $sqlBase = 'SELECT DISTINCT t.tid, t.family, ' .($this->commonDisplay?'IFNULL(v.VernacularName,t.SciName)':'t.SciName'). ' AS DisplayName, t.parenttid ';
             if($this->dynClid){
-                $sqlFromBase = 'INNER JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
+                $sqlFromBase = 'LEFT JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
                 $sqlWhere = 'WHERE clk.dynclid = ' .$this->dynClid. ' AND t.RankId = 220 ';
             }
             else{

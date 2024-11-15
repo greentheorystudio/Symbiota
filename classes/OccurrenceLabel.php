@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceLabel{
 
@@ -12,7 +12,7 @@ class OccurrenceLabel{
     private $errorArr = array();
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 
@@ -36,21 +36,21 @@ class OccurrenceLabel{
             $sqlWhere = '';
             $sqlOrderBy = '';
             if($pArr['taxa']){
-                $sqlWhere .= 'AND (o.sciname = "'.Sanitizer::cleanInStr($this->conn,$pArr['taxa']).'") ';
+                $sqlWhere .= 'AND (o.sciname = "'.SanitizerService::cleanInStr($this->conn,$pArr['taxa']).'") ';
             }
             if($pArr['labelproject']){
-                $sqlWhere .= 'AND (o.labelproject = "'.Sanitizer::cleanInStr($this->conn,$pArr['labelproject']).'") ';
+                $sqlWhere .= 'AND (o.labelproject = "'.SanitizerService::cleanInStr($this->conn,$pArr['labelproject']).'") ';
             }
             if($pArr['recordenteredby']){
-                $sqlWhere .= 'AND (o.recordenteredby = "'.Sanitizer::cleanInStr($this->conn,$pArr['recordenteredby']).'") ';
+                $sqlWhere .= 'AND (o.recordenteredby = "'.SanitizerService::cleanInStr($this->conn,$pArr['recordenteredby']).'") ';
             }
-            $date1 = Sanitizer::cleanInStr($this->conn,$pArr['date1']);
-            $date2 = Sanitizer::cleanInStr($this->conn,$pArr['date2']);
+            $date1 = SanitizerService::cleanInStr($this->conn,$pArr['date1']);
+            $date2 = SanitizerService::cleanInStr($this->conn,$pArr['date2']);
             if(!$date1 && $date2){
                 $date1 = $date2;
                 $date2 = '';
             }
-            $dateTarget = Sanitizer::cleanInStr($this->conn,$pArr['datetarget']);
+            $dateTarget = SanitizerService::cleanInStr($this->conn,$pArr['datetarget']);
             if($date1){
                 if($date2){
                     $sqlWhere .= 'AND (DATE('.$dateTarget.') BETWEEN "'.$date1.'" AND "'.$date2.'") ';
@@ -60,7 +60,7 @@ class OccurrenceLabel{
                 }
             }
             if($pArr['recordnumber']){
-                $rnArr = explode(',',Sanitizer::cleanInStr($this->conn,$pArr['recordnumber']));
+                $rnArr = explode(',',SanitizerService::cleanInStr($this->conn,$pArr['recordnumber']));
                 $rnBetweenFrag = array();
                 $rnInFrag = array();
                 foreach($rnArr as $v){
@@ -93,7 +93,7 @@ class OccurrenceLabel{
                 $sqlWhere .= 'AND ('.substr($rnWhere,3).') ';
             }
             if($pArr['recordedby']){
-                $recordedBy = Sanitizer::cleanInStr($this->conn,$pArr['recordedby']);
+                $recordedBy = SanitizerService::cleanInStr($this->conn,$pArr['recordedby']);
                 if(strlen($recordedBy) < 4 || in_array(strtolower($recordedBy),array('best','little'))){
                     $sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
                 }
@@ -102,7 +102,7 @@ class OccurrenceLabel{
                 }
             }
             if($pArr['identifier']){
-                $iArr = explode(',',Sanitizer::cleanInStr($this->conn,$pArr['identifier']));
+                $iArr = explode(',',SanitizerService::cleanInStr($this->conn,$pArr['identifier']));
                 $iBetweenFrag = array();
                 $iInFrag = array();
                 foreach($iArr as $v){
@@ -135,7 +135,7 @@ class OccurrenceLabel{
                 $sqlWhere .= 'AND ('.substr($iWhere,3).') ';
                 $sqlOrderBy .= ',o.catalogNumber';
             }
-            if($this->collArr['colltype'] === 'General Observations'){
+            if($this->collArr['colltype'] === 'HumanObservation'){
                 $sqlWhere .= 'AND (o.collid = '.$this->collid.') ';
                 $sqlWhere .= (!array_key_exists('extendedsearch', $pArr)) ? ' AND (o.observeruid = ' . $GLOBALS['SYMB_UID'] . ') ' : '';
             }
@@ -238,7 +238,7 @@ class OccurrenceLabel{
                 header('Content-Description: Label Output File');
                 header ('Content-Type: text/csv');
                 header ('Content-Disposition: attachment; filename="'.$fileName.'"');
-                header('Content-Transfer-Encoding: '.strtoupper($GLOBALS['CHARSET']));
+                header('Content-Transfer-Encoding: UTF-8');
                 header('Expires: 0');
                 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
                 header('Pragma: public');
@@ -272,8 +272,7 @@ class OccurrenceLabel{
     {
         if(!$this->labelFieldArr){
             $this->labelFieldArr = array('occid'=>'o.occid', 'collid'=>'o.collid', 'catalognumber'=>'o.catalognumber', 'othercatalognumbers'=>'o.othercatalognumbers', 'family'=>'o.family',
-                'sciname'=>'o.sciname','genus'=>'o.genus','specificepithet'=>'o.specificepithet','taxonrank'=>'o.taxonrank',
-                'infraspecificepithet'=>'o.infraspecificepithet', 'scientificnameauthorship'=>'o.scientificnameauthorship', 'identifiedby'=>'o.identifiedby',
+                'sciname'=>'o.sciname','identifiedby'=>'o.identifiedby',
                 'dateidentified'=>'o.dateidentified', 'identificationreferences'=>'o.identificationreferences', 'identificationremarks'=>'o.identificationremarks', 'taxonremarks'=>'o.taxonremarks','locationid'=>'o.locationid',
                 'identificationqualifier'=>'o.identificationqualifier', 'typestatus'=>'o.typestatus', 'recordedby'=>'o.recordedby', 'recordnumber'=>'o.recordnumber', 'associatedcollectors'=>'o.associatedcollectors',
                 'eventdate'=>'DATE_FORMAT(o.eventdate,"%e %M %Y") AS eventdate', 'year'=>'o.year', 'month'=>'o.month', 'day'=>'o.day', 'monthname'=>'DATE_FORMAT(o.eventdate,"%M") AS monthname',
@@ -644,9 +643,6 @@ class OccurrenceLabel{
             $urlStr = 'https://';
         }
         $urlStr .= $_SERVER['HTTP_HOST'];
-        if($_SERVER['SERVER_PORT'] && $_SERVER['SERVER_PORT'] !== 80 && $_SERVER['SERVER_PORT'] !== 443) {
-            $urlStr .= ':' . $_SERVER['SERVER_PORT'];
-        }
         $urlStr .= $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?fullwindow=1&occid=' . $occid;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'http://chart.apis.google.com/chart');
@@ -684,7 +680,7 @@ class OccurrenceLabel{
                 'CONCAT_WS(", ",d.identifiedBy,d.dateIdentified,d.identificationRemarks,d.identificationReferences) AS determination '.
                 'FROM omoccurrences AS o INNER JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
                 'WHERE (o.collid = '.$this->collid.') AND (d.printqueue = 1) ';
-            if($this->collArr['colltype'] === 'General Observations'){
+            if($this->collArr['colltype'] === 'HumanObservation'){
                 $sql .= ' AND (o.observeruid = '.$GLOBALS['SYMB_UID'].') ';
             }
             $sql .= 'LIMIT 400 ';
@@ -707,7 +703,7 @@ class OccurrenceLabel{
         $retArr = array();
         if($this->collid){
             $sql = 'SELECT DISTINCT labelproject FROM omoccurrences WHERE labelproject IS NOT NULL AND collid = '.$this->collid.' ';
-            if($this->collArr['colltype'] === 'General Observations' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) {
+            if($this->collArr['colltype'] === 'HumanObservation' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) {
                 $sql .= 'AND (observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
             }
             $rs = $this->conn->query($sql);
@@ -729,7 +725,7 @@ class OccurrenceLabel{
                 'INNER JOIN omoccurdatasetlink AS dl ON ds.datasetid = dl.datasetid '.
                 'INNER JOIN omoccurrences AS o ON dl.occid = o.occid '.
                 'WHERE (r.tablename = "omoccurdatasets") AND (o.collid = '.$this->collid.') ';
-            if($this->collArr['colltype'] === 'General Observations' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) {
+            if($this->collArr['colltype'] === 'HumanObservation' && !array_key_exists('extendedsearch', $GLOBALS['_POST'])) {
                 $sql .= 'AND (o.observeruid = ' . $GLOBALS['SYMB_UID'] . ') ';
             }
             $rs = $this->conn->query($sql);

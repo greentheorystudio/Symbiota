@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -12,7 +12,7 @@ $mode = array_key_exists('mode',$_REQUEST)?htmlspecialchars($_REQUEST['mode']):'
 $action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'';
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 if($target && !preg_match('/^[a-z]+$/',$target)) {
@@ -33,12 +33,12 @@ $collMap = $cleanManager->getCollMap();
 
 $statusStr = '';
 $isEditor = 0; 
-if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'General Observations')
+if($GLOBALS['IS_ADMIN'] || ($collMap['colltype'] === 'HumanObservation')
 	|| (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
 	$isEditor = 1;
 }
 
-if($collMap['colltype'] === 'General Observations' && $obsUid !== 0){
+if($collMap['colltype'] === 'HumanObservation' && $obsUid !== 0){
 	$obsUid = $GLOBALS['SYMB_UID'];
 	$cleanManager->setObsUid($obsUid);
 }
@@ -67,7 +67,11 @@ if($action && $isEditor){
 	}
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Geography Cleaning Module</title>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -527,7 +531,8 @@ if($action && $isEditor){
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../../footer.php');
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

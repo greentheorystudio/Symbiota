@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']): '';
@@ -59,6 +59,7 @@ if($clValue || $dynClid){
     $taxaArray = $clManager->getTaxaList(0,99999);
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Research Checklist: <?php echo $clManager->getClName(); ?> print friendly</title>
@@ -127,7 +128,6 @@ if($clValue || $dynClid){
 								echo "<div class='tnimg' style='".($imgSrc? '' : 'border:1px solid black;')."'>";
 								$spUrl = "../taxa/index.php?taxon=$tid&cl=".$clManager->getClid();
 								if($imgSrc){
-									$imgSrc = (isset($GLOBALS['IMAGE_DOMAIN']) && strncmp($imgSrc, 'http', 4) !== 0 ?$GLOBALS['IMAGE_DOMAIN']: '').$imgSrc;
 									echo "<img src='".$imgSrc."' style='height:100%;' />";
 								}
 								else{

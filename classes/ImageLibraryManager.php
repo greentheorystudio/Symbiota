@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceManager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageLibraryManager{
 
@@ -11,7 +11,7 @@ class ImageLibraryManager{
     private $sqlWhere = '';
 
     public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 
@@ -42,7 +42,7 @@ class ImageLibraryManager{
         $sql = 'SELECT DISTINCT t.UnitName1 ';
         $sql .= $this->getImageSql();
         if($inTaxon){
-            $taxon = Sanitizer::cleanInStr($this->conn,$inTaxon);
+            $taxon = SanitizerService::cleanInStr($this->conn,$inTaxon);
             $sql .= "AND t.family = '".$taxon."' ";
         }
         $result = $this->conn->query($sql);
@@ -60,7 +60,7 @@ class ImageLibraryManager{
         $tidArr = array();
         $taxon = '';
         if($inTaxon){
-            $taxon = Sanitizer::cleanInStr($this->conn,$inTaxon);
+            $taxon = SanitizerService::cleanInStr($this->conn,$inTaxon);
             if(strpos($taxon, ' ')) {
                 $tidArr = array_keys(OccurrenceManager::getSynonyms($taxon));
             }
@@ -119,7 +119,7 @@ class ImageLibraryManager{
                 $collName .= ' (' . $collCode . ')';
             }
             $stagingArr[$r->collid]['name'] = $collName;
-            $stagingArr[$r->collid]['type'] = (strpos($r->colltype,'Observations') !== false?'obs':'coll');
+            $stagingArr[$r->collid]['type'] = ($r->colltype === 'HumanObservation'?'obs':'coll');
         }
         $rs->free();
         $sql = 'SELECT o.collid, COUNT(i.imgid) AS imgcnt '.
@@ -192,9 +192,9 @@ class ImageLibraryManager{
             $retArr[$imgId]['tidaccepted'] = $r->tidaccepted;
             $retArr[$imgId]['tid'] = $r->tid;
             $retArr[$imgId]['sciname'] = $r->sciname;
-            $retArr[$imgId]['url'] = $r->url;
-            $retArr[$imgId]['thumbnailurl'] = $r->thumbnailurl;
-            $retArr[$imgId]['originalurl'] = $r->originalurl;
+            $retArr[$imgId]['url'] = ($r->url && $GLOBALS['CLIENT_ROOT'] && strncmp($r->url, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->url) : $r->url;
+            $retArr[$imgId]['thumbnailurl'] = ($r->thumbnailurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->thumbnailurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->thumbnailurl) : $r->thumbnailurl;
+            $retArr[$imgId]['originalurl'] = ($r->originalurl && $GLOBALS['CLIENT_ROOT'] && strncmp($r->originalurl, '/', 1) === 0) ? ($GLOBALS['CLIENT_ROOT'] . $r->originalurl) : $r->originalurl;
             $retArr[$imgId]['uid'] = $r->uid;
             $retArr[$imgId]['lastname'] = $r->lastname;
             $retArr[$imgId]['firstname'] = $r->firstname;
@@ -254,9 +254,6 @@ class ImageLibraryManager{
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
-        }
-        if(array_key_exists('assochost',$this->searchTermsArr)) {
-            $sql .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
         }
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';

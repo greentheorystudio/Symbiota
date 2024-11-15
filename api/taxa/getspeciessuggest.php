@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbService.php');
 
-$connection = new DbConnection();
-header('Content-Type: application/json; charset=' .$GLOBALS['CHARSET']);
+$connection = new DbService();
+header('Content-Type: application/json; charset=UTF-8' );
 $con = $connection->getConnection();
 $retArr = array();
 $term = $con->real_escape_string($_REQUEST['term']);

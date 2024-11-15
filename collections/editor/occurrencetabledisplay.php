@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -15,7 +15,7 @@ $reset = (array_key_exists('reset', $_REQUEST) && $_REQUEST['reset']);
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 if($crowdSourceMode) {
     $occManager->setCrowdSourceMode(1);
@@ -139,7 +139,7 @@ if($GLOBALS['SYMB_UID']){
 		$isEditor = 1;
 	}
 
-	if($collMap && $collMap['colltype'] === 'General Observations') {
+	if($collMap && $collMap['colltype'] === 'HumanObservation') {
         $isGenObs = 1;
     }
 	if(!$isEditor && ((array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) || ($isGenObs && ($action || $occManager->getObserverUid() === $GLOBALS['SYMB_UID'])))){
@@ -194,10 +194,14 @@ if($GLOBALS['SYMB_UID']){
 	$navStr .= '</div>';
 }
 else{
-	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+	header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
+<!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+<?php
+include_once(__DIR__ . '/../../config/header-includes.php');
+?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Edit Existing Record</title>
     <style>
@@ -210,8 +214,7 @@ else{
     <script src="../../js/external/all.min.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/shared.js?ver=20221207"></script>
-	<script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;border:0;">
 	<div>
@@ -283,9 +286,7 @@ else{
 										<option value="">----------------------</option>
 										<?php
 										foreach($headerMapBase as $k => $v){
-											if($k !== 'scientificnameauthorship' && $k !== 'sciname' && $k !== 'verbatimsciname'){
-												echo '<option value="'.$k.'" '.($buFieldName === $k?'SELECTED':'').'>'.$v.'</option>';
-											}
+                                            echo '<option value="'.$k.'" '.($buFieldName === $k?'SELECTED':'').'>'.$v.'</option>';
 										}
 										?>
 									</select>
@@ -431,5 +432,8 @@ else{
         }
 		?>
 	</div>
+    <?php
+    include_once(__DIR__ . '/../../config/footer-includes.php');
+    ?>
 </body>
 </html>

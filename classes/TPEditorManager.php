@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TPEditorManager {
 
@@ -10,14 +10,13 @@ class TPEditorManager {
 	protected $parentTid;
 	protected $family;
 	protected $rankId;
-	protected $language = 'English';
- 	protected $submittedTid;
+	protected $submittedTid;
  	protected $submittedSciName;
 	protected $taxonCon;
 	protected $errorStr = '';
 	
  	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->taxonCon = $connection->getConnection();
  	}
  	
@@ -93,7 +92,7 @@ class TPEditorManager {
  		$synArr = array();
 		$sql = 'SELECT t2.tid, t2.SciName ' .
 			'FROM taxa AS t1 INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.tid ' .
-			'WHERE t.tid <> t.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
+			'WHERE t1.tid <> t1.tidaccepted AND t1.tid = ' .$this->tid. ' ' .
 			'ORDER BY t2.SciName';
 		//echo $sql."<br>";
 		$result = $this->taxonCon->query($sql);
@@ -128,27 +127,9 @@ class TPEditorManager {
 		return $vernArr;
 	}
 	
-	public function editVernacular($inArray): string
-	{
-		$editArr = Sanitizer::cleanInArray($this->taxonCon,$inArray);
-		$vid = $editArr['vid'];
-		unset($editArr['vid']);
-		$setFrag = '';
-		foreach($editArr as $keyField => $value){
-			$setFrag .= ','.$keyField.' = "'.$value.'" ';
-		}
-		$sql = 'UPDATE taxavernaculars SET '.substr($setFrag,1).' WHERE (vid = '.$this->taxonCon->real_escape_string($vid).')';
-		//echo $sql;
-		$status = '';
-		if(!$this->taxonCon->query($sql)){
-			$status = 'Error:editingVernacular.';
-		}
-		return $status;
-	}
-	
 	public function addVernacular($inArray): string
 	{
-		$newVerns = Sanitizer::cleanInArray($this->taxonCon,$inArray);
+		$newVerns = SanitizerService::cleanInArray($this->taxonCon,$inArray);
 		$sql = 'INSERT INTO taxavernaculars (tid,'.implode(',',array_keys($newVerns)).') VALUES ('.$this->getTid().',"'.implode('","',$newVerns).'")';
 		//echo $sql;
 		$status = '';
@@ -190,11 +171,6 @@ class TPEditorManager {
  		return $this->parentTid;
  	}
 
- 	public function setLanguage($lang): string
-	{
- 		return $this->language = $this->taxonCon->real_escape_string($lang);
- 	}
- 	
  	public function getErrorStr(): string
 	{
  		return $this->errorStr;

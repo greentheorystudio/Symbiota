@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/TPEditorManager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TPDescEditorManager extends TPEditorManager{
 
@@ -14,9 +14,6 @@ class TPDescEditorManager extends TPEditorManager{
 		$sql = 'SELECT t.tid, t.sciname, tdb.tdbid, tdb.caption, tdb.source, tdb.sourceurl, tdb.displaylevel, tdb.notes, tdb.language '.
 			'FROM taxa AS t INNER JOIN taxadescrblock AS tdb ON t.tid = tdb.tid '.
 			'WHERE t.tidaccepted = '.$this->tid.' ';
-		if(!$editor){
-			$sql .= 'AND tdb.Language = "'.$this->language.'" ';
-		}
 		$sql .= 'ORDER BY tdb.DisplayLevel ';
 		//echo $sql;
 		if($rs = $this->taxonCon->query($sql)){
@@ -54,12 +51,12 @@ class TPDescEditorManager extends TPEditorManager{
 	public function editDescriptionBlock(): string
 	{
 		$sql = 'UPDATE taxadescrblock ' .
-			'SET language = ' .($_REQUEST['language']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['language']).'"': 'NULL').
-			',displaylevel = ' .Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['displaylevel']).
-			',notes = ' .($_REQUEST['notes']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['notes']).'"': 'NULL').
-			',caption = ' .($_REQUEST['caption']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['caption']).'"': 'NULL').
-			',source = ' .($_REQUEST['source']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['source']).'"': 'NULL').
-			',sourceurl = ' .($_REQUEST['sourceurl']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['sourceurl']).'"': 'NULL').
+			'SET language = ' .($_REQUEST['language']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['language']).'"': 'NULL').
+			',displaylevel = ' .SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['displaylevel']).
+			',notes = ' .($_REQUEST['notes']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['notes']).'"': 'NULL').
+			',caption = ' .($_REQUEST['caption']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['caption']).'"': 'NULL').
+			',source = ' .($_REQUEST['source']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['source']).'"': 'NULL').
+			',sourceurl = ' .($_REQUEST['sourceurl']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['sourceurl']).'"': 'NULL').
 			' WHERE (tdbid = ' .$this->taxonCon->real_escape_string($_REQUEST['tdbid']).')';
 		//echo $sql;
 		$status = '';
@@ -89,11 +86,11 @@ class TPDescEditorManager extends TPEditorManager{
 			$sql = 'INSERT INTO taxadescrblock(tid,uid,'.($_REQUEST['language']? 'language,' : '').($_REQUEST['displaylevel']? 'displaylevel,' : '').
 				'notes,caption,source,sourceurl) '.
 				'VALUES('.$_REQUEST['tid'].','.$GLOBALS['SYMB_UID'].
-				','.($_REQUEST['language']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['language']).'",': '').
+				','.($_REQUEST['language']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['language']).'",': '').
 				($_REQUEST['displaylevel']?$this->taxonCon->real_escape_string($_REQUEST['displaylevel']). ',' : '').
-				($_REQUEST['notes']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['notes']).'",': 'NULL,').
-				($_REQUEST['caption']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['caption']).'",': 'NULL,').
-				($_REQUEST['source']?'"'.Sanitizer::cleanInStr($this->taxonCon,$_REQUEST['source']).'",': 'NULL,').
+				($_REQUEST['notes']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['notes']).'",': 'NULL,').
+				($_REQUEST['caption']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['caption']).'",': 'NULL,').
+				($_REQUEST['source']?'"'.SanitizerService::cleanInStr($this->taxonCon,$_REQUEST['source']).'",': 'NULL,').
 				($_REQUEST['sourceurl']?'"'.$_REQUEST['sourceurl'].'"': 'NULL').')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
@@ -126,15 +123,15 @@ class TPDescEditorManager extends TPEditorManager{
 	public function addStatement($stArr): string
 	{
 		$status = '';
-		$stmtStr = Sanitizer::cleanInStr($this->taxonCon,$stArr['statement']);
+		$stmtStr = SanitizerService::cleanInStr($this->taxonCon,$stArr['statement']);
 		if(strncmp($stmtStr, '<p>', 3) === 0 && substr($stmtStr,-4) === '</p>'){
 			$stmtStr = trim(substr($stmtStr,3, -4));
 		}
 		if($stmtStr && $stArr['tdbid'] && is_numeric($stArr['tdbid'])){
 			$sql = 'INSERT INTO taxadescrstmts(tdbid,heading,statement,displayheader'.($stArr['sortsequence']?',sortsequence':'').') '.
-				'VALUES('.$stArr['tdbid'].',"'.Sanitizer::cleanInStr($this->taxonCon,$stArr['heading']).
+				'VALUES('.$stArr['tdbid'].',"'.SanitizerService::cleanInStr($this->taxonCon,$stArr['heading']).
 				'","'.$stmtStr.'",'.(array_key_exists('displayheader',$stArr)?'1':'0').
-				($stArr['sortsequence']?','.Sanitizer::cleanInStr($this->taxonCon,$stArr['sortsequence']):'').')';
+				($stArr['sortsequence']?','.SanitizerService::cleanInStr($this->taxonCon,$stArr['sortsequence']):'').')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
 				$status = 'ERROR adding description statement.';
@@ -146,16 +143,16 @@ class TPDescEditorManager extends TPEditorManager{
 	public function editStatement($stArr): string
 	{
 		$status = '';
-		$stmtStr = Sanitizer::cleanInStr($this->taxonCon,$stArr['statement']);
+		$stmtStr = SanitizerService::cleanInStr($this->taxonCon,$stArr['statement']);
 		if(strncmp($stmtStr, '<p>', 3) === 0 && substr($stmtStr,-4) === '</p>'){
 			$stmtStr = trim(substr($stmtStr,3, -4));
 		}
 		if($stmtStr && $stArr['tdsid'] && is_numeric($stArr['tdsid'])){
 			$sql = 'UPDATE taxadescrstmts '.
-				'SET heading = "'.Sanitizer::cleanInStr($this->taxonCon,$stArr['heading']).'",'.
+				'SET heading = "'.SanitizerService::cleanInStr($this->taxonCon,$stArr['heading']).'",'.
 				'statement = "'.$stmtStr.'"'.
 				(array_key_exists('displayheader',$stArr)?',displayheader = 1':',displayheader = 0').
-				($stArr['sortsequence']?',sortsequence = '.Sanitizer::cleanInStr($this->taxonCon,$stArr['sortsequence']):'').
+				($stArr['sortsequence']?',sortsequence = '.SanitizerService::cleanInStr($this->taxonCon,$stArr['sortsequence']):'').
 				' WHERE (tdsid = '.$stArr['tdsid'].')';
 			//echo $sql;
 			if(!$this->taxonCon->query($sql)){
