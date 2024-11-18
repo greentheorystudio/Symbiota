@@ -69,6 +69,28 @@ class IRLManager {
         return $returnArr;
     }
 
+    public function getNativeStatus($tid): string
+    {
+        $returnArr = array();
+        if($tid){
+            $sql = 'SELECT TID, CLID ' .
+                'FROM fmchklsttaxalink  ' .
+                'WHERE TID = ' .$tid. ' AND CLID IN(13,14) ';
+            //echo $sql;
+            $result = $this->conn->query($sql);
+            if($row = $result->fetch_object()){
+                if((int)$row->CLID === 13) {
+                    $returnArr[] = 'NON-NATIVE';
+                }
+                if((int)$row->CLID === 14) {
+                    $returnArr[] = 'CRYPTOGENIC';
+                }
+            }
+            $result->free();
+        }
+        return implode(',', $returnArr);
+    }
+
     public function getProjectAmbiInfaunaData($collid): array
     {
         $returnArr = array();
@@ -169,26 +191,49 @@ class IRLManager {
         return $returnArr;
     }
 
-    public function getNativeStatus($tid): string
+    public function getProjectRScriptData($collid): array
     {
         $returnArr = array();
-        if($tid){
-            $sql = 'SELECT TID, CLID ' .
-                'FROM fmchklsttaxalink  ' .
-                'WHERE TID = ' .$tid. ' AND CLID IN(13,14) ';
-            //echo $sql;
-            $result = $this->conn->query($sql);
-            if($row = $result->fetch_object()){
-                if((int)$row->CLID === 13) {
-                    $returnArr[] = 'NON-NATIVE';
-                }
-                if((int)$row->CLID === 14) {
-                    $returnArr[] = 'CRYPTOGENIC';
-                }
+        $oArr = array("M01", "M15");
+        $mArr = array("M02", "M03", "M04", "M14");
+        $pArr = array("M05", "M06", "M08");
+        $eArr = array("M07", "M09", "M10", "M11", "M12", "M13");
+        $sql = 'SELECT DISTINCT l.locationcode, o.decimallatitude, o.decimallongitude, o.rep, o.eventdate, '.
+            'o.sciname, o.individualcount, m.datavalue '.
+            'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
+            'LEFT JOIN ommofextension AS m ON o.eventID = m.eventID '.
+            'WHERE o.collid = ' . (int)$collid . ' AND (m.field = "bottom_salinity" OR ISNULL(m.mofID)) ';
+        //echo $sql;
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $nodeArr = array();
+            $nodeArr['StationID'] = $row->locationcode;
+            $nodeArr['Latitude'] = $row->decimallatitude;
+            $nodeArr['Longitude'] = $row->decimallongitude;
+            $nodeArr['Replicate'] = $row->rep;
+            $nodeArr['SampleDate'] = $row->eventdate;
+            if(in_array($row->locationcode, $oArr)){
+                $nodeArr['HabClassName'] = 'Oligohaline';
             }
-            $result->free();
+            elseif(in_array($row->locationcode, $mArr)){
+                $nodeArr['HabClassName'] = 'Mesohaline';
+            }
+            elseif(in_array($row->locationcode, $pArr)){
+                $nodeArr['HabClassName'] = 'Polyhaline';
+            }
+            elseif(in_array($row->locationcode, $eArr)){
+                $nodeArr['HabClassName'] = 'Euhaline';
+            }
+            else{
+                $nodeArr['HabClassName'] = '';
+            }
+            $nodeArr['Salinity'] = $row->datavalue;
+            $nodeArr['Species'] = $row->sciname;
+            $nodeArr['Abundance'] = $row->individualcount;
+            $returnArr[] = $nodeArr;
         }
-        return implode(',', $returnArr);
+        $result->free();
+        return $returnArr;
     }
 
     public function getTotalTaxa(): int

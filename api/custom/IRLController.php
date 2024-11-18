@@ -23,4 +23,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getProjectAmbiInfaunaData' && $collid){
         echo json_encode($irlManager->getProjectAmbiInfaunaData($collid));
     }
+    elseif($action === 'getProjectRScriptData' && $collid){
+        echo json_encode($irlManager->getProjectRScriptData($collid));
+    }
 }
