@@ -130,7 +130,7 @@ class IRLManager {
             $returnArr[] = $headerArr;
 
             $sql = 'SELECT a.eventID, a.field, a.datavalue '.
-                'FROM omoccuradditionaldata AS a LEFT JOIN omoccurcollectingevents AS c ON a.eventID = c.eventID '.
+                'FROM ommofextension AS a LEFT JOIN omoccurcollectingevents AS c ON a.eventID = c.eventID '.
                 'WHERE c.collid = ' . (int)$collid . ' ';
             //echo $sql;
             $result = $this->conn->query($sql);
