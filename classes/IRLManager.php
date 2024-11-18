@@ -59,9 +59,13 @@ class IRLManager {
     public function getConfiguredData($collid): array
     {
         $returnArr = array();
-        if(file_exists($GLOBALS['SERVER_ROOT'] . '/content/json/collection' . $collid . 'occurrencedatafields.json')) {
-            $returnArr = json_decode(file_get_contents($GLOBALS['SERVER_ROOT'].'/content/json/collection' . $collid . 'occurrencedatafields.json'), true);
+        $sql = 'SELECT configjson FROM omcollections WHERE collid = ' . $collid . ' ';
+        //echo $sql;
+        $result = $this->conn->query($sql);
+        if(($row = $result->fetch_object()) && $row->configjson) {
+            $returnArr = json_decode($row->configjson, true);
         }
+        $result->free();
         return $returnArr;
     }
 
@@ -123,8 +127,8 @@ class IRLManager {
         $headerArr = array('sample_date', 'site', 'time', 'depth', 'decimalLong', 'decimalLat');
         $configuredDataArr = array();
         $configuredData = $this->getConfiguredData($collid);
-        if($configuredData && array_key_exists('dataFields', $configuredData)){
-            foreach($configuredData['dataFields'] as $field => $fieldArr){
+        if($configuredData && array_key_exists('eventMofExtension', $configuredData) && array_key_exists('dataFields', $configuredData['eventMofExtension'])){
+            foreach($configuredData['eventMofExtension']['dataFields'] as $field => $fieldArr){
                 $headerArr[] = $field;
             }
             $returnArr[] = $headerArr;
@@ -155,7 +159,7 @@ class IRLManager {
                 $rowArr[] = $row->minimumDepthInMeters;
                 $rowArr[] = $row->decimalLong;
                 $rowArr[] = $row->decimalLat;
-                foreach($configuredData['dataFields'] as $field => $fieldArr){
+                foreach($configuredData['eventMofExtension']['dataFields'] as $field => $fieldArr){
                     $rowArr[] = (array_key_exists($eventId, $configuredDataArr) && array_key_exists($field, $configuredDataArr[$eventId])) ? $configuredDataArr[$eventId][$field] : '';
                 }
                 $returnArr[] = $rowArr;
