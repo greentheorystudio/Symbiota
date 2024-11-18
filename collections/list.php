@@ -566,6 +566,9 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                             if(data && Object.keys(data).length > 0){
                                 currentUserPermissions.value = data;
                             }
+                            if(Number(queryId) === 0 && !stArrJson){
+                                displayQueryPopup.value = true;
+                            }
                         });
                     }
 
@@ -621,9 +624,6 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
                                 }
                                 loadRecords();
                             }
-                        }
-                        else{
-                            displayQueryPopup.value = true;
                         }
                     });
 
