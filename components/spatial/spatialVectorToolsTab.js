@@ -124,7 +124,7 @@ const spatialVectorToolsTab = {
                         if(geoType === 'Point'){
                             turfFeature = turf.point(featCoords);
                         }
-                        if(geoType === 'MultiPoint'){
+                        else if(geoType === 'MultiPoint'){
                             turfFeature = turf.point(featCoords[0]);
                         }
                         else if(geoType === 'LineString'){
