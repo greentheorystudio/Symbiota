@@ -153,7 +153,7 @@ const spatialVectorToolsTab = {
                         mapSettings.selectSource.addFeature(buffpoly);
                     }
                 });
-                bufferWidthValue.value = 0;
+                bufferWidthValue.value = null;
             }
         }
 
