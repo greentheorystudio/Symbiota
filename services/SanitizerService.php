@@ -89,9 +89,14 @@ class SanitizerService {
     {
         $returnStr = 'NULL';
         if($dataType !== 'number'){
-            $cleanedVal = self::cleanInStr($conn, $value);
-            if($cleanedVal !== ''){
-                $returnStr = '"' . str_replace('"', '""', $cleanedVal) . '"';
+            if($dataType === 'json' || $dataType === 'sql'){
+                $returnStr = "'" . $value . "'";
+            }
+            else{
+                $cleanedVal = self::cleanInStr($conn, $value);
+                if($cleanedVal !== ''){
+                    $returnStr = '"' . str_replace('"', '""', $cleanedVal) . '"';
+                }
             }
         }
         elseif((string)$value !== '' && is_numeric($value)){
