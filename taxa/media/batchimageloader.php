@@ -44,7 +44,6 @@ if(!$GLOBALS['SYMB_UID']) {
                 min-height: 150px;
             }
         </style>
-        <script src="../../js/external/all.min.js" type="text/javascript"></script>
     </head>
     <body>
         <?php

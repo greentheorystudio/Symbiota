@@ -22,7 +22,6 @@ if(!$GLOBALS['SYMB_UID']) {
                 width: 500px;
             }
         </style>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     </head>
     <body>
         <?php

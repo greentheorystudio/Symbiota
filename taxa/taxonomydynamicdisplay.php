@@ -36,7 +36,6 @@ header('X-Frame-Options: SAMEORIGIN');
                 font-style: italic;
             }
         </style>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     </head>
     <body>
         <?php

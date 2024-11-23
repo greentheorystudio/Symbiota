@@ -70,8 +70,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		echo 'var maxUpload = '.$maxUpload.";\n";
 		?>
 	</script>
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script src="../../js/external/jquery.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="../../js/collections.coordinateValidation.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 	<script src="../../js/collections.observationsubmit.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
