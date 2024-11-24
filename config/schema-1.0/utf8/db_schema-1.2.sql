@@ -283,20 +283,6 @@ CREATE TABLE `guidoccurrences` (
     UNIQUE KEY `guidoccurrences_occid_unique` (`occid`)
 );
 
-CREATE TABLE `imagekeywords` (
-    `imgkeywordid` int(11) NOT NULL AUTO_INCREMENT,
-    `imgid` int(10) unsigned NOT NULL,
-    `keyword` varchar(45) NOT NULL,
-    `uidassignedby` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`imgkeywordid`),
-    KEY `FK_imagekeywords_imgid_idx` (`imgid`),
-    KEY `FK_imagekeyword_uid_idx` (`uidassignedby`),
-    KEY `INDEX_imagekeyword` (`keyword`),
-    CONSTRAINT `FK_imagekeyword_uid` FOREIGN KEY (`uidassignedby`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_imagekeywords_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `images` (
     `imgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `tid` int(10) unsigned DEFAULT NULL,
@@ -1398,15 +1384,6 @@ CREATE TABLE `omoccurrences` (
     CONSTRAINT `FK_eventID` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`) ON DELETE RESTRICT ON UPDATE NO ACTION
 );
 
-CREATE TABLE `omoccurrencesfulltext` (
-    `occid` int(11) NOT NULL,
-    `locality` text,
-    `recordedby` varchar(255) DEFAULT NULL,
-    PRIMARY KEY (`occid`),
-    FULLTEXT KEY `ft_occur_locality` (`locality`),
-    FULLTEXT KEY `ft_occur_recordedby` (`recordedby`)
-);
-
 CREATE TABLE `omoccurrencetypes` (
     `occurtypeid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `occid` int(10) unsigned DEFAULT NULL,
@@ -1914,38 +1891,6 @@ CREATE TABLE `uploadglossary` (
     KEY `relatedterm_index` (`newGroupId`)
 );
 
-CREATE TABLE `uploadimagetemp` (
-    `tid` int(10) unsigned DEFAULT NULL,
-    `url` varchar(255) DEFAULT NULL,
-    `thumbnailurl` varchar(255) DEFAULT NULL,
-    `originalurl` varchar(255) DEFAULT NULL,
-    `archiveurl` varchar(255) DEFAULT NULL,
-    `photographer` varchar(100) DEFAULT NULL,
-    `photographeruid` int(10) unsigned DEFAULT NULL,
-    `imagetype` varchar(50) DEFAULT NULL,
-    `format` varchar(45) DEFAULT NULL,
-    `caption` varchar(100) DEFAULT NULL,
-    `owner` varchar(100) DEFAULT NULL,
-    `sourceUrl` varchar(255),
-    `referenceurl` varchar(255),
-    `copyright` varchar(255),
-    `accessrights` varchar(255),
-    `rights` varchar(255),
-    `locality` varchar(250),
-    `occid` int(10) unsigned DEFAULT NULL,
-    `collid` int(10) unsigned DEFAULT NULL,
-    `dbpk` varchar(150) DEFAULT NULL,
-    `sourceIdentifier` varchar(150) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `username` varchar(45) DEFAULT NULL,
-    `sortsequence` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    KEY `Index_uploadimg_occid` (`occid`),
-    KEY `Index_uploadimg_collid` (`collid`),
-    KEY `Index_uploadimg_dbpk` (`dbpk`),
-    KEY `Index_uploadimg_ts` (`initialtimestamp`)
-);
-
 CREATE TABLE `uploadspecmap` (
     `usmid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `uspid` int(10) unsigned NOT NULL,
@@ -2293,8 +2238,6 @@ CREATE TRIGGER `omoccurrences_insert` AFTER INSERT ON `omoccurrences` FOR EACH R
 		INSERT INTO omoccurpoints (`occid`,`point`)
 		VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
     END IF;
-INSERT INTO omoccurrencesfulltext (`occid`,`recordedby`,`locality`)
-VALUES (NEW.`occid`,NEW.`recordedby`,NEW.`locality`);
 END
 ;;
 delimiter ;
@@ -2311,9 +2254,6 @@ CREATE TRIGGER `omoccurrences_update` AFTER UPDATE ON `omoccurrences` FOR EACH R
 			VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
         END IF;
     END IF;
-UPDATE omoccurrencesfulltext
-SET `recordedby` = NEW.`recordedby`,`locality` = NEW.`locality`
-WHERE `occid` = NEW.`occid`;
 END
 ;;
 delimiter ;
@@ -2321,7 +2261,6 @@ delimiter ;
 delimiter ;;
 CREATE TRIGGER `omoccurrences_delete` BEFORE DELETE ON `omoccurrences` FOR EACH ROW BEGIN
     DELETE FROM omoccurpoints WHERE `occid` = OLD.`occid`;
-    DELETE FROM omoccurrencesfulltext WHERE `occid` = OLD.`occid`;
 END
 ;;
 delimiter ;
