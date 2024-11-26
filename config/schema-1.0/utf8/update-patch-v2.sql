@@ -125,6 +125,7 @@ CREATE TABLE `omoccurlocations` (
     KEY `localitySecurity` (`localitySecurity`),
     KEY `decimalLatitude` (`decimalLatitude`),
     KEY `decimalLongitude` (`decimalLongitude`),
+    KEY `locality`(`locality`(100)),
     KEY `FK_collid` (`collid`),
     CONSTRAINT `FK_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
