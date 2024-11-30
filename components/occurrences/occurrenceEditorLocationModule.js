@@ -10,10 +10,8 @@ const occurrenceEditorLocationModule = {
                         <template v-if="locationId > 0 && collectingEventArr.length > 0">
                             <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Events" />
                         </template>
-                        <template v-if="locationData.decimallatitude && locationData.decimallongitude">
-                            <q-btn color="secondary" @click="findNearbyLocations();" label="Find Nearby Locations" />
-                        </template>
                         <template v-if="Number(locationId) === 0">
+                            <q-btn color="secondary" @click="showLocationLinkageToolPopup = true" label="Search Locations" />
                             <q-btn color="secondary" @click="createLocationRecord();" label="Create Location Record" :disabled="!locationValid" />
                         </template>
                         <template v-else>
@@ -34,23 +32,22 @@ const occurrenceEditorLocationModule = {
         </q-card>
         <template v-if="showCollectingEventListPopup">
             <occurrence-collecting-event-list-popup
-                    popup-type="location"
-                    :event-arr="collectingEventArr"
-                    :show-popup="showCollectingEventListPopup"
-                    @close:popup="showCollectingEventListPopup = false"
+                popup-type="location"
+                :event-arr="collectingEventArr"
+                :show-popup="showCollectingEventListPopup"
+                @close:popup="showCollectingEventListPopup = false"
             ></occurrence-collecting-event-list-popup>
         </template>
-        <template v-if="showLocationListPopup">
-            <occurrence-location-list-popup
-                    :location-arr="nearbyLocationArr"
-                    :show-popup="showLocationListPopup"
-                    @close:popup="closeLocationListPopup();"
-            ></occurrence-location-list-popup>
+        <template v-if="showLocationLinkageToolPopup">
+            <occurrence-location-linkage-tool-popup
+                :show-popup="showLocationLinkageToolPopup"
+                @close:popup="showLocationLinkageToolPopup = false"
+            ></occurrence-location-linkage-tool-popup>
         </template>
         <template v-if="showLocationEditorPopup">
             <occurrence-location-editor-popup
-                    :show-popup="showLocationEditorPopup"
-                    @close:popup="showLocationEditorPopup = false"
+                :show-popup="showLocationEditorPopup"
+                @close:popup="showLocationEditorPopup = false"
             ></occurrence-location-editor-popup>
         </template>
     `,
@@ -59,7 +56,7 @@ const occurrenceEditorLocationModule = {
         'location-name-code-auto-complete': locationNameCodeAutoComplete,
         'occurrence-collecting-event-list-popup': occurrenceCollectingEventListPopup,
         'occurrence-location-editor-popup': occurrenceLocationEditorPopup,
-        'occurrence-location-list-popup': occurrenceLocationListPopup,
+        'occurrence-location-linkage-tool-popup': occurrenceLocationLinkageToolPopup,
         'text-field-input-element': textFieldInputElement
     },
     setup() {
@@ -72,16 +69,10 @@ const occurrenceEditorLocationModule = {
         const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const locationValid = Vue.computed(() => occurrenceStore.getLocationValid);
-        const nearbyLocationArr = Vue.ref([]);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
         const showCollectingEventListPopup = Vue.ref(false);
         const showLocationEditorPopup = Vue.ref(false);
-        const showLocationListPopup = Vue.ref(false);
-
-        function closeLocationListPopup() {
-            showLocationListPopup.value = false;
-            nearbyLocationArr.value = [];
-        }
+        const showLocationLinkageToolPopup = Vue.ref(false);
 
         function createLocationRecord() {
             occurrenceStore.createLocationRecord((newLocationId) => {
@@ -90,18 +81,6 @@ const occurrenceEditorLocationModule = {
                 }
                 else{
                     showNotification('negative', 'There was an error creating the location record.');
-                }
-            });
-        }
-
-        function findNearbyLocations() {
-            occurrenceStore.getNearbyLocations((locationArr) => {
-                if(locationArr.length > 0){
-                    nearbyLocationArr.value = locationArr;
-                    showLocationListPopup.value = true;
-                }
-                else{
-                    showNotification('negative', 'There were no nearby locations found.');
                 }
             });
         }
@@ -130,14 +109,11 @@ const occurrenceEditorLocationModule = {
             locationId,
             locationFields,
             locationValid,
-            nearbyLocationArr,
             occurrenceFieldDefinitions,
             showCollectingEventListPopup,
             showLocationEditorPopup,
-            showLocationListPopup,
-            closeLocationListPopup,
+            showLocationLinkageToolPopup,
             createLocationRecord,
-            findNearbyLocations,
             processLocationCodeNameSelection,
             updateLocationData
         }
