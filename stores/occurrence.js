@@ -758,6 +758,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         revertLocationEditData() {
             this.locationStore.revertLocationEditData();
         },
+        searchLocations(criteria, callback) {
+            this.locationStore.searchLocations(this.getCollId, criteria, callback);
+        },
         setChecklistArr() {
             const formData = new FormData();
             formData.append('occid', this.occId.toString());
@@ -1018,22 +1021,24 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.mediaStore.setMediaArr('occid', this.occId);
         },
         setOccurrenceMofData() {
-            const formData = new FormData();
-            formData.append('type', 'occurrence');
-            formData.append('id', this.occId.toString());
-            formData.append('action', 'getMofDataByTypeAndId');
-            fetch(occurrenceMeasurementOrFactApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                Object.keys(this.getOccurrenceMofDataFields).forEach(field => {
-                    this.occurrenceMofData[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
+            if(Number(this.occId) > 0){
+                const formData = new FormData();
+                formData.append('type', 'occurrence');
+                formData.append('id', this.occId.toString());
+                formData.append('action', 'getMofDataByTypeAndId');
+                fetch(occurrenceMeasurementOrFactApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    Object.keys(this.getOccurrenceMofDataFields).forEach(field => {
+                        this.occurrenceMofData[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
+                    });
                 });
-            });
+            }
         },
         transferEditCollectingEventDataToOccurrenceData() {
             this.transferEditLocationDataToOccurrenceData();
