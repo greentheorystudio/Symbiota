@@ -20,42 +20,39 @@ const occurrenceLocationLinkageToolPopup = {
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
                         <div class="q-px-sm q-pt-sm">
-                            <div class="text-h6 text-bold">Occurrence Linkage Tool</div>
-                            <div class="text-body1">
-                                Select the collection and enter criteria to search for the occurrence record you would like to link, 
-                                or which to create a new occurrence record to link.
-                            </div>
+                            <div class="text-h6 text-bold">Search Locations</div>
                         </div>
                         <div class="q-pa-sm column q-col-gutter-sm">
-                            <div class="row">
+                            <div class="row justify-between q-col-gutter-sm">
+                                <div class="col-12 col-sm-6 col-md-4">
+                                    <text-field-input-element label="Country" :value="locationData.country" @update:value="(value) => updateLocationData('country', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4">
+                                    <text-field-input-element label="State/Province" :value="locationData.stateprovince" @update:value="(value) => updateLocationData('stateprovince', value)"></text-field-input-element>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4">
+                                    <text-field-input-element label="County" :value="locationData.county" @update:value="(value) => updateLocationData('county', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row q-col-gutter-sm">
                                 <div class="col-grow">
-                                    <selector-input-element :options="collectionOptions" label="Collection" :value="selectedCollection" option-value="collid" :clearable="true" @update:value="(value) => selectedCollection = value"></selector-input-element>
+                                    <text-field-input-element data-type="textarea" label="Locality Contains" :value="localityVal" @update:value="(value) => localityVal = value"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
-                                <div class="col-6">
-                                    <text-field-input-element label="Collector/Observer" :value="recordedByVal" @update:value="(value) => recordedByVal = value"></text-field-input-element>
+                                <div class="col-12 col-sm-6 col-md-6">
+                                    <text-field-input-element label="Latitude" :value="locationData.decimallatitude" @update:value="(value) => updateLocationData('decimallatitude', value)"></text-field-input-element>
                                 </div>
-                                <div class="col-6">
-                                    <text-field-input-element label="Number" :value="recordNumberVal" @update:value="(value) => recordNumberVal = value"></text-field-input-element>
+                                <div class="col-12 col-sm-6 col-md-6">
+                                    <text-field-input-element label="Longitude" :value="locationData.decimallongitude" @update:value="(value) => updateLocationData('decimallongitude', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <div class="full-width row">
-                                <div class="col-6 row">
-                                    <div class="col-6">
-                                        <text-field-input-element label="Catalog Number" :value="catalogNumberVal" @update:value="(value) => catalogNumberVal = value"></text-field-input-element>
-                                    </div>
-                                    <div class="col-6">
-                                        <checkbox-input-element label="Include other catalog numbers" :value="includeOtherCatalogNumberVal" @update:value="(value) => includeOtherCatalogNumberVal = value"></checkbox-input-element>
-                                    </div>
+                            <div class="full-width row justify-end q-gutter-sm">
+                                <div>
+                                    <q-btn color="secondary" @click="findNearbyLocations();" label="Find Nearby Locations" :disabled="!searchCoordinates" />
                                 </div>
-                                <div class="col-6 row justify-end q-gutter-sm">
-                                    <div>
-                                        <q-btn color="secondary" @click="createOccurrence();" label="Create Occurrence" :disabled="!selectedCollection" />
-                                    </div>
-                                    <div>
-                                        <q-btn color="secondary" @click="processSearch();" label="Search Occurrences" :disabled="!searchCriteria" />
-                                    </div>
+                                <div>
+                                    <q-btn color="secondary" @click="processSearch();" label="Search Locations" :disabled="!searchCriteria" />
                                 </div>
                             </div>
                         </div>
@@ -157,22 +154,19 @@ const occurrenceLocationLinkageToolPopup = {
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const collectionStore = useCollectionStore();
         const occurrenceStore = useOccurrenceStore();
-        const searchStore = useSearchStore();
 
-        const catalogNumberVal = Vue.ref(null);
-        const collectionOptions = Vue.ref([]);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const includeOtherCatalogNumberVal = Vue.ref(false);
-        const recordData = Vue.ref([]);
-        const recordedByVal = Vue.ref(null);
-        const recordNumberVal = Vue.ref(null);
-        const searchCriteria = Vue.computed(() => {
-            return !!(selectedCollection && (catalogNumberVal.value || recordedByVal.value || recordNumberVal.value));
+        const localityVal = Vue.ref(null);
+        const locationArr = Vue.ref([]);
+        const locationData = Vue.computed(() => occurrenceStore.getLocationData);
+        const searchCoordinates = Vue.computed(() => {
+            return !!(locationData.value['decimallatitude'] && locationData.value['decimallongitude']);
         });
-        const selectedCollection = Vue.ref(null);
+        const searchCriteria = Vue.computed(() => {
+            return !!(locationData.value['country'] || locationData.value['county'] || locationData.value['decimallatitude'] || locationData.value['decimallongitude'] || localityVal.value || locationData.value['stateprovince']);
+        });
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -182,43 +176,10 @@ const occurrenceLocationLinkageToolPopup = {
             context.emit('close:popup');
         }
 
-        function createOccurrence() {
-            const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
-            occurrenceData['collid'] = selectedCollection.value;
-            if(catalogNumberVal.value){
-                occurrenceData['catalognumber'] = catalogNumberVal.value;
-            }
-            if(recordedByVal.value){
-                occurrenceData['recordedby'] = recordedByVal.value;
-            }
-            if(recordNumberVal.value){
-                occurrenceData['recordnumber'] = recordNumberVal.value;
-            }
-            const formData = new FormData();
-            formData.append('collid', selectedCollection.value.toString());
-            formData.append('occurrence', JSON.stringify(occurrenceData));
-            formData.append('action', 'createOccurrenceRecord');
-            fetch(occurrenceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(res && Number(res) > 0){
-                        linkOccurrence(res);
-                    }
-                    else{
-                        showNotification('negative', 'There was an error creating the occurrence record.');
-                    }
-                });
-            });
-        }
-
         function findNearbyLocations() {
-            occurrenceStore.getNearbyLocations((locationArr) => {
-                if(locationArr.length > 0){
-                    nearbyLocationArr.value = locationArr;
-                    showLocationLinkageToolPopup.value = true;
+            occurrenceStore.getNearbyLocations((dataArr) => {
+                if(dataArr.length > 0){
+                    locationArr.value = dataArr;
                 }
                 else{
                     showNotification('negative', 'There were no nearby locations found.');
@@ -226,47 +187,29 @@ const occurrenceLocationLinkageToolPopup = {
             });
         }
 
-        function linkOccurrence(occid) {
-            context.emit('update:occid', occid);
+        function processLocationSelection(locationid) {
+            occurrenceStore.setCurrentLocationRecord(locationid);
             context.emit('close:popup');
         }
 
         function processSearch() {
             showWorking();
-            const options = {
-                schema: 'occurrence',
-                output: 'json'
+            const criteria = {
+                country: locationData.value['country'],
+                stateprovince: locationData.value['stateprovince'],
+                county: locationData.value['county'],
+                decimallatitude: locationData.value['decimallatitude'],
+                decimallongitude: locationData.value['decimallongitude'],
+                locality: localityVal.value
             };
-            const starr = {
-                db: selectedCollection.value.toString(),
-                catnum: catalogNumberVal.value,
-                collector: recordedByVal.value,
-                collnum: recordNumberVal.value
-            };
-            if(includeOtherCatalogNumberVal.value){
-                starr['othercatnum'] = 1;
-            }
-            searchStore.processSimpleSearch(starr, options, (data) => {
+            occurrenceStore.searchLocations(criteria, (dataArr) => {
                 hideWorking();
-                if(props.currentOccid){
-                    const currentObj = data.find(record => Number(record.occid) === Number(props.currentOccid));
-                    if(currentObj){
-                        const index = data.indexOf(currentObj);
-                        data.splice(index, 1);
-                    }
-                }
-                if(data.length > 0){
-                    recordData.value = data.slice();
+                if(dataArr.length > 0){
+                    locationArr.value = dataArr;
                 }
                 else{
-                    showNotification('negative', ('There were no occurrences found matching that criteria in the selected collection.'));
+                    showNotification('negative', 'There were no locations found.');
                 }
-            });
-        }
-
-        function setCollectionList() {
-            collectionStore.getCollectionListByUserRights((collListData) => {
-                collectionOptions.value = collListData;
             });
         }
 
@@ -277,27 +220,28 @@ const occurrenceLocationLinkageToolPopup = {
             }
         }
 
+        function updateLocationData(key, value) {
+            occurrenceStore.updateLocationEditData(key, value);
+        }
+
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            setCollectionList();
         });
 
         return {
-            catalogNumberVal,
-            collectionOptions,
             contentRef,
             contentStyle,
-            includeOtherCatalogNumberVal,
-            recordData,
-            recordedByVal,
-            recordNumberVal,
+            localityVal,
+            locationArr,
+            locationData,
+            searchCoordinates,
             searchCriteria,
-            selectedCollection,
             closePopup,
-            createOccurrence,
-            linkOccurrence,
-            processSearch
+            findNearbyLocations,
+            processLocationSelection,
+            processSearch,
+            updateLocationData
         }
     }
 };

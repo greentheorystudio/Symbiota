@@ -110,6 +110,22 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
         revertLocationEditData() {
             this.locationEditData = Object.assign({}, this.locationData);
         },
+        searchLocations(collid, criteria, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('criteria', JSON.stringify(criteria));
+            formData.append('action', 'searchLocations');
+            fetch(occurrenceLocationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
+        },
         setCurrentLocationRecord(locationid, collid, callback = null) {
             if(locationid && Number(locationid) > 0){
                 if(this.locationId !== Number(locationid)){
