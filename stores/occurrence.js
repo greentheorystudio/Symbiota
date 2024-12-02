@@ -796,7 +796,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         this.occurrenceEditData = Object.assign({}, this.occurrenceData);
                         this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
                         this.setCurrentCollectingEventRecord(this.occurrenceEditData['eventid'] ? this.occurrenceEditData['eventid'] : 0);
-                        this.setOccurrenceMofData();
+                        if(Number(this.occurrenceData.occid) > 0){
+                            this.setOccurrenceMofData();
+                        }
                     }
                     if(this.getCollectingEventID === 0){
                         this.updateCollectingEventEditData('repcount', (this.getCollectionData['defaultrepcount'] ? Number(this.getCollectionData['defaultrepcount']) : 0))
@@ -1021,24 +1023,22 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.mediaStore.setMediaArr('occid', this.occId);
         },
         setOccurrenceMofData() {
-            if(Number(this.occId) > 0){
-                const formData = new FormData();
-                formData.append('type', 'occurrence');
-                formData.append('id', this.occId.toString());
-                formData.append('action', 'getMofDataByTypeAndId');
-                fetch(occurrenceMeasurementOrFactApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((data) => {
-                    Object.keys(this.getOccurrenceMofDataFields).forEach(field => {
-                        this.occurrenceMofData[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
-                    });
+            const formData = new FormData();
+            formData.append('type', 'occurrence');
+            formData.append('id', this.occId.toString());
+            formData.append('action', 'getMofDataByTypeAndId');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                Object.keys(this.getOccurrenceMofDataFields).forEach(field => {
+                    this.occurrenceMofData[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
                 });
-            }
+            });
         },
         transferEditCollectingEventDataToOccurrenceData() {
             this.transferEditLocationDataToOccurrenceData();
