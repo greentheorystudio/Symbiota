@@ -43,7 +43,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
     <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
     <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/external/jquery.js"></script>
     <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>

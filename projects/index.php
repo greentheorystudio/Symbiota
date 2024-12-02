@@ -95,7 +95,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
             cursor:pointer;
         }
     </style>
-    <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>

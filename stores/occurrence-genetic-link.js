@@ -13,7 +13,6 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
         geneticLinkArr: [],
         geneticLinkData: {},
         geneticLinkEditData: {},
-        geneticLinkFields: {},
         geneticLinkId: 0,
         geneticLinkUpdateData: {}
     }),
@@ -34,9 +33,6 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
                 }
             }
             return exist;
-        },
-        getGeneticLinkFields(state) {
-            return state.geneticLinkFields;
         },
         getGeneticLinkID(state) {
             return state.geneticLinkId;
@@ -118,7 +114,7 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
             formData.append('collid', collid.toString());
             formData.append('idoccurgenetic', this.geneticLinkId.toString());
             formData.append('linkageData', JSON.stringify(this.geneticLinkUpdateData));
-            formData.append('action', 'updateDeterminationRecord');
+            formData.append('action', 'updateGeneticLinkageRecord');
             fetch(occurrenceGeneticLinkApiUrl, {
                 method: 'POST',
                 body: formData

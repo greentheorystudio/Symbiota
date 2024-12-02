@@ -137,7 +137,7 @@ class Occurrences{
         $newID = 0;
         $fieldNameArr = array();
         $fieldValueArr = array();
-        $collId = array_key_exists('collid',$data) ? (int)$data['collid'] : 0;
+        $collId = array_key_exists('collid', $data) ? (int)$data['collid'] : 0;
         if($collId){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'occid' && array_key_exists($field, $data)){
