@@ -18,7 +18,6 @@ header('X-Frame-Options: SAMEORIGIN');
                 width: 90%;
             }
         </style>
-        <script src="../js/external/all.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="../js/external/tiny_mce/tiny_mce.js"></script>
     </head>
     <body>

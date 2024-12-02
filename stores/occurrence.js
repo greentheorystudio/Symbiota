@@ -758,6 +758,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         revertLocationEditData() {
             this.locationStore.revertLocationEditData();
         },
+        searchLocations(criteria, callback) {
+            this.locationStore.searchLocations(this.getCollId, criteria, callback);
+        },
         setChecklistArr() {
             const formData = new FormData();
             formData.append('occid', this.occId.toString());
@@ -793,7 +796,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         this.occurrenceEditData = Object.assign({}, this.occurrenceData);
                         this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
                         this.setCurrentCollectingEventRecord(this.occurrenceEditData['eventid'] ? this.occurrenceEditData['eventid'] : 0);
-                        this.setOccurrenceMofData();
+                        if(Number(this.occurrenceData.occid) > 0){
+                            this.setOccurrenceMofData();
+                        }
                     }
                     if(this.getCollectingEventID === 0){
                         this.updateCollectingEventEditData('repcount', (this.getCollectionData['defaultrepcount'] ? Number(this.getCollectionData['defaultrepcount']) : 0))

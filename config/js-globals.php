@@ -55,6 +55,8 @@
     const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
     const collectionCategoryApiUrl = CLIENT_ROOT + '/api/collections/collectionCategoryController.php';
+    const collectionDataUploadParametersApiUrl = CLIENT_ROOT + '/api/collections/collectionDataUploadParametersController.php';
+    const collectionMediaUploadParametersApiUrl = CLIENT_ROOT + '/api/collections/collectionMediaUploadParametersController.php';
     const configurationsApiUrl = CLIENT_ROOT + '/api/configurations/configurationsController.php';
     const dataDownloadServiceApiUrl = CLIENT_ROOT + '/api/services/dataDownloadServiceController.php';
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';

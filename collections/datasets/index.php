@@ -45,7 +45,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         legend{ font-weight: bold; }
         .dataset-item{ margin-bottom: 10px }
     </style>
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/external/jquery.js"></script>
     <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript">

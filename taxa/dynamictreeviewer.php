@@ -19,7 +19,6 @@ header('X-Frame-Options: SAMEORIGIN');
                 overflow: hidden;
             }
         </style>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/d3.v7.js" type="text/javascript"></script>
     </head>
     <body>

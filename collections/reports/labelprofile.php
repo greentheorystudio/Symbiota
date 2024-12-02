@@ -74,7 +74,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         .field-block{ margin:3px 0px }
         .labelFormat{ font-weight: bold; }
     </style>
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript">
