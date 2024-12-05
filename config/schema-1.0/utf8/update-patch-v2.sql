@@ -8,6 +8,34 @@ ALTER TABLE `omcollections`
     ADD INDEX `isPublic`(`isPublic`),
     ADD CONSTRAINT `FK_collid_ccpk` FOREIGN KEY (`ccpk`) REFERENCES `omcollcategories` (`ccpk`) ON DELETE RESTRICT ON UPDATE NO ACTION;
 
+CREATE TABLE `omcolldatauploadparameters` (
+    `uspid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `CollID` int(10) unsigned NOT NULL,
+    `UploadType` int(10) unsigned NOT NULL DEFAULT '1',
+    `title` varchar(45) NOT NULL,
+    `dwcpath` text,
+    `queryparamjson` text,
+    `cleansql` text,
+    `configjson` text,
+    `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`uspid`),
+    KEY `FK_omcolldatauploadparameters_coll` (`CollID`),
+    CONSTRAINT `omcolldatauploadparameters_ibfk_1` FOREIGN KEY (`CollID`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE `omcollmediauploadparameters` (
+    `spprid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `collid` int(10) unsigned NOT NULL,
+    `title` varchar(100) NOT NULL,
+    `filenamepatternmatch` varchar(500) DEFAULT NULL,
+    `patternmatchfield` varchar(255) DEFAULT NULL,
+    `configjson` text,
+    `initialTimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`spprid`),
+    KEY `FK_omcollmediauploadparameters_coll` (`collid`),
+    CONSTRAINT `omcollmediauploadparameters_ibfk_1` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 ALTER TABLE `omoccurrences`
     MODIFY COLUMN `eventID` int(11) UNSIGNED NULL DEFAULT NULL AFTER `fieldnumber`,
     MODIFY COLUMN `locationID` int(11) UNSIGNED NULL DEFAULT NULL AFTER `preparations`,

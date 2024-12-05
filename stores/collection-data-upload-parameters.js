@@ -10,11 +10,19 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             cleansql: null,
             configjson: null
         },
+        blankConfigurations: {
+            existingRecords: 'update'
+        },
         collectionDataUploadParametersArr: [],
         collectionDataUploadParametersData: {},
         collectionDataUploadParametersEditData: {},
-        collectionDataUploadParametersId: 0,
-        collectionDataUploadParametersUpdateData: {}
+        collectionDataUploadParametersId: null,
+        collectionDataUploadParametersUpdateData: {},
+        uploadTypeOptions: [
+            {value: 6, label: 'File Upload (DwC-A, csv, geoJSON)'},
+            {value: 8, label: 'IPT/DwC-A Provider'},
+            {value: 10, label: 'Symbiota Portal'}
+        ]
     }),
     getters: {
         getCollectionDataUploadParametersArr(state) {
@@ -41,12 +49,20 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             return (
                 state.collectionDataUploadParametersEditData['uploadtype'] && state.collectionDataUploadParametersEditData['title']
             );
+        },
+        getConfigurations(state) {
+            if(state.collectionDataUploadParametersEditData.hasOwnProperty('configjson') && state.collectionDataUploadParametersEditData.configjson){
+                return JSON.parse(state.collectionDataUploadParametersEditData.configjson);
+            }
+            else{
+                return state.blankConfigurations;
+            }
+        },
+        getUploadTypeOptions(state) {
+            return state.uploadTypeOptions;
         }
     },
     actions: {
-        clearCollectionDataUploadParametersArr() {
-            this.collectionDataUploadParametersArr.length = 0;
-        },
         createCollectionDataUploadParametersRecord(collid, callback) {
             this.collectionDataUploadParametersEditData['collid'] = collid.toString();
             const formData = new FormData();
@@ -92,6 +108,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             this.collectionDataUploadParametersEditData = Object.assign({}, this.collectionDataUploadParametersData);
         },
         setCollectionDataUploadParametersArr(collid) {
+            this.collectionDataUploadParametersArr.length = 0;
             const formData = new FormData();
             formData.append('collid', collid.toString());
             formData.append('action', 'getCollectionDataUploadParametersByCollection');
