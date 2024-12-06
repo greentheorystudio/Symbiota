@@ -52,11 +52,15 @@ class CollectionDataUploadParameters {
 
     public function deleteCollectionDataUploadParameterRecord($uspid): int
     {
-        $retVal = 0;
+        $retVal = 1;
         if($uspid){
+            $sql = 'DELETE FROM uploadspecmap WHERE uspid = ' . (int)$uspid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
             $sql = 'DELETE FROM omcolldatauploadparameters WHERE uspid = ' . (int)$uspid . ' ';
-            if($this->conn->query($sql)){
-                $retVal = 1;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
             }
         }
         return $retVal;
@@ -80,6 +84,28 @@ class CollectionDataUploadParameters {
                         $name = $val->name;
                         $nodeArr[$name] = $row[$name];
                     }
+                    $retArr[] = $nodeArr;
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getUploadParametersFieldMapping($uspid): array
+    {
+        $retArr = array();
+        if($uspid){
+            $sql = 'SELECT symbspecfield, sourcefield '.
+                'FROM uploadspecmap WHERE uspid = ' . (int)$uspid . ' ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $nodeArr = array();
+                    $nodeArr['symbspecfield'] = $row['symbspecfield'];
+                    $nodeArr['sourcefield'] = $row['sourcefield'];
                     $retArr[] = $nodeArr;
                     unset($rows[$index]);
                 }

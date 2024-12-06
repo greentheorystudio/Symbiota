@@ -18,6 +18,8 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         collectionDataUploadParametersEditData: {},
         collectionDataUploadParametersId: null,
         collectionDataUploadParametersUpdateData: {},
+        eventMofDataFields: {},
+        occurrenceMofDataFields: {},
         uploadTypeOptions: [
             {value: 6, label: 'File Upload (DwC-A, csv, geoJSON)'},
             {value: 8, label: 'IPT/DwC-A Provider'},

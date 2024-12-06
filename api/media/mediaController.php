@@ -35,7 +35,7 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif(($action === 'addMediaFromFile' || $action === 'addMediaFromUrl') && $isEditor && array_key_exists('media',$_POST) && array_key_exists('uploadpath',$_POST)){
         $mediaData = json_decode($_POST['media'], true);
-        $targetPath = FileSystemService::getServerUploadPath($_POST['uploadpath']);
+        $targetPath = FileSystemService::getServerMediaUploadPath($_POST['uploadpath']);
         $origFilename = $action === 'addMediaFromFile' ? $_FILES['medfile']['name'] : $mediaData['filename'];
         if($targetPath && $origFilename){
             $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);

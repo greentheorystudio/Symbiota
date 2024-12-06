@@ -20,16 +20,21 @@ const occurrenceDataUploadModule = {
                                                     <selector-input-element label="Select Upload Profile" :options="collectionDataUploadParametersArr" option-value="uspid" option-label="title" :value="collectionDataUploadParametersId" @update:value="(value) => processParameterProfileSelection(value)"></selector-input-element>
                                                 </template>
                                             </div>
-                                            <div class="col-12 col-sm-3">
+                                            <div class="col-12 col-sm-3 row justify-end">
                                                 <div>
-                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" />
+                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" dense />
                                                 </div>
                                             </div>
                                         </div>
                                         <collection-data-upload-parameters-field-module></collection-data-upload-parameters-field-module>
                                         <div v-if="Number(profileData.uploadtype) === 6" class="row">
                                             <div class="col-grow">
-                                                <file-picker-input-element :accepted-types="acceptedFileTypes" :value="selectedFile" :validate-file-size="false" @update:file="(value) => processUploadFile(value[0])"></file-picker-input-element>
+                                                <file-picker-input-element :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                            </div>
+                                        </div>
+                                        <div class="row justify-end">
+                                            <div>
+                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="!initializeActivated" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -122,18 +127,38 @@ const occurrenceDataUploadModule = {
         'file-picker-input-element': filePickerInputElement,
         'selector-input-element': selectorInputElement
     },
-    setup(props, context) {
+    setup(props) {
         const { processCsvDownload } = useCore();
         const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
         const collectionStore = useCollectionStore();
-
-        const acceptedFileTypes = ['geojson'];
-        const collectionData = Vue.computed(() => collectionStore.getCollectionData);
+        
+        const acceptedFileTypes = ['csv','geojson','txt','zip'];
+        const clientRoot = baseStore.getClientRoot;
         const collectionDataUploadParametersArr = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersArr);
         const collectionDataUploadParametersId = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersID);
+        const collId = Vue.computed(() => collectionStore.getCollectionId);
         const currentProcess = Vue.ref(null);
         const currentTab = Vue.ref('configuration');
+        const eventMofDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
+        const initializeActivated = Vue.computed(() => {
+            let returnVal = false;
+            if((Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10) && profileData.value['dwcpath']){
+                returnVal = true;
+            }
+            else if(Number(profileData.value['uploadtype']) === 6 && uploadedFile.value){
+                returnVal = true;
+            }
+            return returnVal;
+        });
+        const fieldMappingDataDetermiation = Vue.ref({});
+        const fieldMappingDataEventMof = Vue.ref({});
+        const fieldMappingDataMedia = Vue.ref({});
+        const fieldMappingDataMof = Vue.ref({});
+        const fieldMappingDataOccurrence = Vue.ref({});
+        const localDwcaClientPath = Vue.ref(null);
+        const localDwcaServerPath = Vue.ref(null);
+        const occurrenceMofDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
         const processorDisplayArr = Vue.reactive([]);
@@ -142,10 +167,16 @@ const occurrenceDataUploadModule = {
         const processorDisplayIndex = Vue.ref(0);
         const profileData = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersData);
         const scrollProcess = Vue.ref(null);
-        const selectedFile = Vue.ref(null);
         const showCollectionDataUploadParametersEditorPopup = Vue.ref(false);
-        const uploadTypeOptions = Vue.computed(() => collectionDataUploadParametersStore.getUploadTypeOptions);
-
+        const skipDeterminationFields = ['updid','occid','collid','tid','initialtimestamp'];
+        const skipMediaFields = ['upmid','tid','occid','collid','username','initialtimestamp'];
+        const skipOccurrenceFields = ['upspid','occid','collid','institutionid','collectionid','datasetid','tid',
+            'eventid','locationid','initialtimestamp'];
+        const symbiotaFieldOptionsDetermination = Vue.ref([]);
+        const symbiotaFieldOptionsMedia = Vue.ref([]);
+        const symbiotaFieldOptionsOccurrence = Vue.ref([]);
+        const uploadedFile = Vue.ref(null);
+        
         function addProcessToProcessorDisplay(processObj) {
             processorDisplayArr.push(processObj);
             if(processorDisplayArr.length > 100){
@@ -175,6 +206,163 @@ const occurrenceDataUploadModule = {
             processorDisplayDataArr = [];
             processorDisplayCurrentIndex.value = 0;
             processorDisplayIndex.value = 0;
+        }
+
+        function clearData() {
+            fieldMappingDataDetermiation.value = Object.assign({}, {});
+            fieldMappingDataEventMof.value = Object.assign({}, {});
+            fieldMappingDataMedia.value = Object.assign({}, {});
+            fieldMappingDataMof.value = Object.assign({}, {});
+            fieldMappingDataOccurrence.value = Object.assign({}, {});
+            symbiotaFieldOptionsDetermination.value.length = 0;
+            symbiotaFieldOptionsMedia.value.length = 0;
+            symbiotaFieldOptionsOccurrence.value.length = 0;
+            symbiotaFieldOptionsDetermination.value.push({value: 'unmapped', label: 'UNMAPPED'});
+            symbiotaFieldOptionsMedia.value.push({value: 'unmapped', label: 'UNMAPPED'});
+            symbiotaFieldOptionsOccurrence.value.push({value: 'unmapped', label: 'UNMAPPED'});
+        }
+
+        function getFieldData() {
+            const formData = new FormData();
+            formData.append('tableArr', JSON.stringify(['uploaddetermtemp', 'uploadmediatemp', 'uploadspectemp']));
+            formData.append('action', 'getUploadTableFieldData');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.hasOwnProperty('uploaddetermtemp') && data['uploaddetermtemp'].length > 0){
+                    data['uploaddetermtemp'].sort();
+                    data['uploaddetermtemp'].forEach((field) => {
+                        if(!skipDeterminationFields.includes(field)){
+                            symbiotaFieldOptionsDetermination.value.push({value: field, label: field});
+                        }
+                    });
+                }
+                if(data.hasOwnProperty('uploadmediatemp') && data['uploadmediatemp'].length > 0){
+                    data['uploadmediatemp'].sort();
+                    data['uploadmediatemp'].forEach((field) => {
+                        if(!skipMediaFields.includes(field)){
+                            symbiotaFieldOptionsMedia.value.push({value: field, label: field});
+                        }
+                    });
+                }
+                if(data.hasOwnProperty('uploadspectemp') && data['uploadspectemp'].length > 0){
+                    data['uploadspectemp'].sort();
+                    data['uploadspectemp'].forEach((field) => {
+                        if(!skipOccurrenceFields.includes(field)){
+                            symbiotaFieldOptionsOccurrence.value.push({value: field, label: field});
+                        }
+                    });
+                }
+                processSuccessResponse('Complete');
+                processSourceDataIngestion();
+            });
+        }
+
+        function getFieldMapping() {
+            const formData = new FormData();
+            formData.append('collid', collId.value.toString());
+            formData.append('uspid', collectionDataUploadParametersId.value.toString());
+            formData.append('action', 'getUploadParametersFieldMapping');
+            fetch(collectionDataUploadParametersApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data.length > 0){
+                    data.forEach((mapData) => {
+                        if(mapData['symbspecfield'].startsWith('ID-')){
+                            fieldMappingDataDetermiation.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(3);
+                        }
+                        else if(mapData['symbspecfield'].startsWith('IM-')){
+                            fieldMappingDataMedia.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(3);
+                        }
+                        else if(mapData['symbspecfield'].startsWith('MOF-')){
+                            fieldMappingDataMof.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(4);
+                        }
+                        else if(mapData['symbspecfield'].startsWith('EMOF-')){
+                            fieldMappingDataEventMof.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(5);
+                        }
+                        else{
+                            fieldMappingDataOccurrence.value[mapData['sourcefield']] = mapData['symbspecfield'];
+                        }
+                    });
+                }
+                getFieldData();
+            });
+        }
+
+        function getNewProcessObject(type, text) {
+            if(processorDisplayArr.length > 0){
+                const pastProcObj = processorDisplayArr[(processorDisplayArr.length - 1)];
+                if(pastProcObj){
+                    pastProcObj['current'] = false;
+                    if(pastProcObj.hasOwnProperty('subs') && pastProcObj['subs'].length > 0){
+                        const subProcObj = pastProcObj['subs'][(pastProcObj['subs'].length - 1)];
+                        if(subProcObj){
+                            subProcObj['loading'] = false;
+                            if(!subProcObj['result'] || subProcObj['result'] === ''){
+                                subProcObj['result'] = 'success';
+                            }
+                            if(!subProcObj['resultText'] || subProcObj['resultText'] === ''){
+                                subProcObj['resultText'] = 'Complete';
+                            }
+                        }
+                    }
+                    else{
+                        if(!pastProcObj['result'] || pastProcObj['result'] === ''){
+                            pastProcObj['result'] = 'success';
+                        }
+                        if(!pastProcObj['resultText'] || pastProcObj['resultText'] === ''){
+                            pastProcObj['resultText'] = 'Complete';
+                        }
+                    }
+                }
+            }
+            const procObj = {
+                id: currentProcess.value,
+                procText: text,
+                type: type,
+                loading: true,
+                current: true,
+                result: '',
+                resultText: ''
+            };
+            if(type === 'multi'){
+                procObj['subs'] = [];
+            }
+            return procObj;
+        }
+
+        function getNewSubprocessObject(type, text) {
+            return {
+                procText: text,
+                type: type,
+                loading: true,
+                result: '',
+                resultText: ''
+            };
+        }
+
+        function initializeUpload() {
+            adjustUIStart();
+            clearData();
+            const text = 'Setting Symbiota field mapping data';
+            currentProcess.value = 'setFieldMappingData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(Number(collectionDataUploadParametersId.value) > 0){
+                getFieldMapping();
+            }
+            else{
+                getFieldData();
+            }
         }
 
         function processErrorResponse(text) {
@@ -215,6 +403,35 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersStore.setCurrentCollectionDataUploadParametersRecord(uspid);
         }
 
+        function processSourceDataIngestion() {
+            const text = 'Initializing source data';
+            currentProcess.value = 'initializeSourceData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10){
+                const formData = new FormData();
+                formData.append('collid', collId.value.toString());
+                formData.append('uploadType', profileData.value['uploadtype'].toString());
+                formData.append('dwcaPath', profileData.value['dwcpath'].toString());
+                formData.append('action', 'processExternalDwcaTransfer');
+                fetch(dataUploadServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    localDwcaServerPath.value = res;
+                    const relPathIndex = res.indexOf('/temp/downloads');
+                    const relPath = res.slice(relPathIndex);
+                    localDwcaClientPath.value = clientRoot + relPath;
+                });
+            }
+            else if(Number(profileData.value['uploadtype']) === 6){
+                processUploadFile();
+            }
+        }
+
         function processSubprocessErrorResponse(text) {
             const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
             if(parentProcObj){
@@ -253,7 +470,7 @@ const occurrenceDataUploadModule = {
             }
         }
 
-        function processUploadFile(file) {
+        function processUploadFile() {
             const fileReader = new FileReader();
             fileReader.onload = () => {
                 const csvArr = [];
@@ -293,7 +510,7 @@ const occurrenceDataUploadModule = {
                 });
                 processCsvDownload(csvArr, filename);
             };
-            fileReader.readAsText(file);
+            fileReader.readAsText(uploadedFile.value);
         }
 
         function resetScrollProcess() {
@@ -326,13 +543,15 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersId,
             currentProcess,
             currentTab,
+            initializeActivated,
             procDisplayScrollAreaRef,
             processorDisplayArr,
             processorDisplayCurrentIndex,
             processorDisplayIndex,
             profileData,
-            selectedFile,
             showCollectionDataUploadParametersEditorPopup,
+            uploadedFile,
+            initializeUpload,
             processorDisplayScrollDown,
             processorDisplayScrollUp,
             processParameterProfileSelection,

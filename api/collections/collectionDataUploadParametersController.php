@@ -26,4 +26,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteCollectionDataUploadParameterRecord' && $uspid){
         echo $collectionDataUploadParameters->deleteCollectionDataUploadParameterRecord($uspid);
     }
+    elseif($action === 'getUploadParametersFieldMapping' && $uspid){
+        echo json_encode($collectionDataUploadParameters->getUploadParametersFieldMapping($uspid));
+    }
 }

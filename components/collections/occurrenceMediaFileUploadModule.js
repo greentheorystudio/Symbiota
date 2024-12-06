@@ -13,9 +13,9 @@ const occurrenceMediaFileUploadModule = {
                         <selector-input-element label="Select Upload Profile" :options="collectionMediaUploadParametersArr" option-value="spprid" option-label="title" :value="collectionMediaUploadParametersId" @update:value="(value) => processParameterProfileSelection(value)"></selector-input-element>
                     </template>
                 </div>
-                <div class="col-12 col-sm-3">
+                <div class="col-12 col-sm-3 row justify-end">
                     <div>
-                        <q-btn color="secondary" @click="showCollectionMediaUploadParametersEditorPopup = true" :label="Number(collectionMediaUploadParametersId) > 0 ? 'Edit' : 'Create'" />
+                        <q-btn color="secondary" @click="showCollectionMediaUploadParametersEditorPopup = true" :label="Number(collectionMediaUploadParametersId) > 0 ? 'Edit' : 'Create'" dense />
                     </div>
                 </div>
             </div>
