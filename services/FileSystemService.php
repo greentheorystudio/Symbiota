@@ -56,6 +56,20 @@ class FileSystemService {
         }
     }
 
+    public static function getDirectoryFilenameArr($dirPath): array
+    {
+        $returnArr = array();
+        if(is_dir($dirPath) && $handle = opendir($dirPath)) {
+            while(($item = readdir($handle)) !== false){
+                if($item && $item !== '.' && $item !== '..'){
+                    $returnArr[] = $item;
+                }
+            }
+            closedir($handle);
+        }
+        return $returnArr;
+    }
+
     public static function getImageSize($imageUrl): array
     {
         if(strpos($imageUrl, '/') === 0){
@@ -246,5 +260,14 @@ class FileSystemService {
             fclose($fp);
         }
         return $returnVal;
+    }
+
+    public static function unpackZipArchive($targetPath, $zipPath): void
+    {
+        $zip = new ZipArchive;
+        $zip->open($zipPath);
+        if(@$zip->extractTo($targetPath . '/')){
+            $zip->close();
+        }
     }
 }

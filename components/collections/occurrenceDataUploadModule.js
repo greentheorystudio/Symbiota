@@ -17,24 +17,24 @@ const occurrenceDataUploadModule = {
                                         <div class="row justify-between q-col-gutter-sm">
                                             <div class="col-12 col-sm-9">
                                                 <template v-if="collectionDataUploadParametersArr.length > 0">
-                                                    <selector-input-element label="Select Upload Profile" :options="collectionDataUploadParametersArr" option-value="uspid" option-label="title" :value="collectionDataUploadParametersId" @update:value="(value) => processParameterProfileSelection(value)"></selector-input-element>
+                                                    <selector-input-element :disabled="currentProcess" label="Select Upload Profile" :options="collectionDataUploadParametersArr" option-value="uspid" option-label="title" :value="collectionDataUploadParametersId" @update:value="(value) => processParameterProfileSelection(value)"></selector-input-element>
                                                 </template>
                                             </div>
                                             <div class="col-12 col-sm-3 row justify-end">
                                                 <div>
-                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" dense />
+                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" :disabled="currentProcess" dense />
                                                 </div>
                                             </div>
                                         </div>
-                                        <collection-data-upload-parameters-field-module></collection-data-upload-parameters-field-module>
+                                        <collection-data-upload-parameters-field-module :disabled="currentProcess"></collection-data-upload-parameters-field-module>
                                         <div v-if="Number(profileData.uploadtype) === 6" class="row">
                                             <div class="col-grow">
-                                                <file-picker-input-element :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                <file-picker-input-element :disabled="currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
                                             </div>
                                         </div>
                                         <div class="row justify-end">
                                             <div>
-                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="!initializeActivated" dense />
+                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentProcess" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -128,35 +128,23 @@ const occurrenceDataUploadModule = {
         'selector-input-element': selectorInputElement
     },
     setup(props) {
-        const { processCsvDownload } = useCore();
-        const baseStore = useBaseStore();
+        const { processCsvDownload, showNotification } = useCore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
         const collectionStore = useCollectionStore();
         
         const acceptedFileTypes = ['csv','geojson','txt','zip'];
-        const clientRoot = baseStore.getClientRoot;
         const collectionDataUploadParametersArr = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersArr);
         const collectionDataUploadParametersId = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersID);
         const collId = Vue.computed(() => collectionStore.getCollectionId);
         const currentProcess = Vue.ref(null);
         const currentTab = Vue.ref('configuration');
         const eventMofDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
-        const initializeActivated = Vue.computed(() => {
-            let returnVal = false;
-            if((Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10) && profileData.value['dwcpath']){
-                returnVal = true;
-            }
-            else if(Number(profileData.value['uploadtype']) === 6 && uploadedFile.value){
-                returnVal = true;
-            }
-            return returnVal;
-        });
         const fieldMappingDataDetermiation = Vue.ref({});
         const fieldMappingDataEventMof = Vue.ref({});
         const fieldMappingDataMedia = Vue.ref({});
         const fieldMappingDataMof = Vue.ref({});
         const fieldMappingDataOccurrence = Vue.ref({});
-        const localDwcaClientPath = Vue.ref(null);
+        const localDwcaFileArr = Vue.ref([]);
         const localDwcaServerPath = Vue.ref(null);
         const occurrenceMofDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const procDisplayScrollAreaRef = Vue.ref(null);
@@ -259,7 +247,7 @@ const occurrenceDataUploadModule = {
                     });
                 }
                 processSuccessResponse('Complete');
-                processSourceDataIngestion();
+                processSourceDataTransfer();
             });
         }
 
@@ -403,9 +391,30 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersStore.setCurrentCollectionDataUploadParametersRecord(uspid);
         }
 
-        function processSourceDataIngestion() {
-            const text = 'Initializing source data';
-            currentProcess.value = 'initializeSourceData';
+        function processSourceDataProcessing(metaFile) {
+            const text = 'Processing source data';
+            currentProcess.value = 'processSourceData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', collId.value.toString());
+            formData.append('serverPath', localDwcaServerPath.value);
+            formData.append('metaFile', metaFile.toString());
+            formData.append('action', 'processTransferredDwca');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                console.log(data);
+            });
+        }
+
+        function processSourceDataTransfer() {
+            const text = 'Transferring source data';
+            currentProcess.value = 'transferSourceData';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10){
                 const formData = new FormData();
@@ -418,13 +427,19 @@ const occurrenceDataUploadModule = {
                     body: formData
                 })
                 .then((response) => {
-                    return response.ok ? response.text() : null;
+                    return response.ok ? response.json() : null;
                 })
-                .then((res) => {
-                    localDwcaServerPath.value = res;
-                    const relPathIndex = res.indexOf('/temp/downloads');
-                    const relPath = res.slice(relPathIndex);
-                    localDwcaClientPath.value = clientRoot + relPath;
+                .then((data) => {
+                    processSuccessResponse('Complete');
+                    localDwcaServerPath.value = data['baseFolderPath'];
+                    localDwcaFileArr.value = data['files'].slice();
+                    const metaFile = localDwcaFileArr.value.find(filename => filename.toLowerCase() === 'meta.xml');
+                    if(metaFile){
+                        processSourceDataProcessing(metaFile);
+                    }
+                    else{
+                        showNotification('negative', 'The Darwin Core Archive does not contain a meta.xml file, which is necessary for upload processing.');
+                    }
                 });
             }
             else if(Number(profileData.value['uploadtype']) === 6){
@@ -543,7 +558,6 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersId,
             currentProcess,
             currentTab,
-            initializeActivated,
             procDisplayScrollAreaRef,
             processorDisplayArr,
             processorDisplayCurrentIndex,
