@@ -147,7 +147,9 @@ const selectorInputElement = {
         }
 
         function setSelectedOption() {
-            selectedOption.value = selectorOptions.find(opt => opt['value'] === props.value);
+            if(props.value){
+                selectedOption.value = selectorOptions.find(opt => opt['value'].toString() === props.value.toString());
+            }
         }
 
         Vue.onMounted(() => {

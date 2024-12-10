@@ -175,7 +175,7 @@ class OccurrenceLocations{
         $sql = 'SELECT locationid, locationname, locationcode, country, stateprovince, county, locality, decimallatitude, decimallongitude, '.
             'geodeticdatum, coordinateuncertaintyinmeters, locationremarks, verbatimcoordinates, minimumelevationinmeters, '.
             'maximumelevationinmeters, verbatimelevation '.
-            'FROM omoccurlocations WHERE collid = ' . $collid . ' '.
+            'FROM omoccurlocations WHERE collid = ' . (int)$collid . ' '.
             'AND ((3959 * ACOS(COS(RADIANS(decimallatitude)) * COS(RADIANS(' . $decimalLatitude . ')) * COS(RADIANS(' . $decimalLongitude . ') - RADIANS(decimallongitude)) + SIN(RADIANS(decimallatitude)) * SIN(RADIANS(' . $decimalLatitude . ')))) <= 10.955849477517672) ';
         if($locationid){
             $sql .= 'AND locationid <> ' . $locationid . ' ';
@@ -201,6 +201,51 @@ class OccurrenceLocations{
     public function getLocationFields(): array
     {
         return $this->fields;
+    }
+
+    public function searchLocations($collid, $criteria): array
+    {
+        $retArr = array();
+        $sqlWhereArr = array();
+        if($criteria['country']){
+            $sqlWhereArr[] = '(country = "' . SanitizerService::cleanInStr($this->conn, $criteria['country']) . '")';
+        }
+        if($criteria['stateprovince']){
+            $sqlWhereArr[] = '(stateprovince = "' . SanitizerService::cleanInStr($this->conn, $criteria['stateprovince']) . '")';
+        }
+        if($criteria['county']){
+            $sqlWhereArr[] = '(county = "' . SanitizerService::cleanInStr($this->conn, $criteria['county']) . '")';
+        }
+        if($criteria['locality']){
+            $sqlWhereArr[] = '(locality REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteria['locality']) . '")';
+        }
+        if($criteria['decimallatitude']){
+            $sqlWhereArr[] = '(decimallatitude = ' . SanitizerService::cleanInStr($this->conn, $criteria['decimallatitude']) . ')';
+        }
+        if($criteria['decimallongitude']){
+            $sqlWhereArr[] = '(decimallongitude = ' . SanitizerService::cleanInStr($this->conn, $criteria['decimallongitude']) . ')';
+        }
+        $sql = 'SELECT locationid, locationname, locationcode, country, stateprovince, county, locality, decimallatitude, decimallongitude, '.
+            'geodeticdatum, coordinateuncertaintyinmeters, locationremarks, verbatimcoordinates, minimumelevationinmeters, '.
+            'maximumelevationinmeters, verbatimelevation '.
+            'FROM omoccurlocations WHERE collid = ' . (int)$collid . ' '.
+            'AND ' . implode(' AND ', $sqlWhereArr);
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 
     public function updateLocationRecord($locationId, $editData): int

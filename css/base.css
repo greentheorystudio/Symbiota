@@ -456,20 +456,19 @@ body.processing .loadingModal {
 
 /* Vue component styles */
 .processor-container {
-	width: 95%;
-	margin: 20px auto;
+	width: 100%;
 	display: flex;
 	justify-content: space-between;
 	gap: 10px;
 }
 .processor-control-container {
-	width: 40%;
+	width: 60%;
 }
 .processor-control-accordion {
 	height: 610px;
 }
 .processor-display-container {
-	width: 50%;
+	width: 40%;
 }
 .processor-control-card {
 	height: 630px;
