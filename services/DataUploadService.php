@@ -231,4 +231,18 @@ class DataUploadService {
         FileSystemService::deleteFile($serverPath . '/' . $fileInfo['filename']);
         return $returnArr;
     }
+
+    public function uploadDwcaFile($collid, $dwcaFile): array
+    {
+        $returnArr = array();
+        $targetPath = FileSystemService::getTempDwcaUploadPath($collid);
+        if($targetPath && $dwcaFile['name'] && FileSystemService::moveUploadedFileToServer($dwcaFile, $targetPath, $dwcaFile['name'])) {
+            $fullTargetPath = $targetPath . '/' . $dwcaFile['name'];
+            FileSystemService::unpackZipArchive($targetPath, $fullTargetPath);
+            FileSystemService::deleteFile($fullTargetPath);
+            $returnArr['baseFolderPath'] = $targetPath;
+            $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
+        }
+        return $returnArr;
+    }
 }

@@ -22,4 +22,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'processTransferredDwca' && array_key_exists('serverPath',$_POST) && array_key_exists('metaFile',$_POST)){
         echo json_encode($dataUploadService->processTransferredDwca($_POST['serverPath'], $_POST['metaFile']));
     }
+    elseif($action === 'uploadDwcaFile' && array_key_exists('dwcaFile', $_FILES)){
+        echo json_encode($dataUploadService->uploadDwcaFile($collid, $_FILES['dwcaFile']));
+    }
 }

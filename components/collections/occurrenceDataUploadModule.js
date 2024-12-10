@@ -129,6 +129,7 @@ const occurrenceDataUploadModule = {
     },
     setup(props) {
         const { processCsvDownload, showNotification } = useCore();
+        const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
         const collectionStore = useCollectionStore();
         
@@ -144,8 +145,10 @@ const occurrenceDataUploadModule = {
         const fieldMappingDataMedia = Vue.ref({});
         const fieldMappingDataMof = Vue.ref({});
         const fieldMappingDataOccurrence = Vue.ref({});
+        const flatFileMode = Vue.ref(false);
         const localDwcaFileArr = Vue.ref([]);
         const localDwcaServerPath = Vue.ref(null);
+        const maxUploadFilesize = baseStore.getMaxUploadFilesize;
         const occurrenceMofDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
@@ -194,6 +197,7 @@ const occurrenceDataUploadModule = {
             processorDisplayDataArr = [];
             processorDisplayCurrentIndex.value = 0;
             processorDisplayIndex.value = 0;
+            flatFileMode.value = false;
         }
 
         function clearData() {
@@ -486,46 +490,58 @@ const occurrenceDataUploadModule = {
         }
 
         function processUploadFile() {
-            const fileReader = new FileReader();
-            fileReader.onload = () => {
-                const csvArr = [];
-                const filename = 'rare_plant_upload.csv';
-                const geoJSONFormat = new ol.format.GeoJSON();
-                const wktFormat = new ol.format.WKT();
-                const uploadData = JSON.parse(fileReader.result);
-                const uploadFeatures = geoJSONFormat.readFeatures(uploadData);
-                uploadFeatures.forEach((feature) => {
-                    if(feature){
-                        const featureData = {};
-                        const featureProps = feature.getProperties();
-                        const featureGeometry = feature.getGeometry();
-                        const wktStr = wktFormat.writeGeometry(featureGeometry);
-                        Object.keys(featureProps).forEach((prop) => {
-                            if(prop !== 'geometry'){
-                                if(featureProps[prop]){
-                                    if(prop.toLowerCase().includes('date')){
-                                        const date = new Date(featureProps[prop]);
-                                        const year = date.getFullYear();
-                                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                                        const day = String(date.getDate()).padStart(2, '0');
-                                        featureData[prop.toLowerCase()] = `${year}-${month}-${day}`;
+            if(uploadedFile.value.name.endsWith('.zip')){
+                const fileSizeMb = Number(uploadedFile.value.size) > 0 ? Math.round((uploadedFile.value.size / 1000000) * 10) / 100 : 0;
+                if(fileSizeMb <= Number(maxUploadFilesize)){
+                    transferUploadedDwcaFileToServer();
+                }
+                else{
+                    showNotification('negative', (uploadedFile.value.name + ' cannot be uploaded because it is ' + fileSizeMb.toString() + 'MB, which exceeds the server limit of ' + maxUploadFilesize.toString() + 'MB for uploads.'));
+                }
+            }
+            else{
+                flatFileMode.value = true;
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                    const csvArr = [];
+                    const filename = 'rare_plant_upload.csv';
+                    const geoJSONFormat = new ol.format.GeoJSON();
+                    const wktFormat = new ol.format.WKT();
+                    const uploadData = JSON.parse(fileReader.result);
+                    const uploadFeatures = geoJSONFormat.readFeatures(uploadData);
+                    uploadFeatures.forEach((feature) => {
+                        if(feature){
+                            const featureData = {};
+                            const featureProps = feature.getProperties();
+                            const featureGeometry = feature.getGeometry();
+                            const wktStr = wktFormat.writeGeometry(featureGeometry);
+                            Object.keys(featureProps).forEach((prop) => {
+                                if(prop !== 'geometry'){
+                                    if(featureProps[prop]){
+                                        if(prop.toLowerCase().includes('date')){
+                                            const date = new Date(featureProps[prop]);
+                                            const year = date.getFullYear();
+                                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                                            const day = String(date.getDate()).padStart(2, '0');
+                                            featureData[prop.toLowerCase()] = `${year}-${month}-${day}`;
+                                        }
+                                        else{
+                                            featureData[prop.toLowerCase()] = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop];
+                                        }
                                     }
                                     else{
-                                        featureData[prop.toLowerCase()] = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop];
+                                        featureData[prop.toLowerCase()] = null;
                                     }
                                 }
-                                else{
-                                    featureData[prop.toLowerCase()] = null;
-                                }
-                            }
-                        });
-                        featureData['footprintwkt'] = wktStr;
-                        csvArr.push(featureData);
-                    }
-                });
-                processCsvDownload(csvArr, filename);
-            };
-            fileReader.readAsText(uploadedFile.value);
+                            });
+                            featureData['footprintwkt'] = wktStr;
+                            csvArr.push(featureData);
+                        }
+                    });
+                    processCsvDownload(csvArr, filename);
+                };
+                fileReader.readAsText(uploadedFile.value);
+            }
         }
 
         function resetScrollProcess() {
@@ -544,6 +560,32 @@ const occurrenceDataUploadModule = {
                     procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
                 }
             }
+        }
+
+        function transferUploadedDwcaFileToServer() {
+            const formData = new FormData();
+            formData.append('collid', collId.value.toString());
+            formData.append('dwcaFile', uploadedFile.value);
+            formData.append('action', 'uploadDwcaFile');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                processSuccessResponse('Complete');
+                localDwcaServerPath.value = data['baseFolderPath'];
+                localDwcaFileArr.value = data['files'].slice();
+                const metaFile = localDwcaFileArr.value.find(filename => filename.toLowerCase() === 'meta.xml');
+                if(metaFile){
+                    processSourceDataProcessing(metaFile);
+                }
+                else{
+                    showNotification('negative', 'The Darwin Core Archive does not contain a meta.xml file, which is necessary for upload processing.');
+                }
+            });
         }
 
         Vue.onMounted(() => {
