@@ -10,31 +10,31 @@ const occurrenceDataUploadModule = {
             <div class="processor-control-container">
                 <q-card class="processor-control-card">
                     <q-list class="processor-control-accordion">
-                        <q-expansion-item class="overflow-hidden" group="controlgroup" label="Configuration" header-class="bg-grey-3 text-bold" default-opened>
+                        <q-expansion-item class="overflow-hidden" group="expansiongroup" label="Configuration" header-class="bg-grey-3 text-bold" default-opened>
                             <q-card class="accordion-panel">
                                 <q-card-section>
                                     <div class="column q-col-gutter-sm">
                                         <div class="row justify-between q-col-gutter-sm">
                                             <div class="col-12 col-sm-9">
                                                 <template v-if="collectionDataUploadParametersArr.length > 0">
-                                                    <selector-input-element :disabled="currentProcess" label="Select Upload Profile" :options="collectionDataUploadParametersArr" option-value="uspid" option-label="title" :value="collectionDataUploadParametersId" @update:value="(value) => processParameterProfileSelection(value)"></selector-input-element>
+                                                    <selector-input-element :disabled="!!currentProcess" label="Select Upload Profile" :options="collectionDataUploadParametersArr" option-value="uspid" option-label="title" :value="collectionDataUploadParametersId" @update:value="(value) => processParameterProfileSelection(value)"></selector-input-element>
                                                 </template>
                                             </div>
                                             <div class="col-12 col-sm-3 row justify-end">
                                                 <div>
-                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" :disabled="currentProcess" dense />
+                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" :disabled="!!currentProcess" dense />
                                                 </div>
                                             </div>
                                         </div>
-                                        <collection-data-upload-parameters-field-module :disabled="currentProcess"></collection-data-upload-parameters-field-module>
+                                        <collection-data-upload-parameters-field-module :disabled="!!currentProcess"></collection-data-upload-parameters-field-module>
                                         <div v-if="Number(profileData.uploadtype) === 6" class="row">
                                             <div class="col-grow">
-                                                <file-picker-input-element :disabled="currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                <file-picker-input-element :disabled="!!currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
                                             </div>
                                         </div>
                                         <div class="row justify-end">
                                             <div>
-                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentProcess" dense />
+                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="!!currentProcess" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -42,7 +42,7 @@ const occurrenceDataUploadModule = {
                             </q-card>
                         </q-expansion-item>
                         <q-separator></q-separator>
-                        <q-expansion-item class="overflow-hidden" group="controlgroup" label="Field Mapping" header-class="bg-grey-3 text-bold" :disable="currentTab !== 'mapping' && currentTab !== 'summary'">
+                        <q-expansion-item :model-value="currentTab === 'mapping'" class="overflow-hidden" group="expansiongroup" label="Field Mapping" header-class="bg-grey-3 text-bold" :disable="currentTab !== 'mapping' && currentTab !== 'summary'">
                             <q-card class="accordion-panel">
                                 <q-card-section>
                                     
@@ -50,7 +50,7 @@ const occurrenceDataUploadModule = {
                             </q-card>
                         </q-expansion-item>
                         <q-separator></q-separator>
-                        <q-expansion-item class="overflow-hidden" group="controlgroup" label="Summary" header-class="bg-grey-3 text-bold" :disable="currentTab !== 'summary'">
+                        <q-expansion-item :model-value="currentTab === 'summary'" class="overflow-hidden" group="expansiongroup" label="Summary" header-class="bg-grey-3 text-bold" :disable="currentTab !== 'summary'">
                             <q-card class="accordion-panel">
                                 <q-card-section>
                                     
@@ -128,7 +128,7 @@ const occurrenceDataUploadModule = {
         'selector-input-element': selectorInputElement
     },
     setup(props) {
-        const { processCsvDownload, showNotification } = useCore();
+        const { parseCsvFile, showNotification } = useCore();
         const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
         const collectionStore = useCollectionStore();
@@ -163,6 +163,16 @@ const occurrenceDataUploadModule = {
         const skipMediaFields = ['upmid','tid','occid','collid','username','initialtimestamp'];
         const skipOccurrenceFields = ['upspid','occid','collid','institutionid','collectionid','datasetid','tid',
             'eventid','locationid','initialtimestamp'];
+        const sourceDataFieldsDetermination = Vue.ref({});
+        const sourceDataFieldsFlatFile = Vue.ref({});
+        const sourceDataFieldsMof = Vue.ref({});
+        const sourceDataFieldsMultimedia = Vue.ref({});
+        const sourceDataFieldsOccurrence = Vue.ref({});
+        const sourceDataFilesDetermination = Vue.ref([]);
+        const sourceDataFilesMof = Vue.ref([]);
+        const sourceDataFilesMultimedia = Vue.ref([]);
+        const sourceDataFilesOccurrence = Vue.ref([]);
+        const sourceDataFlatFile = Vue.ref([]);
         const symbiotaFieldOptionsDetermination = Vue.ref([]);
         const symbiotaFieldOptionsMedia = Vue.ref([]);
         const symbiotaFieldOptionsOccurrence = Vue.ref([]);
@@ -197,10 +207,10 @@ const occurrenceDataUploadModule = {
             processorDisplayDataArr = [];
             processorDisplayCurrentIndex.value = 0;
             processorDisplayIndex.value = 0;
-            flatFileMode.value = false;
         }
 
         function clearData() {
+            flatFileMode.value = false;
             fieldMappingDataDetermiation.value = Object.assign({}, {});
             fieldMappingDataEventMof.value = Object.assign({}, {});
             fieldMappingDataMedia.value = Object.assign({}, {});
@@ -212,6 +222,16 @@ const occurrenceDataUploadModule = {
             symbiotaFieldOptionsDetermination.value.push({value: 'unmapped', label: 'UNMAPPED'});
             symbiotaFieldOptionsMedia.value.push({value: 'unmapped', label: 'UNMAPPED'});
             symbiotaFieldOptionsOccurrence.value.push({value: 'unmapped', label: 'UNMAPPED'});
+            sourceDataFieldsDetermination.value = Object.assign({}, {});
+            sourceDataFieldsFlatFile.value = Object.assign({}, {});
+            sourceDataFieldsMof.value = Object.assign({}, {});
+            sourceDataFieldsMultimedia.value = Object.assign({}, {});
+            sourceDataFieldsOccurrence.value = Object.assign({}, {});
+            sourceDataFilesDetermination.value.length = 0;
+            sourceDataFilesMof.value.length = 0;
+            sourceDataFilesMultimedia.value.length = 0;
+            sourceDataFilesOccurrence.value.length = 0;
+            sourceDataFlatFile.value.length = 0;
         }
 
         function getFieldData() {
@@ -369,6 +389,96 @@ const occurrenceDataUploadModule = {
             }
         }
 
+        function processFlatFileCsvData(csvData) {
+            if(csvData.length > 0){
+                let generateCoreIds = false;
+                csvData.forEach((dataObj, index) => {
+                    if(index === 0){
+                        if(!dataObj.hasOwnProperty('id') && !dataObj.hasOwnProperty('coreid')){
+                            generateCoreIds = true;
+                        }
+                        if(generateCoreIds){
+                            sourceDataFieldsFlatFile.value['id'] = 'coreid';
+                        }
+                        Object.keys(dataObj).forEach((key) => {
+                            if(key.toLowerCase() === 'id' || key.toLowerCase() === 'coreid'){
+                                sourceDataFieldsFlatFile.value[key.toLowerCase()] = 'coreid';
+                            }
+                            else if(key.toLowerCase() === 'eventid'){
+                                sourceDataFieldsFlatFile.value[key.toLowerCase()] = 'coreeventid';
+                            }
+                            else{
+                                sourceDataFieldsFlatFile.value[key.toLowerCase()] = key;
+                            }
+                        });
+                    }
+                    if(generateCoreIds){
+                        dataObj['id'] = (index + 1).toString();
+                    }
+                    sourceDataFlatFile.value.push(dataObj);
+                });
+            }
+            processSuccessResponse('Complete');
+            currentTab.value = 'mapping';
+        }
+
+        function processFlatFileGeoJson(geojsonData) {
+            let generateCoreIds = false;
+            const geoJSONFormat = new ol.format.GeoJSON();
+            const uploadFeatures = geoJSONFormat.readFeatures(geojsonData);
+            uploadFeatures.forEach((feature, index) => {
+                if(feature){
+                    const featureData = {};
+                    const featureProps = feature.getProperties();
+                    const selectedClone = feature.clone();
+                    const geoType = selectedClone.getGeometry().getType();
+                    const featureGeometry = selectedClone.getGeometry();
+                    if(!featureProps.hasOwnProperty('id') && !featureProps.hasOwnProperty('coreid')){
+                        generateCoreIds = true;
+                    }
+                    if(generateCoreIds){
+                        sourceDataFieldsFlatFile.value['id'] = 'coreid';
+                    }
+                    Object.keys(featureProps).forEach((prop) => {
+                        if(prop !== 'geometry'){
+                            if(prop.toLowerCase() === 'id' || prop.toLowerCase() === 'coreid'){
+                                sourceDataFieldsFlatFile.value[prop.toLowerCase()] = 'coreid';
+                            }
+                            else if(prop.toLowerCase() === 'eventid'){
+                                sourceDataFieldsFlatFile.value[prop.toLowerCase()] = 'coreeventid';
+                            }
+                            else{
+                                sourceDataFieldsFlatFile.value[prop.toLowerCase()] = prop;
+                            }
+                            if(featureProps[prop]){
+                                featureData[prop.toLowerCase()] = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop];
+                            }
+                            else{
+                                featureData[prop.toLowerCase()] = null;
+                            }
+                        }
+                    });
+                    if(generateCoreIds){
+                        featureData['id'] = (index + 1).toString();
+                    }
+                    if(geoType === 'Polygon' || geoType === 'MultiPolygon'){
+                        const wktFormat = new ol.format.WKT();
+                        featureData['footprintwkt'] = wktFormat.writeGeometry(featureGeometry);
+                    }
+                    else if((geoType === 'Point' || geoType === 'MultiPoint') && (!featureData.hasOwnProperty('decimallatitude') || !featureData.hasOwnProperty('decimallongitude') || !featureData['decimallatitude'] || !featureData['decimallongitude'])){
+                        const geoJSONFormat = new ol.format.GeoJSON();
+                        const geojsonStr = geoJSONFormat.writeGeometry(featureGeometry);
+                        const featCoords = geoType === 'Point' ? JSON.parse(geojsonStr).coordinates : JSON.parse(geojsonStr).coordinates[0];
+                        featureData['decimallatitude'] = featCoords[1];
+                        featureData['decimallongitude'] = featCoords[0];
+                    }
+                    sourceDataFlatFile.value.push(featureData);
+                }
+            });
+            processSuccessResponse('Complete');
+            currentTab.value = 'mapping';
+        }
+
         function processorDisplayScrollDown() {
             scrollProcess.value = 'scrollDown';
             processorDisplayArr.length = 0;
@@ -412,15 +522,32 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                console.log(data);
+                processSuccessResponse('Complete');
+                if(data.hasOwnProperty('occurrence') && data['occurrence']['dataFiles'].length > 0){
+                    sourceDataFieldsOccurrence.value = Object.assign({}, data['occurrence']['fields']);
+                    sourceDataFilesOccurrence.value = data['occurrence']['dataFiles'].slice();
+                    if(data.hasOwnProperty('identification') && data['identification']['dataFiles'].length > 0){
+                        sourceDataFieldsDetermination.value = Object.assign({}, data['identification']['fields']);
+                        sourceDataFilesDetermination.value = data['identification']['dataFiles'].slice();
+                    }
+                    if(data.hasOwnProperty('multimedia') && data['multimedia']['dataFiles'].length > 0){
+                        sourceDataFieldsMultimedia.value = Object.assign({}, data['multimedia']['fields']);
+                        sourceDataFilesMultimedia.value = data['multimedia']['dataFiles'].slice();
+                    }
+                    if(data.hasOwnProperty('measurementorfact') && data['measurementorfact']['dataFiles'].length > 0){
+                        sourceDataFieldsMof.value = Object.assign({}, data['measurementorfact']['fields']);
+                        sourceDataFilesMof.value = data['measurementorfact']['dataFiles'].slice();
+                    }
+                }
+                currentTab.value = 'mapping';
             });
         }
 
         function processSourceDataTransfer() {
-            const text = 'Transferring source data';
-            currentProcess.value = 'transferSourceData';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
             if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10){
+                const text = 'Transferring source data';
+                currentProcess.value = 'transferSourceData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 const formData = new FormData();
                 formData.append('collid', collId.value.toString());
                 formData.append('uploadType', profileData.value['uploadtype'].toString());
@@ -499,46 +626,24 @@ const occurrenceDataUploadModule = {
                     showNotification('negative', (uploadedFile.value.name + ' cannot be uploaded because it is ' + fileSizeMb.toString() + 'MB, which exceeds the server limit of ' + maxUploadFilesize.toString() + 'MB for uploads.'));
                 }
             }
+            else if(uploadedFile.value.name.endsWith('.csv')){
+                const text = 'Processing source data';
+                currentProcess.value = 'processSourceData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                flatFileMode.value = true;
+                parseCsvFile(uploadedFile.value, (csvData) => {
+                    processFlatFileCsvData(csvData);
+                });
+            }
             else{
+                const text = 'Processing source data';
+                currentProcess.value = 'processSourceData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 flatFileMode.value = true;
                 const fileReader = new FileReader();
                 fileReader.onload = () => {
-                    const csvArr = [];
-                    const filename = 'rare_plant_upload.csv';
-                    const geoJSONFormat = new ol.format.GeoJSON();
-                    const wktFormat = new ol.format.WKT();
                     const uploadData = JSON.parse(fileReader.result);
-                    const uploadFeatures = geoJSONFormat.readFeatures(uploadData);
-                    uploadFeatures.forEach((feature) => {
-                        if(feature){
-                            const featureData = {};
-                            const featureProps = feature.getProperties();
-                            const featureGeometry = feature.getGeometry();
-                            const wktStr = wktFormat.writeGeometry(featureGeometry);
-                            Object.keys(featureProps).forEach((prop) => {
-                                if(prop !== 'geometry'){
-                                    if(featureProps[prop]){
-                                        if(prop.toLowerCase().includes('date')){
-                                            const date = new Date(featureProps[prop]);
-                                            const year = date.getFullYear();
-                                            const month = String(date.getMonth() + 1).padStart(2, '0');
-                                            const day = String(date.getDate()).padStart(2, '0');
-                                            featureData[prop.toLowerCase()] = `${year}-${month}-${day}`;
-                                        }
-                                        else{
-                                            featureData[prop.toLowerCase()] = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop];
-                                        }
-                                    }
-                                    else{
-                                        featureData[prop.toLowerCase()] = null;
-                                    }
-                                }
-                            });
-                            featureData['footprintwkt'] = wktStr;
-                            csvArr.push(featureData);
-                        }
-                    });
-                    processCsvDownload(csvArr, filename);
+                    processFlatFileGeoJson(uploadData);
                 };
                 fileReader.readAsText(uploadedFile.value);
             }
@@ -563,6 +668,9 @@ const occurrenceDataUploadModule = {
         }
 
         function transferUploadedDwcaFileToServer() {
+            const text = 'Transferring source data';
+            currentProcess.value = 'transferSourceData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', collId.value.toString());
             formData.append('dwcaFile', uploadedFile.value);
