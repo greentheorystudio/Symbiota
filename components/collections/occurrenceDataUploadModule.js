@@ -136,7 +136,6 @@ const occurrenceDataUploadModule = {
         const acceptedFileTypes = ['csv','geojson','txt','zip'];
         const collectionDataUploadParametersArr = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersArr);
         const collectionDataUploadParametersId = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersID);
-        const collId = Vue.computed(() => collectionStore.getCollectionId);
         const currentProcess = Vue.ref(null);
         const currentTab = Vue.ref('configuration');
         const eventMofDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
@@ -159,10 +158,10 @@ const occurrenceDataUploadModule = {
         const profileData = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersData);
         const scrollProcess = Vue.ref(null);
         const showCollectionDataUploadParametersEditorPopup = Vue.ref(false);
-        const skipDeterminationFields = ['updid','occid','collid','tid','initialtimestamp'];
-        const skipMediaFields = ['upmid','tid','occid','collid','username','initialtimestamp'];
-        const skipOccurrenceFields = ['upspid','occid','collid','institutionid','collectionid','datasetid','tid',
-            'eventid','locationid','initialtimestamp'];
+        const skipDeterminationFields = ['updid','occid','collid','dbpk','tid','initialtimestamp'];
+        const skipMediaFields = ['upmid','tid','occid','collid','dbpk','username','initialtimestamp'];
+        const skipOccurrenceFields = ['upspid','occid','collid','dbpk','institutionid','collectionid','datasetid','tid',
+            'eventid','eventdbpk','locationid','initialtimestamp'];
         const sourceDataFieldsDetermination = Vue.ref({});
         const sourceDataFieldsFlatFile = Vue.ref({});
         const sourceDataFieldsMof = Vue.ref({});
@@ -174,7 +173,13 @@ const occurrenceDataUploadModule = {
         const sourceDataFilesOccurrence = Vue.ref([]);
         const sourceDataFlatFile = Vue.ref([]);
         const symbiotaFieldOptionsDetermination = Vue.ref([]);
+        const symbiotaFieldOptionsFlatFile = Vue.ref([]);
         const symbiotaFieldOptionsMedia = Vue.ref([]);
+        const symbiotaFieldOptionsMof = Vue.ref([
+            {value: 'unmapped', label: 'UNMAPPED'},
+            {value: 'field', label: 'measurementtype'},
+            {value: 'datavalue', label: 'measurementvalue'}
+        ]);
         const symbiotaFieldOptionsOccurrence = Vue.ref([]);
         const uploadedFile = Vue.ref(null);
         
@@ -217,9 +222,11 @@ const occurrenceDataUploadModule = {
             fieldMappingDataMof.value = Object.assign({}, {});
             fieldMappingDataOccurrence.value = Object.assign({}, {});
             symbiotaFieldOptionsDetermination.value.length = 0;
+            symbiotaFieldOptionsFlatFile.value.length = 0;
             symbiotaFieldOptionsMedia.value.length = 0;
             symbiotaFieldOptionsOccurrence.value.length = 0;
             symbiotaFieldOptionsDetermination.value.push({value: 'unmapped', label: 'UNMAPPED'});
+            symbiotaFieldOptionsFlatFile.value.push({value: 'unmapped', label: 'UNMAPPED'});
             symbiotaFieldOptionsMedia.value.push({value: 'unmapped', label: 'UNMAPPED'});
             symbiotaFieldOptionsOccurrence.value.push({value: 'unmapped', label: 'UNMAPPED'});
             sourceDataFieldsDetermination.value = Object.assign({}, {});
@@ -232,6 +239,24 @@ const occurrenceDataUploadModule = {
             sourceDataFilesMultimedia.value.length = 0;
             sourceDataFilesOccurrence.value.length = 0;
             sourceDataFlatFile.value.length = 0;
+        }
+
+        function clearUploadTables() {
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'clearUploadTables');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 0){
+                    showNotification('negative', 'An error occurred while clearing the upload tables. Please contact the portal administrator before proceeding.');
+                }
+            });
         }
 
         function getFieldData() {
@@ -277,7 +302,7 @@ const occurrenceDataUploadModule = {
 
         function getFieldMapping() {
             const formData = new FormData();
-            formData.append('collid', collId.value.toString());
+            formData.append('collid', props.collid.toString());
             formData.append('uspid', collectionDataUploadParametersId.value.toString());
             formData.append('action', 'getUploadParametersFieldMapping');
             fetch(collectionDataUploadParametersApiUrl, {
@@ -418,8 +443,7 @@ const occurrenceDataUploadModule = {
                     sourceDataFlatFile.value.push(dataObj);
                 });
             }
-            processSuccessResponse('Complete');
-            currentTab.value = 'mapping';
+            validateFieldMappingData();
         }
 
         function processFlatFileGeoJson(geojsonData) {
@@ -475,8 +499,7 @@ const occurrenceDataUploadModule = {
                     sourceDataFlatFile.value.push(featureData);
                 }
             });
-            processSuccessResponse('Complete');
-            currentTab.value = 'mapping';
+            validateFieldMappingData();
         }
 
         function processorDisplayScrollDown() {
@@ -510,7 +533,7 @@ const occurrenceDataUploadModule = {
             currentProcess.value = 'processSourceData';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
-            formData.append('collid', collId.value.toString());
+            formData.append('collid', props.collid.toString());
             formData.append('serverPath', localDwcaServerPath.value);
             formData.append('metaFile', metaFile.toString());
             formData.append('action', 'processTransferredDwca');
@@ -522,7 +545,6 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                processSuccessResponse('Complete');
                 if(data.hasOwnProperty('occurrence') && data['occurrence']['dataFiles'].length > 0){
                     sourceDataFieldsOccurrence.value = Object.assign({}, data['occurrence']['fields']);
                     sourceDataFilesOccurrence.value = data['occurrence']['dataFiles'].slice();
@@ -539,7 +561,7 @@ const occurrenceDataUploadModule = {
                         sourceDataFilesMof.value = data['measurementorfact']['dataFiles'].slice();
                     }
                 }
-                currentTab.value = 'mapping';
+                validateFieldMappingData();
             });
         }
 
@@ -549,7 +571,7 @@ const occurrenceDataUploadModule = {
                 currentProcess.value = 'transferSourceData';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 const formData = new FormData();
-                formData.append('collid', collId.value.toString());
+                formData.append('collid', props.collid.toString());
                 formData.append('uploadType', profileData.value['uploadtype'].toString());
                 formData.append('dwcaPath', profileData.value['dwcpath'].toString());
                 formData.append('action', 'processExternalDwcaTransfer');
@@ -631,6 +653,7 @@ const occurrenceDataUploadModule = {
                 currentProcess.value = 'processSourceData';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 flatFileMode.value = true;
+                setSymbiotaFlatFileFieldOptions();
                 parseCsvFile(uploadedFile.value, (csvData) => {
                     processFlatFileCsvData(csvData);
                 });
@@ -640,6 +663,7 @@ const occurrenceDataUploadModule = {
                 currentProcess.value = 'processSourceData';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 flatFileMode.value = true;
+                setSymbiotaFlatFileFieldOptions();
                 const fileReader = new FileReader();
                 fileReader.onload = () => {
                     const uploadData = JSON.parse(fileReader.result);
@@ -653,6 +677,18 @@ const occurrenceDataUploadModule = {
             setTimeout(() => {
                 scrollProcess.value = null;
             }, 200);
+        }
+
+        function setSymbiotaFlatFileFieldOptions() {
+            symbiotaFieldOptionsOccurrence.value.forEach((fieldOption) => {
+                symbiotaFieldOptionsFlatFile.value.push(fieldOption);
+            });
+            Object.keys(eventMofDataFields.value).forEach((key) => {
+                symbiotaFieldOptionsFlatFile.value.push({value: key, label: eventMofDataFields.value[key]['label']});
+            });
+            Object.keys(occurrenceMofDataFields.value).forEach((key) => {
+                symbiotaFieldOptionsFlatFile.value.push({value: key, label: occurrenceMofDataFields.value[key]['label']});
+            });
         }
 
         function setScroller(info) {
@@ -672,7 +708,7 @@ const occurrenceDataUploadModule = {
             currentProcess.value = 'transferSourceData';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
-            formData.append('collid', collId.value.toString());
+            formData.append('collid', props.collid.toString());
             formData.append('dwcaFile', uploadedFile.value);
             formData.append('action', 'uploadDwcaFile');
             fetch(dataUploadServiceApiUrl, {
@@ -696,8 +732,104 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function validateFieldMappingData() {
+            let validated = true;
+            if(flatFileMode.value && sourceDataFlatFile.value.length > 0 && Object.keys(sourceDataFieldsFlatFile.value).length > 0){
+                Object.keys(sourceDataFieldsFlatFile.value).forEach((field) => {
+                    if(!fieldMappingDataOccurrence.value.hasOwnProperty(field)){
+                        if(sourceDataFieldsFlatFile.value[field] === 'coreid'){
+                            fieldMappingDataOccurrence.value[field] = 'dbpk';
+                        }
+                        else if(sourceDataFieldsFlatFile.value[field] === 'coreeventid'){
+                            fieldMappingDataOccurrence.value[field] = 'eventdbpk';
+                        }
+                        else{
+                            const fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === field.toLowerCase());
+                            fieldMappingDataOccurrence.value[field] = fieldOption ? fieldOption.value : 'unmapped';
+                        }
+                    }
+                });
+            }
+            else if(sourceDataFilesOccurrence.value.length > 0 && Object.keys(sourceDataFieldsOccurrence.value).length > 0){
+                Object.keys(sourceDataFieldsOccurrence.value).forEach((field) => {
+                    if(!fieldMappingDataOccurrence.value.hasOwnProperty(field)){
+                        if(sourceDataFieldsOccurrence.value[field] === 'coreid'){
+                            fieldMappingDataOccurrence.value[field] = 'dbpk';
+                        }
+                        else if(sourceDataFieldsOccurrence.value[field] === 'coreeventid'){
+                            fieldMappingDataOccurrence.value[field] = 'eventdbpk';
+                        }
+                        else{
+                            const fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === field.toLowerCase());
+                            fieldMappingDataOccurrence.value[field] = fieldOption ? fieldOption.value : 'unmapped';
+                        }
+                    }
+                });
+                if(sourceDataFilesDetermination.value.length > 0 && Object.keys(sourceDataFieldsDetermination.value).length > 0){
+                    Object.keys(sourceDataFieldsDetermination.value).forEach((field) => {
+                        if(!fieldMappingDataDetermiation.value.hasOwnProperty(field)){
+                            if(sourceDataFieldsDetermination.value[field] === 'coreid'){
+                                fieldMappingDataDetermiation.value[field] = 'dbpk';
+                            }
+                            else{
+                                const fieldOption = symbiotaFieldOptionsDetermination.value.find(option => option.value.toLowerCase() === field.toLowerCase());
+                                fieldMappingDataDetermiation.value[field] = fieldOption ? fieldOption.value : 'unmapped';
+                            }
+                        }
+                    });
+                }
+                if(sourceDataFilesMultimedia.value.length > 0 && Object.keys(sourceDataFieldsMultimedia.value).length > 0){
+                    Object.keys(sourceDataFieldsMultimedia.value).forEach((field) => {
+                        if(!fieldMappingDataMedia.value.hasOwnProperty(field)){
+                            if(sourceDataFieldsMultimedia.value[field] === 'coreid'){
+                                fieldMappingDataMedia.value[field] = 'dbpk';
+                            }
+                            else{
+                                const fieldOption = symbiotaFieldOptionsMedia.value.find(option => option.value.toLowerCase() === field.toLowerCase());
+                                fieldMappingDataMedia.value[field] = fieldOption ? fieldOption.value : 'unmapped';
+                            }
+                        }
+                    });
+                }
+                if(sourceDataFilesMof.value.length > 0 && Object.keys(sourceDataFieldsMof.value).length > 0){
+                    Object.keys(sourceDataFieldsMof.value).forEach((field) => {
+                        if(!fieldMappingDataMof.value.hasOwnProperty(field)){
+                            if(sourceDataFieldsMof.value[field] === 'coreid'){
+                                fieldMappingDataMof.value[field] = 'dbpk';
+                            }
+                            else if(sourceDataFieldsMof.value[field] === 'coreeventid'){
+                                fieldMappingDataMof.value[field] = 'eventdbpk';
+                            }
+                            else if(sourceDataFieldsMof.value[field].toLowerCase() === 'measurementtype'){
+                                fieldMappingDataMof.value[field] = 'field';
+                            }
+                            else if(sourceDataFieldsMof.value[field].toLowerCase() === 'measurementvalue'){
+                                fieldMappingDataMof.value[field] = 'datavalue';
+                            }
+                            else{
+                                fieldMappingDataOccurrence.value[field] = 'unmapped';
+                            }
+                        }
+                    });
+                }
+            }
+            else{
+                validated = false;
+            }
+            processSuccessResponse('Complete');
+            if(validated){
+                currentTab.value = 'mapping';
+            }
+            else{
+                showNotification('negative', 'Source data could not be correctly read to process upload.');
+                adjustUIStart();
+                clearData();
+            }
+        }
+
         Vue.onMounted(() => {
             if(Number(props.collid) > 0){
+                clearUploadTables();
                 collectionDataUploadParametersStore.setCollectionDataUploadParametersArr(props.collid);
             }
         });
@@ -708,6 +840,7 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersId,
             currentProcess,
             currentTab,
+            flatFileMode,
             procDisplayScrollAreaRef,
             processorDisplayArr,
             processorDisplayCurrentIndex,

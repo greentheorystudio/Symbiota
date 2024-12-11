@@ -318,6 +318,7 @@ CREATE TABLE `uploadmediatemp` (
 
 CREATE TABLE `uploadmoftemp` (
     `upmfid` int(50) NOT NULL AUTO_INCREMENT,
+    `collid` int(10) unsigned DEFAULT NULL,
     `dbpk` varchar(150) DEFAULT NULL,
     `eventdbpk` varchar(150) DEFAULT NULL,
     `occid` int(10) unsigned DEFAULT NULL,
@@ -328,6 +329,7 @@ CREATE TABLE `uploadmoftemp` (
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`upmfid`) USING BTREE,
     KEY `Index_uploaddet_occid` (`occid`),
+    KEY `Index_collid` (`collid`),
     KEY `Index_uploaddet_dbpk` (`dbpk`),
     KEY `Index_eventdbpk` (`eventdbpk`),
     KEY `Index_eventID` (`eventID`),

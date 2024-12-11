@@ -16,6 +16,34 @@ class DataUploadService {
         $this->conn->close();
     }
 
+    public function clearUploadTables($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM uploadspectemppoints WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
+    }
+
     public function getUploadTableFieldData($tableArr): array
     {
         $retArr = array();

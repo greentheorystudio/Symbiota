@@ -25,4 +25,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'uploadDwcaFile' && array_key_exists('dwcaFile', $_FILES)){
         echo json_encode($dataUploadService->uploadDwcaFile($collid, $_FILES['dwcaFile']));
     }
+    elseif($action === 'clearUploadTables'){
+        echo $dataUploadService->clearUploadTables($collid);
+    }
 }
