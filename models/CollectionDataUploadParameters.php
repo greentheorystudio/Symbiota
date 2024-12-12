@@ -54,16 +54,21 @@ class CollectionDataUploadParameters {
     {
         $retVal = 1;
         if($uspid){
-            $sql = 'DELETE FROM uploadspecmap WHERE uspid = ' . (int)$uspid . ' ';
-            if(!$this->conn->query($sql)){
-                $retVal = 0;
-            }
+            $this->deleteFieldMappingData($uspid);
             $sql = 'DELETE FROM omcolldatauploadparameters WHERE uspid = ' . (int)$uspid . ' ';
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
         }
         return $retVal;
+    }
+
+    public function deleteFieldMappingData($uspid): void
+    {
+        if($uspid){
+            $sql = 'DELETE FROM uploadspecmap WHERE uspid = ' . (int)$uspid . ' ';
+            $this->conn->query($sql);
+        }
     }
 
     public function getCollectionDataUploadParametersByCollection($collid): array
@@ -112,6 +117,35 @@ class CollectionDataUploadParameters {
             }
         }
         return $retArr;
+    }
+
+    public function saveFieldMapping($uspid, $fieldMappingData): int
+    {
+        $retVal = 0;
+        $sqlValueArr = array();
+        if($uspid && $fieldMappingData){
+            $this->deleteFieldMappingData($uspid);
+            foreach($fieldMappingData['occurrence'] as $source => $target){
+                $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
+            }
+            foreach($fieldMappingData['determination'] as $source => $target){
+                $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
+            }
+            foreach($fieldMappingData['multimedia'] as $source => $target){
+                $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
+            }
+            foreach($fieldMappingData['mof'] as $source => $target){
+                $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
+            }
+            if(count($sqlValueArr) > 0){
+                $sql = 'INSERT INTO uploadspecmap(uspid, sourcefield, symbspecfield) VALUES ' . implode(',', $sqlValueArr) . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
     }
 
     public function updateCollectionDataUploadParameterRecord($uspid, $editData): int

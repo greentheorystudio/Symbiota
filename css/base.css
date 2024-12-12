@@ -1110,3 +1110,6 @@ body.processing .loadingModal {
 .occurrence-search-image-thumbnail {
 	height: 150px;
 }
+.upload-field-mapper-grid-cell {
+	border: 1px solid black;
+}

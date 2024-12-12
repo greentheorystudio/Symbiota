@@ -29,4 +29,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'getUploadParametersFieldMapping' && $uspid){
         echo json_encode($collectionDataUploadParameters->getUploadParametersFieldMapping($uspid));
     }
+    elseif($action === 'saveFieldMapping' && $uspid && array_key_exists('fieldMappingData',$_POST)){
+        echo $collectionDataUploadParameters->saveFieldMapping($uspid, json_decode($_POST['fieldMappingData'], true));
+    }
 }
