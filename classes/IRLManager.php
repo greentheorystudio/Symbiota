@@ -199,7 +199,7 @@ class IRLManager {
         $pArr = array("M05", "M06", "M08");
         $eArr = array("M07", "M09", "M10", "M11", "M12", "M13");
         $sql = 'SELECT DISTINCT l.locationcode, o.decimallatitude, o.decimallongitude, o.rep, o.eventdate, '.
-            'o.sciname, o.individualcount, m.datavalue '.
+            'o.sciname, o.individualcount, o.identificationRemarks, m.datavalue '.
             'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
             'LEFT JOIN ommofextension AS m ON o.eventID = m.eventID '.
             'WHERE o.collid = ' . (int)$collid . ' AND (m.field = "bottom_salinity" OR ISNULL(m.mofID)) ';
@@ -230,6 +230,7 @@ class IRLManager {
             $nodeArr['Salinity'] = $row->datavalue;
             $nodeArr['Species'] = $row->sciname;
             $nodeArr['Abundance'] = $row->individualcount;
+            $nodeArr['IDRemarks'] = $row->identificationRemarks;
             $returnArr[] = $nodeArr;
         }
         $result->free();
