@@ -16,6 +16,34 @@ class DataUploadService {
         $this->conn->close();
     }
 
+    public function clearUploadTables($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM uploadspectemppoints WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
+    }
+
     public function getUploadTableFieldData($tableArr): array
     {
         $retArr = array();
@@ -229,6 +257,20 @@ class DataUploadService {
         $returnArr[] = $currentFilename;
         fclose($fh);
         FileSystemService::deleteFile($serverPath . '/' . $fileInfo['filename']);
+        return $returnArr;
+    }
+
+    public function uploadDwcaFile($collid, $dwcaFile): array
+    {
+        $returnArr = array();
+        $targetPath = FileSystemService::getTempDwcaUploadPath($collid);
+        if($targetPath && $dwcaFile['name'] && FileSystemService::moveUploadedFileToServer($dwcaFile, $targetPath, $dwcaFile['name'])) {
+            $fullTargetPath = $targetPath . '/' . $dwcaFile['name'];
+            FileSystemService::unpackZipArchive($targetPath, $fullTargetPath);
+            FileSystemService::deleteFile($fullTargetPath);
+            $returnArr['baseFolderPath'] = $targetPath;
+            $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
+        }
         return $returnArr;
     }
 }

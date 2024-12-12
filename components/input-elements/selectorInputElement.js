@@ -150,6 +150,9 @@ const selectorInputElement = {
             if(props.value){
                 selectedOption.value = selectorOptions.find(opt => opt['value'].toString() === props.value.toString());
             }
+            else{
+                selectedOption.value = null;
+            }
         }
 
         Vue.onMounted(() => {
