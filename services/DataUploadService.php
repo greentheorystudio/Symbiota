@@ -1,4 +1,8 @@
 <?php
+include_once(__DIR__ . '/../models/UploadDeterminationTemp.php');
+include_once(__DIR__ . '/../models/UploadMediaTemp.php');
+include_once(__DIR__ . '/../models/UploadMofTemp.php');
+include_once(__DIR__ . '/../models/UploadOccurrenceTemp.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/SanitizerService.php');
@@ -16,28 +20,20 @@ class DataUploadService {
         $this->conn->close();
     }
 
-    public function clearUploadTables($collid): int
+    public function clearOccurrenceUploadTables($collid): int
     {
         $retVal = 1;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' ';
-            if(!$this->conn->query($sql)){
+            if(!(new UploadDeterminationTemp)->clearCollectionData($collid)){
                 $retVal = 0;
             }
-            $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' ';
-            if(!$this->conn->query($sql)){
+            if(!(new UploadMediaTemp)->clearCollectionData($collid)){
                 $retVal = 0;
             }
-            $sql = 'DELETE FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' ';
-            if(!$this->conn->query($sql)){
+            if(!(new UploadMofTemp)->clearCollectionData($collid)){
                 $retVal = 0;
             }
-            $sql = 'DELETE FROM uploadspectemppoints WHERE collid = ' . (int)$collid . ' ';
-            if(!$this->conn->query($sql)){
-                $retVal = 0;
-            }
-            $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' ';
-            if(!$this->conn->query($sql)){
+            if(!(new UploadOccurrenceTemp)->clearCollectionData($collid)){
                 $retVal = 0;
             }
         }
@@ -63,6 +59,51 @@ class DataUploadService {
             }
         }
         return $retArr;
+    }
+
+    public function processDwcaFileDataUpload($collid, $configArr): int
+    {
+        $recordsCreated = 0;
+        $recordIndex = 0;
+        $dataUploadArr = array();
+        $fh = fopen(($configArr['serverPath'] . '/' . $configArr['uploadFile']), 'rb');
+        while($dataArr = fgetcsv($fh,0, ',', '"', '')){
+            if($recordIndex === 5000){
+                if($configArr['dataType'] === 'occurrence'){
+                    $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+                }
+                elseif($configArr['dataType'] === 'determination'){
+                    $recordsCreated += (new UploadDeterminationTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+                }
+                elseif($configArr['dataType'] === 'multimedia'){
+                    $recordsCreated += (new UploadMediaTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+                }
+                elseif($configArr['dataType'] === 'mof'){
+                    $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+                }
+                $recordIndex = 0;
+                $dataUploadArr = array();
+            }
+            $dataUploadArr[] = $dataArr;
+            $recordIndex++;
+        }
+        fclose($fh);
+        if(count($dataUploadArr) > 0){
+            if($configArr['dataType'] === 'occurrence'){
+                $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+            }
+            elseif($configArr['dataType'] === 'determination'){
+                $recordsCreated += (new UploadDeterminationTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+            }
+            elseif($configArr['dataType'] === 'multimedia'){
+                $recordsCreated += (new UploadMediaTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+            }
+            elseif($configArr['dataType'] === 'mof'){
+                $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+            }
+        }
+        FileSystemService::deleteFile($configArr['serverPath'] . '/' . $configArr['uploadFile']);
+        return $recordsCreated;
     }
 
     public function processDwcaMetaFile($metaPath): array
@@ -228,26 +269,21 @@ class DataUploadService {
     public function processTransferredDwcaFile($serverPath, $prefix, $fileInfo): array
     {
         $returnArr = array();
-        $headerArr = array();
         $fileIndex = 1;
         $recordIndex = 0;
         $currentFilename = $prefix . '_' . $fileIndex . '.csv';
         $fh = fopen(($serverPath . '/' . $fileInfo['filename']), 'rb');
         $wh = fopen(($serverPath . '/' . $currentFilename), 'wb');
         if((int)$fileInfo['ignoreHeaderLines'] === 1) {
-            $headerArr = fgetcsv($fh,0, $fileInfo['fieldsTerminatedBy'], $fileInfo['fieldsEnclosedBy'], '');
-            fputcsv($wh, $headerArr, ',', '"', '');
+            fgetcsv($fh,0, $fileInfo['fieldsTerminatedBy'], $fileInfo['fieldsEnclosedBy'], '');
         }
         while($dataArr = fgetcsv($fh,0, $fileInfo['fieldsTerminatedBy'], $fileInfo['fieldsEnclosedBy'], '')){
-            if($recordIndex === 100000){
+            if($recordIndex === 10000){
                 fclose($wh);
                 $returnArr[] = $currentFilename;
                 $fileIndex++;
                 $currentFilename = $prefix . '_' . $fileIndex . '.csv';
                 $wh = fopen(($serverPath . '/' . $currentFilename), 'wb');
-                if($headerArr){
-                    fputcsv($wh, $headerArr, ',', '"', '');
-                }
                 $recordIndex = 0;
             }
             fputcsv($wh, $dataArr, ',', '"', '');

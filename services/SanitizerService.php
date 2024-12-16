@@ -88,19 +88,21 @@ class SanitizerService {
     public static function getSqlValueString($conn, $value, $dataType): string
     {
         $returnStr = 'NULL';
-        if($dataType !== 'number'){
-            if($dataType === 'json' || $dataType === 'sql'){
-                $returnStr = "'" . $value . "'";
-            }
-            else{
-                $cleanedVal = self::cleanInStr($conn, $value);
-                if($cleanedVal !== ''){
-                    $returnStr = '"' . str_replace('"', '""', $cleanedVal) . '"';
+        if($value){
+            if($dataType !== 'number'){
+                if($dataType === 'json' || $dataType === 'sql'){
+                    $returnStr = "'" . $value . "'";
+                }
+                else{
+                    $cleanedVal = self::cleanInStr($conn, $value);
+                    if($cleanedVal !== ''){
+                        $returnStr = '"' . str_replace('"', '""', $cleanedVal) . '"';
+                    }
                 }
             }
-        }
-        elseif((string)$value !== '' && is_numeric($value)){
-            $returnStr = (string)$value;
+            elseif((string)$value !== '' && is_numeric($value)){
+                $returnStr = (string)$value;
+            }
         }
         return $returnStr;
     }
