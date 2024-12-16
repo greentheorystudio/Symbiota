@@ -727,7 +727,7 @@ const occurrenceDataUploadModule = {
                 configuration['fieldMap'] = Object.assign({}, fieldMappingDataOccurrence.value);
                 sourceDataFilesOccurrence.value.splice(0, 1);
             }
-            /*else if(sourceDataFilesDetermination.value.length > 0){
+            else if(sourceDataFilesDetermination.value.length > 0){
                 configuration['uploadFile'] = sourceDataFilesDetermination.value[0];
                 configuration['dataType'] = 'determination';
                 configuration['fieldMap'] = Object.assign({}, fieldMappingDataDetermiation.value);
@@ -744,8 +744,7 @@ const occurrenceDataUploadModule = {
                 configuration['dataType'] = 'mof';
                 configuration['fieldMap'] = Object.assign({}, fieldMappingDataMof.value);
                 sourceDataFilesMof.value.splice(0, 1);
-            }*/
-            console.log(configuration['fieldMap']);
+            }
             if(configuration.hasOwnProperty('dataType')){
                 const formData = new FormData();
                 formData.append('collid', props.collid.toString());
@@ -756,7 +755,7 @@ const occurrenceDataUploadModule = {
                     body: formData
                 })
                 .then((response) => {
-                    return response.ok ? response.json() : null;
+                    return response.ok ? response.text() : null;
                 })
                 .then((res) => {
                     console.log(res);

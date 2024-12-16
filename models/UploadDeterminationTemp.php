@@ -45,10 +45,12 @@ class UploadDeterminationTemp{
             $sourceDataKeys = array_keys($data[0]);
             $fieldNameArr[] = 'collid';
             foreach($sourceDataKeys as $key){
-                if(($fieldMapping && $fieldMapping[$key] !== 'unmapped') || !$fieldMapping){
-                    $field = $fieldMapping ? $fieldMapping[$key] : $key;
-                    $fieldNameArr[] = $field;
-                    $sourceKeyArr[] = $key;
+                if($key || (string)$key === '0'){
+                    if(($fieldMapping && array_key_exists($key, $fieldMapping) && $fieldMapping[$key] !== 'unmapped') || !$fieldMapping){
+                        $field = $fieldMapping ? $fieldMapping[$key] : $key;
+                        $fieldNameArr[] = $field;
+                        $sourceKeyArr[] = $key;
+                    }
                 }
             }
             foreach($data as $dataArr){

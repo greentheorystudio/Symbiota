@@ -95,7 +95,8 @@ class SanitizerService {
                 }
                 else{
                     $cleanedVal = self::cleanInStr($conn, $value);
-                    if($cleanedVal !== ''){
+                    if($cleanedVal && $cleanedVal !== ''){
+                        $cleanedVal = str_replace('\"', '"', $cleanedVal);
                         $returnStr = '"' . str_replace('"', '""', $cleanedVal) . '"';
                     }
                 }
