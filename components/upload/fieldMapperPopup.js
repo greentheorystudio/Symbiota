@@ -37,13 +37,13 @@ const fieldMapperPopup = {
                                 </div>
                             </div>
                             <template v-for="sourceField in Object.keys(sourceFields)">
-                                <template v-if="fieldMapping[sourceFields[sourceField]] !== 'dbpk' && fieldMapping[sourceFields[sourceField]] !== 'eventdbpk'">
+                                <template v-if="fieldMapping[sourceField.toLowerCase()] !== 'dbpk' && fieldMapping[sourceField.toLowerCase()] !== 'eventdbpk'">
                                     <div class="row">
-                                        <div class="col-4 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
+                                        <div class="col-4 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="fieldMapping[sourceField.toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
                                             {{ sourceFields[sourceField] }}
                                         </div>
-                                        <div class="col-8 q-pl-sm upload-field-mapper-grid-cell" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
-                                            <selector-input-element :options="targetFields" :value="fieldMapping[sourceFields[sourceField].toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
+                                        <div class="col-8 q-pl-sm upload-field-mapper-grid-cell" :class="fieldMapping[sourceField.toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
+                                            <selector-input-element :options="targetFields" :value="fieldMapping[sourceField.toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
                                         </div>
                                     </div>
                                 </template>
