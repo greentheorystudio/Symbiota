@@ -92,7 +92,7 @@ const mofDataFieldModule = {
         });
 
         function processSaveDataEdits() {
-            if(props.dataType === 'occurrence' || Number(occurrenceData.value['eventid']) > 0){
+            if(props.dataType === 'occurrence' || Number(occurrenceStore.getCollectingEventID) > 0){
                 saveConfiguredDataEdits();
             }
             else{

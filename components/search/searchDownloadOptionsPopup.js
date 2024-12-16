@@ -46,6 +46,7 @@ const searchDownloadOptionsPopup = {
                         <div class="col-7 column">
                             <checkbox-input-element label="Include Determination History" :value="includeDeterminations" @update:value="(value) => includeDeterminations = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
                             <checkbox-input-element label="Include Image Records" :value="includeImages" @update:value="(value) => includeImages = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
+                            <checkbox-input-element label="Include Measurement or Fact Records" :value="includeMof" @update:value="(value) => includeMof = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
                         </div>
                     </div>
                     <div class="row justify-end">
@@ -74,6 +75,7 @@ const searchDownloadOptionsPopup = {
         ]);
         const includeDeterminations = Vue.ref(false);
         const includeImages = Vue.ref(false);
+        const includeMof = Vue.ref(false);
         const selectedDataStructure = Vue.ref('native');
         const selectedDownloadType = Vue.ref('csv');
 
@@ -86,7 +88,8 @@ const searchDownloadOptionsPopup = {
                 type: selectedDownloadType.value,
                 structure: selectedDataStructure.value,
                 includeDet: includeDeterminations.value,
-                includeImage: includeImages.value
+                includeImage: includeImages.value,
+                includeMof: includeMof.value
             });
         }
 
@@ -96,6 +99,7 @@ const searchDownloadOptionsPopup = {
             downloadTypeOptions,
             includeDeterminations,
             includeImages,
+            includeMof,
             selectedDataStructure,
             selectedDownloadType,
             closePopup,

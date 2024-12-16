@@ -3,8 +3,8 @@ include_once(__DIR__ . '/../config/symbbase.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
-$queryId = array_key_exists('queryId',$_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
-$stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
+$queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
+$stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

@@ -56,6 +56,20 @@ class FileSystemService {
         }
     }
 
+    public static function getDirectoryFilenameArr($dirPath): array
+    {
+        $returnArr = array();
+        if(is_dir($dirPath) && $handle = opendir($dirPath)) {
+            while(($item = readdir($handle)) !== false){
+                if($item && $item !== '.' && $item !== '..'){
+                    $returnArr[] = $item;
+                }
+            }
+            closedir($handle);
+        }
+        return $returnArr;
+    }
+
     public static function getImageSize($imageUrl): array
     {
         if(strpos($imageUrl, '/') === 0){
@@ -99,13 +113,26 @@ class FileSystemService {
         return $returnStr;
     }
 
-    public static function getServerUploadPath($fragment): string
+    public static function getServerMediaUploadPath($fragment): string
     {
         $fullUploadPath = $GLOBALS['IMAGE_ROOT_PATH'] . '/' . $fragment;
         if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
             $fullUploadPath = '';
         }
         $fullUploadPath .= '/' . date('Ym');
+        if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
+            $fullUploadPath = '';
+        }
+        return $fullUploadPath;
+    }
+
+    public static function getTempDwcaUploadPath($collid): string
+    {
+        $fullUploadPath = $GLOBALS['TEMP_DIR_ROOT'] . '/downloads';
+        if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
+            $fullUploadPath = '';
+        }
+        $fullUploadPath .= '/' . $collid . '_' . time();
         if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
             $fullUploadPath = '';
         }
@@ -150,7 +177,7 @@ class FileSystemService {
     public static function processUploadImageFromFile($imageData, $uploadPath): array
     {
         $origFilename = $_FILES['imgfile']['name'];
-        $targetPath = self::getServerUploadPath($uploadPath);
+        $targetPath = self::getServerMediaUploadPath($uploadPath);
         if($targetPath && $origFilename) {
             $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
             if($targetFilename && self::moveUploadedFileToServer($_FILES['imgfile'], $targetPath, $targetFilename)){
@@ -164,7 +191,7 @@ class FileSystemService {
     public static function processUploadImageFromExternalUrl($imageData, $uploadPath): array
     {
         $origFilename = $imageData['filename'];
-        $targetPath = self::getServerUploadPath($uploadPath);
+        $targetPath = self::getServerMediaUploadPath($uploadPath);
         if($targetPath && $origFilename) {
             $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
             if($targetFilename && self::copyFileToTarget($imageData['sourceurl'], $targetPath, $targetFilename)){
@@ -173,5 +200,74 @@ class FileSystemService {
             }
         }
         return $imageData;
+    }
+
+    public static function transferDwcaToLocalTarget($targetPath, $dwcaPath): bool
+    {
+        $returnVal = false;
+        if(file_exists($dwcaPath)){
+            $fp = fopen($targetPath, 'wb+');
+            $ch = curl_init(str_replace(' ','%20', $dwcaPath));
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            if(curl_exec($ch)) {
+                $returnVal = true;
+            }
+            curl_close($ch);
+            fclose($fp);
+        }
+        return $returnVal;
+    }
+
+    public static function transferSymbiotaDwcaToLocalTarget($targetPath, $dwcaPath): bool
+    {
+        $returnVal = false;
+        $searchLabel = '';
+        $pathParts = array();
+        if(strpos($dwcaPath, 'searchvar=') !== false){
+            $searchLabel = 'searchvar';
+            $pathParts = explode('?searchvar=', $dwcaPath);
+        }
+        elseif(strpos($dwcaPath, 'starr=') !== false){
+            $searchLabel = 'starr';
+            $pathParts = explode('?starr=', $dwcaPath);
+        }
+        if($pathParts){
+            $data = array(
+                'schema' => 'dwc',
+                'identifications' => '1',
+                'images' => '1',
+                'attributes' => '1',
+                'format' => 'csv',
+                'cset' => 'utf-8',
+                'zip' => '1',
+                'publicsearch' => '1',
+                'sourcepage' => 'specimen',
+                $searchLabel => $pathParts[1]
+            );
+            $fp = fopen($targetPath, 'wb+');
+            $ch = curl_init(str_replace(' ','%20', $dwcaPath));
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            if(curl_exec($ch)) {
+                $returnVal = true;
+            }
+            curl_close($ch);
+            fclose($fp);
+        }
+        return $returnVal;
+    }
+
+    public static function unpackZipArchive($targetPath, $zipPath): void
+    {
+        $zip = new ZipArchive;
+        $zip->open($zipPath);
+        if(@$zip->extractTo($targetPath . '/')){
+            $zip->close();
+        }
     }
 }

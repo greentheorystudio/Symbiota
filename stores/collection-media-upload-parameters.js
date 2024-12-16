@@ -1,19 +1,20 @@
 const useCollectionMediaUploadParametersStore = Pinia.defineStore('collection-media-upload-parameters', {
     state: () => ({
         blankCollectionMediaUploadParameterRecord: {
-            uspid: 0,
+            spprid: 0,
             collid: null,
-            uploadtype: null,
             title: null,
-            dwcpath: null,
-            queryparamjson: null,
-            cleansql: null,
+            filenamepatternmatch: null,
+            patternmatchfield: 'catalognumber',
             configjson: null
+        },
+        blankConfigurations: {
+            createOccurrence: true
         },
         collectionMediaUploadParametersArr: [],
         collectionMediaUploadParametersData: {},
         collectionMediaUploadParametersEditData: {},
-        collectionMediaUploadParametersId: 0,
+        collectionMediaUploadParametersId: null,
         collectionMediaUploadParametersUpdateData: {}
     }),
     getters: {
@@ -41,12 +42,17 @@ const useCollectionMediaUploadParametersStore = Pinia.defineStore('collection-me
             return (
                 state.collectionMediaUploadParametersEditData['title']
             );
-        }
+        },
+        getConfigurations(state) {
+            if(state.collectionMediaUploadParametersEditData.hasOwnProperty('configjson') && state.collectionMediaUploadParametersEditData.configjson){
+                return JSON.parse(state.collectionMediaUploadParametersEditData.configjson);
+            }
+            else{
+                return state.blankConfigurations;
+            }
+        },
     },
     actions: {
-        clearCollectionMediaUploadParametersArr() {
-            this.collectionMediaUploadParametersArr.length = 0;
-        },
         createCollectionMediaUploadParametersRecord(collid, callback) {
             this.collectionMediaUploadParametersEditData['collid'] = collid.toString();
             const formData = new FormData();
@@ -79,10 +85,10 @@ const useCollectionMediaUploadParametersStore = Pinia.defineStore('collection-me
             });
         },
         getCurrentCollectionMediaUploadParametersData() {
-            return this.collectionMediaUploadParametersArr.find(params => Number(params.uspid) === this.collectionMediaUploadParametersId);
+            return this.collectionMediaUploadParametersArr.find(params => Number(params.spprid) === this.collectionMediaUploadParametersId);
         },
-        setCurrentCollectionMediaUploadParametersRecord(uspid) {
-            this.collectionMediaUploadParametersId = Number(uspid);
+        setCurrentCollectionMediaUploadParametersRecord(spprid) {
+            this.collectionMediaUploadParametersId = Number(spprid);
             if(this.collectionMediaUploadParametersId > 0){
                 this.collectionMediaUploadParametersData = Object.assign({}, this.getCurrentCollectionMediaUploadParametersData());
             }
@@ -92,6 +98,7 @@ const useCollectionMediaUploadParametersStore = Pinia.defineStore('collection-me
             this.collectionMediaUploadParametersEditData = Object.assign({}, this.collectionMediaUploadParametersData);
         },
         setCollectionMediaUploadParametersArr(collid) {
+            this.collectionMediaUploadParametersArr.length = 0;
             const formData = new FormData();
             formData.append('collid', collid.toString());
             formData.append('action', 'getCollectionMediaUploadParametersByCollection');
