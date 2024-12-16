@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/../services/DataUtilitiesService.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class UploadOccurrenceTemp{
@@ -161,43 +162,60 @@ class UploadOccurrenceTemp{
         $this->conn->close();
 	}
 
-    public function batchCreateRecords($collid, $data, $fieldMapping =  null): int
+    public function batchCreateRecords($collid, $data, $processingStatus, $fieldMapping =  null): int
     {
         $recordsCreated = 0;
         $fieldNameArr = array();
-        $sourceKeyArr = array();
         $valueArr = array();
+        $skipFields = array('upspid', 'occid', 'collid', 'institutionid', 'collectionid', 'datasetid', 'tid', 'eventid', 'locationid', 'initialtimestamp');
+        $mappedFields = array();
         if($collid){
-            $sourceDataKeys = array_keys($data[0]);
             $fieldNameArr[] = 'collid';
-            foreach($sourceDataKeys as $key){
-                if($key || (string)$key === '0'){
-                    if(($fieldMapping && array_key_exists($key, $fieldMapping) && $fieldMapping[$key] !== 'unmapped') || !$fieldMapping){
-                        $field = $fieldMapping ? $fieldMapping[$key] : $key;
-                        if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
-                            $fieldNameArr[] = '`' . $field . '`';
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                    if($fieldMapping){
+                        $mappedKey = array_search($field, $fieldMapping, true);
+                        if($mappedKey){
+                            $mappedFields[$field] = $mappedKey;
                         }
-                        else{
-                            $fieldNameArr[] = $field;
-                        }
-                        $sourceKeyArr[] = $key;
+                    }
+                    elseif(array_key_exists($field, $data[0])){
+                        $mappedFields[$field] = $field;
                     }
                 }
             }
             foreach($data as $dataArr){
                 $dataValueArr = array();
+                $occurrenceData = array();
                 $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
-                foreach($sourceKeyArr as $key){
-                    $targetField = $fieldMapping ? $fieldMapping[$key] : $key;
-                    $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataArr[$key], $this->fields[$targetField]);
+                foreach($mappedFields as $field => $key){
+                    $occurrenceData[$field] = $dataArr[$key];
+                }
+                if($processingStatus){
+                    $occurrenceData['processingstatus'] = $processingStatus;
+                }
+                $occurrenceData = DataUtilitiesService::cleanOccurrenceData($occurrenceData);
+                foreach($this->fields as $field => $fieldArr){
+                    if(!in_array($field, $skipFields)){
+                        $dataValue = $occurrenceData[$field] ?? null;
+                        $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataValue, $fieldArr);
+                    }
                 }
                 $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
             }
-            $sql = 'INSERT INTO uploadspectemp(' . implode(',', $fieldNameArr) . ') '.
-                'VALUES ' . implode(',', $valueArr) . ' ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $recordsCreated = $this->conn->affected_rows;
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO uploadspectemp(' . implode(',', $fieldNameArr) . ') '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
             }
         }
         return $recordsCreated;

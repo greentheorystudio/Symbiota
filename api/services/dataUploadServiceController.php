@@ -31,4 +31,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'processDwcaFileDataUpload' && array_key_exists('uploadConfig',$_POST)){
         echo $dataUploadService->processDwcaFileDataUpload($collid, json_decode($_POST['uploadConfig'], true));
     }
+    elseif($action === 'processFlatFileDataUpload' && array_key_exists('uploadConfig',$_POST) && array_key_exists('data',$_POST)){
+        echo $dataUploadService->processFlatFileDataUpload($collid, json_decode($_POST['uploadConfig'], true), json_decode($_POST['data'], true));
+    }
 }

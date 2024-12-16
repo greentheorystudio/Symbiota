@@ -86,11 +86,13 @@ class UploadMediaTemp{
                 }
                 $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
             }
-            $sql = 'INSERT INTO uploadmediatemp(' . implode(',', $fieldNameArr) . ') '.
-                'VALUES ' . implode(',', $valueArr) . ' ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $recordsCreated = $this->conn->affected_rows;
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO uploadmediatemp(' . implode(',', $fieldNameArr) . ') '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
             }
         }
         return $recordsCreated;

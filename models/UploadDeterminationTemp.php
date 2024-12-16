@@ -62,11 +62,13 @@ class UploadDeterminationTemp{
                 }
                 $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
             }
-            $sql = 'INSERT INTO uploaddetermtemp(' . implode(',', $fieldNameArr) . ') '.
-                'VALUES ' . implode(',', $valueArr) . ' ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $recordsCreated = $this->conn->affected_rows;
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO uploaddetermtemp(' . implode(',', $fieldNameArr) . ') '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
             }
         }
         return $recordsCreated;

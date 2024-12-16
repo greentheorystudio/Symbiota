@@ -27,7 +27,7 @@ class UploadMofTemp{
         $this->conn->close();
 	}
 
-    public function batchCreateRecords($collid, $data, $fieldMapping =  null): int
+    public function batchCreateRecords($collid, $data, $fieldMapping =  null, $eventMofFields = null, $occurrenceMofFields = null): int
     {
         $recordsCreated = 0;
         $fieldNameArr = array();
@@ -36,6 +36,7 @@ class UploadMofTemp{
         if($collid){
             $sourceDataKeys = array_keys($data[0]);
             $fieldNameArr[] = 'collid';
+            $sourceDataFieldNameIndex = $fieldMapping ? array_search('field', $fieldMapping, true) : 'field';
             foreach($sourceDataKeys as $key){
                 if($key || (string)$key === '0'){
                     if(($fieldMapping && array_key_exists($key, $fieldMapping) && $fieldMapping[$key] !== 'unmapped') || !$fieldMapping){
@@ -46,19 +47,24 @@ class UploadMofTemp{
                 }
             }
             foreach($data as $dataArr){
-                $dataValueArr = array();
-                $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
-                foreach($sourceKeyArr as $key){
-                    $targetField = $fieldMapping ? $fieldMapping[$key] : $key;
-                    $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataArr[$key], $this->fields[$targetField]);
+                $fieldName = $dataArr[$sourceDataFieldNameIndex];
+                if(!$fieldMapping || (($eventMofFields || $occurrenceMofFields) && (array_key_exists($fieldName, $eventMofFields) || array_key_exists($fieldName, $occurrenceMofFields)))){
+                    $dataValueArr = array();
+                    $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
+                    foreach($sourceKeyArr as $key){
+                        $targetField = $fieldMapping ? $fieldMapping[$key] : $key;
+                        $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataArr[$key], $this->fields[$targetField]);
+                    }
+                    $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
                 }
-                $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
             }
-            $sql = 'INSERT INTO uploadmoftemp(' . implode(',', $fieldNameArr) . ') '.
-                'VALUES ' . implode(',', $valueArr) . ' ';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $recordsCreated = $this->conn->affected_rows;
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO uploadmoftemp(' . implode(',', $fieldNameArr) . ') '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
             }
         }
         return $recordsCreated;
