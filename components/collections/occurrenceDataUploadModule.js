@@ -56,21 +56,21 @@ const occurrenceDataUploadModule = {
                                                 <div class="text-body1 text-bold">Occurrence Records</div>
                                                 <div class="cursor-pointer" @click="openFieldMapperPopup('occurrence');">(view mapping)</div>
                                             </div>
-                                            <template v-if="sourceDataFilesDetermination.length > 0">
+                                            <template v-if="determinationDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeDeterminationData" @update:value="(value) => includeDeterminationData = value"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Identification History</div>
                                                     <div class="cursor-pointer" @click="openFieldMapperPopup('determination');">(view mapping)</div>
                                                 </div>
                                             </template>
-                                            <template v-if="sourceDataFilesMultimedia.length > 0">
+                                            <template v-if="multimediaDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeMultimediaData" @update:value="(value) => includeMultimediaData = value"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Media Records</div>
                                                     <div class="cursor-pointer" @click="openFieldMapperPopup('multimedia');">(view mapping)</div>
                                                 </div>
                                             </template>
-                                            <template v-if="sourceDataFilesMof.length > 0">
+                                            <template v-if="mofDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeMofData" @update:value="(value) => includeMofData = value"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Measurement or Fact Records</div>
@@ -83,10 +83,10 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div class="q-mt-sm row justify-end q-gutter-sm">
                                             <div v-if="collectionDataUploadParametersId">
-                                                <q-btn color="secondary" @click="saveMapping();" label="Save Mapping" :disabled="currentTab !== 'mapping'" dense />
+                                                <q-btn color="secondary" @click="saveMapping();" label="Save Mapping" :disabled="currentTab !== 'mapping' || currentProcess" dense />
                                             </div>
                                             <div>
-                                                <q-btn color="secondary" @click="startUpload();" label="Start Upload" :disabled="currentTab !== 'mapping'" dense />
+                                                <q-btn color="secondary" @click="startUpload();" label="Start Upload" :disabled="currentTab !== 'mapping' || currentProcess" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -94,7 +94,7 @@ const occurrenceDataUploadModule = {
                             </q-card>
                         </q-expansion-item>
                         <q-separator></q-separator>
-                        <q-expansion-item :model-value="currentTab === 'summary'" class="overflow-hidden" group="expansiongroup" label="Summary" header-class="bg-grey-3 text-bold" :disable="currentTab !== 'summary'">
+                        <q-expansion-item :model-value="currentTab === 'summary'" class="overflow-hidden" group="expansiongroup" label="Summary" header-class="bg-grey-3 text-bold" :disable="currentTab !== 'summary' || currentProcess">
                             <q-card class="accordion-panel">
                                 <q-card-section>
                                     
@@ -194,6 +194,7 @@ const occurrenceDataUploadModule = {
         const collectionDataUploadParametersId = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersID);
         const currentProcess = Vue.ref(null);
         const currentTab = Vue.ref('configuration');
+        const determinationDataIncluded = Vue.ref(false);
         const eventMofDataFields = Vue.computed(() => collectionStore.getEventMofDataFields);
         const fieldMapperPopupType = Vue.ref(null);
         const fieldMapperFieldMapping = Vue.computed(() => {
@@ -258,12 +259,16 @@ const occurrenceDataUploadModule = {
         const fieldMappingDataMof = Vue.ref({});
         const fieldMappingDataOccurrence = Vue.ref({});
         const flatFileMode = Vue.ref(false);
+        const flatFileMofData = Vue.ref([]);
+        const flatFileOccurrenceData = Vue.ref([]);
         const includeDeterminationData = Vue.ref(true);
         const includeMultimediaData = Vue.ref(true);
         const includeMofData = Vue.ref(true);
         const localDwcaFileArr = Vue.ref([]);
         const localDwcaServerPath = Vue.ref(null);
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
+        const multimediaDataIncluded = Vue.ref(false);
+        const mofDataIncluded = Vue.ref(false);
         const occurrenceMofDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
@@ -273,6 +278,14 @@ const occurrenceDataUploadModule = {
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
         const profileData = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersData);
+        const recordsUploadedDetermination = Vue.ref(0);
+        const recordsUploadedMof = Vue.ref(0);
+        const recordsUploadedMultimedia = Vue.ref(0);
+        const recordsUploadedOccurrence = Vue.ref(0);
+        const savedMappingDataDetermiation = Vue.ref({});
+        const savedMappingDataMedia = Vue.ref({});
+        const savedMappingDataMof = Vue.ref({});
+        const savedMappingDataOccurrence = Vue.ref({});
         const scrollProcess = Vue.ref(null);
         const selectedProcessingStatus = Vue.ref(null);
         const showCollectionDataUploadParametersEditorPopup = Vue.ref(false);
@@ -338,10 +351,19 @@ const occurrenceDataUploadModule = {
             includeDeterminationData.value = true;
             includeMultimediaData.value = true;
             includeMofData.value = true;
+            determinationDataIncluded.value = false;
+            multimediaDataIncluded.value = false;
+            mofDataIncluded.value = false;
             fieldMappingDataDetermiation.value = Object.assign({}, {});
             fieldMappingDataMedia.value = Object.assign({}, {});
             fieldMappingDataMof.value = Object.assign({}, {});
             fieldMappingDataOccurrence.value = Object.assign({}, {});
+            flatFileMofData.value.length = 0;
+            flatFileOccurrenceData.value.length = 0;
+            savedMappingDataDetermiation.value = Object.assign({}, {});
+            savedMappingDataMedia.value = Object.assign({}, {});
+            savedMappingDataMof.value = Object.assign({}, {});
+            savedMappingDataOccurrence.value = Object.assign({}, {});
             symbiotaFieldOptionsDetermination.value.length = 0;
             symbiotaFieldOptionsFlatFile.value.length = 0;
             symbiotaFieldOptionsMedia.value.length = 0;
@@ -359,12 +381,16 @@ const occurrenceDataUploadModule = {
             sourceDataFilesMultimedia.value.length = 0;
             sourceDataFilesOccurrence.value.length = 0;
             sourceDataFlatFile.value.length = 0;
+            recordsUploadedDetermination.value = 0;
+            recordsUploadedMof.value = 0;
+            recordsUploadedMultimedia.value = 0;
+            recordsUploadedOccurrence.value = 0;
         }
 
-        function clearUploadTables() {
+        function clearOccurrenceUploadTables() {
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            formData.append('action', 'clearUploadTables');
+            formData.append('action', 'clearOccurrenceUploadTables');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
                 body: formData
@@ -436,16 +462,16 @@ const occurrenceDataUploadModule = {
                 if(data.length > 0){
                     data.forEach((mapData) => {
                         if(mapData['symbspecfield'].startsWith('ID-')){
-                            fieldMappingDataDetermiation.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(3);
+                            savedMappingDataDetermiation.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(3);
                         }
                         else if(mapData['symbspecfield'].startsWith('IM-')){
-                            fieldMappingDataMedia.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(3);
+                            savedMappingDataMedia.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(3);
                         }
                         else if(mapData['symbspecfield'].startsWith('MOF-')){
-                            fieldMappingDataMof.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(4);
+                            savedMappingDataMof.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(4);
                         }
                         else{
-                            fieldMappingDataOccurrence.value[mapData['sourcefield']] = mapData['symbspecfield'];
+                            savedMappingDataOccurrence.value[mapData['sourcefield']] = mapData['symbspecfield'];
                         }
                     });
                 }
@@ -520,9 +546,38 @@ const occurrenceDataUploadModule = {
         }
 
         function openFieldMapperPopup(type) {
-            console.log();
             fieldMapperPopupType.value = type;
             showFieldMapperPopup.value = true;
+        }
+
+        function parseFlatFileData() {
+            const text = 'Processing data for upload';
+            currentProcess.value = 'transferSourceData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const idField = Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === 'dbpk');
+            sourceDataFlatFile.value.forEach((dataRow) => {
+                const occurrenceData = {};
+                occurrenceData['dbpk'] = dataRow[idField];
+                Object.keys(dataRow).forEach((field) => {
+                    if(fieldMappingDataOccurrence.value.hasOwnProperty(field) && fieldMappingDataOccurrence.value[field] !== 'unmapped'){
+                        if(eventMofDataFields.value.hasOwnProperty(fieldMappingDataOccurrence.value[field]) || occurrenceMofDataFields.value.hasOwnProperty(fieldMappingDataOccurrence.value[field])){
+                            if(dataRow[field]){
+                                const mofData = {};
+                                mofData['dbpk'] = dataRow[idField];
+                                mofData['field'] = fieldMappingDataOccurrence.value[field];
+                                mofData['datavalue'] = dataRow[field];
+                                flatFileMofData.value.push(mofData);
+                            }
+                        }
+                        else{
+                            occurrenceData[fieldMappingDataOccurrence.value[field]] = dataRow[field];
+                        }
+                    }
+                });
+                flatFileOccurrenceData.value.push(occurrenceData);
+            });
+            processSuccessResponse('Complete');
+            processFlatFileSourceData();
         }
 
         function processErrorResponse(text) {
@@ -626,6 +681,7 @@ const occurrenceDataUploadModule = {
                     if(geoType === 'Polygon' || geoType === 'MultiPolygon'){
                         const wktFormat = new ol.format.WKT();
                         featureData['footprintwkt'] = wktFormat.writeGeometry(featureGeometry);
+                        sourceDataFieldsFlatFile.value['footprintwkt'] = 'footprintwkt';
                     }
                     else if((geoType === 'Point' || geoType === 'MultiPoint') && (!featureData.hasOwnProperty('decimallatitude') || !featureData.hasOwnProperty('decimallongitude') || !featureData['decimallatitude'] || !featureData['decimallongitude'])){
                         const geoJSONFormat = new ol.format.GeoJSON();
@@ -633,11 +689,74 @@ const occurrenceDataUploadModule = {
                         const featCoords = geoType === 'Point' ? JSON.parse(geojsonStr).coordinates : JSON.parse(geojsonStr).coordinates[0];
                         featureData['decimallatitude'] = featCoords[1];
                         featureData['decimallongitude'] = featCoords[0];
+                        sourceDataFieldsFlatFile.value['decimallatitude'] = 'decimallatitude';
+                        sourceDataFieldsFlatFile.value['decimallongitude'] = 'decimallongitude';
                     }
                     sourceDataFlatFile.value.push(featureData);
                 }
             });
             validateFieldMappingData();
+        }
+
+        function processFlatFileSourceData() {
+            let data = [];
+            const configuration = {
+                processingStatus: selectedProcessingStatus.value
+            };
+            if(flatFileOccurrenceData.value.length > 0){
+                data = flatFileOccurrenceData.value.length > 500 ? flatFileOccurrenceData.value.slice(0, 500) : flatFileOccurrenceData.value.slice();
+                configuration['dataType'] = 'occurrence';
+                if(flatFileOccurrenceData.value.length > 500){
+                    flatFileOccurrenceData.value.splice(0, 500);
+                }
+                else{
+                    flatFileOccurrenceData.value.length = 0;
+                }
+            }
+            else if(flatFileMofData.value.length > 0){
+
+                data = flatFileMofData.value.length > 500 ? flatFileMofData.value.slice(0, 500) : flatFileMofData.value.slice();
+                configuration['dataType'] = 'mof';
+                if(flatFileMofData.value.length > 500){
+                    flatFileMofData.value.splice(0, 500);
+                }
+                else{
+                    flatFileMofData.value.length = 0;
+                }
+            }
+            if(configuration.hasOwnProperty('dataType')){
+                const text = 'Loading ' + configuration['dataType'] + ' data';
+                currentProcess.value = 'transferSourceData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                const formData = new FormData();
+                formData.append('collid', props.collid.toString());
+                formData.append('uploadConfig', JSON.stringify(configuration));
+                formData.append('data', JSON.stringify(data));
+                formData.append('action', 'processFlatFileDataUpload');
+                fetch(dataUploadServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    let resText = '';
+                    if(configuration['dataType'] === 'occurrence'){
+                        recordsUploadedOccurrence.value = recordsUploadedOccurrence.value + Number(res);
+                        resText = recordsUploadedOccurrence.value + ' records loaded'
+                    }
+                    else if(configuration['dataType'] === 'mof'){
+                        recordsUploadedMof.value = recordsUploadedMof.value + Number(res);
+                        resText = recordsUploadedMof.value + ' records loaded'
+                    }
+                    processSuccessResponse(resText);
+                    processFlatFileSourceData();
+                });
+            }
+            else{
+                processPostUploadCleaning();
+            }
         }
 
         function processorDisplayScrollDown() {
@@ -666,6 +785,83 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersStore.setCurrentCollectionDataUploadParametersRecord(uspid);
         }
 
+        function processPostUploadCleaning() {
+            console.log('done');
+        }
+
+        function processSourceDataFiles() {
+            const configuration = {
+                eventMofFields: eventMofDataFields.value,
+                occurrenceMofFields: occurrenceMofDataFields.value,
+                processingStatus: selectedProcessingStatus.value,
+                serverPath: localDwcaServerPath.value
+            };
+            if(sourceDataFilesOccurrence.value.length > 0){
+                configuration['uploadFile'] = sourceDataFilesOccurrence.value[0];
+                configuration['dataType'] = 'occurrence';
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataOccurrence.value);
+                sourceDataFilesOccurrence.value.splice(0, 1);
+            }
+            else if(includeDeterminationData.value && sourceDataFilesDetermination.value.length > 0){
+                configuration['uploadFile'] = sourceDataFilesDetermination.value[0];
+                configuration['dataType'] = 'determination';
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataDetermiation.value);
+                sourceDataFilesDetermination.value.splice(0, 1);
+            }
+            else if(includeMultimediaData.value && sourceDataFilesMultimedia.value.length > 0){
+                configuration['uploadFile'] = sourceDataFilesMultimedia.value[0];
+                configuration['dataType'] = 'multimedia';
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataMedia.value);
+                sourceDataFilesMultimedia.value.splice(0, 1);
+            }
+            else if(includeMofData.value && sourceDataFilesMof.value.length > 0){
+                configuration['uploadFile'] = sourceDataFilesMof.value[0];
+                configuration['dataType'] = 'mof';
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataMof.value);
+                sourceDataFilesMof.value.splice(0, 1);
+            }
+            if(configuration.hasOwnProperty('dataType')){
+                const text = 'Loading ' + configuration['dataType'] + ' data';
+                currentProcess.value = 'transferSourceData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                const formData = new FormData();
+                formData.append('collid', props.collid.toString());
+                formData.append('uploadConfig', JSON.stringify(configuration));
+                formData.append('action', 'processDwcaFileDataUpload');
+                fetch(dataUploadServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    let resText = '';
+                    if(configuration['dataType'] === 'occurrence'){
+                        recordsUploadedOccurrence.value = recordsUploadedOccurrence.value + Number(res);
+                        resText = recordsUploadedOccurrence.value + ' records loaded'
+                    }
+                    else if(configuration['dataType'] === 'determination'){
+                        recordsUploadedDetermination.value = recordsUploadedDetermination.value + Number(res);
+                        resText = recordsUploadedDetermination.value + ' records loaded'
+                    }
+                    else if(configuration['dataType'] === 'multimedia'){
+                        recordsUploadedMultimedia.value = recordsUploadedMultimedia.value + Number(res);
+                        resText = recordsUploadedMultimedia.value + ' records loaded'
+                    }
+                    else if(configuration['dataType'] === 'mof'){
+                        recordsUploadedMof.value = recordsUploadedMof.value + Number(res);
+                        resText = recordsUploadedMof.value + ' records loaded'
+                    }
+                    processSuccessResponse(resText);
+                    processSourceDataFiles();
+                });
+            }
+            else{
+                processPostUploadCleaning();
+            }
+        }
+
         function processSourceDataProcessing(metaFile) {
             const text = 'Processing source data';
             currentProcess.value = 'processSourceData';
@@ -689,14 +885,17 @@ const occurrenceDataUploadModule = {
                     if(data.hasOwnProperty('identification') && data['identification']['dataFiles'].length > 0){
                         sourceDataFieldsDetermination.value = Object.assign({}, data['identification']['fields']);
                         sourceDataFilesDetermination.value = data['identification']['dataFiles'].slice();
+                        determinationDataIncluded.value = true;
                     }
                     if(data.hasOwnProperty('multimedia') && data['multimedia']['dataFiles'].length > 0){
                         sourceDataFieldsMultimedia.value = Object.assign({}, data['multimedia']['fields']);
                         sourceDataFilesMultimedia.value = data['multimedia']['dataFiles'].slice();
+                        multimediaDataIncluded.value = true;
                     }
                     if(data.hasOwnProperty('measurementorfact') && data['measurementorfact']['dataFiles'].length > 0){
                         sourceDataFieldsMof.value = Object.assign({}, data['measurementorfact']['fields']);
                         sourceDataFilesMof.value = data['measurementorfact']['dataFiles'].slice();
+                        mofDataIncluded.value = true;
                     }
                 }
                 validateFieldMappingData();
@@ -819,18 +1018,33 @@ const occurrenceDataUploadModule = {
 
         function saveMapping() {
             const saveMappingData = {};
-            saveMappingData['occurrence'] = Object.assign({}, fieldMappingDataOccurrence.value);
+            saveMappingData['occurrence'] = {};
             saveMappingData['determination'] = {};
             saveMappingData['multimedia'] = {};
             saveMappingData['mof'] = {};
+            Object.keys(fieldMappingDataOccurrence.value).forEach((field) => {
+                const fieldName = flatFileMode.value ? sourceDataFieldsFlatFile.value[field] : sourceDataFieldsOccurrence.value[field];
+                if(fieldName){
+                    saveMappingData['occurrence'][fieldName.toLowerCase()] = fieldMappingDataOccurrence.value[field];
+                }
+            });
             Object.keys(fieldMappingDataDetermiation.value).forEach((field) => {
-                saveMappingData['determination'][field] = 'ID-' + fieldMappingDataDetermiation.value[field];
+                const fieldName = sourceDataFieldsDetermination.value[field];
+                if(fieldName){
+                    saveMappingData['determination'][fieldName.toLowerCase()] = 'ID-' + fieldMappingDataDetermiation.value[field];
+                }
             });
             Object.keys(fieldMappingDataMedia.value).forEach((field) => {
-                saveMappingData['multimedia'][field] = 'IM-' + fieldMappingDataMedia.value[field];
+                const fieldName = sourceDataFieldsMultimedia.value[field];
+                if(fieldName){
+                    saveMappingData['multimedia'][fieldName.toLowerCase()] = 'IM-' + fieldMappingDataMedia.value[field];
+                }
             });
             Object.keys(fieldMappingDataMof.value).forEach((field) => {
-                saveMappingData['mof'][field] = 'MOF-' + fieldMappingDataMof.value[field];
+                const fieldName = sourceDataFieldsMof.value[field];
+                if(fieldName){
+                    saveMappingData['mof'][fieldName.toLowerCase()] = 'MOF-' + fieldMappingDataMof.value[field];
+                }
             });
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
@@ -878,6 +1092,17 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function startUpload() {
+            adjustUIStart();
+            currentTab.value = 'mapping';
+            if(flatFileMode.value){
+                parseFlatFileData();
+            }
+            else{
+                processSourceDataFiles();
+            }
+        }
+
         function transferUploadedDwcaFileToServer() {
             const text = 'Transferring source data';
             currentProcess.value = 'transferSourceData';
@@ -914,10 +1139,10 @@ const occurrenceDataUploadModule = {
                     const fieldName = sourceDataFieldsFlatFile.value[field];
                     if(!fieldMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
                         if(fieldName === 'coreid'){
-                            fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'dbpk';
+                            fieldMappingDataOccurrence.value[field.toLowerCase()] = 'dbpk';
                         }
                         else if(fieldName === 'coreeventid'){
-                            fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'eventdbpk';
+                            fieldMappingDataOccurrence.value[field.toLowerCase()] = 'eventdbpk';
                         }
                         else{
                             const fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
@@ -930,69 +1155,85 @@ const occurrenceDataUploadModule = {
             else if(sourceDataFilesOccurrence.value.length > 0 && Object.keys(sourceDataFieldsOccurrence.value).length > 0){
                 Object.keys(sourceDataFieldsOccurrence.value).forEach((field) => {
                     const fieldName = sourceDataFieldsOccurrence.value[field];
-                    if(!fieldMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
+                    if(Object.keys(savedMappingDataOccurrence.value).length === 0 || !savedMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
                         if(fieldName === 'coreid'){
-                            fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'dbpk';
+                            fieldMappingDataOccurrence.value[field.toLowerCase()] = 'dbpk';
                         }
                         else if(fieldName === 'coreeventid'){
-                            fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'eventdbpk';
+                            fieldMappingDataOccurrence.value[field.toLowerCase()] = 'eventdbpk';
                         }
                         else{
                             const fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
                             const usedField = fieldOption ? Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === fieldOption.value) : null;
-                            fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                            fieldMappingDataOccurrence.value[field] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                         }
+                    }
+                    else{
+                        const fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === savedMappingDataOccurrence.value[fieldName.toLowerCase()]);
+                        fieldMappingDataOccurrence.value[field] = fieldOption ? fieldOption.value : 'unmapped';
                     }
                 });
                 if(sourceDataFilesDetermination.value.length > 0 && Object.keys(sourceDataFieldsDetermination.value).length > 0){
                     Object.keys(sourceDataFieldsDetermination.value).forEach((field) => {
                         const fieldName = sourceDataFieldsDetermination.value[field];
-                        if(!fieldMappingDataDetermiation.value.hasOwnProperty(fieldName.toLowerCase())){
+                        if(Object.keys(savedMappingDataDetermiation.value).length === 0 || !savedMappingDataDetermiation.value.hasOwnProperty(fieldName.toLowerCase())){
                             if(fieldName === 'coreid'){
-                                fieldMappingDataDetermiation.value[fieldName.toLowerCase()] = 'dbpk';
+                                fieldMappingDataDetermiation.value[field.toLowerCase()] = 'dbpk';
                             }
                             else{
                                 const fieldOption = symbiotaFieldOptionsDetermination.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
                                 const usedField = fieldOption ? Object.keys(fieldMappingDataDetermiation.value).find(field => fieldMappingDataDetermiation.value[field] === fieldOption.value) : null;
-                                fieldMappingDataDetermiation.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                                fieldMappingDataDetermiation.value[field] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                             }
+                        }
+                        else{
+                            const fieldOption = symbiotaFieldOptionsDetermination.value.find(option => option.value.toLowerCase() === savedMappingDataDetermiation.value[fieldName.toLowerCase()]);
+                            fieldMappingDataDetermiation.value[field] = fieldOption ? fieldOption.value : 'unmapped';
                         }
                     });
                 }
                 if(sourceDataFilesMultimedia.value.length > 0 && Object.keys(sourceDataFieldsMultimedia.value).length > 0){
                     Object.keys(sourceDataFieldsMultimedia.value).forEach((field) => {
                         const fieldName = sourceDataFieldsMultimedia.value[field];
-                        if(!fieldMappingDataMedia.value.hasOwnProperty(fieldName.toLowerCase())){
+                        if(Object.keys(savedMappingDataMedia.value).length === 0 || !savedMappingDataMedia.value.hasOwnProperty(fieldName.toLowerCase())){
                             if(fieldName === 'coreid'){
-                                fieldMappingDataMedia.value[fieldName.toLowerCase()] = 'dbpk';
+                                fieldMappingDataMedia.value[field.toLowerCase()] = 'dbpk';
                             }
                             else{
                                 const fieldOption = symbiotaFieldOptionsMedia.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
                                 const usedField = fieldOption ? Object.keys(fieldMappingDataMedia.value).find(field => fieldMappingDataMedia.value[field] === fieldOption.value) : null;
-                                fieldMappingDataMedia.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                                fieldMappingDataMedia.value[field] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                             }
+                        }
+                        else{
+                            const fieldOption = symbiotaFieldOptionsMedia.value.find(option => option.value.toLowerCase() === savedMappingDataMedia.value[fieldName.toLowerCase()]);
+                            fieldMappingDataMedia.value[field] = fieldOption ? fieldOption.value : 'unmapped';
                         }
                     });
                 }
                 if(sourceDataFilesMof.value.length > 0 && Object.keys(sourceDataFieldsMof.value).length > 0){
                     Object.keys(sourceDataFieldsMof.value).forEach((field) => {
                         const fieldName = sourceDataFieldsMof.value[field];
-                        if(!fieldMappingDataMof.value.hasOwnProperty(fieldName.toLowerCase())){
+                        if(Object.keys(savedMappingDataMof.value).length === 0 || !savedMappingDataMof.value.hasOwnProperty(fieldName.toLowerCase())){
                             if(fieldName === 'coreid'){
-                                fieldMappingDataMof.value[fieldName.toLowerCase()] = 'dbpk';
+                                fieldMappingDataMof.value[field.toLowerCase()] = 'dbpk';
                             }
                             else if(fieldName === 'coreeventid'){
-                                fieldMappingDataMof.value[fieldName.toLowerCase()] = 'eventdbpk';
+                                fieldMappingDataMof.value[field.toLowerCase()] = 'eventdbpk';
                             }
                             else if(fieldName.toLowerCase() === 'measurementtype'){
-                                fieldMappingDataMof.value[fieldName.toLowerCase()] = 'field';
+                                fieldMappingDataMof.value[field] = 'field';
                             }
                             else if(fieldName.toLowerCase() === 'measurementvalue'){
-                                fieldMappingDataMof.value[fieldName.toLowerCase()] = 'datavalue';
+                                fieldMappingDataMof.value[field] = 'datavalue';
                             }
                             else{
-                                fieldMappingDataMof.value[fieldName.toLowerCase()] = 'unmapped';
+                                fieldMappingDataMof.value[field] = 'unmapped';
                             }
+                        }
+                        else{
+                            const fieldOption = symbiotaFieldOptionsMof.value.find(option => option.value.toLowerCase() === savedMappingDataMof.value[fieldName.toLowerCase()]);
+                            fieldMappingDataMof.value[field] = fieldOption ? fieldOption.value : 'unmapped';
                         }
                     });
                 }
@@ -1003,6 +1244,7 @@ const occurrenceDataUploadModule = {
             processSuccessResponse('Complete');
             if(validated){
                 currentTab.value = 'mapping';
+                currentProcess.value = null;
             }
             else{
                 showNotification('negative', 'Source data could not be correctly read to process upload.');
@@ -1013,7 +1255,7 @@ const occurrenceDataUploadModule = {
 
         Vue.onMounted(() => {
             if(Number(props.collid) > 0){
-                clearUploadTables();
+                clearOccurrenceUploadTables();
                 collectionDataUploadParametersStore.setCollectionDataUploadParametersArr(props.collid);
             }
         });
@@ -1024,6 +1266,7 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersId,
             currentProcess,
             currentTab,
+            determinationDataIncluded,
             fieldMapperFieldMapping,
             fieldMapperSourceFields,
             fieldMapperTargetFields,
@@ -1031,6 +1274,8 @@ const occurrenceDataUploadModule = {
             includeDeterminationData,
             includeMultimediaData,
             includeMofData,
+            multimediaDataIncluded,
+            mofDataIncluded,
             procDisplayScrollAreaRef,
             processingStatusOptions,
             processorDisplayArr,
@@ -1051,7 +1296,8 @@ const occurrenceDataUploadModule = {
             processorDisplayScrollUp,
             processParameterProfileSelection,
             processUploadFile,
-            saveMapping
+            saveMapping,
+            startUpload
         }
     }
 };
