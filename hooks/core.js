@@ -112,11 +112,18 @@ function useCore() {
     }
 
     function csvToArray(str) {
-        const headers = str.slice(0, str.indexOf("\n")).split(',');
-        if(str.endsWith("\n")){
+        let lineTermination;
+        if(str.endsWith('\r\n')){
+            lineTermination = '\r\n';
+        }
+        else{
+            lineTermination = '\n';
+        }
+        const headers = str.slice(0, str.indexOf(lineTermination)).split(',');
+        if(str.endsWith(lineTermination)){
             str = str.substring(0, str.length - 2);
         }
-        const rows = str.slice(str.indexOf("\n") + 1).split("\n");
+        const rows = str.slice(str.indexOf(lineTermination) + 1).split(lineTermination);
         return rows.map((row) => {
             if(row){
                 const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);

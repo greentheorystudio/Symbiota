@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../classes/OccurrenceManager.php');
-include_once(__DIR__ . '/../classes/OccurrenceUtilities.php');
+include_once(__DIR__ . '/DataUtilitiesService.php');
 
 class SOLRService extends OccurrenceManager{
 
@@ -11,12 +11,11 @@ class SOLRService extends OccurrenceManager{
     protected $qStr = '';
     protected $spatial = false;
     private $checklistTaxaCnt = 0;
-    private $iconColors;
+    private $iconColors = array('fc6355','5781fc','fcf357','00e13c','e14f9e','55d7d7','ff9900','7e55fc');
     private $collArr = array();
 
     public function __construct(){
         parent::__construct();
-        $this->iconColors = array('fc6355','5781fc','fcf357','00e13c','e14f9e','55d7d7','ff9900','7e55fc');
     }
 
     public function getMaxCnt($geo = null){
@@ -828,8 +827,8 @@ class SOLRService extends OccurrenceManager{
                     $qArr[] = '(-eventDate:["" TO *])';
                     $this->localSearchArr[] = 'Date IS NULL';
                 }
-                elseif($eDate1 = OccurrenceUtilities::formatDate($dateArr[0])){
-                    $eDate2 = (count($dateArr)>1?OccurrenceUtilities::formatDate($dateArr[1]):'');
+                elseif($eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
+                    $eDate2 = (count($dateArr)>1?DataUtilitiesService::formatDate($dateArr[1]):'');
                     if($eDate2){
                         $qArr[] = '(eventDate:['.$eDate1.'T00:00:00Z TO '.$eDate2.'T23:59:59.999Z])';
                     }

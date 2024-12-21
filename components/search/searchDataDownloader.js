@@ -87,6 +87,7 @@ const searchDataDownloader = {
             requestOptions.schema = options.structure;
             requestOptions.identifications = options['includeDet'];
             requestOptions.images = options['includeImage'];
+            requestOptions.mof = options['includeMof'];
             displayOptionsPopup.value = false;
             processDownload();
         }

@@ -33,6 +33,7 @@ class Configurations{
         'KEY_MOD_IS_ACTIVE',
         'LOG_PATH',
         'MAX_UPLOAD_FILESIZE',
+        'MOF_SEARCH_FIELD_JSON',
         'PARAMS_ARR',
         'PORTAL_EMAIL_ADDRESS',
         'PORTAL_GUID',
@@ -439,8 +440,8 @@ class Configurations{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20241002';
-        $GLOBALS['JS_VERSION'] = '20240519';
+        $GLOBALS['CSS_VERSION'] = '20241005';
+        $GLOBALS['JS_VERSION'] = '202405211';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -704,6 +705,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['SPATIAL_POINT_CLUSTER'])){
             $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
+        }
+        if(!isset($GLOBALS['MOF_SEARCH_FIELD_JSON'])){
+            $GLOBALS['MOF_SEARCH_FIELD_JSON'] = '';
         }
         if(!isset($GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']) || $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] === ''){
             $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] = '50';
