@@ -11,7 +11,7 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS'])
 
 $attrsValues = array();
 
-$clValue = array_key_exists('cl',$_REQUEST)?(int)$_REQUEST['cl']:0;
+$clValue = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
 $dynClid = array_key_exists('dynclid',$_REQUEST)?(int)$_REQUEST['dynclid']:0;
 $taxonValue = array_key_exists('taxon',$_REQUEST)?htmlspecialchars($_REQUEST['taxon'],ENT_QUOTES): '';
 $action = array_key_exists('submitbutton',$_REQUEST)?htmlspecialchars($_REQUEST['submitbutton'],ENT_QUOTES): '';
@@ -77,7 +77,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/ident.key.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
-	<?php 
+	<?php
 	include(__DIR__ . '/../header.php');
     echo '<div class="navpath">';
     echo '<a href="../index.php">Home</a> &gt;&gt; ';
@@ -101,26 +101,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
     }
     echo '<b>Key: '.$dataManager->getClName().'</b>';
     echo '</div>';
-	
+
 ?>
 <div id="innertext">
 	<form name="keyform" id="keyform" action="key.php" method="get">
 		<table id="keytable">
 			<tr>
                 <td id="keycharcolumn">
-                    <div>
-                        <div style="font-weight:bold;margin-top:0.5em;">Taxon:</div>
-                        <select name="taxon">
-                            <?php
-                                echo "<option value='All Species'>-- Select a Taxonomic Group --</option>\n";
-                                $selectList = $dataManager->getTaxaFilterList();
-                                foreach($selectList as $value){
-                                    $selectStr = ($value === $taxonValue? 'SELECTED' : '');
-                                    echo "<option $selectStr>$value</option>\n";
-                                }
-                            ?>
-                        </select>
-                    </div>
                     <div style='font-weight:bold; margin-top:0.5em;'>
                         <input type="hidden" id="cl" name="cl" value="<?php echo $clid; ?>" />
                         <input type="hidden" id="dynclid" name="dynclid" value="<?php echo $dynClid; ?>" />
@@ -199,7 +186,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </td>
 			</tr>
 		</table>
-		<?php 
+		<?php
 		if(array_key_exists('crumburl',$_REQUEST)) {
             echo "<input type='hidden' name='crumburl' value='" . $_REQUEST['crumburl'] . "' />";
         }

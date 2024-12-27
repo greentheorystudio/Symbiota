@@ -905,8 +905,8 @@ class SearchService {
         }
         if(array_key_exists('targetclid',$searchTermsArr) && $searchTermsArr['targetclid'] && is_numeric($searchTermsArr['targetclid'])){
             $checklist = (new Checklists)->getChecklistFromClid($searchTermsArr['targetclid']);
-            if($checklist && $checklist['dynamicsql']){
-                $checklistVoucherStr = $this->prepareOccurrenceChecklistVoucherWhereSql(json_decode($checklist['dynamicsql'], true));
+            if($checklist && $checklist['searchterms']){
+                $checklistVoucherStr = $this->prepareOccurrenceChecklistVoucherWhereSql(json_decode($checklist['searchterms'], true));
                 if($checklistVoucherStr){
                     $sqlWherePartsArr[] = '(' . $checklistVoucherStr . ') AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid = ' . (int)$searchTermsArr['targetclid'] . '))';
                 }

@@ -1,6 +1,6 @@
-const useImageStore = Pinia.defineStore('image', {
+const useChecklistStore = Pinia.defineStore('checklist', {
     state: () => ({
-        blankImageRecord: {
+        blankChecklistRecord: {
             imgid: 0,
             tid: null,
             sciname: null,
@@ -25,14 +25,14 @@ const useImageStore = Pinia.defineStore('image', {
             mediamd5: null,
             dynamicproperties: null,
             sortsequence: null,
-            tagArr: []
+            childChecklistArr: []
         },
-        imageArr: [],
-        imageData: {},
-        imageEditData: {},
-        imageId: 0,
-        imageTaxon: {},
-        imageUpdateData: {}
+        checklistData: {},
+        checklistEditData: {},
+        checklistId: 0,
+        checklistTaxaArr: [],
+        checklistUpdateData: {},
+        checklistVoucherArr: []
     }),
     getters: {
         getBlankImageRecord(state) {
@@ -77,9 +77,6 @@ const useImageStore = Pinia.defineStore('image', {
         getImageID(state) {
             return state.imageId;
         },
-        getImageTaxon(state) {
-            return state.imageTaxon;
-        },
         getImageValid(state) {
             return !!state.imageEditData['url'];
         }
@@ -91,7 +88,6 @@ const useImageStore = Pinia.defineStore('image', {
         clearImageData() {
             this.imageData = Object.assign({}, this.blankImageRecord);
             this.imageEditData = Object.assign({}, {});
-            this.imageTaxon = Object.assign({}, {});
         },
         deleteImageRecord(collid, callback) {
             const formData = new FormData();
@@ -172,8 +168,6 @@ const useImageStore = Pinia.defineStore('image', {
             .then((data) => {
                 if(data.hasOwnProperty('imgid') && Number(data.imgid) > 0){
                     data.sciname = data['taxonData'] ? data['taxonData']['sciname'] : null;
-                    this.imageTaxon = Object.assign({}, data['taxonData']);
-                    delete data['taxonData'];
                     this.imageData = Object.assign({}, data);
                     this.imageEditData = Object.assign({}, this.imageData);
                 }

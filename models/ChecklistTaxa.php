@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
 
-class ChecklistVouchers{
+class ChecklistTaxa{
 
 	private $conn;
 

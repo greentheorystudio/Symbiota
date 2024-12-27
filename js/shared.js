@@ -1,31 +1,3 @@
-document.addEventListener("DOMContentLoaded", function() {
-	const smallWorkingSpinnerElements = document.getElementsByClassName('sm-native-spinner');
-	if(smallWorkingSpinnerElements.length > 0){
-		for(let i in smallWorkingSpinnerElements){
-			if(smallWorkingSpinnerElements.hasOwnProperty(i)){
-				const parentStyle = smallWorkingSpinnerElements[i].style;
-				smallWorkingSpinnerElements[i].innerHTML = getSmallWorkingSpinnerHtml();
-				if(parentStyle){
-					smallWorkingSpinnerElements[i].firstChild.style.cssText = parentStyle.cssText;
-				}
-			}
-		}
-	}
-
-	const vineWorkingSpinnerElements = document.getElementsByClassName('vine-native-spinner');
-	if(vineWorkingSpinnerElements.length > 0){
-		for(let i in vineWorkingSpinnerElements){
-			if(vineWorkingSpinnerElements.hasOwnProperty(i)){
-				const parentStyle = vineWorkingSpinnerElements[i].style;
-				vineWorkingSpinnerElements[i].innerHTML = getVineWorkingSpinnerHtml();
-				if(parentStyle){
-					vineWorkingSpinnerElements[i].firstChild.style.cssText = parentStyle.cssText;
-				}
-			}
-		}
-	}
-});
-
 function getRgbaStrFromHexOpacity(hex,opacity) {
 	const rgbArr = hexToRgb(hex);
 	let retStr = '';

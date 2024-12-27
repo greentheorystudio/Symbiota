@@ -27,7 +27,7 @@ class ChecklistAdmin{
 			$sql = 'SELECT c.clid, c.name, c.locality, c.publication, ' .
                 'c.abstract, c.authors, c.parentclid, c.notes, ' .
                 'c.latcentroid, c.longcentroid, c.pointradiusmeters, c.access, c.defaultsettings, ' .
-                'c.dynamicsql, c.datelastmodified, c.uid, c.type, c.initialtimestamp, c.footprintwkt ' .
+                'c.searchterms, c.datelastmodified, c.uid, c.type, c.initialtimestamp, c.footprintwkt ' .
                 'FROM fmchecklists AS c WHERE c.clid = ' .$this->clid.' ';
 	 		$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
@@ -45,7 +45,7 @@ class ChecklistAdmin{
 				$retArr['pointradiusmeters'] = $row->pointradiusmeters;
 				$retArr['access'] = $row->access;
 				$retArr['defaultsettings'] = $row->defaultsettings;
-				$retArr['dynamicsql'] = $row->dynamicsql;
+				$retArr['searchterms'] = $row->searchterms;
 				$retArr['datelastmodified'] = $row->datelastmodified;
                 $retArr['footprintwkt'] = $row->footprintwkt;
 				$retArr['hasfootprintwkt'] = ($row->footprintwkt?'1':'0');

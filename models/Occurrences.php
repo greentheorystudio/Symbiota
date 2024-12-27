@@ -448,6 +448,7 @@ class Occurrences{
                 }
             }
             if(count($sqlPartArr) > 0){
+                $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';
                 $sql = 'SELECT ' . implode(', ', $fieldNameArr) .
                     ' FROM omoccurrences WHERE occid = ' . (int)$occId . ' ';
                 //echo $sql;
