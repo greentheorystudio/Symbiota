@@ -31,11 +31,11 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getChecklistListByOccurrenceVoucher' && $occid){
         echo json_encode($checklistVouchers->getChecklistListByOccurrenceVoucher($_POST['occid']));
     }
-    elseif($action === 'removeOccurrenceVoucherLinkage' && $isEditor && $clid && $occid){
-        echo $checklistVouchers->removeOccurrenceVoucherLinkage($clid, $occid);
+    elseif($action === 'deleteChecklistVoucherRecord' && $isEditor && $clid && $occid){
+        echo $checklistVouchers->deleteChecklistVoucherRecord($clid, $occid);
     }
-    elseif($action === 'addOccurrenceVoucherLinkage' && $isEditor && $clid && $occid){
+    elseif($action === 'createChecklistVoucherRecord' && $isEditor && $clid && $occid){
         $tid = array_key_exists('tid',$_POST) ? (int)$_POST['tid'] : null;
-        echo $checklistVouchers->addOccurrenceVoucherLinkage($clid, $occid, $tid);
+        echo $checklistVouchers->createChecklistVoucherRecord($clid, $occid, $tid);
     }
 }

@@ -31,12 +31,12 @@ class ChecklistVoucherAdmin {
 	public function setCollectionVariables(): void
 	{
 		if($this->clid){
-			$sql = 'SELECT name, dynamicsql FROM fmchecklists WHERE clid = '.$this->clid.' ';
+			$sql = 'SELECT name, searchterms FROM fmchecklists WHERE clid = '.$this->clid.' ';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->clName = SanitizerService::cleanOutStr($row->name);
-				if($row->dynamicsql){
-                    $varArr = $this->parseSqlFrag(json_decode($row->dynamicsql, true));
+				if($row->searchterms){
+                    $varArr = $this->parseSqlFrag(json_decode($row->searchterms, true));
                     $this->saveQueryVariables($varArr);
                     $this->queryVariablesArr = $varArr;
                 }
@@ -74,7 +74,7 @@ class ChecklistVoucherAdmin {
 				$jsonArr[$fieldName] = $postArr[$fieldName];
 			}
 		}
-		$sql = 'UPDATE fmchecklists AS c SET c.dynamicsql = '.($jsonArr?'"'.SanitizerService::cleanInStr($this->conn,json_encode($jsonArr)).'"':'NULL').' WHERE c.clid = '.$this->clid.' ';
+		$sql = 'UPDATE fmchecklists AS c SET c.searchterms = '.($jsonArr?'"'.SanitizerService::cleanInStr($this->conn,json_encode($jsonArr)).'"':'NULL').' WHERE c.clid = '.$this->clid.' ';
 		//echo $sql; exit;
 		$this->conn->query($sql);
 	}
@@ -216,7 +216,7 @@ class ChecklistVoucherAdmin {
 	public function deleteQueryVariables(): string
 	{
 		$statusStr = '';
-		if($this->conn->query('UPDATE fmchecklists AS c SET c.dynamicsql = NULL WHERE c.clid = '.$this->clid.' ')){
+		if($this->conn->query('UPDATE fmchecklists AS c SET c.searchterms = NULL WHERE c.clid = '.$this->clid.' ')){
 			$this->queryVariablesArr = array();
 		}
 		else{

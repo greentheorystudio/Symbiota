@@ -13,13 +13,14 @@ $tid = (int)$_POST['tid'];
 $interface = htmlspecialchars($_POST['interface']);
 
 $dynClManager = new DynamicChecklistManager();
+$dynClid = 0;
 
 if(is_numeric($groundRadius)){
 	$dynClid = $dynClManager->createChecklist($lat, $lng, $radius, $groundRadius, $radiusunits, $tid);
 }
 
 if($interface === 'key'){
-	header('Location: ' .$GLOBALS['CLIENT_ROOT']. '/ident/key.php?dynclid=' .$dynClid. '&taxon=All Species');
+	header('Location: ' .$GLOBALS['CLIENT_ROOT']. '/ident/key.php?clid=' .$dynClid);
 }
 else{
 	header('Location: ' .$GLOBALS['CLIENT_ROOT']. '/checklists/checklist.php?dynclid=' .$dynClid);

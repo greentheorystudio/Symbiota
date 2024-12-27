@@ -186,6 +186,10 @@ ALTER TABLE `media`
 ALTER TABLE `images`
     ADD INDEX `sourceurl`(`sourceurl`);
 
+ALTER TABLE `fmchecklists`
+    CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
+    MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`;
+
 CREATE TABLE `keycharacterheadings` (
     `chid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `headingname` varchar(255) NOT NULL,
