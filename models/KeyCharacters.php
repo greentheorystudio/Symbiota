@@ -58,6 +58,26 @@ class KeyCharacters{
         return $retVal;
     }
 
+    public function getCharacterDependencies($cidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT cid, dcid, dcsid '.
+            'FROM keycharacterdependence WHERE cid IN(' . implode(',', $cidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['cid'] = $row['dcid'];
+                $nodeArr['csid'] = $row['dcsid'];
+                $retArr[$row['cid']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getKeyCharacterData($cid): array
     {
         $retArr = array();
@@ -74,6 +94,38 @@ class KeyCharacters{
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
                 }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getTaxaKeyCharacters($cidArr): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM keycharacters WHERE cid IN(' . implode(',', $cidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['cid'], $retArr)){
+                    $retArr[$row['cid']] = array();
+                    $retArr[$row['cid']]['dependencies'] = array();
+                }
+                foreach($fields as $val){
+                    $name = $val->name;
+                    if($name !== 'cid'){
+                        $retArr[$row['cid']][$name] = $row[$name];
+                    }
+                }
+                unset($rows[$index]);
+            }
+            $depArr = $this->getCharacterDependencies($cidArr);
+            foreach($depArr as $cid => $cDepArr){
+                $retArr[$cid]['dependencies'] = $cDepArr;
             }
         }
         return $retArr;

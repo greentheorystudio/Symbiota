@@ -64,6 +64,9 @@
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
+    const keyCharacterApiUrl = CLIENT_ROOT + '/api/ident/keyCharacterController.php';
+    const keyCharacterHeadingApiUrl = CLIENT_ROOT + '/api/ident/keyCharacterHeadingController.php';
+    const keyCharacterStateApiUrl = CLIENT_ROOT + '/api/ident/keyCharacterStateController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/languages/languageController.php';
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
     const occurrenceApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceController.php';

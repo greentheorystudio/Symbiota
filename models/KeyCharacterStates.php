@@ -79,6 +79,34 @@ class KeyCharacterStates{
         return $retArr;
     }
 
+    public function getTaxaKeyCharacterStates($tidArr): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
+        $sql = 'SELECT tl.tid, ' . implode(',', $fieldNameArr) . ' '.
+            'FROM keycharacterstatetaxalink AS tl LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
+            'WHERE tl.tid in(' . implode(',', $tidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['tid'], $retArr)){
+                    $retArr[$row['tid']] = array();
+                }
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[$row['tid']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function updateKeyCharacterStateRecord($csid, $editData): int
     {
         $retVal = 0;
