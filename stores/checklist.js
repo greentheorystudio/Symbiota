@@ -1,29 +1,29 @@
 const useChecklistStore = Pinia.defineStore('checklist', {
     state: () => ({
         blankChecklistRecord: {
-            imgid: 0,
-            tid: null,
-            sciname: null,
-            url: null,
-            thumbnailurl: null,
-            originalurl: null,
-            photographer: null,
-            photographeruid: null,
-            format: null,
-            caption: null,
-            owner: null,
-            sourceurl: null,
-            referenceurl: null,
-            copyright: null,
-            rights: null,
+            clid: 0,
+            name: null,
+            title: null,
             locality: null,
-            occid: null,
+            publication: null,
+            abstract: null,
+            authors: null,
+            type: null,
+            politicaldivision: null,
+            searchterms: null,
+            parent: null,
+            parentclid: null,
             notes: null,
-            anatomy: null,
-            username: null,
-            sourceidentifier: null,
-            mediamd5: null,
-            dynamicproperties: null,
+            latcentroid: null,
+            longcentroid: null,
+            pointradiusmeters: null,
+            footprintwkt: null,
+            percenteffort: null,
+            access: null,
+            defaultsettings: null,
+            iconurl: null,
+            headerurl: null,
+            uid: null,
             sortsequence: null,
             childChecklistArr: []
         },
@@ -35,50 +35,28 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         checklistVoucherArr: []
     }),
     getters: {
-        getBlankImageRecord(state) {
-            return state.blankImageRecord;
+        getBlankChecklistRecord(state) {
+            return state.blankChecklistRecord;
         },
-        getImageArr(state) {
-            return state.imageArr;
+        getChecklistData(state) {
+            return state.checklistEditData;
         },
-        getImageCount(state) {
-            return state.imageArr.length;
-        },
-        getImageData(state) {
-            return state.imageEditData;
-        },
-        getImageEditsExist(state) {
+        getChecklistEditsExist(state) {
             let exist = false;
-            state.imageUpdateData = Object.assign({}, {});
-            for(let key in state.imageEditData) {
-                if(key === 'tagArr'){
-                    if(state.imageEditData[key].length !== state.imageData[key].length){
-                        exist = true;
-                        state.imageUpdateData[key] = state.imageEditData[key];
-                    }
-                    else if(state.imageData[key].length > 0){
-                        state.imageData[key].forEach(tag => {
-                            if(!state.imageEditData[key].includes(tag)){
-                                exist = true;
-                                state.imageUpdateData[key] = state.imageEditData[key];
-                            }
-                        });
-                    }
-                }
-                else{
-                    if(state.imageEditData.hasOwnProperty(key) && state.imageEditData[key] !== state.imageData[key]) {
-                        exist = true;
-                        state.imageUpdateData[key] = state.imageEditData[key];
-                    }
+            state.checklistUpdateData = Object.assign({}, {});
+            for(let key in state.checklistEditData) {
+                if(state.checklistEditData.hasOwnProperty(key) && state.checklistEditData[key] !== state.checklistData[key]) {
+                    exist = true;
+                    state.checklistUpdateData[key] = state.checklistEditData[key];
                 }
             }
             return exist;
         },
-        getImageID(state) {
-            return state.imageId;
+        getChecklistID(state) {
+            return state.checklistId;
         },
-        getImageValid(state) {
-            return !!state.imageEditData['url'];
+        getChecklistValid(state) {
+            return !!state.checklistEditData['name'];
         }
     },
     actions: {
