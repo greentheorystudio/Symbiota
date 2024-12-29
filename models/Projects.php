@@ -102,6 +102,7 @@ class Projects{
                     $retArr[$name] = $row[$name];
                 }
             }
+            $retArr['checklists'] = $this->getProjectChecklists($pid);
         }
         return $retArr;
     }
