@@ -81,7 +81,7 @@ class KeyCharacterHeadings{
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM keycharacterheadings WHERE chid in(' . implode(',', $chidArr) . ') ';
+            'FROM keycharacterheadings WHERE chid IN(' . implode(',', $chidArr) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);

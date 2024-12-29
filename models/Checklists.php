@@ -109,6 +109,22 @@ class Checklists{
         return $retVal;
     }
 
+    public function getChecklistChildClidArr($clid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT clidchild FROM fmchklstchildren WHERE clid = ' . (int)$clid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['clidchild'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getChecklistData($clid): array
     {
         $retArr = array();

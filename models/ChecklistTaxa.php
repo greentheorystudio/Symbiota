@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Checklists.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistTaxa{
@@ -68,10 +69,12 @@ class ChecklistTaxa{
 
     public function getChecklistTaxa($clid): array
     {
+        $clidArr = (new Checklists)->getChecklistChildClidArr($clid);
+        $clidArr[] = (int)$clid;
         $retArr = array();
         $sql = 'SELECT t.tid, t.sciname, t.author, t.family, c.habitat, c.abundance, c.notes '.
             'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
-            'WHERE c.clid = ' . (int)$clid . ' ';
+            'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);

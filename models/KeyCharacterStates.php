@@ -85,7 +85,7 @@ class KeyCharacterStates{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
         $sql = 'SELECT tl.tid, ' . implode(',', $fieldNameArr) . ' '.
             'FROM keycharacterstatetaxalink AS tl LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
-            'WHERE tl.tid in(' . implode(',', $tidArr) . ') ';
+            'WHERE tl.tid IN(' . implode(',', $tidArr) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
