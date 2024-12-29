@@ -64,6 +64,27 @@ class Projects{
         return $retVal;
     }
 
+    public function getProjectChecklists($pid): array
+    {
+        $retArr = array();
+        $sql = 'c.clid, c.`name` '.
+            'FROM fmchklstprojlink AS p LEFT JOIN fmchecklists AS c ON p.clid = c.clid '.
+            'WHERE p.pid = ' . (int)$pid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['clid'] = $row['clid'];
+                $nodeArr['name'] = $row['name'];
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getProjectData($pid): array
     {
         $retArr = array();

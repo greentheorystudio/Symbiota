@@ -67,14 +67,14 @@ class ChecklistTaxa{
         return $retVal;
     }
 
-    public function getChecklistTaxa($clid): array
+    public function getChecklistTaxa($clidArr): array
     {
-        $clidArr = (new Checklists)->getChecklistChildClidArr($clid);
-        $clidArr[] = (int)$clid;
+        $childClidArr = (new Checklists)->getChecklistChildClidArr($clidArr);
+        $queryClidArr = array_merge($childClidArr, $clidArr);
         $retArr = array();
         $sql = 'SELECT t.tid, t.sciname, t.author, t.family, c.habitat, c.abundance, c.notes '.
             'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
-            'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
+            'WHERE c.clid IN(' . implode(',', $queryClidArr) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);

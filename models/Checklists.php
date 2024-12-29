@@ -109,10 +109,10 @@ class Checklists{
         return $retVal;
     }
 
-    public function getChecklistChildClidArr($clid): array
+    public function getChecklistChildClidArr($clidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT clidchild FROM fmchklstchildren WHERE clid = ' . (int)$clid . ' ';
+        $sql = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(' . implode(',', $clidArr) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
