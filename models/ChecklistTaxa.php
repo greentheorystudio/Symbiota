@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Checklists.php');
+include_once(__DIR__ . '/KeyCharacterStates.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistTaxa{
@@ -67,29 +68,48 @@ class ChecklistTaxa{
         return $retVal;
     }
 
-    public function getChecklistTaxa($clidArr): array
+    public function getChecklistTaxa($clidArr, $includeKeyData = false): array
     {
-        $childClidArr = (new Checklists)->getChecklistChildClidArr($clidArr);
-        $queryClidArr = array_merge($childClidArr, $clidArr);
         $retArr = array();
-        $sql = 'SELECT t.tid, t.sciname, t.author, t.family, c.habitat, c.abundance, c.notes '.
-            'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
-            'WHERE c.clid IN(' . implode(',', $queryClidArr) . ') ';
-        //echo '<div>'.$sql.'</div>';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $nodeArr = array();
-                $nodeArr['tid'] = $row['tid'];
-                $nodeArr['sciname'] = $row['sciname'];
-                $nodeArr['author'] = $row['author'];
-                $nodeArr['family'] = $row['family'] ?: '[Incertae Sedis]';
-                $nodeArr['habitat'] = $row['habitat'];
-                $nodeArr['abundance'] = $row['abundance'];
-                $nodeArr['notes'] = $row['notes'];
-                $retArr[] = $nodeArr;
-                unset($rows[$index]);
+        $tempArr = array();
+        if(count($clidArr) > 0){
+            $sql = 'SELECT t.tid, t.sciname, t.author, t.family, c.habitat, c.abundance, c.notes '.
+                'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
+                'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $tidArr = array();
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($includeKeyData && !in_array((int)$row['tid'], $tidArr, true)){
+                        $tidArr[] = (int)$row['tid'];
+                    }
+                    $nodeArr = array();
+                    $nodeArr['tid'] = $row['tid'];
+                    $nodeArr['sciname'] = $row['sciname'];
+                    $nodeArr['author'] = $row['author'];
+                    $nodeArr['family'] = $row['family'] ?: '[Incertae Sedis]';
+                    $nodeArr['habitat'] = $row['habitat'];
+                    $nodeArr['abundance'] = $row['abundance'];
+                    $nodeArr['notes'] = $row['notes'];
+                    if($includeKeyData){
+                        $tempArr[] = $nodeArr;
+                    }
+                    else{
+                        $retArr[] = $nodeArr;
+                    }
+                    unset($rows[$index]);
+                }
+                if($includeKeyData && count($tidArr) > 0){
+                    $keyDataArr = (new KeyCharacterStates)->getTaxaKeyCharacterStates($tidArr);
+                    foreach($tempArr as $taxonArr){
+                        if(array_key_exists($taxonArr['tid'], $keyDataArr)){
+                            $taxonArr['keyData'] = array_key_exists((int)$taxonArr['tid'], $keyDataArr) ? $keyDataArr[$taxonArr['tid']] : array();
+                            $retArr[] = $taxonArr;
+                        }
+                    }
+                }
             }
         }
         return $retArr;

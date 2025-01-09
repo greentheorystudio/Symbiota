@@ -4,7 +4,7 @@ header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $clid = array_key_exists('clid',$_REQUEST) ? (int)$_REQUEST['clid'] : 0;
-$pid = array_key_exists('proj',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
+$pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -54,6 +54,7 @@ $pid = array_key_exists('proj',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return checklistData.value.hasOwnProperty('name') ? checklistData.value['name'] : '';
                     });
                     const clId = CLID;
+                    const clidArr = Vue.ref([]);
                     const clientRoot = baseStore.getClientRoot;
                     const languageArr = [];
                     const pId = PID;
@@ -61,6 +62,12 @@ $pid = array_key_exists('proj',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const projectName = Vue.computed(() => {
                         return projectData.value.hasOwnProperty('projname') ? projectData.value['projname'] : '';
                     });
+                    const taxaData = Vue.ref({});
+                    const tidArr = Vue.ref([]);
+
+                    function processTaxaData() {
+                        console.log(taxaData.value);
+                    }
 
                     function setChecklistData() {
                         const formData = new FormData();
@@ -74,7 +81,10 @@ $pid = array_key_exists('proj',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 return response.ok ? response.json() : null;
                             })
                         .then((data) => {
+                            console.log(data);
                             checklistData.value = Object.assign({}, data);
+                            clidArr.value = checklistData.value['clidArr'].slice();
+                            setTaxaData();
                         });
                     }
 
@@ -91,6 +101,27 @@ $pid = array_key_exists('proj',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         })
                         .then((data) => {
                             projectData.value = Object.assign({}, data);
+                            clidArr.value = Object.values(projectData.value['clidArr']).slice();
+                            setTaxaData();
+                        });
+                    }
+
+                    function setTaxaData() {
+                        const formData = new FormData();
+                        formData.append('clidArr', JSON.stringify(clidArr.value));
+                        formData.append('includeKeyData', '1');
+                        formData.append('action', 'getChecklistTaxa');
+                        fetch(checklistTaxaApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((data) => {
+                            console.log(data);
+                            taxaData.value = Object.assign({}, data);
+                            processTaxaData();
                         });
                     }
 
@@ -98,7 +129,7 @@ $pid = array_key_exists('proj',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         if(Number(clId) > 0){
                             setChecklistData();
                         }
-                        else if(Number(clId) > 0){
+                        else if(Number(pId) > 0){
                             setProjectData();
                         }
                     });

@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Checklists.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class Projects{
@@ -67,7 +68,7 @@ class Projects{
     public function getProjectChecklists($pid): array
     {
         $retArr = array();
-        $sql = 'c.clid, c.`name` '.
+        $sql = 'SELECT c.clid, c.`name` '.
             'FROM fmchklstprojlink AS p LEFT JOIN fmchecklists AS c ON p.clid = c.clid '.
             'WHERE p.pid = ' . (int)$pid . ' ';
         //echo '<div>'.$sql.'</div>';
@@ -88,6 +89,7 @@ class Projects{
     public function getProjectData($pid): array
     {
         $retArr = array();
+        $clidArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmprojects WHERE pid = ' . (int)$pid . ' ';
@@ -103,6 +105,11 @@ class Projects{
                 }
             }
             $retArr['checklists'] = $this->getProjectChecklists($pid);
+            foreach($retArr['checklists'] as $checklistArr) {
+                $clidArr[] = $checklistArr['clid'];
+            }
+            $childClidArr = (new Checklists)->getChecklistChildClidArr($clidArr);
+            $retArr['clidArr'] = array_unique(array_merge($childClidArr, $clidArr));
         }
         return $retArr;
     }

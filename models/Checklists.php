@@ -67,7 +67,12 @@ class Checklists{
                 else{
                     $fieldNameArr[] = $field;
                 }
-                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                if($field === 'defaultsettings' || $field === 'searchterms'){
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                }
+                else{
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
             }
         }
         if($dynamic){
@@ -139,8 +144,16 @@ class Checklists{
             if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $row[$name];
+                    if($retArr[$name] && ($name === 'defaultsettings' || $name === 'searchterms')){
+                        $retArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $retArr[$name] = $row[$name];
+                    }
                 }
+                $clidArr = $this->getChecklistChildClidArr(array($clid));
+                $clidArr[] = $clid;
+                $retArr['clidArr'] = $clidArr;
             }
         }
         return $retArr;
@@ -202,7 +215,12 @@ class Checklists{
                     else{
                         $fieldName = $field;
                     }
-                    $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    if($field === 'defaultsettings' || $field === 'searchterms'){
+                        $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    }
                 }
             }
             $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';

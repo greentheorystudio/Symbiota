@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/KeyCharacterHeadings.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class KeyCharacters{
@@ -99,33 +100,46 @@ class KeyCharacters{
         return $retArr;
     }
 
-    public function getTaxaKeyCharacters($cidArr): array
+    public function getTaxaKeyCharacters($cidArr, $includeKeyData = false): array
     {
         $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM keycharacters WHERE cid IN(' . implode(',', $cidArr) . ') ';
-        //echo '<div>'.$sql.'</div>';
-        if($result = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($result);
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                if(!array_key_exists($row['cid'], $retArr)){
-                    $retArr[$row['cid']] = array();
-                    $retArr[$row['cid']]['dependencies'] = array();
-                }
-                foreach($fields as $val){
-                    $name = $val->name;
-                    if($name !== 'cid'){
-                        $retArr[$row['cid']][$name] = $row[$name];
+        $chidArr = array();
+        $tempArr = array();
+        if(count($cidArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM keycharacters WHERE cid IN(' . implode(',', $cidArr) . ') ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $retArr['characters'] = array();
+                $retArr['character-headings'] = array();
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($includeKeyData && !in_array((int)$row['chid'], $chidArr, true)){
+                        $chidArr[] = (int)$row['chid'];
                     }
+                    if(!array_key_exists($row['cid'], $tempArr)){
+                        $tempArr[$row['cid']] = array();
+                    }
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        if($name !== 'cid'){
+                            $tempArr[$row['cid']][$name] = $row[$name];
+                        }
+                    }
+                    unset($rows[$index]);
                 }
-                unset($rows[$index]);
-            }
-            $depArr = $this->getCharacterDependencies($cidArr);
-            foreach($depArr as $cid => $cDepArr){
-                $retArr[$cid]['dependencies'] = $cDepArr;
+                $depArr = $this->getCharacterDependencies($cidArr);
+                foreach($tempArr as $cid => $cArr){
+                    $cArr['cid'] = $cid;
+                    $cArr['dependencies'] = array_key_exists($cid, $depArr) ? $depArr[$cid] : array();
+                    $retArr['characters'][] = $cArr;
+                }
+                if($includeKeyData){
+                    $retArr['character-headings'] = (new KeyCharacterHeadings)->getTaxaKeyCharacterHeadings($chidArr);
+                }
             }
         }
         return $retArr;

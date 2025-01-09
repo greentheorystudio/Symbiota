@@ -14,7 +14,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 if($action && SanitizerService::validateInternalRequest()){
     $checklistTaxa = new ChecklistTaxa();
     if($action === 'getChecklistTaxa' && array_key_exists('clidArr', $_POST)){
-        echo json_encode($checklistTaxa->getChecklistTaxa(json_decode($_POST['clidArr'], false)));
+        $includeKeyData = array_key_exists('includeKeyData',$_POST) && (int)$_POST['includeKeyData'] === 1;
+        echo json_encode($checklistTaxa->getChecklistTaxa(json_decode($_POST['clidArr'], false), $includeKeyData));
     }
     elseif($action === 'deleteChecklistTaxonRecord' && $isEditor && $clid && array_key_exists('tid', $_POST)){
         echo $checklistTaxa->deleteChecklistTaxonRecord($clid, $_POST['tid']);

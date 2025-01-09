@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/KeyCharacters.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class KeyCharacterStates{
@@ -79,29 +80,38 @@ class KeyCharacterStates{
         return $retArr;
     }
 
-    public function getTaxaKeyCharacterStates($tidArr): array
+    public function getTaxaKeyCharacterStates($tidArr, $includeKeyData = false): array
     {
         $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
-        $sql = 'SELECT tl.tid, ' . implode(',', $fieldNameArr) . ' '.
-            'FROM keycharacterstatetaxalink AS tl LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
-            'WHERE tl.tid IN(' . implode(',', $tidArr) . ') ';
-        //echo '<div>'.$sql.'</div>';
-        if($result = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($result);
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                if(!array_key_exists($row['tid'], $retArr)){
-                    $retArr[$row['tid']] = array();
+        $cidArr = array();
+        if(count($tidArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
+            $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM keycharacterstatetaxalink AS tl LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
+                'WHERE tl.tid IN(' . implode(',', $tidArr) . ') ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $retArr['character-states'] = array();
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($includeKeyData && !in_array((int)$row['cid'], $cidArr, true)){
+                        $cidArr[] = (int)$row['cid'];
+                    }
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $retArr['character-states'][] = $nodeArr;
+                    unset($rows[$index]);
                 }
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
+                if($includeKeyData){
+                    $keyDataArr = (new KeyCharacters)->getTaxaKeyCharacters($cidArr, $includeKeyData);
+                    $retArr['characters'] = $keyDataArr['characters'];
+                    $retArr['character-headings'] = $keyDataArr['character-headings'];
                 }
-                $retArr[$row['tid']][] = $nodeArr;
-                unset($rows[$index]);
             }
         }
         return $retArr;
