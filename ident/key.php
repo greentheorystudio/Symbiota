@@ -119,7 +119,6 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             return response.ok ? response.json() : null;
                         })
                         .then((data) => {
-                            console.log(data);
                             taxaData.value = Object.assign({}, data);
                             processTaxaData();
                         });

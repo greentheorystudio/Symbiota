@@ -76,7 +76,7 @@ class KeyCharacterHeadings{
         return $retArr;
     }
 
-    public function getTaxaKeyCharacterHeadings($chidArr): array
+    public function getKeyCharacterHeadingsArr($chidArr): array
     {
         $retArr = array();
         if(count($chidArr) > 0){

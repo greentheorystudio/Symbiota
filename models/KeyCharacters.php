@@ -100,7 +100,7 @@ class KeyCharacters{
         return $retArr;
     }
 
-    public function getTaxaKeyCharacters($cidArr, $includeKeyData = false): array
+    public function getKeyCharactersArr($cidArr, $includeFullKeyData = false): array
     {
         $retArr = array();
         $chidArr = array();
@@ -117,7 +117,7 @@ class KeyCharacters{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    if($includeKeyData && !in_array((int)$row['chid'], $chidArr, true)){
+                    if($includeFullKeyData && !in_array((int)$row['chid'], $chidArr, true)){
                         $chidArr[] = (int)$row['chid'];
                     }
                     if(!array_key_exists($row['cid'], $tempArr)){
@@ -137,8 +137,8 @@ class KeyCharacters{
                     $cArr['dependencies'] = array_key_exists($cid, $depArr) ? $depArr[$cid] : array();
                     $retArr['characters'][] = $cArr;
                 }
-                if($includeKeyData){
-                    $retArr['character-headings'] = (new KeyCharacterHeadings)->getTaxaKeyCharacterHeadings($chidArr);
+                if($includeFullKeyData){
+                    $retArr['character-headings'] = (new KeyCharacterHeadings)->getKeyCharacterHeadingsArr($chidArr);
                 }
             }
         }

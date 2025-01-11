@@ -16,6 +16,10 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getTaxaKeyCharacterStates' && array_key_exists('tidArr', $_POST)){
         echo json_encode($keyCharacterStates->getTaxaKeyCharacterStates(json_decode($_POST['tidArr'], false)));
     }
+    elseif($action === 'getKeyCharacterStatesArr' && array_key_exists('csidArr', $_POST)){
+        $includeFullKeyData = array_key_exists('includeFullKeyData',$_POST) && (int)$_POST['includeFullKeyData'] === 1;
+        echo json_encode($keyCharacterStates->getKeyCharacterStatesArr(json_decode($_POST['csidArr'], false), $includeFullKeyData));
+    }
     elseif($action === 'createKeyCharacterStateRecord' && $isEditor){
         echo $keyCharacterStates->createKeyCharacterStateRecord(json_decode($_POST['characterState'], true));
     }
