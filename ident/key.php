@@ -234,9 +234,18 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     if(active && !activeCidArr.value.includes(Number(character['cid']))){
                                         activeCidArr.value.push(Number(character['cid']));
                                     }
-                                    else if(!active && activeCidArr.value.includes(Number(character['cid']))){
-                                        const index = activeCidArr.value.indexOf(Number(character['cid']));
-                                        activeCidArr.value.splice(index, 1);
+                                    else if(!active){
+                                        if(activeCidArr.value.includes(Number(character['cid']))){
+                                            const index = activeCidArr.value.indexOf(Number(character['cid']));
+                                            activeCidArr.value.splice(index, 1);
+                                        }
+                                        if(selectedCidArr.value.includes(Number(character['cid']))){
+                                            const targetStateArr = selectedStateArr.value.filter((state) => Number(state['cid']) === Number(character['cid']));
+                                            targetStateArr.forEach(state => {
+                                                const index = selectedStateArr.value.indexOf(state);
+                                                selectedStateArr.value.splice(index, 1);
+                                            });
+                                        }
                                     }
                                 });
                             }
