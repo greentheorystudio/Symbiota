@@ -13,6 +13,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Interactive Key</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <script type="text/javascript">
@@ -38,7 +39,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             </div>
             <div id="innertext">
                 <div class="full-width row q-gutter-sm">
-                    <div class="col-4 column q-gutter-sm">
+                    <div class="col-4 column q-col-gutter-sm">
                         <div class="full-width">
                             <q-card flat bordered>
                                 <q-card-section class="column q-gutter-xs">
@@ -54,7 +55,9 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 </q-card-section>
                             </q-card>
                         </div>
-                        <q-separator ></q-separator>
+                        <div>
+                            <q-separator ></q-separator>
+                        </div>
                         <template v-for="heading in keyDataArr">
                             <template v-if="activeChidArr.includes(Number(heading.chid))">
                                 <div class="full-width">
@@ -66,7 +69,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                             <template v-for="character in heading['characterArr']">
                                                 <template v-if="activeCidArr.includes(Number(character.cid))">
                                                     <div class="full-width column q-gutter-xs">
-                                                        <div class="text-body1 text-bold">
+                                                        <div v-if="character.charactername !== heading.headingname" class="text-body1 text-bold">
                                                             {{ character.charactername }}
                                                         </div>
                                                         <template v-for="state in character['stateArr']">
@@ -83,8 +86,52 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             </template>
                         </template>
                     </div>
-                    <div class="col-8 column">
+                    <div class="col-8 column q-col-gutter-sm q-pl-md">
+                        <div class="column">
+                            <div class="full-width row justify-end text-h5 text-bold">
+                                <a :href="(clientRoot + '/checklists/checklist.php?cl=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
+                            </div>
+                            <div class="full-width row justify-end text-body1">
+                                Taxa Count: {{ taxaCount }}
+                            </div>
+                        </div>
+                        <template v-if="selectedSortByOption === 'family'">
+                            <template v-if="displayImagesVal">
 
+                            </template>
+                            <template v-else>
+                                <template v-for="family in taxaDisplayDataArr">
+                                    <template v-if="activeFamilyArr.includes(family['familyName'])">
+                                        <div class="full-width column q-gutter-xs">
+                                            <div class="text-body1 text-bold">
+                                                {{ family['familyName'] }}
+                                            </div>
+                                            <template v-for="taxon in family['taxa']">
+                                                <template v-if="activeTidArr.includes(taxon['tid'])">
+                                                    <div class="full-width">
+                                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
+                                                    </div>
+                                                </template>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </template>
+                            </template>
+                        </template>
+                        <template v-else>
+                            <template v-if="displayImagesVal">
+
+                            </template>
+                            <template v-else>
+                                <template v-for="taxon in taxaDisplayDataArr">
+                                    <template v-if="activeTidArr.includes(taxon['tid'])">
+                                        <div class="full-width">
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
+                                        </div>
+                                    </template>
+                                </template>
+                            </template>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -114,6 +161,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return valArr;
                     });
                     const activeCidArr = Vue.ref([]);
+                    const activeFamilyArr = Vue.ref([]);
                     const activeTidArr = Vue.ref([]);
                     const characterDependencyDataArr = Vue.ref([]);
                     const checklistData = Vue.ref({});
@@ -123,9 +171,11 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const clId = CLID;
                     const clidArr = Vue.ref([]);
                     const clientRoot = baseStore.getClientRoot;
+                    const commonNameData = Vue.ref({});
                     const csidArr = Vue.ref([]);
                     const displayCommonNamesVal = Vue.ref(false);
                     const displayImagesVal = Vue.ref(false);
+                    const imageData = Vue.ref({});
                     const keyDataArr = Vue.ref([]);
                     const languageArr = [];
                     const pId = PID;
@@ -147,7 +197,11 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         {value: 'family', label: 'Family/Scientific Name'},
                         {value: 'sciname', label: 'Scientific Name'}
                     ]);
+                    const taxaCount = Vue.computed(() => {
+                        return activeTidArr.value.length;
+                    });
                     const taxaDataArr = Vue.ref([]);
+                    const taxaDisplayDataArr = Vue.ref([]);
                     const tidArr = Vue.ref([]);
 
                     function processCharacterStateSelectionChange(state, value) {
@@ -159,14 +213,15 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             selectedStateArr.value.splice(index, 1);
                         }
                         setActiveCidArr();
+                        setActiveTaxa();
                     }
 
                     function processDisplayCommonNameChange(value) {
-
+                        displayCommonNamesVal.value = Number(value) === 1;
                     }
 
                     function processDisplayImagesChange(value) {
-
+                        displayImagesVal.value = Number(value) === 1;
                     }
 
                     function processKeyData(keyData) {
@@ -197,6 +252,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processSortByChange(value) {
                         selectedSortByOption.value = value;
+                        setTaxaDisplayData();
                     }
 
                     function processTaxaData() {
@@ -204,6 +260,9 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             if(!tidArr.value.includes(taxon['tid'])){
                                 tidArr.value.push(taxon['tid']);
                                 activeTidArr.value.push(taxon['tid']);
+                                if(!activeFamilyArr.value.includes(taxon['family'])){
+                                    activeFamilyArr.value.push(taxon['family']);
+                                }
                             }
                             if(taxon['keyData'].length > 0){
                                 taxon['keyData'].forEach(keyData => {
@@ -213,6 +272,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 });
                             }
                         });
+                        setTaxaDisplayData();
                         setKeyData();
                     }
 
@@ -255,6 +315,36 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 activeCidArr.value.push(Number(character['cid']));
                             }
                         });
+                    }
+
+                    function setActiveTaxa() {
+                        const newActiveFamilyArr = [];
+                        const newActiveTidArr = [];
+                        taxaDataArr.value.forEach(taxon => {
+                            const cidArr = [];
+                            let includeTaxon = true;
+                            taxon['keyData'].forEach(char => {
+                                if(includeTaxon && selectedCidArr.value.includes(Number(char['cid'])) && !selectedCsidArr.value.includes(Number(char['csid']))){
+                                    includeTaxon = false;
+                                }
+                                else if(!cidArr.includes(Number(char['cid']))){
+                                    cidArr.push(Number(char['cid']));
+                                }
+                            });
+                            selectedCidArr.value.forEach(cid => {
+                                if(!cidArr.includes(Number(cid))){
+                                    includeTaxon = false;
+                                }
+                            });
+                            if(includeTaxon){
+                                newActiveTidArr.push(taxon['tid']);
+                                if(!newActiveFamilyArr.includes(taxon['family'])){
+                                    newActiveFamilyArr.push(taxon['family']);
+                                }
+                            }
+                        });
+                        activeFamilyArr.value = newActiveFamilyArr.slice();
+                        activeTidArr.value = newActiveTidArr.slice();
                     }
 
                     function setChecklistData() {
@@ -328,6 +418,44 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         });
                     }
 
+                    function setTaxaDisplayData() {
+                        const newDataArr = [];
+                        taxaDataArr.value.forEach(taxon => {
+                            if(selectedSortByOption.value === 'family'){
+                                const familyObj = newDataArr.find(family => family['familyName'] === taxon['family']);
+                                if(familyObj){
+                                    familyObj['taxa'].push(taxon);
+                                }
+                                else{
+                                    const taxaArr = [taxon];
+                                    newDataArr.push({
+                                        familyName: taxon['family'],
+                                        taxa: taxaArr
+                                    });
+                                }
+                            }
+                            else{
+                                newDataArr.push(taxon);
+                            }
+                        });
+                        if(selectedSortByOption.value === 'family'){
+                            newDataArr.sort((a, b) => {
+                                return a['familyName'].localeCompare(b['familyName']);
+                            });
+                            newDataArr.forEach(family => {
+                                family['taxa'].sort((a, b) => {
+                                    return a['sciname'].localeCompare(b['sciname']);
+                                });
+                            });
+                        }
+                        else{
+                            newDataArr.sort((a, b) => {
+                                return a['sciname'].localeCompare(b['sciname']);
+                            });
+                        }
+                        taxaDisplayDataArr.value = newDataArr.slice();
+                    }
+
                     Vue.onMounted(() => {
                         if(Number(clId) > 0){
                             setChecklistData();
@@ -340,6 +468,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     return {
                         activeChidArr,
                         activeCidArr,
+                        activeFamilyArr,
                         activeTidArr,
                         checklistData,
                         checklistName,
@@ -356,6 +485,8 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         selectedSortByOption,
                         selectedStateArr,
                         sortByOptions,
+                        taxaCount,
+                        taxaDisplayDataArr,
                         processCharacterStateSelectionChange,
                         processDisplayCommonNameChange,
                         processDisplayImagesChange,
