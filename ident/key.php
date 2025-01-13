@@ -134,11 +134,11 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return projectData.value.hasOwnProperty('projname') ? projectData.value['projname'] : '';
                     });
                     const selectedCidArr = Vue.computed(() => {
-                        const valueArr = selectedStateArr.value.length > 0 ? selectedStateArr.value.map(state => Number(state['cid'])) : []
+                        const valueArr = selectedStateArr.value.length > 0 ? selectedStateArr.value.map(state => Number(state['cid'])) : [];
                         return valueArr.length > 0 ? valueArr.filter((value, index, array) => array.indexOf(value) === index) : [];
                     });
                     const selectedCsidArr = Vue.computed(() => {
-                        const valueArr = selectedStateArr.value.length > 0 ? selectedStateArr.value.map(state => Number(state['csid'])) : []
+                        const valueArr = selectedStateArr.value.length > 0 ? selectedStateArr.value.map(state => Number(state['csid'])) : [];
                         return valueArr.length > 0 ? valueArr.filter((value, index, array) => array.indexOf(value) === index) : [];
                     });
                     const selectedSortByOption = Vue.ref('family');
@@ -196,7 +196,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function processSortByChange(value) {
-
+                        selectedSortByOption.value = value;
                     }
 
                     function processTaxaData() {
@@ -221,33 +221,35 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             if(character['dependencies'].length > 0){
                                 let active = false;
                                 character['dependencies'].forEach(dep => {
-                                    if(Number(dep['csid']) === 0){
-                                        if(selectedCidArr.value.includes(Number(dep['cid']))){
-                                            active = true;
+                                    if(!active){
+                                        if(Number(dep['csid']) === 0){
+                                            if(selectedCidArr.value.includes(Number(dep['cid']))){
+                                                active = true;
+                                            }
                                         }
-                                    }
-                                    else{
-                                        if(selectedCsidArr.value.includes(Number(dep['csid']))){
-                                            active = true;
-                                        }
-                                    }
-                                    if(active && !activeCidArr.value.includes(Number(character['cid']))){
-                                        activeCidArr.value.push(Number(character['cid']));
-                                    }
-                                    else if(!active){
-                                        if(activeCidArr.value.includes(Number(character['cid']))){
-                                            const index = activeCidArr.value.indexOf(Number(character['cid']));
-                                            activeCidArr.value.splice(index, 1);
-                                        }
-                                        if(selectedCidArr.value.includes(Number(character['cid']))){
-                                            const targetStateArr = selectedStateArr.value.filter((state) => Number(state['cid']) === Number(character['cid']));
-                                            targetStateArr.forEach(state => {
-                                                const index = selectedStateArr.value.indexOf(state);
-                                                selectedStateArr.value.splice(index, 1);
-                                            });
+                                        else{
+                                            if(selectedCsidArr.value.includes(Number(dep['csid']))){
+                                                active = true;
+                                            }
                                         }
                                     }
                                 });
+                                if(active && !activeCidArr.value.includes(Number(character['cid']))){
+                                    activeCidArr.value.push(Number(character['cid']));
+                                }
+                                else if(!active){
+                                    if(activeCidArr.value.includes(Number(character['cid']))){
+                                        const index = activeCidArr.value.indexOf(Number(character['cid']));
+                                        activeCidArr.value.splice(index, 1);
+                                    }
+                                    if(selectedCidArr.value.includes(Number(character['cid']))){
+                                        const targetStateArr = selectedStateArr.value.filter((state) => Number(state['cid']) === Number(character['cid']));
+                                        targetStateArr.forEach(state => {
+                                            const index = selectedStateArr.value.indexOf(state);
+                                            selectedStateArr.value.splice(index, 1);
+                                        });
+                                    }
+                                }
                             }
                             else if(!activeCidArr.value.includes(Number(character['cid']))){
                                 activeCidArr.value.push(Number(character['cid']));
