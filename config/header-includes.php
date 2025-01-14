@@ -9,7 +9,6 @@
 include_once(__DIR__ . '/js-globals.php');
 ?>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/base.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/image.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/media.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/occurrence-location.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>

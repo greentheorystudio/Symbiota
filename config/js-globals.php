@@ -52,6 +52,7 @@
     let abortController;
     const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json?ver=<?php echo $GLOBALS['JS_VERSION']; ?>';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
+    const checklistTaxaApiUrl = CLIENT_ROOT + '/api/checklists/checklistTaxaController.php';
     const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
     const collectionCategoryApiUrl = CLIENT_ROOT + '/api/collections/collectionCategoryController.php';
@@ -63,6 +64,9 @@
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
+    const keyCharacterApiUrl = CLIENT_ROOT + '/api/ident/keyCharacterController.php';
+    const keyCharacterHeadingApiUrl = CLIENT_ROOT + '/api/ident/keyCharacterHeadingController.php';
+    const keyCharacterStateApiUrl = CLIENT_ROOT + '/api/ident/keyCharacterStateController.php';
     const languageApiUrl = CLIENT_ROOT + '/api/languages/languageController.php';
     const mediaApiUrl = CLIENT_ROOT + '/api/media/mediaController.php';
     const occurrenceApiUrl = CLIENT_ROOT + '/api/occurrences/occurrenceController.php';

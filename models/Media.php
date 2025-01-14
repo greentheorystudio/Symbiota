@@ -48,7 +48,7 @@ class Media{
         $fieldNameArr = array();
         $fieldValueArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'mediaid' && array_key_exists($field, $data)){
+            if($field !== 'mediaid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
                 if($field === 'language' || $field === 'owner'){
                     $fieldNameArr[] = '`' . $field . '`';
                 }
