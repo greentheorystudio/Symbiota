@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../services/DataUploadService.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
+ini_set('max_execution_time', 3600);
 
 $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
@@ -18,6 +19,9 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'processExternalDwcaTransfer' && array_key_exists('uploadType',$_POST) && array_key_exists('dwcaPath',$_POST)){
         echo json_encode($dataUploadService->processExternalDwcaTransfer($collid, $_POST['uploadType'], $_POST['dwcaPath']));
+    }
+    elseif($action === 'processExternalDwcaUnpack' && array_key_exists('targetPath',$_POST) && array_key_exists('archivePath',$_POST)){
+        echo json_encode($dataUploadService->processExternalDwcaUnpack($_POST['targetPath'], $_POST['archivePath']));
     }
     elseif($action === 'processTransferredDwca' && array_key_exists('serverPath',$_POST) && array_key_exists('metaFile',$_POST)){
         echo json_encode($dataUploadService->processTransferredDwca($_POST['serverPath'], $_POST['metaFile']));

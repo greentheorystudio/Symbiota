@@ -904,7 +904,7 @@ const occurrenceDataUploadModule = {
 
         function processSourceDataTransfer() {
             if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10){
-                const text = 'Transferring source data';
+                const text = 'Transferring source data archive';
                 currentProcess.value = 'transferSourceData';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 const formData = new FormData();
@@ -920,21 +920,48 @@ const occurrenceDataUploadModule = {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    processSuccessResponse('Complete');
-                    localDwcaServerPath.value = data['baseFolderPath'];
-                    localDwcaFileArr.value = data['files'].slice();
-                    const metaFile = localDwcaFileArr.value.find(filename => filename.toLowerCase() === 'meta.xml');
-                    if(metaFile){
-                        processSourceDataProcessing(metaFile);
+                    if(data.hasOwnProperty('targetPath') && data.hasOwnProperty('archivePath')){
+                        processSuccessResponse('Complete');
+                        processSourceDataUnpacking(data['targetPath'], data['archivePath']);
                     }
                     else{
-                        showNotification('negative', 'The Darwin Core Archive does not contain a meta.xml file, which is necessary for upload processing.');
+                        processErrorResponse('The source data archive could not be transferred.');
                     }
                 });
             }
             else if(Number(profileData.value['uploadtype']) === 6){
                 processUploadFile();
             }
+        }
+
+        function processSourceDataUnpacking(targetPath, archivePath) {
+            const text = 'Unpacking source data archive';
+            currentProcess.value = 'unpackSourceData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('targetPath', targetPath.toString());
+            formData.append('archivePath', archivePath.toString());
+            formData.append('action', 'processExternalDwcaUnpack');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                processSuccessResponse('Complete');
+                localDwcaServerPath.value = data['baseFolderPath'];
+                localDwcaFileArr.value = data['files'].slice();
+                const metaFile = localDwcaFileArr.value.find(filename => filename.toLowerCase() === 'meta.xml');
+                if(metaFile){
+                    processSourceDataProcessing(metaFile);
+                }
+                else{
+                    showNotification('negative', 'The Darwin Core Archive does not contain a meta.xml file, which is necessary for upload processing.');
+                }
+            });
         }
 
         function processSubprocessErrorResponse(text) {
