@@ -269,6 +269,8 @@ const occurrenceDataUploadModule = {
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
         const multimediaDataIncluded = Vue.ref(false);
         const mofDataIncluded = Vue.ref(false);
+        const mofEventDataIncluded = Vue.ref(false);
+        const mofOccurrenceDataIncluded = Vue.ref(false);
         const occurrenceMofDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
@@ -354,6 +356,8 @@ const occurrenceDataUploadModule = {
             determinationDataIncluded.value = false;
             multimediaDataIncluded.value = false;
             mofDataIncluded.value = false;
+            mofEventDataIncluded.value = false;
+            mofOccurrenceDataIncluded.value = false;
             fieldMappingDataDetermiation.value = Object.assign({}, {});
             fieldMappingDataMedia.value = Object.assign({}, {});
             fieldMappingDataMof.value = Object.assign({}, {});
@@ -714,7 +718,7 @@ const occurrenceDataUploadModule = {
                 }
             }
             else if(flatFileMofData.value.length > 0){
-
+                mofDataIncluded.value = true;
                 data = flatFileMofData.value.length > 500 ? flatFileMofData.value.slice(0, 500) : flatFileMofData.value.slice();
                 configuration['dataType'] = 'mof';
                 if(flatFileMofData.value.length > 500){
