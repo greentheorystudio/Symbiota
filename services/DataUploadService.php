@@ -235,11 +235,21 @@ class DataUploadService {
                 $transferSuccess = FileSystemService::transferSymbiotaDwcaToLocalTarget($fullTargetPath, $dwcaPath);
             }
             if($transferSuccess){
-                FileSystemService::unpackZipArchive($targetPath, $fullTargetPath);
-                FileSystemService::deleteFile($fullTargetPath);
-                $returnArr['baseFolderPath'] = $targetPath;
-                $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
+                $returnArr['targetPath'] = $targetPath;
+                $returnArr['archivePath'] = $fullTargetPath;
             }
+        }
+        return $returnArr;
+    }
+
+    public function processExternalDwcaUnpack($targetPath, $archivePath): array
+    {
+        $returnArr = array();
+        if($targetPath && $archivePath){
+            FileSystemService::unpackZipArchive($targetPath, $archivePath);
+            FileSystemService::deleteFile($archivePath);
+            $returnArr['baseFolderPath'] = $targetPath;
+            $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
         }
         return $returnArr;
     }
