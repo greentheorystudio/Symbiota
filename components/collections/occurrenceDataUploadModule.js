@@ -759,7 +759,7 @@ const occurrenceDataUploadModule = {
                 });
             }
             else{
-                processPostUploadCleaning();
+                processPostUploadMofFieldProcessing();
             }
         }
 
@@ -789,8 +789,81 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersStore.setCurrentCollectionDataUploadParametersRecord(uspid);
         }
 
-        function processPostUploadCleaning() {
-            console.log('done');
+        function processPostUploadCleaningScripts() {
+            if(profileData.value['existingRecords'] === 'skip'){
+
+            }
+            else{
+
+            }
+        }
+
+        function processPostUploadExistingRecordProcessing() {
+            let text;
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            if(profileData.value['existingRecords'] === 'skip'){
+                text = 'Removing existing occurrence data from upload';
+                currentProcess.value = 'removeExistingOccurrences';
+                formData.append('action', 'removeExistingOccurrencesFromUpload');
+            }
+            else{
+                text = 'Associating upload data with existing occurrence records';
+                currentProcess.value = 'linkExistingOccurrences';
+                formData.append('action', 'linkExistingOccurrencesToUpload');
+            }
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    processPostUploadExistingRecordProcessing();
+                }
+                else{
+                    processErrorResponse('An error occurred');
+                }
+            });
+        }
+
+        function processPostUploadMofFieldProcessing() {
+            if(mofDataIncluded.value){
+                const text = 'Analyzing uploaded measurement or fact data';
+                currentProcess.value = 'analyzeUploadedMofData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                const formData = new FormData();
+                formData.append('collid', props.collid.toString());
+                formData.append('action', 'getUploadedMofDataFields');
+                fetch(dataUploadServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    if(data.length > 0){
+                        data.forEach((field) => {
+                            if(eventMofDataFields.value.hasOwnProperty(field)){
+                                mofEventDataIncluded.value = true;
+                            }
+                            else if(occurrenceMofDataFields.value.hasOwnProperty(field)){
+                                mofOccurrenceDataIncluded.value = true;
+                            }
+                        });
+                    }
+                    processSuccessResponse('Complete');
+                    processPostUploadExistingRecordProcessing();
+                });
+            }
+            else{
+                processPostUploadExistingRecordProcessing();
+            }
         }
 
         function processSourceDataFiles() {
@@ -862,7 +935,7 @@ const occurrenceDataUploadModule = {
                 });
             }
             else{
-                processPostUploadCleaning();
+                processPostUploadMofFieldProcessing();
             }
         }
 

@@ -89,4 +89,31 @@ class UploadDeterminationTemp{
     {
         return $this->fields;
     }
+
+    public function linkUploadToExistingOccurrenceData($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploaddetermtemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'SET u.occid = o.occid '.
+                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function removeExistingOccurrenceDataFromUpload($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE u.* FROM uploaddetermtemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
 }

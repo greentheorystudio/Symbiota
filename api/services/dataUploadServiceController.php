@@ -38,4 +38,13 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'processFlatFileDataUpload' && array_key_exists('uploadConfig',$_POST) && array_key_exists('data',$_POST)){
         echo $dataUploadService->processFlatFileDataUpload($collid, json_decode($_POST['uploadConfig'], true), json_decode($_POST['data'], true));
     }
+    elseif($action === 'getUploadedMofDataFields'){
+        echo json_encode($dataUploadService->getUploadedMofDataFields($collid));
+    }
+    elseif($action === 'removeExistingOccurrencesFromUpload'){
+        echo $dataUploadService->removeExistingOccurrencesFromUpload($collid);
+    }
+    elseif($action === 'linkExistingOccurrencesToUpload'){
+        echo $dataUploadService->linkExistingOccurrencesToUpload($collid);
+    }
 }

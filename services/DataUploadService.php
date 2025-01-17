@@ -40,6 +40,15 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function getUploadedMofDataFields($collid): array
+    {
+        $retArr = array();
+        if($collid){
+            $retArr = (new UploadMofTemp)->getUploadedMofDataFields($collid);
+        }
+        return $retArr;
+    }
+
     public function getUploadTableFieldData($tableArr): array
     {
         $retArr = array();
@@ -59,6 +68,24 @@ class DataUploadService {
             }
         }
         return $retArr;
+    }
+
+    public function linkExistingOccurrencesToUpload($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->linkUploadToExistingOccurrenceData($collid);
+            if($retVal){
+                $retVal = (new UploadMediaTemp)->linkUploadToExistingOccurrenceData($collid);
+            }
+            if($retVal){
+                $retVal = (new UploadMofTemp)->linkUploadToExistingOccurrenceData($collid);
+            }
+            if($retVal){
+                $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceData($collid);
+            }
+        }
+        return $retVal;
     }
 
     public function processDwcaFileDataUpload($collid, $configArr): int
@@ -317,6 +344,24 @@ class DataUploadService {
         fclose($fh);
         FileSystemService::deleteFile($serverPath . '/' . $fileInfo['filename']);
         return $returnArr;
+    }
+
+    public function removeExistingOccurrencesFromUpload($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            if($retVal){
+                $retVal = (new UploadMediaTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            }
+            if($retVal){
+                $retVal = (new UploadMofTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            }
+            if($retVal){
+                $retVal = (new UploadOccurrenceTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            }
+        }
+        return $retVal;
     }
 
     public function uploadDwcaFile($collid, $dwcaFile): array
