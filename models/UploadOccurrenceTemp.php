@@ -221,6 +221,151 @@ class UploadOccurrenceTemp{
         return $recordsCreated;
     }
 
+    public function cleanUploadCoordinates($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp SET decimallongitude = -1 * decimallongitude '.
+                'WHERE collid = ' . (int)$collid . ' AND decimallongitude > 0 AND country IN("USA", "United States", "U.S.A.", "Canada", "Mexico") AND (stateprovince <> "Alaska" OR ISNULL(stateprovince)) ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET decimallatitude = NULL, decimallongitude = NULL '.
+                    'WHERE collid = ' . (int)$collid . ' AND decimallatitude = 0 AND decimallongitude = 0 ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET verbatimcoordinates = CONCAT_WS(" ", decimallatitude, decimallongitude) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(verbatimcoordinates) AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET decimallatitude = NULL, decimallongitude = NULL '.
+                    'WHERE collid = ' . (int)$collid . ' AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadCountryStateNames($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso3 '.
+                'SET u.country = c.countryname '.
+                'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso '.
+                    'SET u.country = c.countryname '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.abbrev '.
+                    'SET u.stateprovince = s.statename '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND s.statename IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.statename '.
+                    'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid '.
+                    'SET u.country = c.countryname '.
+                    'WHERE ISNULL(u.country) AND u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadEventDates($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp SET `year` = YEAR(eventdate) '.
+                'WHERE collid = ' . (int)$collid . ' AND eventdate IS NOT NULL AND ISNULL(`year`) ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET `month` = MONTH(eventdate) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`month`) AND eventdate IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET `day` = DAY(eventdate) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`day`) AND eventdate IS NOT NULL';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET startdayofyear = DAYOFYEAR(eventdate) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(startdayofyear) AND eventdate IS NOT NULL';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET enddayofyear = DAYOFYEAR(eventdate) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(enddayofyear) AND eventdate IS NOT NULL';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadTaxonomy($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp SET family = sciname '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET sciname = family '.
+                    'WHERE collid = ' . (int)$collid . ' AND family IS NOT NULL AND ISNULL(sciname) ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
     public function clearCollectionData($collid): bool
     {
         if($collid){
@@ -254,17 +399,45 @@ class UploadOccurrenceTemp{
         return $returnVal;
     }
 
+    public function processCleaningScriptData($collid, $scriptData): int
+    {
+        $returnVal = 0;
+        if($collid && $scriptData){
+            $sql = 'DELETE u.* FROM uploadspectemp AS u ';
+            if(array_key_exists('join', $scriptData) && $scriptData['join']){
+                $sql .= $scriptData['join'] . ' ';
+            }
+            $sql .= 'WHERE u.collid = ' . (int)$collid . ' ';
+            if(array_key_exists('where', $scriptData) && $scriptData['where']){
+                $sql .= 'AND ' . $scriptData['where'] . ' ';
+            }
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
     public function removeExistingOccurrenceDataFromUpload($collid): int
     {
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE up.*, u.* FROM uploadspectemppoints AS up LEFT JOIN uploadspectemp AS u ON up.upspid = u.upspid '.
                 'LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
         }
         return $returnVal;
+    }
+
+    public function removeOrphanedPoints($collid): void
+    {
+        if($collid){
+            $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT upspid FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ') ';
+            $this->conn->query($sql);
+        }
     }
 }

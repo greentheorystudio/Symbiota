@@ -47,4 +47,19 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'linkExistingOccurrencesToUpload'){
         echo $dataUploadService->linkExistingOccurrencesToUpload($collid);
     }
+    elseif($action === 'executeCleaningScriptArr' && array_key_exists('cleaningScriptArr',$_POST)){
+        echo $dataUploadService->executeCleaningScriptArr($collid, json_decode($_POST['cleaningScriptArr'], true));
+    }
+    elseif($action === 'cleanUploadEventDates'){
+        echo $dataUploadService->cleanUploadEventDates($collid);
+    }
+    elseif($action === 'cleanUploadCountryStateNames'){
+        echo $dataUploadService->cleanUploadCountryStateNames($collid);
+    }
+    elseif($action === 'cleanUploadCoordinates'){
+        echo $dataUploadService->cleanUploadCoordinates($collid);
+    }
+    elseif($action === 'cleanUploadTaxonomy'){
+        echo $dataUploadService->cleanUploadTaxonomy($collid);
+    }
 }

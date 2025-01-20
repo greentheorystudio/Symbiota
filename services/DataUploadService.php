@@ -20,6 +20,42 @@ class DataUploadService {
         $this->conn->close();
     }
 
+    public function cleanUploadCoordinates($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadCoordinates($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadCountryStateNames($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadCountryStateNames($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadEventDates($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadEventDates($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomy($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomy($collid);
+        }
+        return $retVal;
+    }
+
     public function clearOccurrenceUploadTables($collid): int
     {
         $retVal = 1;
@@ -36,6 +72,20 @@ class DataUploadService {
             if(!(new UploadOccurrenceTemp)->clearCollectionData($collid)){
                 $retVal = 0;
             }
+        }
+        return $retVal;
+    }
+
+    public function executeCleaningScriptArr($collid, $cleaningScriptArr): int
+    {
+        $retVal = 1;
+        if($collid && count($cleaningScriptArr) > 0){
+            foreach($cleaningScriptArr as $scriptData){
+                if($retVal === 1){
+                    $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
+                }
+            }
+            (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
         }
         return $retVal;
     }

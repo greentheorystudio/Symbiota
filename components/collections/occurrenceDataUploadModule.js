@@ -279,6 +279,8 @@ const occurrenceDataUploadModule = {
         let processorDisplayDataArr = [];
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
+        const profileCleanSqlArr = Vue.computed(() => collectionDataUploadParametersStore.getCleanSqlArr);
+        const profileConfigurationData = Vue.computed(() => collectionDataUploadParametersStore.getConfigurations);
         const profileData = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersData);
         const recordsUploadedDetermination = Vue.ref(0);
         const recordsUploadedMof = Vue.ref(0);
@@ -789,20 +791,142 @@ const occurrenceDataUploadModule = {
             collectionDataUploadParametersStore.setCurrentCollectionDataUploadParametersRecord(uspid);
         }
 
-        function processPostUploadCleaningScripts() {
-            if(profileData.value['existingRecords'] === 'skip'){
+        function processPostUploadCleanCoordinates() {
+            const text = 'Cleaning coordinates';
+            currentProcess.value = 'cleaningCoordinates';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadCoordinates');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanTaxonomy();
+                }
+                else{
+                    processErrorResponse('An error occurred while cleaning coordinates');
+                }
+            });
+        }
 
+        function processPostUploadCleanCountryStateNames() {
+            const text = 'Cleaning country and state/province names';
+            currentProcess.value = 'cleaningCountryState';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadCountryStateNames');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanCoordinates();
+                }
+                else{
+                    processErrorResponse('An error occurred while cleaning country and state/province names');
+                }
+            });
+        }
+
+        function processPostUploadCleanEventDates() {
+            const text = 'Cleaning event dates';
+            currentProcess.value = 'cleaningEventDates';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadEventDates');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanCountryStateNames();
+                }
+                else{
+                    processErrorResponse('An error occurred while cleaning event dates');
+                }
+            });
+        }
+
+        function processPostUploadCleaningScripts() {
+            if(profileCleanSqlArr.value.length > 0){
+                const text = 'Running configured cleaning scripts';
+                currentProcess.value = 'runningCleaningScripts';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                const formData = new FormData();
+                formData.append('collid', props.collid.toString());
+                formData.append('cleaningScriptArr', JSON.stringify(profileCleanSqlArr.value));
+                formData.append('action', 'executeCleaningScriptArr');
+                fetch(dataUploadServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(Number(res) === 1){
+                        processSuccessResponse('Complete');
+                        processPostUploadCleanEventDates();
+                    }
+                    else{
+                        processErrorResponse('An error occurred running cleaning scripts');
+                    }
+                });
             }
             else{
-
+                processPostUploadCleanEventDates();
             }
+        }
+
+        function processPostUploadCleanTaxonomy() {
+            const text = 'Cleaning taxonomy';
+            currentProcess.value = 'cleaningTaxonomy';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadTaxonomy');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanEventDates();
+                }
+                else{
+                    processErrorResponse('An error occurred while cleaning taxonomy');
+                }
+            });
         }
 
         function processPostUploadExistingRecordProcessing() {
             let text;
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            if(profileData.value['existingRecords'] === 'skip'){
+            if(profileConfigurationData.value['existingRecords'] === 'skip'){
                 text = 'Removing existing occurrence data from upload';
                 currentProcess.value = 'removeExistingOccurrences';
                 formData.append('action', 'removeExistingOccurrencesFromUpload');
