@@ -208,9 +208,10 @@ class FileSystemService {
         if(file_exists($dwcaPath)){
             $fp = fopen($targetPath, 'wb+');
             $ch = curl_init(str_replace(' ','%20', $dwcaPath));
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             if(curl_exec($ch)) {
                 $returnVal = true;
             }
@@ -248,11 +249,12 @@ class FileSystemService {
             );
             $fp = fopen($targetPath, 'wb+');
             $ch = curl_init(str_replace(' ','%20', $dwcaPath));
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             if(curl_exec($ch)) {
                 $returnVal = true;
             }

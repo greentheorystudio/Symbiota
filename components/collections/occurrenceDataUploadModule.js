@@ -1390,13 +1390,16 @@ const occurrenceDataUploadModule = {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    if(data.hasOwnProperty('targetPath') && data.hasOwnProperty('archivePath')){
+                    if(data && data.hasOwnProperty('targetPath') && data.hasOwnProperty('archivePath')){
                         processSuccessResponse('Complete');
                         processSourceDataUnpacking(data['targetPath'], data['archivePath']);
                     }
                     else{
                         processErrorResponse('The source data archive could not be transferred.');
                     }
+                })
+                .catch((error) => {                        // catch
+                    console.log('Request failed', error);
                 });
             }
             else if(Number(profileData.value['uploadtype']) === 6){
@@ -1661,12 +1664,12 @@ const occurrenceDataUploadModule = {
                         else{
                             const fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
                             const usedField = fieldOption ? Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === fieldOption.value) : null;
-                            fieldMappingDataOccurrence.value[field] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                            fieldMappingDataOccurrence.value[field.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                         }
                     }
                     else{
                         const fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === savedMappingDataOccurrence.value[fieldName.toLowerCase()]);
-                        fieldMappingDataOccurrence.value[field] = fieldOption ? fieldOption.value : 'unmapped';
+                        fieldMappingDataOccurrence.value[field.toLowerCase()] = fieldOption ? fieldOption.value : 'unmapped';
                     }
                 });
                 if(sourceDataFilesDetermination.value.length > 0 && Object.keys(sourceDataFieldsDetermination.value).length > 0){

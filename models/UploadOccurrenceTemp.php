@@ -180,9 +180,9 @@ class UploadOccurrenceTemp{
                         $fieldNameArr[] = $field;
                     }
                     if($fieldMapping){
-                        $mappedKey = array_search($field, $fieldMapping, true);
-                        if($mappedKey){
-                            $mappedFields[$field] = $mappedKey;
+                        $mappedKey = array_search((string)$field, $fieldMapping, true);
+                        if($mappedKey || (string)$mappedKey === '0'){
+                            $mappedFields[$field] = (string)$mappedKey;
                         }
                     }
                     elseif(array_key_exists($field, $data[0])){
