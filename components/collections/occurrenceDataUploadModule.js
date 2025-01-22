@@ -97,7 +97,145 @@ const occurrenceDataUploadModule = {
                         <q-expansion-item :model-value="currentTab === 'summary'" class="overflow-hidden" group="expansiongroup" label="Summary" header-class="bg-grey-3 text-bold" :disable="currentTab !== 'summary' || currentProcess">
                             <q-card class="accordion-panel">
                                 <q-card-section>
-                                    
+                                    <div class="column">
+                                        <div class="text-body1 text-bold">
+                                            Upload Summary
+                                        </div>
+                                        <div class="row q-col-gutter-xs">
+                                            <div>
+                                                Occurrence records pending transfer: {{ uploadSummaryData['occur'] }}
+                                            </div>
+                                            <div v-if="Number(uploadSummaryData['occur']) > 0" class="q-ml-xs">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('occur');" icon="fas fa-list" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        View records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                            <div v-if="Number(uploadSummaryData['occur']) > 0">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('occur', 'upload_occurrence_records');" icon="fas fa-download" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Download records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                        </div>
+                                        <div class="row q-col-gutter-xs">
+                                            <div>
+                                                Records to be updated: {{ uploadSummaryData['update'] }}
+                                            </div>
+                                            <div v-if="Number(uploadSummaryData['update']) > 0" class="q-ml-xs">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('update');" icon="fas fa-list" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        View records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                            <div v-if="Number(uploadSummaryData['update']) > 0">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('update', 'records_to_update');" icon="fas fa-download" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Download records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                        </div>
+                                        <div class="row q-col-gutter-xs">
+                                            <div>
+                                                New records: {{ uploadSummaryData['new'] }}
+                                            </div>
+                                            <div v-if="Number(uploadSummaryData['new']) > 0" class="q-ml-xs">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('new');" icon="fas fa-list" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        View records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                            <div v-if="Number(uploadSummaryData['new']) > 0">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('new', 'new_records');" icon="fas fa-download" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Download records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                        </div>
+                                        <div v-if="Number(uploadSummaryData['exist']) > 0" class="row q-col-gutter-xs">
+                                            <div>
+                                                Previous loaded records not matching incoming records: {{ uploadSummaryData['exist'] }}
+                                            </div>
+                                            <div class="q-ml-xs">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('exist');" icon="fas fa-list" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        View records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                            <div>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('exist', 'previous_records_not_matching');" icon="fas fa-download" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Download records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                        </div>
+                                        <div v-if="Number(uploadSummaryData['nulldbpk']) > 0" class="row q-col-gutter-xs">
+                                            <div>
+                                                Records that will be removed due to missing primary identifier: {{ uploadSummaryData['nulldbpk'] }}
+                                            </div>
+                                            <div class="q-ml-xs">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('nulldbpk');" icon="fas fa-list" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        View records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                            <div>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('nulldbpk', 'missing_primary_identifier_records');" icon="fas fa-download" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Download records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                        </div>
+                                        <div v-if="Number(uploadSummaryData['dupdbpk']) > 0" class="row q-col-gutter-xs">
+                                            <div>
+                                                Records that will be removed due to duplicate primary identifier: {{ uploadSummaryData['dupdbpk'] }}
+                                            </div>
+                                            <div class="q-ml-xs">
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('dupdbpk');" icon="fas fa-list" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        View records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                            <div>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('dupdbpk', 'duplicate_primary_identifier_records');" icon="fas fa-download" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Download records
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </div>
+                                        </div>
+                                        <div v-if="includeDeterminationData" class="row">
+                                            <div>
+                                                Determination records pending transfer: {{ uploadSummaryData['ident'] }}
+                                            </div>
+                                        </div>
+                                        <div v-if="includeMultimediaData" class="row">
+                                            <div>
+                                                Media records pending transfer: {{ uploadSummaryData['media'] }}
+                                            </div>
+                                        </div>
+                                        <div v-if="includeMofData" class="row">
+                                            <div>
+                                                Measurement or fact records pending transfer: {{ uploadSummaryData['mof'] }}
+                                            </div>
+                                        </div>
+                                        <div class="q-mt-sm row justify-end">
+                                            <div>
+                                                <q-btn color="secondary" @click="initializeTransferRecords();" label="Transfer Records to Central Occurrence Table" :disabled="currentTab !== 'summary' || currentProcess" dense />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </q-card-section>
                             </q-card>
                         </q-expansion-item>
@@ -174,6 +312,17 @@ const occurrenceDataUploadModule = {
                 @close:popup="showFieldMapperPopup = false"
             ></field-mapper-popup>
         </template>
+        <template v-if="showUploadDataTableViewerPopup">
+            <upload-data-table-viewer-popup
+                :data="popupData"
+                :load-count="popupLoadCount"
+                :page-number="popupPageNumber"
+                :total-records="popupTotalRecords"
+                :show-popup="showUploadDataTableViewerPopup"
+                @update:page-number="getPopupViewerRecords"
+                @close:popup="showUploadDataTableViewerPopup = false"
+            ></upload-data-table-viewer-popup>
+        </template>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
@@ -181,10 +330,12 @@ const occurrenceDataUploadModule = {
         'collection-data-upload-parameters-field-module': collectionDataUploadParametersFieldModule,
         'field-mapper-popup': fieldMapperPopup,
         'file-picker-input-element': filePickerInputElement,
-        'selector-input-element': selectorInputElement
+        'selector-input-element': selectorInputElement,
+        'upload-data-table-viewer-popup': uploadDataTableViewerPopup
     },
     setup(props) {
-        const { parseCsvFile, showNotification } = useCore();
+        const { hideWorking, parseCsvFile, processCsvDownload, showNotification, showWorking } = useCore();
+
         const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
         const collectionStore = useCollectionStore();
@@ -272,6 +423,18 @@ const occurrenceDataUploadModule = {
         const mofEventDataIncluded = Vue.ref(false);
         const mofOccurrenceDataIncluded = Vue.ref(false);
         const occurrenceMofDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
+        const popupData = Vue.ref([]);
+        const popupDataType = Vue.ref(null);
+        const popupLoadCount = 100;
+        const popupPageNumber = Vue.ref(1);
+        const popupTotalRecords = Vue.computed(() => {
+            if(popupDataType.value){
+                return uploadSummaryData.value[popupDataType.value];
+            }
+            else{
+                return 0;
+            }
+        });
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
         const processingStatusOptions = Vue.computed(() => baseStore.getOccurrenceProcessingStatusOptions);
@@ -293,7 +456,8 @@ const occurrenceDataUploadModule = {
         const scrollProcess = Vue.ref(null);
         const selectedProcessingStatus = Vue.ref(null);
         const showCollectionDataUploadParametersEditorPopup = Vue.ref(false);
-        const showFieldMapperPopup = Vue.ref(null);
+        const showFieldMapperPopup = Vue.ref(false);
+        const showUploadDataTableViewerPopup = Vue.ref(false);
         const skipDeterminationFields = ['updid','occid','collid','dbpk','tid','initialtimestamp'];
         const skipMediaFields = ['upmid','tid','occid','collid','dbpk','username','initialtimestamp'];
         const skipOccurrenceFields = ['upspid','occid','collid','dbpk','institutionid','collectionid','datasetid','tid',
@@ -318,6 +482,7 @@ const occurrenceDataUploadModule = {
         ]);
         const symbiotaFieldOptionsOccurrence = Vue.ref([]);
         const uploadedFile = Vue.ref(null);
+        const uploadSummaryData = Vue.ref({});
         
         function addProcessToProcessorDisplay(processObj) {
             processorDisplayArr.push(processObj);
@@ -537,6 +702,76 @@ const occurrenceDataUploadModule = {
             };
         }
 
+        function getPopupViewerRecords(pageNumber) {
+            popupPageNumber.value = pageNumber;
+            getUploadData(popupDataType.value, (data) => {
+                popupData.value = data.slice();
+            }, (popupPageNumber.value - 1), popupLoadCount);
+        }
+
+        function getUploadData(type, callback, index = null, limit = null) {
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('dataType', type);
+            if(index && limit){
+                formData.append('index', index.toString());
+                formData.append('limit', limit.toString());
+            }
+            formData.append('action', 'getUploadData');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
+        }
+
+        function getUploadSummary() {
+            const text = 'Getting upload summary';
+            currentProcess.value = 'gettingUploadSummary';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'getUploadSummary');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data){
+                    uploadSummaryData.value = Object.assign({}, data);
+                    processSuccessResponse('Complete');
+                    currentTab.value = 'summary';
+                    currentProcess.value = null;
+                }
+                else{
+                    processErrorResponse('An error occurred while getting the upload summary');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function initializeTransferRecords() {
+            adjustUIStart();
+            clearData();
+            const text = 'Setting Symbiota field mapping data';
+            currentProcess.value = 'setFieldMappingData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(Number(collectionDataUploadParametersId.value) > 0){
+                getFieldMapping();
+            }
+            else{
+                getFieldData();
+            }
+        }
+
         function initializeUpload() {
             adjustUIStart();
             clearData();
@@ -584,6 +819,16 @@ const occurrenceDataUploadModule = {
             });
             processSuccessResponse('Complete');
             processFlatFileSourceData();
+        }
+
+        function processDownloadRecords(type, filename) {
+            showWorking();
+            getUploadData(type, (data) => {
+                hideWorking();
+                if(data){
+                    processCsvDownload(data, (props.collid.toString() + '_' + filename + '.csv'));
+                }
+            });
         }
 
         function processErrorResponse(text) {
@@ -765,6 +1010,13 @@ const occurrenceDataUploadModule = {
             }
         }
 
+        function processOpenRecordViewerPopup(type) {
+            popupData.value.length = 0;
+            popupDataType.value = type;
+            getPopupViewerRecords(1);
+            showUploadDataTableViewerPopup.value = true;
+        }
+
         function processorDisplayScrollDown() {
             scrollProcess.value = 'scrollDown';
             processorDisplayArr.length = 0;
@@ -808,11 +1060,11 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    processPostUploadCleanTaxonomy();
                 }
                 else{
                     processErrorResponse('An error occurred while cleaning coordinates');
                 }
+                processPostUploadCleanTaxonomy();
             });
         }
 
@@ -833,11 +1085,11 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    processPostUploadCleanCoordinates();
                 }
                 else{
                     processErrorResponse('An error occurred while cleaning country and state/province names');
                 }
+                processPostUploadCleanCoordinates();
             });
         }
 
@@ -858,11 +1110,11 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    processPostUploadCleanCountryStateNames();
                 }
                 else{
                     processErrorResponse('An error occurred while cleaning event dates');
                 }
+                processPostUploadCleanCountryStateNames();
             });
         }
 
@@ -889,6 +1141,7 @@ const occurrenceDataUploadModule = {
                     }
                     else{
                         processErrorResponse('An error occurred running cleaning scripts');
+                        adjustUIEnd();
                     }
                 });
             }
@@ -914,11 +1167,11 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    processPostUploadCleanEventDates();
                 }
                 else{
                     processErrorResponse('An error occurred while cleaning taxonomy');
                 }
+                getUploadSummary();
             });
         }
 
@@ -935,6 +1188,10 @@ const occurrenceDataUploadModule = {
                 text = 'Associating upload data with existing occurrence records';
                 currentProcess.value = 'linkExistingOccurrences';
                 formData.append('action', 'linkExistingOccurrencesToUpload');
+                if(profileConfigurationData.value['matchOnCatalogNumber']){
+                    formData.append('matchByCatalogNumber', '1');
+                    formData.append('linkField', profileConfigurationData.value['catalogNumberMatchField']);
+                }
             }
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             fetch(dataUploadServiceApiUrl, {
@@ -947,10 +1204,11 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    processPostUploadExistingRecordProcessing();
+                    processPostUploadCleaningScripts();
                 }
                 else{
                     processErrorResponse('An error occurred');
+                    adjustUIEnd();
                 }
             });
         }
@@ -1322,7 +1580,6 @@ const occurrenceDataUploadModule = {
 
         function startUpload() {
             adjustUIStart();
-            currentTab.value = 'mapping';
             if(flatFileMode.value){
                 parseFlatFileData();
             }
@@ -1476,8 +1733,7 @@ const occurrenceDataUploadModule = {
             }
             else{
                 showNotification('negative', 'Source data could not be correctly read to process upload.');
-                adjustUIStart();
-                clearData();
+                adjustUIEnd();
             }
         }
 
@@ -1504,6 +1760,10 @@ const occurrenceDataUploadModule = {
             includeMofData,
             multimediaDataIncluded,
             mofDataIncluded,
+            popupData,
+            popupLoadCount,
+            popupPageNumber,
+            popupTotalRecords,
             procDisplayScrollAreaRef,
             processingStatusOptions,
             processorDisplayArr,
@@ -1513,13 +1773,19 @@ const occurrenceDataUploadModule = {
             selectedProcessingStatus,
             showCollectionDataUploadParametersEditorPopup,
             showFieldMapperPopup,
+            showUploadDataTableViewerPopup,
             sourceDataFilesDetermination,
             sourceDataFilesMof,
             sourceDataFilesMultimedia,
             uploadedFile,
+            uploadSummaryData,
+            getPopupViewerRecords,
+            initializeTransferRecords,
             initializeUpload,
             openFieldMapperPopup,
+            processDownloadRecords,
             processFieldMapperUpdate,
+            processOpenRecordViewerPopup,
             processorDisplayScrollDown,
             processorDisplayScrollUp,
             processParameterProfileSelection,

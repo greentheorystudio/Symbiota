@@ -298,6 +298,23 @@ class Occurrences{
         return $retArr;
     }
 
+    public function getOccurrenceCountNotIncludedInUpload($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u  ON o.occid = u.occid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
     public function getOccurrenceData($occid): array
     {
         $retArr = array();
@@ -370,6 +387,35 @@ class Occurrences{
                     $retArr[strtolower($row[$identifierField])]['occid'] = $row['occid'];
                     $retArr[strtolower($row[$identifierField])]['tid'] = $row['tid'];
                     unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getOccurrenceRecordsNotIncludedInUpload($collid, $index = null, $limit = null): array
+    {
+        $retArr = array();
+        if($collid){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'o');
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u  ON o.occid = u.occid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) ';
+            if($index && $limit){
+                $sql .= 'LIMIT ' . (((int)$index - 1) * (int)$limit) . ', ' . (int)$limit . ' ';
+            }
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $retArr[] = $nodeArr;
+                    unset($rows[$rIndex]);
                 }
             }
         }

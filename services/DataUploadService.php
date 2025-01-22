@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/UploadDeterminationTemp.php');
 include_once(__DIR__ . '/../models/UploadMediaTemp.php');
 include_once(__DIR__ . '/../models/UploadMofTemp.php');
@@ -90,11 +91,38 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function getUploadData($collid, $dataType, $index = null, $limit = null): array
+    {
+        $retArr = array();
+        if($collid){
+            if($dataType === 'exist'){
+                $retArr = (new Occurrences)->getOccurrenceRecordsNotIncludedInUpload($collid, $index, $limit);
+            }
+            else{
+                $retArr = (new UploadOccurrenceTemp)->getUploadData($collid, $dataType, $index, $limit);
+            }
+        }
+        return $retArr;
+    }
+
     public function getUploadedMofDataFields($collid): array
     {
         $retArr = array();
         if($collid){
             $retArr = (new UploadMofTemp)->getUploadedMofDataFields($collid);
+        }
+        return $retArr;
+    }
+
+    public function getUploadSummary($collid): array
+    {
+        $retArr = array();
+        if($collid){
+            $retArr = (new UploadOccurrenceTemp)->getUploadSummary($collid);
+            $retArr['exist'] = (new Occurrences)->getOccurrenceCountNotIncludedInUpload($collid);
+            $retArr['ident'] = (new UploadDeterminationTemp)->getUploadCount($collid);
+            $retArr['media'] = (new UploadMediaTemp)->getUploadCount($collid);
+            $retArr['mof'] = (new UploadMofTemp)->getUploadCount($collid);
         }
         return $retArr;
     }
@@ -120,19 +148,20 @@ class DataUploadService {
         return $retArr;
     }
 
-    public function linkExistingOccurrencesToUpload($collid): int
+    public function linkExistingOccurrencesToUpload($collid, $matchByCatalogNumber = false, $linkField = null): int
     {
         $retVal = 0;
         if($collid){
-            $retVal = (new UploadDeterminationTemp)->linkUploadToExistingOccurrenceData($collid);
-            if($retVal){
-                $retVal = (new UploadMediaTemp)->linkUploadToExistingOccurrenceData($collid);
+            if($matchByCatalogNumber){
+                $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceDataByCatalogNumber($collid, $linkField);
             }
-            if($retVal){
-                $retVal = (new UploadMofTemp)->linkUploadToExistingOccurrenceData($collid);
-            }
-            if($retVal){
+            else{
                 $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceData($collid);
+            }
+            if($retVal){
+                (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
+                (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
+                (new UploadMofTemp)->populateOccidFromUploadOccurrenceData($collid);
             }
         }
         return $retVal;

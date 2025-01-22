@@ -11,7 +11,9 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             configjson: {}
         },
         blankConfigurations: {
-            existingRecords: 'update'
+            catalogNumberMatchField: 'catalognumber',
+            existingRecords: 'update',
+            matchOnCatalogNumber: false
         },
         collectionDataUploadParametersArr: [],
         collectionDataUploadParametersData: {},

@@ -86,6 +86,22 @@ class UploadMofTemp{
         return $this->fields;
     }
 
+    public function getUploadCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upmfid) AS cnt FROM uploadmoftemp WHERE collid  = ' . (int)$collid . ' ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
     public function getUploadedMofDataFields($collid): array
     {
         $retArr = array();
@@ -104,18 +120,14 @@ class UploadMofTemp{
         return $retArr;
     }
 
-    public function linkUploadToExistingOccurrenceData($collid): int
+    public function populateOccidFromUploadOccurrenceData($collid): void
     {
-        $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+            $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
                 'SET u.occid = o.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
-            }
+                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            $this->conn->query($sql);
         }
-        return $returnVal;
     }
 
     public function removeExistingOccurrenceDataFromUpload($collid): int

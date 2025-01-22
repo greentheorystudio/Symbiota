@@ -314,7 +314,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                             if(data){
                                 processCsvDownload(data, (collId.value.toString() + '_' + filename));
                             }
-                        });;
+                        });
                     }
 
                     function processDownloadSpeciesList() {

@@ -385,6 +385,140 @@ class UploadOccurrenceTemp{
         return $this->fields;
     }
 
+    public function getDuplicateDbpkCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT dbpk FROM uploadspectemp GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+            if($result = $this->conn->query($sql)){
+                $returnVal = $result->num_rows;
+                $result->free();
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getExistingRecordCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upspid) AS cnt FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' AND occid IS NOT NULL ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getNewRecordCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upspid) AS cnt FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' AND ISNULL(occid) ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getNullDbpkCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upspid) AS cnt FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' AND ISNULL(dbpk) ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getUploadCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upspid) AS cnt FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getUploadData($collid, $dataType, $index = null, $limit = null): array
+    {
+        $retArr = array();
+        if($collid && $dataType){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM uploadspectemp ';
+            if($dataType !== 'dupdbpk'){
+                $sql .= 'WHERE collid  = ' . (int)$collid . ' ';
+            }
+            if($dataType === 'new'){
+                $sql .= 'AND ISNULL(occid) ';
+            }
+            elseif($dataType === 'update'){
+                $sql .= 'AND occid IS NOT NULL ';
+            }
+            elseif($dataType === 'nulldbpk'){
+                $sql .= 'AND ISNULL(dbpk) ';
+            }
+            elseif($dataType === 'dupdbpk'){
+                $sql .= 'GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+            }
+            if($index !== null && $limit !== null){
+                $sql .= 'LIMIT ' . (((int)$index - 1) * (int)$limit) . ', ' . (int)$limit;
+            }
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $retArr[] = $nodeArr;
+                    unset($rows[$rIndex]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getUploadSummary($collid): array
+    {
+        $retArr = array();
+        if($collid){
+            $retArr['occur'] = $this->getUploadCount($collid);
+            $retArr['new'] = $this->getNewRecordCount($collid);
+            $retArr['update'] = $this->getExistingRecordCount($collid);
+            $retArr['nulldbpk'] = $this->getNullDbpkCount($collid);
+            $retArr['dupdbpk'] = $this->getDuplicateDbpkCount($collid);
+        }
+        return $retArr;
+    }
+
     public function linkUploadToExistingOccurrenceData($collid): int
     {
         $returnVal = 0;
@@ -392,6 +526,20 @@ class UploadOccurrenceTemp{
             $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
                 'SET u.occid = o.occid '.
                 'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function linkUploadToExistingOccurrenceDataByCatalogNumber($collid, $linkField): int
+    {
+        $returnVal = 0;
+        if($collid && ($linkField === 'catalognumber' || $linkField === 'othercatalognumbers')){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' AND u.collid = o.collid '.
+                'SET u.occid = o.occid '.
+                'WHERE u.collid  = ' . $collid . ' AND u.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL ';
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }

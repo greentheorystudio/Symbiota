@@ -14,16 +14,16 @@ if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_ar
 
 if($action && $isEditor && SanitizerService::validateInternalRequest()){
     $dataUploadService = new DataUploadService();
-    if($action === 'getUploadTableFieldData' && array_key_exists('tableArr',$_POST)){
+    if($action === 'getUploadTableFieldData' && array_key_exists('tableArr', $_POST)){
         echo json_encode($dataUploadService->getUploadTableFieldData(json_decode($_POST['tableArr'], false)));
     }
-    elseif($action === 'processExternalDwcaTransfer' && array_key_exists('uploadType',$_POST) && array_key_exists('dwcaPath',$_POST)){
+    elseif($action === 'processExternalDwcaTransfer' && array_key_exists('uploadType', $_POST) && array_key_exists('dwcaPath', $_POST)){
         echo json_encode($dataUploadService->processExternalDwcaTransfer($collid, $_POST['uploadType'], $_POST['dwcaPath']));
     }
-    elseif($action === 'processExternalDwcaUnpack' && array_key_exists('targetPath',$_POST) && array_key_exists('archivePath',$_POST)){
+    elseif($action === 'processExternalDwcaUnpack' && array_key_exists('targetPath', $_POST) && array_key_exists('archivePath', $_POST)){
         echo json_encode($dataUploadService->processExternalDwcaUnpack($_POST['targetPath'], $_POST['archivePath']));
     }
-    elseif($action === 'processTransferredDwca' && array_key_exists('serverPath',$_POST) && array_key_exists('metaFile',$_POST)){
+    elseif($action === 'processTransferredDwca' && array_key_exists('serverPath', $_POST) && array_key_exists('metaFile', $_POST)){
         echo json_encode($dataUploadService->processTransferredDwca($_POST['serverPath'], $_POST['metaFile']));
     }
     elseif($action === 'uploadDwcaFile' && array_key_exists('dwcaFile', $_FILES)){
@@ -32,10 +32,10 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'clearOccurrenceUploadTables'){
         echo $dataUploadService->clearOccurrenceUploadTables($collid);
     }
-    elseif($action === 'processDwcaFileDataUpload' && array_key_exists('uploadConfig',$_POST)){
+    elseif($action === 'processDwcaFileDataUpload' && array_key_exists('uploadConfig', $_POST)){
         echo $dataUploadService->processDwcaFileDataUpload($collid, json_decode($_POST['uploadConfig'], true));
     }
-    elseif($action === 'processFlatFileDataUpload' && array_key_exists('uploadConfig',$_POST) && array_key_exists('data',$_POST)){
+    elseif($action === 'processFlatFileDataUpload' && array_key_exists('uploadConfig', $_POST) && array_key_exists('data', $_POST)){
         echo $dataUploadService->processFlatFileDataUpload($collid, json_decode($_POST['uploadConfig'], true), json_decode($_POST['data'], true));
     }
     elseif($action === 'getUploadedMofDataFields'){
@@ -45,9 +45,11 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         echo $dataUploadService->removeExistingOccurrencesFromUpload($collid);
     }
     elseif($action === 'linkExistingOccurrencesToUpload'){
-        echo $dataUploadService->linkExistingOccurrencesToUpload($collid);
+        $matchByCatalogNumber = array_key_exists('matchByCatalogNumber',$_POST) && (int)$_POST['matchByCatalogNumber'] === 1;
+        $linkField = $_POST['linkField'] ?? null;
+        echo $dataUploadService->linkExistingOccurrencesToUpload($collid, $matchByCatalogNumber, $linkField);
     }
-    elseif($action === 'executeCleaningScriptArr' && array_key_exists('cleaningScriptArr',$_POST)){
+    elseif($action === 'executeCleaningScriptArr' && array_key_exists('cleaningScriptArr', $_POST)){
         echo $dataUploadService->executeCleaningScriptArr($collid, json_decode($_POST['cleaningScriptArr'], true));
     }
     elseif($action === 'cleanUploadEventDates'){
@@ -61,5 +63,13 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'cleanUploadTaxonomy'){
         echo $dataUploadService->cleanUploadTaxonomy($collid);
+    }
+    elseif($action === 'getUploadSummary'){
+        echo json_encode($dataUploadService->getUploadSummary($collid));
+    }
+    elseif($action === 'getUploadData' && array_key_exists('dataType', $_POST)){
+        $index = array_key_exists('index', $_POST) ? (int)$_POST['index'] : null;
+        $limit = array_key_exists('limit', $_POST) ? (int)$_POST['limit'] : null;
+        echo json_encode($dataUploadService->getUploadData($collid, $_POST['dataType'], $index, $limit));
     }
 }
