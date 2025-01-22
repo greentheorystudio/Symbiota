@@ -485,7 +485,7 @@ class UploadOccurrenceTemp{
                 $sql .= 'GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
             }
             if($index !== null && $limit !== null){
-                $sql .= 'LIMIT ' . ((int)$index > 0 ? (((int)$index - 1) * (int)$limit) : (int)$index) . ', ' . (int)$limit;
+                $sql .= 'LIMIT ' . (((int)$index - 1) * (int)$limit) . ', ' . (int)$limit;
             }
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){

@@ -1,5 +1,9 @@
 const uploadDataTableViewerPopup = {
     props: {
+        columns: {
+            type: Array,
+            default: []
+        },
         data: {
             type: Array,
             default: []
@@ -30,7 +34,7 @@ const uploadDataTableViewerPopup = {
                     </div>
                 </div>
                 <div ref="contentRef" class="fit overflow-auto">
-                    <q-table flat bordered class="sticky-header-table" :style="contentStyle" :rows="data" row-key="upspid" :loading="tableLoading" v-model:pagination="pagination" separator="cell" @request="changePage" :rows-per-page-options="[0]" wrap-cells dense virtual-scroll-sticky-size-start="40">
+                    <q-table flat bordered class="sticky-header-table" :style="contentStyle" :columns="columns" :rows="data" row-key="upspid" :loading="tableLoading" v-model:pagination="pagination" separator="cell" @request="changePage" :rows-per-page-options="[0]" wrap-cells dense virtual-scroll-sticky-size-start="40">
                         <template v-slot:top="scope">
                             <div class="full-width row justify-end">
                                 <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>

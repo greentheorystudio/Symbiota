@@ -314,6 +314,7 @@ const occurrenceDataUploadModule = {
         </template>
         <template v-if="showUploadDataTableViewerPopup">
             <upload-data-table-viewer-popup
+                :columns="popupColumns"
                 :data="popupData"
                 :load-count="popupLoadCount"
                 :page-number="popupPageNumber"
@@ -423,6 +424,16 @@ const occurrenceDataUploadModule = {
         const mofEventDataIncluded = Vue.ref(false);
         const mofOccurrenceDataIncluded = Vue.ref(false);
         const occurrenceMofDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
+        const popupColumns = Vue.computed(() => {
+            const returnArr = [];
+            if(popupData.value.length > 0){
+                const fields = Object.keys(popupData.value[0]);
+                fields.forEach((field) => {
+                    returnArr.push({ name: field, label: field, field: field });
+                });
+            }
+            return returnArr;
+        });
         const popupData = Vue.ref([]);
         const popupDataType = Vue.ref(null);
         const popupLoadCount = 100;
@@ -706,7 +717,7 @@ const occurrenceDataUploadModule = {
             popupPageNumber.value = pageNumber;
             getUploadData(popupDataType.value, (data) => {
                 popupData.value = data.slice();
-            }, (popupPageNumber.value - 1), popupLoadCount);
+            }, popupPageNumber.value, popupLoadCount);
         }
 
         function getUploadData(type, callback, index = null, limit = null) {
@@ -1760,6 +1771,7 @@ const occurrenceDataUploadModule = {
             includeMofData,
             multimediaDataIncluded,
             mofDataIncluded,
+            popupColumns,
             popupData,
             popupLoadCount,
             popupPageNumber,
