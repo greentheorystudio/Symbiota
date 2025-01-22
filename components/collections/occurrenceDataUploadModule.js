@@ -713,7 +713,7 @@ const occurrenceDataUploadModule = {
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('dataType', type);
-            if(index && limit){
+            if(Number(limit) > 0){
                 formData.append('index', index.toString());
                 formData.append('limit', limit.toString());
             }
