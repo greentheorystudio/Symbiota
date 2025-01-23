@@ -484,6 +484,8 @@ const occurrenceDataUploadModule = {
         const sourceDataFilesMultimedia = Vue.ref([]);
         const sourceDataFilesOccurrence = Vue.ref([]);
         const sourceDataFlatFile = Vue.ref([]);
+        const sourceDataUploadCount = Vue.ref(0);
+        const sourceDataUploadStage = Vue.ref(null);
         const symbiotaFieldOptionsDetermination = Vue.ref([]);
         const symbiotaFieldOptionsFlatFile = Vue.ref([]);
         const symbiotaFieldOptionsMedia = Vue.ref([]);
@@ -509,10 +511,10 @@ const occurrenceDataUploadModule = {
 
         function addSubprocessToProcessorDisplay(type, text) {
             const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
-            parentProcObj['subs'].push(getNewSubprocessObject(type,text));
+            parentProcObj['subs'].push(getNewSubprocessObject(type, text));
             const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === currentProcess.value);
             if(dataParentProcObj){
-                dataParentProcObj['subs'].push(getNewSubprocessObject(type,text));
+                dataParentProcObj['subs'].push(getNewSubprocessObject(type, text));
             }
         }
 
@@ -568,6 +570,8 @@ const occurrenceDataUploadModule = {
             recordsUploadedMof.value = 0;
             recordsUploadedMultimedia.value = 0;
             recordsUploadedOccurrence.value = 0;
+            sourceDataUploadCount.value = 0;
+            sourceDataUploadStage.value = null;
         }
 
         function clearOccurrenceUploadTables() {
@@ -963,10 +967,19 @@ const occurrenceDataUploadModule = {
 
         function processFlatFileSourceData() {
             let data = [];
+            let countChange = false;
+            let currentComplete = false;
             const configuration = {
                 processingStatus: selectedProcessingStatus.value
             };
             if(flatFileOccurrenceData.value.length > 0){
+                if(sourceDataUploadStage.value !== 'occurrence'){
+                    countChange = true;
+                    sourceDataUploadStage.value = 'occurrence';
+                    const text = 'Loading occurrence data:';
+                    currentProcess.value = 'transferSourceDataOccurrence';
+                    addProcessToProcessorDisplay(getNewProcessObject('multi', text));
+                }
                 data = flatFileOccurrenceData.value.length > 500 ? flatFileOccurrenceData.value.slice(0, 500) : flatFileOccurrenceData.value.slice();
                 configuration['dataType'] = 'occurrence';
                 if(flatFileOccurrenceData.value.length > 500){
@@ -975,8 +988,16 @@ const occurrenceDataUploadModule = {
                 else{
                     flatFileOccurrenceData.value.length = 0;
                 }
+                currentComplete = flatFileOccurrenceData.value.length === 0;
             }
             else if(flatFileMofData.value.length > 0){
+                if(sourceDataUploadStage.value !== 'mof'){
+                    countChange = true;
+                    sourceDataUploadStage.value = 'mof';
+                    const text = 'Loading measurement or fact data:';
+                    currentProcess.value = 'transferSourceDataMof';
+                    addProcessToProcessorDisplay(getNewProcessObject('multi', text));
+                }
                 mofDataIncluded.value = true;
                 data = flatFileMofData.value.length > 500 ? flatFileMofData.value.slice(0, 500) : flatFileMofData.value.slice();
                 configuration['dataType'] = 'mof';
@@ -986,11 +1007,9 @@ const occurrenceDataUploadModule = {
                 else{
                     flatFileMofData.value.length = 0;
                 }
+                currentComplete = flatFileMofData.value.length === 0;
             }
             if(configuration.hasOwnProperty('dataType')){
-                const text = 'Loading ' + configuration['dataType'] + ' data';
-                currentProcess.value = 'transferSourceData';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 const formData = new FormData();
                 formData.append('collid', props.collid.toString());
                 formData.append('uploadConfig', JSON.stringify(configuration));
@@ -1004,6 +1023,10 @@ const occurrenceDataUploadModule = {
                     return response.ok ? response.text() : null;
                 })
                 .then((res) => {
+                    if(!countChange && sourceDataUploadCount.value !== Number(res)){
+                        countChange = true;
+                    }
+                    sourceDataUploadCount.value = Number(res);
                     let resText = '';
                     if(configuration['dataType'] === 'occurrence'){
                         recordsUploadedOccurrence.value = recordsUploadedOccurrence.value + Number(res);
@@ -1013,7 +1036,13 @@ const occurrenceDataUploadModule = {
                         recordsUploadedMof.value = recordsUploadedMof.value + Number(res);
                         resText = recordsUploadedMof.value + ' records loaded'
                     }
-                    processSuccessResponse(resText);
+                    if(countChange){
+                        addSubprocessToProcessorDisplay('text', resText);
+                        processSubprocessSuccessResponse(currentProcess.value, false);
+                    }
+                    if(currentComplete){
+                        processSuccessResponse();
+                    }
                     processFlatFileSourceData();
                 });
             }
@@ -1261,6 +1290,8 @@ const occurrenceDataUploadModule = {
         }
 
         function processSourceDataFiles() {
+            let countChange = false;
+            let currentComplete = false;
             const configuration = {
                 eventMofFields: eventMofDataFields.value,
                 occurrenceMofFields: occurrenceMofDataFields.value,
@@ -1268,33 +1299,62 @@ const occurrenceDataUploadModule = {
                 serverPath: localDwcaServerPath.value
             };
             if(sourceDataFilesOccurrence.value.length > 0){
+                if(sourceDataUploadStage.value !== 'occurrence'){
+                    countChange = true;
+                    sourceDataUploadStage.value = 'occurrence';
+                    const text = 'Loading occurrence data:';
+                    currentProcess.value = 'transferSourceDataOccurrence';
+                    addProcessToProcessorDisplay(getNewProcessObject('multi', text));
+                }
                 configuration['uploadFile'] = sourceDataFilesOccurrence.value[0];
                 configuration['dataType'] = 'occurrence';
                 configuration['fieldMap'] = Object.assign({}, fieldMappingDataOccurrence.value);
                 sourceDataFilesOccurrence.value.splice(0, 1);
+                currentComplete = sourceDataFilesOccurrence.value.length === 0;
             }
             else if(includeDeterminationData.value && sourceDataFilesDetermination.value.length > 0){
+                if(sourceDataUploadStage.value !== 'determination'){
+                    countChange = true;
+                    sourceDataUploadStage.value = 'determination';
+                    const text = 'Loading determination data:';
+                    currentProcess.value = 'transferSourceDataDetermination';
+                    addProcessToProcessorDisplay(getNewProcessObject('multi', text));
+                }
                 configuration['uploadFile'] = sourceDataFilesDetermination.value[0];
                 configuration['dataType'] = 'determination';
                 configuration['fieldMap'] = Object.assign({}, fieldMappingDataDetermiation.value);
                 sourceDataFilesDetermination.value.splice(0, 1);
+                currentComplete = sourceDataFilesDetermination.value.length === 0;
             }
             else if(includeMultimediaData.value && sourceDataFilesMultimedia.value.length > 0){
+                if(sourceDataUploadStage.value !== 'multimedia'){
+                    countChange = true;
+                    sourceDataUploadStage.value = 'multimedia';
+                    const text = 'Loading media data:';
+                    currentProcess.value = 'transferSourceDataMedia';
+                    addProcessToProcessorDisplay(getNewProcessObject('multi', text));
+                }
                 configuration['uploadFile'] = sourceDataFilesMultimedia.value[0];
                 configuration['dataType'] = 'multimedia';
                 configuration['fieldMap'] = Object.assign({}, fieldMappingDataMedia.value);
                 sourceDataFilesMultimedia.value.splice(0, 1);
+                currentComplete = sourceDataFilesMultimedia.value.length === 0;
             }
             else if(includeMofData.value && sourceDataFilesMof.value.length > 0){
+                if(sourceDataUploadStage.value !== 'mof'){
+                    countChange = true;
+                    sourceDataUploadStage.value = 'mof';
+                    const text = 'Loading measurement or fact data:';
+                    currentProcess.value = 'transferSourceDataMof';
+                    addProcessToProcessorDisplay(getNewProcessObject('multi', text));
+                }
                 configuration['uploadFile'] = sourceDataFilesMof.value[0];
                 configuration['dataType'] = 'mof';
                 configuration['fieldMap'] = Object.assign({}, fieldMappingDataMof.value);
                 sourceDataFilesMof.value.splice(0, 1);
+                currentComplete = sourceDataFilesMof.value.length === 0;
             }
             if(configuration.hasOwnProperty('dataType')){
-                const text = 'Loading ' + (configuration['dataType'] === 'mof' ? 'measurement or fact' : configuration['dataType']) + ' data';
-                currentProcess.value = 'transferSourceData';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 const formData = new FormData();
                 formData.append('collid', props.collid.toString());
                 formData.append('uploadConfig', JSON.stringify(configuration));
@@ -1307,6 +1367,10 @@ const occurrenceDataUploadModule = {
                     return response.ok ? response.text() : null;
                 })
                 .then((res) => {
+                    if(!countChange && sourceDataUploadCount.value !== Number(res)){
+                        countChange = true;
+                    }
+                    sourceDataUploadCount.value = Number(res);
                     let resText = '';
                     if(configuration['dataType'] === 'occurrence'){
                         recordsUploadedOccurrence.value = recordsUploadedOccurrence.value + Number(res);
@@ -1324,7 +1388,13 @@ const occurrenceDataUploadModule = {
                         recordsUploadedMof.value = recordsUploadedMof.value + Number(res);
                         resText = recordsUploadedMof.value + ' records loaded'
                     }
-                    processSuccessResponse(resText);
+                    if(countChange){
+                        addSubprocessToProcessorDisplay('text', resText);
+                        processSubprocessSuccessResponse(currentProcess.value, false);
+                    }
+                    if(currentComplete){
+                        processSuccessResponse();
+                    }
                     processSourceDataFiles();
                 });
             }
@@ -1398,9 +1468,6 @@ const occurrenceDataUploadModule = {
                     else{
                         processErrorResponse('The source data archive could not be transferred.');
                     }
-                })
-                .catch((error) => {                        // catch
-                    console.log('Request failed', error);
                 });
             }
             else if(Number(profileData.value['uploadtype']) === 6){
@@ -1451,8 +1518,8 @@ const occurrenceDataUploadModule = {
             }
         }
 
-        function processSubprocessSuccessResponse(complete, text = null) {
-            const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
+        function processSubprocessSuccessResponse(id, complete, text = null) {
+            const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
             if(parentProcObj){
                 parentProcObj['current'] = !complete;
                 const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
@@ -1460,6 +1527,16 @@ const occurrenceDataUploadModule = {
                     subProcObj['loading'] = false;
                     subProcObj['result'] = 'success';
                     subProcObj['resultText'] = text;
+                }
+            }
+            const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === id);
+            if(dataParentProcObj){
+                dataParentProcObj['current'] = !complete;
+                const dataSubProcObj = dataParentProcObj['subs'].find(subproc => subproc['loading'] === true);
+                if(dataSubProcObj){
+                    dataSubProcObj['loading'] = false;
+                    dataSubProcObj['result'] = 'success';
+                    dataSubProcObj['resultText'] = text;
                 }
             }
         }
