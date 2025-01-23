@@ -969,6 +969,7 @@ const occurrenceDataUploadModule = {
             let data = [];
             let countChange = false;
             let currentComplete = false;
+            let totalRecordsLoaded = 0;
             const configuration = {
                 processingStatus: selectedProcessingStatus.value
             };
@@ -1030,18 +1031,20 @@ const occurrenceDataUploadModule = {
                     let resText = '';
                     if(configuration['dataType'] === 'occurrence'){
                         recordsUploadedOccurrence.value = recordsUploadedOccurrence.value + Number(res);
-                        resText = recordsUploadedOccurrence.value + ' records loaded'
+                        totalRecordsLoaded = recordsUploadedOccurrence.value;
+                        resText = Number(res) + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'mof'){
                         recordsUploadedMof.value = recordsUploadedMof.value + Number(res);
-                        resText = recordsUploadedMof.value + ' records loaded'
+                        totalRecordsLoaded = recordsUploadedMof.value;
+                        resText = Number(res) + ' records loaded'
                     }
                     if(countChange){
                         addSubprocessToProcessorDisplay('text', resText);
                         processSubprocessSuccessResponse(currentProcess.value, false);
                     }
                     if(currentComplete){
-                        processSuccessResponse();
+                        processSuccessResponse('Complete: ' + totalRecordsLoaded + ' total records loaded');
                     }
                     processFlatFileSourceData();
                 });
@@ -1292,6 +1295,7 @@ const occurrenceDataUploadModule = {
         function processSourceDataFiles() {
             let countChange = false;
             let currentComplete = false;
+            let totalRecordsLoaded = 0;
             const configuration = {
                 eventMofFields: eventMofDataFields.value,
                 occurrenceMofFields: occurrenceMofDataFields.value,
@@ -1374,26 +1378,30 @@ const occurrenceDataUploadModule = {
                     let resText = '';
                     if(configuration['dataType'] === 'occurrence'){
                         recordsUploadedOccurrence.value = recordsUploadedOccurrence.value + Number(res);
-                        resText = recordsUploadedOccurrence.value + ' records loaded'
+                        totalRecordsLoaded = recordsUploadedOccurrence.value;
+                        resText = Number(res) + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'determination'){
                         recordsUploadedDetermination.value = recordsUploadedDetermination.value + Number(res);
-                        resText = recordsUploadedDetermination.value + ' records loaded'
+                        totalRecordsLoaded = recordsUploadedDetermination.value;
+                        resText = Number(res) + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'multimedia'){
                         recordsUploadedMultimedia.value = recordsUploadedMultimedia.value + Number(res);
-                        resText = recordsUploadedMultimedia.value + ' records loaded'
+                        totalRecordsLoaded = recordsUploadedMultimedia.value;
+                        resText = Number(res) + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'mof'){
                         recordsUploadedMof.value = recordsUploadedMof.value + Number(res);
-                        resText = recordsUploadedMof.value + ' records loaded'
+                        totalRecordsLoaded = recordsUploadedMof.value;
+                        resText = Number(res) + ' records loaded'
                     }
                     if(countChange){
                         addSubprocessToProcessorDisplay('text', resText);
                         processSubprocessSuccessResponse(currentProcess.value, false);
                     }
                     if(currentComplete){
-                        processSuccessResponse();
+                        processSuccessResponse('Complete: ' + totalRecordsLoaded + ' total records loaded');
                     }
                     processSourceDataFiles();
                 });
@@ -1548,7 +1556,25 @@ const occurrenceDataUploadModule = {
                 if(procObj['loading'] === true){
                     procObj['loading'] = false;
                     procObj['result'] = 'success';
-                    procObj['resultText'] = text;
+                }
+                if(text){
+                    if(procObj.hasOwnProperty('subs') && procObj['subs'].length > 0){
+                        const subProcObj = procObj['subs'][(procObj['subs'].length - 1)];
+                        if(subProcObj){
+                            subProcObj['resultText'] = text;
+                        }
+                        const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === procObj['id']);
+                        if(dataParentProcObj){
+                            dataParentProcObj['current'] = !complete;
+                            const dataSubProcObj = dataParentProcObj['subs'][(dataParentProcObj['subs'].length - 1)];
+                            if(dataSubProcObj){
+                                dataSubProcObj['resultText'] = text;
+                            }
+                        }
+                    }
+                    else{
+                        procObj['resultText'] = text;
+                    }
                 }
             }
         }
