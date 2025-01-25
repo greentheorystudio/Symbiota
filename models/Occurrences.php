@@ -397,9 +397,7 @@ class Occurrences{
     {
         $retArr = array();
         if($collid){
-            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'o');
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u  ON o.occid = u.occid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) ';
+            $sql = $this->getOccurrenceRecordsNotIncludedInUploadSql($collid);
             if($index && $limit){
                 $sql .= 'LIMIT ' . (((int)$index - 1) * (int)$limit) . ', ' . (int)$limit . ' ';
             }
@@ -420,6 +418,17 @@ class Occurrences{
             }
         }
         return $retArr;
+    }
+
+    public function getOccurrenceRecordsNotIncludedInUploadSql($collid): string
+    {
+        $sql = '';
+        if($collid){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'o');
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u  ON o.occid = u.occid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) ';
+        }
+        return $sql;
     }
 
     public function getOccurrencesByCatalogNumber($catalogNumber, $collid = null): array

@@ -838,11 +838,30 @@ const occurrenceDataUploadModule = {
         }
 
         function processDownloadRecords(type, filename) {
+            const fullFilename = props.collid.toString() + '_' + filename + '.csv';
             showWorking();
-            getUploadData(type, (data) => {
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('dataType', type);
+            formData.append('filename', fullFilename);
+            formData.append('action', 'processUploadDataDownload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
                 hideWorking();
-                if(data){
-                    processCsvDownload(data, (props.collid.toString() + '_' + filename + '.csv'));
+                if(blob !== null){
+                    const objectUrl = window.URL.createObjectURL(blob);
+                    const anchor = document.createElement('a');
+                    anchor.href = objectUrl;
+                    anchor.download = fullFilename;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    anchor.remove();
                 }
             });
         }

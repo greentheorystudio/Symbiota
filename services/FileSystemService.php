@@ -1,6 +1,11 @@
 <?php
 class FileSystemService {
 
+    public static function closeFileHandler($fileHandler): void
+    {
+        fclose($fileHandler);
+    }
+
     public static function copyFileToTarget($source, $targetPath, $targetFilename): bool
     {
         if(copy($source, $targetPath . '/' . $targetFilename)){
@@ -126,13 +131,13 @@ class FileSystemService {
         return $fullUploadPath;
     }
 
-    public static function getTempDwcaUploadPath($collid): string
+    public static function getTempDownloadUploadPath(): string
     {
         $fullUploadPath = $GLOBALS['TEMP_DIR_ROOT'] . '/downloads';
         if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
             $fullUploadPath = '';
         }
-        $fullUploadPath .= '/' . $collid . '_' . time();
+        $fullUploadPath .= '/' . time();
         if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
             $fullUploadPath = '';
         }
@@ -150,6 +155,11 @@ class FileSystemService {
             return true;
         }
         return false;
+    }
+
+    public static function openFileHandler($filePath)
+    {
+        return fopen($filePath, 'wb');
     }
 
     public static function processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename): array
@@ -271,5 +281,10 @@ class FileSystemService {
         if(@$zip->extractTo($targetPath . '/')){
             $zip->close();
         }
+    }
+
+    public static function writeRowToCsv($fileHandler, $row): void
+    {
+        fputcsv($fileHandler, $row);
     }
 }

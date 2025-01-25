@@ -1,9 +1,19 @@
 <?php
-include_once(__DIR__ . '/DataUtilitiesService.php');
 include_once(__DIR__ . '/DbService.php');
-include_once(__DIR__ . '/SanitizerService.php');
+include_once(__DIR__ . '/FileSystemService.php');
 
 class DataDownloadService {
+
+    private $conn;
+
+    public function __construct(){
+        $connection = new DbService();
+        $this->conn = $connection->getConnection();
+    }
+
+    public function __destruct(){
+        $this->conn->close();
+    }
 
     public function getContentTypeFromFileType($fileType): string
     {
@@ -24,6 +34,48 @@ class DataDownloadService {
             $returnVal = 'application/gpx+xml';
         }
         return $returnVal;
+    }
+
+    public function processCsvDownloadFromSql($sql, $filename): void
+    {
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
+        if($sql && $filename && $targetPath){
+            $fullPath = $targetPath . '/' . $filename;
+            $fileHandler = FileSystemService::openFileHandler($fullPath);
+            if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+                $headerRow = array();
+                $fields = mysqli_fetch_fields($result);
+                foreach($fields as $val){
+                    $headerRow[] = $val->name;
+                }
+                FileSystemService::writeRowToCsv($fileHandler, $headerRow);
+                while($row = $result->fetch_assoc()){
+                    FileSystemService::writeRowToCsv($fileHandler, $row);
+                }
+                $result->free();
+                FileSystemService::closeFileHandler($fileHandler);
+                $this->setDownloadHeaders('csv', 'text/csv; charset=UTF-8', basename($fullPath), $fullPath);
+                flush();
+                readfile($fullPath);
+                unlink($fullPath);
+            }
+        }
+    }
+
+    public function setDownloadHeaders($downloadType, $outputType, $filename, $content): void
+    {
+        header('Content-Type: ' . $outputType);
+        header('Content-Disposition: attachment; filename=' . $filename);
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        if($downloadType === 'geojson' || $downloadType === 'gpx' || $downloadType === 'kml'){
+            header('Content-Length: ' . strlen($content));
+        }
+        else{
+            header('Content-Length: ' . filesize($content));
+        }
     }
 
     public function writeGPXFromOccurrenceArr($occArr): string

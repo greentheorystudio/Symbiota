@@ -312,7 +312,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 formData.append('starr', this.getSearchTermsJson);
             }
             formData.append('options', JSON.stringify(options));
-            fetch(dataDownloadServiceApiUrl, {
+            formData.append('action', 'processSearchDownload');
+            fetch(searchServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })

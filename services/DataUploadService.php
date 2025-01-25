@@ -4,6 +4,7 @@ include_once(__DIR__ . '/../models/UploadDeterminationTemp.php');
 include_once(__DIR__ . '/../models/UploadMediaTemp.php');
 include_once(__DIR__ . '/../models/UploadMofTemp.php');
 include_once(__DIR__ . '/../models/UploadOccurrenceTemp.php');
+include_once(__DIR__ . '/DataDownloadService.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/SanitizerService.php');
@@ -330,7 +331,7 @@ class DataUploadService {
     {
         $returnArr = array();
         $transferSuccess = false;
-        $targetPath = FileSystemService::getTempDwcaUploadPath($collid);
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
         if($targetPath && $dwcaPath){
             $fileName = 'dwca.zip';
             $fullTargetPath = $targetPath . '/' . $fileName;
@@ -425,6 +426,19 @@ class DataUploadService {
         return $returnArr;
     }
 
+    public function processUploadDataDownload($collid, $filename, $dataType): void
+    {
+        if($collid && $filename && $dataType){
+            if($dataType === 'exist'){
+                $sql = (new Occurrences)->getOccurrenceRecordsNotIncludedInUploadSql($collid);
+            }
+            else{
+                $sql = (new UploadOccurrenceTemp)->getUploadDataSql($collid, $dataType);
+            }
+            (new DataDownloadService)->processCsvDownloadFromSql($sql, $filename);
+        }
+    }
+
     public function removeExistingOccurrencesFromUpload($collid): int
     {
         $retVal = 0;
@@ -446,7 +460,7 @@ class DataUploadService {
     public function uploadDwcaFile($collid, $dwcaFile): array
     {
         $returnArr = array();
-        $targetPath = FileSystemService::getTempDwcaUploadPath($collid);
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
         if($targetPath && $dwcaFile['name'] && FileSystemService::moveUploadedFileToServer($dwcaFile, $targetPath, $dwcaFile['name'])) {
             $fullTargetPath = $targetPath . '/' . $dwcaFile['name'];
             FileSystemService::unpackZipArchive($targetPath, $fullTargetPath);

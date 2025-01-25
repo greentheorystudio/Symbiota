@@ -72,4 +72,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         $limit = array_key_exists('limit', $_POST) ? (int)$_POST['limit'] : null;
         echo json_encode($dataUploadService->getUploadData($collid, $_POST['dataType'], $index, $limit));
     }
+    elseif($action === 'processUploadDataDownload' && array_key_exists('filename', $_POST) && array_key_exists('dataType', $_POST)){
+        $dataUploadService->processUploadDataDownload($collid, $_POST['filename'], $_POST['dataType']);
+    }
 }

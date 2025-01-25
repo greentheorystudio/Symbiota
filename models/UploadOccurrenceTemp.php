@@ -466,24 +466,7 @@ class UploadOccurrenceTemp{
     {
         $retArr = array();
         if($collid && $dataType){
-            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM uploadspectemp ';
-            if($dataType !== 'dupdbpk'){
-                $sql .= 'WHERE collid  = ' . (int)$collid . ' ';
-            }
-            if($dataType === 'new'){
-                $sql .= 'AND ISNULL(occid) ';
-            }
-            elseif($dataType === 'update'){
-                $sql .= 'AND occid IS NOT NULL ';
-            }
-            elseif($dataType === 'nulldbpk'){
-                $sql .= 'AND ISNULL(dbpk) ';
-            }
-            elseif($dataType === 'dupdbpk'){
-                $sql .= 'GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
-            }
+            $sql = $this->getUploadDataSql($collid, $dataType);
             if($index !== null && $limit !== null){
                 $sql .= 'LIMIT ' . (((int)$index - 1) * (int)$limit) . ', ' . (int)$limit;
             }
@@ -504,6 +487,32 @@ class UploadOccurrenceTemp{
             }
         }
         return $retArr;
+    }
+
+    public function getUploadDataSql($collid, $dataType): string
+    {
+        $sql = '';
+        if($collid && $dataType){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM uploadspectemp ';
+            if($dataType !== 'dupdbpk'){
+                $sql .= 'WHERE collid  = ' . (int)$collid . ' ';
+            }
+            if($dataType === 'new'){
+                $sql .= 'AND ISNULL(occid) ';
+            }
+            elseif($dataType === 'update'){
+                $sql .= 'AND occid IS NOT NULL ';
+            }
+            elseif($dataType === 'nulldbpk'){
+                $sql .= 'AND ISNULL(dbpk) ';
+            }
+            elseif($dataType === 'dupdbpk'){
+                $sql .= 'GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+            }
+        }
+        return $sql;
     }
 
     public function getUploadSummary($collid): array
