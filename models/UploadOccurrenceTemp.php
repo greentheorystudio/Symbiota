@@ -349,15 +349,42 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 1;
         if($collid){
-            $sql = 'UPDATE uploadspectemp SET family = sciname '.
-                'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") ';
+            $sql = 'UPDATE uploadspectemp SET sciname = family '.
+                'WHERE collid = ' . (int)$collid . ' AND family IS NOT NULL AND ISNULL(sciname) ';
             if(!$this->conn->query($sql)){
                 $returnVal = 0;
             }
 
             if($returnVal === 1){
-                $sql = 'UPDATE uploadspectemp SET sciname = family '.
-                    'WHERE collid = ' . (int)$collid . ' AND family IS NOT NULL AND ISNULL(sciname) ';
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                    'SET u.tid = t.tid '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND u.sciname IS NOT NULL AND t.tid IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                    'SET u.tid = NULL '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
+                    'SET u.family = t.family '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND t.family IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET family = sciname '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") ';
                 if(!$this->conn->query($sql)){
                     $returnVal = 0;
                 }
