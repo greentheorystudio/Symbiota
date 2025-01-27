@@ -93,6 +93,31 @@ class OccurrenceDeterminations{
         }
     }
 
+    public function createOccurrenceDeterminationRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('detid', 'printqueue', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    $fieldNameArr[] = $field;
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $fieldNameArr[] = 'dateentered';
+                $sql = 'INSERT INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploaddetermtemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteDeterminationRecord($detId): int
     {
         $retVal = 1;

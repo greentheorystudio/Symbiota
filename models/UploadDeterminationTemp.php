@@ -116,6 +116,19 @@ class UploadDeterminationTemp{
         }
     }
 
+    public function removeExistingDeterminationDataFromUpload($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE u.* FROM uploaddetermtemp AS u LEFT JOIN omoccurdeterminations AS d ON u.occid = d.occid '.
+                'WHERE u.collid  = ' . $collid . ' AND u.sciname = d.sciname AND u.identifiedby = d.identifiedby AND u.dateidentified = d.dateidentified ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
     public function removeExistingOccurrenceDataFromUpload($collid): int
     {
         $returnVal = 0;

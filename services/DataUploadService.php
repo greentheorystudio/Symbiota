@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../models/Images.php');
 include_once(__DIR__ . '/../models/Media.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
+include_once(__DIR__ . '/../models/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/../models/UploadDeterminationTemp.php');
 include_once(__DIR__ . '/../models/UploadMediaTemp.php');
 include_once(__DIR__ . '/../models/UploadMofTemp.php');
@@ -94,11 +95,38 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferAddNewDeterminations($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceDeterminations)->createOccurrenceDeterminationRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferAddNewOccurrences($collid): int
     {
         $retVal = 1;
         if($collid){
             $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferClearPreviousDeterminations($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords('collid', $collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveExistingDeterminationsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->removeExistingDeterminationDataFromUpload($collid);
         }
         return $retVal;
     }
@@ -203,7 +231,6 @@ class DataUploadService {
             if($retVal && $updateAssociatedData){
                 (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
                 (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
-                (new UploadMofTemp)->populateOccidFromUploadOccurrenceData($collid);
             }
         }
         return $retVal;

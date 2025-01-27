@@ -88,4 +88,13 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'finalTransferSetNewOccurrenceIds'){
         echo $dataUploadService->finalTransferSetNewOccurrenceIds($collid);
     }
+    elseif($action === 'finalTransferClearPreviousDeterminations'){
+        echo $dataUploadService->finalTransferClearPreviousDeterminations($collid);
+    }
+    elseif($action === 'finalTransferRemoveExistingDeterminationsFromUpload'){
+        echo $dataUploadService->finalTransferRemoveExistingDeterminationsFromUpload($collid);
+    }
+    elseif($action === 'finalTransferAddNewDeterminations'){
+        echo $dataUploadService->finalTransferAddNewDeterminations($collid);
+    }
 }

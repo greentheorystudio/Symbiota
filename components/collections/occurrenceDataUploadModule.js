@@ -602,6 +602,32 @@ const occurrenceDataUploadModule = {
             }
         }
 
+        function finalTransferAddNewDeterminations() {
+            const text = 'Transferring new identification records';
+            currentProcess.value = 'finalTransferAddNewDeterminations';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferAddNewDeterminations');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferProcessMedia();
+                }
+                else{
+                    processErrorResponse('An error occurred while transferring new identification records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
         function finalTransferAddNewOccurrences() {
             const text = 'Transferring new occurrence records';
             currentProcess.value = 'finalTransferAddNewOccurrences';
@@ -622,7 +648,101 @@ const occurrenceDataUploadModule = {
                     finalTransferSetNewOccurrenceIds();
                 }
                 else{
-                    processErrorResponse('An error occurred while adding new occurrence records');
+                    processErrorResponse('An error occurred while transferring new occurrence records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferClearPreviousDeterminations() {
+            const text = 'Clearing previous determination records';
+            currentProcess.value = 'finalTransferClearPreviousDeterminations';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferClearPreviousDeterminations');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewDeterminations();
+                }
+                else{
+                    processErrorResponse('An error occurred while clearing previous determination records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferProcessDeterminations() {
+            if(includeDeterminationData.value && Number(uploadSummaryData.value['ident']) > 0){
+                if(profileConfigurationData.value['existingDeterminationRecords'] === 'merge'){
+                    finalTransferRemoveExistingDeterminationsFromUpload();
+                }
+                else{
+                    finalTransferClearPreviousDeterminations();
+                }
+            }
+            else{
+                finalTransferProcessMedia();
+            }
+        }
+
+        function finalTransferProcessMedia() {
+            if(includeMultimediaData.value && Number(uploadSummaryData.value['media']) > 0){
+                if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
+                    finalTransferRemoveExistingDeterminationsFromUpload();
+                }
+                else{
+                    finalTransferClearPreviousDeterminations();
+                }
+            }
+            else{
+                finalTransferProcessMof();
+            }
+        }
+
+        function finalTransferProcessMof() {
+            if(includeMofData.value && Number(uploadSummaryData.value['mof']) > 0){
+                if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
+                    finalTransferRemoveExistingDeterminationsFromUpload();
+                }
+                else{
+                    finalTransferClearPreviousDeterminations();
+                }
+            }
+            else{
+
+            }
+        }
+
+        function finalTransferRemoveExistingDeterminationsFromUpload() {
+            const text = 'Removing existing determination records from upload';
+            currentProcess.value = 'finalTransferRemoveExistingDeterminationsFromUpload';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferRemoveExistingDeterminationsFromUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewDeterminations();
+                }
+                else{
+                    processErrorResponse('An error occurred while removing existing determination records from upload');
                     adjustUIEnd();
                 }
             });
@@ -677,10 +797,10 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    getUploadSummary();
+                    finalTransferProcessDeterminations();
                 }
                 else{
-                    processErrorResponse('An error occurred while adding new occurrence records');
+                    processErrorResponse('An error occurred while populating IDs');
                     adjustUIEnd();
                 }
             });
