@@ -63,20 +63,20 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function clearOccurrenceUploadTables($collid): int
+    public function clearOccurrenceUploadTables($collid, $optimizeTables): int
     {
         $retVal = 1;
         if($collid){
-            if(!(new UploadDeterminationTemp)->clearCollectionData($collid)){
+            if(!(new UploadDeterminationTemp)->clearCollectionData($collid, $optimizeTables)){
                 $retVal = 0;
             }
-            if(!(new UploadMediaTemp)->clearCollectionData($collid)){
+            if(!(new UploadMediaTemp)->clearCollectionData($collid, $optimizeTables)){
                 $retVal = 0;
             }
-            if(!(new UploadMofTemp)->clearCollectionData($collid)){
+            if(!(new UploadMofTemp)->clearCollectionData($collid, $optimizeTables)){
                 $retVal = 0;
             }
-            if(!(new UploadOccurrenceTemp)->clearCollectionData($collid)){
+            if(!(new UploadOccurrenceTemp)->clearCollectionData($collid, $optimizeTables)){
                 $retVal = 0;
             }
         }

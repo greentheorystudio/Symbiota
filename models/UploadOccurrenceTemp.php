@@ -393,13 +393,17 @@ class UploadOccurrenceTemp{
         return $returnVal;
     }
 
-    public function clearCollectionData($collid): bool
+    public function clearCollectionData($collid, $optimizeTables): bool
     {
         if($collid){
             $sql = 'DELETE FROM uploadspectemppoints WHERE collid = ' . (int)$collid . ' ';
             if($this->conn->query($sql)){
                 $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' ';
                 if($this->conn->query($sql)){
+                    if($optimizeTables){
+                        $this->conn->query('OPTIMIZE TABLE uploadspectemppoints');
+                        $this->conn->query('OPTIMIZE TABLE uploadspectemp');
+                    }
                     return true;
                 }
             }

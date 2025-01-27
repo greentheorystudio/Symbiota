@@ -133,6 +133,35 @@ class Occurrences{
         $this->conn->close();
 	}
 
+    public function batchCreateOccurrenceRecordGUIDs($collid): int
+    {
+        $returnVal = 1;
+        $valueArr = array();
+        $insertPrefix = 'INSERT INTO guidoccurrences(guid, occid) VALUES ';
+        $sql = 'SELECT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ' AND occid NOT IN(SELECT occid FROM guidoccurrences) ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            while($returnVal && $row = $result->fetch_assoc()){
+                if(count($valueArr) === 5000){
+                    $sql2 = $insertPrefix . implode(',', $valueArr);
+                    if(!$this->conn->query($sql2)){
+                        $returnVal = 0;
+                    }
+                    $valueArr = array();
+                }
+                if($row['occid']){
+                    $guid = UuidService::getUuidV4();
+                    $valueArr[] = '("' . $guid . '",' . $row['occid'] . ')';
+                }
+            }
+            if($returnVal && count($valueArr) > 0){
+                $sql2 = $insertPrefix . implode(',', $valueArr);
+                $this->conn->query($sql2);
+            }
+            $result->free();
+        }
+        return $returnVal;
+    }
+
     public function createOccurrenceRecord($data): int
     {
         $newID = 0;
@@ -162,7 +191,7 @@ class Occurrences{
                 $newID = $this->conn->insert_id;
                 $guid = UuidService::getUuidV4();
                 $this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt + 1 WHERE collid = ' . $collId);
-                $this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("' . $guid . '",' . $newID . ')');
+                $this->conn->query('INSERT INTO guidoccurrences(guid, occid) VALUES("' . $guid . '",' . $newID . ')');
             }
         }
         return $newID;

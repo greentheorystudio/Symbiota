@@ -36,6 +36,36 @@ class OccurrenceDeterminations{
         $this->conn->close();
 	}
 
+    public function batchCreateOccurrenceDeterminationRecordGUIDs($collid): int
+    {
+        $returnVal = 1;
+        $valueArr = array();
+        $insertPrefix = 'INSERT INTO guidoccurdeterminations(guid, detid) VALUES ';
+        $sql = 'SELECT d.detid FROM omoccurdeterminations AS d LEFT JOIN omoccurrences AS o ON d.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND d.detid NOT IN(SELECT detid FROM guidoccurdeterminations) ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            while($returnVal && $row = $result->fetch_assoc()){
+                if(count($valueArr) === 5000){
+                    $sql2 = $insertPrefix . implode(',', $valueArr);
+                    if(!$this->conn->query($sql2)){
+                        $returnVal = 0;
+                    }
+                    $valueArr = array();
+                }
+                if($row['detid']){
+                    $guid = UuidService::getUuidV4();
+                    $valueArr[] = '("' . $guid . '",' . $row['detid'] . ')';
+                }
+            }
+            if($returnVal && count($valueArr) > 0){
+                $sql2 = $insertPrefix . implode(',', $valueArr);
+                $this->conn->query($sql2);
+            }
+            $result->free();
+        }
+        return $returnVal;
+    }
+
     public function createOccurrenceDeterminationRecord($data): int
     {
         $newID = 0;

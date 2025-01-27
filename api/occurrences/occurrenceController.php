@@ -57,4 +57,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getOccurrenceIdDataFromIdentifierArr' && $collid && array_key_exists('identifierField',$_POST) && array_key_exists('identifiers',$_POST)){
         echo json_encode($occurrences->getOccurrenceIdDataFromIdentifierArr($collid, $_POST['identifierField'], json_decode($_POST['identifiers'], true)));
     }
+    elseif($action === 'batchPopulateOccurrenceGUIDs' && $collid){
+        echo $occurrences->batchCreateOccurrenceRecordGUIDs($collid);
+    }
 }

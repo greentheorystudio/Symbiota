@@ -848,13 +848,14 @@ const occurrenceDataUploadModule = {
             });
         }
 
-        function finalTransferPostProcessGenerateGUIDS() {
-            const text = 'Updating collection statistics';
-            currentProcess.value = 'finalTransferPostProcessUpdateCollStats';
+        function finalTransferPostProcessCleanup() {
+            const text = 'Performing final cleanup';
+            currentProcess.value = 'finalTransferPostProcessCleanup';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            formData.append('action', 'updateCollectionStatistics');
+            formData.append('optimizeTables', '1');
+            formData.append('action', 'clearOccurrenceUploadTables');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
                 body: formData
@@ -864,11 +865,27 @@ const occurrenceDataUploadModule = {
             })
             .then((res) => {
                 if(Number(res) === 1){
+                    processSuccessResponse('Upload complete!');
+                }
+                else{
+                    processErrorResponse('An error occurred while performing final cleanup');
+                }
+                adjustUIEnd();
+            });
+        }
+
+        function finalTransferPostProcessGenerateGUIDS() {
+            const text = 'Generating GUIDs for new records';
+            currentProcess.value = 'finalTransferPostProcessGenerateGUIDS';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            collectionStore.batchPopulateCollectionRecordGUIDs((res) => {
+                if(Number(res) === 1){
                     processSuccessResponse('Complete');
                 }
                 else{
-                    processErrorResponse('An error occurred while updating collection statistics');
+                    processErrorResponse('An error occurred while generating GUIDs');
                 }
+                finalTransferPostProcessCleanup();
             });
         }
 
@@ -876,17 +893,7 @@ const occurrenceDataUploadModule = {
             const text = 'Updating collection statistics';
             currentProcess.value = 'finalTransferPostProcessUpdateCollStats';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            const formData = new FormData();
-            formData.append('collidStr', props.collid.toString());
-            formData.append('action', 'updateCollectionStatistics');
-            fetch(collectionApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
+            collectionStore.updateCollectionStatistics(props.collid, (res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
                 }

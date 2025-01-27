@@ -30,7 +30,8 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         echo json_encode($dataUploadService->uploadDwcaFile($collid, $_FILES['dwcaFile']));
     }
     elseif($action === 'clearOccurrenceUploadTables'){
-        echo $dataUploadService->clearOccurrenceUploadTables($collid);
+        $optimizeTables = array_key_exists('optimizeTables', $_POST) && (int)$_POST['optimizeTables'] === 1;
+        echo $dataUploadService->clearOccurrenceUploadTables($collid, $optimizeTables);
     }
     elseif($action === 'processDwcaFileDataUpload' && array_key_exists('uploadConfig', $_POST)){
         echo $dataUploadService->processDwcaFileDataUpload($collid, json_decode($_POST['uploadConfig'], true));

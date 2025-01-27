@@ -105,6 +105,57 @@ const useCollectionStore = Pinia.defineStore('collection', {
         }
     },
     actions: {
+        batchPopulateCollectionRecordGUIDs(callback = null) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollectionId.toString());
+            formData.append('action', 'batchPopulateOccurrenceGUIDs');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    const formData = new FormData();
+                    formData.append('collid', this.getCollectionId.toString());
+                    formData.append('action', 'batchPopulateOccurrenceDeterminationGUIDs');
+                    fetch(occurrenceDeterminationApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        return response.ok ? response.text() : null;
+                    })
+                    .then((res) => {
+                        if(Number(res) === 1){
+                            const formData = new FormData();
+                            formData.append('collid', this.getCollectionId.toString());
+                            formData.append('action', 'batchPopulateOccurrenceImageGUIDs');
+                            fetch(imageApiUrl, {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then((response) => {
+                                return response.ok ? response.text() : null;
+                            })
+                            .then((res) => {
+                                if(callback){
+                                    callback(Number(res));
+                                }
+                            });
+                        }
+                        else if(callback){
+                            callback(Number(res));
+                        }
+                    });
+                }
+                else if(callback){
+                    callback(Number(res));
+                }
+            });
+        },
         cleanSOLRIndex(collidStr, callback = null) {
             if(collidStr){
                 const formData = new FormData();
@@ -115,11 +166,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     body: formData
                 })
                 .then((response) => {
-                    response.text().then((res) => {
-                        if(callback){
-                            callback(Number(res));
-                        }
-                    });
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(callback){
+                        callback(Number(res));
+                    }
                 });
             }
         },
@@ -145,9 +197,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 body: formData
             })
             .then((response) => {
-                response.json().then((resObj) => {
-                    callback(resObj);
-                });
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                callback(resObj);
             });
         },
         setCollection(collid, callback = null) {
@@ -163,10 +216,11 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     body: formData
                 })
                 .then((response) => {
-                    response.json().then((resData) => {
-                        this.collectionPermissions = resData;
-                        this.setCollectionInfo(callback);
-                    });
+                    return response.ok ? response.json() : null;
+                })
+                .then((resData) => {
+                    this.collectionPermissions = resData;
+                    this.setCollectionInfo(callback);
                 });
             }
         },
@@ -178,9 +232,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 body: formData
             })
             .then((response) => {
-                response.json().then((resData) => {
-                    this.collectionArr = resData;
-                });
+                return response.ok ? response.json() : null;
+            })
+            .then((resData) => {
+                this.collectionArr = resData;
             });
         },
         setCollectionInfo(callback = null) {
@@ -192,46 +247,47 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 body: formData
             })
             .then((response) => {
-                response.json().then((resObj) => {
-                    if(Number(resObj['ispublic']) === 1 || (this.collectionPermissions.includes('CollAdmin') || this.collectionPermissions.includes('CollEditor'))){
-                        this.collectionData = Object.assign({}, resObj);
-                        if(this.collectionData['configuredData']){
-                            if(this.collectionData['configuredData'].hasOwnProperty('eventMofExtension')){
-                                this.eventMofData = Object.assign({}, this.collectionData['configuredData']['eventMofExtension']);
-                                if(Object.keys(this.collectionData['configuredData']['eventMofExtension']['dataFields']).length > 0){
-                                    this.eventMofDataFields = this.collectionData['configuredData']['eventMofExtension']['dataFields'];
-                                    if(this.collectionData['configuredData']['eventMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['eventMofExtension']['dataLayout']){
-                                        this.eventMofDataFieldsLayoutData = this.collectionData['configuredData']['eventMofExtension']['dataLayout'];
-                                    }
-                                    if(this.collectionData['configuredData']['eventMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['eventMofExtension']['dataLabel']){
-                                        this.eventMofDataLabel = this.collectionData['configuredData']['eventMofExtension']['dataLabel'].toString();
-                                    }
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                if(Number(resObj['ispublic']) === 1 || (this.collectionPermissions.includes('CollAdmin') || this.collectionPermissions.includes('CollEditor'))){
+                    this.collectionData = Object.assign({}, resObj);
+                    if(this.collectionData['configuredData']){
+                        if(this.collectionData['configuredData'].hasOwnProperty('eventMofExtension')){
+                            this.eventMofData = Object.assign({}, this.collectionData['configuredData']['eventMofExtension']);
+                            if(Object.keys(this.collectionData['configuredData']['eventMofExtension']['dataFields']).length > 0){
+                                this.eventMofDataFields = this.collectionData['configuredData']['eventMofExtension']['dataFields'];
+                                if(this.collectionData['configuredData']['eventMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['eventMofExtension']['dataLayout']){
+                                    this.eventMofDataFieldsLayoutData = this.collectionData['configuredData']['eventMofExtension']['dataLayout'];
+                                }
+                                if(this.collectionData['configuredData']['eventMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['eventMofExtension']['dataLabel']){
+                                    this.eventMofDataLabel = this.collectionData['configuredData']['eventMofExtension']['dataLabel'].toString();
                                 }
                             }
-                            if(this.collectionData['configuredData'].hasOwnProperty('occurrenceMofExtension')){
-                                this.occurrenceMofData = Object.assign({}, this.collectionData['configuredData']['occurrenceMofExtension']);
-                                if(Object.keys(this.collectionData['configuredData']['occurrenceMofExtension']['dataFields']).length > 0){
-                                    this.occurrenceMofDataFields = this.collectionData['configuredData']['occurrenceMofExtension']['dataFields'];
-                                    if(this.collectionData['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout']){
-                                        this.occurrenceMofDataFieldsLayoutData = this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout'];
-                                    }
-                                    if(this.collectionData['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['occurrenceMofExtension']['dataLabel']){
-                                        this.occurrenceMofDataLabel = this.collectionData['configuredData']['occurrenceMofExtension']['dataLabel'].toString();
-                                    }
+                        }
+                        if(this.collectionData['configuredData'].hasOwnProperty('occurrenceMofExtension')){
+                            this.occurrenceMofData = Object.assign({}, this.collectionData['configuredData']['occurrenceMofExtension']);
+                            if(Object.keys(this.collectionData['configuredData']['occurrenceMofExtension']['dataFields']).length > 0){
+                                this.occurrenceMofDataFields = this.collectionData['configuredData']['occurrenceMofExtension']['dataFields'];
+                                if(this.collectionData['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout']){
+                                    this.occurrenceMofDataFieldsLayoutData = this.collectionData['configuredData']['occurrenceMofExtension']['dataLayout'];
+                                }
+                                if(this.collectionData['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['occurrenceMofExtension']['dataLabel']){
+                                    this.occurrenceMofDataLabel = this.collectionData['configuredData']['occurrenceMofExtension']['dataLabel'].toString();
                                 }
                             }
-                            if(this.collectionData['configuredData'].hasOwnProperty('dataDownloads') && this.collectionData['configuredData']['dataDownloads']){
-                                this.configuredDataDownloads = this.collectionData['configuredData']['dataDownloads'];
-                            }
                         }
-                        if(callback){
-                            callback();
+                        if(this.collectionData['configuredData'].hasOwnProperty('dataDownloads') && this.collectionData['configuredData']['dataDownloads']){
+                            this.configuredDataDownloads = this.collectionData['configuredData']['dataDownloads'];
                         }
                     }
-                    else{
-                        window.location.href = this.getClientRoot + '/index.php';
+                    if(callback){
+                        callback();
                     }
-                });
+                }
+                else{
+                    window.location.href = this.getClientRoot + '/index.php';
+                }
             });
         },
         updateCollectionStatistics(collidStr, callback = null) {
@@ -244,12 +300,13 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     body: formData
                 })
                 .then((response) => {
-                    response.text().then((res) => {
-                        if(callback){
-                            callback(Number(res));
-                            this.setCollectionInfo();
-                        }
-                    });
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(callback){
+                        callback(Number(res));
+                        this.setCollectionInfo();
+                    }
                 });
             }
         }

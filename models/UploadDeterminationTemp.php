@@ -74,11 +74,14 @@ class UploadDeterminationTemp{
         return $recordsCreated;
     }
 
-    public function clearCollectionData($collid): bool
+    public function clearCollectionData($collid, $optimizeTables): bool
     {
         if($collid){
             $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' ';
             if($this->conn->query($sql)){
+                if($optimizeTables){
+                    $this->conn->query('OPTIMIZE TABLE uploaddetermtemp');
+                }
                 return true;
             }
         }
