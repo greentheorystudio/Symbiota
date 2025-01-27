@@ -654,6 +654,32 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferAddNewMof() {
+            const text = 'Transferring new measurement or fact records';
+            currentProcess.value = 'finalTransferAddNewMof';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferAddNewMof');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferPostProcessUpdateCollStats();
+                }
+                else{
+                    processErrorResponse('An error occurred while transferring new measurement or fact records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
         function finalTransferAddNewOccurrences() {
             const text = 'Transferring new occurrence records';
             currentProcess.value = 'finalTransferAddNewOccurrences';
@@ -763,6 +789,114 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferClearPreviousMofRecords() {
+            const text = 'Clearing previous measurement or fact records';
+            currentProcess.value = 'finalTransferClearPreviousMofRecords';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferClearPreviousMofRecords');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMof();
+                }
+                else{
+                    processErrorResponse('An error occurred while clearing previous measurement or fact records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferPopulateMofIdentifiers() {
+            const text = 'Populating identifiers for measurement or fact records in upload';
+            currentProcess.value = 'finalTransferPopulateMofIdentifiers';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('eventMofDataFields', JSON.stringify(Object.keys(eventMofDataFields.value)));
+            formData.append('occurrenceMofDataFields', JSON.stringify(Object.keys(occurrenceMofDataFields.value)));
+            formData.append('action', 'finalTransferPopulateMofIdentifiers');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
+                        finalTransferRemoveExistingMofRecordsFromUpload();
+                    }
+                    else{
+                        finalTransferClearPreviousMofRecords();
+                    }
+                }
+                else{
+                    processErrorResponse('An error occurred while populating identifiers for measurement or fact records in upload');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferPostProcessGenerateGUIDS() {
+            const text = 'Updating collection statistics';
+            currentProcess.value = 'finalTransferPostProcessUpdateCollStats';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'updateCollectionStatistics');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                }
+                else{
+                    processErrorResponse('An error occurred while updating collection statistics');
+                }
+            });
+        }
+
+        function finalTransferPostProcessUpdateCollStats() {
+            const text = 'Updating collection statistics';
+            currentProcess.value = 'finalTransferPostProcessUpdateCollStats';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collidStr', props.collid.toString());
+            formData.append('action', 'updateCollectionStatistics');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                }
+                else{
+                    processErrorResponse('An error occurred while updating collection statistics');
+                }
+                finalTransferPostProcessGenerateGUIDS();
+            });
+        }
+
         function finalTransferProcessDeterminations() {
             if(includeDeterminationData.value && Number(uploadSummaryData.value['ident']) > 0){
                 if(profileConfigurationData.value['existingDeterminationRecords'] === 'merge'){
@@ -788,15 +922,10 @@ const occurrenceDataUploadModule = {
 
         function finalTransferProcessMof() {
             if(includeMofData.value && Number(uploadSummaryData.value['mof']) > 0){
-                if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
-                    finalTransferRemoveExistingDeterminationsFromUpload();
-                }
-                else{
-                    finalTransferClearPreviousDeterminations();
-                }
+                finalTransferPopulateMofIdentifiers();
             }
             else{
-
+                finalTransferPostProcessUpdateCollStats();
             }
         }
 
@@ -847,6 +976,32 @@ const occurrenceDataUploadModule = {
                 }
                 else{
                     processErrorResponse('An error occurred while removing existing media records from upload');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferRemoveExistingMofRecordsFromUpload() {
+            const text = 'Removing existing measurement or fact records from upload';
+            currentProcess.value = 'finalTransferRemoveExistingMofRecordsFromUpload';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferRemoveExistingMofRecordsFromUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMof();
+                }
+                else{
+                    processErrorResponse('An error occurred while removing existing measurement or fact records from upload');
                     adjustUIEnd();
                 }
             });

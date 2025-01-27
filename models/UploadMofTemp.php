@@ -120,14 +120,50 @@ class UploadMofTemp{
         return $retArr;
     }
 
-    public function populateOccidFromUploadOccurrenceData($collid): void
+    public function populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
     {
+        $returnVal = 1;
         if($collid){
-            $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'SET u.occid = o.occid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            $this->conn->query($sql);
+            if(count($eventMofDataFields) > 0){
+                $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk AND u.collid = o.collid '.
+                    'SET u.eventid = o.eventid WHERE u.collid  = ' . (int)$collid . ' '.
+                    'AND o.eventid IS NOT NULL AND u.field IN("' . implode('","', $eventMofDataFields) . '") ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1 && count($occurrenceMofDataFields) > 0){
+                $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                    'SET u.occid = o.occid WHERE u.collid  = ' . (int)$collid . ' '.
+                    'AND o.occid IS NOT NULL AND u.field IN("' . implode('","', $occurrenceMofDataFields) . '") ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
         }
+        return $returnVal;
+    }
+
+    public function removeExistingMofDataFromUpload($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE u.* FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.eventid = m.eventid '.
+                'WHERE u.collid  = ' . $collid . ' AND m.eventid IS NOT NULL AND u.field = m.field ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+
+            if($returnVal === 1){
+                $sql = 'DELETE u.* FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.occid = m.occid '.
+                    'WHERE u.collid  = ' . $collid . ' AND m.occid IS NOT NULL AND u.field = m.field ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
     }
 
     public function removeExistingOccurrenceDataFromUpload($collid): int

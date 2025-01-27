@@ -1,8 +1,10 @@
 <?php
+include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Images.php');
 include_once(__DIR__ . '/../models/Media.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/OccurrenceDeterminations.php');
+include_once(__DIR__ . '/../models/OccurrenceMeasurementsOrFacts.php');
 include_once(__DIR__ . '/../models/UploadDeterminationTemp.php');
 include_once(__DIR__ . '/../models/UploadMediaTemp.php');
 include_once(__DIR__ . '/../models/UploadMofTemp.php');
@@ -116,11 +118,23 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferAddNewMof($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceMeasurementsOrFacts)->createOccurrenceMofRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferAddNewOccurrences($collid): int
     {
         $retVal = 1;
         if($collid){
             $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
+            if($retVal){
+                (new Collections)->updateUploadDate($collid);
+            }
         }
         return $retVal;
     }
@@ -157,6 +171,24 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearPreviousMofRecords($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords('collid', $collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferPopulateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMofTemp)->populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields);
+        }
+        return $retVal;
+    }
+
     public function finalTransferRemoveExistingDeterminationsFromUpload($collid): int
     {
         $retVal = 1;
@@ -171,6 +203,15 @@ class DataUploadService {
         $retVal = 1;
         if($collid){
             $retVal = (new UploadMediaTemp)->removeExistingMediaDataFromUpload($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveExistingMofRecordsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMofTemp)->removeExistingMofDataFromUpload($collid);
         }
         return $retVal;
     }

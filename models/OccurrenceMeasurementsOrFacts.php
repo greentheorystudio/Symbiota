@@ -25,18 +25,43 @@ class OccurrenceMeasurementsOrFacts{
         $this->conn->close();
 	}
 
+    public function createOccurrenceMofRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('mofid', 'enteredby', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    $fieldNameArr[] = $field;
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $fieldNameArr[] = 'dateentered';
+                $sql = 'INSERT INTO ommofextension(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmoftemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND (eventid IS NOT NULL OR occid IS NOT NULL) ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteOccurrenceMofRecords($idType, $id): int
     {
         $retVal = 0;
         $whereStr = '';
         if($idType === 'occid'){
-            $whereStr = 'occid = ' . (int)$id;
+            $whereStr = 'occid = ' . (int)$id . ' OR eventid IN(SELECT eventid FROM omoccurrences WHERE occid = ' . (int)$id . ')';
         }
         elseif($idType === 'occidArr'){
-            $whereStr = 'occid IN(' . implode(',', $id) . ')';
+            $whereStr = 'occid IN(' . implode(',', $id) . ') OR eventid IN(SELECT eventid FROM omoccurrences WHERE occid IN(' . implode(',', $id) . '))';
         }
         elseif($idType === 'collid'){
-            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') OR eventid IN(SELECT eventid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
         }
         if($whereStr){
             $sql = 'DELETE FROM ommofextension WHERE ' . $whereStr . ' ';
