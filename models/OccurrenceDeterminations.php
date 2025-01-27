@@ -107,6 +107,34 @@ class OccurrenceDeterminations{
         return $retVal;
     }
 
+    public function deleteOccurrenceDeterminationRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'd.occid = ' . (int)$id;
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'd.occid IN(' . implode(',', $id) . ')';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'd.occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE g.* FROM guidoccurdeterminations AS g LEFT JOIN omoccurdeterminations AS d ON g.detid = d.detid WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+            if($retVal){
+                $sql = 'DELETE d.* FROM omoccurdeterminations AS d WHERE ' . $whereStr . ' ';
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function getDeterminationFields(): array
     {
         return $this->fields;

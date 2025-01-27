@@ -52,11 +52,11 @@ class FileSystemService {
     {
         if(file_exists($filePath)) {
             unlink($filePath);
-        }
-        if($cleanParentFolder){
-            $parentPath = self::getParentFolderPath($filePath);
-            if(is_dir($parentPath) && !scandir($parentPath)){
-                unlink($parentPath);
+            if($cleanParentFolder){
+                $parentPath = self::getParentFolderPath($filePath);
+                if(is_dir($parentPath) && !scandir($parentPath)){
+                    unlink($parentPath);
+                }
             }
         }
     }

@@ -25,6 +25,28 @@ class OccurrenceMeasurementsOrFacts{
         $this->conn->close();
 	}
 
+    public function deleteOccurrenceMofRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'occid = ' . (int)$id;
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'occid IN(' . implode(',', $id) . ')';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE FROM ommofextension WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function getMofDataByTypeAndId($type, $id): array
     {
         $retArr = array();

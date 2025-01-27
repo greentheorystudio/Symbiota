@@ -124,6 +124,72 @@ class Images{
         return $retVal;
     }
 
+    public function deleteOccurrenceImageFiles($idType, $id): void
+    {
+        $sql = '';
+        if($idType === 'occid'){
+            $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE occid = ' . (int)$id . ' ';
+        }
+        elseif($idType === 'occidArr'){
+            $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE occid IN(' . implode(',', $id) . ') ';
+        }
+        elseif($idType === 'collid'){
+            $sql = 'SELECT i.url, i.thumbnailurl, i.originalurl FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+                'WHERE o.collid = ' . (int)$id . ' ';
+        }
+        //echo '<div>'.$sql.'</div>';
+        if($sql && $result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(strpos($row['url'], '/') === 0){
+                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['url']), true);
+                }
+                if(strpos($row['thumbnailurl'], '/') === 0){
+                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['thumbnailurl']), true);
+                }
+                if(strpos($row['originalurl'], '/') === 0){
+                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['originalurl']), true);
+                }
+                unset($rows[$index]);
+            }
+        }
+    }
+
+    public function deleteOccurrenceImageRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'i.occid = ' . (int)$id;
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'i.occid IN(' . implode(',', $id) . ')';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'i.occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE t.* FROM imagetag AS t LEFT JOIN images AS i ON t.imgid = i.imgid WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+            if($retVal){
+                $sql = 'DELETE g.* FROM guidimages AS g LEFT JOIN images AS i ON g.imgid = i.imgid WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE i.* FROM images AS i WHERE ' . $whereStr . ' ';
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteImageTag($imgid, $tag): int
     {
         $retVal = 1;

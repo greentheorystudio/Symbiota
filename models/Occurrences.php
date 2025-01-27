@@ -3,6 +3,8 @@ include_once(__DIR__ . '/ChecklistVouchers.php');
 include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/Media.php');
 include_once(__DIR__ . '/OccurrenceDeterminations.php');
+include_once(__DIR__ . '/OccurrenceGeneticLinks.php');
+include_once(__DIR__ . '/OccurrenceMeasurementsOrFacts.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -111,7 +113,6 @@ class Occurrences{
         "minimumdepthinmeters" => array("dataType" => "number", "length" => 0),
         "maximumdepthinmeters" => array("dataType" => "number", "length" => 0),
         "verbatimdepth" => array("dataType" => "string", "length" => 50),
-        "previousidentifications" => array("dataType" => "text", "length" => 0),
         "disposition" => array("dataType" => "string", "length" => 250),
         "storagelocation" => array("dataType" => "string", "length" => 100),
         "language" => array("dataType" => "string", "length" => 20),
@@ -167,64 +168,137 @@ class Occurrences{
         return $newID;
     }
 
-    public function deleteOccurrenceRecord($occid): int
+    public function createOccurrenceRecordsFromUploadData($collId): int
     {
-        $retVal = 1;
-        $sql = 'DELETE gd.* FROM omoccurdeterminations AS d LEFT JOIN guidoccurdeterminations AS gd ON d.detid = gd.detid WHERE d.occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        $skipFields = array('occid', 'recordenteredby', 'dateentered', 'datelastmodified');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $fieldNameArr[] = 'dateentered';
+                $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ', "' . date('Y-m-d H:i:s') . '" FROM uploadspectemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND ISNULL(occid) ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
         }
-        $sql = 'DELETE FROM omoccurdeterminations WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        return $retVal;
+    }
+
+    public function deleteOccurrenceRecord($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'occid = ' . (int)$id . ' ';
         }
-        $sql = 'DELETE FROM guidoccurrences WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        elseif($idType === 'occidArr'){
+            $whereStr = 'occid IN(' . implode(',', $id) . ') ';
         }
-        $sql = 'DELETE FROM omcrowdsourcequeue WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        elseif($idType === 'collid'){
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') ';
         }
-        $sql = 'DELETE FROM omexsiccatiocclink WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM omoccuraccessstats WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM omoccurdatasetlink WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM omoccureditlocks WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM omoccuredits WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM omoccurloanslink WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM omoccurpoints WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM omoccurrencesfulltext WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM ommofextension WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        $sql = 'DELETE FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        if($whereStr){
+            $retVal = (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords($idType, $id);
+            if($retVal){
+                $retVal = (new OccurrenceGeneticLinks)->deleteOccurrenceGeneticLinkageRecords($idType, $id);
+            }
+            if($retVal){
+                $retVal = (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
+            }
+            if($retVal){
+                $retVal = (new Images)->deleteOccurrenceImageRecords($idType, $id);
+            }
+            if($retVal){
+                $retVal = (new Media)->deleteOccurrenceMediaRecords($idType, $id);
+            }
+            if($retVal){
+                $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);
+            }
+            if($retVal){
+                $sql = 'DELETE FROM guidoccurrences WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omcrowdsourcequeue WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omexsiccatiocclink WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omoccuraccessstats WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omoccurdatasetlink WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omoccureditlocks WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omoccuredits WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omoccurloanslink WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omoccurpoints WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omoccurrencesfulltext WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                if($idType === 'occid' || $idType === 'occidArr'){
+                    $sql = 'DELETE FROM omoccurrences WHERE ' . $whereStr . ' ';
+                }
+                else{
+                    $sql = 'DELETE FROM omoccurrences WHERE collid = ' . (int)$id . ' ';
+                }
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
         }
         return $retVal;
     }
@@ -298,11 +372,29 @@ class Occurrences{
         return $retArr;
     }
 
+    public function getOccidArrNotIncludedInUpload($collid): array
+    {
+        $returnArr = array();
+        if($collid){
+            $sql = 'SELECT o.occid FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) ';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $returnArr[] = $row['occid'];
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $returnArr;
+    }
+
     public function getOccurrenceCountNotIncludedInUpload($collid): int
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u  ON o.occid = u.occid '.
+            $sql = 'SELECT COUNT(o.occid) AS cnt FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
                 'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) ';
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -531,6 +623,37 @@ class Occurrences{
                         (new Images)->updateTidFromOccurrenceRecord($occId, $editData['tid']);
                         (new Media)->updateTidFromOccurrenceRecord($occId, $editData['tid']);
                     }
+                }
+            }
+        }
+        return $retVal;
+    }
+
+    public function updateOccurrenceRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('occid', 'collid', 'dbpk', 'recordenteredby', 'dateentered', 'datelastmodified');
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
+                        $fieldStr = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldStr = $field;
+                    }
+                    $sqlPartArr[] = 'o.' . $fieldStr . ' = u.' . $fieldStr;
+                }
+            }
+            if(count($sqlPartArr) > 0){
+                $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';
+                $sql = 'UPDATE omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
+                    'SET ' . implode(', ', $sqlPartArr) . ' '.
+                    'WHERE u.collid = ' . (int)$collId . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
                 }
             }
         }

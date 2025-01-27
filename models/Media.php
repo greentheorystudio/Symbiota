@@ -84,6 +84,54 @@ class Media{
         return $retVal;
     }
 
+    public function deleteOccurrenceMediaFiles($idType, $id): void
+    {
+        $sql = '';
+        if($idType === 'occid'){
+            $sql = 'SELECT accessuri FROM media WHERE occid = ' . (int)$id . ' ';
+        }
+        elseif($idType === 'occidArr'){
+            $sql = 'SELECT accessuri FROM media WHERE occid IN(' . implode(',', $id) . ') ';
+        }
+        elseif($idType === 'collid'){
+            $sql = 'SELECT m.accessuri FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'WHERE o.collid = ' . (int)$id . ' ';
+        }
+        //echo '<div>'.$sql.'</div>';
+        if($sql && $result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(strpos($row['accessuri'], '/') === 0){
+                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['accessuri']), true);
+                }
+                unset($rows[$index]);
+            }
+        }
+    }
+
+    public function deleteOccurrenceMediaRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'occid = ' . (int)$id;
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'occid IN(' . implode(',', $id) . ')';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE FROM media WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function getMediaArrByProperty($property, $value, $limitFormat = null): array
     {
         $returnArr = array();

@@ -160,7 +160,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div v-if="Number(uploadSummaryData['exist']) > 0" class="row q-col-gutter-xs">
                                             <div>
-                                                Previous loaded records not matching incoming records: {{ uploadSummaryData['exist'] }}
+                                                Previously loaded records not included in upload: {{ uploadSummaryData['exist'] }}
                                             </div>
                                             <div class="q-ml-xs">
                                                 <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('exist');" icon="fas fa-list" dense>
@@ -179,7 +179,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div v-if="Number(uploadSummaryData['nulldbpk']) > 0" class="row q-col-gutter-xs">
                                             <div>
-                                                Records that will be removed due to missing primary identifier: {{ uploadSummaryData['nulldbpk'] }}
+                                                Records that have a missing primary identifier: {{ uploadSummaryData['nulldbpk'] }}
                                             </div>
                                             <div class="q-ml-xs">
                                                 <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('nulldbpk');" icon="fas fa-list" dense>
@@ -198,7 +198,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div v-if="Number(uploadSummaryData['dupdbpk']) > 0" class="row q-col-gutter-xs">
                                             <div>
-                                                Records that will be removed due to duplicate primary identifier: {{ uploadSummaryData['dupdbpk'] }}
+                                                Records that have a duplicate primary identifier: {{ uploadSummaryData['dupdbpk'] }}
                                             </div>
                                             <div class="q-ml-xs">
                                                 <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('dupdbpk');" icon="fas fa-list" dense>
@@ -232,7 +232,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div class="q-mt-sm row justify-end">
                                             <div>
-                                                <q-btn color="secondary" @click="initializeTransferRecords();" label="Transfer Records to Central Occurrence Table" :disabled="currentTab !== 'summary' || currentProcess" dense />
+                                                <q-btn color="secondary" @click="finalTransfer();" label="Transfer Records to Central Occurrence Table" :disabled="currentTab !== 'summary' || currentProcess" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -592,6 +592,126 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransfer() {
+            adjustUIStart();
+            if(profileConfigurationData.value['existingRecords'] === 'skip'){
+                finalTransferRemoveUnmatchedOccurrences();
+            }
+            else{
+                finalTransferUpdateExistingOccurrences();
+            }
+        }
+
+        function finalTransferAddNewOccurrences() {
+            const text = 'Transferring new occurrence records';
+            currentProcess.value = 'finalTransferAddNewOccurrences';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferAddNewOccurrences');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferSetNewOccurrenceIds();
+                }
+                else{
+                    processErrorResponse('An error occurred while adding new occurrence records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferRemoveUnmatchedOccurrences() {
+            if(profileConfigurationData.value['removeUnmatchedRecords'] && Number(uploadSummaryData.value['exist']) > 0){
+                const text = 'Removing previous records not included in upload';
+                currentProcess.value = 'finalTransferRemoveUnmatchedOccurrences';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                const formData = new FormData();
+                formData.append('collid', props.collid.toString());
+                formData.append('action', 'finalTransferRemoveUnmatchedOccurrences');
+                fetch(dataUploadServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(Number(res) === 1){
+                        processSuccessResponse('Complete');
+                        finalTransferAddNewOccurrences();
+                    }
+                    else{
+                        processErrorResponse('An error occurred while removing unmatched occurrence records');
+                        adjustUIEnd();
+                    }
+                });
+            }
+            else{
+                finalTransferAddNewOccurrences();
+            }
+        }
+
+        function finalTransferSetNewOccurrenceIds() {
+            const text = 'Populating IDs of new occurrence records in upload data';
+            currentProcess.value = 'finalTransferSetNewOccurrenceIds';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('updateAssociatedData', '1');
+            formData.append('action', 'linkExistingOccurrencesToUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    getUploadSummary();
+                }
+                else{
+                    processErrorResponse('An error occurred while adding new occurrence records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferUpdateExistingOccurrences() {
+            const text = 'Updating existing occurrence records';
+            currentProcess.value = 'finalTransferUpdateExistingOccurrences';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferUpdateExistingOccurrences');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferRemoveUnmatchedOccurrences();
+                }
+                else{
+                    processErrorResponse('An error occurred while updating existing occurrence records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
         function getFieldData() {
             const formData = new FormData();
             formData.append('tableArr', JSON.stringify(['uploaddetermtemp', 'uploadmediatemp', 'uploadspectemp']));
@@ -772,20 +892,6 @@ const occurrenceDataUploadModule = {
                     adjustUIEnd();
                 }
             });
-        }
-
-        function initializeTransferRecords() {
-            adjustUIStart();
-            clearData();
-            const text = 'Setting Symbiota field mapping data';
-            currentProcess.value = 'setFieldMappingData';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            if(Number(collectionDataUploadParametersId.value) > 0){
-                getFieldMapping();
-            }
-            else{
-                getFieldData();
-            }
         }
 
         function initializeUpload() {
@@ -1917,8 +2023,8 @@ const occurrenceDataUploadModule = {
             sourceDataFilesMultimedia,
             uploadedFile,
             uploadSummaryData,
+            finalTransfer,
             getPopupViewerRecords,
-            initializeTransferRecords,
             initializeUpload,
             openFieldMapperPopup,
             processDownloadRecords,

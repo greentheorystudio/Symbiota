@@ -1,4 +1,6 @@
 <?php
+include_once(__DIR__ . '/../models/Images.php');
+include_once(__DIR__ . '/../models/Media.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/UploadDeterminationTemp.php');
 include_once(__DIR__ . '/../models/UploadMediaTemp.php');
@@ -92,6 +94,45 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferAddNewOccurrences($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveUnmatchedOccurrences($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $occidArr = (new Occurrences)->getOccidArrNotIncludedInUpload($collid);
+            (new Images)->deleteOccurrenceImageFiles('occidArr', $occidArr);
+            (new Media)->deleteOccurrenceMediaFiles('occidArr', $occidArr);
+            $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferSetNewOccurrenceIds($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferUpdateExistingOccurrences($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
     public function getUploadData($collid, $dataType, $index = null, $limit = null): array
     {
         $retArr = array();
@@ -149,7 +190,7 @@ class DataUploadService {
         return $retArr;
     }
 
-    public function linkExistingOccurrencesToUpload($collid, $matchByCatalogNumber = false, $linkField = null): int
+    public function linkExistingOccurrencesToUpload($collid, $updateAssociatedData, $matchByCatalogNumber, $linkField): int
     {
         $retVal = 0;
         if($collid){
@@ -159,7 +200,7 @@ class DataUploadService {
             else{
                 $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceData($collid);
             }
-            if($retVal){
+            if($retVal && $updateAssociatedData){
                 (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
                 (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
                 (new UploadMofTemp)->populateOccidFromUploadOccurrenceData($collid);

@@ -45,9 +45,10 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         echo $dataUploadService->removeExistingOccurrencesFromUpload($collid);
     }
     elseif($action === 'linkExistingOccurrencesToUpload'){
+        $updateAssociatedData = array_key_exists('updateAssociatedData',$_POST) && (int)$_POST['updateAssociatedData'] === 1;
         $matchByCatalogNumber = array_key_exists('matchByCatalogNumber',$_POST) && (int)$_POST['matchByCatalogNumber'] === 1;
         $linkField = $_POST['linkField'] ?? null;
-        echo $dataUploadService->linkExistingOccurrencesToUpload($collid, $matchByCatalogNumber, $linkField);
+        echo $dataUploadService->linkExistingOccurrencesToUpload($collid, $updateAssociatedData, $matchByCatalogNumber, $linkField);
     }
     elseif($action === 'executeCleaningScriptArr' && array_key_exists('cleaningScriptArr', $_POST)){
         echo $dataUploadService->executeCleaningScriptArr($collid, json_decode($_POST['cleaningScriptArr'], true));
@@ -74,5 +75,17 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'processUploadDataDownload' && array_key_exists('filename', $_POST) && array_key_exists('dataType', $_POST)){
         $dataUploadService->processUploadDataDownload($collid, $_POST['filename'], $_POST['dataType']);
+    }
+    elseif($action === 'finalTransferUpdateExistingOccurrences'){
+        echo $dataUploadService->finalTransferUpdateExistingOccurrences($collid);
+    }
+    elseif($action === 'finalTransferRemoveUnmatchedOccurrences'){
+        echo $dataUploadService->finalTransferRemoveUnmatchedOccurrences($collid);
+    }
+    elseif($action === 'finalTransferAddNewOccurrences'){
+        echo $dataUploadService->finalTransferAddNewOccurrences($collid);
+    }
+    elseif($action === 'finalTransferSetNewOccurrenceIds'){
+        echo $dataUploadService->finalTransferSetNewOccurrenceIds($collid);
     }
 }

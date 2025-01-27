@@ -63,6 +63,28 @@ class OccurrenceGeneticLinks{
         return $retVal;
     }
 
+    public function deleteOccurrenceGeneticLinkageRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'occid = ' . (int)$id;
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'occid IN(' . implode(',', $id) . ')';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE FROM omoccurgenetic WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function getOccurrenceGeneticLinkData($occid): array
     {
         $retArr = array();

@@ -19,7 +19,22 @@ const collectionDataUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <selector-input-element :disabled="disabled" label="Existing Records" :options="existingRecordOptions" :value="configurationData.existingRecords" @update:value="(value) => updateConfigurationData('existingRecords', value)"></selector-input-element>
+                    <selector-input-element :disabled="disabled" label="Existing Occurrence Records" :options="existingRecordOptions" :value="configurationData.existingRecords" @update:value="(value) => updateConfigurationData('existingRecords', value)"></selector-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
+                    <selector-input-element :disabled="disabled" label="Existing Identification Records" :options="existingAssociatedDataOptions" :value="configurationData.existingDeterminationRecords" @update:value="(value) => updateConfigurationData('existingDeterminationRecords', value)"></selector-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
+                    <selector-input-element :disabled="disabled" label="Existing Media Records" :options="existingAssociatedDataOptions" :value="configurationData.existingMediaRecords" @update:value="(value) => updateConfigurationData('existingMediaRecords', value)"></selector-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
+                    <selector-input-element :disabled="disabled" label="Existing Measurement or Fact Records" :options="existingAssociatedDataOptions" :value="configurationData.existingMofRecords" @update:value="(value) => updateConfigurationData('existingMofRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
@@ -30,6 +45,11 @@ const collectionDataUploadParametersFieldModule = {
             <div v-if="configurationData.matchOnCatalogNumber" class="row q-col-gutter-sm">
                 <div class="col-grow">
                     <selector-input-element :disabled="disabled" label="Match Field" :options="catalogNumberMatchOptions" :value="configurationData.catalogNumberMatchField" @update:value="(value) => updateConfigurationData('catalogNumberMatchField', value)"></selector-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
+                    <checkbox-input-element :disabled="disabled" label="Remove Previous Records Not Included in Upload" :value="configurationData.removeUnmatchedRecords" @update:value="(value) => updateConfigurationData('removeUnmatchedRecords', value)"></checkbox-input-element>
                 </div>
             </div>
         </div>
@@ -47,6 +67,10 @@ const collectionDataUploadParametersFieldModule = {
             {value: 'othercatalognumbers', label: 'Other Catalog Numbers'}
         ];
         const configurationData = Vue.computed(() => collectionDataUploadParametersStore.getConfigurations);
+        const existingAssociatedDataOptions = [
+            {value: 'merge', label: 'Import new records while leaving existing records'},
+            {value: 'replace', label: 'Replace existing records with new records'}
+        ];
         const existingRecordOptions = [
             {value: 'update', label: 'Update existing records (Replaces records with incoming records)'},
             {value: 'skip', label: 'Skip existing records (Do not update)'}
@@ -67,6 +91,7 @@ const collectionDataUploadParametersFieldModule = {
         return {
             catalogNumberMatchOptions,
             configurationData,
+            existingAssociatedDataOptions,
             existingRecordOptions,
             profileData,
             uploadTypeOptions,
