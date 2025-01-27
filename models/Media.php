@@ -69,6 +69,36 @@ class Media{
         return $newID;
     }
 
+    public function createMediaRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('mediaid', 'creatoruid', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    if($field === 'language' || $field === 'owner'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $fieldNameArr[] = 'dateentered';
+                $sql = 'INSERT INTO media(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND accessuri IS NOT NULL AND format IS NOT NULL ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteMediaRecord($mediaid): int
     {
         $retVal = 1;

@@ -97,4 +97,16 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'finalTransferAddNewDeterminations'){
         echo $dataUploadService->finalTransferAddNewDeterminations($collid);
     }
+    elseif($action === 'finalTransferCleanMediaRecords'){
+        echo $dataUploadService->finalTransferCleanMediaRecords($collid);
+    }
+    elseif($action === 'finalTransferRemoveExistingMediaRecordsFromUpload'){
+        echo $dataUploadService->finalTransferRemoveExistingMediaRecordsFromUpload($collid);
+    }
+    elseif($action === 'finalTransferClearPreviousMediaRecords'){
+        echo $dataUploadService->finalTransferClearPreviousMediaRecords($collid);
+    }
+    elseif($action === 'finalTransferAddNewMedia'){
+        echo $dataUploadService->finalTransferAddNewMedia($collid);
+    }
 }

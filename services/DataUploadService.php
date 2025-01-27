@@ -104,11 +104,32 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferAddNewMedia($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Images)->createImageRecordsFromUploadData($collid);
+            if($retVal){
+                $retVal = (new Media)->createMediaRecordsFromUploadData($collid);
+            }
+        }
+        return $retVal;
+    }
+
     public function finalTransferAddNewOccurrences($collid): int
     {
         $retVal = 1;
         if($collid){
             $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferCleanMediaRecords($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->cleanMediaRecords($collid);
         }
         return $retVal;
     }
@@ -122,11 +143,34 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearPreviousMediaRecords($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            (new Images)->deleteOccurrenceImageFiles('collid', $collid);
+            (new Media)->deleteOccurrenceMediaFiles('collid', $collid);
+            $retVal = (new Images)->deleteOccurrenceImageRecords('collid', $collid);
+            if($retVal){
+                $retVal = (new Media)->deleteOccurrenceMediaRecords('collid', $collid);
+            }
+        }
+        return $retVal;
+    }
+
     public function finalTransferRemoveExistingDeterminationsFromUpload($collid): int
     {
         $retVal = 1;
         if($collid){
             $retVal = (new UploadDeterminationTemp)->removeExistingDeterminationDataFromUpload($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveExistingMediaRecordsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->removeExistingMediaDataFromUpload($collid);
         }
         return $retVal;
     }

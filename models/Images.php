@@ -93,6 +93,36 @@ class Images{
         return $newID;
     }
 
+    public function createImageRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('imgid', 'username', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    if($field === 'owner'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $fieldNameArr[] = 'dateentered';
+                $sql = 'INSERT INTO images(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND url IS NOT NULL AND format IS NOT NULL ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteImageRecord($imgid): int
     {
         $retVal = 1;

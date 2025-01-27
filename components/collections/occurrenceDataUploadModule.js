@@ -628,6 +628,32 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferAddNewMedia() {
+            const text = 'Transferring new media records';
+            currentProcess.value = 'finalTransferAddNewMedia';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferAddNewMedia');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferProcessMof();
+                }
+                else{
+                    processErrorResponse('An error occurred while transferring new media records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
         function finalTransferAddNewOccurrences() {
             const text = 'Transferring new occurrence records';
             currentProcess.value = 'finalTransferAddNewOccurrences';
@@ -649,6 +675,37 @@ const occurrenceDataUploadModule = {
                 }
                 else{
                     processErrorResponse('An error occurred while transferring new occurrence records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferCleanMediaRecords() {
+            const text = 'Cleaning media records in upload';
+            currentProcess.value = 'finalTransferCleanMediaRecords';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferCleanMediaRecords');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
+                        finalTransferRemoveExistingMediaRecordsFromUpload();
+                    }
+                    else{
+                        finalTransferClearPreviousMediaRecords();
+                    }
+                }
+                else{
+                    processErrorResponse('An error occurred while cleaning media records in upload');
                     adjustUIEnd();
                 }
             });
@@ -680,6 +737,32 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferClearPreviousMediaRecords() {
+            const text = 'Clearing previous media records';
+            currentProcess.value = 'finalTransferClearPreviousMediaRecords';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferClearPreviousMediaRecords');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMedia();
+                }
+                else{
+                    processErrorResponse('An error occurred while clearing previous media records');
+                    adjustUIEnd();
+                }
+            });
+        }
+
         function finalTransferProcessDeterminations() {
             if(includeDeterminationData.value && Number(uploadSummaryData.value['ident']) > 0){
                 if(profileConfigurationData.value['existingDeterminationRecords'] === 'merge'){
@@ -696,12 +779,7 @@ const occurrenceDataUploadModule = {
 
         function finalTransferProcessMedia() {
             if(includeMultimediaData.value && Number(uploadSummaryData.value['media']) > 0){
-                if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
-                    finalTransferRemoveExistingDeterminationsFromUpload();
-                }
-                else{
-                    finalTransferClearPreviousDeterminations();
-                }
+                finalTransferCleanMediaRecords();
             }
             else{
                 finalTransferProcessMof();
@@ -743,6 +821,32 @@ const occurrenceDataUploadModule = {
                 }
                 else{
                     processErrorResponse('An error occurred while removing existing determination records from upload');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferRemoveExistingMediaRecordsFromUpload() {
+            const text = 'Removing existing media records from upload';
+            currentProcess.value = 'finalTransferRemoveExistingMediaRecordsFromUpload';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferRemoveExistingMediaRecordsFromUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMedia();
+                }
+                else{
+                    processErrorResponse('An error occurred while removing existing media records from upload');
                     adjustUIEnd();
                 }
             });
