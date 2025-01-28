@@ -125,7 +125,7 @@ class Images{
 
     public function createImageRecordsFromUploadData($collId): int
     {
-        $skipFields = array('imgid', 'username', 'initialtimestamp');
+        $skipFields = array('imgid', 'photographeruid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
@@ -140,7 +140,6 @@ class Images{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $fieldNameArr[] = 'dateentered';
                 $sql = 'INSERT INTO images(' . implode(',', $fieldNameArr) . ') '.
                     'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
                     'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND url IS NOT NULL AND format IS NOT NULL ';

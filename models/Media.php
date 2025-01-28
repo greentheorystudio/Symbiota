@@ -86,7 +86,6 @@ class Media{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $fieldNameArr[] = 'dateentered';
                 $sql = 'INSERT INTO media(' . implode(',', $fieldNameArr) . ') '.
                     'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
                     'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND accessuri IS NOT NULL AND format IS NOT NULL ';

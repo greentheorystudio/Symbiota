@@ -199,7 +199,7 @@ class Occurrences{
 
     public function createOccurrenceRecordsFromUploadData($collId): int
     {
-        $skipFields = array('occid', 'recordenteredby', 'dateentered', 'datelastmodified');
+        $skipFields = array('occid', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
@@ -214,8 +214,7 @@ class Occurrences{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $fieldNameArr[] = 'dateentered';
-                $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ') '.
+                $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ',dateentered) '.
                     'SELECT ' . implode(',', $fieldNameArr) . ', "' . date('Y-m-d H:i:s') . '" FROM uploadspectemp '.
                     'WHERE collid = ' . (int)$collId . ' AND ISNULL(occid) ';
                 //echo "<div>".$sql."</div>";
@@ -660,7 +659,7 @@ class Occurrences{
 
     public function updateOccurrenceRecordsFromUploadData($collId): int
     {
-        $skipFields = array('occid', 'collid', 'dbpk', 'recordenteredby', 'dateentered', 'datelastmodified');
+        $skipFields = array('occid', 'collid', 'dbpk', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
         $retVal = 0;
         $sqlPartArr = array();
         if($collId){

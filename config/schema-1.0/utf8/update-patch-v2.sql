@@ -317,6 +317,10 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_uploadimg_occid` (`occid`),
     KEY `Index_uploadimg_collid` (`collid`),
     KEY `Index_uploadimg_dbpk` (`dbpk`),
+    KEY `Index_ url` (`url`),
+    KEY `Index_ originalurl` (`originalurl`),
+    KEY `Index_ accessuri` (`accessuri`),
+    KEY `Index_ format` (`format`),
     KEY `Index_uploadimg_ts` (`initialtimestamp`)
 );
 
@@ -378,5 +382,7 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `locationCode` varchar(50) NULL AFTER `locationName`,
     ADD COLUMN `repCount` int(10) UNSIGNED NULL AFTER `duplicateQuantity`,
     ADD INDEX `Index_eventdbpk`(`eventdbpk`);
+
+DROP TRIGGER `uploadspectemp_delete`;
 
 SET FOREIGN_KEY_CHECKS = 1;

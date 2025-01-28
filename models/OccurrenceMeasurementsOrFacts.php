@@ -37,7 +37,6 @@ class OccurrenceMeasurementsOrFacts{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $fieldNameArr[] = 'dateentered';
                 $sql = 'INSERT INTO ommofextension(' . implode(',', $fieldNameArr) . ') '.
                     'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmoftemp '.
                     'WHERE collid = ' . (int)$collId . ' AND (eventid IS NOT NULL OR occid IS NOT NULL) ';

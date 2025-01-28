@@ -35,7 +35,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
     getters: {
         getCleanSqlArr(state) {
             if(state.collectionDataUploadParametersEditData.hasOwnProperty('cleansql') && state.collectionDataUploadParametersEditData.cleansql && state.collectionDataUploadParametersEditData.cleansql.length > 0){
-                return state.collectionDataUploadParametersEditData.configjson;
+                return state.collectionDataUploadParametersEditData.cleansql;
             }
             else{
                 return [];

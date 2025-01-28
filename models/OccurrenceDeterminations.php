@@ -44,7 +44,9 @@ class OccurrenceDeterminations{
         $sql = 'SELECT d.detid FROM omoccurdeterminations AS d LEFT JOIN omoccurrences AS o ON d.occid = o.occid '.
             'WHERE o.collid = ' . (int)$collid . ' AND d.detid NOT IN(SELECT detid FROM guidoccurdeterminations) ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-            while($returnVal && $row = $result->fetch_assoc()){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
                 if(count($valueArr) === 5000){
                     $sql2 = $insertPrefix . implode(',', $valueArr);
                     if(!$this->conn->query($sql2)){
@@ -61,7 +63,6 @@ class OccurrenceDeterminations{
                 $sql2 = $insertPrefix . implode(',', $valueArr);
                 $this->conn->query($sql2);
             }
-            $result->free();
         }
         return $returnVal;
     }
@@ -125,7 +126,7 @@ class OccurrenceDeterminations{
 
     public function createOccurrenceDeterminationRecordsFromUploadData($collId): int
     {
-        $skipFields = array('detid', 'printqueue', 'initialtimestamp');
+        $skipFields = array('detid', 'verbatimscientificname', 'printqueue', 'initialtimestamp');
         $retVal = 0;
         $fieldNameArr = array();
         if($collId){
@@ -135,7 +136,6 @@ class OccurrenceDeterminations{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $fieldNameArr[] = 'dateentered';
                 $sql = 'INSERT INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
                     'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploaddetermtemp '.
                     'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL ';
