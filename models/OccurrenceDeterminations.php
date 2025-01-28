@@ -47,16 +47,18 @@ class OccurrenceDeterminations{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $row){
-                if(count($valueArr) === 5000){
-                    $sql2 = $insertPrefix . implode(',', $valueArr);
-                    if(!$this->conn->query($sql2)){
-                        $returnVal = 0;
+                if($returnVal){
+                    if(count($valueArr) === 5000){
+                        $sql2 = $insertPrefix . implode(',', $valueArr);
+                        if(!$this->conn->query($sql2)){
+                            $returnVal = 0;
+                        }
+                        $valueArr = array();
                     }
-                    $valueArr = array();
-                }
-                if($row['detid']){
-                    $guid = UuidService::getUuidV4();
-                    $valueArr[] = '("' . $guid . '",' . $row['detid'] . ')';
+                    if($row['detid']){
+                        $guid = UuidService::getUuidV4();
+                        $valueArr[] = '("' . $guid . '",' . $row['detid'] . ')';
+                    }
                 }
             }
             if($returnVal && count($valueArr) > 0){

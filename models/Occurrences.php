@@ -140,24 +140,27 @@ class Occurrences{
         $insertPrefix = 'INSERT INTO guidoccurrences(guid, occid) VALUES ';
         $sql = 'SELECT occid FROM omoccurrences WHERE collid = ' . (int)$collid . ' AND occid NOT IN(SELECT occid FROM guidoccurrences) ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-            while($returnVal && $row = $result->fetch_assoc()){
-                if(count($valueArr) === 5000){
-                    $sql2 = $insertPrefix . implode(',', $valueArr);
-                    if(!$this->conn->query($sql2)){
-                        $returnVal = 0;
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                if($returnVal){
+                    if(count($valueArr) === 5000){
+                        $sql2 = $insertPrefix . implode(',', $valueArr);
+                        if(!$this->conn->query($sql2)){
+                            $returnVal = 0;
+                        }
+                        $valueArr = array();
                     }
-                    $valueArr = array();
-                }
-                if($row['occid']){
-                    $guid = UuidService::getUuidV4();
-                    $valueArr[] = '("' . $guid . '",' . $row['occid'] . ')';
+                    if($row['occid']){
+                        $guid = UuidService::getUuidV4();
+                        $valueArr[] = '("' . $guid . '",' . $row['occid'] . ')';
+                    }
                 }
             }
             if($returnVal && count($valueArr) > 0){
                 $sql2 = $insertPrefix . implode(',', $valueArr);
                 $this->conn->query($sql2);
             }
-            $result->free();
         }
         return $returnVal;
     }

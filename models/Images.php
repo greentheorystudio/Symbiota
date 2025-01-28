@@ -67,24 +67,27 @@ class Images{
         $sql = 'SELECT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
             'WHERE o.collid = ' . (int)$collid . ' AND i.imgid NOT IN(SELECT imgid FROM guidimages) ';
         if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-            while($returnVal && $row = $result->fetch_assoc()){
-                if(count($valueArr) === 5000){
-                    $sql2 = $insertPrefix . implode(',', $valueArr);
-                    if(!$this->conn->query($sql2)){
-                        $returnVal = 0;
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                if($returnVal){
+                    if(count($valueArr) === 5000){
+                        $sql2 = $insertPrefix . implode(',', $valueArr);
+                        if(!$this->conn->query($sql2)){
+                            $returnVal = 0;
+                        }
+                        $valueArr = array();
                     }
-                    $valueArr = array();
-                }
-                if($row['imgid']){
-                    $guid = UuidService::getUuidV4();
-                    $valueArr[] = '("' . $guid . '",' . $row['imgid'] . ')';
+                    if($row['imgid']){
+                        $guid = UuidService::getUuidV4();
+                        $valueArr[] = '("' . $guid . '",' . $row['imgid'] . ')';
+                    }
                 }
             }
             if($returnVal && count($valueArr) > 0){
                 $sql2 = $insertPrefix . implode(',', $valueArr);
                 $this->conn->query($sql2);
             }
-            $result->free();
         }
         return $returnVal;
     }

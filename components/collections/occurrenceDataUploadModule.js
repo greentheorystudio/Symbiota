@@ -10,7 +10,7 @@ const occurrenceDataUploadModule = {
             <div class="processor-control-container">
                 <q-card class="processor-control-card">
                     <q-list class="processor-control-accordion">
-                        <q-expansion-item class="overflow-hidden" group="expansiongroup" label="Configuration" header-class="bg-grey-3 text-bold" default-opened>
+                        <q-expansion-item :model-value="currentTab === 'configuration'" class="overflow-hidden" group="expansiongroup" label="Configuration" header-class="bg-grey-3 text-bold" default-opened>
                             <q-card class="accordion-panel">
                                 <q-card-section>
                                     <div class="column q-col-gutter-sm">
@@ -870,6 +870,8 @@ const occurrenceDataUploadModule = {
                 else{
                     processErrorResponse('An error occurred while performing final cleanup');
                 }
+                currentProcess.value = null;
+                currentTab.value = 'configuration';
                 adjustUIEnd();
             });
         }
