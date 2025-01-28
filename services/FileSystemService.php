@@ -50,9 +50,9 @@ class FileSystemService {
         if(file_exists($filePath)) {
             unlink($filePath);
             if($cleanParentFolder){
-                $parentPath = self::getParentFolderPath($filePath);
+                $parentPath = dirname($filePath);
                 if(is_dir($parentPath) && !scandir($parentPath)){
-                    unlink($parentPath);
+                    self::deleteDirectory($parentPath);
                 }
             }
         }
@@ -78,13 +78,6 @@ class FileSystemService {
             $imageUrl = self::getServerPathFromUrlPath($imageUrl);
         }
         return getimagesize($imageUrl);
-    }
-
-    public static function getParentFolderPath($filePath): string
-    {
-        $pathParts = explode('/', $filePath);
-        array_pop($pathParts);
-        return implode('/', $pathParts);
     }
 
     public static function getServerPathFromUrlPath($path): string
