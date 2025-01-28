@@ -25,27 +25,24 @@ class FileSystemService {
         return false;
     }
 
-    public static function deleteDirectory($dir): bool
+    public static function deleteDirectory($directoryPath): bool
 	{
-        if(!file_exists($dir)){
-            $returnVal = true;
-        }
-        elseif(is_dir($dir)) {
-            foreach(scandir($dir) as $item){
-                if($item === '.' || $item === '..'){
-                    continue;
+        if(is_dir($directoryPath)) {
+            $files = scandir($directoryPath);
+            foreach($files as $file) {
+                if($file !== '.' && $file !== '..') {
+                    $filePath = $directoryPath . '/' . $file;
+                    if(is_dir($filePath)) {
+                        self::deleteDirectory($filePath);
+                    }
+                    else {
+                        unlink($filePath);
+                    }
                 }
-                if(!self::deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)){
-                    return false;
-                }
-
             }
-            $returnVal = rmdir($dir);
+            rmdir($directoryPath);
         }
-        else {
-            $returnVal = unlink($dir);
-        }
-        return $returnVal;
+        return (is_dir($directoryPath) === false);
 	}
 
     public static function deleteFile($filePath, $cleanParentFolder = false): void

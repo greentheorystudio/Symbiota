@@ -27,7 +27,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         echo json_encode($dataUploadService->processTransferredDwca($_POST['serverPath'], $_POST['metaFile']));
     }
     elseif($action === 'uploadDwcaFile' && array_key_exists('dwcaFile', $_FILES)){
-        echo json_encode($dataUploadService->uploadDwcaFile($collid, $_FILES['dwcaFile']));
+        echo json_encode($dataUploadService->uploadDwcaFile($_FILES['dwcaFile']));
     }
     elseif($action === 'clearOccurrenceUploadTables'){
         $optimizeTables = array_key_exists('optimizeTables', $_POST) && (int)$_POST['optimizeTables'] === 1;
@@ -123,5 +123,8 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'finalTransferAddNewMof'){
         echo $dataUploadService->finalTransferAddNewMof($collid);
+    }
+    elseif($action === 'removeUploadFiles' && array_key_exists('serverPath', $_POST)){
+        echo $dataUploadService->removeUploadFiles($_POST['serverPath']);
     }
 }

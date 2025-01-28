@@ -610,7 +610,16 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function uploadDwcaFile($collid, $dwcaFile): array
+    public function removeUploadFiles($serverPath): int
+    {
+        $returnVal = 0;
+        if($serverPath && FileSystemService::deleteDirectory($serverPath)) {
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
+    public function uploadDwcaFile($dwcaFile): array
     {
         $returnArr = array();
         $targetPath = FileSystemService::getTempDownloadUploadPath();

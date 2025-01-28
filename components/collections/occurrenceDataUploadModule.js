@@ -534,6 +534,8 @@ const occurrenceDataUploadModule = {
             includeDeterminationData.value = true;
             includeMultimediaData.value = true;
             includeMofData.value = true;
+            localDwcaServerPath.value = null;
+            localDwcaFileArr.value.length = 0;
             determinationDataIncluded.value = false;
             multimediaDataIncluded.value = false;
             mofDataIncluded.value = false;
@@ -864,15 +866,41 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Upload complete!');
+                if(localDwcaServerPath.value){
+                    const formData = new FormData();
+                    formData.append('collid', props.collid.toString());
+                    formData.append('serverPath', localDwcaServerPath.value);
+                    formData.append('action', 'removeUploadFiles');
+                    fetch(dataUploadServiceApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        return response.ok ? response.text() : null;
+                    })
+                    .then((res) => {
+                        if(Number(res) === 1){
+                            processSuccessResponse('Upload complete!');
+                        }
+                        else{
+                            processErrorResponse('An error occurred while performing final cleanup');
+                        }
+                        currentProcess.value = null;
+                        currentTab.value = 'configuration';
+                        adjustUIEnd();
+                    });
                 }
                 else{
-                    processErrorResponse('An error occurred while performing final cleanup');
+                    if(Number(res) === 1){
+                        processSuccessResponse('Upload complete!');
+                    }
+                    else{
+                        processErrorResponse('An error occurred while performing final cleanup');
+                    }
+                    currentProcess.value = null;
+                    currentTab.value = 'configuration';
+                    adjustUIEnd();
                 }
-                currentProcess.value = null;
-                currentTab.value = 'configuration';
-                adjustUIEnd();
             });
         }
 
