@@ -27,7 +27,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         eventMofDataFields: {},
         occurrenceMofDataFields: {},
         uploadTypeOptions: [
-            {value: 6, label: 'File Upload (DwC-A, csv, geoJSON)'},
+            {value: 6, label: 'File Upload (DwC-A (zip), csv, txt, geojson, json)'},
             {value: 8, label: 'IPT/DwC-A Provider'},
             {value: 10, label: 'Symbiota Portal'}
         ]

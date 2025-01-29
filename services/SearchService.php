@@ -1015,7 +1015,6 @@ class SearchService {
                 $dwcaHandler->setSchemaType($options['schema']);
                 $dwcaHandler->setRedactLocalities(0);
                 $dwcaHandler->setCustomWhereSql($sqlWhere);
-                $dwcaHandler->setIsPublicDownload();
                 if($options['type'] === 'zip'){
                     $dwcaHandler->setIncludeDets($options['identifications']);
                     $dwcaHandler->setIncludeImgs($options['images']);

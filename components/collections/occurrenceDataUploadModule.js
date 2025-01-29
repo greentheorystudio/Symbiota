@@ -342,7 +342,7 @@ const occurrenceDataUploadModule = {
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
         const collectionStore = useCollectionStore();
         
-        const acceptedFileTypes = ['csv','geojson','txt','zip'];
+        const acceptedFileTypes = ['csv','json','geojson','txt','zip'];
         const collectionDataUploadParametersArr = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersArr);
         const collectionDataUploadParametersId = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersID);
         const currentProcess = Vue.ref(null);
@@ -2130,7 +2130,7 @@ const occurrenceDataUploadModule = {
                     showNotification('negative', (uploadedFile.value.name + ' cannot be uploaded because it is ' + fileSizeMb.toString() + 'MB, which exceeds the server limit of ' + maxUploadFilesize.toString() + 'MB for uploads.'));
                 }
             }
-            else if(uploadedFile.value.name.endsWith('.csv')){
+            else if(uploadedFile.value.name.endsWith('.csv') || uploadedFile.value.name.endsWith('.txt')){
                 const text = 'Processing source data';
                 currentProcess.value = 'processSourceData';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
