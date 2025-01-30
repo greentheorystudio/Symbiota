@@ -36,6 +36,39 @@ class OccurrenceDeterminations{
         $this->conn->close();
 	}
 
+    public function batchCreateOccurrenceDeterminationRecordGUIDs($collid): int
+    {
+        $returnVal = 1;
+        $valueArr = array();
+        $insertPrefix = 'INSERT INTO guidoccurdeterminations(guid, detid) VALUES ';
+        $sql = 'SELECT d.detid FROM omoccurdeterminations AS d LEFT JOIN omoccurrences AS o ON d.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND d.detid NOT IN(SELECT detid FROM guidoccurdeterminations) ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                if($returnVal){
+                    if(count($valueArr) === 5000){
+                        $sql2 = $insertPrefix . implode(',', $valueArr);
+                        if(!$this->conn->query($sql2)){
+                            $returnVal = 0;
+                        }
+                        $valueArr = array();
+                    }
+                    if($row['detid']){
+                        $guid = UuidService::getUuidV4();
+                        $valueArr[] = '("' . $guid . '",' . $row['detid'] . ')';
+                    }
+                }
+            }
+            if($returnVal && count($valueArr) > 0){
+                $sql2 = $insertPrefix . implode(',', $valueArr);
+                $this->conn->query($sql2);
+            }
+        }
+        return $returnVal;
+    }
+
     public function createOccurrenceDeterminationRecord($data): int
     {
         $newID = 0;
@@ -93,6 +126,30 @@ class OccurrenceDeterminations{
         }
     }
 
+    public function createOccurrenceDeterminationRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('detid', 'verbatimscientificname', 'printqueue', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    $fieldNameArr[] = $field;
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $sql = 'INSERT INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploaddetermtemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteDeterminationRecord($detId): int
     {
         $retVal = 1;
@@ -103,6 +160,34 @@ class OccurrenceDeterminations{
         $sql = 'DELETE FROM omoccurdeterminations WHERE detid = ' . (int)$detId . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
+        }
+        return $retVal;
+    }
+
+    public function deleteOccurrenceDeterminationRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'd.occid = ' . (int)$id;
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'd.occid IN(' . implode(',', $id) . ')';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'd.occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE g.* FROM guidoccurdeterminations AS g LEFT JOIN omoccurdeterminations AS d ON g.detid = d.detid WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+            if($retVal){
+                $sql = 'DELETE d.* FROM omoccurdeterminations AS d WHERE ' . $whereStr . ' ';
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
         }
         return $retVal;
     }

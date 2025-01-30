@@ -1,6 +1,11 @@
 <?php
 class FileSystemService {
 
+    public static function closeFileHandler($fileHandler): void
+    {
+        fclose($fileHandler);
+    }
+
     public static function copyFileToTarget($source, $targetPath, $targetFilename): bool
     {
         if(copy($source, $targetPath . '/' . $targetFilename)){
@@ -20,38 +25,35 @@ class FileSystemService {
         return false;
     }
 
-    public static function deleteDirectory($dir): bool
+    public static function deleteDirectory($directoryPath): bool
 	{
-        if(!file_exists($dir)){
-            $returnVal = true;
-        }
-        elseif(is_dir($dir)) {
-            foreach(scandir($dir) as $item){
-                if($item === '.' || $item === '..'){
-                    continue;
+        if(is_dir($directoryPath)) {
+            $files = scandir($directoryPath);
+            foreach($files as $file) {
+                if($file !== '.' && $file !== '..') {
+                    $filePath = $directoryPath . '/' . $file;
+                    if(is_dir($filePath)) {
+                        self::deleteDirectory($filePath);
+                    }
+                    else {
+                        unlink($filePath);
+                    }
                 }
-                if(!self::deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)){
-                    return false;
-                }
-
             }
-            $returnVal = rmdir($dir);
+            rmdir($directoryPath);
         }
-        else {
-            $returnVal = unlink($dir);
-        }
-        return $returnVal;
+        return (is_dir($directoryPath) === false);
 	}
 
     public static function deleteFile($filePath, $cleanParentFolder = false): void
     {
         if(file_exists($filePath)) {
             unlink($filePath);
-        }
-        if($cleanParentFolder){
-            $parentPath = self::getParentFolderPath($filePath);
-            if(is_dir($parentPath) && !scandir($parentPath)){
-                unlink($parentPath);
+            if($cleanParentFolder){
+                $parentPath = dirname($filePath);
+                if(is_dir($parentPath) && !scandir($parentPath)){
+                    self::deleteDirectory($parentPath);
+                }
             }
         }
     }
@@ -76,13 +78,6 @@ class FileSystemService {
             $imageUrl = self::getServerPathFromUrlPath($imageUrl);
         }
         return getimagesize($imageUrl);
-    }
-
-    public static function getParentFolderPath($filePath): string
-    {
-        $pathParts = explode('/', $filePath);
-        array_pop($pathParts);
-        return implode('/', $pathParts);
     }
 
     public static function getServerPathFromUrlPath($path): string
@@ -126,13 +121,13 @@ class FileSystemService {
         return $fullUploadPath;
     }
 
-    public static function getTempDwcaUploadPath($collid): string
+    public static function getTempDownloadUploadPath(): string
     {
         $fullUploadPath = $GLOBALS['TEMP_DIR_ROOT'] . '/downloads';
         if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
             $fullUploadPath = '';
         }
-        $fullUploadPath .= '/' . $collid . '_' . time();
+        $fullUploadPath .= '/' . time();
         if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
             $fullUploadPath = '';
         }
@@ -150,6 +145,11 @@ class FileSystemService {
             return true;
         }
         return false;
+    }
+
+    public static function openFileHandler($filePath)
+    {
+        return fopen($filePath, 'wb');
     }
 
     public static function processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename): array
@@ -208,9 +208,10 @@ class FileSystemService {
         if(file_exists($dwcaPath)){
             $fp = fopen($targetPath, 'wb+');
             $ch = curl_init(str_replace(' ','%20', $dwcaPath));
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             if(curl_exec($ch)) {
                 $returnVal = true;
             }
@@ -248,11 +249,12 @@ class FileSystemService {
             );
             $fp = fopen($targetPath, 'wb+');
             $ch = curl_init(str_replace(' ','%20', $dwcaPath));
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             curl_setopt($ch, CURLOPT_FILE, $fp);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
             if(curl_exec($ch)) {
                 $returnVal = true;
             }
@@ -269,5 +271,10 @@ class FileSystemService {
         if(@$zip->extractTo($targetPath . '/')){
             $zip->close();
         }
+    }
+
+    public static function writeRowToCsv($fileHandler, $row): void
+    {
+        fputcsv($fileHandler, $row);
     }
 }

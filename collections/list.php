@@ -527,26 +527,28 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function processTaxaData(data) {
                         data.forEach((taxon) => {
-                            const familyName = (taxon['family'] && taxon['family'] !== '') ? taxon['family'] : '[Family Unknown]';
-                            let familyData = taxaDataArr.find((family) => family.name === familyName);
-                            if(!familyData){
-                                taxaDataArr.push({
-                                    name: familyName,
-                                    taxa: []
-                                });
-                                familyData = taxaDataArr.find((family) => family.name === familyName);
-                            }
-                            const taxonData = familyData['taxa'].find((taxonObj) => taxonObj.sciname.toLowerCase() === taxon['sciname'].toLowerCase());
-                            if(!taxonData){
-                                familyData['taxa'].push({
-                                    tid: taxon['id'],
-                                    sciname: taxon['sciname'],
-                                    author: taxon['scientificNameAuthorship']
-                                });
-                            }
-                            else if(Number(taxonData['tid']) === 0 && Number(taxon['id']) > 0){
-                                taxonData['tid'] = taxon['id'];
-                                taxonData['author'] = taxon['scientificNameAuthorship'];
+                            if(taxon['sciname']){
+                                const familyName = (taxon['family'] && taxon['family'] !== '') ? taxon['family'] : '[Family Unknown]';
+                                let familyData = taxaDataArr.find((family) => family.name === familyName);
+                                if(!familyData){
+                                    taxaDataArr.push({
+                                        name: familyName,
+                                        taxa: []
+                                    });
+                                    familyData = taxaDataArr.find((family) => family.name === familyName);
+                                }
+                                const taxonData = familyData['taxa'].find((taxonObj) => taxonObj.sciname.toLowerCase() === taxon['sciname'].toLowerCase());
+                                if(!taxonData){
+                                    familyData['taxa'].push({
+                                        tid: taxon['id'],
+                                        sciname: taxon['sciname'],
+                                        author: taxon['scientificNameAuthorship']
+                                    });
+                                }
+                                else if(Number(taxonData['tid']) === 0 && Number(taxon['id']) > 0){
+                                    taxonData['tid'] = taxon['id'];
+                                    taxonData['author'] = taxon['scientificNameAuthorship'];
+                                }
                             }
                         });
                         taxaDataArr.sort((a, b) => {

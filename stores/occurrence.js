@@ -399,25 +399,25 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    response.text().then((res) => {
-                        callback(Number(res));
-                        if(res && Number(res) > 0){
-                            if(this.occidArr[(this.occidArr.length - 1)] === 0){
-                                this.occidArr.splice((this.occidArr.length - 1), 1);
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                    if(res && Number(res) > 0){
+                        if(this.occidArr[(this.occidArr.length - 1)] === 0){
+                            this.occidArr.splice((this.occidArr.length - 1), 1);
+                        }
+                        this.occidArr.push(Number(res));
+                        if(this.occurrenceEntryFormat !== 'observation'){
+                            if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
+                                this.setCurrentOccurrenceRecord(Number(res));
                             }
-                            this.occidArr.push(Number(res));
-                            if(this.occurrenceEntryFormat !== 'observation'){
-                                if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
-                                    this.setCurrentOccurrenceRecord(Number(res));
-                                }
-                                else{
-                                    this.setCurrentOccurrenceRecord(0);
-                                }
+                            else{
+                                this.setCurrentOccurrenceRecord(0);
                             }
                         }
-                    });
+                    }
                 });
+            });
         },
         deleteOccurrenceDeterminationRecord(callback = null) {
             this.determinationStore.deleteDeterminationRecord(this.getCollId, (res) => {
@@ -448,23 +448,23 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    response.text().then((val) => {
-                        if(this.occidArr.includes(Number(occid))){
-                            const index = this.occidArr.indexOf(Number(occid));
-                            this.occidArr.splice(index, 1);
+            .then((response) => {
+                response.text().then((val) => {
+                    if(this.occidArr.includes(Number(occid))){
+                        const index = this.occidArr.indexOf(Number(occid));
+                        this.occidArr.splice(index, 1);
+                    }
+                    if(this.occId === Number(occid)){
+                        if(this.occidArr.length > 0){
+                            this.setCurrentOccurrenceRecord(this.occidArr[(this.occidArr.length - 1)]);
                         }
-                        if(this.occId === Number(occid)){
-                            if(this.occidArr.length > 0){
-                                this.setCurrentOccurrenceRecord(this.occidArr[(this.occidArr.length - 1)]);
-                            }
-                            else{
-                                this.setCurrentOccurrenceRecord(0);
-                            }
+                        else{
+                            this.setCurrentOccurrenceRecord(0);
                         }
-                        callback(Number(val));
-                    });
+                    }
+                    callback(Number(val));
                 });
+            });
         },
         evaluateOccurrenceForDeletion(occid, callback) {
             const formData = new FormData();
@@ -475,11 +475,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    response.json().then((data) => {
-                        callback(data);
-                    });
+            .then((response) => {
+                response.json().then((data) => {
+                    callback(data);
                 });
+            });
         },
         getCoordinateVerificationData(callback) {
             if(this.occurrenceEditData['decimallatitude'] && this.occurrenceEditData['decimallongitude']){
@@ -549,12 +549,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((data) => {
-                    callback(data);
-                });
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
         },
         goToFirstRecord() {
             this.setCurrentOccurrenceRecord(this.occidArr[0]);
@@ -739,18 +739,18 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    if(dataType === 'event'){
-                        this.collectingEventStore.setEventMofData(this.getEventMofDataFields);
-                    }
-                    else{
-                        this.setOccurrenceMofData();
-                    }
-                    callback(Number(res));
-                });
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(dataType === 'event'){
+                    this.collectingEventStore.setEventMofData(this.getEventMofDataFields);
+                }
+                else{
+                    this.setOccurrenceMofData();
+                }
+                callback(Number(res));
+            });
         },
         revertCollectingEventEditData() {
             this.collectingEventStore.revertCollectingEventEditData();

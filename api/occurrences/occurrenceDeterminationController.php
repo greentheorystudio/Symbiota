@@ -38,4 +38,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'makeDeterminationCurrent' && $detid && $isEditor){
         echo $occurrenceDeterminations->makeDeterminationCurrent($detid);
     }
+    elseif($action === 'batchPopulateOccurrenceDeterminationGUIDs' && $collid){
+        echo $occurrenceDeterminations->batchCreateOccurrenceDeterminationRecordGUIDs($collid);
+    }
 }

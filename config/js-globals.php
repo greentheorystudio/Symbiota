@@ -59,7 +59,6 @@
     const collectionDataUploadParametersApiUrl = CLIENT_ROOT + '/api/collections/collectionDataUploadParametersController.php';
     const collectionMediaUploadParametersApiUrl = CLIENT_ROOT + '/api/collections/collectionMediaUploadParametersController.php';
     const configurationsApiUrl = CLIENT_ROOT + '/api/configurations/configurationsController.php';
-    const dataDownloadServiceApiUrl = CLIENT_ROOT + '/api/services/dataDownloadServiceController.php';
     const dataUploadServiceApiUrl = CLIENT_ROOT + '/api/services/dataUploadServiceController.php';
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';

@@ -144,7 +144,7 @@ class Checklists{
             if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    if($retArr[$name] && ($name === 'defaultsettings' || $name === 'searchterms')){
+                    if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms')){
                         $retArr[$name] = json_decode($row[$name], true);
                     }
                     else{

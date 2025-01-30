@@ -28,7 +28,6 @@ else{
 	}
 }
 
-$dwcaHandler->setVerboseMode(0);
 $dwcaHandler->setSchemaType($schema);
 $dwcaHandler->setRedactLocalities($redactLocalities);
 if($rareReaderArr) {

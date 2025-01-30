@@ -44,7 +44,7 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($occurrences->evaluateOccurrenceForDeletion($occid));
     }
     elseif($action === 'deleteOccurrenceRecord' && $occid && $isEditor){
-        echo $occurrences->deleteOccurrenceRecord($occid);
+        echo $occurrences->deleteOccurrenceRecord('occid', $occid);
     }
     elseif($action === 'getOccurrencesByCatalogNumber' && array_key_exists('catalognumber', $_POST)){
         $collId = array_key_exists('collid',$_POST) ? (int)$_POST['collid'] : null;
@@ -56,5 +56,8 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getOccurrenceIdDataFromIdentifierArr' && $collid && array_key_exists('identifierField',$_POST) && array_key_exists('identifiers',$_POST)){
         echo json_encode($occurrences->getOccurrenceIdDataFromIdentifierArr($collid, $_POST['identifierField'], json_decode($_POST['identifiers'], true)));
+    }
+    elseif($action === 'batchPopulateOccurrenceGUIDs' && $collid){
+        echo $occurrences->batchCreateOccurrenceRecordGUIDs($collid);
     }
 }
