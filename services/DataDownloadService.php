@@ -57,7 +57,7 @@ class DataDownloadService {
                 $this->setDownloadHeaders('csv', 'text/csv; charset=UTF-8', basename($fullPath), $fullPath);
                 flush();
                 readfile($fullPath);
-                unlink($fullPath);
+                FileSystemService::deleteFile($fullPath, true);
             }
         }
     }

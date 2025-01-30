@@ -4,9 +4,11 @@ include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../models/TaxonVernaculars.php');
+include_once(__DIR__ . '/DarwinCoreArchiverService.php');
 include_once(__DIR__ . '/DataDownloadService.php');
 include_once(__DIR__ . '/DataUtilitiesService.php');
 include_once(__DIR__ . '/DbService.php');
+include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/SanitizerService.php');
 include_once(__DIR__ . '/../classes/DwcArchiverCore.php');
 
@@ -1009,24 +1011,29 @@ class SearchService {
         if($searchTermsArr && $options){
             $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
             if($contentType){
-                $dwcaHandler = new DwcArchiverCore();
-                $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
-                $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
-                $dwcaHandler->setSchemaType($options['schema']);
-                $dwcaHandler->setRedactLocalities(0);
-                $dwcaHandler->setCustomWhereSql($sqlWhere);
+                $targetPath = FileSystemService::getTempDownloadUploadPath();
+                //$dwcaHandler = new DwcArchiverCore();
+                //$dwcaHandler->setSchemaType($options['schema']);
+                //$dwcaHandler->setRedactLocalities(0);
+                //$dwcaHandler->setCustomWhereSql($sqlWhere);
                 if($options['type'] === 'zip'){
-                    $dwcaHandler->setIncludeDets($options['identifications']);
-                    $dwcaHandler->setIncludeImgs($options['images']);
-                    $outputFile = $dwcaHandler->createDwcArchive('webreq');
+                    //$dwcaHandler->setIncludeDets($options['identifications']);
+                    //$dwcaHandler->setIncludeImgs($options['images']);
+                    //$outputFile = $dwcaHandler->createDwcArchive('webreq');
+
+                    $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, $searchTermsArr, $options);
                 }
                 else{
-                    $outputFile = $dwcaHandler->getOccurrenceFile();
+                    //$outputFile = $dwcaHandler->getOccurrenceFile();
+
+                    $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
+                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
+                    $outputFile = (new DarwinCoreArchiverService)->createOccurrenceFile($targetPath, $options, false);
                 }
                 (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, basename($outputFile), $outputFile);
                 flush();
                 readfile($outputFile);
-                unlink($outputFile);
+                FileSystemService::deleteFile($outputFile, true);
             }
         }
     }
@@ -1038,6 +1045,7 @@ class SearchService {
             $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
             if($contentType){
                 $fileData = $this->processSearch($searchTermsArr, $options);
+                $fileName = $options['filename'] . '.' . $options['type'];
                 if($options['type'] === 'geojson'){
                     $fileContent = json_encode($fileData);
                 }
@@ -1047,7 +1055,7 @@ class SearchService {
                 elseif($options['type'] === 'kml'){
                     $fileContent = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileData);
                 }
-                (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, $options['filename'], $fileContent);
+                (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, $fileName, $fileContent);
             }
         }
         return $fileContent;

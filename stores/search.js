@@ -301,7 +301,7 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
         },
         processDownloadRequest(options, callback){
-            options.filename = 'occurrence_data_' + (options.type === 'zip' ? 'DwCA_' : '') + this.getDateTimeString + '.' + options.type;
+            options.filename = 'occurrence_data_' + (options.type === 'zip' ? 'DwCA_' : '') + this.getDateTimeString;
             const formData = new FormData();
             if(options.selections){
                 formData.append('starr', JSON.stringify({
