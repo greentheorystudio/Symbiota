@@ -336,7 +336,7 @@ const occurrenceDataUploadModule = {
         'upload-data-table-viewer-popup': uploadDataTableViewerPopup
     },
     setup(props) {
-        const { hideWorking, parseCsvFile, processCsvDownload, showNotification, showWorking } = useCore();
+        const { csvToArray, hideWorking, parseFile, showNotification, showWorking } = useCore();
 
         const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
@@ -2136,7 +2136,8 @@ const occurrenceDataUploadModule = {
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 flatFileMode.value = true;
                 setSymbiotaFlatFileFieldOptions();
-                parseCsvFile(uploadedFile.value, (csvData) => {
+                parseFile(uploadedFile.value, (fileContents) => {
+                    let csvData = csvToArray(fileContents);
                     processFlatFileCsvData(csvData);
                 });
             }
@@ -2146,12 +2147,10 @@ const occurrenceDataUploadModule = {
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 flatFileMode.value = true;
                 setSymbiotaFlatFileFieldOptions();
-                const fileReader = new FileReader();
-                fileReader.onload = () => {
-                    const uploadData = JSON.parse(fileReader.result);
+                parseFile(uploadedFile.value, (fileContents) => {
+                    const uploadData = JSON.parse(fileContents);
                     processFlatFileGeoJson(uploadData);
-                };
-                fileReader.readAsText(uploadedFile.value);
+                });
             }
         }
 

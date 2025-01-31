@@ -237,12 +237,29 @@ function useCore() {
         window.open(url, '_blank');
     }
 
-    function parseCsvFile(file, callback) {
-        const fileReader = new FileReader();
-        fileReader.onload = () => {
-            callback(csvToArray(fileReader.result));
+    function parseFile(file, callback) {
+        const CHUNK_SIZE = 512;
+        const reader = new FileReader();
+        let offset = 0;
+        let resultStr = '';
+
+        reader.onload = (event) => {
+            if(event.target.result.length > 0) {
+                resultStr += event.target.result;
+                offset += CHUNK_SIZE;
+                readNext();
+            }
+            else {
+                callback(resultStr);
+            }
         };
-        fileReader.readAsText(file);
+
+        function readNext() {
+            let slice = file.slice(offset, offset + CHUNK_SIZE);
+            reader.readAsText(slice);
+        }
+
+        readNext();
     }
 
     function parseDate(dateStr){
@@ -430,6 +447,7 @@ function useCore() {
 
     return {
         checkObjectNotEmpty,
+        csvToArray,
         convertMysqlWKT,
         convertUtmToDecimalDegrees,
         generateRandHexColor,
@@ -441,7 +459,7 @@ function useCore() {
         hexToRgb,
         hideWorking,
         openTutorialWindow,
-        parseCsvFile,
+        parseFile,
         parseDate,
         processCsvDownload,
         showNotification,
