@@ -129,7 +129,7 @@ function useCore() {
         const processRows = async (batch) => {
             const promises = batch.map((row) => {
                 if(row){
-                    const values = row.split(/("([^"]*)"|([^,]+))/g);
+                    const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     return headers.reduce((object, header, index) => {
                         let fieldName = header.trim();
                         if(fieldName.indexOf('"') > -1){
