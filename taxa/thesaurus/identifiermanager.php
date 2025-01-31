@@ -315,19 +315,20 @@ if(!$GLOBALS['SYMB_UID']) {
                                 adjustUIStart();
                                 currentProcess.value = 'initializeUSDAImport';
                                 parseFile(selectedUsdaFile.value, (fileContents) => {
-                                    let csvData = csvToArray(fileContents);
-                                    if(csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
-                                        processingArr.value = csvData;
-                                        if(selectedKingdomName.value === 'Fungi'){
-                                            processUsdaFungiSymbolUpload();
+                                    csvToArray(fileContents).then((csvData) => {
+                                        if(csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
+                                            processingArr.value = csvData;
+                                            if(selectedKingdomName.value === 'Fungi'){
+                                                processUsdaFungiSymbolUpload();
+                                            }
+                                            else{
+                                                processUsdaPlantaeSymbolUpload();
+                                            }
                                         }
                                         else{
-                                            processUsdaPlantaeSymbolUpload();
+                                            showNotification('negative', 'There is an issue with processing the USDA data.');
                                         }
-                                    }
-                                    else{
-                                        showNotification('negative', 'There is an issue with processing the USDA data.');
-                                    }
+                                    });
                                 });
                             }
                             else{

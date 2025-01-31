@@ -2137,8 +2137,9 @@ const occurrenceDataUploadModule = {
                 flatFileMode.value = true;
                 setSymbiotaFlatFileFieldOptions();
                 parseFile(uploadedFile.value, (fileContents) => {
-                    let csvData = csvToArray(fileContents);
-                    processFlatFileCsvData(csvData);
+                    csvToArray(fileContents).then((csvData) => {
+                        processFlatFileCsvData(csvData);
+                    });
                 });
             }
             else{

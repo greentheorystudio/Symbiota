@@ -647,8 +647,10 @@ const mediaFileUploadInputElement = {
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){
                     parseFile(file, (fileContents) => {
-                        csvFileData = csvToArray(fileContents);
-                        processCsvFileData();
+                        csvToArray(fileContents).then((csvData) => {
+                            csvFileData = csvData;
+                            processCsvFileData();
+                        });
                     });
                 }
                 else if(!existingData){

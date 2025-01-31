@@ -111,8 +111,10 @@ function useCore() {
         return (Number(latValue) > 0 && Number(lngValue) > 0) ? {lat: latValue, long: lngValue} : null;
     }
 
-    function csvToArray(str) {
+    async function csvToArray(str) {
+        const PROCESS_SIZE = 1000;
         let lineTermination;
+        let resultArr = [];
         if(str.endsWith('\r\n')){
             lineTermination = '\r\n';
         }
@@ -124,23 +126,32 @@ function useCore() {
             str = str.substring(0, str.length - 2);
         }
         const rows = str.slice(str.indexOf(lineTermination) + 1).split(lineTermination);
-        return rows.map((row) => {
-            if(row){
-                const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                return headers.reduce((object, header, index) => {
-                    let fieldName = header.trim();
-                    if(fieldName.indexOf('"') > -1){
-                        fieldName = fieldName.replaceAll('"', '');
-                    }
-                    let fieldValue = values[index] ? values[index].replace('\r', '') : '';
-                    if(fieldValue.indexOf('"') > -1){
-                        fieldValue = fieldValue.replaceAll('"','');
-                    }
-                    object[fieldName] = fieldValue;
-                    return object;
-                }, {});
-            }
-        });
+        const processRows = async (batch) => {
+            const promises = batch.map((row) => {
+                if(row){
+                    const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    return headers.reduce((object, header, index) => {
+                        let fieldName = header.trim();
+                        if(fieldName.indexOf('"') > -1){
+                            fieldName = fieldName.replaceAll('"', '');
+                        }
+                        let fieldValue = values[index] ? values[index].replace('\r', '') : '';
+                        if(fieldValue.indexOf('"') > -1){
+                            fieldValue = fieldValue.replaceAll('"','');
+                        }
+                        object[fieldName] = fieldValue;
+                        return object;
+                    }, {});
+                }
+            });
+            return Promise.all(promises);
+        };
+        for(let i = 0; rows.length > 0; i += PROCESS_SIZE) {
+            const batch = rows.slice(i, i + PROCESS_SIZE);
+            rows.splice(0, PROCESS_SIZE);
+            resultArr = resultArr.concat(await processRows(batch));
+        }
+        return resultArr;
     }
 
     function generateRandHexColor() {
@@ -237,31 +248,6 @@ function useCore() {
         window.open(url, '_blank');
     }
 
-    function parseFile(file, callback) {
-        const CHUNK_SIZE = 512;
-        const reader = new FileReader();
-        let offset = 0;
-        let resultStr = '';
-
-        reader.onload = (event) => {
-            if(event.target.result.length > 0) {
-                resultStr += event.target.result;
-                offset += CHUNK_SIZE;
-                readNext();
-            }
-            else {
-                callback(resultStr);
-            }
-        };
-
-        function readNext() {
-            let slice = file.slice(offset, offset + CHUNK_SIZE);
-            reader.readAsText(slice);
-        }
-
-        readNext();
-    }
-
     function parseDate(dateStr){
         const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
         const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
@@ -336,6 +322,31 @@ function useCore() {
             }
         }
         return returnData;
+    }
+
+    function parseFile(file, callback) {
+        const CHUNK_SIZE = 512;
+        const reader = new FileReader();
+        let offset = 0;
+        let resultStr = '';
+
+        reader.onload = (event) => {
+            if(event.target.result.length > 0) {
+                resultStr += event.target.result;
+                offset += CHUNK_SIZE;
+                readNext();
+            }
+            else {
+                callback(resultStr);
+            }
+        };
+
+        function readNext() {
+            let slice = file.slice(offset, offset + CHUNK_SIZE);
+            reader.readAsText(slice);
+        }
+
+        readNext();
     }
 
     function processCsvDownload(csvDataArr, filename) {
