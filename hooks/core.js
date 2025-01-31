@@ -129,7 +129,19 @@ function useCore() {
         const processRows = async (batch) => {
             const promises = batch.map((row) => {
                 if(row){
-                    const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const dataObjPattern = new RegExp("(,|\\r?\\n|\\r|^)(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^\",\\r\\n]*))",'gi');
+                    const values = [];
+                    let dataMatch = null;
+                    while(dataMatch = dataObjPattern.exec(row)){
+                        let dataValue = '';
+                        if(dataMatch[2]){
+                            dataValue = dataMatch[2].replace(new RegExp( '""', 'g' ), '"');
+                        }
+                        else {
+                            dataValue = dataMatch[3];
+                        }
+                        values.push(dataValue);
+                    }
                     return headers.reduce((object, header, index) => {
                         let fieldName = header.trim();
                         if(fieldName.indexOf('"') > -1){
