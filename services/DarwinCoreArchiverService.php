@@ -121,7 +121,7 @@ class DarwinCoreArchiverService {
                 //echo $sql; exit;
 
                 FileSystemService::writeRowToCsv($fileHandler, $this->getOccurrenceFileHeaders($occurrenceFieldData, $options['schema']));
-
+                $sql = 'SELECT DISTINCT ' . $this->getOccurrenceFileSqlSelect($occurrenceFieldData['fields']);
                 if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
                     $this->setServerDomain();
                     $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
@@ -231,5 +231,19 @@ class DarwinCoreArchiverService {
             $returnArr = array_keys($fieldArr);
         }
         return $returnArr;
+    }
+
+    public function getOccurrenceFileSqlSelect($fieldArr): string
+    {
+        $returnStrArr = array();
+        foreach($fieldArr as $fieldName => $sql){
+            if($sql){
+                $returnStrArr[] = $sql;
+            }
+            else{
+                $returnStrArr[] = '"" AS t_' . $fieldName;
+            }
+        }
+        return implode(',', $returnStrArr);
     }
 }
