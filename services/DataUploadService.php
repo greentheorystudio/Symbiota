@@ -523,7 +523,6 @@ class DataUploadService {
         elseif($configArr['dataType'] === 'mof'){
             $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $data);
         }
-        FileSystemService::deleteFile($configArr['serverPath'] . '/' . $configArr['uploadFile']);
         return $recordsCreated;
     }
 

@@ -135,7 +135,7 @@ function useCore() {
                     while(dataMatch = dataObjPattern.exec(row)){
                         let dataValue = '';
                         if(dataMatch[2]){
-                            dataValue = dataMatch[2].replace(new RegExp( '""', 'g' ), '"');
+                            dataValue = dataMatch[2].replace(new RegExp('""', 'g'), '"');
                         }
                         else {
                             dataValue = dataMatch[3];
