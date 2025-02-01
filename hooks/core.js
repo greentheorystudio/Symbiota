@@ -98,7 +98,6 @@ function useCore() {
         const d10 = Number(northing) / d;
         const d12 = d10 / (d1 * (1 - d2 / 4 - (3 * d2 * d2) / 64 - (5 * Math.pow(d2, 3)) / 256));
         const d14 = d12 + ((3 * d4) / 2 - (27 * Math.pow(d4, 3)) / 32) * Math.sin(2 * d12) + ((21 * d4 * d4) / 16 - (55 * Math.pow(d4, 4)) / 32) * Math.sin(4 * d12) + ((151 * Math.pow(d4, 3)) / 96) * Math.sin(6 * d12);
-        const d13 = (d14 / Math.PI) * 180;
         const d5 = d1 / Math.sqrt(1 - d2 * Math.sin(d14) * Math.sin(d14));
         const d6 = Math.tan(d14) * Math.tan(d14);
         const d7 = d3 * Math.cos(d14) * Math.cos(d14);
