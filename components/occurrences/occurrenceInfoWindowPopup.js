@@ -569,7 +569,7 @@ const occurrenceInfoWindowPopup = {
 
         function setCollectionPermissions() {
             const formData = new FormData();
-            formData.append('permissionJson', JSON.stringify(["CollAdmin", "CollEditor"]));
+            formData.append('permissionJson', JSON.stringify(['CollAdmin', 'CollEditor']));
             formData.append('key', occurrenceData.value['collid'].toString());
             formData.append('action', 'validatePermission');
             fetch(permissionApiUrl, {

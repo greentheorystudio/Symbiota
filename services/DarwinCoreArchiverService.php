@@ -1,4 +1,8 @@
 <?php
+include_once(__DIR__ . '/../models/Collections.php');
+include_once(__DIR__ . '/../models/Occurrences.php');
+include_once(__DIR__ . '/../models/Permissions.php');
+include_once(__DIR__ . '/../models/TaxonHierarchy.php');
 include_once(__DIR__ . '/DarwinCoreFieldDefinitionService.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/FileSystemService.php');
@@ -20,11 +24,14 @@ class DarwinCoreArchiverService {
 
     public function createDwcArchive($targetPath, $searchTermsArr, $options): string
     {
+        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $archiveFilePath = '';
         $archiveFilename = $options['filename'] . '.zip';
         $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
         $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
-        $status = $this->createOccurrenceFile($targetPath, $options, true);
+        $sqlFrom = (new SearchService)->setFromSql($options['schema']);
+        $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+        $status = $this->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, true);
         if($status){
             $archiveFilePath = $targetPath . '/' . $archiveFilename;
             if(file_exists($archiveFilePath)) {
@@ -82,10 +89,12 @@ class DarwinCoreArchiverService {
         return $archiveFilePath;
     }
 
-    public function createOccurrenceFile($targetPath, $options, $archiveFile){
+    public function createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, $archiveFile): string
+    {
         $outputPath = '';
         $outputFilename = '';
         $dataIncluded = false;
+        $collectionData = array();
         if($archiveFile){
             $outputFilename = 'occurrences.csv';
         }
@@ -97,115 +106,88 @@ class DarwinCoreArchiverService {
             $fileHandler = FileSystemService::openFileHandler($outputPath);
             if($fileHandler){
                 $occurrenceFieldData = DarwinCoreFieldDefinitionService::getOccurrenceArr($options['schema']);
-                $this->applyConditions();
-                $sql = DwcArchiverOccurrence::getSqlOccurrences($occurrenceFieldData['fields'],$this->conditionSql,$this->getTableJoins(),true);
-                if(!$this->collArr){
-                    $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid '.
-                        'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
-                    if($this->conditionSql){
-                        $sql1 .= $this->getTableJoins().$this->conditionSql;
-                    }
-                    $rs1 = $this->conn->query($sql1);
-                    $collidStr = '';
-                    while($r1 = $rs1->fetch_object()){
-                        $collidStr .= ','.$r1->collid;
-                    }
-                    $rs1->free();
-                    if($collidStr) {
-                        $this->setCollArr(trim($collidStr, ','));
-                    }
-                }
-
-                $this->setUpperTaxonomy();
-
-                //echo $sql; exit;
-
+                $upperTaxonomyData = (new TaxonHierarchy)->getUpperTaxonomyData();
+                $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
                 FileSystemService::writeRowToCsv($fileHandler, $this->getOccurrenceFileHeaders($occurrenceFieldData, $options['schema']));
-                $sql = 'SELECT DISTINCT ' . $this->getOccurrenceFileSqlSelect($occurrenceFieldData['fields']);
-                if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-                    $this->setServerDomain();
-                    $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
-                    $typeArr = null;
-                    while($r = $rs->fetch_assoc()){
+                $sql = 'SELECT DISTINCT ' . $this->getOccurrenceFileSqlSelect($occurrenceFieldData['fields']) . ' ';
+                $sql .= $sqlFrom . 'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid ' . $sqlWhere . ' ORDER BY c.collid ';
+                if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+                    while($row = $result->fetch_assoc()){
+                        $rareSpReader = false;
                         $dataIncluded = true;
-                        if(!$r['occurrenceID']){
-                            $guidTarget = $this->collArr[$r['collid']]['guidtarget'];
-                            if($guidTarget === 'catalogNumber'){
-                                $r['occurrenceID'] = $r['catalogNumber'];
-                            }
-                            elseif($guidTarget === 'symbiotaUUID'){
-                                $r['occurrenceID'] = $r['recordId'];
-                            }
+                        $localitySecurity = (int)$row['localitySecurity'] === 1;
+                        if($localitySecurity){
+                            $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                         }
-                        if($this->limitToGuids && (!$r['occurrenceID'] || !$r['basisOfRecord'])){
-                            continue;
-                        }
-                        if($this->redactLocalities && (int)$r['localitySecurity'] === 1 && !in_array($r['collid'], $this->rareReaderArr, true)){
-                            $protectedFields = array();
-                            foreach($this->securityArr as $v){
-                                if(array_key_exists($v,$r) && $r[$v]){
-                                    $r[$v] = '';
-                                    $protectedFields[] = $v;
+                        if(($localitySecurity && $rareSpReader) || !$localitySecurity || !$options['spatial']){
+                            if(!array_key_exists($row['collid'], $collectionData)){
+                                $collectionData[$row['collid']] = (new Collections)->getCollectionInfoArr($row['collid']);
+                            }
+                            if(!$localitySecurity && !$rareSpReader){
+                                $row = (new Occurrences)->clearSensitiveOccurrenceData($row);
+                            }
+                            if(!$row['occurrenceID']){
+                                $guidTarget = $collectionData[$row['collid']]['guidtarget'];
+                                if($guidTarget === 'catalogNumber'){
+                                    $row['occurrenceID'] = $row['catalogNumber'];
+                                }
+                                elseif($guidTarget === 'symbiotaUUID'){
+                                    $row['occurrenceID'] = $row['recordId'];
                                 }
                             }
-                            if($protectedFields){
-                                $r['informationWithheld'] = trim($r['informationWithheld'].'; field values redacted: '.implode(', ',$protectedFields),' ;');
+                            if($urlPathPrefix) {
+                                $row['t_references'] = $urlPathPrefix . '/collections/individual/index.php?occid=' . $row['occid'];
                             }
+                            $row['recordId'] = 'urn:uuid:' . $row['recordId'];
+                            $managementType = $collectionData[$row['collid']]['managementtype'];
+                            if($managementType === 'Live Data' && array_key_exists('collectionID', $row) && !$row['collectionID']) {
+                                $guid = $collectionData[$row['collid']]['collectionguid'];
+                                if(strlen($guid) === 36) {
+                                    $guid = 'urn:uuid:' . $guid;
+                                }
+                                $row['collectionID'] = $guid;
+                            }
+                            if($options['schema'] === 'dwc'){
+                                unset($row['localitySecurity'], $row['collid']);
+                            }
+                            elseif($options['schema'] === 'backup'){
+                                unset($row['collid']);
+                            }
+                            if($upperTaxonomyData){
+                                $lcSciName = $row['scientificName'] ? strtolower($row['scientificName']) : '';
+                                $famStr = isset($row['family']) ? strtolower($row['family']) : '';
+                                $ordStr = isset($upperTaxonomyData[$famStr]['o']) ? strtolower($upperTaxonomyData[$famStr]['o']) : '';
+                                if(!$ordStr){
+                                    $ordStr = $lcSciName;
+                                }
+                                $claStr = isset($upperTaxonomyData[$ordStr]['c']) ? strtolower($upperTaxonomyData[$ordStr]['c']) : '';
+                                if(!$claStr){
+                                    $claStr = isset($upperTaxonomyData[$lcSciName]['c']) ? strtolower($upperTaxonomyData[$lcSciName]['c']) : '';
+                                }
+                                $phyStr = isset($upperTaxonomyData[$claStr]['p']) ? strtolower($upperTaxonomyData[$claStr]['p']) : '';
+                                if(!$phyStr){
+                                    $phyStr = isset($upperTaxonomyData[$lcSciName]['p']) ? strtolower($upperTaxonomyData[$lcSciName]['p']) : '';
+                                }
+                                if($famStr && isset($upperTaxonomyData[$famStr]['o'])){
+                                    $row['t_order'] = $upperTaxonomyData[$famStr]['o'];
+                                }
+                                elseif($ordStr && $claStr){
+                                    $row['t_order'] = $row['scientificName'];
+                                }
+                                if($ordStr && isset($upperTaxonomyData[$ordStr]['c'])){
+                                    $row['t_class'] = $upperTaxonomyData[$ordStr]['c'];
+                                }
+                                if($claStr && isset($upperTaxonomyData[$claStr]['p'])){
+                                    $row['t_phylum'] = $upperTaxonomyData[$claStr]['p'];
+                                }
+                                if($phyStr && isset($upperTaxonomyData[$phyStr]['k'])){
+                                    $row['t_kingdom'] = $upperTaxonomyData[$phyStr]['k'];
+                                }
+                            }
+                            FileSystemService::writeRowToCsv($fileHandler, $row);
                         }
-
-                        if($urlPathPrefix) {
-                            $r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-                        }
-                        $r['recordId'] = 'urn:uuid:'.$r['recordId'];
-                        $managementType = $this->collArr[$r['collid']]['managementtype'];
-                        if($managementType === 'Live Data' && array_key_exists('collectionID', $r) && !$r['collectionID']) {
-                            $guid = $this->collArr[$r['collid']]['collectionguid'];
-                            if(strlen($guid) === 36) {
-                                $guid = 'urn:uuid:' . $guid;
-                            }
-                            $r['collectionID'] = $guid;
-                        }
-                        if($this->schemaType === 'dwc'){
-                            unset($r['localitySecurity'], $r['collid']);
-                        }
-                        elseif($this->schemaType === 'backup'){
-                            unset($r['collid']);
-                        }
-                        if($this->upperTaxonomy){
-                            $lcSciName = $r['scientificName']?strtolower($r['scientificName']):'';
-                            $famStr = (isset($r['family'])?strtolower($r['family']):'');
-                            $ordStr = (isset($this->upperTaxonomy[$famStr]['o'])?strtolower($this->upperTaxonomy[$famStr]['o']):'');
-                            if(!$ordStr){
-                                $ordStr = $lcSciName;
-                            }
-                            $claStr = (isset($this->upperTaxonomy[$ordStr]['c'])?strtolower($this->upperTaxonomy[$ordStr]['c']):'');
-                            if(!$claStr){
-                                $claStr = (isset($this->upperTaxonomy[$lcSciName]['c'])?strtolower($this->upperTaxonomy[$lcSciName]['c']):'');
-                            }
-                            $phyStr = (isset($this->upperTaxonomy[$claStr]['p'])?strtolower($this->upperTaxonomy[$claStr]['p']):'');
-                            if(!$phyStr){
-                                $phyStr = (isset($this->upperTaxonomy[$lcSciName]['p'])?strtolower($this->upperTaxonomy[$lcSciName]['p']):'');
-                            }
-                            if($famStr && isset($this->upperTaxonomy[$famStr]['o'])){
-                                $r['t_order'] = $this->upperTaxonomy[$famStr]['o'];
-                            }
-                            elseif($ordStr && $claStr){
-                                $r['t_order'] = $r['scientificName'];
-                            }
-                            if($ordStr && isset($this->upperTaxonomy[$ordStr]['c'])){
-                                $r['t_class'] = $this->upperTaxonomy[$ordStr]['c'];
-                            }
-                            if($claStr && isset($this->upperTaxonomy[$claStr]['p'])){
-                                $r['t_phylum'] = $this->upperTaxonomy[$claStr]['p'];
-                            }
-                            if($phyStr && isset($this->upperTaxonomy[$phyStr]['k'])){
-                                $r['t_kingdom'] = $this->upperTaxonomy[$phyStr]['k'];
-                            }
-                        }
-                        $this->addcslashesArr($r);
-                        fputcsv($fileHandler, $r);
                     }
-                    $rs->free();
+                    $result->free();
                 }
                 FileSystemService::closeFileHandler($fileHandler);
             }

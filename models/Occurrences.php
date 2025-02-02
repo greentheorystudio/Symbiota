@@ -165,6 +165,30 @@ class Occurrences{
         return $returnVal;
     }
 
+    public function clearSensitiveOccurrenceData($occurrenceObj): array
+    {
+        $obscurredFieldArr = array();
+        $sensitiveFieldArr = array('recordnumber', 'locality', 'locationremarks', 'minimumelevationinmeters', 'date',
+            'maximumelevationinmeters', 'verbatimelevation', 'decimallatitude', 'decimallongitude', 'geodeticdatum',
+            'coordinateuncertaintyinmeters', 'footprintwkt', 'verbatimcoordinates', 'georeferenceremarks', 'georeferencedby',
+            'georeferenceprotocol', 'georeferencesources', 'georeferenceverificationstatus', 'habitat', 'informationwithheld',
+            'eventdate', 'eventtime', 'year', 'month', 'day', 'startdayofyear', 'enddayofyear', 'verbatimeventdate',
+            'substrate', 'associatedtaxa');
+        foreach($occurrenceObj as $field => $fieldVal){
+            if($fieldVal && in_array(strtolower($field), $sensitiveFieldArr)){
+                $occurrenceObj[$field] = '';
+                $obscurredFieldArr[] = $field;
+            }
+        }
+        if(array_key_exists('informationwithheld', $occurrenceObj)){
+            $occurrenceObj['informationwithheld'] = 'Fields redacted: ' . implode(', ', $obscurredFieldArr);
+        }
+        elseif(array_key_exists('informationWithheld', $occurrenceObj)){
+            $occurrenceObj['informationWithheld'] = 'Fields redacted: ' . implode(', ', $obscurredFieldArr);
+        }
+        return $occurrenceObj;
+    }
+
     public function createOccurrenceRecord($data): int
     {
         $newID = 0;
