@@ -11,7 +11,6 @@ include_once(__DIR__ . '/DataUtilitiesService.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/SanitizerService.php');
-include_once(__DIR__ . '/../classes/DwcArchiverCore.php');
 
 class SearchService {
 
@@ -989,15 +988,7 @@ class SearchService {
             $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
             if($contentType){
                 $targetPath = FileSystemService::getTempDownloadUploadPath();
-                //$dwcaHandler = new DwcArchiverCore();
-                //$dwcaHandler->setSchemaType($options['schema']);
-                //$dwcaHandler->setRedactLocalities(0);
-                //$dwcaHandler->setCustomWhereSql($sqlWhere);
                 if($options['type'] === 'zip'){
-                    //$dwcaHandler->setIncludeDets($options['identifications']);
-                    //$dwcaHandler->setIncludeImgs($options['images']);
-                    //$outputFile = $dwcaHandler->createDwcArchive('webreq');
-
                     $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, $searchTermsArr, $options);
                 }
                 else{
@@ -1006,12 +997,15 @@ class SearchService {
                     $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
                     $sqlFrom = (new SearchService)->setFromSql($options['schema']);
                     $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
-                    $outputFile = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
+                    $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
+                    $outputFile = $outputFileData['outputPath'];
                 }
-                (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, basename($outputFile), $outputFile);
-                flush();
-                readfile($outputFile);
-                FileSystemService::deleteFile($outputFile, true);
+                if($outputFile){
+                    (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, basename($outputFile), $outputFile);
+                    flush();
+                    readfile($outputFile);
+                    FileSystemService::deleteFile($outputFile, true);
+                }
             }
         }
     }

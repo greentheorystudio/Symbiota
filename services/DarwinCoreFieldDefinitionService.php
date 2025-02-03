@@ -1,6 +1,175 @@
 <?php
 class DarwinCoreFieldDefinitionService {
 
+    public static function getDeterminationArr($schemaType): array
+    {
+        $fieldArr['coreid'] = 'o.occid';
+        $termArr['identifiedBy'] = 'http://rs.tdwg.org/dwc/terms/identifiedBy';
+        $fieldArr['identifiedBy'] = 'd.identifiedBy';
+        $termArr['identifiedByID'] = '';
+        $fieldArr['identifiedByID'] = 'd.idbyid';
+        $termArr['dateIdentified'] = 'http://rs.tdwg.org/dwc/terms/dateIdentified';
+        $fieldArr['dateIdentified'] = 'd.dateIdentified';
+        $termArr['identificationQualifier'] = 'http://rs.tdwg.org/dwc/terms/identificationQualifier';
+        $fieldArr['identificationQualifier'] = 'd.identificationQualifier';
+        $termArr['scientificName'] = 'http://rs.tdwg.org/dwc/terms/scientificName';
+        $fieldArr['scientificName'] = 'd.sciName AS scientificName';
+        $termArr['tidAccepted'] = '';
+        $fieldArr['tidAccepted'] = 't.tidaccepted';
+        $termArr['identificationIsCurrent'] = '';
+        $fieldArr['identificationIsCurrent'] = 'd.iscurrent';
+        $termArr['scientificNameAuthorship'] = 'http://rs.tdwg.org/dwc/terms/scientificNameAuthorship';
+        $fieldArr['scientificNameAuthorship'] = 'd.scientificNameAuthorship';
+        $termArr['genus'] = 'http://rs.tdwg.org/dwc/terms/genus';
+        $fieldArr['genus'] = 'CONCAT_WS(" ", t.unitind1, t.unitname1) AS genus';
+        $termArr['specificEpithet'] = 'http://rs.tdwg.org/dwc/terms/specificEpithet';
+        $fieldArr['specificEpithet'] = 'CONCAT_WS(" ", t.unitind2, t.unitname2) AS specificEpithet';
+        $termArr['taxonRank'] = 'http://rs.tdwg.org/dwc/terms/taxonRank';
+        $fieldArr['taxonRank'] = 't.unitind3 AS taxonRank';
+        $termArr['infraspecificEpithet'] = 'http://rs.tdwg.org/dwc/terms/infraspecificEpithet';
+        $fieldArr['infraspecificEpithet'] = 't.unitname3 AS infraspecificEpithet';
+        $termArr['identificationReferences'] = 'http://rs.tdwg.org/dwc/terms/identificationReferences';
+        $fieldArr['identificationReferences'] = 'd.identificationReferences';
+        $termArr['identificationRemarks'] = 'http://rs.tdwg.org/dwc/terms/identificationRemarks';
+        $fieldArr['identificationRemarks'] = 'd.identificationRemarks';
+        $termArr['recordId'] = 'http://portal.idigbio.org/terms/recordID';
+        $fieldArr['recordId'] = 'g.guid AS recordId';
+        $termArr['modified'] = 'http://purl.org/dc/terms/modified';
+        $fieldArr['modified'] = 'd.initialTimeStamp AS modified';
+        $termArr['collId'] = '';
+        $fieldArr['collId'] = 'c.collid';
+        $termArr['localitySecurity'] = '';
+        $fieldArr['localitySecurity'] = 'o.localitySecurity';
+        $retArr['terms'] = self::trimDeterminationBySchemaType($termArr, $schemaType);
+        $retArr['fields'] = self::trimDeterminationBySchemaType($fieldArr, $schemaType);
+        return $retArr;
+    }
+
+    public static function getImageArr($schemaType): array
+    {
+        $fieldArr['coreid'] = 'o.occid';
+        $termArr['identifier'] = 'http://purl.org/dc/terms/identifier';
+        $fieldArr['identifier'] = 'IFNULL(i.originalurl, i.url) as identifier';
+        $termArr['accessURI'] = 'http://rs.tdwg.org/ac/terms/accessURI';
+        $fieldArr['accessURI'] = 'IFNULL(NULLIF(i.originalurl, ""), i.url) as accessURI';
+        $termArr['thumbnailAccessURI'] = 'http://rs.tdwg.org/ac/terms/thumbnailAccessURI';
+        $fieldArr['thumbnailAccessURI'] = 'i.thumbnailurl as thumbnailAccessURI';
+        $termArr['goodQualityAccessURI'] = 'http://rs.tdwg.org/ac/terms/goodQualityAccessURI';
+        $fieldArr['goodQualityAccessURI'] = 'i.url as goodQualityAccessURI';
+        $termArr['rights'] = 'http://purl.org/dc/terms/rights';
+        $fieldArr['rights'] = 'c.rights';
+        $termArr['Owner'] = 'http://ns.adobe.com/xap/1.0/rights/Owner';
+        $fieldArr['Owner'] = 'IFNULL(c.rightsholder, CONCAT(c.collectionname, " (", CONCAT_WS("-", c.institutioncode, c.collectioncode), ")")) AS owner';
+        $termArr['creator'] = 'http://purl.org/dc/elements/1.1/creator';
+        $fieldArr['creator'] = 'i.photographer AS creator';
+        $termArr['UsageTerms'] = 'http://ns.adobe.com/xap/1.0/rights/UsageTerms';
+        $fieldArr['UsageTerms'] = 'i.copyright AS usageterms';
+        $termArr['WebStatement'] = 'http://ns.adobe.com/xap/1.0/rights/WebStatement';
+        $fieldArr['WebStatement'] = 'c.accessrights AS webstatement';
+        $termArr['caption'] = 'http://rs.tdwg.org/ac/terms/caption';
+        $fieldArr['caption'] = 'i.caption';
+        $termArr['comments'] = 'http://rs.tdwg.org/ac/terms/comments';
+        $fieldArr['comments'] = 'i.notes';
+        $termArr['providerManagedID'] = 'http://rs.tdwg.org/ac/terms/providerManagedID';
+        $fieldArr['providerManagedID'] = 'i.imgid AS providermanagedid';
+        $termArr['MetadataDate'] = 'http://ns.adobe.com/xap/1.0/MetadataDate';
+        $fieldArr['MetadataDate'] = 'i.initialtimestamp AS metadatadate';
+        $termArr['format'] = 'http://purl.org/dc/terms/format';
+        $fieldArr['format'] = 'i.format';
+        $termArr['associatedSpecimenReference'] = 'http://rs.tdwg.org/ac/terms/associatedSpecimenReference';
+        $fieldArr['associatedSpecimenReference'] = '"" AS associatedSpecimenReference';
+        $termArr['type'] = 'http://purl.org/dc/terms/type';
+        $fieldArr['type'] = '"" AS type';
+        $termArr['metadataLanguage'] = 'http://rs.tdwg.org/ac/terms/metadataLanguage';
+        $fieldArr['metadataLanguage'] = '"" AS metadataLanguage';
+        $termArr['collId'] = '';
+        $fieldArr['collId'] = 'c.collid';
+        $termArr['localitySecurity'] = '';
+        $fieldArr['localitySecurity'] = 'o.localitySecurity';
+        if($schemaType === 'backup') {
+            $fieldArr['rights'] = 'i.copyright';
+        }
+        $retArr['terms'] = self::trimMediaBySchemaType($termArr, $schemaType);
+        $retArr['fields'] = self::trimMediaBySchemaType($fieldArr, $schemaType);
+        return $retArr;
+    }
+
+    public static function getMeasurementOrFactArr($schemaType): array
+    {
+        $fieldArr['coreid'] = 'o.occid';
+        $termArr['eventID'] = 'http://rs.tdwg.org/dwc/terms/eventID';
+        $fieldArr['eventID'] = 'o.eventID';
+        $termArr['measurementType'] = 'http://rs.tdwg.org/dwc/terms/measurementType';
+        $fieldArr['measurementType'] = 'm.field AS measurementType';
+        $termArr['measurementValue'] = 'http://rs.tdwg.org/dwc/terms/measurementValue';
+        $fieldArr['measurementValue'] = 'm.datavalue AS measurementValue';
+        $termArr['measurementUnit'] = 'http://rs.tdwg.org/dwc/terms/measurementUnit';
+        $fieldArr['measurementUnit'] = '"" AS measurementUnit';
+        $termArr['measurementAccuracy'] = 'http://rs.tdwg.org/dwc/terms/measurementAccuracy';
+        $fieldArr['measurementAccuracy'] = '"" AS measurementAccuracy';
+        $termArr['measurementMethod'] = 'http://rs.tdwg.org/dwc/terms/measurementMethod';
+        $fieldArr['measurementMethod'] = '"" AS measurementMethod';
+        $termArr['measurementRemarks'] = 'http://rs.tdwg.org/dwc/terms/measurementRemarks';
+        $fieldArr['measurementRemarks'] = '"" AS measurementRemarks';
+        $termArr['measurementDeterminedDate'] = 'http://rs.tdwg.org/dwc/terms/measurementDeterminedDate';
+        $fieldArr['measurementDeterminedDate'] = 'DATE_FORMAT(m.initialtimestamp, "%Y-%m-%dT%TZ") AS measurementDeterminedDate';
+        $termArr['measurementDeterminedBy'] = 'http://rs.tdwg.org/dwc/terms/measurementDeterminedBy';
+        $fieldArr['measurementDeterminedBy'] = 'm.enteredBy AS measurementDeterminedBy';
+        $termArr['collId'] = '';
+        $fieldArr['collId'] = 'c.collid';
+        $termArr['localitySecurity'] = '';
+        $fieldArr['localitySecurity'] = 'o.localitySecurity';
+        $retArr['terms'] = self::trimMediaBySchemaType($termArr, $schemaType);
+        $retArr['fields'] = self::trimMediaBySchemaType($fieldArr, $schemaType);
+        return $retArr;
+    }
+
+    public static function getMediaArr($schemaType): array
+    {
+        $fieldArr['coreid'] = 'o.occid';
+        $termArr['identifier'] = 'http://purl.org/dc/terms/identifier';
+        $fieldArr['identifier'] = 'm.accessuri as identifier';
+        $termArr['accessURI'] = 'http://rs.tdwg.org/ac/terms/accessURI';
+        $fieldArr['accessURI'] = 'm.accessuri as accessURI';
+        $termArr['thumbnailAccessURI'] = 'http://rs.tdwg.org/ac/terms/thumbnailAccessURI';
+        $fieldArr['thumbnailAccessURI'] = '"" as thumbnailAccessURI';
+        $termArr['goodQualityAccessURI'] = 'http://rs.tdwg.org/ac/terms/goodQualityAccessURI';
+        $fieldArr['goodQualityAccessURI'] = 'm.accessuri as goodQualityAccessURI';
+        $termArr['rights'] = 'http://purl.org/dc/terms/rights';
+        $fieldArr['rights'] = 'c.rights';
+        $termArr['Owner'] = 'http://ns.adobe.com/xap/1.0/rights/Owner';
+        $fieldArr['Owner'] = 'IFNULL(c.rightsholder, CONCAT(c.collectionname, " (", CONCAT_WS("-", c.institutioncode, c.collectioncode), ")")) AS owner';
+        $termArr['creator'] = 'http://purl.org/dc/elements/1.1/creator';
+        $fieldArr['creator'] = 'm.creator';
+        $termArr['UsageTerms'] = 'http://ns.adobe.com/xap/1.0/rights/UsageTerms';
+        $fieldArr['UsageTerms'] = 'm.usageterms AS usageterms';
+        $termArr['WebStatement'] = 'http://ns.adobe.com/xap/1.0/rights/WebStatement';
+        $fieldArr['WebStatement'] = 'c.accessrights AS webstatement';
+        $termArr['caption'] = 'http://rs.tdwg.org/ac/terms/caption';
+        $fieldArr['caption'] = 'm.title AS caption';
+        $termArr['comments'] = 'http://rs.tdwg.org/ac/terms/comments';
+        $fieldArr['comments'] = 'm.description AS notes';
+        $termArr['providerManagedID'] = 'http://rs.tdwg.org/ac/terms/providerManagedID';
+        $fieldArr['providerManagedID'] = 'm.mediaid AS providermanagedid';
+        $termArr['MetadataDate'] = 'http://ns.adobe.com/xap/1.0/MetadataDate';
+        $fieldArr['MetadataDate'] = 'm.initialtimestamp AS metadatadate';
+        $termArr['format'] = 'http://purl.org/dc/terms/format';
+        $fieldArr['format'] = 'm.format';
+        $termArr['associatedSpecimenReference'] = 'http://rs.tdwg.org/ac/terms/associatedSpecimenReference';
+        $fieldArr['associatedSpecimenReference'] = '"" as associatedSpecimenReference';
+        $termArr['type'] = 'http://purl.org/dc/terms/type';
+        $fieldArr['type'] = 'm.type';
+        $termArr['metadataLanguage'] = 'http://rs.tdwg.org/ac/terms/metadataLanguage';
+        $fieldArr['metadataLanguage'] = '"" as metadataLanguage';
+        $termArr['collId'] = '';
+        $fieldArr['collId'] = 'c.collid';
+        $termArr['localitySecurity'] = '';
+        $fieldArr['localitySecurity'] = 'o.localitySecurity';
+        $retArr['terms'] = self::trimMediaBySchemaType($termArr, $schemaType);
+        $retArr['fields'] = self::trimMediaBySchemaType($fieldArr, $schemaType);
+        return $retArr;
+    }
+
     public static function getOccurrenceArr($schemaType): array
     {
         $occurFieldArr['id'] = 'o.occid';
@@ -233,7 +402,31 @@ class DarwinCoreFieldDefinitionService {
         return $occurrenceFieldArr;
     }
 
-    private static function trimOccurrenceBySchemaType($occurArr, $schemaType): array
+    public static function trimDeterminationBySchemaType($detArr, $schemaType): array
+    {
+        $trimArr = array();
+        if($schemaType === 'dwc'){
+            $trimArr[] = 'identifiedByID';
+            $trimArr[] = 'tidAccepted';
+            $trimArr[] = 'identificationIsCurrent';
+        }
+        elseif($schemaType === 'native'){
+            $trimArr[] = 'identifiedByID';
+            $trimArr[] = 'tidAccepted';
+        }
+        return array_diff_key($detArr, array_flip($trimArr));
+    }
+
+    public static function trimMediaBySchemaType($imageArr, $schemaType): array
+    {
+        $trimArr = array();
+        if($schemaType === 'backup'){
+            $trimArr = array('Owner', 'UsageTerms', 'WebStatement');
+        }
+        return array_diff_key($imageArr, array_flip($trimArr));
+    }
+
+    public static function trimOccurrenceBySchemaType($occurArr, $schemaType): array
     {
         $retArr = array();
         if($schemaType === 'dwc'){
