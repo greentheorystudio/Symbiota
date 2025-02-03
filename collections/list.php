@@ -175,7 +175,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                                     {{ props.row.verbatimelevation }}
                                                                                 </span>
                                                                             </div>
-                                                                            <div v-if="props.row.informationwithheld" class="text-bold text-red">
+                                                                            <div v-if="props.row.informationwithheld" class="text-red">
                                                                                 {{ props.row.informationwithheld }}
                                                                             </div>
                                                                             <div>

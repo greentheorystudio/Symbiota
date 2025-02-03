@@ -209,7 +209,7 @@ const occurrenceInfoWindowPopup = {
                                             <span class="text-bold">Disposition:</span>
                                             <span class="q-ml-sm">{{ occurrenceData['disposition'] }}</span>
                                         </div>
-                                        <div v-if="occurrenceData['informationwithheld']">
+                                        <div v-if="occurrenceData['informationwithheld']" class="text-red">
                                             <span class="text-bold">Information Withheld:</span>
                                             <span class="q-ml-sm">{{ occurrenceData['informationwithheld'] }}</span>
                                         </div>

@@ -5,6 +5,7 @@ include_once(__DIR__ . '/Media.php');
 include_once(__DIR__ . '/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/OccurrenceGeneticLinks.php');
 include_once(__DIR__ . '/OccurrenceMeasurementsOrFacts.php');
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -479,6 +480,13 @@ class Occurrences{
                 foreach($fields as $val){
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
+                }
+                $localitySecurity = (int)$row['localitysecurity'] === 1;
+                if($localitySecurity){
+                    $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                    if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                        $retArr = $this->clearSensitiveOccurrenceData($retArr);
+                    }
                 }
             }
             if($retArr && $retArr['tid'] && (int)$retArr['tid'] > 0){
