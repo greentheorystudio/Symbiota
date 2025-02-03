@@ -618,6 +618,15 @@ class DataUploadService {
         return $returnVal;
     }
 
+    public function setUploadLocalitySecurity($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->setUploadLocalitySecurity($collid);
+        }
+        return $retVal;
+    }
+
     public function uploadDwcaFile($dwcaFile): array
     {
         $returnArr = array();

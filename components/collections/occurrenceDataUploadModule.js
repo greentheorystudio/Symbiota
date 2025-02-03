@@ -1756,7 +1756,7 @@ const occurrenceDataUploadModule = {
                 else{
                     processErrorResponse('An error occurred while cleaning taxonomy');
                 }
-                getUploadSummary();
+                processPostUploadSetLocalitySecurity();
             });
         }
 
@@ -1831,6 +1831,31 @@ const occurrenceDataUploadModule = {
             else{
                 processPostUploadExistingRecordProcessing();
             }
+        }
+
+        function processPostUploadSetLocalitySecurity() {
+            const text = 'Setting locality security for threatened and endangered taxa';
+            currentProcess.value = 'setUploadLocalitySecurity';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'setUploadLocalitySecurity');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                }
+                else{
+                    processErrorResponse('An error occurred while setting locality security for threatened and endangered taxa');
+                }
+                getUploadSummary();
+            });
         }
 
         function processSourceDataFiles() {

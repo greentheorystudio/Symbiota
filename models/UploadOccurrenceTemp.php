@@ -628,4 +628,18 @@ class UploadOccurrenceTemp{
             $this->conn->query($sql);
         }
     }
+
+    public function setUploadLocalitySecurity($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
+                'SET u.localitysecurity = 1 '.
+                'WHERE u.collid = ' . (int)$collid . ' AND t.securitystatus = 1 ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+        }
+        return $returnVal;
+    }
 }

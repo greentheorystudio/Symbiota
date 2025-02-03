@@ -525,22 +525,17 @@ class OccurrenceTaxonomyCleaner extends Manager{
 	public function protectGlobalSpecies($collid = null): int
     {
         $status = 0;
-        $sensitiveArr = (new TaxonomyUtilities)->getSensitiveTaxa();
-
-        if($sensitiveArr){
-            $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
-                'SET o.localitySecurity = 1 '.
-                'WHERE ISNULL(o.localitySecurityReason) AND t.tidaccepted IN('.implode(',',$sensitiveArr).') ';
-            if($collid) {
-                $sql .= 'AND o.collid = ' . $collid . ' ';
-            }
-            if($this->conn->query($sql)){
-                $status += $this->conn->affected_rows;
-            }
+        $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+            'SET o.localitySecurity = 1 WHERE t.securitystatus = 1 ';
+        if($collid) {
+            $sql .= 'AND o.collid = ' . $collid . ' ';
+        }
+        if($this->conn->query($sql)){
+            $status += $this->conn->affected_rows;
         }
         $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
             'SET o.localitySecurity = 0 '.
-            'WHERE ISNULL(o.localitySecurityReason) AND t.tidaccepted NOT IN('.implode(',',$sensitiveArr).') ';
+            'WHERE t.TID IS NOT NULL AND t.securitystatus <> 1 ';
         if($collid) {
             $sql2 .= 'AND o.collid = ' . $collid . ' ';
         }

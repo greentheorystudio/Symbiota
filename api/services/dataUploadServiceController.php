@@ -127,4 +127,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'removeUploadFiles' && array_key_exists('serverPath', $_POST)){
         echo $dataUploadService->removeUploadFiles($_POST['serverPath']);
     }
+    elseif($action === 'setUploadLocalitySecurity'){
+        echo $dataUploadService->setUploadLocalitySecurity($collid);
+    }
 }
