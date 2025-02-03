@@ -69,7 +69,7 @@ class FileSystemService {
             unlink($filePath);
             if($cleanParentFolder){
                 $parentPath = dirname($filePath);
-                if(is_dir($parentPath) && !scandir($parentPath)){
+                if(is_dir($parentPath) && !glob(($parentPath . '/*'))){
                     self::deleteDirectory($parentPath);
                 }
             }
