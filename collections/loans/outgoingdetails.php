@@ -227,8 +227,11 @@ $specList = $loanManager->getSpecList($loanId);
 						Warning: Specimen already linked to loan.
 					</div>
 					<div style="padding-top:8px;clear:left;float:left;">
-						<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
-						<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
+                        <input name="loantype" type="hidden" value="<?php echo $loanType; ?>" />
+                        <input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
+                        <input name="collid" type="hidden" value="<?php echo $collId; ?>" />
+                        <input name="emode" type="hidden" value="1" />
+                        <input name="tabindex" type="hidden" value="1" />
 						<input name="formsubmit" type="submit" value="Add Specimen" />
 					</div>
 				</form>
