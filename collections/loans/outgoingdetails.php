@@ -226,11 +226,14 @@ $specList = $loanManager->getSpecList($loanId);
 					<div id="addspecerr3" style="float:left;margin-left:30px;padding-bottom:2px;color:orange;display:none;">
 						Warning: Specimen already linked to loan.
 					</div>
-					<div style="padding-top:8px;clear:left;float:left;">
-						<input name="collid" type="hidden" value="<?php echo $collId; ?>" />
-						<input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
-						<input name="formsubmit" type="submit" value="Add Specimen" />
-					</div>
+                    <div style="padding-top:8px;clear:left;float:left;">
+                        <input name="loantype" type="hidden" value="<?php echo $loanType; ?>" />
+                        <input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
+                        <input name="collid" type="hidden" value="<?php echo $collId; ?>" />
+                        <input name="emode" type="hidden" value="1" />
+                        <input name="tabindex" type="hidden" value="1" />
+                        <input name="formsubmit" type="submit" value="Add Specimen" />
+                    </div>
 				</form>
 				<div id="refreshbut" style="float:left;padding-top:10px;margin-left:10px;">
 					<form style="margin-bottom:0;" name="refreshspeclist" action="index.php" method="post">
