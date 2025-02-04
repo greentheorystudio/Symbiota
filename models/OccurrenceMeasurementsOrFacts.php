@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
@@ -80,14 +81,25 @@ class OccurrenceMeasurementsOrFacts{
         else{
             $field = 'occid';
         }
-        $sql = 'SELECT mofid, field, datavalue, initialtimestamp '.
-            'FROM ommofextension WHERE ' . $field . ' = ' . (int)$id . ' ';
+        $sql = 'SELECT DISTINCT m.mofid, m.field, m.datavalue, m.initialtimestamp, o.collid, o.localitysecurity '.
+            'FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.' . $field . ' = o.' . $field . ' '.
+            'WHERE m.' . $field . ' = ' . (int)$id . ' ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $retArr[$row['field']] = $row['datavalue'];
+                $permitted = true;
+                $localitySecurity = (int)$row['localitysecurity'] === 1;
+                if($localitySecurity){
+                    $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                    if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                        $permitted = false;
+                    }
+                }
+                if($permitted){
+                    $retArr[$row['field']] = $row['datavalue'];
+                }
                 unset($rows[$index]);
             }
         }
