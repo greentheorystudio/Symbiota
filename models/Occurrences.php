@@ -499,11 +499,14 @@ class Occurrences{
     public function getOccurrenceDuplicateIdentifierRecordArr($collid, $occid, $identifierField, $identifier): array
     {
         $retArr = array();
-        if($occid && $identifierField && $identifier){
+        if($identifierField && $identifier){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences '.
-                'WHERE collid = ' . (int)$collid . ' AND occid <> ' . (int)$occid . ' '.
-                'AND ' . SanitizerService::cleanInStr($this->conn, $identifierField) . ' = "' . SanitizerService::cleanInStr($this->conn, $identifier) . '" '.
+                'WHERE collid = ' . (int)$collid . ' ';
+            if($occid){
+                $sql .= 'AND occid <> ' . (int)$occid . ' ';
+            }
+            $sql .= 'AND ' . SanitizerService::cleanInStr($this->conn, $identifierField) . ' = "' . SanitizerService::cleanInStr($this->conn, $identifier) . '" '.
                 'ORDER BY eventdate, recordnumber ';
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){

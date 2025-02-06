@@ -18,6 +18,7 @@ const occurrenceEditorFormIdentifierElement = {
         <template v-if="showCollectionListPopup">
             <occurrence-collection-list-popup
                 :collection-arr="duplicateArr"
+                :duplicate-display="true"
                 :show-popup="showCollectionListPopup"
                 @close:popup="closeCollectionListPopup"
             ></occurrence-collection-list-popup>
