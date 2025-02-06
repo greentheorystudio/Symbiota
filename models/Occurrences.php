@@ -496,6 +496,34 @@ class Occurrences{
         return $retArr;
     }
 
+    public function getOccurrenceDuplicateIdentifierRecordArr($collid, $occid, $identifierField, $identifier): array
+    {
+        $retArr = array();
+        if($occid && $identifierField && $identifier){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences '.
+                'WHERE collid = ' . (int)$collid . ' AND occid <> ' . (int)$occid . ' '.
+                'AND ' . SanitizerService::cleanInStr($this->conn, $identifierField) . ' = "' . SanitizerService::cleanInStr($this->conn, $identifier) . '" ';
+            'ORDER BY eventdate, recordnumber ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $retArr[] = $nodeArr;
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
     public function getOccurrenceEditData($occid): array
     {
         $retArr = array();

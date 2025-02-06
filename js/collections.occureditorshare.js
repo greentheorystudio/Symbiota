@@ -348,3 +348,93 @@ function toggleBatchUpdate(){
 	document.getElementById("querydiv").style.display = "none";
 	toggle("batchupdatediv");
 }
+
+function searchDupesCatalogNumber(f,verbose){
+	const cnValue = f.catalognumber.value;
+	if(cnValue){
+		const occid = f.occid.value;
+		if(verbose){
+			document.getElementById("dupeMsgDiv").style.display = "block";
+			document.getElementById("dupesearch").style.display = "block";
+			document.getElementById("dupenone").style.display = "none";
+		}
+
+		$.ajax({
+			type: "POST",
+			url: "../../api/occurrenceduplicates/dupequerycatnum.php",
+			data: { catnum: cnValue, collid: f.collid.value, occid: f.occid.value }
+		}).done(function( msg ) {
+			if(msg){
+				if(confirm("Record(s) of same catalog number already exists. Do you want to view this record?")){
+					const occWindow = open("dupesearch.php?occidquery=catnu:" + msg + "&collid=" + f.collid.value + "&curoccid=" + occid, "occsearch", "resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
+					if(occWindow != null){
+						if (occWindow.opener == null) {
+							occWindow.opener = self;
+						}
+						occWindow.focus();
+					}
+					else{
+						alert("Unable to display record, which is likely due to your browser blocking popups. Please adjust your browser settings to allow popups from this website.");
+					}
+				}
+				if(verbose){
+					document.getElementById("dupesearch").style.display = "none";
+					document.getElementById("dupeMsgDiv").style.display = "none";
+				}
+				return true;
+			}
+			else{
+				if(verbose){
+					document.getElementById("dupesearch").style.display = "none";
+					document.getElementById("dupenone").style.display = "block";
+					setTimeout(function () {
+						document.getElementById("dupenone").style.display = "none";
+						document.getElementById("dupeMsgDiv").style.display = "none";
+					}, 3000);
+				}
+				return false;
+			}
+		});
+	}
+}
+
+function searchDupesOtherCatalogNumbers(f){
+	const ocnValue = f.othercatalognumbers.value;
+	if(ocnValue){
+		document.getElementById("dupeMsgDiv").style.display = "block";
+		document.getElementById("dupesearch").style.display = "block";
+		document.getElementById("dupenone").style.display = "none";
+
+		$.ajax({
+			type: "POST",
+			url: "../../api/occurrenceduplicates/dupequeryothercatnum.php",
+			data: { othercatnum: ocnValue, collid: f.collid.value, occid: f.occid.value }
+		}).done(function( msg ) {
+			if(msg.length > 6){
+				if(confirm("Record(s) using the same identifier already exists. Do you want to view this record?")){
+					const occWindow = open("dupesearch.php?occidquery=" + msg + "&collid=" + f.collid.value + "&curoccid=" + f.occid.value, "occsearch", "resizable=1,scrollbars=1,toolbar=1,width=900,height=600,left=20,top=20");
+					if(occWindow != null){
+						if (occWindow.opener == null) {
+							occWindow.opener = self;
+						}
+						occWindow.focus();
+					}
+					else{
+						alert("Unable to show record, which is likely due to your browser blocking popups. Please adjust your browser settings to allow popups from this website.");
+					}
+				}
+				document.getElementById("dupesearch").style.display = "none";
+				document.getElementById("dupeMsgDiv").style.display = "none";
+			}
+			else{
+				document.getElementById("dupesearch").style.display = "none";
+				document.getElementById("dupenone").style.display = "block";
+				setTimeout(function () {
+					document.getElementById("dupenone").style.display = "none";
+					document.getElementById("dupeMsgDiv").style.display = "none";
+				}, 3000);
+			}
+		});
+
+	}
+}

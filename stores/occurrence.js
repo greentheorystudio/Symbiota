@@ -556,6 +556,24 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 callback(data);
             });
         },
+        getOccurrenceDuplicateIdentifierRecordArr(identifierField, identifier, callback) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollId.toString());
+            formData.append('occid', this.occId.toString());
+            formData.append('identifierField', identifierField);
+            formData.append('identifier', identifier);
+            formData.append('action', 'getOccurrenceDuplicateIdentifierRecordArr');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
+        },
         goToFirstRecord() {
             this.setCurrentOccurrenceRecord(this.occidArr[0]);
         },

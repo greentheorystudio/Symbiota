@@ -60,4 +60,9 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'batchPopulateOccurrenceGUIDs' && $collid){
         echo $occurrences->batchCreateOccurrenceRecordGUIDs($collid);
     }
+    elseif($action === 'getOccurrenceDuplicateIdentifierRecordArr' && $collid){
+        $identifierField = $_POST['identifierField'] ?? null;
+        $identifier = $_POST['identifier'] ?? null;
+        echo json_encode($occurrences->getOccurrenceDuplicateIdentifierRecordArr($collid, $occid, $identifierField, $identifier));
+    }
 }

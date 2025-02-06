@@ -15,25 +15,56 @@ const occurrenceEditorFormIdentifierElement = {
                 </div>
             </q-card-section>
         </q-card>
+        <template v-if="showCollectionListPopup">
+            <occurrence-collection-list-popup
+                :collection-arr="duplicateArr"
+                :show-popup="showCollectionListPopup"
+                @close:popup="closeCollectionListPopup"
+            ></occurrence-collection-list-popup>
+        </template>
     `,
     components: {
+        'occurrence-collection-list-popup': occurrenceCollectionListPopup,
         'text-field-input-element': textFieldInputElement
     },
     setup() {
         const occurrenceStore = useOccurrenceStore();
 
+        const duplicateArr = Vue.ref([]);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const showCollectionListPopup = Vue.ref(false);
+
+        function closeCollectionListPopup() {
+            showCollectionListPopup.value = false;
+            duplicateArr.value = [];
+        }
+
+        function processDuplicateIdentifierSearch(field, value) {
+            duplicateArr.value.length = 0;
+            if(value && value !== ''){
+                occurrenceStore.getOccurrenceDuplicateIdentifierRecordArr(field, value, (dupArr) => {
+                    if(dupArr.length > 0){
+                        duplicateArr.value = dupArr;
+                        showCollectionListPopup.value = true;
+                    }
+                });
+            }
+        }
 
         function updateOccurrenceData(key, value) {
             occurrenceStore.updateOccurrenceEditData(key, value);
+            processDuplicateIdentifierSearch(key, value);
         }
 
         return {
+            duplicateArr,
             occurrenceData,
             occurrenceFields,
             occurrenceFieldDefinitions,
+            showCollectionListPopup,
+            closeCollectionListPopup,
             updateOccurrenceData
         }
     }
