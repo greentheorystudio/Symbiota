@@ -503,8 +503,8 @@ class Occurrences{
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences '.
                 'WHERE collid = ' . (int)$collid . ' AND occid <> ' . (int)$occid . ' '.
-                'AND ' . SanitizerService::cleanInStr($this->conn, $identifierField) . ' = "' . SanitizerService::cleanInStr($this->conn, $identifier) . '" ';
-            'ORDER BY eventdate, recordnumber ';
+                'AND ' . SanitizerService::cleanInStr($this->conn, $identifierField) . ' = "' . SanitizerService::cleanInStr($this->conn, $identifier) . '" '.
+                'ORDER BY eventdate, recordnumber ';
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
