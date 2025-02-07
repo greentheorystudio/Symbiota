@@ -14,8 +14,11 @@ const occurrenceEditorOccurrenceDataControls = {
                     <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                 </template>
             </div>
-            <div class="row justify-end">
+            <div class="row justify-end q-gutter-sm">
                 <template v-if="Number(occId) === 0">
+                    <template v-if="Object.keys(configuredDataFields).length > 0">
+                        <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
+                    </template>
                     <q-btn color="secondary" @click="createOccurrenceRecord();" label="Create Occurrence Record" :disabled="!occurrenceValid" />
                 </template>
                 <template v-else>
@@ -23,8 +26,17 @@ const occurrenceEditorOccurrenceDataControls = {
                 </template>
             </div>
         </div>
+        <template v-if="showConfiguredDataEditorPopup">
+            <mof-data-editor-popup
+                data-type="occurrence"
+                :new-record="Number(occId) === 0"
+                :show-popup="showConfiguredDataEditorPopup"
+                @close:popup="showConfiguredDataEditorPopup = false"
+            ></mof-data-editor-popup>
+        </template>
     `,
     components: {
+        'mof-data-editor-popup': mofDataEditorPopup,
         'occurrence-entry-follow-up-action-selector': occurrenceEntryFollowUpActionSelector
     },
     setup(_, context) {
@@ -32,6 +44,8 @@ const occurrenceEditorOccurrenceDataControls = {
         const occurrenceStore = useOccurrenceStore();
 
         const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectingEventAutoSearch);
+        const configuredDataFields = Vue.computed(() => occurrenceStore.getOccurrenceMofDataFields);
+        const configuredDataLabel = Vue.computed(() => occurrenceStore.getOccurrenceMofDataLabel);
         const configuredEventMofDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
         const editsExist = Vue.computed(() => occurrenceStore.getOccurrenceEditsExist);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
@@ -39,6 +53,7 @@ const occurrenceEditorOccurrenceDataControls = {
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceValid = Vue.computed(() => occurrenceStore.getOccurrenceValid);
+        const showConfiguredDataEditorPopup = Vue.ref(false);
 
         function changeEntryFollowUpAction(value) {
             occurrenceStore.setEntryFollowUpAction(value);
@@ -89,12 +104,15 @@ const occurrenceEditorOccurrenceDataControls = {
 
         return {
             collectionEventAutoSearch,
+            configuredDataFields,
+            configuredDataLabel,
             configuredEventMofDataFields,
             editsExist,
             entryFollowUpAction,
             occId,
             occurrenceEntryFormat,
             occurrenceValid,
+            showConfiguredDataEditorPopup,
             changeEntryFollowUpAction,
             createOccurrenceRecord,
             saveOccurrenceEdits,
