@@ -17,9 +17,9 @@ const occurrenceEditorCollectingEventModule = {
                             <template v-else-if="collectingEventCollectionArr.length > 0">
                                 <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" />
                             </template>
-                            <template v-if="Object.keys(configuredDataFields).length > 0">
-                                <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
-                            </template>
+                        </template>
+                        <template v-if="Object.keys(configuredDataFields).length > 0">
+                            <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
                         </template>
                         <template v-if="Number(eventId) === 0">
                             <q-btn color="secondary" @click="createCollectingEventRecord();" label="Create Event Record" :disabled="!eventValid" />
@@ -68,15 +68,17 @@ const occurrenceEditorCollectingEventModule = {
             ></occurrence-collecting-event-editor-popup>
         </template>
         <template v-if="showConfiguredDataEditorPopup">
-            <event-mof-data-editor-popup
+            <mof-data-editor-popup
+                data-type="event"
+                :new-record="Number(eventId) === 0"
                 :show-popup="showConfiguredDataEditorPopup"
                 @close:popup="showConfiguredDataEditorPopup = false"
-            ></event-mof-data-editor-popup>
+            ></mof-data-editor-popup>
         </template>
     `,
     components: {
         'collecting-event-field-module': collectingEventFieldModule,
-        'event-mof-data-editor-popup': eventMofDataEditorPopup,
+        'mof-data-editor-popup': mofDataEditorPopup,
         'occurrence-collecting-event-benthic-taxa-editor-popup': occurrenceCollectingEventBenthicTaxaEditorPopup,
         'occurrence-collecting-event-benthic-taxa-list-popup': occurrenceCollectingEventBenthicTaxaListPopup,
         'occurrence-collecting-event-editor-popup': occurrenceCollectingEventEditorPopup,
