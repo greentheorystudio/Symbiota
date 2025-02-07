@@ -180,9 +180,9 @@ class UploadOccurrenceTemp{
                         $fieldNameArr[] = $field;
                     }
                     if($fieldMapping){
-                        $mappedKey = array_search($field, $fieldMapping, true);
-                        if($mappedKey){
-                            $mappedFields[$field] = $mappedKey;
+                        $mappedKey = array_search((string)$field, $fieldMapping, true);
+                        if($mappedKey || (string)$mappedKey === '0'){
+                            $mappedFields[$field] = (string)$mappedKey;
                         }
                     }
                     elseif(array_key_exists($field, $data[0])){
@@ -221,13 +221,189 @@ class UploadOccurrenceTemp{
         return $recordsCreated;
     }
 
-    public function clearCollectionData($collid): bool
+    public function cleanUploadCoordinates($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp SET decimallongitude = -1 * decimallongitude '.
+                'WHERE collid = ' . (int)$collid . ' AND decimallongitude > 0 AND country IN("USA", "United States", "U.S.A.", "Canada", "Mexico") AND (stateprovince <> "Alaska" OR ISNULL(stateprovince)) ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET decimallatitude = NULL, decimallongitude = NULL '.
+                    'WHERE collid = ' . (int)$collid . ' AND decimallatitude = 0 AND decimallongitude = 0 ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET verbatimcoordinates = CONCAT_WS(" ", decimallatitude, decimallongitude) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(verbatimcoordinates) AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET decimallatitude = NULL, decimallongitude = NULL '.
+                    'WHERE collid = ' . (int)$collid . ' AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadCountryStateNames($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso3 '.
+                'SET u.country = c.countryname '.
+                'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso '.
+                    'SET u.country = c.countryname '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.abbrev '.
+                    'SET u.stateprovince = s.statename '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND s.statename IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.statename '.
+                    'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid '.
+                    'SET u.country = c.countryname '.
+                    'WHERE ISNULL(u.country) AND u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadEventDates($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp SET `year` = YEAR(eventdate) '.
+                'WHERE collid = ' . (int)$collid . ' AND eventdate IS NOT NULL AND ISNULL(`year`) ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET `month` = MONTH(eventdate) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`month`) AND eventdate IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET `day` = DAY(eventdate) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`day`) AND eventdate IS NOT NULL';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET startdayofyear = DAYOFYEAR(eventdate) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(startdayofyear) AND eventdate IS NOT NULL';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET enddayofyear = DAYOFYEAR(eventdate) '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(enddayofyear) AND eventdate IS NOT NULL';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadTaxonomy($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp SET sciname = family '.
+                'WHERE collid = ' . (int)$collid . ' AND family IS NOT NULL AND ISNULL(sciname) ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                    'SET u.tid = t.tid '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND u.sciname IS NOT NULL AND t.tid IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                    'SET u.tid = NULL '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
+                    'SET u.family = t.family '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND t.family IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadspectemp SET family = sciname '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function clearCollectionData($collid, $optimizeTables): bool
     {
         if($collid){
             $sql = 'DELETE FROM uploadspectemppoints WHERE collid = ' . (int)$collid . ' ';
             if($this->conn->query($sql)){
                 $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' ';
                 if($this->conn->query($sql)){
+                    if($optimizeTables){
+                        $this->conn->query('OPTIMIZE TABLE uploadspectemppoints');
+                        $this->conn->query('OPTIMIZE TABLE uploadspectemp');
+                    }
                     return true;
                 }
             }
@@ -238,5 +414,232 @@ class UploadOccurrenceTemp{
     public function getFields(): array
     {
         return $this->fields;
+    }
+
+    public function getDuplicateDbpkCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT dbpk FROM uploadspectemp GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+            if($result = $this->conn->query($sql)){
+                $returnVal = $result->num_rows;
+                $result->free();
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getExistingRecordCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upspid) AS cnt FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' AND occid IS NOT NULL ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getNewRecordCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upspid) AS cnt FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' AND ISNULL(occid) ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getNullDbpkCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upspid) AS cnt FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' AND ISNULL(dbpk) ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getUploadCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(upspid) AS cnt FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function getUploadData($collid, $dataType, $index = null, $limit = null): array
+    {
+        $retArr = array();
+        if($collid && $dataType){
+            $sql = $this->getUploadDataSql($collid, $dataType);
+            if($index !== null && $limit !== null){
+                $sql .= 'LIMIT ' . (((int)$index - 1) * (int)$limit) . ', ' . (int)$limit;
+            }
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $row){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $retArr[] = $nodeArr;
+                    //unset($rows[$rIndex]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getUploadDataSql($collid, $dataType): string
+    {
+        $sql = '';
+        if($collid && $dataType){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM uploadspectemp ';
+            if($dataType !== 'dupdbpk'){
+                $sql .= 'WHERE collid  = ' . (int)$collid . ' ';
+            }
+            if($dataType === 'new'){
+                $sql .= 'AND ISNULL(occid) ';
+            }
+            elseif($dataType === 'update'){
+                $sql .= 'AND occid IS NOT NULL ';
+            }
+            elseif($dataType === 'nulldbpk'){
+                $sql .= 'AND ISNULL(dbpk) ';
+            }
+            elseif($dataType === 'dupdbpk'){
+                $sql .= 'GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+            }
+        }
+        return $sql;
+    }
+
+    public function getUploadSummary($collid): array
+    {
+        $retArr = array();
+        if($collid){
+            $retArr['occur'] = $this->getUploadCount($collid);
+            $retArr['new'] = $this->getNewRecordCount($collid);
+            $retArr['update'] = $this->getExistingRecordCount($collid);
+            $retArr['nulldbpk'] = $this->getNullDbpkCount($collid);
+            $retArr['dupdbpk'] = $this->getDuplicateDbpkCount($collid);
+        }
+        return $retArr;
+    }
+
+    public function linkUploadToExistingOccurrenceData($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'SET u.occid = o.occid '.
+                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function linkUploadToExistingOccurrenceDataByCatalogNumber($collid, $linkField): int
+    {
+        $returnVal = 0;
+        if($collid && ($linkField === 'catalognumber' || $linkField === 'othercatalognumbers')){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' AND u.collid = o.collid '.
+                'SET u.occid = o.occid, o.dbpk = u.dbpk '.
+                'WHERE u.collid  = ' . $collid . ' AND u.' . $linkField . ' IS NOT NULL AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function processCleaningScriptData($collid, $scriptData): int
+    {
+        $returnVal = 0;
+        if($collid && $scriptData){
+            $sql = 'DELETE u.* FROM uploadspectemp AS u ';
+            if(array_key_exists('join', $scriptData) && $scriptData['join']){
+                $sql .= $scriptData['join'] . ' ';
+            }
+            $sql .= 'WHERE u.collid = ' . (int)$collid . ' ';
+            if(array_key_exists('where', $scriptData) && $scriptData['where']){
+                $sql .= 'AND ' . $scriptData['where'] . ' ';
+            }
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function removeExistingOccurrenceDataFromUpload($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE up.*, u.* FROM uploadspectemppoints AS up LEFT JOIN uploadspectemp AS u ON up.upspid = u.upspid '.
+                'LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function removeOrphanedPoints($collid): void
+    {
+        if($collid){
+            $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT upspid FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ') ';
+            $this->conn->query($sql);
+        }
+    }
+
+    public function setUploadLocalitySecurity($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
+                'SET u.localitysecurity = 1 '.
+                'WHERE u.collid = ' . (int)$collid . ' AND t.securitystatus = 1 ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+        }
+        return $returnVal;
     }
 }

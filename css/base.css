@@ -1113,3 +1113,19 @@ body.processing .loadingModal {
 .upload-field-mapper-grid-cell {
 	border: 1px solid black;
 }
+.sticky-header-table {
+	height: 100%;
+}
+.sticky-header-table thead tr th {
+	position: sticky;
+	z-index: 1;
+}
+.sticky-header-table thead tr:first-child th {
+	top: 0;
+}
+.sticky-header-table.q-table--loading thead tr:last-child th {
+	top: 48px;
+}
+.sticky-header-table tbody {
+	scroll-margin-top: 48px;
+}

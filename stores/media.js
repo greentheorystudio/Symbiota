@@ -27,7 +27,6 @@ const useMediaStore = Pinia.defineStore('media', {
         mediaArr: [],
         mediaData: {},
         mediaEditData: {},
-        mediaFields: {},
         mediaId: 0,
         mediaTaxon: {},
         mediaUpdateData: {}
@@ -52,9 +51,6 @@ const useMediaStore = Pinia.defineStore('media', {
                 }
             }
             return exist;
-        },
-        getMediaFields(state) {
-            return state.mediaFields;
         },
         getMediaID(state) {
             return state.mediaId;

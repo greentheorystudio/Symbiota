@@ -91,9 +91,9 @@ class DataUtilitiesService {
             $occData['dateidentified'] = date('Y-m-d', mktime(0,0,0,1,$occData['dateidentified'] - 1,1900));
         }
         if(array_key_exists('year', $occData) || array_key_exists('month', $occData) || array_key_exists('day', $occData)){
-            $y = array_key_exists('year',$occData) ? $occData['year'] : '';
-            $m = array_key_exists('month',$occData) ? $occData['month'] : '';
-            $d = array_key_exists('day',$occData) ? $occData['day'] : '';
+            $y = (array_key_exists('year', $occData) && is_numeric($occData['year'])) ? $occData['year'] : '';
+            $m = (array_key_exists('month', $occData) && is_numeric($occData['month'])) ? $occData['month'] : '';
+            $d = (array_key_exists('day', $occData) && is_numeric($occData['day'])) ? $occData['day'] : '';
             $vDate = trim($y . '-' . $m . '-' . $d,'- ');
             if(isset($occData['day']) && $occData['day'] && !is_numeric($occData['day'])){
                 unset($occData['day']);
@@ -240,7 +240,7 @@ class DataUtilitiesService {
             }
             $occData['verbatimcoordinates'] = $vCoord;
         }
-        if((array_key_exists('utmnorthing', $occData) && $occData['utmnorthing']) || (array_key_exists('utmeasting', $occData) && $occData['utmeasting'])){
+        if((array_key_exists('utmnorthing', $occData) && is_numeric($occData['utmnorthing'])) || (array_key_exists('utmeasting', $occData) && is_numeric($occData['utmeasting']))){
             $no = array_key_exists('utmnorthing',$occData) ? $occData['utmnorthing'] : '';
             $ea = array_key_exists('utmeasting',$occData) ? $occData['utmeasting'] : '';
             $zo = array_key_exists('utmzoning',$occData) ? $occData['utmzoning'] : '';

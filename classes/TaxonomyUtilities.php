@@ -76,18 +76,6 @@ class TaxonomyUtilities {
         return $retTid;
     }
 
-    public function getSensitiveTaxa(): array
-    {
-        $sensitiveArr = array();
-        $sql = 'SELECT DISTINCT tid FROM taxa WHERE SecurityStatus = 1 ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $sensitiveArr[] = $r->tid;
-        }
-        $rs->free();
-        return $sensitiveArr;
-    }
-
     public function getRankArr($kingdomId = null): array
     {
         $retArr = array();

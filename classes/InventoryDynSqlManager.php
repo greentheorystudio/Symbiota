@@ -26,11 +26,11 @@ class InventoryDynSqlManager {
 	{
 		$sqlStr = '';
 		if($this->clid){
-			$sql = 'SELECT c.dynamicsql FROM fmchecklists c WHERE (c.clid = '.$this->clid.')';
+			$sql = 'SELECT c.searchterms FROM fmchecklists c WHERE (c.clid = '.$this->clid.')';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
-				$sqlStr = $row->dynamicsql;
+				$sqlStr = $row->searchterms;
 			}
 			$rs->close();
 		}
@@ -48,7 +48,7 @@ class InventoryDynSqlManager {
 	
 	public function saveSql($sqlFrag): void
 	{
-		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = "'.SanitizerService::cleanInStr($this->conn,$sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists c SET c.searchterms = "'.SanitizerService::cleanInStr($this->conn,$sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
 		$this->conn->query($sql);
 	}
 

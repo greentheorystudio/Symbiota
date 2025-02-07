@@ -331,7 +331,7 @@ if(!$printMode){
         if($activateKey && !$printMode){
             ?>
             <div>
-                <a href="../ident/key.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid;?>&taxon=All+Species">
+                <a href="../ident/key.php?clid=<?php echo $clValue. '&pid=' .$pid;?>">
                     <i style='width:15px; height:15px;' class="fas fa-key"></i>
                 </a>
             </div>
@@ -720,7 +720,7 @@ if(!$printMode){
                                 <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>');"></i>
                             </span>
                             <?php
-                            if($showVouchers && array_key_exists('dynamicsql',$clArray) && $clArray['dynamicsql']){
+                            if($showVouchers && array_key_exists('searchterms',$clArray) && $clArray['searchterms']){
                                 ?>
                                 <span class="editspp" style="display:none;">
                                     <i style='width:13px;height:13px;cursor:pointer;' title='Link Voucher Occurrences' class="fas fa-link" onclick="setPopup(<?php echo $tid . ',' . $clid;?>);"></i>

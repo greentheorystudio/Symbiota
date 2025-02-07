@@ -1,87 +1,62 @@
-const useImageStore = Pinia.defineStore('image', {
+const useChecklistStore = Pinia.defineStore('checklist', {
     state: () => ({
-        blankImageRecord: {
-            imgid: 0,
-            tid: null,
-            sciname: null,
-            url: null,
-            thumbnailurl: null,
-            originalurl: null,
-            photographer: null,
-            photographeruid: null,
-            format: null,
-            caption: null,
-            owner: null,
-            sourceurl: null,
-            referenceurl: null,
-            copyright: null,
-            rights: null,
+        blankChecklistRecord: {
+            clid: 0,
+            name: null,
+            title: null,
             locality: null,
-            occid: null,
+            publication: null,
+            abstract: null,
+            authors: null,
+            type: null,
+            politicaldivision: null,
+            searchterms: null,
+            parent: null,
+            parentclid: null,
             notes: null,
-            anatomy: null,
-            username: null,
-            sourceidentifier: null,
-            mediamd5: null,
-            dynamicproperties: null,
+            latcentroid: null,
+            longcentroid: null,
+            pointradiusmeters: null,
+            footprintwkt: null,
+            percenteffort: null,
+            access: null,
+            defaultsettings: null,
+            iconurl: null,
+            headerurl: null,
+            uid: null,
             sortsequence: null,
-            tagArr: []
+            childChecklistArr: []
         },
-        imageArr: [],
-        imageData: {},
-        imageEditData: {},
-        imageId: 0,
-        imageTaxon: {},
-        imageUpdateData: {}
+        checklistData: {},
+        checklistEditData: {},
+        checklistId: 0,
+        checklistTaxaArr: [],
+        checklistUpdateData: {},
+        checklistVoucherArr: []
     }),
     getters: {
-        getBlankImageRecord(state) {
-            return state.blankImageRecord;
+        getBlankChecklistRecord(state) {
+            return state.blankChecklistRecord;
         },
-        getImageArr(state) {
-            return state.imageArr;
+        getChecklistData(state) {
+            return state.checklistEditData;
         },
-        getImageCount(state) {
-            return state.imageArr.length;
-        },
-        getImageData(state) {
-            return state.imageEditData;
-        },
-        getImageEditsExist(state) {
+        getChecklistEditsExist(state) {
             let exist = false;
-            state.imageUpdateData = Object.assign({}, {});
-            for(let key in state.imageEditData) {
-                if(key === 'tagArr'){
-                    if(state.imageEditData[key].length !== state.imageData[key].length){
-                        exist = true;
-                        state.imageUpdateData[key] = state.imageEditData[key];
-                    }
-                    else if(state.imageData[key].length > 0){
-                        state.imageData[key].forEach(tag => {
-                            if(!state.imageEditData[key].includes(tag)){
-                                exist = true;
-                                state.imageUpdateData[key] = state.imageEditData[key];
-                            }
-                        });
-                    }
-                }
-                else{
-                    if(state.imageEditData.hasOwnProperty(key) && state.imageEditData[key] !== state.imageData[key]) {
-                        exist = true;
-                        state.imageUpdateData[key] = state.imageEditData[key];
-                    }
+            state.checklistUpdateData = Object.assign({}, {});
+            for(let key in state.checklistEditData) {
+                if(state.checklistEditData.hasOwnProperty(key) && state.checklistEditData[key] !== state.checklistData[key]) {
+                    exist = true;
+                    state.checklistUpdateData[key] = state.checklistEditData[key];
                 }
             }
             return exist;
         },
-        getImageID(state) {
-            return state.imageId;
+        getChecklistID(state) {
+            return state.checklistId;
         },
-        getImageTaxon(state) {
-            return state.imageTaxon;
-        },
-        getImageValid(state) {
-            return !!state.imageEditData['url'];
+        getChecklistValid(state) {
+            return !!state.checklistEditData['name'];
         }
     },
     actions: {
@@ -91,7 +66,6 @@ const useImageStore = Pinia.defineStore('image', {
         clearImageData() {
             this.imageData = Object.assign({}, this.blankImageRecord);
             this.imageEditData = Object.assign({}, {});
-            this.imageTaxon = Object.assign({}, {});
         },
         deleteImageRecord(collid, callback) {
             const formData = new FormData();
@@ -172,8 +146,6 @@ const useImageStore = Pinia.defineStore('image', {
             .then((data) => {
                 if(data.hasOwnProperty('imgid') && Number(data.imgid) > 0){
                     data.sciname = data['taxonData'] ? data['taxonData']['sciname'] : null;
-                    this.imageTaxon = Object.assign({}, data['taxonData']);
-                    delete data['taxonData'];
                     this.imageData = Object.assign({}, data);
                     this.imageEditData = Object.assign({}, this.imageData);
                 }

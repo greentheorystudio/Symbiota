@@ -45,7 +45,7 @@ const searchDownloadOptionsPopup = {
                         </div>
                         <div class="col-7 column">
                             <checkbox-input-element label="Include Determination History" :value="includeDeterminations" @update:value="(value) => includeDeterminations = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
-                            <checkbox-input-element label="Include Image Records" :value="includeImages" @update:value="(value) => includeImages = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
+                            <checkbox-input-element label="Include Media Records" :value="includeMedia" @update:value="(value) => includeMedia = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
                             <checkbox-input-element label="Include Measurement or Fact Records" :value="includeMof" @update:value="(value) => includeMof = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ const searchDownloadOptionsPopup = {
             {value: 'zip', label: 'ZIP'}
         ]);
         const includeDeterminations = Vue.ref(false);
-        const includeImages = Vue.ref(false);
+        const includeMedia = Vue.ref(false);
         const includeMof = Vue.ref(false);
         const selectedDataStructure = Vue.ref('native');
         const selectedDownloadType = Vue.ref('csv');
@@ -88,7 +88,7 @@ const searchDownloadOptionsPopup = {
                 type: selectedDownloadType.value,
                 structure: selectedDataStructure.value,
                 includeDet: includeDeterminations.value,
-                includeImage: includeImages.value,
+                includeMedia: includeMedia.value,
                 includeMof: includeMof.value
             });
         }
@@ -98,7 +98,7 @@ const searchDownloadOptionsPopup = {
             dataStructureOptions,
             downloadTypeOptions,
             includeDeterminations,
-            includeImages,
+            includeMedia,
             includeMof,
             selectedDataStructure,
             selectedDownloadType,

@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/FileSystemService.php');
@@ -59,6 +60,39 @@ class Images{
         return $retVal;
     }
 
+    public function batchCreateOccurrenceImageRecordGUIDs($collid): int
+    {
+        $returnVal = 1;
+        $valueArr = array();
+        $insertPrefix = 'INSERT INTO guidimages(guid, imgid) VALUES ';
+        $sql = 'SELECT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND i.imgid NOT IN(SELECT imgid FROM guidimages) ';
+        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $row){
+                if($returnVal){
+                    if(count($valueArr) === 5000){
+                        $sql2 = $insertPrefix . implode(',', $valueArr);
+                        if(!$this->conn->query($sql2)){
+                            $returnVal = 0;
+                        }
+                        $valueArr = array();
+                    }
+                    if($row['imgid']){
+                        $guid = UuidService::getUuidV4();
+                        $valueArr[] = '("' . $guid . '",' . $row['imgid'] . ')';
+                    }
+                }
+            }
+            if($returnVal && count($valueArr) > 0){
+                $sql2 = $insertPrefix . implode(',', $valueArr);
+                $this->conn->query($sql2);
+            }
+        }
+        return $returnVal;
+    }
+
     public function createImageRecord($data): int
     {
         $newID = 0;
@@ -93,6 +127,35 @@ class Images{
         return $newID;
     }
 
+    public function createImageRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('imgid', 'photographeruid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    if($field === 'owner'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $sql = 'INSERT INTO images(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND url IS NOT NULL AND format IS NOT NULL ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteImageRecord($imgid): int
     {
         $retVal = 1;
@@ -124,6 +187,72 @@ class Images{
         return $retVal;
     }
 
+    public function deleteOccurrenceImageFiles($idType, $id): void
+    {
+        $sql = '';
+        if($idType === 'occid'){
+            $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE occid = ' . (int)$id . ' ';
+        }
+        elseif($idType === 'occidArr'){
+            $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE occid IN(' . implode(',', $id) . ') ';
+        }
+        elseif($idType === 'collid'){
+            $sql = 'SELECT i.url, i.thumbnailurl, i.originalurl FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+                'WHERE o.collid = ' . (int)$id . ' ';
+        }
+        //echo '<div>'.$sql.'</div>';
+        if($sql && $result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(strpos($row['url'], '/') === 0){
+                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['url']), true);
+                }
+                if(strpos($row['thumbnailurl'], '/') === 0){
+                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['thumbnailurl']), true);
+                }
+                if(strpos($row['originalurl'], '/') === 0){
+                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['originalurl']), true);
+                }
+                unset($rows[$index]);
+            }
+        }
+    }
+
+    public function deleteOccurrenceImageRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'i.occid = ' . (int)$id;
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'i.occid IN(' . implode(',', $id) . ')';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'i.occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE t.* FROM imagetag AS t LEFT JOIN images AS i ON t.imgid = i.imgid WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+            if($retVal){
+                $sql = 'DELETE g.* FROM guidimages AS g LEFT JOIN images AS i ON g.imgid = i.imgid WHERE ' . $whereStr . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE i.* FROM images AS i WHERE ' . $whereStr . ' ';
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteImageTag($imgid, $tag): int
     {
         $retVal = 1;
@@ -141,13 +270,14 @@ class Images{
     {
         $returnArr = array();
         if($property === 'occid' || $property === 'tid'){
-            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM images WHERE ' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'i');
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity '.
+                'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+                'WHERE i.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
             if($property === 'tid' && !$includeOccurrence){
-                $sql .= 'AND ISNULL(occid) ';
+                $sql .= 'AND ISNULL(i.occid) ';
             }
-            $sql .= 'ORDER BY sortsequence ';
+            $sql .= 'ORDER BY i.sortsequence ';
             if($limit){
                 $sql .= 'LIMIT ' . (int)$limit . ' ';
             }
@@ -157,13 +287,25 @@ class Images{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    $nodeArr = array();
-                    foreach($fields as $val){
-                        $name = $val->name;
-                        $nodeArr[$name] = $row[$name];
+                    $permitted = true;
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
+                    if($localitySecurity){
+                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                        if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                            $permitted = false;
+                        }
                     }
-                    $nodeArr['tagArr'] = $this->getImageTags($row['imgid']);
-                    $returnArr[] = $nodeArr;
+                    if($permitted){
+                        $nodeArr = array();
+                        foreach($fields as $val){
+                            $name = $val->name;
+                            if($name !== 'collid' && $name !== 'localitysecurity'){
+                                $nodeArr[$name] = $row[$name];
+                            }
+                        }
+                        $nodeArr['tagArr'] = $this->getImageTags($row['imgid']);
+                        $returnArr[] = $nodeArr;
+                    }
                     unset($rows[$index]);
                 }
             }

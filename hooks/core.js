@@ -98,7 +98,6 @@ function useCore() {
         const d10 = Number(northing) / d;
         const d12 = d10 / (d1 * (1 - d2 / 4 - (3 * d2 * d2) / 64 - (5 * Math.pow(d2, 3)) / 256));
         const d14 = d12 + ((3 * d4) / 2 - (27 * Math.pow(d4, 3)) / 32) * Math.sin(2 * d12) + ((21 * d4 * d4) / 16 - (55 * Math.pow(d4, 4)) / 32) * Math.sin(4 * d12) + ((151 * Math.pow(d4, 3)) / 96) * Math.sin(6 * d12);
-        const d13 = (d14 / Math.PI) * 180;
         const d5 = d1 / Math.sqrt(1 - d2 * Math.sin(d14) * Math.sin(d14));
         const d6 = Math.tan(d14) * Math.tan(d14);
         const d7 = d3 * Math.cos(d14) * Math.cos(d14);
@@ -111,8 +110,10 @@ function useCore() {
         return (Number(latValue) > 0 && Number(lngValue) > 0) ? {lat: latValue, long: lngValue} : null;
     }
 
-    function csvToArray(str) {
+    async function csvToArray(str) {
+        const PROCESS_SIZE = 1000;
         let lineTermination;
+        let resultArr = [];
         if(str.endsWith('\r\n')){
             lineTermination = '\r\n';
         }
@@ -124,23 +125,44 @@ function useCore() {
             str = str.substring(0, str.length - 2);
         }
         const rows = str.slice(str.indexOf(lineTermination) + 1).split(lineTermination);
-        return rows.map((row) => {
-            if(row){
-                const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                return headers.reduce((object, header, index) => {
-                    let fieldName = header.trim();
-                    if(fieldName.indexOf('"') > -1){
-                        fieldName = fieldName.replaceAll('"', '');
+        const processRows = async (batch) => {
+            const promises = batch.map((row) => {
+                if(row){
+                    const dataObjPattern = new RegExp("(,|\\r?\\n|\\r|^)(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^\",\\r\\n]*))",'gi');
+                    const values = [];
+                    let dataMatch = null;
+                    while(dataMatch = dataObjPattern.exec(row)){
+                        let dataValue = '';
+                        if(dataMatch[2]){
+                            dataValue = dataMatch[2].replace(new RegExp('""', 'g'), '"');
+                        }
+                        else {
+                            dataValue = dataMatch[3];
+                        }
+                        values.push(dataValue);
                     }
-                    let fieldValue = values[index] ? values[index].replace('\r', '') : '';
-                    if(fieldValue.indexOf('"') > -1){
-                        fieldValue = fieldValue.replaceAll('"','');
-                    }
-                    object[fieldName] = fieldValue;
-                    return object;
-                }, {});
-            }
-        });
+                    return headers.reduce((object, header, index) => {
+                        let fieldName = header.trim();
+                        if(fieldName.indexOf('"') > -1){
+                            fieldName = fieldName.replaceAll('"', '');
+                        }
+                        let fieldValue = values[index] ? values[index].replace('\r', '') : '';
+                        if(fieldValue.indexOf('"') > -1){
+                            fieldValue = fieldValue.replaceAll('"','');
+                        }
+                        object[fieldName] = fieldValue;
+                        return object;
+                    }, {});
+                }
+            });
+            return Promise.all(promises);
+        };
+        for(let i = 0; rows.length > 0; i += PROCESS_SIZE) {
+            const batch = rows.slice(i, i + PROCESS_SIZE);
+            rows.splice(0, PROCESS_SIZE);
+            resultArr = resultArr.concat(await processRows(batch));
+        }
+        return resultArr;
     }
 
     function generateRandHexColor() {
@@ -237,14 +259,6 @@ function useCore() {
         window.open(url, '_blank');
     }
 
-    function parseCsvFile(file, callback) {
-        const fileReader = new FileReader();
-        fileReader.onload = () => {
-            callback(csvToArray(fileReader.result));
-        };
-        fileReader.readAsText(file);
-    }
-
     function parseDate(dateStr){
         const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
         const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
@@ -319,6 +333,31 @@ function useCore() {
             }
         }
         return returnData;
+    }
+
+    function parseFile(file, callback) {
+        const CHUNK_SIZE = 512;
+        const reader = new FileReader();
+        let offset = 0;
+        let resultStr = '';
+
+        reader.onload = (event) => {
+            if(event.target.result.length > 0) {
+                resultStr += event.target.result;
+                offset += CHUNK_SIZE;
+                readNext();
+            }
+            else {
+                callback(resultStr);
+            }
+        };
+
+        function readNext() {
+            let slice = file.slice(offset, offset + CHUNK_SIZE);
+            reader.readAsText(slice);
+        }
+
+        readNext();
     }
 
     function processCsvDownload(csvDataArr, filename) {
@@ -430,6 +469,7 @@ function useCore() {
 
     return {
         checkObjectNotEmpty,
+        csvToArray,
         convertMysqlWKT,
         convertUtmToDecimalDegrees,
         generateRandHexColor,
@@ -441,7 +481,7 @@ function useCore() {
         hexToRgb,
         hideWorking,
         openTutorialWindow,
-        parseCsvFile,
+        parseFile,
         parseDate,
         processCsvDownload,
         showNotification,

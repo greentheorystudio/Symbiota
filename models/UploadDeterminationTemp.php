@@ -74,11 +74,14 @@ class UploadDeterminationTemp{
         return $recordsCreated;
     }
 
-    public function clearCollectionData($collid): bool
+    public function clearCollectionData($collid, $optimizeTables): bool
     {
         if($collid){
             $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' ';
             if($this->conn->query($sql)){
+                if($optimizeTables){
+                    $this->conn->query('OPTIMIZE TABLE uploaddetermtemp');
+                }
                 return true;
             }
         }
@@ -88,5 +91,57 @@ class UploadDeterminationTemp{
     public function getFields(): array
     {
         return $this->fields;
+    }
+
+    public function getUploadCount($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'SELECT COUNT(updid) AS cnt FROM uploaddetermtemp WHERE collid  = ' . (int)$collid . ' ';
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $returnVal = (int)$row['cnt'];
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function populateOccidFromUploadOccurrenceData($collid): void
+    {
+        if($collid){
+            $sql = 'UPDATE uploaddetermtemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'SET u.occid = o.occid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            $this->conn->query($sql);
+        }
+    }
+
+    public function removeExistingDeterminationDataFromUpload($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE u.* FROM uploaddetermtemp AS u LEFT JOIN omoccurdeterminations AS d ON u.occid = d.occid '.
+                'WHERE u.collid  = ' . $collid . ' AND u.sciname = d.sciname AND u.identifiedby = d.identifiedby AND u.dateidentified = d.dateidentified ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function removeExistingOccurrenceDataFromUpload($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE u.* FROM uploaddetermtemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
     }
 }

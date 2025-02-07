@@ -6,12 +6,18 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             uploadtype: null,
             title: null,
             dwcpath: null,
-            queryparamjson: null,
-            cleansql: null,
-            configjson: null
+            queryparamjson: {},
+            cleansql: [],
+            configjson: {}
         },
         blankConfigurations: {
-            existingRecords: 'update'
+            catalogNumberMatchField: 'catalognumber',
+            existingRecords: 'update',
+            existingDeterminationRecords: 'merge',
+            existingMediaRecords: 'merge',
+            existingMofRecords: 'merge',
+            matchOnCatalogNumber: false,
+            removeUnmatchedRecords: false
         },
         collectionDataUploadParametersArr: [],
         collectionDataUploadParametersData: {},
@@ -21,12 +27,20 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         eventMofDataFields: {},
         occurrenceMofDataFields: {},
         uploadTypeOptions: [
-            {value: 6, label: 'File Upload (DwC-A, csv, geoJSON)'},
+            {value: 6, label: 'File Upload (DwC-A (zip), csv, txt, geojson, json)'},
             {value: 8, label: 'IPT/DwC-A Provider'},
             {value: 10, label: 'Symbiota Portal'}
         ]
     }),
     getters: {
+        getCleanSqlArr(state) {
+            if(state.collectionDataUploadParametersEditData.hasOwnProperty('cleansql') && state.collectionDataUploadParametersEditData.cleansql && state.collectionDataUploadParametersEditData.cleansql.length > 0){
+                return state.collectionDataUploadParametersEditData.cleansql;
+            }
+            else{
+                return [];
+            }
+        },
         getCollectionDataUploadParametersArr(state) {
             return state.collectionDataUploadParametersArr;
         },
@@ -53,8 +67,8 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             );
         },
         getConfigurations(state) {
-            if(state.collectionDataUploadParametersEditData.hasOwnProperty('configjson') && state.collectionDataUploadParametersEditData.configjson){
-                return JSON.parse(state.collectionDataUploadParametersEditData.configjson);
+            if(state.collectionDataUploadParametersEditData.hasOwnProperty('configjson') && state.collectionDataUploadParametersEditData.configjson && Object.keys(state.collectionDataUploadParametersEditData.configjson).length > 0){
+                return state.collectionDataUploadParametersEditData.configjson;
             }
             else{
                 return state.blankConfigurations;

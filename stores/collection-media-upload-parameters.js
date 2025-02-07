@@ -6,7 +6,7 @@ const useCollectionMediaUploadParametersStore = Pinia.defineStore('collection-me
             title: null,
             filenamepatternmatch: null,
             patternmatchfield: 'catalognumber',
-            configjson: null
+            configjson: {}
         },
         blankConfigurations: {
             createOccurrence: true

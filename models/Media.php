@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/FileSystemService.php');
@@ -48,7 +49,7 @@ class Media{
         $fieldNameArr = array();
         $fieldValueArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'mediaid' && array_key_exists($field, $data)){
+            if($field !== 'mediaid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
                 if($field === 'language' || $field === 'owner'){
                     $fieldNameArr[] = '`' . $field . '`';
                 }
@@ -69,6 +70,35 @@ class Media{
         return $newID;
     }
 
+    public function createMediaRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('mediaid', 'creatoruid', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    if($field === 'language' || $field === 'owner'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $sql = 'INSERT INTO media(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND accessuri IS NOT NULL AND format IS NOT NULL ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteMediaRecord($mediaid): int
     {
         $retVal = 1;
@@ -84,34 +114,95 @@ class Media{
         return $retVal;
     }
 
+    public function deleteOccurrenceMediaFiles($idType, $id): void
+    {
+        $sql = '';
+        if($idType === 'occid'){
+            $sql = 'SELECT accessuri FROM media WHERE occid = ' . (int)$id . ' ';
+        }
+        elseif($idType === 'occidArr'){
+            $sql = 'SELECT accessuri FROM media WHERE occid IN(' . implode(',', $id) . ') ';
+        }
+        elseif($idType === 'collid'){
+            $sql = 'SELECT m.accessuri FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'WHERE o.collid = ' . (int)$id . ' ';
+        }
+        //echo '<div>'.$sql.'</div>';
+        if($sql && $result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(strpos($row['accessuri'], '/') === 0){
+                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['accessuri']), true);
+                }
+                unset($rows[$index]);
+            }
+        }
+    }
+
+    public function deleteOccurrenceMediaRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'occid = ' . (int)$id;
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'occid IN(' . implode(',', $id) . ')';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE FROM media WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function getMediaArrByProperty($property, $value, $limitFormat = null): array
     {
         $returnArr = array();
         if($property === 'occid' || $property === 'tid'){
-            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM media WHERE ' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'm');
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity '.
+                'FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'WHERE m.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
             if($limitFormat){
                 if($limitFormat === 'audio'){
-                    $sql .= 'AND format LIKE "audio/%" ';
+                    $sql .= 'AND m.format LIKE "audio/%" ';
                 }
                 elseif($limitFormat === 'video'){
-                    $sql .= 'AND format LIKE "video/%" ';
+                    $sql .= 'AND m.format LIKE "video/%" ';
                 }
             }
-            $sql .= 'ORDER BY sortsequence ';
+            $sql .= 'ORDER BY m.sortsequence ';
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    $nodeArr = array();
-                    foreach($fields as $val){
-                        $name = $val->name;
-                        $nodeArr[$name] = $row[$name];
+                    $permitted = true;
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
+                    if($localitySecurity){
+                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                        if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                            $permitted = false;
+                        }
                     }
-                    $returnArr[] = $nodeArr;
+                    if($permitted){
+                        $nodeArr = array();
+                        foreach($fields as $val){
+                            $name = $val->name;
+                            if($name !== 'collid' && $name !== 'localitysecurity'){
+                                $nodeArr[$name] = $row[$name];
+                            }
+                        }
+                        $returnArr[] = $nodeArr;
+                    }
                     unset($rows[$index]);
                 }
             }

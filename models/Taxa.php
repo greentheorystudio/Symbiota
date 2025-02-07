@@ -249,7 +249,7 @@ class Taxa{
             $rankHigh = array_key_exists('rhigh', $opts) ? (int)$opts['rhigh'] : null;
             $rankLimit = array_key_exists('rlimit', $opts) ? (int)$opts['rlimit'] : null;
             $rankLow = array_key_exists('rlow', $opts) ? (int)$opts['rlow'] : null;
-            $sql = 'SELECT DISTINCT tid, kingdomId, rankid, sciname, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
+            $sql = 'SELECT DISTINCT tid, kingdomid, rankid, sciname, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
                 'author, tidaccepted, parenttid, family, source, notes, hybrid, securitystatus  '.
                 'FROM taxa WHERE sciname LIKE "' . $term . '%" ';
             if($rankLimit){

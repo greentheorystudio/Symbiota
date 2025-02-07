@@ -76,6 +76,7 @@ const checkboxInputElement = {
         }
 
         function processValueChange(val) {
+            setCheckboxValue();
             context.emit('update:value', (val ? 1 : null));
         }
 

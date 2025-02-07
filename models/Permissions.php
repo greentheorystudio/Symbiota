@@ -64,6 +64,35 @@ class Permissions{
         }
     }
 
+    public function getUserRareSpCollidAccessArr(): array
+    {
+        $returnArr = array();
+        if($GLOBALS['VALID_USER']){
+            $sql = 'SELECT collid FROM omcollections ';
+            //echo $sql;
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($GLOBALS['IS_ADMIN'] || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
+                        $returnArr[] = (int)$row['collid'];
+                    }
+                    elseif(
+                        (array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array((int)$row['collid'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) ||
+                        (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array((int)$row['collid'], $GLOBALS['USER_RIGHTS']['CollEditor'], true)) ||
+                        (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array((int)$row['collid'], $GLOBALS['USER_RIGHTS']['RareSppReader'], true))
+                    ){
+                        $returnArr[] = (int)$row['collid'];
+                    }
+
+
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $returnArr;
+    }
+
     public function setUserPermissions(): void
     {
         if(isset($_SESSION['PARAMS_ARR']['uid']) && (int)$_SESSION['PARAMS_ARR']['uid'] > 0){

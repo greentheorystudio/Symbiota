@@ -1,5 +1,9 @@
 const fieldMapperPopup = {
     props: {
+        disabled: {
+            type: Boolean,
+            default: false
+        },
         fieldMapping: {
             type: Object,
             default: {}
@@ -43,7 +47,7 @@ const fieldMapperPopup = {
                                             {{ sourceFields[sourceField] }}
                                         </div>
                                         <div class="col-8 q-pl-sm upload-field-mapper-grid-cell" :class="fieldMapping[sourceField.toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
-                                            <selector-input-element :options="targetFields" :value="fieldMapping[sourceField.toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
+                                            <selector-input-element :disabled="disabled" :options="targetFields" :value="fieldMapping[sourceField.toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
                                         </div>
                                     </div>
                                 </template>
