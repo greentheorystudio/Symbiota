@@ -38,7 +38,11 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'makeDeterminationCurrent' && $detid && $isEditor){
         echo $occurrenceDeterminations->makeDeterminationCurrent($detid);
     }
-    elseif($action === 'batchPopulateOccurrenceDeterminationGUIDs' && $collid){
+    elseif($action === 'batchPopulateOccurrenceDeterminationGUIDs' && $isEditor && $collid){
         echo $occurrenceDeterminations->batchCreateOccurrenceDeterminationRecordGUIDs($collid);
+    }
+    elseif($action === 'updateDetThesaurusLinkages' && $isEditor && $collid && array_key_exists('kingdomid', $_POST)){
+        $kingdomid = (int)$_POST['kingdomid'];
+        echo $occurrenceDeterminations->updateDetTaxonomicThesaurusLinkages($collid, $kingdomid);
     }
 }

@@ -294,4 +294,44 @@ class OccurrenceDeterminations{
         }
         return $retVal;
     }
+
+    public function updateDetTaxonomicThesaurusLinkages($collid, $kingdomId): int
+    {
+        $retCnt = 0;
+        $rankIdArr = array();
+        if((int)$collid && $kingdomId){
+            $sql = 'SELECT DISTINCT rankid FROM taxonunits WHERE kingdomid = ' . (int)$kingdomId . ' AND rankid < 180 AND rankid > 20 ORDER BY rankid DESC ';
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $rankIdArr[] = $r->rankid;
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
+                'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
+                'SET d.tid = t.tid '.
+                'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid >= 180 ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
+            }
+            foreach($rankIdArr as $id){
+                $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
+                    'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
+                    'SET d.tid = t.tid '.
+                    'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid = ' . $id . ' ';
+                //echo $sql;
+                if($this->conn->query($sql)){
+                    $retCnt += $this->conn->affected_rows;
+                }
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
+                'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
+                'SET d.tid = t.tid '.
+                'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid <= 20 ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
 }
