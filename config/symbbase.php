@@ -44,36 +44,3 @@ $GLOBALS['PUBLIC_CHECKLIST'] = (
 );
 $GLOBALS['SOLR_MODE'] = (isset($GLOBALS['SOLR_URL']) && $GLOBALS['SOLR_URL']);
 $GLOBALS['CHECKLIST_FG_EXPORT'] = (isset($GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']) && $GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT']);
-
-$GLOBALS['RIGHTS_TERMS'] = array(
-    'http://creativecommons.org/publicdomain/zero/1.0/' => array(
-        'title' => 'CC0 1.0 (Public-domain)',
-        'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
-        'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
-    ),
-    'http://creativecommons.org/licenses/by/3.0/' => array(
-        'title' => 'CC BY (Attribution)',
-        'url' => 'http://creativecommons.org/licenses/by/3.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-    'http://creativecommons.org/licenses/by-nc/3.0/' => array(
-        'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-        'url' => 'http://creativecommons.org/licenses/by-nc/3.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-    'http://creativecommons.org/licenses/by/4.0/' => array(
-        'title' => 'CC BY (Attribution)',
-        'url' => 'http://creativecommons.org/licenses/by/4.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-    'http://creativecommons.org/licenses/by-nc/4.0/' => array(
-        'title' => 'CC BY-NC (Attribution-Non-Commercial)',
-        'url' => 'http://creativecommons.org/licenses/by-nc/4.0/legalcode',
-        'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    ),
-    'http://creativecommons.org/licenses/by-nc-nd/4.0/' => array(
-        'title' => 'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivatives 4.0 International)',
-        'url' => 'http://creativecommons.org/licenses/by-nc-nd/4.0/legalcode',
-        'def' => 'Users can copy and redistribute the material in any medium or format. The licensor cannot revoke these freedoms as long as you follow the license terms.'
-    )
-);

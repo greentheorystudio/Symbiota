@@ -16,24 +16,6 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <style>
-            .sticky-header-table {
-                height: 100%;
-            }
-            .sticky-header-table thead tr th {
-                position: sticky;
-                z-index: 1;
-            }
-            .sticky-header-table thead tr:first-child th {
-                top: 0;
-            }
-            .sticky-header-table.q-table--loading thead tr:last-child th {
-                top: 48px;
-            }
-            .sticky-header-table tbody {
-                scroll-margin-top: 48px;
-            }
-        </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collid; ?>;
@@ -124,10 +106,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 
                     Vue.onMounted(() => {
                         collectionStore.setCollection(collId, () => {
-                            if(isEditor.value){
-                                //setUnlinkedRecordCounts();
-                            }
-                            else{
+                            if(!isEditor.value){
                                 window.location.href = baseStore.getClientRoot + '/index.php';
                             }
                         });

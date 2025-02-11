@@ -1,9 +1,22 @@
 <?php
 class FileSystemService {
 
+    public static function addFileToZipArchive($zipArchive, $filePath): void
+    {
+        if(file_exists($filePath)) {
+            $zipArchive->addFile($filePath);
+            $zipArchive->renameName($filePath, basename($filePath));
+        }
+    }
+
     public static function closeFileHandler($fileHandler): void
     {
         fclose($fileHandler);
+    }
+
+    public static function closeZipArchive($zipArchive): void
+    {
+        $zipArchive->close();
     }
 
     public static function copyFileToTarget($source, $targetPath, $targetFilename): bool
@@ -23,6 +36,11 @@ class FileSystemService {
             return true;
         }
         return false;
+    }
+
+    public static function createNewZipArchive($zipArchive, $targetPath)
+    {
+        return $zipArchive->open($targetPath, ZipArchive::CREATE);
     }
 
     public static function deleteDirectory($directoryPath): bool
@@ -51,7 +69,7 @@ class FileSystemService {
             unlink($filePath);
             if($cleanParentFolder){
                 $parentPath = dirname($filePath);
-                if(is_dir($parentPath) && !scandir($parentPath)){
+                if(is_dir($parentPath) && !glob(($parentPath . '/*'))){
                     self::deleteDirectory($parentPath);
                 }
             }
@@ -139,6 +157,16 @@ class FileSystemService {
         return str_replace($GLOBALS['SERVER_ROOT'], '', $path);
     }
 
+    public static function initializeNewDomDocument(): DOMDocument
+    {
+        return new DOMDocument('1.0', 'UTF-8');
+    }
+
+    public static function initializeNewZipArchive(): ZipArchive
+    {
+        return new ZipArchive;
+    }
+
     public static function moveUploadedFileToServer($file, $targetPath, $targetFilename): bool
     {
         if(move_uploaded_file($file['tmp_name'], $targetPath . '/' . $targetFilename)){
@@ -200,6 +228,11 @@ class FileSystemService {
             }
         }
         return $imageData;
+    }
+
+    public static function saveDomDocument($domDocument, $targetPath): void
+    {
+        $domDocument->save($targetPath);
     }
 
     public static function transferDwcaToLocalTarget($targetPath, $dwcaPath): bool

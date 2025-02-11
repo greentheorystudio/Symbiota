@@ -5,6 +5,7 @@ include_once(__DIR__ . '/Media.php');
 include_once(__DIR__ . '/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/OccurrenceGeneticLinks.php');
 include_once(__DIR__ . '/OccurrenceMeasurementsOrFacts.php');
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -163,6 +164,334 @@ class Occurrences{
             }
         }
         return $returnVal;
+    }
+
+    public function cleanDoubleSpaceNames($collid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname, "  ", " ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "%  %" ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt = $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function cleanInfraAbbrNames($collid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET verbatimscientificname = sciname '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND (sciname LIKE "% ssp. %" OR sciname LIKE "% ssp %" OR '.
+                'sciname LIKE "% subspec. %" OR sciname LIKE "% subspec %" OR sciname LIKE "% subspecies %" OR sciname LIKE "% subsp %" OR '.
+                'sciname LIKE "% var %" OR sciname LIKE "% variety %" OR sciname LIKE "% forma %" OR sciname LIKE "% form %" OR '.
+                'sciname LIKE "% fo. %" OR sciname LIKE "% fo %") ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql4 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," ssp. "," subsp. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% ssp. %" ';
+            //echo $sql4;
+            if($this->conn->query($sql4)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql4 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," ssp "," subsp. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% ssp %" ';
+            //echo $sql4;
+            if($this->conn->query($sql4)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql5 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," subspec. "," subsp. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% subspec. %" ';
+            //echo $sql5;
+            if($this->conn->query($sql5)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql5 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," subspec "," subsp. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% subspec %" ';
+            //echo $sql5;
+            if($this->conn->query($sql5)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql5 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," subspecies "," subsp. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% subspecies %" ';
+            //echo $sql5;
+            if($this->conn->query($sql5)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql5 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," subsp "," subsp. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% subsp %" ';
+            //echo $sql5;
+            if($this->conn->query($sql5)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql5 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," var "," var. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% var %" ';
+            //echo $sql5;
+            if($this->conn->query($sql5)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql5 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," variety "," var. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% variety %" ';
+            //echo $sql5;
+            if($this->conn->query($sql5)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql6 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," forma "," f. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% forma %" ';
+            //echo $sql6;
+            if($this->conn->query($sql6)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql6 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," form "," f. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% form %" ';
+            //echo $sql6;
+            if($this->conn->query($sql6)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql6 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," fo. "," f. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% fo. %" ';
+            //echo $sql6;
+            if($this->conn->query($sql6)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql6 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," fo "," f. ") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% fo %" ';
+            //echo $sql6;
+            if($this->conn->query($sql6)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function cleanQualifierNames($collid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET verbatimscientificname = sciname '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND (sciname LIKE "% cf. %" OR sciname LIKE "% cf %" OR '.
+                'sciname LIKE "% aff. %" OR sciname LIKE "% aff %") ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," cf. "," "), identificationQualifier = "cf." '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% cf. %" ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," cf "," "), identificationQualifier = "cf." '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% cf %" ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql3 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," aff. "," "), identificationQualifier = "aff." '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% aff. %" ';
+            //echo $sql3;
+            if($this->conn->query($sql3)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql4 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," aff "," "), identificationQualifier = "aff." '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% aff %" ';
+            //echo $sql4;
+            if($this->conn->query($sql4)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function cleanQuestionMarks($collid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET verbatimscientificname = sciname '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "%?%" ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname,"?","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "%?%" ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function cleanSpNames($collid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET verbatimscientificname = sciname '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND (sciname LIKE "% sp." OR sciname LIKE "% sp" OR '.
+                'sciname LIKE "% sp. nov." OR sciname LIKE "% sp. nov" OR sciname LIKE "% sp nov." OR sciname LIKE "% sp nov" OR '.
+                'sciname LIKE "% spp." OR sciname LIKE "% spp" OR sciname LIKE "% group") ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp.","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% sp." ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql1 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% sp" ';
+            //echo $sql1;
+            if($this->conn->query($sql1)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp. nov.","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% sp. nov." ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp. nov","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% sp. nov" ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp nov.","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% sp nov." ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql2 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," sp nov","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% sp nov" ';
+            //echo $sql2;
+            if($this->conn->query($sql2)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql3 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," spp.","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% spp." ';
+            //echo $sql3;
+            if($this->conn->query($sql3)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql3 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," spp","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% spp" ';
+            //echo $sql3;
+            if($this->conn->query($sql3)){
+                $retCnt += $this->conn->affected_rows;
+            }
+
+            $sql3 = 'UPDATE omoccurrences '.
+                'SET sciname = REPLACE(sciname," group","") '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% group" ';
+            //echo $sql3;
+            if($this->conn->query($sql3)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function cleanTrimNames($collid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql = 'UPDATE omoccurrences '.
+                'SET sciname = TRIM(sciname) '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND (sciname LIKE " %" OR sciname LIKE "% ") ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function clearSensitiveOccurrenceData($occurrenceObj): array
+    {
+        $obscurredFieldArr = array();
+        $sensitiveFieldArr = array('recordnumber', 'locality', 'locationremarks', 'minimumelevationinmeters', 'date',
+            'maximumelevationinmeters', 'verbatimelevation', 'decimallatitude', 'decimallongitude', 'geodeticdatum',
+            'coordinateuncertaintyinmeters', 'footprintwkt', 'verbatimcoordinates', 'georeferenceremarks', 'georeferencedby',
+            'georeferenceprotocol', 'georeferencesources', 'georeferenceverificationstatus', 'habitat', 'informationwithheld',
+            'eventdate', 'eventtime', 'year', 'month', 'day', 'startdayofyear', 'enddayofyear', 'verbatimeventdate',
+            'substrate', 'associatedtaxa');
+        foreach($occurrenceObj as $field => $fieldVal){
+            if($fieldVal && in_array(strtolower($field), $sensitiveFieldArr)){
+                $occurrenceObj[$field] = '';
+                $obscurredFieldArr[] = $field;
+            }
+        }
+        if(array_key_exists('informationwithheld', $occurrenceObj)){
+            $occurrenceObj['informationwithheld'] = 'Fields redacted: ' . implode(', ', $obscurredFieldArr);
+        }
+        elseif(array_key_exists('informationWithheld', $occurrenceObj)){
+            $occurrenceObj['informationWithheld'] = 'Fields redacted: ' . implode(', ', $obscurredFieldArr);
+        }
+        return $occurrenceObj;
     }
 
     public function createOccurrenceRecord($data): int
@@ -360,6 +689,40 @@ class Occurrences{
         return $retArr;
     }
 
+    public function getBadSpecimenCount($collid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql = 'SELECT COUNT(occid) AS cnt FROM omoccurrences '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname IS NOT NULL ';
+            //echo $sql;
+            if($rs = $this->conn->query($sql)){
+                if($row = $rs->fetch_object()){
+                    $retCnt = $row->cnt;
+                }
+                $rs->free();
+            }
+        }
+        return $retCnt;
+    }
+
+    public function getBadTaxaCount($collid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql = 'SELECT COUNT(DISTINCT sciname) AS taxacnt FROM omoccurrences '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname IS NOT NULL ';
+            //echo $sql;
+            if($rs = $this->conn->query($sql)){
+                if($row = $rs->fetch_object()){
+                    $retCnt = $row->taxacnt;
+                }
+                $rs->free();
+            }
+        }
+        return $retCnt;
+    }
+
     public function getLock($occid): int
     {
         $isLocked = 0;
@@ -456,9 +819,47 @@ class Occurrences{
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
                 }
+                $localitySecurity = (int)$row['localitysecurity'] === 1;
+                if($localitySecurity){
+                    $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                    if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                        $retArr = $this->clearSensitiveOccurrenceData($retArr);
+                    }
+                }
             }
             if($retArr && $retArr['tid'] && (int)$retArr['tid'] > 0){
                 $retArr['taxonData'] = (new Taxa)->getTaxonFromTid($retArr['tid']);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getOccurrenceDuplicateIdentifierRecordArr($collid, $occid, $identifierField, $identifier): array
+    {
+        $retArr = array();
+        if($identifierField && $identifier){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM omoccurrences '.
+                'WHERE collid = ' . (int)$collid . ' ';
+            if($occid){
+                $sql .= 'AND occid <> ' . (int)$occid . ' ';
+            }
+            $sql .= 'AND ' . SanitizerService::cleanInStr($this->conn, $identifierField) . ' = "' . SanitizerService::cleanInStr($this->conn, $identifier) . '" '.
+                'ORDER BY eventdate, recordnumber ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $retArr[] = $nodeArr;
+                    unset($rows[$index]);
+                }
             }
         }
         return $retArr;
@@ -581,6 +982,47 @@ class Occurrences{
         return $retArr;
     }
 
+    public function getUnlinkedSciNames($collid): array
+    {
+        $retArr = array();
+        if((int)$collid){
+            $sql = 'SELECT DISTINCT sciname '.
+                'FROM omoccurrences '.
+                'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname IS NOT NULL '.
+                'ORDER BY sciname ';
+            //echo $sql;
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $retArr[] = $r->sciname;
+            }
+            $rs->free();
+        }
+        return $retArr;
+    }
+
+    public function protectGlobalSpecies($collid = null): int
+    {
+        $returnVal = 0;
+        $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+            'SET o.localitySecurity = 1 WHERE t.securitystatus = 1 ';
+        if($collid) {
+            $sql .= 'AND o.collid = ' . (int)$collid . ' ';
+        }
+        if($this->conn->query($sql)){
+            $returnVal += $this->conn->affected_rows;
+        }
+        $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+            'SET o.localitySecurity = 0 '.
+            'WHERE t.TID IS NOT NULL AND t.securitystatus <> 1 ';
+        if($collid) {
+            $sql2 .= 'AND o.collid = ' . (int)$collid . ' ';
+        }
+        if($this->conn->query($sql2)){
+            $returnVal += $this->conn->affected_rows;
+        }
+        return $returnVal;
+    }
+
     public function transferOccurrenceRecord($occid, $transferToCollid): int
     {
         $returnVal = 0;
@@ -591,6 +1033,122 @@ class Occurrences{
             }
         }
         return $returnVal;
+    }
+
+    public function undoOccRecordsCleanedScinameChange($collid, $oldSciname,$newSciname): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql = 'UPDATE omoccurrences SET sciname = verbatimscientificname, verbatimscientificname = NULL, tid = NULL '.
+                'WHERE collid = ' . (int)$collid.' AND verbatimscientificname = "' . SanitizerService::cleanInStr($this->conn,$oldSciname) . '" AND sciname = "' . SanitizerService::cleanInStr($this->conn,$newSciname) . '" ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt = $this->conn->affected_rows;
+            }
+        }
+        return $retCnt;
+    }
+
+    public function updateOccRecordsWithCleanedSciname($collid, $sciname, $cleanedSciname, $tid): int
+    {
+        $retCnt = 0;
+        if((int)$collid){
+            $sql = 'UPDATE omoccurrences SET verbatimscientificname = sciname '.
+                'WHERE collid = ' . (int)$collid . ' AND sciname = "' . SanitizerService::cleanInStr($this->conn, $sciname) . '" ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $sql2 = 'UPDATE omoccurrences SET sciname = "' . SanitizerService::cleanInStr($this->conn, $cleanedSciname) . '"'.
+                    ((int)$tid > 0 ? ', tid = ' . (int)$tid . ' ' : ' ').
+                    'WHERE collid = ' . (int)$collid . ' AND sciname = "' . SanitizerService::cleanInStr($this->conn, $sciname) . '" ';
+                //echo $sql2;
+                if($this->conn->query($sql2)){
+                    $retCnt = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $retCnt;
+    }
+
+    public function updateOccRecordsWithNewScinameTid($collid, $sciname, $tid): int
+    {
+        $retCnt = 0;
+        $sciname = SanitizerService::cleanInStr($this->conn, $sciname);
+        if((int)$collid && $sciname){
+            $sql = 'UPDATE omoccurrences SET tid = '.$tid.' '.
+                'WHERE collid = ' . (int)$collid . ' AND sciname = "' . $sciname . '" ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt = $this->conn->affected_rows;
+                $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN omoccurdeterminations AS d ON o.occid = d.occid '.
+                    'SET d.tid = ' . (int)$tid . ' '.
+                    'WHERE o.collid = ' . (int)$collid . ' AND d.sciname = "' . $sciname . '" ';
+                //echo $sql2;
+                $this->conn->query($sql2);
+
+                $sql3 = 'UPDATE omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
+                    'SET i.tid = o.tid '.
+                    'WHERE o.collid = ' . (int)$collid . ' AND o.sciname = "' . $sciname . '" ';
+                //echo $sql3;
+                $this->conn->query($sql3);
+
+                $sql4 = 'UPDATE omoccurrences AS o LEFT JOIN media AS m ON o.occid = m.occid '.
+                    'SET m.tid = o.tid '.
+                    'WHERE o.collid = ' . (int)$collid . ' AND o.sciname = "' . $sciname . '" ';
+                //echo $sql4;
+                $this->conn->query($sql4);
+            }
+        }
+        return $retCnt;
+    }
+
+    public function updateOccTaxonomicThesaurusLinkages($collid, $kingdomId): int
+    {
+        $retCnt = 0;
+        $rankIdArr = array();
+        if((int)$collid && $kingdomId){
+            $sql = 'SELECT DISTINCT rankid FROM taxonunits WHERE kingdomid = ' . (int)$kingdomId . ' AND rankid < 180 AND rankid > 20 ORDER BY rankid DESC ';
+            $rs = $this->conn->query($sql);
+            while($r = $rs->fetch_object()){
+                $rankIdArr[] = $r->rankid;
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
+                'SET o.tid = t.tid '.
+                'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(o.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid >= 180 ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
+            }
+            foreach($rankIdArr as $id){
+                $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
+                    'SET o.tid = t.tid '.
+                    'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(o.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid = ' . $id . ' ';
+                //echo $sql;
+                if($this->conn->query($sql)){
+                    $retCnt += $this->conn->affected_rows;
+                }
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.sciname = t.SciName '.
+                'SET o.tid = t.tid '.
+                'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(o.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid <= 20 ';
+            //echo $sql;
+            if($this->conn->query($sql)){
+                $retCnt += $this->conn->affected_rows;
+            }
+            if($retCnt > 0){
+                $sql = 'UPDATE omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
+                    'SET i.tid = o.tid '.
+                    'WHERE o.collid = ' . (int)$collid . ' AND i.imgid IS NOT NULL ';
+                //echo $sql;
+                $this->conn->query($sql);
+
+                $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN media AS m ON o.occid = m.occid '.
+                    'SET m.tid = o.tid '.
+                    'WHERE o.collid = ' . (int)$collid . ' AND m.mediaid IS NOT NULL ';
+                //echo $sql2;
+                $this->conn->query($sql2);
+            }
+        }
+        return $retCnt;
     }
 
     public function updateOccurrenceRecord($occId, $editData, $determinationUpdate = false): int

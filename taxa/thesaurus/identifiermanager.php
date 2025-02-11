@@ -152,7 +152,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     'taxa-kingdom-selector': taxaKingdomSelector
                 },
                 setup() {
-                    const { getErrorResponseText, parseCsvFile, showNotification } = useCore();
+                    const { csvToArray, getErrorResponseText, parseFile, showNotification } = useCore();
 
                     let abortController = null;
                     const acceptedFileTypes = ['csv', 'txt'];
@@ -314,19 +314,21 @@ if(!$GLOBALS['SYMB_UID']) {
                             if(selectedUsdaFile.value){
                                 adjustUIStart();
                                 currentProcess.value = 'initializeUSDAImport';
-                                parseCsvFile(selectedUsdaFile.value, (csvData) => {
-                                    if(csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
-                                        processingArr.value = csvData;
-                                        if(selectedKingdomName.value === 'Fungi'){
-                                            processUsdaFungiSymbolUpload();
+                                parseFile(selectedUsdaFile.value, (fileContents) => {
+                                    csvToArray(fileContents).then((csvData) => {
+                                        if(csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
+                                            processingArr.value = csvData;
+                                            if(selectedKingdomName.value === 'Fungi'){
+                                                processUsdaFungiSymbolUpload();
+                                            }
+                                            else{
+                                                processUsdaPlantaeSymbolUpload();
+                                            }
                                         }
                                         else{
-                                            processUsdaPlantaeSymbolUpload();
+                                            showNotification('negative', 'There is an issue with processing the USDA data.');
                                         }
-                                    }
-                                    else{
-                                        showNotification('negative', 'There is an issue with processing the USDA data.');
-                                    }
+                                    });
                                 });
                             }
                             else{

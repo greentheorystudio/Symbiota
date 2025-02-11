@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/FileSystemService.php');
@@ -165,30 +166,43 @@ class Media{
     {
         $returnArr = array();
         if($property === 'occid' || $property === 'tid'){
-            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM media WHERE ' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'm');
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity '.
+                'FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'WHERE m.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
             if($limitFormat){
                 if($limitFormat === 'audio'){
-                    $sql .= 'AND format LIKE "audio/%" ';
+                    $sql .= 'AND m.format LIKE "audio/%" ';
                 }
                 elseif($limitFormat === 'video'){
-                    $sql .= 'AND format LIKE "video/%" ';
+                    $sql .= 'AND m.format LIKE "video/%" ';
                 }
             }
-            $sql .= 'ORDER BY sortsequence ';
+            $sql .= 'ORDER BY m.sortsequence ';
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    $nodeArr = array();
-                    foreach($fields as $val){
-                        $name = $val->name;
-                        $nodeArr[$name] = $row[$name];
+                    $permitted = true;
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
+                    if($localitySecurity){
+                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                        if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                            $permitted = false;
+                        }
                     }
-                    $returnArr[] = $nodeArr;
+                    if($permitted){
+                        $nodeArr = array();
+                        foreach($fields as $val){
+                            $name = $val->name;
+                            if($name !== 'collid' && $name !== 'localitysecurity'){
+                                $nodeArr[$name] = $row[$name];
+                            }
+                        }
+                        $returnArr[] = $nodeArr;
+                    }
                     unset($rows[$index]);
                 }
             }

@@ -1,5 +1,13 @@
-const eventMofDataEditorPopup = {
+const mofDataEditorPopup = {
     props: {
+        dataType: {
+            type: String,
+            default: 'event'
+        },
+        newRecord: {
+            type: Boolean,
+            default: false
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -16,7 +24,7 @@ const eventMofDataEditorPopup = {
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
                         <div>
-                            <mof-data-field-module data-type="event"></mof-data-field-module>
+                            <mof-data-field-module :data-type="dataType" :new-record="newRecord"></mof-data-field-module>
                         </div>
                     </div>
                 </div>

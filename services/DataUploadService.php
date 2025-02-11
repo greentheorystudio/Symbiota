@@ -523,7 +523,6 @@ class DataUploadService {
         elseif($configArr['dataType'] === 'mof'){
             $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $data);
         }
-        FileSystemService::deleteFile($configArr['serverPath'] . '/' . $configArr['uploadFile']);
         return $recordsCreated;
     }
 
@@ -617,6 +616,15 @@ class DataUploadService {
             $returnVal = 1;
         }
         return $returnVal;
+    }
+
+    public function setUploadLocalitySecurity($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->setUploadLocalitySecurity($collid);
+        }
+        return $retVal;
     }
 
     public function uploadDwcaFile($dwcaFile): array

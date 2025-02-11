@@ -336,7 +336,7 @@ const occurrenceDataUploadModule = {
         'upload-data-table-viewer-popup': uploadDataTableViewerPopup
     },
     setup(props) {
-        const { hideWorking, parseCsvFile, processCsvDownload, showNotification, showWorking } = useCore();
+        const { csvToArray, hideWorking, parseFile, showNotification, showWorking } = useCore();
 
         const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
@@ -1756,7 +1756,7 @@ const occurrenceDataUploadModule = {
                 else{
                     processErrorResponse('An error occurred while cleaning taxonomy');
                 }
-                getUploadSummary();
+                processPostUploadSetLocalitySecurity();
             });
         }
 
@@ -1831,6 +1831,31 @@ const occurrenceDataUploadModule = {
             else{
                 processPostUploadExistingRecordProcessing();
             }
+        }
+
+        function processPostUploadSetLocalitySecurity() {
+            const text = 'Setting locality security for threatened and endangered taxa';
+            currentProcess.value = 'setUploadLocalitySecurity';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'setUploadLocalitySecurity');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                }
+                else{
+                    processErrorResponse('An error occurred while setting locality security for threatened and endangered taxa');
+                }
+                getUploadSummary();
+            });
         }
 
         function processSourceDataFiles() {
@@ -2136,8 +2161,10 @@ const occurrenceDataUploadModule = {
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 flatFileMode.value = true;
                 setSymbiotaFlatFileFieldOptions();
-                parseCsvFile(uploadedFile.value, (csvData) => {
-                    processFlatFileCsvData(csvData);
+                parseFile(uploadedFile.value, (fileContents) => {
+                    csvToArray(fileContents).then((csvData) => {
+                        processFlatFileCsvData(csvData);
+                    });
                 });
             }
             else{
@@ -2146,12 +2173,10 @@ const occurrenceDataUploadModule = {
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 flatFileMode.value = true;
                 setSymbiotaFlatFileFieldOptions();
-                const fileReader = new FileReader();
-                fileReader.onload = () => {
-                    const uploadData = JSON.parse(fileReader.result);
+                parseFile(uploadedFile.value, (fileContents) => {
+                    const uploadData = JSON.parse(fileContents);
                     processFlatFileGeoJson(uploadData);
-                };
-                fileReader.readAsText(uploadedFile.value);
+                });
             }
         }
 

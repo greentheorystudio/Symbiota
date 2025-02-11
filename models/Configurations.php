@@ -9,6 +9,32 @@ class Configurations{
 
     private $conn;
 
+    public $baseDirectories = array(
+        'admin',
+        'api',
+        'checklists',
+        'classes',
+        'collections',
+        'components',
+        'config',
+        'games',
+        'glossary',
+        'hooks',
+        'ident',
+        'imagelib',
+        'misc',
+        'models',
+        'profile',
+        'projects',
+        'references',
+        'services',
+        'spatial',
+        'stores',
+        'taxa',
+        'tutorial',
+        'webservices'
+    );
+
     public $coreConfigurations = array(
         'ACTIVATE_CHECKLIST_FG_EXPORT',
         'ACTIVATE_EXSICCATI',
@@ -88,30 +114,37 @@ class Configurations{
         'USERNAME'
     );
 
-    public $baseDirectories = array(
-        'admin',
-        'api',
-        'checklists',
-        'classes',
-        'collections',
-        'components',
-        'config',
-        'games',
-        'glossary',
-        'hooks',
-        'ident',
-        'imagelib',
-        'misc',
-        'models',
-        'profile',
-        'projects',
-        'references',
-        'services',
-        'spatial',
-        'stores',
-        'taxa',
-        'tutorial',
-        'webservices'
+    public $rightsTerms = array(
+        'http://creativecommons.org/publicdomain/zero/1.0/' => array(
+            'title' => 'CC0 1.0 (Public-domain)',
+            'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
+            'def' => 'Users can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.'
+        ),
+        'http://creativecommons.org/licenses/by/3.0/' => array(
+            'title' => 'CC BY (Attribution)',
+            'url' => 'http://creativecommons.org/licenses/by/3.0/legalcode',
+            'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+        ),
+        'http://creativecommons.org/licenses/by-nc/3.0/' => array(
+            'title' => 'CC BY-NC (Attribution-Non-Commercial)',
+            'url' => 'http://creativecommons.org/licenses/by-nc/3.0/legalcode',
+            'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+        ),
+        'http://creativecommons.org/licenses/by/4.0/' => array(
+            'title' => 'CC BY (Attribution)',
+            'url' => 'http://creativecommons.org/licenses/by/4.0/legalcode',
+            'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material for any purpose, even commercially. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+        ),
+        'http://creativecommons.org/licenses/by-nc/4.0/' => array(
+            'title' => 'CC BY-NC (Attribution-Non-Commercial)',
+            'url' => 'http://creativecommons.org/licenses/by-nc/4.0/legalcode',
+            'def' => 'Users can copy, redistribute the material in any medium or format, remix, transform, and build upon the material. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+        ),
+        'http://creativecommons.org/licenses/by-nc-nd/4.0/' => array(
+            'title' => 'CC BY-NC-ND 4.0 (Attribution-NonCommercial-NoDerivatives 4.0 International)',
+            'url' => 'http://creativecommons.org/licenses/by-nc-nd/4.0/legalcode',
+            'def' => 'Users can copy and redistribute the material in any medium or format. The licensor cannot revoke these freedoms as long as you follow the license terms.'
+        )
     );
 
     public function __construct(){
@@ -287,6 +320,17 @@ class Configurations{
         return PHP_VERSION;
     }
 
+    public static function getRightsTermData($termId): array
+    {
+        $returnArr = array();
+        foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
+            if($k === $termId){
+                $returnArr = $v;
+            }
+        }
+        return $returnArr;
+    }
+
     public function getServerLogFilePath(): string
     {
         $serverPath = $this->getServerRootPath();
@@ -440,8 +484,8 @@ class Configurations{
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
         }
-        $GLOBALS['CSS_VERSION'] = '20241005';
-        $GLOBALS['JS_VERSION'] = '202405231111';
+        $GLOBALS['CSS_VERSION'] = '20241006';
+        $GLOBALS['JS_VERSION'] = '2024052411111111111111111111111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -495,6 +539,7 @@ class Configurations{
         $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY'] = '0.5';
         $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
         $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
+        $GLOBALS['RIGHTS_TERMS'] = $this->rightsTerms;
     }
 
     public function updateConfigurationValue($name, $value): bool
@@ -776,6 +821,9 @@ class Configurations{
         );
         if(!isset($GLOBALS['PERMITTED_COLLECTIONS'])){
             $GLOBALS['PERMITTED_COLLECTIONS'] = array();
+        }
+        if(!isset($GLOBALS['RIGHTS_TERMS']) || count($GLOBALS['RIGHTS_TERMS']) === 0){
+            $GLOBALS['RIGHTS_TERMS'] = $this->rightsTerms;
         }
     }
 

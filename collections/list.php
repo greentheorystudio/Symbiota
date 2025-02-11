@@ -137,43 +137,46 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                                 </template>
                                                                             </div>
                                                                             <div v-if="props.row.catalognumber || props.row.othercatalognumbers">
-                                                                            <span v-if="props.row.catalognumber">
-                                                                                {{ props.row.catalognumber + (props.row.othercatalognumbers ? '  ' : '') }}
-                                                                            </span>
-                                                                                <span v-if="props.row.othercatalognumbers">
-                                                                                {{ props.row.othercatalognumbers }}
-                                                                            </span>
+                                                                                <span v-if="props.row.catalognumber">
+                                                                                    {{ props.row.catalognumber + (props.row.othercatalognumbers ? '  ' : '') }}
+                                                                                </span>
+                                                                                    <span v-if="props.row.othercatalognumbers">
+                                                                                    {{ props.row.othercatalognumbers }}
+                                                                                </span>
                                                                             </div>
                                                                             <div v-if="props.row.recordedby || props.row.recordnumber || props.row.eventdate || props.row.verbatimeventdate" class="full-width">
-                                                                            <span v-if="props.row.recordedby || props.row.recordnumber">
-                                                                                {{ (props.row.recordedby ? props.row.recordedby : '') + ((props.row.recordedby && props.row.recordnumber) ? ' ' : '') + (props.row.recordnumber ? props.row.recordnumber : '') + ((props.row.eventdate || props.row.verbatimeventdate) ? '  ' : '') }}
-                                                                            </span>
+                                                                                <span v-if="props.row.recordedby || props.row.recordnumber">
+                                                                                    {{ (props.row.recordedby ? props.row.recordedby : '') + ((props.row.recordedby && props.row.recordnumber) ? ' ' : '') + (props.row.recordnumber ? props.row.recordnumber : '') + ((props.row.eventdate || props.row.verbatimeventdate) ? '  ' : '') }}
+                                                                                </span>
                                                                                 <span v-if="props.row.eventdate">
-                                                                                {{ props.row.eventdate }}
-                                                                            </span>
+                                                                                    {{ props.row.eventdate }}
+                                                                                </span>
                                                                                 <span v-else-if="props.row.verbatimeventdate">
-                                                                                {{ props.row.verbatimeventdate }}
-                                                                            </span>
+                                                                                    {{ props.row.verbatimeventdate }}
+                                                                                </span>
                                                                             </div>
                                                                             <div v-if="props.row.country || props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation" class="full-width">
-                                                                            <span v-if="props.row.country">
-                                                                                {{ props.row.country + ((props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
-                                                                            </span>
+                                                                                <span v-if="props.row.country">
+                                                                                    {{ props.row.country + ((props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                                </span>
                                                                                 <span v-if="props.row.stateprovince">
-                                                                                {{ props.row.stateprovince + ((props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
-                                                                            </span>
+                                                                                    {{ props.row.stateprovince + ((props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                                </span>
                                                                                 <span v-if="props.row.county">
-                                                                                {{ props.row.county + ((props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
-                                                                            </span>
+                                                                                    {{ props.row.county + ((props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                                </span>
                                                                                 <span v-if="props.row.locality">
-                                                                                {{ props.row.locality + ((props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
-                                                                            </span>
+                                                                                    {{ props.row.locality + ((props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                                </span>
                                                                                 <span v-if="props.row.minimumelevationinmeters || props.row.maximumelevationinmeters">
-                                                                                {{ (props.row.minimumelevationinmeters ? props.row.minimumelevationinmeters : '') + ((props.row.minimumelevationinmeters && props.row.maximumelevationinmeters) ? '-' : '') + (props.row.maximumelevationinmeters ? props.row.maximumelevationinmeters : '') + 'm' }}
-                                                                            </span>
+                                                                                    {{ (props.row.minimumelevationinmeters ? props.row.minimumelevationinmeters : '') + ((props.row.minimumelevationinmeters && props.row.maximumelevationinmeters) ? '-' : '') + (props.row.maximumelevationinmeters ? props.row.maximumelevationinmeters : '') + 'm' }}
+                                                                                </span>
                                                                                 <span v-else-if="props.row.verbatimelevation">
-                                                                                {{ props.row.verbatimelevation }}
-                                                                            </span>
+                                                                                    {{ props.row.verbatimelevation }}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div v-if="props.row.informationwithheld" class="text-red">
+                                                                                {{ props.row.informationwithheld }}
                                                                             </div>
                                                                             <div>
                                                                                 <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);">Full Record Details</span>

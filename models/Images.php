@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/FileSystemService.php');
@@ -269,13 +270,14 @@ class Images{
     {
         $returnArr = array();
         if($property === 'occid' || $property === 'tid'){
-            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM images WHERE ' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'i');
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity '.
+                'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+                'WHERE i.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
             if($property === 'tid' && !$includeOccurrence){
-                $sql .= 'AND ISNULL(occid) ';
+                $sql .= 'AND ISNULL(i.occid) ';
             }
-            $sql .= 'ORDER BY sortsequence ';
+            $sql .= 'ORDER BY i.sortsequence ';
             if($limit){
                 $sql .= 'LIMIT ' . (int)$limit . ' ';
             }
@@ -285,13 +287,25 @@ class Images{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    $nodeArr = array();
-                    foreach($fields as $val){
-                        $name = $val->name;
-                        $nodeArr[$name] = $row[$name];
+                    $permitted = true;
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
+                    if($localitySecurity){
+                        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                        if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                            $permitted = false;
+                        }
                     }
-                    $nodeArr['tagArr'] = $this->getImageTags($row['imgid']);
-                    $returnArr[] = $nodeArr;
+                    if($permitted){
+                        $nodeArr = array();
+                        foreach($fields as $val){
+                            $name = $val->name;
+                            if($name !== 'collid' && $name !== 'localitysecurity'){
+                                $nodeArr[$name] = $row[$name];
+                            }
+                        }
+                        $nodeArr['tagArr'] = $this->getImageTags($row['imgid']);
+                        $returnArr[] = $nodeArr;
+                    }
                     unset($rows[$index]);
                 }
             }

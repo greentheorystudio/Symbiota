@@ -85,6 +85,11 @@ class SanitizerService {
         return $returnPath;
     }
 
+    public static function getFullUrlPathPrefix(): string
+    {
+        return ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
+    }
+
     public static function getSqlValueString($conn, $value, $dataType): string
     {
         $returnStr = 'NULL';
