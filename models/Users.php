@@ -486,7 +486,6 @@ class Users{
                     $status = 1;
                 }
             }
-            $result->free();
         }
         return $status;
     }
