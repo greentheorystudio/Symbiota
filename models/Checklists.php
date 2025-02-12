@@ -15,7 +15,7 @@ class Checklists{
         "authors" => array("dataType" => "string", "length" => 250),
         "type" => array("dataType" => "string", "length" => 50),
         "politicaldivision" => array("dataType" => "string", "length" => 45),
-        "dynamicsql" => array("dataType" => "string", "length" => 500),
+        "searchterms" => array("dataType" => "text", "length" => 0),
         "parent" => array("dataType" => "string", "length" => 50),
         "parentclid" => array("dataType" => "number", "length" => 10),
         "notes" => array("dataType" => "string", "length" => 500),
@@ -30,7 +30,7 @@ class Checklists{
         "headerurl" => array("dataType" => "string", "length" => 150),
         "uid" => array("dataType" => "number", "length" => 10),
         "sortsequence" => array("dataType" => "number", "length" => 10),
-        "expiration" => array("dataType" => "number", "length" => 10),
+        "expiration" => array("dataType" => "timestamp", "length" => 0),
         "datelastmodified" => array("dataType" => "date", "length" => 0),
         "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
     );
@@ -43,6 +43,121 @@ class Checklists{
  	public function __destruct(){
         $this->conn->close();
 	}
+
+    public function clearExpiredChecklists(): void
+    {
+        $sql1 = 'DELETE l.* FROM fmchecklists AS c LEFT JOIN fmchklsttaxalink AS l ON c.clid = l.clid '.
+            'WHERE c.expiration IS NOT NULL AND c.expiration < NOW()';
+        $this->conn->query($sql1);
+        $sql2 = 'DELETE FROM fmchecklists WHERE expiration < NOW()';
+        $this->conn->query($sql2);
+    }
+
+    public function createChecklistRecord($data, $dynamic = false): int
+    {
+        $this->clearExpiredChecklists();
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'clid' && $field !== 'uid' && $field !== 'expiration' && $field !== 'datelastmodified' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
+                if($field === 'name'){
+                    $fieldNameArr[] = '`' . $field . '`';
+                }
+                else{
+                    $fieldNameArr[] = $field;
+                }
+                if($field === 'defaultsettings' || $field === 'searchterms'){
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                }
+                else{
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
+            }
+        }
+        if($dynamic){
+            $fieldNameArr[] = 'expiration';
+            $fieldValueArr[] = '"' . date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))) . '"';
+        }
+        $fieldNameArr[] = 'uid';
+        $fieldValueArr[] = $GLOBALS['SYMB_UID'] ?: 'NULL';
+        $fieldNameArr[] = 'initialtimestamp';
+        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+        $sql = 'INSERT INTO fmchecklists(' . implode(',', $fieldNameArr) . ') '.
+            'VALUES (' . implode(',', $fieldValueArr) . ') ';
+        //echo "<div>".$sql."</div>";
+        if($this->conn->query($sql)){
+            $newID = $this->conn->insert_id;
+        }
+        return $newID;
+    }
+
+    public function deleteChecklistRecord($clid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM fmchklstprojlink WHERE clid = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM fmvouchers WHERE clid = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM fmchklsttaxalink WHERE clid = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
+    public function getChecklistChildClidArr($clidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(' . implode(',', $clidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['clidchild'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getChecklistData($clid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms')){
+                        $retArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $retArr[$name] = $row[$name];
+                    }
+                }
+                $clidArr = $this->getChecklistChildClidArr(array($clid));
+                $clidArr[] = $clid;
+                $retArr['clidArr'] = $clidArr;
+            }
+        }
+        return $retArr;
+    }
 
     public function getChecklistFromClid($clid): array
     {
@@ -85,5 +200,37 @@ class Checklists{
             }
         }
         return $retArr;
+    }
+
+    public function updateChecklistRecord($clid, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($clid && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'clid' && $field !== 'uid' && $field !== 'expiration' && $field !== 'datelastmodified' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
+                    if($field === 'name'){
+                        $fieldName = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldName = $field;
+                    }
+                    if($field === 'defaultsettings' || $field === 'searchterms'){
+                        $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    }
+                }
+            }
+            $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';
+            $sql = 'UPDATE fmchecklists SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE clid = ' . (int)$clid . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 }

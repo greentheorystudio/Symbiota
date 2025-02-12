@@ -40,15 +40,17 @@ const occurrenceEditorFormCollectingEventElement = {
             ></occurrence-collecting-event-list-popup>
         </template>
         <template v-if="showConfiguredDataEditorPopup">
-            <event-mof-data-editor-popup
+            <mof-data-editor-popup
+                data-type="event"
+                :new-record="Number(eventId) === 0"
                 :show-popup="showConfiguredDataEditorPopup"
                 @close:popup="showConfiguredDataEditorPopup = false"
-            ></event-mof-data-editor-popup>
+            ></mof-data-editor-popup>
         </template>
     `,
     components: {
         'collecting-event-field-module': collectingEventFieldModule,
-        'event-mof-data-editor-popup': eventMofDataEditorPopup,
+        'mof-data-editor-popup': mofDataEditorPopup,
         'occurrence-collecting-event-list-popup': occurrenceCollectingEventListPopup
     },
     setup() {
@@ -59,6 +61,7 @@ const occurrenceEditorFormCollectingEventElement = {
         const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectingEventAutoSearch);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
         const configuredDataLabel = Vue.computed(() => occurrenceStore.getEventMofDataLabel);
+        const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');
@@ -112,6 +115,7 @@ const occurrenceEditorFormCollectingEventElement = {
             collectionEventAutoSearch,
             configuredDataFields,
             configuredDataLabel,
+            eventId,
             occId,
             occurrenceData,
             occurrenceFields,

@@ -16,7 +16,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <link href="../../css/external/jquery.mobile-1.4.0.min.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="../../css/jsongui.css?ver=20221204" rel="stylesheet" type="text/css" />
     <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.popupoverlay.js" type="text/javascript"></script>

@@ -59,4 +59,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteImageTag' && $imgid && $isEditor && array_key_exists('tag', $_POST)){
         echo $images->deleteImageTag($imgid, $_POST['tag']);
     }
+    elseif($action === 'batchPopulateOccurrenceImageGUIDs' && $collid){
+        echo $images->batchCreateOccurrenceImageRecordGUIDs($collid);
+    }
 }

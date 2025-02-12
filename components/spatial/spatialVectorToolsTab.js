@@ -124,6 +124,9 @@ const spatialVectorToolsTab = {
                         if(geoType === 'Point'){
                             turfFeature = turf.point(featCoords);
                         }
+                        else if(geoType === 'MultiPoint'){
+                            turfFeature = turf.point(featCoords[0]);
+                        }
                         else if(geoType === 'LineString'){
                             turfFeature = turf.lineString(featCoords);
                         }
@@ -150,7 +153,7 @@ const spatialVectorToolsTab = {
                         mapSettings.selectSource.addFeature(buffpoly);
                     }
                 });
-                bufferWidthValue.value = 0;
+                bufferWidthValue.value = null;
             }
         }
 

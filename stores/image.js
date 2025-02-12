@@ -30,7 +30,6 @@ const useImageStore = Pinia.defineStore('image', {
         imageArr: [],
         imageData: {},
         imageEditData: {},
-        imageFields: {},
         imageId: 0,
         imageTaxon: {},
         imageUpdateData: {}
@@ -74,9 +73,6 @@ const useImageStore = Pinia.defineStore('image', {
                 }
             }
             return exist;
-        },
-        getImageFields(state) {
-            return state.imageFields;
         },
         getImageID(state) {
             return state.imageId;

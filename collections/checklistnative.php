@@ -30,7 +30,7 @@ if($GLOBALS['SOLR_MODE']){
 
 $dynClid = $checklistManager->buildOccurrenceChecklist($taxonFilter,$tidArr);
 if($interface === 'key'){
-	header('Location: ../ident/key.php?dynclid=' .$dynClid. '&taxon=All Species');
+	header('Location: ../ident/key.php?clid=' .$dynClid);
 }
 else{
 	header('Location: ../checklists/checklist.php?dynclid=' .$dynClid);

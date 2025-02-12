@@ -299,6 +299,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         include_once(__DIR__ . '/../../config/footer-includes.php');
         include(__DIR__ . '/../../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
@@ -435,7 +436,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 addProcessToProcessorDisplay(getNewProcessObject('cleanTrimNames', 'single', text));
                                 formData.append('action', 'cleanTrimNames');
                             }
-                            fetch(occurrenceTaxonomyApiUrl, {
+                            fetch(occurrenceApiUrl, {
                                 method: 'POST',
                                 signal: abortController.signal,
                                 body: formData
@@ -480,6 +481,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         if(selectedKingdomId.value){
                             abortController = new AbortController();
                             const formData = new FormData();
+                            let url = occurrenceApiUrl;
                             formData.append('collid', collId);
                             formData.append('kingdomid', selectedKingdomId.value);
                             if(!step){
@@ -493,8 +495,9 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                     const text = 'Updating linkages of associated determination records to the Taxonomic Thesaurus';
                                     addProcessToProcessorDisplay(getNewProcessObject('updateDetThesaurusLinkages','single',text));
                                     formData.append('action', 'updateDetThesaurusLinkages');
+                                    url = occurrenceDeterminationApiUrl;
                                 }
-                                fetch(occurrenceTaxonomyApiUrl, {
+                                fetch(url, {
                                     method: 'POST',
                                     signal: abortController.signal,
                                     body: formData
@@ -877,7 +880,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         const formData = new FormData();
                         formData.append('collid', collId);
                         formData.append('action', 'getUnlinkedOccSciNames');
-                        fetch(occurrenceTaxonomyApiUrl, {
+                        fetch(occurrenceApiUrl, {
                             method: 'POST',
                             signal: abortController.signal,
                             body: formData
@@ -939,7 +942,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             const formData = new FormData();
                             formData.append('collid', collId);
                             formData.append('action', 'getUnlinkedOccSciNames');
-                            fetch(occurrenceTaxonomyApiUrl, {
+                            fetch(occurrenceApiUrl, {
                                 method: 'POST',
                                 signal: abortController.signal,
                                 body: formData
@@ -1125,7 +1128,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                             formData.append('cleanedsciname', nameSearchResults[0]['sciname']);
                                             formData.append('tid', newTid.toString());
                                             formData.append('action', 'updateOccWithCleanedName');
-                                            fetch(occurrenceTaxonomyApiUrl, {
+                                            fetch(occurrenceApiUrl, {
                                                 method: 'POST',
                                                 body: formData
                                             })
@@ -1421,7 +1424,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                             formData.append('cleanedsciname', parsedName['sciname']);
                                             formData.append('tid', null);
                                             formData.append('action', 'updateOccWithCleanedName');
-                                            fetch(occurrenceTaxonomyApiUrl, {
+                                            fetch(occurrenceApiUrl, {
                                                 method: 'POST',
                                                 body: formData
                                             })
@@ -1601,7 +1604,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         formData.append('cleanedsciname', newName);
                         formData.append('tid', newtid);
                         formData.append('action', 'updateOccWithCleanedName');
-                        fetch(occurrenceTaxonomyApiUrl, {
+                        fetch(occurrenceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -1704,7 +1707,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         const formData = new FormData();
                         formData.append('collid', collId);
                         formData.append('action', 'getUnlinkedScinameCounts');
-                        fetch(occurrenceTaxonomyApiUrl, {
+                        fetch(occurrenceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -1728,7 +1731,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             const formData = new FormData();
                             formData.append('collid', collId);
                             formData.append('action', 'getUnlinkedOccSciNames');
-                            fetch(occurrenceTaxonomyApiUrl, {
+                            fetch(occurrenceApiUrl, {
                                 method: 'POST',
                                 signal: abortController.signal,
                                 body: formData
@@ -1770,7 +1773,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         formData.append('oldsciname', oldName);
                         formData.append('newsciname', newName);
                         formData.append('action', 'undoOccScinameChange');
-                        fetch(occurrenceTaxonomyApiUrl, {
+                        fetch(occurrenceApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -1794,7 +1797,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         const formData = new FormData();
                         formData.append('collid', collId);
                         formData.append('action', 'updateLocalitySecurity');
-                        fetch(occurrenceTaxonomyApiUrl, {
+                        fetch(occurrenceApiUrl, {
                             method: 'POST',
                             signal: abortController.signal,
                             body: formData
@@ -1825,7 +1828,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         formData.append('tid', newScinameTid);
                         formData.append('kingdomid', selectedKingdomId.value);
                         formData.append('action', 'updateOccWithNewSciname');
-                        fetch(occurrenceTaxonomyApiUrl, {
+                        fetch(occurrenceApiUrl, {
                             method: 'POST',
                             body: formData
                         })

@@ -95,7 +95,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
             cursor:pointer;
         }
     </style>
-    <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.js"></script>
     <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
@@ -405,7 +404,7 @@ echo '</div>';
                                     <?php
                                     if($GLOBALS['KEY_MOD_IS_ACTIVE']){
                                         ?>
-                                        <a href='../ident/key.php?cl=<?php echo $key; ?>&proj=<?php echo $pid; ?>&taxon=All+Species'>
+                                        <a href='../ident/key.php?clid=<?php echo $key; ?>&pid=<?php echo $pid; ?>'>
                                             <i style='width:12px;border:0;' class="fas fa-key"></i>
                                         </a>
                                         <?php

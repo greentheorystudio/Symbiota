@@ -16,7 +16,7 @@ const occurrenceEditorChecklistVoucherModule = {
                                     <selector-input-element :options="checklistOptions" label="Checklist" :value="selectedChecklist" option-label="name" option-value="clid" :clearable="true" @update:value="(value) => selectedChecklist = value"></selector-input-element>
                                 </div>
                                 <div>
-                                    <q-btn color="primary" @click="linkVoucher();" label="Link Voucher" dense />
+                                    <q-btn color="primary" @click="linkVoucher();" label="Link Voucher" :disabled="!selectedChecklist" dense />
                                 </div>
                             </div>
                             <div class="col-2">
@@ -39,7 +39,7 @@ const occurrenceEditorChecklistVoucherModule = {
                                                     </a>
                                                 </div>
                                                 <div>
-                                                    <q-btn color="white" text-color="black" size=".6rem" @click="removeOccurrenceVoucherLinkage(checklist.clid);" icon="far fa-trash-alt" dense>
+                                                    <q-btn color="white" text-color="black" size=".6rem" @click="deleteChecklistVoucherRecord(checklist.clid);" icon="far fa-trash-alt" dense>
                                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                             Remove voucher linkage
                                                         </q-tooltip>
@@ -88,7 +88,7 @@ const occurrenceEditorChecklistVoucherModule = {
             formData.append('clid', selectedChecklist.value.toString());
             formData.append('occid', occId.value.toString());
             formData.append('tid', occurrenceData.value['tid'].toString());
-            formData.append('action', 'addOccurrenceVoucherLinkage');
+            formData.append('action', 'createChecklistVoucherRecord');
             fetch(checklistVoucherApiUrl, {
                 method: 'POST',
                 body: formData
@@ -106,7 +106,7 @@ const occurrenceEditorChecklistVoucherModule = {
             });
         }
 
-        function removeOccurrenceVoucherLinkage(clid) {
+        function deleteChecklistVoucherRecord(clid) {
             const confirmText = 'Are you sure you want to remove this occurrence as a voucher?';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'Cancel', trueText: 'Yes', callback: (val) => {
                 if(val){
@@ -114,7 +114,7 @@ const occurrenceEditorChecklistVoucherModule = {
                     formData.append('collid', collId.value.toString());
                     formData.append('clid', clid.toString());
                     formData.append('occid', occId.value.toString());
-                    formData.append('action', 'removeOccurrenceVoucherLinkage');
+                    formData.append('action', 'deleteChecklistVoucherRecord');
                     fetch(checklistVoucherApiUrl, {
                         method: 'POST',
                         body: formData
@@ -170,7 +170,7 @@ const occurrenceEditorChecklistVoucherModule = {
             userChecklistArr,
             voucherChecklistArr,
             linkVoucher,
-            removeOccurrenceVoucherLinkage
+            deleteChecklistVoucherRecord
         }
     }
 };

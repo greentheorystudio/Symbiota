@@ -11,7 +11,7 @@ class KeyDataManager extends Manager{
 	private $clName;
 	private $clAuthors;
 	private $clType;
-	private $dynamicSql;
+	private $searchterms;
 	private $charArr = array();
 	private $taxaCount;
 	private $lang;
@@ -114,11 +114,11 @@ class KeyDataManager extends Manager{
 		}
 		else{
 			if(is_numeric($clv)){
-				$sql = 'SELECT cl.CLID, cl.Name, cl.Authors, cl.Type, cl.dynamicsql ' .
+				$sql = 'SELECT cl.CLID, cl.Name, cl.Authors, cl.Type, cl.searchterms ' .
 					'FROM fmchecklists cl WHERE (cl.CLID = ' .$clv. ')';
 			}
 			else{
-				$sql = 'SELECT cl.CLID, cl.Name, cl.Authors, cl.Type, cl.dynamicsql ' .
+				$sql = 'SELECT cl.CLID, cl.Name, cl.Authors, cl.Type, cl.searchterms ' .
 					"FROM fmchecklists cl WHERE (cl.Name = '".$clv."') OR (cl.Title = '".$clv."')";
 			}
 			$result = $this->conn->query($sql);
@@ -127,7 +127,7 @@ class KeyDataManager extends Manager{
 				$this->clName = $row->Name;
 				$this->clAuthors = $row->Authors;
 				$this->clType = ($row->Type?:'static');
-				$this->dynamicSql = $row->dynamicsql;
+				$this->searchterms = $row->searchterms;
 			}
 			$result->close();
 		}
@@ -455,7 +455,7 @@ class KeyDataManager extends Manager{
                     $sqlFromBase = 'INNER JOIN fmchklsttaxalink AS clk ON t.tid = clk.tid ';
                 }
                 if($this->clType === 'dynamic'){
-                    $sqlWhere = 'WHERE t.RankId = 220 AND (' .$this->dynamicSql. ') ';
+                    $sqlWhere = 'WHERE t.RankId = 220 AND (' .$this->searchterms. ') ';
                 }
                 else{
                     $sqlWhere = 'WHERE clk.clid = ' .$this->clid. ' AND t.RankId = 220 ';

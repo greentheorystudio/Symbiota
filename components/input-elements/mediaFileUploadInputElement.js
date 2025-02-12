@@ -184,7 +184,7 @@ const mediaFileUploadInputElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { getSubstringByRegEx, hideWorking, parseCsvFile, showNotification, showWorking } = useCore();
+        const { csvToArray, getSubstringByRegEx, hideWorking, parseFile, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
@@ -646,9 +646,11 @@ const mediaFileUploadInputElement = {
             files.forEach((file) => {
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){
-                    parseCsvFile(file, (csvData) => {
-                        csvFileData = csvData;
-                        processCsvFileData();
+                    parseFile(file, (fileContents) => {
+                        csvToArray(fileContents).then((csvData) => {
+                            csvFileData = csvData;
+                            processCsvFileData();
+                        });
                     });
                 }
                 else if(!existingData){

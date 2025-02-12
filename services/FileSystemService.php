@@ -1,6 +1,24 @@
 <?php
 class FileSystemService {
 
+    public static function addFileToZipArchive($zipArchive, $filePath): void
+    {
+        if(file_exists($filePath)) {
+            $zipArchive->addFile($filePath);
+            $zipArchive->renameName($filePath, basename($filePath));
+        }
+    }
+
+    public static function closeFileHandler($fileHandler): void
+    {
+        fclose($fileHandler);
+    }
+
+    public static function closeZipArchive($zipArchive): void
+    {
+        $zipArchive->close();
+    }
+
     public static function copyFileToTarget($source, $targetPath, $targetFilename): bool
     {
         if(copy($source, $targetPath . '/' . $targetFilename)){
@@ -20,40 +38,56 @@ class FileSystemService {
         return false;
     }
 
-    public static function deleteDirectory($dir): bool
-	{
-        if(!file_exists($dir)){
-            $returnVal = true;
-        }
-        elseif(is_dir($dir)) {
-            foreach(scandir($dir) as $item){
-                if($item === '.' || $item === '..'){
-                    continue;
-                }
-                if(!self::deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)){
-                    return false;
-                }
+    public static function createNewZipArchive($zipArchive, $targetPath)
+    {
+        return $zipArchive->open($targetPath, ZipArchive::CREATE);
+    }
 
+    public static function deleteDirectory($directoryPath): bool
+	{
+        if(is_dir($directoryPath)) {
+            $files = scandir($directoryPath);
+            foreach($files as $file) {
+                if($file !== '.' && $file !== '..') {
+                    $filePath = $directoryPath . '/' . $file;
+                    if(is_dir($filePath)) {
+                        self::deleteDirectory($filePath);
+                    }
+                    else {
+                        unlink($filePath);
+                    }
+                }
             }
-            $returnVal = rmdir($dir);
+            rmdir($directoryPath);
         }
-        else {
-            $returnVal = unlink($dir);
-        }
-        return $returnVal;
+        return (is_dir($directoryPath) === false);
 	}
 
     public static function deleteFile($filePath, $cleanParentFolder = false): void
     {
         if(file_exists($filePath)) {
             unlink($filePath);
-        }
-        if($cleanParentFolder){
-            $parentPath = self::getParentFolderPath($filePath);
-            if(is_dir($parentPath) && !scandir($parentPath)){
-                unlink($parentPath);
+            if($cleanParentFolder){
+                $parentPath = dirname($filePath);
+                if(is_dir($parentPath) && !glob(($parentPath . '/*'))){
+                    self::deleteDirectory($parentPath);
+                }
             }
         }
+    }
+
+    public static function getDirectoryFilenameArr($dirPath): array
+    {
+        $returnArr = array();
+        if(is_dir($dirPath) && $handle = opendir($dirPath)) {
+            while(($item = readdir($handle)) !== false){
+                if($item && $item !== '.' && $item !== '..'){
+                    $returnArr[] = $item;
+                }
+            }
+            closedir($handle);
+        }
+        return $returnArr;
     }
 
     public static function getImageSize($imageUrl): array
@@ -62,13 +96,6 @@ class FileSystemService {
             $imageUrl = self::getServerPathFromUrlPath($imageUrl);
         }
         return getimagesize($imageUrl);
-    }
-
-    public static function getParentFolderPath($filePath): string
-    {
-        $pathParts = explode('/', $filePath);
-        array_pop($pathParts);
-        return implode('/', $pathParts);
     }
 
     public static function getServerPathFromUrlPath($path): string
@@ -99,7 +126,7 @@ class FileSystemService {
         return $returnStr;
     }
 
-    public static function getServerUploadPath($fragment): string
+    public static function getServerMediaUploadPath($fragment): string
     {
         $fullUploadPath = $GLOBALS['IMAGE_ROOT_PATH'] . '/' . $fragment;
         if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
@@ -112,9 +139,32 @@ class FileSystemService {
         return $fullUploadPath;
     }
 
+    public static function getTempDownloadUploadPath(): string
+    {
+        $fullUploadPath = $GLOBALS['TEMP_DIR_ROOT'] . '/downloads';
+        if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
+            $fullUploadPath = '';
+        }
+        $fullUploadPath .= '/' . time();
+        if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
+            $fullUploadPath = '';
+        }
+        return $fullUploadPath;
+    }
+
     public static function getUrlPathFromServerPath($path): string
     {
         return str_replace($GLOBALS['SERVER_ROOT'], '', $path);
+    }
+
+    public static function initializeNewDomDocument(): DOMDocument
+    {
+        return new DOMDocument('1.0', 'UTF-8');
+    }
+
+    public static function initializeNewZipArchive(): ZipArchive
+    {
+        return new ZipArchive;
     }
 
     public static function moveUploadedFileToServer($file, $targetPath, $targetFilename): bool
@@ -123,6 +173,11 @@ class FileSystemService {
             return true;
         }
         return false;
+    }
+
+    public static function openFileHandler($filePath)
+    {
+        return fopen($filePath, 'wb');
     }
 
     public static function processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename): array
@@ -150,7 +205,7 @@ class FileSystemService {
     public static function processUploadImageFromFile($imageData, $uploadPath): array
     {
         $origFilename = $_FILES['imgfile']['name'];
-        $targetPath = self::getServerUploadPath($uploadPath);
+        $targetPath = self::getServerMediaUploadPath($uploadPath);
         if($targetPath && $origFilename) {
             $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
             if($targetFilename && self::moveUploadedFileToServer($_FILES['imgfile'], $targetPath, $targetFilename)){
@@ -164,7 +219,7 @@ class FileSystemService {
     public static function processUploadImageFromExternalUrl($imageData, $uploadPath): array
     {
         $origFilename = $imageData['filename'];
-        $targetPath = self::getServerUploadPath($uploadPath);
+        $targetPath = self::getServerMediaUploadPath($uploadPath);
         if($targetPath && $origFilename) {
             $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
             if($targetFilename && self::copyFileToTarget($imageData['sourceurl'], $targetPath, $targetFilename)){
@@ -173,5 +228,86 @@ class FileSystemService {
             }
         }
         return $imageData;
+    }
+
+    public static function saveDomDocument($domDocument, $targetPath): void
+    {
+        $domDocument->save($targetPath);
+    }
+
+    public static function transferDwcaToLocalTarget($targetPath, $dwcaPath): bool
+    {
+        $returnVal = false;
+        if(file_exists($dwcaPath)){
+            $fp = fopen($targetPath, 'wb+');
+            $ch = curl_init(str_replace(' ','%20', $dwcaPath));
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+            if(curl_exec($ch)) {
+                $returnVal = true;
+            }
+            curl_close($ch);
+            fclose($fp);
+        }
+        return $returnVal;
+    }
+
+    public static function transferSymbiotaDwcaToLocalTarget($targetPath, $dwcaPath): bool
+    {
+        $returnVal = false;
+        $searchLabel = '';
+        $pathParts = array();
+        if(strpos($dwcaPath, 'searchvar=') !== false){
+            $searchLabel = 'searchvar';
+            $pathParts = explode('?searchvar=', $dwcaPath);
+        }
+        elseif(strpos($dwcaPath, 'starr=') !== false){
+            $searchLabel = 'starr';
+            $pathParts = explode('?starr=', $dwcaPath);
+        }
+        if($pathParts){
+            $data = array(
+                'schema' => 'dwc',
+                'identifications' => '1',
+                'images' => '1',
+                'attributes' => '1',
+                'format' => 'csv',
+                'cset' => 'utf-8',
+                'zip' => '1',
+                'publicsearch' => '1',
+                'sourcepage' => 'specimen',
+                $searchLabel => $pathParts[1]
+            );
+            $fp = fopen($targetPath, 'wb+');
+            $ch = curl_init(str_replace(' ','%20', $dwcaPath));
+            curl_setopt($ch, CURLOPT_FILE, $fp);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+            if(curl_exec($ch)) {
+                $returnVal = true;
+            }
+            curl_close($ch);
+            fclose($fp);
+        }
+        return $returnVal;
+    }
+
+    public static function unpackZipArchive($targetPath, $zipPath): void
+    {
+        $zip = new ZipArchive;
+        $zip->open($zipPath);
+        if(@$zip->extractTo($targetPath . '/')){
+            $zip->close();
+        }
+    }
+
+    public static function writeRowToCsv($fileHandler, $row): void
+    {
+        fputcsv($fileHandler, $row);
     }
 }

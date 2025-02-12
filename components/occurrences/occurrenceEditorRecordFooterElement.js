@@ -1,8 +1,16 @@
 const occurrenceEditorRecordFooterElement = {
     template: `
         <div class="q-mt-sm q-px-sm row justify-between">
-            <div>
-                Key: {{ occurrenceData.occid }}
+            <div v-if="Number(occurrenceData.occid) > 0" class="row q-gutter-xs">
+                <div>
+                    <span class="text-bold">Record Id:</span> {{ occurrenceData.occid }}
+                </div>
+                <div v-if="Number(eventId) > 0">
+                    <span class="text-bold">Event Id:</span> {{ eventId }}
+                </div>
+                <div v-if="Number(locationId) > 0">
+                    <span class="text-bold">Location Id:</span> {{ locationId }}
+                </div>
             </div>
             <div>
                 <template v-if="occurrenceData.datelastmodified">
@@ -24,9 +32,13 @@ const occurrenceEditorRecordFooterElement = {
     setup() {
         const occurrenceStore = useOccurrenceStore();
 
+        const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
+        const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
 
         return {
+            eventId,
+            locationId,
             occurrenceData
         }
     }

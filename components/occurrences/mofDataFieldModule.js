@@ -3,11 +3,15 @@ const mofDataFieldModule = {
         dataType: {
             type: String,
             default: 'event'
+        },
+        newRecord: {
+            type: Boolean,
+            default: false
         }
     },
     template: `
         <div class="q-pa-md column q-col-gutter-sm">
-            <div class="row justify-between">
+            <div v-if="!newRecord" class="row justify-between">
                 <div>
                     <template v-if="editsExist">
                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
@@ -45,7 +49,6 @@ const mofDataFieldModule = {
                 return occurrenceStore.getOccurrenceMofData;
             }
         });
-        const configuredEditData = Vue.ref({});
         const configuredDataFields = Vue.computed(() => {
             if(props.dataType === 'event'){
                 return occurrenceStore.getEventMofDataFields;
@@ -70,29 +73,18 @@ const mofDataFieldModule = {
                 return occurrenceStore.getOccurrenceMofDataLabel;
             }
         });
-        const configuredUpdateData = Vue.ref({});
         const editsExist = Vue.computed(() => {
-            let exist = false;
-            configuredUpdateData.value = Object.assign({}, {});
-            for(let key in configuredEditData.value) {
-                if(configuredEditData.value.hasOwnProperty(key) && configuredEditData.value[key] !== configuredData.value[key]) {
-                    exist = true;
-                    configuredUpdateData.value[key] = configuredEditData.value[key];
-                }
+            if(props.dataType === 'event'){
+                return occurrenceStore.getEventMofEditsExist;
             }
-            return exist;
+            else{
+                return occurrenceStore.getOccurrenceMofEditsExist;
+            }
         });
         const newEventRecord = Vue.ref(false);
-        const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-
-        Vue.watch(configuredData, () => {
-            if(!newEventRecord.value){
-                setEditData();
-            }
-        });
 
         function processSaveDataEdits() {
-            if(props.dataType === 'occurrence' || Number(occurrenceData.value['eventid']) > 0){
+            if(props.dataType === 'occurrence' || Number(occurrenceStore.getCollectingEventID) > 0){
                 saveConfiguredDataEdits();
             }
             else{
@@ -118,23 +110,7 @@ const mofDataFieldModule = {
 
         function saveConfiguredDataEdits() {
             newEventRecord.value = false;
-            const editData = {
-                add: [],
-                delete: [],
-                update: []
-            };
-            Object.keys(configuredUpdateData.value).forEach((key) => {
-                if(configuredEditData.value[key] && !configuredData.value[key]){
-                    editData.add.push({field: key, value: configuredUpdateData.value[key]});
-                }
-                else if(!configuredEditData.value[key] && configuredData.value[key]){
-                    editData.delete.push(key);
-                }
-                else if(configuredEditData.value[key] !== configuredData.value[key]){
-                    editData.update.push({field: key, value: configuredUpdateData.value[key]});
-                }
-            });
-            occurrenceStore.processMofEditData(props.dataType, editData, (res) => {
+            occurrenceStore.processMofEditData(props.dataType, (res) => {
                 hideWorking();
                 if(Number(res) === 1){
                     showNotification('positive','Edits saved.');
@@ -145,22 +121,18 @@ const mofDataFieldModule = {
             });
         }
 
-        function setEditData() {
-            configuredEditData.value = Object.assign({}, configuredData.value);
-            configuredUpdateData.value = Object.assign({}, {});
-        }
-
         function updateConfiguredEditData(key, value) {
-            configuredEditData.value[key] = value;
+            if(props.dataType === 'event'){
+                occurrenceStore.updateEventMofEditData(key, value);
+            }
+            else{
+                occurrenceStore.updateOccurrenceMofEditData(key, value);
+            }
         }
 
-        Vue.provide('configuredEditData', configuredEditData);
+        Vue.provide('configuredEditData', configuredData);
         Vue.provide('configuredDataFields', configuredDataFields);
         Vue.provide('updateConfiguredEditData', updateConfiguredEditData);
-
-        Vue.onMounted(() => {
-            setEditData();
-        });
 
         return {
             configuredDataFieldsLayoutData,

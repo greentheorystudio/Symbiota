@@ -17,7 +17,6 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collid; ?>;
         </script>
@@ -32,28 +31,31 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             <b>Occurrence Data Upload Module</b>
         </div>
         <div id="innertext">
-            <h1>Occurrence Data Upload Module</h1>
+            <div class="text-h5 text-bold">Occurrence Data Upload Module</div>
+            <div v-if="Number(collectionData.collid) > 0" class="q-ml-md column q-mb-sm">
+                <div class="text-bold">
+                    {{ collectionData.collectionname }}
+                </div>
+                <div>
+                    <span class="text-bold">
+                        Last Data Upload Date:
+                    </span>
+                    {{ collectionData.uploaddate }}
+                </div>
+            </div>
             <template v-if="isEditor">
                 <q-card>
                     <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
-                        <q-tab name="occurrence" label="Occurrence Records" no-caps></q-tab>
-                        <q-tab name="media" label="Media" no-caps></q-tab>
-                        <q-tab name="temp" label="Temp" no-caps></q-tab>
+                        <q-tab name="occurrence" label="Data" no-caps></q-tab>
+                        <q-tab name="media" label="Media Files" no-caps></q-tab>
                     </q-tabs>
                     <q-separator></q-separator>
                     <q-tab-panels v-model="tab">
                         <q-tab-panel name="occurrence">
-                            <?php include_once(__DIR__ . '/occurrenceloader.php'); ?>
+                            <occurrence-data-upload-module :collid="collId"></occurrence-data-upload-module>
                         </q-tab-panel>
                         <q-tab-panel name="media">
-                            <?php include_once(__DIR__ . '/imageloader.php'); ?>
-                        </q-tab-panel>
-                        <q-tab-panel name="temp">
-                            <div class="row q-mt-xs">
-                                <div class="col-grow">
-                                    <file-picker-input-element :accepted-types="acceptedFileTypes" :value="selectedFile" :validate-file-size="false" @update:file="(value) => processUploadFile(value[0])"></file-picker-input-element>
-                                </div>
-                            </div>
+                            <occurrence-media-file-upload-module :collid="collId"></occurrence-media-file-upload-module>
                         </q-tab-panel>
                     </q-tab-panels>
                 </q-card>
@@ -63,91 +65,64 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         include_once(__DIR__ . '/../../config/footer-includes.php');
         include(__DIR__ . '/../../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection-data-upload-parameters.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection-media-upload-parameters.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/imageTagSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceLinkageToolPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/mediaFileUploadInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/upload/fieldMapperPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/upload/uploadDataTableViewerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionDataUploadParametersFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionMediaUploadParametersFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionDataUploadParametersEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionMediaUploadParametersEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/occurrenceDataUploadModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/occurrenceMediaFileUploadModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
-            const occurrenceDataUploadModule = Vue.createApp({
+            const collectionOccurrenceDataUploadModule = Vue.createApp({
                 components: {
-                    'file-picker-input-element': filePickerInputElement
+                    'occurrence-data-upload-module': occurrenceDataUploadModule,
+                    'occurrence-media-file-upload-module': occurrenceMediaFileUploadModule
                 },
                 setup() {
-                    const { processCsvDownload } = useCore();
                     const baseStore = useBaseStore();
                     const collectionStore = useCollectionStore();
 
-                    const acceptedFileTypes = ['geojson'];
+                    const collectionData = Vue.computed(() => collectionStore.getCollectionData);
                     const collId = COLLID;
                     const isEditor = Vue.computed(() => {
                         return (collectionStore.getCollectionPermissions.includes('CollAdmin') || collectionStore.getCollectionPermissions.includes('CollEditor'));
                     });
-                    const selectedFile = Vue.ref(null);
                     const tab = Vue.ref('occurrence');
-
-                    function processUploadFile(file) {
-                        const fileReader = new FileReader();
-                        fileReader.onload = () => {
-                            const csvArr = [];
-                            const filename = 'rare_plant_upload.csv';
-                            const geoJSONFormat = new ol.format.GeoJSON();
-                            const wktFormat = new ol.format.WKT();
-                            const uploadData = JSON.parse(fileReader.result);
-                            const uploadFeatures = geoJSONFormat.readFeatures(uploadData);
-                            uploadFeatures.forEach((feature) => {
-                                if(feature){
-                                    const featureData = {};
-                                    const featureProps = feature.getProperties();
-                                    const featureGeometry = feature.getGeometry();
-                                    const wktStr = wktFormat.writeGeometry(featureGeometry);
-                                    Object.keys(featureProps).forEach((prop) => {
-                                        if(prop !== 'geometry'){
-                                            if(featureProps[prop]){
-                                                if(prop.toLowerCase().includes('date')){
-                                                    const date = new Date(featureProps[prop]);
-                                                    const year = date.getFullYear();
-                                                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                                                    const day = String(date.getDate()).padStart(2, '0');
-                                                    featureData[prop.toLowerCase()] = `${year}-${month}-${day}`;
-                                                }
-                                                else{
-                                                    featureData[prop.toLowerCase()] = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop];
-                                                }
-                                            }
-                                            else{
-                                                featureData[prop.toLowerCase()] = null;
-                                            }
-                                        }
-                                    });
-                                    featureData['footprintwkt'] = wktStr;
-                                    csvArr.push(featureData);
-                                }
-                            });
-                            processCsvDownload(csvArr, filename);
-                        };
-                        fileReader.readAsText(file);
-                    }
 
                     Vue.onMounted(() => {
                         collectionStore.setCollection(collId, () => {
-                            if(isEditor.value){
-                                //setUnlinkedRecordCounts();
-                            }
-                            else{
+                            if(!isEditor.value){
                                 window.location.href = baseStore.getClientRoot + '/index.php';
                             }
                         });
                     });
 
                     return {
-                        acceptedFileTypes,
+                        collectionData,
+                        collId,
                         isEditor,
-                        selectedFile,
-                        tab,
-                        processUploadFile
+                        tab
                     }
                 }
             });
-            occurrenceDataUploadModule.use(Quasar, { config: {} });
-            occurrenceDataUploadModule.use(Pinia.createPinia());
-            occurrenceDataUploadModule.mount('#innertext');
+            collectionOccurrenceDataUploadModule.use(Quasar, { config: {} });
+            collectionOccurrenceDataUploadModule.use(Pinia.createPinia());
+            collectionOccurrenceDataUploadModule.mount('#innertext');
         </script>
     </body>
 </html>

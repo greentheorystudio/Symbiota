@@ -85,17 +85,30 @@ class SanitizerService {
         return $returnPath;
     }
 
+    public static function getFullUrlPathPrefix(): string
+    {
+        return ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
+    }
+
     public static function getSqlValueString($conn, $value, $dataType): string
     {
         $returnStr = 'NULL';
-        if($dataType !== 'number'){
-            $cleanedVal = self::cleanInStr($conn, $value);
-            if($cleanedVal !== ''){
-                $returnStr = '"' . str_replace('"', '""', $cleanedVal) . '"';
+        if($value){
+            if($dataType !== 'number'){
+                if($dataType === 'json' || $dataType === 'sql'){
+                    $returnStr = "'" . $value . "'";
+                }
+                else{
+                    $cleanedVal = self::cleanInStr($conn, $value);
+                    if($cleanedVal && $cleanedVal !== ''){
+                        $cleanedVal = str_replace('\"', '"', $cleanedVal);
+                        $returnStr = '"' . str_replace('"', '""', $cleanedVal) . '"';
+                    }
+                }
             }
-        }
-        elseif((string)$value !== '' && is_numeric($value)){
-            $returnStr = (string)$value;
+            elseif((string)$value !== '' && is_numeric($value)){
+                $returnStr = (string)$value;
+            }
         }
         return $returnStr;
     }

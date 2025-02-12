@@ -508,4 +508,10 @@ class Collections {
         }
         return $returnVal;
     }
+
+    public function updateUploadDate($collid): void
+    {
+        $sql = 'UPDATE omcollectionstats SET uploaddate = CURDATE() WHERE collid = ' . (int)$collid . ' ';
+        $this->conn->query($sql);
+    }
 }
