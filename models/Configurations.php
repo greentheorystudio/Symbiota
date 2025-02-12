@@ -467,7 +467,7 @@ class Configurations{
                 $result->free();
                 foreach($rows as $index => $row){
                     $value = $row['configurationvalue'];
-                    if(strpos($row['configurationname'], 'SMTP') === false && (strpos($row['configurationname'], 'PASSWORD') !== false || strpos($row['configurationname'], 'USERNAME') !== false)){
+                    if(strpos($row['configurationname'], 'PASSWORD') !== false || strpos($row['configurationname'], 'USERNAME') !== false){
                         $value = EncryptionService::decrypt($value);
                     }
                     $GLOBALS[$row['configurationname']] = $value;
