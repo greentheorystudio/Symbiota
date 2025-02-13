@@ -387,7 +387,7 @@ class Users{
 
     public function resetPassword($username, $admin): string
     {
-        $returnVal = 0;
+        $returnVal = '0';
         if($username && ($admin || $GLOBALS['EMAIL_CONFIGURED'])){
             $newPassword = $this->generateNewPassword();
             $sql = 'UPDATE users ';
@@ -403,7 +403,7 @@ class Users{
                     $returnVal = $newPassword;
                 }
                 else{
-                    $returnVal = 1;
+                    $returnVal = '1';
                     $emailAddr = '';
                     $sql = 'SELECT email FROM users WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
                     $result = $this->conn->query($sql);
