@@ -126,7 +126,8 @@ include_once(__DIR__ . '/classes/Sanitizer.php');
                                 {url: 'https://herbarium.wisc.edu', label: 'WI State Herbarium', newTab: true},
                                 {url: CLIENT_ROOT + '/misc/links.php', label: 'Links'}
                             ]
-                        }
+                        },
+                        {url: CLIENT_ROOT + '/keys.php', label: 'Keys'},
                     ]);
                     let navBarTimeout = null;
                     const navBarToggle = Vue.ref({});

@@ -85,19 +85,22 @@ include_once(__DIR__ . '/config/header-includes.php');
             }
             ?>
             <ul>
-                <li><b>Enter a genus, species, or common name to view the species description pages.</b></li>
-                <li>View detailed species descriptions, photos, interactive maps, and links to specimen records and additional information.</li></ul>
-            <p><strong>Advanced Searches</strong></p>
+                <li><span class="text-bold">Enter a genus, species, or common name to view the species description pages.</span></li>
+                <li>View detailed species descriptions, photos, interactive maps, and links to specimen records and additional information.</li>
+            </ul>
+            <p class="text-bold">Advanced Searches</p>
             <ul>
-                <li>See <strong>Advanced Searches</strong> tab above to <strong>Search for Specimen Records</strong> and to <strong>Browse the Image Library</strong>. <br>
+                <li>
+                    See <span class="text-bold">Advanced Searches</span> tab above to <span class="text-bold">Search for Specimen Records</span> and to <span class="text-bold">Browse the Image Library</span>. <br />
                 </li>
-                <li>Search, view, and download nearly 400,000 in-state herbarium specimen records and thousands of images.<br>
+                <li>
+                    Search, view, and download nearly 400,000 in-state herbarium specimen records and thousands of images.<br>
                 </li>
             </ul>
             <p>
-                <strong>Checklists</strong> (e.g., County Floras, Wildflowers by Color) are under development.  Take a look or create your own!<br>
+                <span class="text-bold">Checklists</span> (e.g., County Floras, Wildflowers by Color) are under development.  Take a look or create your own!<br />
             </p>
-            <p><em>NOTE: 'Interactive Maps' will plot only collections with known GPS localities.</em></p>
+            <p class="text-italic">NOTE: 'Interactive Maps' will plot only collections with known GPS localities.</p>
             <div style="width: 100%; clear:both;"></div>
             <q-card class="update-card q-mb-md bg-green-1">
                 <q-card-section>
@@ -112,7 +115,9 @@ include_once(__DIR__ . '/config/header-includes.php');
                             <li>Changes to the way images are displayed.</li>
                             <li>Updates to the spatial module with new map layers and functionality.</li>
                             <li>Updating the photos with new higher resolution images.</li>
-                            <li>Adding dichotomous keys from the ongoing work on the <span class="text-underline">Flora of Wisconsin.</span></li>
+                            <li class="text-bold">Adding dichotomous keys from the ongoing work on the <span class="text-underline">Flora of Wisconsin</span>.
+                                <br /><span class="text-red">(See the “Keys” tab above for a list of families and genera with completed keys.)</span>
+                            </li>
                             <li>Updating the county level maps.</li>
                         </ul>
                     </div>
