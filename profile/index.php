@@ -53,6 +53,10 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                     </q-card-section>
                     <q-separator size="1px" color="grey-8"></q-separator>
                     <q-card-section class="column justify-center">
+                        <div v-if="showPasswordReset" class="q-mb-md text-red text-bold text-center">
+                            If you haven't recently changed your password and are having trouble logging in, please click the
+                            Reset password link below and a new password will be emailed to you.
+                        </div>
                         <div class="column justify-center q-mb-xs text-bold">
                             <span class="row justify-center">
                                 Don't have an account?
@@ -112,15 +116,17 @@ elseif(array_key_exists('refurl',$_REQUEST)){
             const loginModule = Vue.createApp({
                 setup() {
                     const { showNotification } = useCore();
-                    const store = useBaseStore();
-                    const adminEmail = store.getAdminEmail;
+                    const baseStore = useBaseStore();
+
+                    const adminEmail = baseStore.getAdminEmail;
                     const confirmationCode = CONFIRMATION_CODE;
                     const email = Vue.ref(null);
-                    const emailConfigured = store.getEmailConfigured;
+                    const emailConfigured = baseStore.getEmailConfigured;
                     const password = Vue.ref(null);
                     const refUrl = REF_URL;
                     const rememberMe = Vue.ref(false);
                     const retrieveUsernameWindow = Vue.ref(false);
+                    const showPasswordReset = baseStore.getShowPasswordReset;
                     const uid = UID;
                     const username = Vue.ref(null);
 
@@ -248,6 +254,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                         password,
                         rememberMe,
                         retrieveUsernameWindow,
+                        showPasswordReset,
                         username,
                         processLogin,
                         resetPassword,
