@@ -12,6 +12,7 @@ const useBaseStore = Pinia.defineStore('base', {
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
+        showPasswordReset: SHOW_PASSWORD_RESET,
         solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
         taxonomicRanks: TAXONOMIC_RANKS,
@@ -64,11 +65,14 @@ const useBaseStore = Pinia.defineStore('base', {
         getOccurrenceProcessingStatusOptions(state) {
             return state.occurrenceProcessingStatusOptions;
         },
-        getSolrMode(state) {
-            return state.solrMode;
-        },
         getRightsTerms(state) {
             return state.rightsTerms;
+        },
+        getShowPasswordReset(state) {
+            return state.showPasswordReset;
+        },
+        getSolrMode(state) {
+            return state.solrMode;
         },
         getSymbUid(state) {
             return state.symbUid;
