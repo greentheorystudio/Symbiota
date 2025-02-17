@@ -157,6 +157,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getBasisOfRecordOptions(state) {
             return state.basisOfRecordOptions;
         },
+        getBlankCollectingEventRecord(state) {
+            return state.collectingEventStore.getBlankCollectingEventRecord;
+        },
+        getBlankLocationRecord(state) {
+            return state.locationStore.getBlankLocationRecord;
+        },
         getBlankOccurrenceRecord(state) {
             return state.blankOccurrenceRecord;
         },
@@ -403,13 +409,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 callback(Number(newEventId));
             });
         },
-        createLocationRecord(callback) {
+        createLocationRecord(callback, locationData = null) {
             this.locationStore.createLocationRecord(this.getCollId, (newLocationId) => {
                 callback(Number(newLocationId));
                 if(newLocationId && Number(newLocationId) > 0){
                     this.updateOccurrenceEditData('locationid', Number(newLocationId));
                 }
-            });
+            }, locationData);
         },
         createOccurrenceDeterminationRecord(callback) {
             const newIsCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
@@ -1195,6 +1201,16 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.collectingEventStore.updateCollectingEventEditData('day', dateData['day']);
             this.collectingEventStore.updateCollectingEventEditData('startdayofyear', dateData['startDayOfYear']);
             this.collectingEventStore.updateCollectingEventEditData('enddayofyear', dateData['endDayOfYear']);
+        },
+        updateCollectingEventLocation(locationid, callback) {
+            this.collectingEventStore.updateCollectingEventLocation(this.getCollId, locationid, (res) => {
+                if(Number(res) === 1){
+                    this.setCurrentLocationRecord(locationid);
+                    this.occurrenceData['locationid'] = locationid;
+                    this.occurrenceEditData['locationid'] = locationid;
+                }
+                callback(Number(res));
+            });
         },
         updateCollectingEventRecord(callback) {
             this.collectingEventStore.updateCollectingEventRecord(this.getCollId, callback);

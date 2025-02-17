@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/OccurrenceLocations.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
@@ -283,6 +284,30 @@ class OccurrenceCollectingEvents{
         return $retArr;
     }
 
+    public function updateCollectingEventLocation($eventId, $locationId): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($eventId && $locationId){
+            $sql = 'UPDATE omoccurcollectingevents SET locationid = ' . (int)$locationId . ' '.
+                'WHERE eventid = ' . (int)$eventId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                $sql = 'UPDATE omoccurrences SET locationid = ' . (int)$locationId . ' '.
+                    'WHERE eventid = ' . (int)$eventId . ' ';
+                //echo "<div>".$sql."</div>";
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                if($retVal){
+                    $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($locationId);
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function updateCollectingEventRecord($eventId, $editData): int
     {
         $retVal = 0;
@@ -321,6 +346,26 @@ class OccurrenceCollectingEvents{
                         }
                     }
                 }
+            }
+        }
+        return $retVal;
+    }
+
+    public function updateOccurrencesFromCollectingEventData($eventId): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($eventId){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'eventtype'){
+                    $sqlPartArr[] = 'o.' . $field . ' = e.' . $field . ' ';
+                }
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
+                'SET ' . implode(', ', $sqlPartArr) . ' WHERE e.eventid = ' . (int)$eventId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
             }
         }
         return $retVal;

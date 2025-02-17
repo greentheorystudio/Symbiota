@@ -56,6 +56,9 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
         locationCollectingEventArr: []
     }),
     getters: {
+        getBlankCollectingEventRecord(state) {
+            return state.blankEventRecord;
+        },
         getCollectingEventBenthicData(state) {
             return state.collectingEventBenthicData;
         },
@@ -294,6 +297,26 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
         },
         updateCollectingEventEditData(key, value) {
             this.collectingEventEditData[key] = value;
+        },
+        updateCollectingEventLocation(collid, locationid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('eventid', this.collectingEventId.toString());
+            formData.append('locationid', locationid.toString());
+            formData.append('action', 'updateCollectingEventLocation');
+            fetch(occurrenceCollectingEventApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                    if(res && Number(res) === 1){
+                        this.collectingEventData['locationid'] = locationid;
+                        this.collectingEventEditData['locationid'] = locationid;
+                    }
+                });
+            });
         },
         updateCollectingEventRecord(collid, callback) {
             const formData = new FormData();
