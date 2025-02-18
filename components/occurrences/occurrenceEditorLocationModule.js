@@ -15,7 +15,7 @@ const occurrenceEditorLocationModule = {
                             <q-btn color="secondary" @click="createLocationRecord();" label="Create Location Record" :disabled="!locationValid" />
                         </template>
                         <template v-else>
-                            <q-btn color="secondary" @click="showLocationEditorPopup = true" label="Edit Location" />
+                            <q-btn color="secondary" @click="processOpenEditor" label="Edit Location" />
                         </template>
                     </div>
                 </div>
@@ -52,8 +52,10 @@ const occurrenceEditorLocationModule = {
                 @close:popup="showLocationEditorPopup = false"
             ></occurrence-location-editor-popup>
         </template>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
+        'confirmation-popup': confirmationPopup,
         'location-field-module': locationFieldModule,
         'location-name-code-auto-complete': locationNameCodeAutoComplete,
         'occurrence-collecting-event-list-popup': occurrenceCollectingEventListPopup,
@@ -67,6 +69,8 @@ const occurrenceEditorLocationModule = {
 
         const collectingEventArr = Vue.computed(() => occurrenceStore.getLocationCollectingEventArr);
         const collId = Vue.computed(() => occurrenceStore.getCollId);
+        const confirmationPopupRef = Vue.ref(null);
+        const editorConfirmed = Vue.ref(false);
         const locationData = Vue.computed(() => occurrenceStore.getLocationData);
         const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
@@ -104,6 +108,21 @@ const occurrenceEditorLocationModule = {
             occurrenceStore.setCurrentLocationRecord(location.locationid);
         }
 
+        function processOpenEditor() {
+            if(editorConfirmed.value){
+                showLocationEditorPopup.value = true;
+            }
+            else{
+                const confirmText = 'If you want to edit this location, click OK to continue. If you want to change the location for this collecting event, click Cancel, and then click Edit Event button in the Collecting Event section, and then click the Change Location button. If you want to change the location for this occurrence only, click Cancel, and then click Change Event/Location button in the bottom section. ';
+                confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'Cancel', trueText: 'OK', callback: (val) => {
+                    editorConfirmed.value = true;
+                    if(val){
+                        showLocationEditorPopup.value = true;
+                    }
+                }});
+            }
+        }
+
         function updateLocationData(key, value) {
             occurrenceStore.updateLocationEditData(key, value);
         }
@@ -115,6 +134,7 @@ const occurrenceEditorLocationModule = {
         return {
             collectingEventArr,
             collId,
+            confirmationPopupRef,
             locationData,
             locationId,
             locationFields,
@@ -127,6 +147,7 @@ const occurrenceEditorLocationModule = {
             processEventSelection,
             processLocationCodeNameSelection,
             processLocationSelection,
+            processOpenEditor,
             updateLocationData
         }
     }
