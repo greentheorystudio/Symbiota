@@ -334,6 +334,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getOccurrenceEntryFormat(state) {
             return state.occurrenceEntryFormat;
         },
+        getOccurrenceFieldControlledVocabularies(state) {
+            return state.collectionStore.getOccurrenceFieldControlledVocabularies;
+        },
         getOccurrenceFields(state) {
             return state.occurrenceFields;
         },

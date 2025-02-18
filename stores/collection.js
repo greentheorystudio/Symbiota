@@ -9,6 +9,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
         eventMofDataFields: {},
         eventMofDataFieldsLayoutData: {},
         eventMofDataLabel: 'Measurement or Fact Data',
+        occurrenceFieldControlledVocabularies: {},
         occurrenceMofData: {},
         occurrenceMofDataFields: {},
         occurrenceMofDataFieldsLayoutData: {},
@@ -73,6 +74,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getInstallationKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('installationKey')) ? state.collectionData['aggkeysstr']['installationKey'] : null);
+        },
+        getOccurrenceFieldControlledVocabularies(state) {
+            return state.occurrenceFieldControlledVocabularies;
         },
         getOccurrenceMofData(state) {
             return state.occurrenceMofData;
@@ -184,6 +188,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.eventMofDataFields = Object.assign({}, {});
             this.eventMofDataFieldsLayoutData = Object.assign({}, {});
             this.eventMofDataLabel = 'Measurement or Fact Data';
+            this.occurrenceFieldControlledVocabularies = Object.assign({}, {});
             this.occurrenceMofData = Object.assign({}, {});
             this.occurrenceMofDataFields = Object.assign({}, {});
             this.occurrenceMofDataFieldsLayoutData = Object.assign({}, {});
@@ -279,6 +284,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
                         }
                         if(this.collectionData['configuredData'].hasOwnProperty('dataDownloads') && this.collectionData['configuredData']['dataDownloads']){
                             this.configuredDataDownloads = this.collectionData['configuredData']['dataDownloads'];
+                        }
+                        if(this.collectionData['configuredData'].hasOwnProperty('occurrenceFieldControlledVocabularies') && this.collectionData['configuredData']['occurrenceFieldControlledVocabularies']){
+                            this.occurrenceFieldControlledVocabularies = Object.assign({}, this.collectionData['configuredData']['occurrenceFieldControlledVocabularies']);
                         }
                     }
                     if(callback){
