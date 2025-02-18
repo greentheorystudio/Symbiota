@@ -35,12 +35,14 @@ const occurrenceEditorLocationModule = {
                 popup-type="location"
                 :event-arr="collectingEventArr"
                 :show-popup="showCollectingEventListPopup"
+                @update:event="processEventSelection"
                 @close:popup="showCollectingEventListPopup = false"
             ></occurrence-collecting-event-list-popup>
         </template>
         <template v-if="showLocationLinkageToolPopup">
             <occurrence-location-linkage-tool-popup
                 :show-popup="showLocationLinkageToolPopup"
+                @update:location="processLocationSelection"
                 @close:popup="showLocationLinkageToolPopup = false"
             ></occurrence-location-linkage-tool-popup>
         </template>
@@ -85,6 +87,10 @@ const occurrenceEditorLocationModule = {
             });
         }
 
+        function processEventSelection(event) {
+            occurrenceStore.setCurrentCollectingEventRecord(event.eventid);
+        }
+
         function processLocationCodeNameSelection(key, value) {
             if(value.hasOwnProperty('id') && Number(value.id) > 0){
                 occurrenceStore.setCurrentLocationRecord(value.id);
@@ -92,6 +98,10 @@ const occurrenceEditorLocationModule = {
             else{
                 updateLocationData(key, value.value);
             }
+        }
+
+        function processLocationSelection(location) {
+            occurrenceStore.setCurrentLocationRecord(location.locationid);
         }
 
         function updateLocationData(key, value) {
@@ -114,7 +124,9 @@ const occurrenceEditorLocationModule = {
             showLocationEditorPopup,
             showLocationLinkageToolPopup,
             createLocationRecord,
+            processEventSelection,
             processLocationCodeNameSelection,
+            processLocationSelection,
             updateLocationData
         }
     }

@@ -398,7 +398,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.geneticLinkStore.clearGeneticLinkArr();
             this.occurrenceMofData = Object.assign({}, {});
         },
-        createCollectingEventRecord(callback) {
+        createCollectingEventRecord(callback, eventData = null) {
             this.collectingEventStore.createCollectingEventRecord(this.getCollId, this.getLocationID, this.occurrenceEntryFormat, this.getCollectionData['defaultrepcount'], this.getEventMofDataFields, (newEventId) => {
                 if(newEventId && Number(newEventId) > 0){
                     if(this.getEventMofEditsExist){
@@ -407,14 +407,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     this.updateOccurrenceEditData('eventid', Number(newEventId));
                 }
                 callback(Number(newEventId));
-            });
+            }, eventData);
         },
         createLocationRecord(callback, locationData = null) {
             this.locationStore.createLocationRecord(this.getCollId, (newLocationId) => {
-                callback(Number(newLocationId));
                 if(newLocationId && Number(newLocationId) > 0){
                     this.updateOccurrenceEditData('locationid', Number(newLocationId));
                 }
+                callback(Number(newLocationId));
             }, locationData);
         },
         createOccurrenceDeterminationRecord(callback) {
@@ -1264,12 +1264,46 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['scientificnameauthorship'] = taxon ? taxon.author : null;
             this.occurrenceEditData['taxonData'] = taxon ? Object.assign({}, taxon) : null;
         },
+        updateOccurrenceEvent(eventid, updateData, callback) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollId.toString());
+            formData.append('occid', this.occId.toString());
+            formData.append('eventid', eventid.toString());
+            formData.append('updateData', (updateData ? '1' : '0'));
+            formData.append('action', 'updateOccurrenceEvent');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                });
+            });
+        },
         updateOccurrenceGeneticLinkageRecord(callback) {
             this.geneticLinkStore.updateGeneticLinkageRecord(this.getCollId, (res) => {
                 callback(Number(res));
                 if(Number(res) === 1){
                     this.geneticLinkStore.setGeneticLinkArr(this.occId);
                 }
+            });
+        },
+        updateOccurrenceLocation(locationid, updateData, callback) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollId.toString());
+            formData.append('occid', this.occId.toString());
+            formData.append('locationid', locationid.toString());
+            formData.append('updateData', (updateData ? '1' : '0'));
+            formData.append('action', 'updateOccurrenceLocation');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                });
             });
         },
         updateOccurrenceMofEditData(key, value) {

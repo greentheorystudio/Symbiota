@@ -142,14 +142,24 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
         clearLocationData() {
             this.locationCollectingEventArr.length = 0;
         },
-        createCollectingEventRecord(collid, locationid, entryFormat, defaultRepCount, fields, callback) {
-            this.collectingEventEditData['collid'] = collid;
-            if(locationid > 0){
-                this.collectingEventEditData['locationid'] = locationid;
+        createCollectingEventRecord(collid, locationid, entryFormat, defaultRepCount, fields, callback, eventData = null) {
+            if(!eventData){
+                this.collectingEventEditData['collid'] = collid;
+                if(locationid > 0){
+                    this.collectingEventEditData['locationid'] = locationid;
+                }
+            }
+            if(eventData && !eventData['repcount'] && Number(defaultRepCount) > 0){
+                eventData['repcount'] = defaultRepCount;
             }
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('event', JSON.stringify(this.collectingEventEditData));
+            if(eventData){
+                formData.append('event', JSON.stringify(eventData));
+            }
+            else{
+                formData.append('event', JSON.stringify(this.collectingEventEditData));
+            }
             formData.append('action', 'createCollectingEventRecord');
             fetch(occurrenceCollectingEventApiUrl, {
                 method: 'POST',

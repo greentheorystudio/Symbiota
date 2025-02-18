@@ -6,7 +6,7 @@ const occurrenceCollectingEventTransferPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" persistent>
+        <q-dialog v-if="!showLocationLinkageToolPopup" class="z-top" v-model="showPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -18,7 +18,8 @@ const occurrenceCollectingEventTransferPopup = {
                         <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div></div>
-                                <div class="row justify-end">
+                                <div class="row justify-end q-gutter-xs">
+                                    <q-btn color="secondary" @click="showLocationLinkageToolPopup = true" label="Search Locations" />
                                     <q-btn color="secondary" @click="processChangeLocation();" label="Change Event Location" :disabled="!locationValid" />
                                 </div>
                             </div>
@@ -36,10 +37,18 @@ const occurrenceCollectingEventTransferPopup = {
                 </div>
             </q-card>
         </q-dialog>
+        <template v-if="showLocationLinkageToolPopup">
+            <occurrence-location-linkage-tool-popup
+                :show-popup="showLocationLinkageToolPopup"
+                @update:location="setLocationData"
+                @close:popup="showLocationLinkageToolPopup = false"
+            ></occurrence-location-linkage-tool-popup>
+        </template>
     `,
     components: {
         'location-field-module': locationFieldModule,
-        'location-name-code-auto-complete': locationNameCodeAutoComplete
+        'location-name-code-auto-complete': locationNameCodeAutoComplete,
+        'occurrence-location-linkage-tool-popup': occurrenceLocationLinkageToolPopup
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
@@ -54,6 +63,7 @@ const occurrenceCollectingEventTransferPopup = {
             return (locationData['country'] && locationData['stateprovince']);
         });
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const showLocationLinkageToolPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -142,9 +152,11 @@ const occurrenceCollectingEventTransferPopup = {
             locationFields,
             locationValid,
             occurrenceFieldDefinitions,
+            showLocationLinkageToolPopup,
             closePopup,
             processChangeLocation,
             processLocationCodeNameSelection,
+            setLocationData,
             updateLocationData
         }
     }

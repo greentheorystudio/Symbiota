@@ -287,7 +287,6 @@ class OccurrenceCollectingEvents{
     public function updateCollectingEventLocation($eventId, $locationId): int
     {
         $retVal = 0;
-        $sqlPartArr = array();
         if($eventId && $locationId){
             $sql = 'UPDATE omoccurcollectingevents SET locationid = ' . (int)$locationId . ' '.
                 'WHERE eventid = ' . (int)$eventId . ' ';
@@ -357,7 +356,7 @@ class OccurrenceCollectingEvents{
         $sqlPartArr = array();
         if($eventId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'eventtype'){
+                if($field !== 'eventtype' && $field !== 'repcount'){
                     $sqlPartArr[] = 'o.' . $field . ' = e.' . $field . ' ';
                 }
             }
