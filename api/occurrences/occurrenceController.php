@@ -57,12 +57,69 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getOccurrenceIdDataFromIdentifierArr' && $collid && array_key_exists('identifierField',$_POST) && array_key_exists('identifiers',$_POST)){
         echo json_encode($occurrences->getOccurrenceIdDataFromIdentifierArr($collid, $_POST['identifierField'], json_decode($_POST['identifiers'], true)));
     }
-    elseif($action === 'batchPopulateOccurrenceGUIDs' && $collid){
+    elseif($action === 'batchPopulateOccurrenceGUIDs' && $isEditor && $collid){
         echo $occurrences->batchCreateOccurrenceRecordGUIDs($collid);
     }
-    elseif($action === 'getOccurrenceDuplicateIdentifierRecordArr' && $collid){
+    elseif($action === 'getOccurrenceDuplicateIdentifierRecordArr' && $isEditor && $collid){
         $identifierField = $_POST['identifierField'] ?? null;
         $identifier = $_POST['identifier'] ?? null;
         echo json_encode($occurrences->getOccurrenceDuplicateIdentifierRecordArr($collid, $occid, $identifierField, $identifier));
+    }
+    elseif($action === 'undoOccScinameChange' && $isEditor && $collid){
+        $oldName = str_replace(array('%squot;', '%dquot;'), array("'", '"'), $_POST['oldsciname']);
+        $newName = str_replace(array('%squot;', '%dquot;'), array("'", '"'), $_POST['newsciname']);
+        echo $occurrences->undoOccRecordsCleanedScinameChange($collid, $oldName, $newName);
+    }
+    elseif($action === 'updateOccWithCleanedName' && $isEditor && $collid){
+        echo $occurrences->updateOccRecordsWithCleanedSciname($collid, $_POST['sciname'],$_POST['cleanedsciname'],$_POST['tid']);
+    }
+    elseif($action === 'updateOccWithNewSciname' && $isEditor && array_key_exists('sciname', $_POST) && array_key_exists('tid', $_POST) && $collid){
+        $sciname = $_POST['sciname'];
+        $tid = (int)$_POST['tid'];
+        echo $occurrences->updateOccRecordsWithNewScinameTid($collid, $sciname, $tid);
+    }
+    elseif($action === 'getUnlinkedOccSciNames' && $isEditor && $collid){
+        echo json_encode($occurrences->getUnlinkedSciNames($collid));
+    }
+    elseif($action === 'cleanDoubleSpaces' && $isEditor && $collid){
+        echo $occurrences->cleanDoubleSpaceNames($collid);
+    }
+    elseif($action === 'cleanQualifierNames' && $isEditor && $collid){
+        echo $occurrences->cleanQualifierNames($collid);
+    }
+    elseif($action === 'cleanInfra' && $isEditor && $collid){
+        echo $occurrences->cleanInfraAbbrNames($collid);
+    }
+    elseif($action === 'cleanSpNames' && $isEditor && $collid){
+        echo $occurrences->cleanSpNames($collid);
+    }
+    elseif($action === 'cleanTrimNames' && $isEditor && $collid){
+        echo $occurrences->cleanTrimNames($collid);
+    }
+    elseif($action === 'cleanQuestionMarks' && $isEditor && $collid){
+        echo $occurrences->cleanQuestionMarks($collid);
+    }
+    elseif($action === 'updateLocalitySecurity' && $isEditor){
+        echo $occurrences->protectGlobalSpecies($collid);
+    }
+    elseif($action === 'updateOccThesaurusLinkages' && $isEditor && $collid && array_key_exists('kingdomid', $_POST)){
+        $kingdomid = (int)$_POST['kingdomid'];
+        echo $occurrences->updateOccTaxonomicThesaurusLinkages($collid, $kingdomid);
+    }
+    elseif($action === 'getUnlinkedScinameCounts' && $isEditor && $collid){
+        $returnArr = array();
+        $returnArr['taxaCnt'] = $occurrences->getBadTaxaCount($collid);
+        $returnArr['occCnt'] = $occurrences->getBadSpecimenCount($collid);
+        echo json_encode($returnArr);
+    }
+    elseif($action === 'updateOccurrenceLocation' && $isEditor && $occid && array_key_exists('locationid', $_POST)){
+        $locationid = (int)$_POST['locationid'];
+        $updateData = array_key_exists('updateData', $_POST) && (int)$_POST['updateData'] === 1;
+        echo $occurrences->updateOccurrenceLocationId($occid, $locationid, $updateData);
+    }
+    elseif($action === 'updateOccurrenceEvent' && $isEditor && $occid && array_key_exists('eventid', $_POST)){
+        $eventid = (int)$_POST['eventid'];
+        $updateData = array_key_exists('updateData', $_POST) && (int)$_POST['updateData'] === 1;
+        echo $occurrences->updateOccurrenceEventId($occid, $eventid, $updateData);
     }
 }

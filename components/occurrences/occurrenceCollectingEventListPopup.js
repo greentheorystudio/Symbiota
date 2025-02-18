@@ -194,7 +194,7 @@ const occurrenceCollectingEventListPopup = {
                                             <q-btn color="primary" @click="processMergeEventData(event);" label="Merge Missing Data Only" dense />
                                         </template>
                                         <template v-else-if="popupType === 'location'">
-                                            <q-btn color="primary" @click="processEventSelection(event.eventid);" label="Select Event" dense />
+                                            <q-btn color="primary" @click="processEventSelection(event);" label="Select Event" dense />
                                         </template>
                                     </div>
                                 </q-card-section>
@@ -219,13 +219,13 @@ const occurrenceCollectingEventListPopup = {
             context.emit('close:popup');
         }
 
-        function processEventSelection(eventid) {
-            occurrenceStore.setCurrentCollectingEventRecord(eventid);
+        function processEventSelection(event) {
+            context.emit('update:event', event);
             context.emit('close:popup');
         }
 
         function processMergeEventData(data, missingOnly = true) {
-            occurrenceStore.mergeSelectedEventOccurrenceData(data, !missingOnly);
+            context.emit('merge:event', {event: data, missing: !missingOnly});
             context.emit('close:popup');
         }
 

@@ -385,27 +385,27 @@ class Users{
         return $returnVal;
     }
 
-    public function resetPassword($uid, $admin): string
+    public function resetPassword($username, $admin): string
     {
-        $returnVal = 0;
-        if($uid && ($admin || $GLOBALS['EMAIL_CONFIGURED'])){
+        $returnVal = '0';
+        if($username && ($admin || $GLOBALS['EMAIL_CONFIGURED'])){
             $newPassword = $this->generateNewPassword();
             $sql = 'UPDATE users ';
             if($this->encryption === 'password'){
                 $sql .= 'SET password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'SET password = SHA2("' . SanitizerService::cleanInStr($this->conn,$newPassword) . '", 224) ';
+                $sql .= 'SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '", 224) ';
             }
-            $sql .= 'WHERE uid = ' . (int)$uid . ' ';
+            $sql .= 'WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
             if($this->conn->query($sql)){
                 if($admin){
                     $returnVal = $newPassword;
                 }
                 else{
-                    $returnVal = 1;
+                    $returnVal = '1';
                     $emailAddr = '';
-                    $sql = 'SELECT email FROM users WHERE uid = ' . (int)$uid . ' ';
+                    $sql = 'SELECT email FROM users WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
                     $result = $this->conn->query($sql);
                     if($row = $result->fetch_array(MYSQLI_ASSOC)){
                         $emailAddr = $row['email'];
@@ -419,7 +419,6 @@ class Users{
                             $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                         }
                         (new MailerService)->sendEmail($emailAddr, $subject, $bodyStr);
-                        $result->free();
                     }
                 }
             }
@@ -486,7 +485,6 @@ class Users{
                     $status = 1;
                 }
             }
-            $result->free();
         }
         return $status;
     }

@@ -53,4 +53,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getCollectingEventCollectionsArr' && $eventid){
         echo json_encode($occurrenceCollectingEvents->getCollectingEventCollectionsArr($eventid));
     }
+    elseif($action === 'updateCollectingEventLocation' && $isEditor && $eventid && array_key_exists('locationid', $_POST)){
+        $locationid = (int)$_POST['locationid'];
+        echo $occurrenceCollectingEvents->updateCollectingEventLocation($eventid, $locationid);
+    }
 }

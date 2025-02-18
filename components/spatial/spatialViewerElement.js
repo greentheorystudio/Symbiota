@@ -10,7 +10,7 @@ const spatialViewerElement = {
         }
     },
     template: `
-        <div id="viewer-map">
+        <div id="viewer-map" class="fit">
             <div id="viewer-popup" class="ol-popup">
                 <template v-if="popupCloser">
                     <a class="ol-popup-closer cursor-pointer" @click="closePopup();"></a>

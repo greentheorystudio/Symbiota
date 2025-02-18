@@ -478,14 +478,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        if(!isset($GLOBALS['CLIENT_ROOT'])){
-            $GLOBALS['CLIENT_ROOT'] = '';
-        }
-        if(!isset($GLOBALS['DEFAULT_TITLE'])){
-            $GLOBALS['DEFAULT_TITLE'] = '';
-        }
-        $GLOBALS['CSS_VERSION'] = '20241006';
-        $GLOBALS['JS_VERSION'] = '2024052411111111111111111111111';
+        $GLOBALS['CSS_VERSION'] = '20241007';
+        $GLOBALS['JS_VERSION'] = '20240526';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -643,6 +637,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['CLIENT_ROOT'])){
             $GLOBALS['CLIENT_ROOT'] = '';
+        }
+        if(!isset($GLOBALS['DEFAULT_TITLE'])){
+            $GLOBALS['DEFAULT_TITLE'] = '';
         }
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
@@ -825,6 +822,7 @@ class Configurations{
         if(!isset($GLOBALS['RIGHTS_TERMS']) || count($GLOBALS['RIGHTS_TERMS']) === 0){
             $GLOBALS['RIGHTS_TERMS'] = $this->rightsTerms;
         }
+        $GLOBALS['SHOW_PASSWORD_RESET'] = isset($GLOBALS['PW_RESET']) && (int)$GLOBALS['PW_RESET'] === 1;
     }
 
     public function validateNewConfNameCore($name): bool
