@@ -52,7 +52,7 @@ const selectorInputElement = {
                     {{ selectedOption.label.replaceAll(' ', '&nbsp;') }}
                 </template>
                 <template v-else>
-                    {{ value.replaceAll(' ', '&nbsp;') }}
+                    {{ value.toString().replaceAll(' ', '&nbsp;') }}
                 </template>
             </template>
         </q-select>
