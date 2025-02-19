@@ -2306,22 +2306,22 @@ const occurrenceDataUploadModule = {
             if(flatFileMode.value && sourceDataFlatFile.value.length > 0 && Object.keys(sourceDataFieldsFlatFile.value).length > 0){
                 Object.keys(sourceDataFieldsFlatFile.value).forEach((field) => {
                     const fieldName = sourceDataFieldsFlatFile.value[field];
-                    if(Object.keys(savedMappingDataOccurrence.value).length === 0 || !savedMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
-                        if(fieldName === 'coreid'){
-                            fieldMappingDataOccurrence.value[field.toLowerCase()] = 'dbpk';
-                        }
-                        else if(fieldName === 'coreeventid'){
-                            fieldMappingDataOccurrence.value[field.toLowerCase()] = 'eventdbpk';
-                        }
-                        else{
-                            const fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
-                            const usedField = fieldOption ? Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === fieldOption.value) : null;
-                            fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
-                        }
+                    if(fieldName === 'coreid'){
+                        fieldMappingDataOccurrence.value[field.toLowerCase()] = 'dbpk';
+                    }
+                    else if(fieldName === 'coreeventid'){
+                        fieldMappingDataOccurrence.value[field.toLowerCase()] = 'eventdbpk';
                     }
                     else{
-                        const fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === savedMappingDataOccurrence.value[fieldName.toLowerCase()]);
-                        fieldMappingDataOccurrence.value[field.toLowerCase()] = fieldOption ? fieldOption.value : 'unmapped';
+                        let fieldOption;
+                        if(Object.keys(savedMappingDataOccurrence.value).length === 0 || !savedMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
+                            fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
+                        }
+                        else{
+                            fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === savedMappingDataOccurrence.value[fieldName.toLowerCase()]);
+                        }
+                        const usedField = fieldOption ? Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === fieldOption.value) : null;
+                        fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                     }
                 });
             }
