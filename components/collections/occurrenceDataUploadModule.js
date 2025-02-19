@@ -26,12 +26,12 @@ const occurrenceDataUploadModule = {
                                                 </div>
                                             </div>
                                         </div>
-                                        <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || currentProcess"></collection-data-upload-parameters-field-module>
                                         <div v-if="Number(profileData.uploadtype) === 6" class="row">
                                             <div class="col-grow">
                                                 <file-picker-input-element :disabled="currentTab !== 'configuration' || currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
                                             </div>
                                         </div>
+                                        <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || currentProcess"></collection-data-upload-parameters-field-module>
                                         <div class="row justify-end">
                                             <div>
                                                 <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || currentProcess" dense />
