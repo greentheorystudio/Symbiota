@@ -1025,6 +1025,21 @@ class Occurrences{
         return $returnVal;
     }
 
+    public function removePrimaryIdentifiersFromUploadedOccurrences($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
+                'SET o.dbpk = NULL '.
+                'WHERE o.collid  = ' . (int)$collid . ' AND u.occid IS NOT NULL ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function transferOccurrenceRecord($occid, $transferToCollid): int
     {
         $returnVal = 0;

@@ -1044,6 +1044,32 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences() {
+            const text = 'Removing source data identifiers from uploaded occurrences';
+            currentProcess.value = 'finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'removePrimaryIdentifiersFromUploadedOccurrences');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferProcessDeterminations();
+                }
+                else{
+                    processErrorResponse('An error occurred while removing primary identifiers.');
+                    adjustUIEnd();
+                }
+            });
+        }
+
         function finalTransferRemoveUnmatchedOccurrences() {
             if(profileConfigurationData.value['removeUnmatchedRecords'] && Number(uploadSummaryData.value['exist']) > 0){
                 const text = 'Removing previous records not included in upload';
@@ -1093,7 +1119,12 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    finalTransferProcessDeterminations();
+                    if(profileConfigurationData.value['saveSourcePrimaryIdentifier']){
+                        finalTransferProcessDeterminations();
+                    }
+                    else{
+                        finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences();
+                    }
                 }
                 else{
                     processErrorResponse('An error occurred while populating IDs');

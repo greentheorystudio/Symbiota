@@ -39,6 +39,11 @@ const collectionDataUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
+                    <checkbox-input-element :disabled="disabled" label="Save primary identifiers from source data" :value="configurationData.saveSourcePrimaryIdentifier" @update:value="(value) => updateConfigurationData('saveSourcePrimaryIdentifier', value)"></checkbox-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
                     <checkbox-input-element :disabled="disabled" label="Match by Catalog or Other Catalog Number" :value="configurationData.matchOnCatalogNumber" @update:value="(value) => updateConfigurationData('matchOnCatalogNumber', value)"></checkbox-input-element>
                 </div>
             </div>

@@ -16,6 +16,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             existingDeterminationRecords: 'merge',
             existingMediaRecords: 'merge',
             existingMofRecords: 'merge',
+            saveSourcePrimaryIdentifier: true,
             matchOnCatalogNumber: false,
             removeUnmatchedRecords: false
         },
