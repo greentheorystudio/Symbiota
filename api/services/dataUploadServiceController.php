@@ -130,4 +130,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'setUploadLocalitySecurity'){
         echo $dataUploadService->setUploadLocalitySecurity($collid);
     }
+    elseif($action === 'removePrimaryIdentifiersFromUploadedOccurrences'){
+        echo $dataUploadService->removePrimaryIdentifiersFromUploadedOccurrences($collid);
+    }
 }

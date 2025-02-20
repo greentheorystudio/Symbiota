@@ -41,6 +41,9 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
         locationUpdateData: {}
     }),
     getters: {
+        getBlankLocationRecord(state) {
+            return state.blankLocationRecord;
+        },
         getLocationData(state) {
             return state.locationEditData;
         },
@@ -70,11 +73,16 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
             this.locationId = 0;
             this.locationData = Object.assign({}, this.blankLocationRecord);
         },
-        createLocationRecord(collid, callback) {
+        createLocationRecord(collid, callback, locationData = null) {
             this.locationEditData['collid'] = collid;
             const formData = new FormData();
             formData.append('collid', collid.toString());
-            formData.append('location', JSON.stringify(this.locationEditData));
+            if(locationData){
+                formData.append('location', JSON.stringify(locationData));
+            }
+            else{
+                formData.append('location', JSON.stringify(this.locationEditData));
+            }
             formData.append('action', 'createLocationRecord');
             fetch(occurrenceLocationApiUrl, {
                 method: 'POST',

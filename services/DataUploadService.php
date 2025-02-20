@@ -609,6 +609,15 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function removePrimaryIdentifiersFromUploadedOccurrences($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new Occurrences)->removePrimaryIdentifiersFromUploadedOccurrences($collid);
+        }
+        return $retVal;
+    }
+
     public function removeUploadFiles($serverPath): int
     {
         $returnVal = 0;

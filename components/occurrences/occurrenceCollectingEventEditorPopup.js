@@ -7,7 +7,7 @@ const occurrenceCollectingEventEditorPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="lg-popup overflow-hidden">
+            <q-card v-if="!showEventTransferPopup" class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
@@ -22,7 +22,8 @@ const occurrenceCollectingEventEditorPopup = {
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
-                                <div class="row justify-end">
+                                <div class="row justify-end q-gutter-xs">
+                                    <q-btn color="secondary" @click="showEventTransferPopup = true" label="Change Location" />
                                     <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
                                 </div>
                             </div>
@@ -39,10 +40,18 @@ const occurrenceCollectingEventEditorPopup = {
                     </div>
                 </div>
             </q-card>
+            <template v-if="showEventTransferPopup">
+                <occurrence-collecting-event-transfer-popup
+                    :show-popup="showEventTransferPopup"
+                    @location-change:updated="closePopup"
+                    @close:popup="showEventTransferPopup = false"
+                ></occurrence-collecting-event-transfer-popup>
+            </template>
         </q-dialog>
     `,
     components: {
         'collecting-event-field-module': collectingEventFieldModule,
+        'occurrence-collecting-event-transfer-popup': occurrenceCollectingEventTransferPopup,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
@@ -56,6 +65,7 @@ const occurrenceCollectingEventEditorPopup = {
         const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
         const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const showEventTransferPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -107,6 +117,7 @@ const occurrenceCollectingEventEditorPopup = {
             eventFields,
             eventValid,
             occurrenceFieldDefinitions,
+            showEventTransferPopup,
             closePopup,
             saveEventEdits,
             updateCollectingEventData

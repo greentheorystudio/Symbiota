@@ -36,6 +36,7 @@ const occurrenceEditorFormCollectingEventElement = {
             <occurrence-collecting-event-list-popup
                 :event-arr="collectingEventArr"
                 :show-popup="showCollectingEventListPopup"
+                @merge:event="processMergeEventData"
                 @close:popup="closeCollectingEventListPopup();"
             ></occurrence-collecting-event-list-popup>
         </template>
@@ -91,6 +92,10 @@ const occurrenceEditorFormCollectingEventElement = {
             }
         }
 
+        function processMergeEventData(data) {
+            occurrenceStore.mergeSelectedEventOccurrenceData(data.event, data.missing);
+        }
+
         function updateOccurrenceData(key, value) {
             occurrenceStore.updateOccurrenceEditData(key, value);
             if(collectionEventAutoSearch.value && (key === 'recordedby' || key === 'recordnumber')){
@@ -124,6 +129,7 @@ const occurrenceEditorFormCollectingEventElement = {
             showConfiguredDataEditorPopup,
             closeCollectingEventListPopup,
             processCollectingEventSearch,
+            processMergeEventData,
             updateOccurrenceData,
             updateOccurrenceDateData
         }

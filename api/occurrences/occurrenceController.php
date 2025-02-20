@@ -112,4 +112,14 @@ if($action && SanitizerService::validateInternalRequest()){
         $returnArr['occCnt'] = $occurrences->getBadSpecimenCount($collid);
         echo json_encode($returnArr);
     }
+    elseif($action === 'updateOccurrenceLocation' && $isEditor && $occid && array_key_exists('locationid', $_POST)){
+        $locationid = (int)$_POST['locationid'];
+        $updateData = array_key_exists('updateData', $_POST) && (int)$_POST['updateData'] === 1;
+        echo $occurrences->updateOccurrenceLocationId($occid, $locationid, $updateData);
+    }
+    elseif($action === 'updateOccurrenceEvent' && $isEditor && $occid && array_key_exists('eventid', $_POST)){
+        $eventid = (int)$_POST['eventid'];
+        $updateData = array_key_exists('updateData', $_POST) && (int)$_POST['updateData'] === 1;
+        echo $occurrences->updateOccurrenceEventId($occid, $eventid, $updateData);
+    }
 }

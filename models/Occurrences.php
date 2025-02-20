@@ -2,8 +2,10 @@
 include_once(__DIR__ . '/ChecklistVouchers.php');
 include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/Media.php');
+include_once(__DIR__ . '/OccurrenceCollectingEvents.php');
 include_once(__DIR__ . '/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/OccurrenceGeneticLinks.php');
+include_once(__DIR__ . '/OccurrenceLocations.php');
 include_once(__DIR__ . '/OccurrenceMeasurementsOrFacts.php');
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
@@ -1023,6 +1025,21 @@ class Occurrences{
         return $returnVal;
     }
 
+    public function removePrimaryIdentifiersFromUploadedOccurrences($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
+                'SET o.dbpk = NULL '.
+                'WHERE o.collid  = ' . (int)$collid . ' AND u.occid IS NOT NULL ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function transferOccurrenceRecord($occid, $transferToCollid): int
     {
         $returnVal = 0;
@@ -1149,6 +1166,49 @@ class Occurrences{
             }
         }
         return $retCnt;
+    }
+
+    public function updateOccurrenceEventId($occId, $eventId, $updateData = false): int
+    {
+        $retVal = 0;
+        if($occId && $eventId){
+            $sql = 'UPDATE omoccurrences SET eventid = ' . (int)$eventId . ' WHERE occid = ' . (int)$occId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                if($updateData){
+                    $sql = 'SELECT locationid FROM omoccurrences WHERE occid = ' . (int)$occId . ' ';
+                    //echo '<div>'.$sql.'</div>';
+                    if($result = $this->conn->query($sql)){
+                        $row = $result->fetch_array(MYSQLI_ASSOC);
+                        $result->free();
+                        if((int)$row['locationid'] > 0){
+                            $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($row['locationid']);
+                        }
+                    }
+                    if($retVal){
+                        $retVal = (new OccurrenceCollectingEvents)->updateOccurrencesFromCollectingEventData($eventId);
+                    }
+                }
+            }
+        }
+        return $retVal;
+    }
+
+    public function updateOccurrenceLocationId($occId, $locationId, $updateData = false): int
+    {
+        $retVal = 0;
+        if($occId && $locationId){
+            $sql = 'UPDATE omoccurrences SET locationid = ' . (int)$locationId . ' WHERE occid = ' . (int)$occId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                if($updateData){
+                    $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($locationId);
+                }
+            }
+        }
+        return $retVal;
     }
 
     public function updateOccurrenceRecord($occId, $editData, $determinationUpdate = false): int
