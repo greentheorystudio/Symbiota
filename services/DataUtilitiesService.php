@@ -35,7 +35,7 @@ class DataUtilitiesService {
 
     public static function cleanOccurrenceData($occData){
         foreach($occData as $k => $v){
-            $occData[$k] = trim($v);
+            $occData[$k] = $v ? trim($v) : null;
         }
         if(isset($occData['eventdate']) && $occData['eventdate']){
             if(is_numeric($occData['eventdate'])){

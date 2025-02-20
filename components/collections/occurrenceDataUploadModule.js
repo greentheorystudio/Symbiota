@@ -2272,28 +2272,16 @@ const occurrenceDataUploadModule = {
             saveMappingData['multimedia'] = {};
             saveMappingData['mof'] = {};
             Object.keys(fieldMappingDataOccurrence.value).forEach((field) => {
-                const fieldName = flatFileMode.value ? sourceDataFieldsFlatFile.value[field] : sourceDataFieldsOccurrence.value[field];
-                if(fieldName){
-                    saveMappingData['occurrence'][fieldName.toLowerCase()] = fieldMappingDataOccurrence.value[field];
-                }
+                saveMappingData['occurrence'][field.toLowerCase()] = fieldMappingDataOccurrence.value[field];
             });
             Object.keys(fieldMappingDataDetermiation.value).forEach((field) => {
-                const fieldName = sourceDataFieldsDetermination.value[field];
-                if(fieldName){
-                    saveMappingData['determination'][fieldName.toLowerCase()] = 'ID-' + fieldMappingDataDetermiation.value[field];
-                }
+                saveMappingData['determination'][field.toLowerCase()] = 'ID-' + fieldMappingDataDetermiation.value[field];
             });
             Object.keys(fieldMappingDataMedia.value).forEach((field) => {
-                const fieldName = sourceDataFieldsMultimedia.value[field];
-                if(fieldName){
-                    saveMappingData['multimedia'][fieldName.toLowerCase()] = 'IM-' + fieldMappingDataMedia.value[field];
-                }
+                saveMappingData['multimedia'][field.toLowerCase()] = 'IM-' + fieldMappingDataMedia.value[field];
             });
             Object.keys(fieldMappingDataMof.value).forEach((field) => {
-                const fieldName = sourceDataFieldsMof.value[field];
-                if(fieldName){
-                    saveMappingData['mof'][fieldName.toLowerCase()] = 'MOF-' + fieldMappingDataMof.value[field];
-                }
+                saveMappingData['mof'][field.toLowerCase()] = 'MOF-' + fieldMappingDataMof.value[field];
             });
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
@@ -2386,12 +2374,12 @@ const occurrenceDataUploadModule = {
                 Object.keys(sourceDataFieldsFlatFile.value).forEach((field) => {
                     const fieldName = sourceDataFieldsFlatFile.value[field];
                     if(fieldName === 'coreid' && !occurrenceSourcePrimaryKeyField.value){
-                        fieldMappingDataOccurrence.value[field.toLowerCase()] = 'dbpk';
+                        fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'dbpk';
                     }
                     else if(fieldName === 'coreeventid' && !occurrenceSourceEventPrimaryKeyField.value){
-                        fieldMappingDataOccurrence.value[field.toLowerCase()] = 'eventdbpk';
+                        fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'eventdbpk';
                     }
-                    else if(!fieldMappingDataOccurrence.value.hasOwnProperty(field.toLowerCase())){
+                    else if(!fieldMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
                         let fieldOption;
                         if(Object.keys(savedMappingDataOccurrence.value).length === 0 || !savedMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
                             fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
@@ -2400,7 +2388,7 @@ const occurrenceDataUploadModule = {
                             fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === savedMappingDataOccurrence.value[fieldName.toLowerCase()]);
                         }
                         const usedField = fieldOption ? Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === fieldOption.value) : null;
-                        fieldMappingDataOccurrence.value[field.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                        fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                     }
                 });
             }
@@ -2408,12 +2396,12 @@ const occurrenceDataUploadModule = {
                 Object.keys(sourceDataFieldsOccurrence.value).forEach((field) => {
                     const fieldName = sourceDataFieldsOccurrence.value[field];
                     if(fieldName === 'coreid' && !occurrenceSourcePrimaryKeyField.value){
-                        fieldMappingDataOccurrence.value[field.toLowerCase()] = 'dbpk';
+                        fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'dbpk';
                     }
                     else if(fieldName === 'coreeventid' && !occurrenceSourceEventPrimaryKeyField.value){
-                        fieldMappingDataOccurrence.value[field.toLowerCase()] = 'eventdbpk';
+                        fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'eventdbpk';
                     }
-                    else if(!fieldMappingDataOccurrence.value.hasOwnProperty(field.toLowerCase())){
+                    else if(!fieldMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
                         let fieldOption;
                         if(Object.keys(savedMappingDataOccurrence.value).length === 0 || !savedMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
                             fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
@@ -2422,7 +2410,7 @@ const occurrenceDataUploadModule = {
                             fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === savedMappingDataOccurrence.value[fieldName.toLowerCase()]);
                         }
                         const usedField = fieldOption ? Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === fieldOption.value) : null;
-                        fieldMappingDataOccurrence.value[field.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                        fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                     }
                 });
                 if(sourceDataFilesDetermination.value.length > 0 && Object.keys(sourceDataFieldsDetermination.value).length > 0){
@@ -2430,9 +2418,9 @@ const occurrenceDataUploadModule = {
                         const fieldName = sourceDataFieldsDetermination.value[field];
                         const primaryKey = Object.keys(fieldMappingDataDetermiation.value).find(key => fieldMappingDataDetermiation.value[key] === 'dbpk');
                         if(fieldName === 'coreid' && !primaryKey){
-                            fieldMappingDataDetermiation.value[field.toLowerCase()] = 'dbpk';
+                            fieldMappingDataDetermiation.value[fieldName.toLowerCase()] = 'dbpk';
                         }
-                        else if(!fieldMappingDataDetermiation.value.hasOwnProperty(field.toLowerCase())){
+                        else if(!fieldMappingDataDetermiation.value.hasOwnProperty(fieldName.toLowerCase())){
                             let fieldOption;
                             if(Object.keys(savedMappingDataDetermiation.value).length === 0 || !savedMappingDataDetermiation.value.hasOwnProperty(fieldName.toLowerCase())){
                                 fieldOption = symbiotaFieldOptionsDetermination.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
@@ -2441,7 +2429,7 @@ const occurrenceDataUploadModule = {
                                 fieldOption = symbiotaFieldOptionsDetermination.value.find(option => option.value.toLowerCase() === savedMappingDataDetermiation.value[fieldName.toLowerCase()]);
                             }
                             const usedField = fieldOption ? Object.keys(fieldMappingDataDetermiation.value).find(field => fieldMappingDataDetermiation.value[field] === fieldOption.value) : null;
-                            fieldMappingDataDetermiation.value[field.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                            fieldMappingDataDetermiation.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                         }
                     });
                 }
@@ -2450,9 +2438,9 @@ const occurrenceDataUploadModule = {
                         const fieldName = sourceDataFieldsMultimedia.value[field];
                         const primaryKey = Object.keys(fieldMappingDataMedia.value).find(key => fieldMappingDataMedia.value[key] === 'dbpk');
                         if(fieldName === 'coreid' && !primaryKey){
-                            fieldMappingDataMedia.value[field.toLowerCase()] = 'dbpk';
+                            fieldMappingDataMedia.value[fieldName.toLowerCase()] = 'dbpk';
                         }
-                        else if(!fieldMappingDataMedia.value.hasOwnProperty(field.toLowerCase())){
+                        else if(!fieldMappingDataMedia.value.hasOwnProperty(fieldName.toLowerCase())){
                             let fieldOption;
                             if(Object.keys(savedMappingDataMedia.value).length === 0 || !savedMappingDataMedia.value.hasOwnProperty(fieldName.toLowerCase())){
                                 fieldOption = symbiotaFieldOptionsMedia.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
@@ -2461,7 +2449,7 @@ const occurrenceDataUploadModule = {
                                 fieldOption = symbiotaFieldOptionsMedia.value.find(option => option.value.toLowerCase() === savedMappingDataMedia.value[fieldName.toLowerCase()]);
                             }
                             const usedField = fieldOption ? Object.keys(fieldMappingDataMedia.value).find(field => fieldMappingDataMedia.value[field] === fieldOption.value) : null;
-                            fieldMappingDataMedia.value[field.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                            fieldMappingDataMedia.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                         }
                     });
                 }
@@ -2473,18 +2461,18 @@ const occurrenceDataUploadModule = {
                         const fieldKey = Object.keys(fieldMappingDataMof.value).find(key => fieldMappingDataMof.value[key] === 'field');
                         const dataKey = Object.keys(fieldMappingDataMof.value).find(key => fieldMappingDataMof.value[key] === 'datavalue');
                         if(fieldName === 'coreid' && !primaryKey){
-                            fieldMappingDataMof.value[field.toLowerCase()] = 'dbpk';
+                            fieldMappingDataMof.value[fieldName.toLowerCase()] = 'dbpk';
                         }
                         else if(fieldName === 'coreeventid' && !eventPrimaryKey){
-                            fieldMappingDataMof.value[field.toLowerCase()] = 'eventdbpk';
+                            fieldMappingDataMof.value[fieldName.toLowerCase()] = 'eventdbpk';
                         }
                         else if(fieldName === 'measurementtype' && !fieldKey){
-                            fieldMappingDataMof.value[field.toLowerCase()] = 'field';
+                            fieldMappingDataMof.value[fieldName.toLowerCase()] = 'field';
                         }
                         else if(fieldName === 'measurementvalue' && !dataKey){
-                            fieldMappingDataMof.value[field.toLowerCase()] = 'datavalue';
+                            fieldMappingDataMof.value[fieldName.toLowerCase()] = 'datavalue';
                         }
-                        else if(!fieldMappingDataMof.value.hasOwnProperty(field.toLowerCase())){
+                        else if(!fieldMappingDataMof.value.hasOwnProperty(fieldName.toLowerCase())){
                             let fieldOption;
                             if(Object.keys(savedMappingDataMof.value).length === 0 || !savedMappingDataMof.value.hasOwnProperty(fieldName.toLowerCase())){
                                 fieldOption = symbiotaFieldOptionsMof.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
@@ -2493,7 +2481,7 @@ const occurrenceDataUploadModule = {
                                 fieldOption = symbiotaFieldOptionsMof.value.find(option => option.value.toLowerCase() === savedMappingDataMof.value[fieldName.toLowerCase()]);
                             }
                             const usedField = fieldOption ? Object.keys(fieldMappingDataMof.value).find(field => fieldMappingDataMof.value[field] === fieldOption.value) : null;
-                            fieldMappingDataMof.value[field.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                            fieldMappingDataMof.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                         }
                     });
                 }
