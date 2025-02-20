@@ -34,7 +34,7 @@ const occurrenceDataUploadModule = {
                                         <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || currentProcess"></collection-data-upload-parameters-field-module>
                                         <div class="row justify-end">
                                             <div>
-                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || currentProcess" dense />
+                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || currentProcess || !initializeValid" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -50,8 +50,14 @@ const occurrenceDataUploadModule = {
                                             <template v-if="profileConfigurationData['saveSourcePrimaryIdentifier']">
                                                 <div class="q-mb-sm row q-gutter-sm">
                                                     <div class="text-body1 text-bold self-center">Source Primary ID</div> 
-                                                    <selector-input-element :options="sourceDataFieldNamesFlatFile" value="fieldMappingDataOccurrence.hasOwnProperty('uploaddetermtemp') ? fieldMappingDataOccurrence[data['sourceField']] : null" @update:value=""></selector-input-element>
+                                                    <selector-input-element :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('occurrence', value)"></selector-input-element>
                                                 </div>
+                                                <template v-if="collectionData['datarecordingmethod'] === 'lot' || collectionData['datarecordingmethod'] === 'benthic' || Object.keys(eventMofDataFields).length > 0">
+                                                    <div class="q-mb-sm row q-gutter-sm">
+                                                        <div class="text-body1 text-bold self-center">Source Event Primary ID</div> 
+                                                        <selector-input-element :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('event', value)"></selector-input-element>
+                                                    </div>
+                                                </template>
                                             </template>
                                             <div class="q-mb-sm row q-gutter-sm">
                                                 <div class="text-body1 text-bold">Occurrence records</div> 
@@ -93,7 +99,7 @@ const occurrenceDataUploadModule = {
                                                 <q-btn color="secondary" @click="saveMapping();" label="Save Mapping" :disabled="currentTab !== 'mapping' || currentProcess" dense />
                                             </div>
                                             <div>
-                                                <q-btn color="secondary" @click="startUpload();" label="Start Upload" :disabled="currentTab !== 'mapping' || currentProcess" dense />
+                                                <q-btn color="secondary" @click="startUpload();" label="Start Upload" :disabled="currentTab !== 'mapping' || currentProcess || !mappingValid" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -350,6 +356,7 @@ const occurrenceDataUploadModule = {
         const collectionStore = useCollectionStore();
         
         const acceptedFileTypes = ['csv','json','geojson','txt','zip'];
+        const collectionData = Vue.computed(() => collectionStore.getCollectionData);
         const collectionDataUploadParametersArr = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersArr);
         const collectionDataUploadParametersId = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersID);
         const currentProcess = Vue.ref(null);
@@ -424,8 +431,28 @@ const occurrenceDataUploadModule = {
         const includeDeterminationData = Vue.ref(true);
         const includeMultimediaData = Vue.ref(true);
         const includeMofData = Vue.ref(true);
+        const initializeValid = Vue.computed(() => {
+            let valid = false;
+            if((Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10) && profileData.value['dwcpath']){
+                valid = true;
+            }
+            if(Number(profileData.value['uploadtype']) === 6 && uploadedFile.value){
+                valid = true;
+            }
+            return valid;
+        });
         const localDwcaFileArr = Vue.ref([]);
         const localDwcaServerPath = Vue.ref(null);
+        const mappingValid = Vue.computed(() => {
+            let valid = false;
+            if((collectionData.value['datarecordingmethod'] === 'lot' || collectionData.value['datarecordingmethod'] === 'benthic' || Object.keys(eventMofDataFields.value).length > 0) && occurrenceSourcePrimaryKeyField.value && occurrenceSourceEventPrimaryKeyField.value){
+                valid = true;
+            }
+            if(occurrenceSourcePrimaryKeyField.value){
+                valid = true;
+            }
+            return valid;
+        });
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
         const multimediaDataIncluded = Vue.ref(false);
         const mofDataIncluded = Vue.ref(false);
@@ -488,7 +515,13 @@ const occurrenceDataUploadModule = {
         const skipOccurrenceFields = ['upspid','occid','collid','dbpk','institutionid','collectionid','datasetid','tid',
             'eventid','eventdbpk','locationid','initialtimestamp'];
         const sourceDataFieldNamesFlatFile = Vue.computed(() => {
-            return Object.keys(sourceDataFieldsFlatFile.value);
+            const returnArr = [];
+            Object.keys(sourceDataFieldsFlatFile.value).forEach((field) => {
+                if(occurrenceSourcePrimaryKeyField.value === field || !fieldMappingDataOccurrence.value.hasOwnProperty(field.toLowerCase()) || fieldMappingDataOccurrence.value[field.toLowerCase()] === 'unmapped'){
+                    returnArr.push(field);
+                }
+            });
+            return returnArr;
         });
         const sourceDataFieldsDetermination = Vue.ref({});
         const sourceDataFieldsFlatFile = Vue.ref({});
@@ -536,6 +569,9 @@ const occurrenceDataUploadModule = {
 
         function adjustUIEnd() {
             processorDisplayDataArr = processorDisplayDataArr.concat(processorDisplayArr);
+            uploadedFile.value = null;
+            uploadSummaryData.value = Object.assign({}, {});
+            collectionDataUploadParametersStore.setCurrentCollectionDataUploadParametersRecord(0);
         }
 
         function adjustUIStart() {
@@ -2317,6 +2353,21 @@ const occurrenceDataUploadModule = {
             }
         }
 
+        function setSourceDataPrimaryIdentifier(idType, value) {
+            if(idType === 'occurrence'){
+                if(occurrenceSourcePrimaryKeyField.value){
+                    fieldMappingDataOccurrence.value[occurrenceSourcePrimaryKeyField.value] = 'unmapped';
+                }
+                fieldMappingDataOccurrence.value[value] = 'dbpk';
+            }
+            else if(idType === 'event'){
+                if(occurrenceSourceEventPrimaryKeyField.value){
+                    fieldMappingDataOccurrence.value[occurrenceSourceEventPrimaryKeyField.value] = 'unmapped';
+                }
+                fieldMappingDataOccurrence.value[value] = 'eventdbpk';
+            }
+        }
+
         function setSymbiotaFlatFileFieldOptions() {
             symbiotaFieldOptionsOccurrence.value.forEach((fieldOption) => {
                 symbiotaFieldOptionsFlatFile.value.push(fieldOption);
@@ -2509,11 +2560,13 @@ const occurrenceDataUploadModule = {
 
         return {
             acceptedFileTypes,
+            collectionData,
             collectionDataUploadParametersArr,
             collectionDataUploadParametersId,
             currentProcess,
             currentTab,
             determinationDataIncluded,
+            eventMofDataFields,
             fieldMapperFieldMapping,
             fieldMapperSourceFields,
             fieldMapperTargetFields,
@@ -2522,8 +2575,12 @@ const occurrenceDataUploadModule = {
             includeDeterminationData,
             includeMultimediaData,
             includeMofData,
+            initializeValid,
+            mappingValid,
             multimediaDataIncluded,
             mofDataIncluded,
+            occurrenceSourceEventPrimaryKeyField,
+            occurrenceSourcePrimaryKeyField,
             popupColumns,
             popupData,
             popupLoadCount,
@@ -2558,6 +2615,7 @@ const occurrenceDataUploadModule = {
             processParameterProfileSelection,
             processUploadFile,
             saveMapping,
+            setSourceDataPrimaryIdentifier,
             startUpload
         }
     }

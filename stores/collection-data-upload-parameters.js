@@ -122,11 +122,12 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             return this.collectionDataUploadParametersArr.find(params => Number(params.uspid) === this.collectionDataUploadParametersId);
         },
         setCurrentCollectionDataUploadParametersRecord(uspid) {
-            this.collectionDataUploadParametersId = Number(uspid);
-            if(this.collectionDataUploadParametersId > 0){
+            if(Number(uspid) > 0){
+                this.collectionDataUploadParametersId = Number(uspid);
                 this.collectionDataUploadParametersData = Object.assign({}, this.getCurrentCollectionDataUploadParametersData());
             }
             else{
+                this.collectionDataUploadParametersId = null;
                 this.collectionDataUploadParametersData = Object.assign({}, this.blankCollectionDataUploadParameterRecord);
             }
             this.collectionDataUploadParametersEditData = Object.assign({}, this.collectionDataUploadParametersData);
