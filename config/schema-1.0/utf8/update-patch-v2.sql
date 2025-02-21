@@ -348,6 +348,8 @@ CREATE TABLE `uploadmoftemp` (
 ALTER TABLE `uploadspecmap`
     ADD CONSTRAINT `Fk_uploadspecmap_uspid` FOREIGN KEY (`uspid`) REFERENCES `omcolldatauploadparameters` (`uspid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE `uploadspecmap` DROP FOREIGN KEY `FK_uploadspecmap_usp`;
+
 ALTER TABLE `uploadspectemp`
     DROP COLUMN `recordNumberPrefix`,
     DROP COLUMN `recordNumberSuffix`,
