@@ -104,7 +104,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 {
                     label: 'Search',
                     subItems: [
-                        {url: CLIENT_ROOT + '/collections/index.php', label: 'Search Collections'},
+                        {url: CLIENT_ROOT + '/collections/list.php', label: 'Search Collections'},
                         {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true}
                     ]
                 },
