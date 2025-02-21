@@ -28,7 +28,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div v-if="Number(profileData.uploadtype) === 6" class="row">
                                             <div class="col-grow">
-                                                <file-picker-input-element :disabled="currentTab !== 'configuration' || currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => uploadedFile = value[0]"></file-picker-input-element>
+                                                <file-picker-input-element :disabled="currentTab !== 'configuration' || currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                             </div>
                                         </div>
                                         <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || currentProcess"></collection-data-upload-parameters-field-module>
@@ -1530,6 +1530,15 @@ const occurrenceDataUploadModule = {
             }
         }
 
+        function processFileSelection(file) {
+            if(file){
+                uploadedFile.value = file[0];
+            }
+            else{
+                uploadedFile.value = null;
+            }
+        }
+
         function processFlatFileCsvData(csvData) {
             if(csvData.length > 0){
                 let generateCoreIds = false;
@@ -2609,6 +2618,7 @@ const occurrenceDataUploadModule = {
             openFieldMapperPopup,
             processDownloadRecords,
             processFieldMapperUpdate,
+            processFileSelection,
             processOpenRecordViewerPopup,
             processorDisplayScrollDown,
             processorDisplayScrollUp,

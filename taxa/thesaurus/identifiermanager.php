@@ -55,7 +55,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                             from the <a href="https://plants.usda.gov/home/downloads" target="_blank">USDA PLANTS Download page</a> into a txt file, then upload the file below and click Start.
                                             <div class="row q-mt-xs">
                                                 <div class="col-grow">
-                                                    <file-picker-input-element :accepted-types="acceptedFileTypes" :disabled="loading" :value="selectedUsdaFile" :validate-file-size="false" @update:file="(value) => selectedUsdaFile = value[0]"></file-picker-input-element>
+                                                    <file-picker-input-element :accepted-types="acceptedFileTypes" :disabled="loading" :value="selectedUsdaFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                                 </div>
                                             </div>
                                             <div class="processor-tool-control-container">
@@ -374,6 +374,15 @@ if(!$GLOBALS['SYMB_UID']) {
                         resetScrollProcess();
                     }
 
+                    function processFileSelection(file) {
+                        if(file){
+                            selectedUsdaFile.value = file[0];
+                        }
+                        else{
+                            selectedUsdaFile.value = null;
+                        }
+                    }
+
                     function processSuccessResponse(text = null) {
                         const procObj = processorDisplayArr.find(proc => proc['current'] === true);
                         if(procObj){
@@ -559,6 +568,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         initializeUSDAImport,
                         processorDisplayScrollDown,
                         processorDisplayScrollUp,
+                        processFileSelection,
                         setScroller,
                         updateLoading,
                         updateSelectedKingdom
