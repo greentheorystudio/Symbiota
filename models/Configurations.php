@@ -479,7 +479,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20241007';
-        $GLOBALS['JS_VERSION'] = '20240528';
+        $GLOBALS['JS_VERSION'] = '20240528111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
