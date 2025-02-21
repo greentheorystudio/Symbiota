@@ -293,32 +293,28 @@ const occurrenceInfoTabModule = {
                     </template>
                     <template v-if="eventMofDataExists">
                         <q-tab-panel name="eventmof" :style="tabPanelStyle">
-                            <div class="column q-gutter-xs">
-                                <template v-for="key in Object.keys(eventMofDataFields)">
-                                    <div class="row justify-start q-gutter-sm">
-                                        <div class="text-bold">
-                                            {{ (eventMofDataFields[key]['label'] ? eventMofDataFields[key]['label'] : key) + ':' }}
-                                        </div>
-                                        <div>
-                                            {{ eventMofData[key] ? eventMofData[key] : '' }}
-                                        </div>
-                                    </div>
+                            <div class="q-pt-sm q-pb-sm column q-gutter-sm">
+                                <template v-for="layoutElement in eventMofLayoutData">
+                                    <template v-if="layoutElement.type === 'dataFieldRow'">
+                                        <mof-data-field-row :editor="false" :configured-data="eventMofData" :configured-data-fields="eventMofDataFields" :fields="layoutElement.fields"></mof-data-field-row>
+                                    </template>
+                                    <template v-else-if="layoutElement.type === 'dataFieldRowGroup'">
+                                        <mof-data-field-row-group :editor="false" :configured-data="eventMofData" :configured-data-fields="eventMofDataFields" :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion"></mof-data-field-row-group>
+                                    </template>
                                 </template>
                             </div>
                         </q-tab-panel>
                     </template>
                     <template v-if="occurrenceMofDataExists">
                         <q-tab-panel name="occurrencemof" :style="tabPanelStyle">
-                            <div class="column q-gutter-xs">
-                                <template v-for="key in Object.keys(occurrenceMofDataFields)">
-                                    <div class="row justify-start q-gutter-sm">
-                                        <div class="text-bold">
-                                            {{ (occurrenceMofDataFields[key]['label'] ? occurrenceMofDataFields[key]['label'] : key) + ':' }}
-                                        </div>
-                                        <div>
-                                            {{ occurrenceMofData[key] ? occurrenceMofData[key] : '' }}
-                                        </div>
-                                    </div>
+                            <div class="q-pt-sm q-pb-sm column q-gutter-sm">
+                                <template v-for="layoutElement in occurrenceMofLayoutData">
+                                    <template v-if="layoutElement.type === 'dataFieldRow'">
+                                        <mof-data-field-row :editor="false" :configured-data="occurrenceMofData" :configured-data-fields="occurrenceMofDataFields" :fields="layoutElement.fields"></mof-data-field-row>
+                                    </template>
+                                    <template v-else-if="layoutElement.type === 'dataFieldRowGroup'">
+                                        <mof-data-field-row-group :editor="false" :configured-data="occurrenceMofData" :configured-data-fields="occurrenceMofDataFields" :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion"></mof-data-field-row-group>
+                                    </template>
                                 </template>
                             </div>
                         </q-tab-panel>
@@ -333,6 +329,8 @@ const occurrenceInfoTabModule = {
         'image-carousel': imageCarousel,
         'image-record-info-block': imageRecordInfoBlock,
         'media-record-info-block': mediaRecordInfoBlock,
+        'mof-data-field-row': mofDataFieldRow,
+        'mof-data-field-row-group': mofDataFieldRowGroup,
         'spatial-viewer-element': spatialViewerElement
     },
     setup(props, context) {
@@ -384,6 +382,7 @@ const occurrenceInfoTabModule = {
         });
         const eventMofDataFields = Vue.ref({});
         const eventMofDataLabel = Vue.ref(null);
+        const eventMofLayoutData = Vue.ref({});
         const geneticLinkArr = Vue.ref([]);
         const imageArr = Vue.ref([]);
         const isEditor = Vue.computed(() => {
@@ -487,6 +486,7 @@ const occurrenceInfoTabModule = {
         });
         const occurrenceMofDataFields = Vue.ref({});
         const occurrenceMofDataLabel = Vue.ref(null);
+        const occurrenceMofLayoutData = Vue.ref({});
         const selectedTab = Vue.ref('details');
         const tabCardStyle = Vue.ref('');
         const tabPanelStyle = Vue.ref('');
@@ -528,6 +528,9 @@ const occurrenceInfoTabModule = {
                         if(collectionData.value['configuredData'].hasOwnProperty('eventMofExtension')){
                             if(Object.keys(collectionData.value['configuredData']['eventMofExtension']['dataFields']).length > 0){
                                 eventMofDataFields.value = collectionData.value['configuredData']['eventMofExtension']['dataFields'];
+                                if(collectionData.value['configuredData']['eventMofExtension'].hasOwnProperty('dataLayout') && collectionData.value['configuredData']['eventMofExtension']['dataLayout']){
+                                    eventMofLayoutData.value = Object.assign({}, collectionData.value['configuredData']['eventMofExtension']['dataLayout']);
+                                }
                                 if(collectionData.value['configuredData']['eventMofExtension'].hasOwnProperty('dataLabel') && collectionData.value['configuredData']['eventMofExtension']['dataLabel']){
                                     eventMofDataLabel.value = collectionData.value['configuredData']['eventMofExtension']['dataLabel'].toString();
                                 }
@@ -539,6 +542,9 @@ const occurrenceInfoTabModule = {
                         if(collectionData.value['configuredData'].hasOwnProperty('occurrenceMofExtension')){
                             if(Object.keys(collectionData.value['configuredData']['occurrenceMofExtension']['dataFields']).length > 0){
                                 occurrenceMofDataFields.value = collectionData.value['configuredData']['occurrenceMofExtension']['dataFields'];
+                                if(collectionData.value['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLayout') && collectionData.value['configuredData']['occurrenceMofExtension']['dataLayout']){
+                                    occurrenceMofLayoutData.value = Object.assign({}, collectionData.value['configuredData']['occurrenceMofExtension']['dataLayout']);
+                                }
                                 if(collectionData.value['configuredData']['occurrenceMofExtension'].hasOwnProperty('dataLabel') && collectionData.value['configuredData']['occurrenceMofExtension']['dataLabel']){
                                     occurrenceMofDataLabel.value = collectionData.value['configuredData']['occurrenceMofExtension']['dataLabel'].toString();
                                 }
@@ -722,6 +728,7 @@ const occurrenceInfoTabModule = {
             eventMofDataExists,
             eventMofDataFields,
             eventMofDataLabel,
+            eventMofLayoutData,
             geneticLinkArr,
             imageArr,
             isEditor,
@@ -735,6 +742,7 @@ const occurrenceInfoTabModule = {
             occurrenceMofDataExists,
             occurrenceMofDataFields,
             occurrenceMofDataLabel,
+            occurrenceMofLayoutData,
             selectedTab,
             tabCardStyle,
             tabPanelStyle
