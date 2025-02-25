@@ -86,8 +86,9 @@ header('X-Frame-Options: SAMEORIGIN');
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
                 },
                 setup() {
-                    const store = useBaseStore();
-                    const clientRoot = store.getClientRoot;
+                    const baseStore = useBaseStore();
+
+                    const clientRoot = baseStore.getClientRoot;
                     const displayAuthors = Vue.ref(false);
                     const isEditor = Vue.ref(false);
                     const loading = Vue.ref(false);
