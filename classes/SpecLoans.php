@@ -374,15 +374,15 @@ class SpecLoans{
 			if($pArr['transactiontype'] === 'Shipment'){
 			
 				if($pArr['in_out'] === 'In'){
-					$currentBalance = ($prevBalance - (((int)$pArr['totalexmounted'] * 2) + ($pArr['totalexunmounted'])));
+					$currentBalance = ((int)$prevBalance - ((int)$pArr['totalexmounted'] * 2 + (int)$pArr['totalexunmounted']));
 				}
 				elseif($pArr['in_out'] === 'Out'){
-					$currentBalance = ($prevBalance + (((int)$pArr['totalexmounted'] * 2) + ($pArr['totalexunmounted'])));
+					$currentBalance = ((int)$prevBalance + ((int)$pArr['totalexmounted'] * 2 + (int)$pArr['totalexunmounted']));
 				}
 			
 			}
 			elseif($pArr['transactiontype'] === 'Adjustment'){
-				$currentBalance = ($prevBalance + $pArr['adjustment']);
+				$currentBalance = (int)$prevBalance + (int)$pArr['adjustment'];
 			}
 			$sql3 = 'UPDATE omoccurexchange SET invoicebalance = '.$currentBalance.' WHERE (exchangeid = '.$exchangeId.')';
 			if($this->conn->query($sql3)){
