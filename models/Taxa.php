@@ -245,6 +245,7 @@ class Taxa{
             $acceptedOnly = array_key_exists('acceptedonly', $opts) && (($opts['acceptedonly'] === 'true' || (int)$opts['acceptedonly'] === 1));
             $hideAuth = array_key_exists('hideauth', $opts) && (($opts['hideauth'] === 'true' || (int)$opts['hideauth'] === 1));
             $hideProtected = array_key_exists('hideprotected', $opts) && (($opts['hideprotected'] === 'true' || (int)$opts['hideprotected'] === 1));
+            $kingdomId = (array_key_exists('kingdomid', $opts) && (int)$opts['kingdomid'] > 0) ? (int)$opts['kingdomid'] : null;
             $limit = array_key_exists('limit', $opts) ? (int)$opts['limit'] : null;
             $rankHigh = array_key_exists('rhigh', $opts) ? (int)$opts['rhigh'] : null;
             $rankLimit = array_key_exists('rlimit', $opts) ? (int)$opts['rlimit'] : null;
@@ -268,6 +269,9 @@ class Taxa{
             }
             if($acceptedOnly){
                 $sql .= 'AND tid = tidaccepted ';
+            }
+            if($kingdomId){
+                $sql .= 'AND kingdomid = ' . $kingdomId . ' ';
             }
             $sql .= 'ORDER BY sciname ';
             if($limit){

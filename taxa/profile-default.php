@@ -118,7 +118,7 @@
             const imageCarousel = Vue.ref(false);
             const imageCarouselSlide = Vue.ref(null);
             const imageExpansionLabel = Vue.ref('');
-            const isEditor = IS_EDITOR;
+            const isEditor = Vue.ref(false);
             const fuzzyMatches = Vue.ref([]);
             const loading = Vue.ref(true);
             const subtaxaArr = Vue.ref([]);
@@ -179,6 +179,21 @@
                         subtaxaArr.value.push(subTaxon);
                     }
                 }
+            }
+
+            function setEditor() {
+                const formData = new FormData();
+                formData.append('permission', 'TaxonProfile');
+                formData.append('action', 'validatePermission');
+                fetch(permissionApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    response.json().then((resData) => {
+                        isEditor.value = resData.includes('TaxonProfile');
+                    });
+                });
             }
 
             function setGlossary() {
@@ -308,6 +323,7 @@
 
             Vue.onMounted(() => {
                 showWorking('Loading...');
+                setEditor();
                 setTaxon();
             });
 

@@ -2086,22 +2086,21 @@ const taxonomyDataSourceImportUpdateModule = {
                 const formData = new FormData();
                 formData.append('sciname', sciname);
                 formData.append('kingdomid', props.kingdomId);
-                formData.append('action', 'getTaxonFromSciname');
+                formData.append('action', 'getTid');
                 fetch(taxaApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
                     if(response.status === 200){
-                        response.json().then((taxon) => {
-                            const tid = (taxon.hasOwnProperty('tid') && Number(taxon['tid']) > 0) ? taxon['tid'] : null;
-                            if(dataSource.value === 'worms' && !tid){
-                                getWoRMSAddTaxonAuthor(tid, callback);
+                        response.text().then((res) => {
+                            if(dataSource.value === 'worms' && !Number(res) > 0){
+                                getWoRMSAddTaxonAuthor(res, callback);
                             }
                             else{
                                 const currentTaxon = Object.assign({}, setAddTaxaArr.value[0]);
-                                if(tid){
-                                    nameTidIndex.value[currentTaxon['sciname']] = Number(tid);
+                                if(Number(res) > 0){
+                                    nameTidIndex.value[currentTaxon['sciname']] = Number(res);
                                 }
                                 else{
                                     taxaToAddArr.value.push(currentTaxon);
