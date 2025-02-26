@@ -43,7 +43,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                     echo '<li style="margin-left:15px"><a href="webservices/dwc/rss.xml" target="_blank">DwC-A RSS Feed</a></li>';
                 }
                 ?>
-                <li><a href="collections/misc/protectedspecies.php">Protected Species</a></li>
+                <li><a href="taxa/protectedspecies.php">Protected Species</a></li>
 
 			</ul>
 

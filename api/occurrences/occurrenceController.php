@@ -19,6 +19,9 @@ elseif($collid){
         $isEditor = true;
     }
 }
+elseif($action === 'updateLocalitySecurity' && array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS'])){
+    $isEditor = true;
+}
 
 if($action && SanitizerService::validateInternalRequest()){
     $occurrences = new Occurrences();
