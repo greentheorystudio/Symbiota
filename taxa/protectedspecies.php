@@ -22,7 +22,7 @@ header('X-Frame-Options: SAMEORIGIN');
             <div id="innertext">
                 <div class="column q-gutter-md">
                     <div class="row justify-between">
-                        <div class="text-h6 text-bold">Protected Species</div>
+                        <div class="text-h5 text-bold">Protected Species</div>
                         <q-btn v-if="isEditor" color="secondary" @click="setOccurrenceSecurity();" label="Secure occurrence data" dense />
                     </div>
                     <template v-if="isEditor">
@@ -53,7 +53,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             <template v-for="kingdom in kingdomArr">
                                 <q-card flat bordered>
                                     <q-card-section class="column q-gutter-sm">
-                                        <div class="text-body1 text-bold">{{ kingdom }}</div>
+                                        <div class="text-h6 text-bold">{{ kingdom }}</div>
                                         <template v-for="family in taxaDisplayData">
                                             <template v-if="family['kingdom'] === kingdom">
                                                 <div class="q-pl-md column q-gutter-xs">
