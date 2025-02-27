@@ -1490,7 +1490,7 @@ class DwcArchiverCore extends Manager{
     public function deleteArchive($collID): bool
     {
         $status = false;
-        $rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'webservices/dwc/rss.xml';
+        $rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
         if(file_exists($rssFile)) {
             $doc = new DOMDocument();
             $doc->load($rssFile);

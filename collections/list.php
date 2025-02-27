@@ -387,7 +387,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const clientRoot = baseStore.getClientRoot;
                     const currentUserPermissions = Vue.ref(null);
                     const displayQueryPopup = Vue.ref(false);
-                    const isAdmin = baseStore.getIsAdmin;
+                    const isAdmin = Vue.computed(() => {
+                        return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
+                    });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const lazyLoadCnt = 100;
                     const leftLongitude = Vue.ref(null);

@@ -338,14 +338,6 @@ ol.mp_list li.mp_highlighted {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
 }
-.pmargin{
-	margin: 10px;
-}
-.sitemapDataManagementContainer{
-	margin: 30px 0 10px 10px;
-	padding-left: 25px;
-	padding-right: 15px;
-}
 .loadingModal {
 	display:    none;
 	position:   fixed;

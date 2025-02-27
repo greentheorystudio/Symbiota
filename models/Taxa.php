@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Images.php');
+include_once(__DIR__ . '/Occurrences.php');
 include_once(__DIR__ . '/TaxonHierarchy.php');
 include_once(__DIR__ . '/TaxonKingdoms.php');
 include_once(__DIR__ . '/TaxonVernaculars.php');
@@ -250,8 +251,8 @@ class Taxa{
             $rankHigh = array_key_exists('rhigh', $opts) ? (int)$opts['rhigh'] : null;
             $rankLimit = array_key_exists('rlimit', $opts) ? (int)$opts['rlimit'] : null;
             $rankLow = array_key_exists('rlow', $opts) ? (int)$opts['rlow'] : null;
-            $sql = 'SELECT DISTINCT tid, kingdomid, rankid, sciname, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, '.
-                'author, tidaccepted, parenttid, family, source, notes, hybrid, securitystatus  '.
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . '  '.
                 'FROM taxa WHERE sciname LIKE "' . $term . '%" ';
             if($rankLimit){
                 $sql .= 'AND rankid = ' . $rankLimit . ' ';
@@ -300,17 +301,17 @@ class Taxa{
     public function getChildTaxaFromTid($tid): array
     {
         $retArr = array();
-        $sql = 'SELECT TID, SciName, Author, RankId, family '.
-            'FROM taxa WHERE parenttid = ' . (int)$tid . ' AND TID = tidaccepted ';
+        $sql = 'SELECT tid, sciname, author, rankid, family '.
+            'FROM taxa WHERE parenttid = ' . (int)$tid . ' AND tid = tidaccepted ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
                 $nodeArr = array();
-                $nodeArr['tid'] = $row['TID'];
-                $nodeArr['sciname'] = $row['SciName'];
-                $nodeArr['author'] = $row['Author'];
-                $nodeArr['rankid'] = $row['RankId'];
+                $nodeArr['tid'] = $row['tid'];
+                $nodeArr['sciname'] = $row['sciname'];
+                $nodeArr['author'] = $row['author'];
+                $nodeArr['rankid'] = $row['rankid'];
                 $nodeArr['family'] = $row['family'];
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
@@ -420,6 +421,31 @@ class Taxa{
         return $retArr;
     }
 
+    public function getProtectedTaxaArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
+        $fieldNameArr[] = 'k.kingdom_name AS kingdom';
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
+            'WHERE t.securitystatus = 1 ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getRankArrForTaxonomicGroup($parentTid): array
     {
         $retArr = array();
@@ -472,7 +498,7 @@ class Taxa{
             'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
             'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
             'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
-            'WHERE t.SciName = "' . SanitizerService::cleanInStr($this->conn, $sciname) . '" AND t.kingdomId = ' . (int)$kingdomId . ' ';
+            'WHERE t.sciname = "' . SanitizerService::cleanInStr($this->conn, $sciname) . '" AND t.kingdomId = ' . (int)$kingdomId . ' ';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -706,6 +732,41 @@ class Taxa{
             }
         }
         return $retArr;
+    }
+
+    public function removeSecurityForTaxon($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql = 'UPDATE taxa SET securitystatus = 0 '.
+                'WHERE tid = ' . (int)$tid . ' OR tidaccepted = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                (new Occurrences)->protectGlobalSpecies(0);
+            }
+        }
+        return $retVal;
+    }
+
+    public function setSecurityForTaxonOrTaxonomicGroup($tid, $includeSubtaxa): int
+    {
+        $retVal = 0;
+        $tidArr = array();
+        if($tid){
+            if($includeSubtaxa){
+                $tidArr = (new TaxonHierarchy)->getSubtaxaTidArrFromTid($tid);
+            }
+            $tidArr[] = $tid;
+            $sql = 'UPDATE taxa SET securitystatus = 1 '.
+                'WHERE tid IN(' . implode(',', $tidArr) . ') OR tidaccepted IN(' . implode(',', $tidArr) . ') ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                (new Occurrences)->protectGlobalSpecies(0);
+            }
+        }
+        return $retVal;
     }
 
     public function setSynonymSearchData($searchData): array

@@ -197,8 +197,8 @@ include(__DIR__ . '/../../header.php');
 		<b>RSS Feed:</b>
 		<?php
 		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'];
-		if(file_exists('../../webservices/dwc/rss.xml')){
-			$feedLink = $urlPrefix.'/webservices/dwc/rss.xml';
+		if(file_exists('../../rss.xml')){
+			$feedLink = $urlPrefix.'/rss.xml';
 			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
 		}
 		else{

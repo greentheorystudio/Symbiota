@@ -77,22 +77,22 @@ if($action && SanitizerService::validateInternalRequest()){
         $includeChildren = array_key_exists('includeChildren',$_POST) && $_POST['includeChildren'];
         echo json_encode($taxa->getTaxonFromSciname($_POST['sciname'], (int)$_POST['kingdomid'], $includeCommonNames, $includeChildren));
     }
-    elseif($isEditor && $action === 'setUpdateFamiliesAccepted' && array_key_exists('parenttid',$_POST)){
+    elseif($isEditor && $action === 'setUpdateFamiliesAccepted' && array_key_exists('parenttid', $_POST)){
         echo $taxa->setUpdateFamiliesAccepted((int)$_POST['parenttid']);
     }
-    elseif($isEditor && $action === 'setUpdateFamiliesUnaccepted' && array_key_exists('parenttid',$_POST)){
+    elseif($isEditor && $action === 'setUpdateFamiliesUnaccepted' && array_key_exists('parenttid', $_POST)){
         echo $taxa->setUpdateFamiliesUnaccepted((int)$_POST['parenttid']);
     }
-    elseif($action === 'getRankArrForTaxonomicGroup' && array_key_exists('parenttid',$_POST)){
+    elseif($action === 'getRankArrForTaxonomicGroup' && array_key_exists('parenttid', $_POST)){
         echo json_encode($taxa->getRankArrForTaxonomicGroup((int)$_POST['parenttid']));
     }
-    elseif($action === 'getUnacceptedTaxaByTaxonomicGroup' && array_key_exists('index',$_POST) && array_key_exists('parenttid',$_POST)){
-        $rankId = array_key_exists('rankid',$_POST)?(int)$_POST['rankid']:null;
-        echo json_encode($taxa->getUnacceptedTaxaByTaxonomicGroup((int)$_POST['parenttid'],(int)$_POST['index'],$rankId));
+    elseif($action === 'getUnacceptedTaxaByTaxonomicGroup' && array_key_exists('index', $_POST) && array_key_exists('parenttid', $_POST)){
+        $rankId = array_key_exists('rankid', $_POST) ? (int)$_POST['rankid'] : null;
+        echo json_encode($taxa->getUnacceptedTaxaByTaxonomicGroup((int)$_POST['parenttid'], (int)$_POST['index'], $rankId));
     }
-    elseif($action === 'getAcceptedTaxaByTaxonomicGroup' && array_key_exists('index',$_POST) && array_key_exists('parenttid',$_POST)){
-        $rankId = array_key_exists('rankid',$_POST)?(int)$_POST['rankid']:null;
-        echo json_encode($taxa->getAcceptedTaxaByTaxonomicGroup((int)$_POST['parenttid'],(int)$_POST['index'],$rankId));
+    elseif($action === 'getAcceptedTaxaByTaxonomicGroup' && array_key_exists('index', $_POST) && array_key_exists('parenttid', $_POST)){
+        $rankId = array_key_exists('rankid', $_POST) ? (int)$_POST['rankid'] : null;
+        echo json_encode($taxa->getAcceptedTaxaByTaxonomicGroup((int)$_POST['parenttid'], (int)$_POST['index'], $rankId));
     }
     elseif($action === 'evaluateTaxonForDeletion' && $tId){
         echo $taxa->evaluateTaxonForDeletion($tId);
@@ -102,5 +102,15 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($isEditor && $action === 'updateTaxonIdentifier' && $tId && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
         echo $taxa->updateTaxonIdentifier($tId, $_POST['idname'], $_POST['id']);
+    }
+    elseif($action === 'getProtectedTaxaArr'){
+        echo json_encode($taxa->getProtectedTaxaArr());
+    }
+    elseif($action === 'setSecurityForTaxonOrTaxonomicGroup' && $isEditor && $tId){
+        $includeSubtaxa = array_key_exists('includeSubtaxa', $_POST) && (int)$_POST['includeSubtaxa'] === 1;
+        echo $taxa->setSecurityForTaxonOrTaxonomicGroup($tId, $includeSubtaxa);
+    }
+    elseif($action === 'removeSecurityForTaxon' && $isEditor && $tId){
+        echo $taxa->removeSecurityForTaxon($tId);
     }
 }

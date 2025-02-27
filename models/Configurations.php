@@ -50,6 +50,7 @@ class Configurations{
         'GBIF_ORG_KEY',
         'GBIF_PASSWORD',
         'GBIF_USERNAME',
+        'GLOSSARY_MOD_IS_ACTIVE',
         'IMAGE_ROOT_PATH',
         'IMAGE_ROOT_URL',
         'IMAGE_TAG_OPTIONS',
@@ -478,8 +479,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '20241007';
-        $GLOBALS['JS_VERSION'] = '202405281111';
+        $GLOBALS['CSS_VERSION'] = '20241008';
+        $GLOBALS['JS_VERSION'] = '20240529111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -669,8 +670,14 @@ class Configurations{
         if(!isset($GLOBALS['IMG_WEB_WIDTH']) || $GLOBALS['IMG_WEB_WIDTH'] === ''){
             $GLOBALS['IMG_WEB_WIDTH'] = 1400;
         }
+        if(!isset($GLOBALS['ACTIVATE_EXSICCATI'])){
+            $GLOBALS['ACTIVATE_EXSICCATI'] = false;
+        }
         if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
             $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
+        }
+        if(!isset($GLOBALS['GLOSSARY_MOD_IS_ACTIVE'])){
+            $GLOBALS['GLOSSARY_MOD_IS_ACTIVE'] = false;
         }
         if(!isset($GLOBALS['LOG_PATH']) || $GLOBALS['LOG_PATH'] === ''){
             $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
@@ -823,6 +830,7 @@ class Configurations{
             $GLOBALS['RIGHTS_TERMS'] = $this->rightsTerms;
         }
         $GLOBALS['SHOW_PASSWORD_RESET'] = isset($GLOBALS['PW_RESET']) && (int)$GLOBALS['PW_RESET'] === 1;
+        $GLOBALS['RSS_ACTIVE'] = file_exists(__DIR__ . '/../rss.xml');
     }
 
     public function validateNewConfNameCore($name): bool

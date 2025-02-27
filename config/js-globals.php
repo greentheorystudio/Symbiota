@@ -1,23 +1,24 @@
 <script type="text/javascript">
+    const ACTIVATE_EXSICCATI = <?php echo ($GLOBALS['ACTIVATE_EXSICCATI'] ? 'true' : 'false'); ?>;
+    const ADMIN_EMAIL = '<?php echo $GLOBALS['ADMIN_EMAIL']; ?>';
+    const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
     const DEFAULT_COLLECTION_CATEGORY_ID = '<?php echo $GLOBALS['DEFAULTCATID']; ?>';
     const DEFAULT_LANG = '<?php echo $GLOBALS['DEFAULT_LANG']; ?>';
     const DEFAULT_TITLE = '<?php echo $GLOBALS['DEFAULT_TITLE']; ?>';
-    const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
-    const SOLR_MODE = <?php echo ($GLOBALS['SOLR_MODE'] ? 'true' : 'false'); ?>;
-    const MAX_UPLOAD_FILESIZE = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
-    const ADMIN_EMAIL = '<?php echo $GLOBALS['ADMIN_EMAIL']; ?>';
     const EMAIL_CONFIGURED = <?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>;
-    const VALID_USER = <?php echo ($GLOBALS['VALID_USER'] ? 'true' : 'false'); ?>;
-    const IS_ADMIN = <?php echo ($GLOBALS['IS_ADMIN'] ? 'true' : 'false'); ?>;
+    const GLOSSARY_MOD_IS_ACTIVE = <?php echo ($GLOBALS['GLOSSARY_MOD_IS_ACTIVE'] ? 'true' : 'false'); ?>;
+    const IMAGE_TAG_OPTIONS = JSON.parse('<?php echo $GLOBALS['IMAGE_TAG_OPTIONS']; ?>');
     const KEY_MOD_IS_ACTIVE = <?php echo ($GLOBALS['KEY_MOD_IS_ACTIVE'] ? 'true' : 'false'); ?>;
-    const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
-    const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
+    const MAX_UPLOAD_FILESIZE = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
     const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
     const RIGHTS_TERMS = JSON.parse('<?php echo json_encode($GLOBALS['RIGHTS_TERMS']); ?>');
-    const IMAGE_TAG_OPTIONS = JSON.parse('<?php echo $GLOBALS['IMAGE_TAG_OPTIONS']; ?>');
+    const RSS_ACTIVE = <?php echo ($GLOBALS['RSS_ACTIVE'] ? 'true' : 'false'); ?>;
     const SHOW_PASSWORD_RESET = <?php echo ($GLOBALS['SHOW_PASSWORD_RESET'] ? 'true' : 'false'); ?>;
-
+    const SOLR_MODE = <?php echo ($GLOBALS['SOLR_MODE'] ? 'true' : 'false'); ?>;
+    const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;
     const TAXONOMIC_RANKS = JSON.parse('<?php echo $GLOBALS['TAXONOMIC_RANKS']; ?>');
+    const USER_DISPLAY_NAME = '<?php echo $GLOBALS['USER_DISPLAY_NAME']; ?>';
+    const VALID_USER = <?php echo ($GLOBALS['VALID_USER'] ? 'true' : 'false'); ?>;
 
     const SPATIAL_INITIAL_BASE_LAYER = '<?php echo $GLOBALS['SPATIAL_INITIAL_BASE_LAYER']; ?>';
     const SPATIAL_INITIAL_CENTER = <?php echo $GLOBALS['SPATIAL_INITIAL_CENTER']; ?>;
