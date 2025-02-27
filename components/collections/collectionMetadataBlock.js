@@ -44,7 +44,7 @@ const collectionMetadataBlock = {
             </div>
             <div v-if="collectionData['managementtype'] && collectionData['managementtype'] === 'Live Data'">
                 <span class="text-body1 text-bold">Live Data Download: </span>
-                <a :href="(clientRoot + '/webservices/dwc/dwcapubhandler.php?collid=' + collectionData['collid'])">
+                <a class="cursor-pointer" @click="processLiveDataDownload(collectionData['collid']);">
                     DwC-Archive File
                 </a>
             </div>
@@ -69,14 +69,54 @@ const collectionMetadataBlock = {
         </div>
     `,
     setup() {
+        const { hideWorking, showWorking } = useCore();
         const baseStore = useBaseStore();
+        const searchStore = useSearchStore();
 
         const clientRoot = baseStore.getClientRoot;
         const rightsTerms = baseStore.getRightsTerms;
 
+        function processLiveDataDownload(collid){
+            showWorking();
+            const requestOptions = {
+                filename: ('occurrence_data_DwCA_' + searchStore.getDateTimeString),
+                identifications: 1,
+                media: 1,
+                mof: 1,
+                schema: 'dwc',
+                spatial: false,
+                type: 'zip',
+                output: null
+            };
+            const formData = new FormData();
+            formData.append('starr', '{"db":["' + Number(collid) + '"]}');
+            formData.append('options', JSON.stringify(requestOptions));
+            formData.append('action', 'processSearchDownload');
+            fetch(searchServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                hideWorking();
+                if(blob !== null){
+                    const objectUrl = window.URL.createObjectURL(blob);
+                    const anchor = document.createElement('a');
+                    anchor.href = objectUrl;
+                    anchor.download = requestOptions.filename;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    anchor.remove();
+                }
+            });
+        }
+
         return {
             clientRoot,
-            rightsTerms
+            rightsTerms,
+            processLiveDataDownload
         }
     }
 };
