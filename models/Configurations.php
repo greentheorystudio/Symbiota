@@ -830,7 +830,7 @@ class Configurations{
             $GLOBALS['RIGHTS_TERMS'] = $this->rightsTerms;
         }
         $GLOBALS['SHOW_PASSWORD_RESET'] = isset($GLOBALS['PW_RESET']) && (int)$GLOBALS['PW_RESET'] === 1;
-        $GLOBALS['RSS_ACTIVE'] = file_exists(__DIR__ . '/../webservices/dwc/rss.xml');
+        $GLOBALS['RSS_ACTIVE'] = file_exists(__DIR__ . '/../rss.xml');
     }
 
     public function validateNewConfNameCore($name): bool
