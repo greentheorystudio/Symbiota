@@ -1468,6 +1468,20 @@ const occurrenceDataUploadModule = {
                         }
                     }
                 });
+                if(occurrenceData.hasOwnProperty('eventdate') && occurrenceData['eventdate'] && occurrenceData['eventdate'].toString() !== '' && !occurrenceData['eventdate'].toString().includes('-')){
+                    const date = new Date(occurrenceData['eventdate']);
+                    const day = date.toLocaleString('en-US', { day: '2-digit' });
+                    const month = date.toLocaleString('en-US', { month: '2-digit' });
+                    const year = date.getFullYear();
+                    occurrenceData['eventdate'] = year.toString() + '-' + month.toString() + '-' + day.toString();
+                }
+                if(occurrenceData.hasOwnProperty('eventtime') && occurrenceData['eventtime'] && occurrenceData['eventtime'].toString() !== '' && !occurrenceData['eventtime'].toString().includes(':')){
+                    const time = new Date(occurrenceData['eventtime']);
+                    const seconds = time.getUTCSeconds().toString().padStart(2, '0');
+                    const minutes = time.getUTCMinutes().toString().padStart(2, '0');
+                    const hours = time.getUTCHours().toString().padStart(2, '0');
+                    occurrenceData['eventtime'] = hours.toString() + ':' + minutes.toString() + ':' + seconds.toString();
+                }
                 flatFileOccurrenceData.value.push(occurrenceData);
             });
             processSuccessResponse('Complete');
