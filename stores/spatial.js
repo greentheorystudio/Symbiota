@@ -44,6 +44,7 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             polyArea: 0,
             polyCount: 0,
             radiusCircleSource: null,
+            radiusUnits: '',
             rasterAnalysisSource: null,
             recordInfoWindowId: null,
             returnClusters: false,

@@ -98,7 +98,7 @@ const searchCriteriaBlock = {
                             </div>
                             <div class="q-mt-sm row justify-end">
                                 <div class="self-center">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-circle');" icon="fas fa-globe" dense>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-circle,radius');" icon="fas fa-globe" dense>
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Mapping Aid
                                         </q-tooltip>
@@ -205,10 +205,7 @@ const searchCriteriaBlock = {
         const searchStore = useSearchStore();
 
         const processingStatusOptions = Vue.computed(() => baseStore.getOccurrenceProcessingStatusOptions);
-        const radiusUnitOptions = [
-            {value: 'km', label: 'Kilometers'},
-            {value: 'mi', label: 'Miles'}
-        ];
+        const radiusUnitOptions = Vue.computed(() => searchStore.getRadiusUnitOptions);
         const scinameArr = Vue.ref([]);
         const scinameFieldLabel = Vue.ref('Scientific Names');
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
@@ -266,7 +263,7 @@ const searchCriteriaBlock = {
 
         function updateRadius(){
             if(searchTerms.value['pointlat'] && searchTerms.value['pointlong'] && Number(searchTerms.value['radiusval']) > 0){
-                const radius = searchTerms.value['radiusunit'] === 'km' ? (searchTerms.value['radiusval'] * 1000) : ((searchTerms.value['radiusval'] * 0.621371192) * 1000);
+                const radius = searchTerms.value['radiusunit'] === 'km' ? (searchTerms.value['radiusval'] * 1000) : ((searchTerms.value['radiusval'] * 1.609344) * 1000);
                 const centerCoords = ol.proj.fromLonLat([searchTerms.value['pointlong'], searchTerms.value['pointlat']]);
                 const edgeCoordinate = [centerCoords[0] + radius, centerCoords[1]];
                 const fixedcenter = ol.proj.transform(centerCoords, 'EPSG:3857', 'EPSG:4326');

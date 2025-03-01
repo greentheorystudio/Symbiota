@@ -103,6 +103,10 @@ const useSearchStore = Pinia.defineStore('search', {
         ],
         queryId: 0,
         queryOccidArr: [],
+        radiusUnitOptions: [
+            {value: 'km', label: 'Kilometers'},
+            {value: 'mi', label: 'Miles'}
+        ],
         searchRecordData: [],
         searchTerms: {},
         searchTermsPageNumber: 0,
@@ -138,6 +142,12 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getQueryId(state) {
             return state.queryId;
+        },
+        getRadiusDisplayValue(state) {
+            return state.radiusUnitOptions;
+        },
+        getRadiusUnitOptions(state) {
+            return state.radiusUnitOptions;
         },
         getSearchOccidArr(state) {
             return state.queryOccidArr;
@@ -391,8 +401,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 this.updateSearchTerms('pointlong', data['circleArr'][0]['pointlong']);
                 this.updateSearchTerms('radius', data['circleArr'][0]['radius']);
                 this.updateSearchTerms('groundradius', data['circleArr'][0]['groundradius']);
-                this.updateSearchTerms('radiusval', (data['circleArr'][0]['radius'] / 1000));
-                this.updateSearchTerms('radiusunit', 'km');
+                this.updateSearchTerms('radiusval', data['circleArr'][0]['radiusval']);
+                this.updateSearchTerms('radiusunit', data['circleArr'][0]['radiusunits']);
             }
             else if(windowType === 'input' && (data.hasOwnProperty('circleArr') || data.hasOwnProperty('polyArr'))){
                 if(data.hasOwnProperty('circleArr')){

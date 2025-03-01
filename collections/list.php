@@ -286,19 +286,20 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 </template>
                 <template v-if="showSpatialPopup">
                     <spatial-analysis-popup
-                            :bottom-lat="bottomLatitude"
-                            :circle-arr="circleArr"
-                            :left-long="leftLongitude"
-                            :point-lat="pointLatitude"
-                            :point-long="pointLongitude"
-                            :poly-arr="polyArr"
-                            :radius="radius"
-                            :right-long="rightLongitude"
-                            :upper-lat="upperLatitude"
-                            :show-popup="showSpatialPopup"
-                            :window-type="popupWindowType"
-                            @update:spatial-data="processSpatialData"
-                            @close:popup="closeSpatialPopup();"
+                        :bottom-lat="bottomLatitude"
+                        :circle-arr="circleArr"
+                        :left-long="leftLongitude"
+                        :point-lat="pointLatitude"
+                        :point-long="pointLongitude"
+                        :poly-arr="polyArr"
+                        :radius="radius"
+                        :radius-units="radiusUnit"
+                        :right-long="rightLongitude"
+                        :upper-lat="upperLatitude"
+                        :show-popup="showSpatialPopup"
+                        :window-type="popupWindowType"
+                        @update:spatial-data="processSpatialData"
+                        @close:popup="closeSpatialPopup();"
                     ></spatial-analysis-popup>
                 </template>
             </div>
@@ -440,6 +441,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
                     const radius = Vue.ref(null);
+                    const radiusUnit = Vue.ref(null);
                     const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
                     const recordInfoWindowId = Vue.ref(null);
                     const rightLongitude = Vue.ref(null);
@@ -466,6 +468,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         pointLongitude.value = null;
                         polyArr.value = null;
                         radius.value = null;
+                        radiusUnit.value = null;
                         rightLongitude.value = null;
                         upperLatitude.value = null;
                     }
@@ -593,7 +596,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         pointLatitude.value = searchTerms.value.hasOwnProperty('pointlat') ? searchTerms.value['pointlat'] : null;
                         pointLongitude.value = searchTerms.value.hasOwnProperty('pointlong') ? searchTerms.value['pointlong'] : null;
                         polyArr.value = searchTerms.value.hasOwnProperty('polyArr') ? searchTerms.value['polyArr'] : null;
-                        radius.value = searchTerms.value.hasOwnProperty('radius') ? searchTerms.value['radius'] : null;
+                        radius.value = searchTerms.value.hasOwnProperty('radiusval') ? searchTerms.value['radiusval'] : null;
+                        radiusUnit.value = searchTerms.value.hasOwnProperty('radiusunit') ? searchTerms.value['radiusunit'] : null;
                         rightLongitude.value = searchTerms.value.hasOwnProperty('rightlong') ? searchTerms.value['rightlong'] : null;
                         upperLatitude.value = searchTerms.value.hasOwnProperty('upperlat') ? searchTerms.value['upperlat'] : null;
                     }
@@ -652,6 +656,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         polyArr,
                         popupWindowType,
                         radius,
+                        radiusUnit,
                         recordDataArr,
                         recordInfoWindowId,
                         rightLongitude,
