@@ -247,7 +247,7 @@ const spatialAnalysisModule = {
                                 radius = (Number(radiusM) / 1000);
                             }
                             else if(mapSettings.radiusUnits === 'mi'){
-                                radius = ((Number(radiusM) * 0.621371192) / 1000);
+                                radius = ((Number(radiusM) * 1.609344) / 1000);
                             }
                             else{
                                 radius = Number(radiusM);
@@ -370,7 +370,7 @@ const spatialAnalysisModule = {
                 radius = (Number(prad.radius) * 1000);
             }
             else if(prad.radiusunits === 'mi'){
-                radius = ((Number(prad.radius) * 0.621371192) * 1000);
+                radius = ((Number(prad.radius) * 1.609344) * 1000);
             }
             else{
                 radius = Number(prad.radius);

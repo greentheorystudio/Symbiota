@@ -263,7 +263,7 @@ const searchCriteriaBlock = {
 
         function updateRadius(){
             if(searchTerms.value['pointlat'] && searchTerms.value['pointlong'] && Number(searchTerms.value['radiusval']) > 0){
-                const radius = searchTerms.value['radiusunit'] === 'km' ? (searchTerms.value['radiusval'] * 1000) : ((searchTerms.value['radiusval'] * 0.621371192) * 1000);
+                const radius = searchTerms.value['radiusunit'] === 'km' ? (searchTerms.value['radiusval'] * 1000) : ((searchTerms.value['radiusval'] * 1.609344) * 1000);
                 const centerCoords = ol.proj.fromLonLat([searchTerms.value['pointlong'], searchTerms.value['pointlat']]);
                 const edgeCoordinate = [centerCoords[0] + radius, centerCoords[1]];
                 const fixedcenter = ol.proj.transform(centerCoords, 'EPSG:3857', 'EPSG:4326');

@@ -438,7 +438,7 @@ const spatialControlPanel = {
                             radius = (Number(mapSettings.uncertaintyRadiusValue) * 1000);
                         }
                         else if(mapSettings.radiusUnits === 'mi'){
-                            radius = ((Number(mapSettings.uncertaintyRadiusValue) * 0.621371192) * 1000);
+                            radius = ((Number(mapSettings.uncertaintyRadiusValue) * 1.609344) * 1000);
                         }
                         else{
                             radius = Number(mapSettings.uncertaintyRadiusValue);
