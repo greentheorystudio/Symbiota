@@ -211,14 +211,14 @@ const spatialAnalysisModule = {
                     }));
                 }
                 mapSettings.draw.on('drawend', (evt) => {
-                    if(props.inputWindowMode && props.inputWindowToolsArr.includes('point')){
+                    if(props.inputWindowMode && (props.inputWindowToolsArr.includes('point') || props.inputWindowToolsArr.includes('circle') || props.inputWindowToolsArr.includes('box'))){
+                        mapSettings.selectSource.clear();
+                        mapSettings.selectedFeatures.clear();
+                        mapSettings.uncertaintyCircleSource.clear();
                         const featureClone = evt.feature.clone();
                         const geoType = featureClone.getGeometry().getType();
                         const geoJSONFormat = new ol.format.GeoJSON();
                         if(geoType === 'Point'){
-                            mapSettings.selectSource.clear();
-                            mapSettings.selectedFeatures.clear();
-                            mapSettings.uncertaintyCircleSource.clear();
                             const selectiongeometry = featureClone.getGeometry();
                             const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
                             const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
@@ -239,6 +239,20 @@ const spatialAnalysisModule = {
                                     createUncertaintyCircleFromPointRadius(pointRadius);
                                 }
                             }
+                        }
+                        else if(geoType === 'Circle'){
+                            let radius;
+                            const radiusM = featureClone.getGeometry().getRadius();
+                            if(mapSettings.radiusUnits === 'km'){
+                                radius = (Number(radiusM) / 1000);
+                            }
+                            else if(mapSettings.radiusUnits === 'mi'){
+                                radius = ((Number(radiusM) * 0.621371192) / 1000);
+                            }
+                            else{
+                                radius = Number(radiusM);
+                            }
+                            updateMapSettings('uncertaintyRadiusValue', radius);
                         }
                     }
                     else{
@@ -351,9 +365,19 @@ const spatialAnalysisModule = {
         }
 
         function createCircleFromPointRadius(prad, selected) {
+            let radius;
+            if(prad.radiusunits === 'km'){
+                radius = (Number(prad.radius) * 1000);
+            }
+            else if(prad.radiusunits === 'mi'){
+                radius = ((Number(prad.radius) * 0.621371192) * 1000);
+            }
+            else{
+                radius = Number(prad.radius);
+            }
             const centerCoords = ol.proj.fromLonLat([prad.pointlong, prad.pointlat]);
             const circle = new ol.geom.Circle(centerCoords);
-            circle.setRadius(Number(prad.radius));
+            circle.setRadius(radius);
             const circleFeature = new ol.Feature(circle);
             mapSettings.selectSource.addFeature(circleFeature);
             updateMapSettings('activeLayer', 'select');
@@ -769,7 +793,7 @@ const spatialAnalysisModule = {
 
         function handleWindowResize() {
             windowWidth.value = window.innerWidth;
-            updateMapSettings('showControlPanelTop', ((windowWidth.value >= 875 && !propsRefs.inputWindowMode.value) || (windowWidth.value >= 600 && propsRefs.inputWindowMode.value)));
+            updateMapSettings('showControlPanelTop', windowWidth.value >= 875);
         }
 
         function hideFeature(feature) {
@@ -1107,7 +1131,9 @@ const spatialAnalysisModule = {
                             pointlat: fixedcenter[1],
                             pointlong: fixedcenter[0],
                             radius: radius,
-                            groundradius: groundRadius
+                            radiusval: mapSettings.uncertaintyRadiusValue,
+                            groundradius: groundRadius,
+                            radiusunits: mapSettings.radiusUnits
                         };
                         geoCircleArr.value.push(circleObj);
                     }

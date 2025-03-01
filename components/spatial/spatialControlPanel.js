@@ -64,6 +64,9 @@ const spatialControlPanel = {
                                         <div>
                                             <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" />
                                         </div>
+                                        <div v-if="inputWindowToolsArr.includes('radius')">
+                                            <selector-input-element :options="radiusUnitOptions" :value="mapSettings.radiusUnits" @update:value="(value) => updateRadiusUnits(value)"></selector-input-element>
+                                        </div>
                                     </template>
                                 </div>
                             </template>
@@ -94,6 +97,9 @@ const spatialControlPanel = {
                                     <div class="q-mt-xs row justify-center items-center q-gutter-sm">
                                         <div>
                                             <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" />
+                                        </div>
+                                        <div v-if="inputWindowToolsArr.includes('radius')">
+                                            <selector-input-element :options="radiusUnitOptions" :value="mapSettings.radiusUnits" label="Radius units" @update:value="(value) => updateRadiusUnits(value)"></selector-input-element>
                                         </div>
                                     </div>
                                 </template>
@@ -203,6 +209,9 @@ const spatialControlPanel = {
                                     <div>
                                         <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" />
                                     </div>
+                                    <div v-if="inputWindowToolsArr.includes('radius')">
+                                        <selector-input-element :options="radiusUnitOptions" :value="mapSettings.radiusUnits" label="Radius units" @update:value="(value) => updateRadiusUnits(value)"></selector-input-element>
+                                    </div>
                                 </template>
                             </template>
                         </div>
@@ -217,6 +226,7 @@ const spatialControlPanel = {
         <spatial-info-window-popup></spatial-info-window-popup>
     `,
     components: {
+        'selector-input-element': selectorInputElement,
         'spatial-active-layer-selector': spatialActiveLayerSelector,
         'spatial-base-layer-selector': spatialBaseLayerSelector,
         'spatial-control-panel-top-show-button': spatialControlPanelTopShowButton,
@@ -234,6 +244,11 @@ const spatialControlPanel = {
         const inputWindowToolsArr = Vue.inject('inputWindowToolsArr');
         const map = Vue.inject('map');
         const mapSettings = Vue.inject('mapSettings');
+        const radiusUnitOptions = Vue.ref([
+            {value: 'km', label: 'Kilometers'},
+            {value: 'mi', label: 'Miles'}
+        ]);
+        const selectInteraction = Vue.inject('selectInteraction');
         const windowWidth = Vue.inject('windowWidth');
 
         const processInputSubmit = Vue.inject('processInputSubmit');
@@ -345,7 +360,12 @@ const spatialControlPanel = {
 
         function changeInputPointUncertainty(val) {
             updateMapSettings('uncertaintyRadiusValue', val);
-            processInputPointUncertaintyChange();
+            if(inputWindowToolsArr.includes('uncertainty')){
+                processInputPointUncertaintyChange();
+            }
+            else if(inputWindowToolsArr.includes('radius')){
+                updateRadius();
+            }
         }
 
         function exportMapPNG(){
@@ -407,10 +427,43 @@ const spatialControlPanel = {
             changeBaseMap();
         }
 
+        function updateRadius(){
+            const selectFeatures = mapSettings.selectSource.getFeatures();
+            if(selectFeatures.length > 0){
+                if(selectFeatures[0]){
+                    const geoType = selectFeatures[0].getGeometry().getType();
+                    if(geoType === 'Circle'){
+                        let radius;
+                        if(mapSettings.radiusUnits === 'km'){
+                            radius = (Number(mapSettings.uncertaintyRadiusValue) * 1000);
+                        }
+                        else if(mapSettings.radiusUnits === 'mi'){
+                            radius = ((Number(mapSettings.uncertaintyRadiusValue) * 0.621371192) * 1000);
+                        }
+                        else{
+                            radius = Number(mapSettings.uncertaintyRadiusValue);
+                        }
+                        selectFeatures[0].getGeometry().setRadius(radius);
+                    }
+                }
+            }
+            const selectInteractionFeatures = selectInteraction.value.getFeatures().getArray();
+            if(selectInteractionFeatures.length > 0){
+                selectInteraction.value.getFeatures().clear();
+                mapSettings.selectedFeatures.push(selectFeatures[0]);
+            }
+        }
+
+        function updateRadiusUnits(value){
+            updateMapSettings('radiusUnits', value);
+            updateRadius();
+        }
+
         return {
             inputWindowMode,
             inputWindowToolsArr,
             mapSettings,
+            radiusUnitOptions,
             windowWidth,
             processInputSubmit,
             changeBaseMap,
@@ -420,7 +473,8 @@ const spatialControlPanel = {
             openTutorialWindow,
             processChangeBaseLayer,
             setQueryPopupDisplay,
-            updateMapSettings
+            updateMapSettings,
+            updateRadiusUnits
         }
     }
 };

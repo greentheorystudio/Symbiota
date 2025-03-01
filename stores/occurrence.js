@@ -1247,7 +1247,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         updateOccurrenceEditData(key, value) {
             this.occurrenceEditData[key] = value;
-            if(key === 'locationid' || (this.getEmbeddedOccurrenceRecord && this.getEventRecordFields.includes(key) && this.getCollectingEventID > 0)){
+            if(key === 'locationid' || (this.getEmbeddedOccurrenceRecord && this.getEventRecordFields && this.getEventRecordFields.includes(key) && this.getCollectingEventID > 0)){
                 this.updateCollectingEventEditData(key, value);
             }
         },
