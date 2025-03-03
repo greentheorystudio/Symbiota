@@ -33,69 +33,25 @@ const searchCriteriaPopup = {
                         <q-tab-panels v-model="tab">
                             <q-tab-panel class="q-pa-none" name="criteria">
                                 <div class="column q-pa-sm q-col-gutter-sm">
-                                    <div class="row justify-end q-col-gutter-sm">
-                                        <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Reset" dense />
-                                        </div>
-                                        <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="loadRecords();" label="Search Records" :disabled="!searchTermsValid" dense>
-                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    {{ searchRecordsTooltip }}
-                                                </q-tooltip>
-                                            </q-btn>
-                                        </div>
-                                    </div>
+                                    <search-criteria-popup-tab-controls @reset:search-criteria="resetCriteria"></search-criteria-popup-tab-controls>
                                     <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup"></search-criteria-block>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" v-if="!collectionId" name="collections">
                                 <div class="column q-pa-sm q-col-gutter-sm">
-                                    <div class="row justify-end q-col-gutter-sm">
-                                        <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Reset" dense />
-                                        </div>
-                                        <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="loadRecords();" label="Search Records" :disabled="!searchTermsValid" dense>
-                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    {{ searchRecordsTooltip }}
-                                                </q-tooltip>
-                                            </q-btn>
-                                        </div>
-                                    </div>
+                                    <search-criteria-popup-tab-controls @reset:search-criteria="resetCriteria"></search-criteria-popup-tab-controls>
                                     <search-collections-block></search-collections-block>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" name="advanced">
-                                <div class="column q-pa-sm q-col-gutter-md">
-                                    <div class="row justify-end q-col-gutter-sm">
-                                        <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Reset" dense />
-                                        </div>
-                                        <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="loadRecords();" label="Search Records" :disabled="!searchTermsValid" dense>
-                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    {{ searchRecordsTooltip }}
-                                                </q-tooltip>
-                                            </q-btn>
-                                        </div>
-                                    </div>
+                                <div class="column q-pa-sm q-col-gutter-sm">
+                                    <search-criteria-popup-tab-controls @reset:search-criteria="resetCriteria"></search-criteria-popup-tab-controls>
                                     <advanced-query-builder :field-options="advancedFieldOptions" query-type="advanced"></advanced-query-builder>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel v-if="mofExtensionFieldsArr.length > 0" class="q-pa-none" name="mofextension">
-                                <div class="column q-pa-sm q-col-gutter-md">
-                                    <div class="row justify-end q-col-gutter-sm">
-                                        <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Reset" dense />
-                                        </div>
-                                        <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="loadRecords();" label="Search Records" :disabled="!searchTermsValid" dense>
-                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    {{ searchRecordsTooltip }}
-                                                </q-tooltip>
-                                            </q-btn>
-                                        </div>
-                                    </div>
+                                <div class="column q-pa-sm q-col-gutter-sm">
+                                    <search-criteria-popup-tab-controls @reset:search-criteria="resetCriteria"></search-criteria-popup-tab-controls>
                                     <advanced-query-builder :field-options="mofExtensionFieldsArr" query-type="mofextension"></advanced-query-builder>
                                 </div>
                             </q-tab-panel>
@@ -108,7 +64,8 @@ const searchCriteriaPopup = {
     components: {
         'advanced-query-builder': advancedQueryBuilder,
         'search-collections-block': searchCollectionsBlock,
-        'search-criteria-block': searchCriteriaBlock
+        'search-criteria-block': searchCriteriaBlock,
+        'search-criteria-popup-tab-controls': searchCriteriaPopupTabControls
     },
     setup(props, context) {
         const baseStore = useBaseStore();
@@ -119,16 +76,7 @@ const searchCriteriaPopup = {
         const contentStyle = Vue.ref(null);
         const mofExtensionFieldsArr = Vue.reactive([]);
         const searchCriteriaBlockRef = Vue.ref(null);
-        const searchRecordsTooltip = Vue.computed(() => {
-            if(!searchTermsValid.value){
-                return 'Search criteria must be entered or the collection list must be narrowed in order to Search Records';
-            }
-            return 'Search for records matching the criteria';
-        });
-        const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
         const tab = Vue.ref('criteria');
-
-        const loadRecords = Vue.inject('loadRecords');
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -226,11 +174,8 @@ const searchCriteriaPopup = {
             contentStyle,
             mofExtensionFieldsArr,
             searchCriteriaBlockRef,
-            searchRecordsTooltip,
-            searchTermsValid,
             tab,
             closePopup,
-            loadRecords,
             openSpatialPopup,
             resetCriteria
         }
