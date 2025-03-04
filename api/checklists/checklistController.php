@@ -28,4 +28,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteChecklistRecord' && $clid && $isEditor){
         echo $checklists->deleteChecklistRecord($clid);
     }
+    elseif($action === 'createTemporaryChecklistFromTidArr' && array_key_exists('tidArr', $_POST)){
+        echo $checklists->createTemporaryChecklistFromTidArr(json_decode($_POST['tidArr'], true));
+    }
 }

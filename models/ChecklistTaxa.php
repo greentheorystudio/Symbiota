@@ -34,6 +34,26 @@ class ChecklistTaxa{
         $this->conn->close();
 	}
 
+    public function batchCreateChecklistTaxaRecordsFromTidArr($clid, $tidArr): int
+    {
+        $recordsCreated = 0;
+        $valueArr = array();
+        if($clid && count($tidArr) > 0){
+            foreach($tidArr as $tid){
+                $valueArr[] = '(' . (int)$clid . ', ' . (int)$tid . ', "' . date('Y-m-d H:i:s') . '")';
+            }
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO fmchklsttaxalink(clid, tid, initialtimestamp) '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $recordsCreated;
+    }
+
     public function createChecklistTaxonRecord($clid, $data): int
     {
         $newID = 0;

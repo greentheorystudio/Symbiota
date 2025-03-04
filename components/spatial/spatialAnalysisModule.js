@@ -27,7 +27,7 @@ const spatialAnalysisModule = {
         <template v-if="mapSettings.recordInfoWindowId">
             <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
         </template>
-        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
 
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
             <spatial-side-panel :show-panel="mapSettings.showSidePanel" :expanded-element="mapSettings.sidePanelExpandedElement"></spatial-side-panel>
@@ -2548,7 +2548,6 @@ const spatialAnalysisModule = {
         Vue.provide('layersConfigArr', layersConfigArr);
         Vue.provide('layersInfoObj', layersInfoObj);
         Vue.provide('layersObj', layersObj);
-        Vue.provide('loadRecords', loadRecords);
         Vue.provide('loadPointsLayer', loadPointsLayer);
         Vue.provide('map', Vue.computed(() => map));
         Vue.provide('mapSettings', mapSettings);
@@ -2630,6 +2629,7 @@ const spatialAnalysisModule = {
             createPolysFromPolyArr,
             createUncertaintyCircleFromPointRadius,
             emitClosePopup,
+            loadRecords,
             setQueryPopupDisplay,
             updateMapSettings,
             zoomToShapesLayer

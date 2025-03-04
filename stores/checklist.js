@@ -67,6 +67,21 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             this.imageData = Object.assign({}, this.blankImageRecord);
             this.imageEditData = Object.assign({}, {});
         },
+        createTemporaryChecklistFromTidArr(tidArr, callback) {
+            const formData = new FormData();
+            formData.append('tidArr', JSON.stringify(tidArr));
+            formData.append('action', 'createTemporaryChecklistFromTidArr');
+            fetch(checklistApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         deleteImageRecord(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());

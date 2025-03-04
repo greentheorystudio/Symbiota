@@ -4,6 +4,10 @@ const searchCriteriaPopup = {
             type: Number,
             default: null
         },
+        popupType: {
+            type: String,
+            default: 'search'
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -33,25 +37,25 @@ const searchCriteriaPopup = {
                         <q-tab-panels v-model="tab">
                             <q-tab-panel class="q-pa-none" name="criteria">
                                 <div class="column q-pa-sm q-col-gutter-sm">
-                                    <search-criteria-popup-tab-controls @reset:search-criteria="resetCriteria"></search-criteria-popup-tab-controls>
+                                    <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
                                     <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup"></search-criteria-block>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" v-if="!collectionId" name="collections">
                                 <div class="column q-pa-sm q-col-gutter-sm">
-                                    <search-criteria-popup-tab-controls @reset:search-criteria="resetCriteria"></search-criteria-popup-tab-controls>
+                                    <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
                                     <search-collections-block></search-collections-block>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" name="advanced">
                                 <div class="column q-pa-sm q-col-gutter-sm">
-                                    <search-criteria-popup-tab-controls @reset:search-criteria="resetCriteria"></search-criteria-popup-tab-controls>
+                                    <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
                                     <advanced-query-builder :field-options="advancedFieldOptions" query-type="advanced"></advanced-query-builder>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel v-if="mofExtensionFieldsArr.length > 0" class="q-pa-none" name="mofextension">
                                 <div class="column q-pa-sm q-col-gutter-sm">
-                                    <search-criteria-popup-tab-controls @reset:search-criteria="resetCriteria"></search-criteria-popup-tab-controls>
+                                    <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
                                     <advanced-query-builder :field-options="mofExtensionFieldsArr" query-type="mofextension"></advanced-query-builder>
                                 </div>
                             </q-tab-panel>
@@ -82,8 +86,16 @@ const searchCriteriaPopup = {
             setContentStyle();
         });
 
+        function buildChecklist() {
+            context.emit('process:build-checklist');
+        }
+
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function loadRecords() {
+            context.emit('process:search-load-records');
         }
 
         function openSpatialPopup(type) {
@@ -175,7 +187,9 @@ const searchCriteriaPopup = {
             mofExtensionFieldsArr,
             searchCriteriaBlockRef,
             tab,
+            buildChecklist,
             closePopup,
+            loadRecords,
             openSpatialPopup,
             resetCriteria
         }

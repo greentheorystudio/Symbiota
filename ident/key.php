@@ -4,6 +4,7 @@ header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $clid = array_key_exists('clid',$_REQUEST) ? (int)$_REQUEST['clid'] : 0;
+$queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
 $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 ?>
 <!DOCTYPE html>
@@ -14,10 +15,23 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Interactive Key</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/shp.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/stream.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const CLID = <?php echo $clid; ?>;
+            const QUERYID = <?php echo $queryId; ?>;
             const PID = <?php echo $pid; ?>;
         </script>
     </head>
@@ -36,120 +50,229 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">Project Checklists</a> &gt;&gt;
                     <span class="q-ml-xs text-bold">Key: {{ projectName }} Project</span>
                 </template>
+                <template v-else>
+                    <span class="text-bold">Dynamic Key</span>
+                </template>
             </div>
             <div id="innertext">
-                <div class="full-width row q-gutter-sm">
-                    <div class="col-4 column q-col-gutter-sm">
-                        <div class="full-width">
-                            <q-card flat bordered>
-                                <q-card-section class="column q-gutter-xs">
-                                    <div class="full-width">
-                                        <selector-input-element label="Sort by" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
-                                    </div>
-                                    <div class="full-width">
-                                        <checkbox-input-element label="Display Common Names" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
-                                    </div>
-                                    <div class="full-width">
-                                        <checkbox-input-element label="Display Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
-                                    </div>
-                                </q-card-section>
-                            </q-card>
-                        </div>
-                        <div>
-                            <q-separator ></q-separator>
-                        </div>
-                        <template v-for="heading in keyDataArr">
-                            <template v-if="activeChidArr.includes(Number(heading.chid))">
-                                <div class="full-width">
-                                    <q-card flat bordered>
-                                        <q-card-section class="column q-gutter-sm">
-                                            <div class="text-h6 text-bold">
-                                                {{ heading.headingname }}
-                                            </div>
-                                            <template v-for="character in heading['characterArr']">
-                                                <template v-if="activeCidArr.includes(Number(character.cid))">
-                                                    <div class="full-width column q-gutter-xs">
-                                                        <div v-if="character.charactername !== heading.headingname" class="text-body1 text-bold">
-                                                            {{ character.charactername }}
-                                                        </div>
-                                                        <template v-for="state in character['stateArr']">
-                                                            <div class="full-width">
-                                                                <checkbox-input-element :label="state.characterstatename" :value="selectedCsidArr.includes(Number(state.csid)) ? '1' : '0'" @update:value="(value) => processCharacterStateSelectionChange(state, value)"></checkbox-input-element>
-                                                            </div>
-                                                        </template>
-                                                    </div>
-                                                </template>
-                                            </template>
-                                        </q-card-section>
-                                    </q-card>
-                                </div>
-                            </template>
-                        </template>
-                    </div>
-                    <div class="col-8 column q-col-gutter-sm q-pl-md">
-                        <div class="column">
-                            <div class="full-width row justify-end text-h5 text-bold">
-                                <a :href="(clientRoot + '/checklists/checklist.php?cl=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
-                            </div>
-                            <div class="full-width row justify-end text-body1">
-                                Taxa Count: {{ taxaCount }}
-                            </div>
-                        </div>
-                        <template v-if="selectedSortByOption === 'family'">
-                            <template v-if="displayImagesVal">
-
-                            </template>
-                            <template v-else>
-                                <template v-for="family in taxaDisplayDataArr">
-                                    <template v-if="activeFamilyArr.includes(family['familyName'])">
-                                        <div class="full-width column q-gutter-xs">
-                                            <div class="text-body1 text-bold">
-                                                {{ family['familyName'] }}
-                                            </div>
-                                            <template v-for="taxon in family['taxa']">
-                                                <template v-if="activeTidArr.includes(taxon['tid'])">
-                                                    <div class="full-width">
-                                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
-                                                    </div>
-                                                </template>
-                                            </template>
-                                        </div>
-                                    </template>
-                                </template>
-                            </template>
-                        </template>
-                        <template v-else>
-                            <template v-if="displayImagesVal">
-
-                            </template>
-                            <template v-else>
-                                <template v-for="taxon in taxaDisplayDataArr">
-                                    <template v-if="activeTidArr.includes(taxon['tid'])">
+                <template v-if="Number(clId) > 0 || Number(pId) > 0">
+                    <div class="full-width row q-gutter-sm">
+                        <div class="col-4 column q-col-gutter-sm">
+                            <div class="full-width">
+                                <q-card flat bordered>
+                                    <q-card-section class="column q-gutter-xs">
                                         <div class="full-width">
-                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
+                                            <selector-input-element label="Sort by" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
                                         </div>
+                                        <div class="full-width">
+                                            <checkbox-input-element label="Display Common Names" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
+                                        </div>
+                                        <div class="full-width">
+                                            <checkbox-input-element label="Display Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
+                                        </div>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
+                            <div>
+                                <q-separator ></q-separator>
+                            </div>
+                            <template v-for="heading in keyDataArr">
+                                <template v-if="activeChidArr.includes(Number(heading.chid))">
+                                    <div class="full-width">
+                                        <q-card flat bordered>
+                                            <q-card-section class="column q-gutter-sm">
+                                                <div class="text-h6 text-bold">
+                                                    {{ heading.headingname }}
+                                                </div>
+                                                <template v-for="character in heading['characterArr']">
+                                                    <template v-if="activeCidArr.includes(Number(character.cid))">
+                                                        <div class="full-width column q-gutter-xs">
+                                                            <div v-if="character.charactername !== heading.headingname" class="text-body1 text-bold">
+                                                                {{ character.charactername }}
+                                                            </div>
+                                                            <template v-for="state in character['stateArr']">
+                                                                <div class="full-width">
+                                                                    <checkbox-input-element :label="state.characterstatename" :value="selectedCsidArr.includes(Number(state.csid)) ? '1' : '0'" @update:value="(value) => processCharacterStateSelectionChange(state, value)"></checkbox-input-element>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                            </q-card-section>
+                                        </q-card>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                        <div class="col-8 column q-col-gutter-sm q-pl-lg">
+                            <div class="column">
+                                <div class="full-width row justify-end text-h5 text-bold">
+                                    <a :href="(clientRoot + '/checklists/checklist.php?cl=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
+                                </div>
+                                <div class="full-width row justify-end text-body1">
+                                    Taxa Count: {{ taxaCount }}
+                                </div>
+                            </div>
+                            <template v-if="selectedSortByOption === 'family'">
+                                <template v-if="displayImagesVal">
+
+                                </template>
+                                <template v-else>
+                                    <template v-for="family in taxaDisplayDataArr">
+                                        <template v-if="activeFamilyArr.includes(family['familyName'])">
+                                            <div class="full-width column q-gutter-xs">
+                                                <div class="text-body1 text-bold">
+                                                    {{ family['familyName'] }}
+                                                </div>
+                                                <template v-for="taxon in family['taxa']">
+                                                    <template v-if="activeTidArr.includes(taxon['tid'])">
+                                                        <div class="full-width">
+                                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                            </div>
+                                        </template>
                                     </template>
                                 </template>
                             </template>
-                        </template>
+                            <template v-else>
+                                <template v-if="displayImagesVal">
+
+                                </template>
+                                <template v-else>
+                                    <template v-for="taxon in taxaDisplayDataArr">
+                                        <template v-if="activeTidArr.includes(taxon['tid'])">
+                                            <div class="full-width">
+                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
+                                            </div>
+                                        </template>
+                                    </template>
+                                </template>
+                            </template>
+                        </div>
                     </div>
-                </div>
+                </template>
+                <template v-else>
+                    <div class="column">
+                        <div class="q-pa-sm column q-col-gutter-xs">
+                            <div class="row justify-start">
+                                <div>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                                </div>
+                            </div>
+                        </div>
+                        <q-separator ></q-separator>
+                        <div class="q-pa-md row justify-center text-h6 text-bold">
+                            There are no taxa to display. Click the Search button to enter search criteria to build the taxa checklist for the key.
+                        </div>
+                    </div>
+                </template>
             </div>
+            <template v-if="displayQueryPopup">
+                <search-criteria-popup
+                    :show-popup="(displayQueryPopup && !showSpatialPopup)"
+                    popup-type="checklist"
+                    :show-spatial="true"
+                    @open:spatial-popup="openSpatialPopup"
+                    @process:build-checklist="buildChecklist"
+                    @close:popup="setQueryPopupDisplay(false)"
+                ></search-criteria-popup>
+            </template>
+            <template v-if="showSpatialPopup">
+                <spatial-analysis-popup
+                    :bottom-lat="spatialInputValues['bottomLatitude']"
+                    :circle-arr="spatialInputValues['circleArr']"
+                    :left-long="spatialInputValues['leftLongitude']"
+                    :point-lat="spatialInputValues['pointLatitude']"
+                    :point-long="spatialInputValues['pointLongitude']"
+                    :poly-arr="spatialInputValues['polyArr']"
+                    :radius="spatialInputValues['radius']"
+                    :radius-units="spatialInputValues['radiusUnit']"
+                    :right-long="spatialInputValues['rightLongitude']"
+                    :upper-lat="spatialInputValues['upperLatitude']"
+                    :show-popup="showSpatialPopup"
+                    :window-type="popupWindowType"
+                    @update:spatial-data="processSpatialData"
+                    @close:popup="closeSpatialPopup();"
+                ></spatial-analysis-popup>
+            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/determinationRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/geneticLinkRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/colorPicker.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/copyURLButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/collectionCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDataDownloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/keyDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/checklistDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/imageDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/advancedQueryBuilder.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCollectionsBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopupTabControls.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRecordsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSelectionsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSymbologyTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanelLeftShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanelTopShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSidePanelShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSideButtonTray.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialRasterColorScaleSelect.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialVectorToolsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialPointVectorToolsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRecordsSymbologyExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialVectorToolsExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRasterToolsExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSidePanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialDrawToolSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialBaseLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialActiveLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialMapSettingsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerLayerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerLayerGroupElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerQuerySelectorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRow.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRowGroup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoTabModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script>
             const keyIdentificationModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
-                    'selector-input-element': selectorInputElement
+                    'search-criteria-popup': searchCriteriaPopup,
+                    'selector-input-element': selectorInputElement,
+                    'spatial-analysis-popup': spatialAnalysisPopup
                 },
                 setup() {
+                    const { hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
+                    const checklistStore = useChecklistStore();
+                    const searchStore = useSearchStore();
 
                     const activeChidArr = Vue.computed(() => {
                         const valArr = [];
@@ -168,21 +291,24 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const checklistName = Vue.computed(() => {
                         return checklistData.value.hasOwnProperty('name') ? checklistData.value['name'] : '';
                     });
-                    const clId = CLID;
+                    const clId = Vue.ref(CLID);
                     const clidArr = Vue.ref([]);
                     const clientRoot = baseStore.getClientRoot;
                     const commonNameData = Vue.ref({});
                     const csidArr = Vue.ref([]);
                     const displayCommonNamesVal = Vue.ref(false);
                     const displayImagesVal = Vue.ref(false);
+                    const displayQueryPopup = Vue.ref(false);
                     const imageData = Vue.ref({});
                     const keyDataArr = Vue.ref([]);
                     const languageArr = [];
-                    const pId = PID;
+                    const pId = Vue.ref(PID);
+                    const popupWindowType = Vue.ref(null);
                     const projectData = Vue.ref({});
                     const projectName = Vue.computed(() => {
                         return projectData.value.hasOwnProperty('projname') ? projectData.value['projname'] : '';
                     });
+                    const queryId = QUERYID;
                     const selectedCidArr = Vue.computed(() => {
                         const valueArr = selectedStateArr.value.length > 0 ? selectedStateArr.value.map(state => Number(state['cid'])) : [];
                         return valueArr.length > 0 ? valueArr.filter((value, index, array) => array.indexOf(value) === index) : [];
@@ -193,16 +319,62 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const selectedSortByOption = Vue.ref('family');
                     const selectedStateArr = Vue.ref([]);
+                    const showSpatialPopup = Vue.ref(false);
                     const sortByOptions = Vue.ref([
                         {value: 'family', label: 'Family/Scientific Name'},
                         {value: 'sciname', label: 'Scientific Name'}
                     ]);
+                    const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const taxaCount = Vue.computed(() => {
                         return activeTidArr.value.length;
                     });
                     const taxaDataArr = Vue.ref([]);
                     const taxaDisplayDataArr = Vue.ref([]);
                     const tidArr = Vue.ref([]);
+
+                    function buildChecklist(){
+                        if(searchStore.getSearchTermsValid){
+                            showWorking('Loading...');
+                            const options = {
+                                schema: 'occurrence',
+                                spatial: 0
+                            };
+                            searchStore.getSearchTidArr(options, (tidArr) => {
+                                if(tidArr.length > 0){
+                                    checklistStore.createTemporaryChecklistFromTidArr(tidArr, (res) => {
+                                        hideWorking();
+                                        if(Number(res) > 0){
+                                            setQueryPopupDisplay(false);
+                                            clId.value = Number(res);
+                                            setChecklistData();
+                                        }
+                                        else{
+                                            showNotification('negative', 'An error occurred while creating the checklist.');
+                                        }
+                                    });
+                                }
+                                else{
+                                    hideWorking();
+                                    showNotification('negative', 'There were no taxa matching your criteria.');
+                                }
+                            });
+                        }
+                        else{
+                            showNotification('negative', 'Please enter search criteria.');
+                        }
+                    }
+
+                    function closeSpatialPopup() {
+                        popupWindowType.value = null;
+                        showSpatialPopup.value = false;
+                        searchStore.clearSpatialInputValues();
+                    }
+
+                    function openSpatialPopup(type) {
+                        searchStore.setSpatialInputValues();
+                        popupWindowType.value = type;
+                        showSpatialPopup.value = true;
+                    }
 
                     function processCharacterStateSelectionChange(state, value) {
                         if(Number(value) === 1){
@@ -253,6 +425,10 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function processSortByChange(value) {
                         selectedSortByOption.value = value;
                         setTaxaDisplayData();
+                    }
+
+                    function processSpatialData(data) {
+                        searchStore.processSpatialPopupData(popupWindowType.value, data);
                     }
 
                     function processTaxaData() {
@@ -349,7 +525,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setChecklistData() {
                         const formData = new FormData();
-                        formData.append('clid', clId.toString());
+                        formData.append('clid', clId.value.toString());
                         formData.append('action', 'getChecklistData');
                         fetch(checklistApiUrl, {
                             method: 'POST',
@@ -384,7 +560,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setProjectData() {
                         const formData = new FormData();
-                        formData.append('pid', pId.toString());
+                        formData.append('pid', pId.value.toString());
                         formData.append('action', 'getProjectData');
                         fetch(projectApiUrl, {
                             method: 'POST',
@@ -398,6 +574,10 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             clidArr.value = Object.values(projectData.value['clidArr']).slice();
                             setTaxaData();
                         });
+                    }
+
+                    function setQueryPopupDisplay(val) {
+                        displayQueryPopup.value = val;
                     }
 
                     function setTaxaData() {
@@ -457,11 +637,17 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     Vue.onMounted(() => {
-                        if(Number(clId) > 0){
+                        if(Number(clId.value) > 0){
                             setChecklistData();
                         }
-                        else if(Number(pId) > 0){
+                        else if(Number(pId.value) > 0){
                             setProjectData();
+                        }
+                        else{
+                            if(Number(queryId) === 0){
+                                displayQueryPopup.value = true;
+                            }
+                            searchStore.initializeSearchStorage(queryId);
                         }
                     });
 
@@ -476,21 +662,30 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         clientRoot,
                         displayCommonNamesVal,
                         displayImagesVal,
+                        displayQueryPopup,
                         keyDataArr,
                         languageArr,
                         pId,
+                        popupWindowType,
                         projectData,
                         projectName,
                         selectedCsidArr,
                         selectedSortByOption,
                         selectedStateArr,
+                        showSpatialPopup,
                         sortByOptions,
+                        spatialInputValues,
                         taxaCount,
                         taxaDisplayDataArr,
+                        buildChecklist,
+                        closeSpatialPopup,
+                        openSpatialPopup,
                         processCharacterStateSelectionChange,
                         processDisplayCommonNameChange,
                         processDisplayImagesChange,
-                        processSortByChange
+                        processSortByChange,
+                        processSpatialData,
+                        setQueryPopupDisplay
                     }
                 }
             });

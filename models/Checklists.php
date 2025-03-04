@@ -1,5 +1,7 @@
 <?php
+include_once(__DIR__ . '/ChecklistTaxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class Checklists{
 
@@ -53,7 +55,7 @@ class Checklists{
         $this->conn->query($sql2);
     }
 
-    public function createChecklistRecord($data, $dynamic = false): int
+    public function createChecklistRecord($data): int
     {
         $this->clearExpiredChecklists();
         $newID = 0;
@@ -75,10 +77,6 @@ class Checklists{
                 }
             }
         }
-        if($dynamic){
-            $fieldNameArr[] = 'expiration';
-            $fieldValueArr[] = '"' . date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))) . '"';
-        }
         $fieldNameArr[] = 'uid';
         $fieldValueArr[] = $GLOBALS['SYMB_UID'] ?: 'NULL';
         $fieldNameArr[] = 'initialtimestamp';
@@ -88,6 +86,35 @@ class Checklists{
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
+        }
+        return $newID;
+    }
+
+    public function createTemporaryChecklistFromTidArr($tidArr): int
+    {
+        $this->clearExpiredChecklists();
+        $newID = 0;
+        if(count($tidArr) > 0){
+            $guid = UuidService::getUuidV4();
+            $fieldNameArr = array();
+            $fieldValueArr = array();
+            $fieldNameArr[] = '`name`';
+            $fieldValueArr[] = '"' . $guid . '"';
+            $fieldNameArr[] = 'expiration';
+            $fieldValueArr[] = '"' . date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))) . '"';
+            $fieldNameArr[] = 'uid';
+            $fieldValueArr[] = $GLOBALS['SYMB_UID'] ?: 'NULL';
+            $fieldNameArr[] = 'initialtimestamp';
+            $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+            $sql = 'INSERT INTO fmchecklists(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+                if(!(new ChecklistTaxa)->batchCreateChecklistTaxaRecordsFromTidArr($newID, $tidArr)){
+                    $newID = 0;
+                }
+            }
         }
         return $newID;
     }
