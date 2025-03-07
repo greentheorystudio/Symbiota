@@ -3,12 +3,12 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/Taxa.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
-$action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
-$tId = array_key_exists('tid',$_REQUEST) ? (int)$_REQUEST['tid'] : null;
-$kingdomid = array_key_exists('kingdomid',$_REQUEST) ? (int)$_REQUEST['kingdomid'] : null;
+$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
+$tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : null;
+$kingdomid = array_key_exists('kingdomid', $_REQUEST) ? (int)$_REQUEST['kingdomid'] : null;
 
 $isEditor = false;
-if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS']) || array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS'])){
+if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array_key_exists('TaxonProfile', $GLOBALS['USER_RIGHTS']) || array_key_exists('Taxonomy', $GLOBALS['USER_RIGHTS'])){
     $isEditor = true;
 }
 
@@ -19,7 +19,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $author = array_key_exists('author',$_POST) ? $_POST['author'] : null;
         echo $taxa->getTid(htmlspecialchars($_POST['sciname']), (int)$_POST['kingdomid'], $rankid, $author);
     }
-    elseif($isEditor && $action === 'addTaxon'){
+    elseif($isEditor && $action === 'addTaxon' && array_key_exists('taxon',$_POST)){
         echo $taxa->createTaxaRecord(json_decode($_POST['taxon'], true));
     }
     elseif($action === 'getSciNameFuzzyMatches' && array_key_exists('sciname',$_POST) && array_key_exists('lev',$_POST)){

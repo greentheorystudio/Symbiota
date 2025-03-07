@@ -30,11 +30,14 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         checklistData: {},
         checklistEditData: {},
         checklistId: 0,
-        checklistTaxaArr: [],
+        checklistTaxaStore: useChecklistTaxaStore(),
         checklistUpdateData: {},
         checklistVoucherArr: []
     }),
     getters: {
+        getChecklistTaxaArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaArr;
+        },
         getBlankChecklistRecord(state) {
             return state.blankChecklistRecord;
         },
@@ -57,15 +60,34 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         getChecklistValid(state) {
             return !!state.checklistEditData['name'];
+        },
+        getChecklistVoucherArr(state) {
+            return state.checklistVoucherArr;
         }
     },
     actions: {
-        clearImageArr() {
-            this.imageArr.length = 0;
+        clearChecklistData() {
+            this.checklistData = Object.assign({}, this.blankChecklistRecord);
+            this.checklistTaxaStore.clearChecklistTaxaArr();
+            this.checklistVoucherArr.length = 0;
         },
-        clearImageData() {
-            this.imageData = Object.assign({}, this.blankImageRecord);
-            this.imageEditData = Object.assign({}, {});
+        createChecklistRecord(callback) {
+            const formData = new FormData();
+            formData.append('checklist', JSON.stringify(this.checklistEditData));
+            formData.append('action', 'createChecklistRecord');
+            fetch(checklistApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) > 0){
+                    this.setChecklist(Number(res));
+                }
+            });
         },
         createTemporaryChecklistFromTidArr(tidArr, callback) {
             const formData = new FormData();
@@ -82,127 +104,73 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 callback(Number(res));
             });
         },
-        deleteImageRecord(collid, callback) {
+        deleteChecklistRecord(clid, callback) {
             const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('imgid', this.imageId.toString());
-            formData.append('action', 'deleteImageRecord');
-            fetch(imageApiUrl, {
+            formData.append('clid', clid.toString());
+            formData.append('action', 'deleteChecklistRecord');
+            fetch(checklistApiUrl, {
                 method: 'POST',
                 body: formData
             })
             .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                this.setChecklist(0);
+                callback(Number(res));
             });
         },
-        deleteImageTag(collid, tag) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('imgid', this.imageId.toString());
-            formData.append('tag', tag);
-            formData.append('action', 'deleteImageTag');
-            fetch(imageApiUrl, {
-                method: 'POST',
-                body: formData
-            });
-        },
-        resetOccurrenceLinkage(collid, occidVal, callback) {
-            const formData = new FormData();
-            formData.append('collid', collid.toString());
-            formData.append('imgid', this.imageId.toString());
-            formData.append('imageData', JSON.stringify({occid: occidVal}));
-            formData.append('action', 'updateImageRecord');
-            fetch(imageApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                });
-            });
-        },
-        setCurrentImageRecord(imgid) {
-            this.imageId = Number(imgid);
-            this.clearImageData();
-            if(this.imageId > 0){
-                this.setImageData();
-            }
-        },
-        setImageArr(property, value) {
-            const formData = new FormData();
-            formData.append('property', property);
-            formData.append('value', value.toString());
-            formData.append('action', 'getImageArrByProperty');
-            fetch(imageApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.imageArr = data;
-            });
-        },
-        setImageData() {
-            const formData = new FormData();
-            formData.append('imgid', this.imageId.toString());
-            formData.append('action', 'getImageData');
-            fetch(imageApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                if(data.hasOwnProperty('imgid') && Number(data.imgid) > 0){
-                    data.sciname = data['taxonData'] ? data['taxonData']['sciname'] : null;
-                    this.imageData = Object.assign({}, data);
-                    this.imageEditData = Object.assign({}, this.imageData);
-                }
-            });
-        },
-        updateImageEditData(key, value) {
-            this.imageEditData[key] = value;
-        },
-        updateImageRecord(collid, callback) {
-            if(this.imageUpdateData.hasOwnProperty('tagArr')){
-                this.imageData['tagArr'].forEach(tag => {
-                    if(!this.imageUpdateData['tagArr'].includes(tag)){
-                        this.deleteImageTag(collid, tag);
-                    }
-                    else{
-                        const index = this.imageUpdateData['tagArr'].indexOf(tag);
-                        this.imageUpdateData['tagArr'].splice(index,1);
-                    }
-                });
-            }
-            if(!this.imageUpdateData.hasOwnProperty('tagArr') || this.imageUpdateData['tagArr'].length > 0 || Object.keys(this.imageUpdateData).length > 1){
+        setChecklist(clid, callback = null) {
+            this.clearChecklistData();
+            if(Number(clid) > 0){
+                this.checklistEditData = Object.assign({}, {});
+                this.checklistId = Number(clid);
                 const formData = new FormData();
-                formData.append('collid', collid.toString());
-                formData.append('imgid', this.imageId.toString());
-                formData.append('imageData', JSON.stringify(this.imageUpdateData));
-                formData.append('action', 'updateImageRecord');
-                fetch(imageApiUrl, {
+                formData.append('clid', this.checklistId.toString());
+                formData.append('action', 'getChecklistData');
+                fetch(checklistApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
-                    response.text().then((res) => {
-                        callback(Number(res));
-                        if(res && Number(res) === 1){
-                            this.imageData = Object.assign({}, this.imageEditData);
-                        }
-                    });
+                    return response.ok ? response.json() : null;
+                })
+                .then((resObj) => {
+                    this.checklistData = Object.assign({}, resObj);
+                    this.checklistEditData = Object.assign({}, this.checklistData);
+                    if(callback){
+                        callback();
+                    }
                 });
             }
             else{
-                callback(1);
+                this.checklistEditData = Object.assign({}, this.checklistData);
+                if(callback){
+                    callback();
+                }
             }
+        },
+        updateChecklistEditData(key, value) {
+            this.checklistEditData[key] = value;
+        },
+        updateChecklistRecord(callback) {
+            const formData = new FormData();
+            formData.append('clid', this.checklistId.toString());
+            formData.append('checklistData', JSON.stringify(this.checklistUpdateData));
+            formData.append('action', 'updateChecklistRecord');
+            fetch(checklistApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) === 1){
+                    this.checklistData = Object.assign({}, this.checklistEditData);
+                }
+            });
         }
     }
 });

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/ChecklistTaxa.php');
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
@@ -17,7 +18,7 @@ class Checklists{
         "authors" => array("dataType" => "string", "length" => 250),
         "type" => array("dataType" => "string", "length" => 50),
         "politicaldivision" => array("dataType" => "string", "length" => 45),
-        "searchterms" => array("dataType" => "text", "length" => 0),
+        "searchterms" => array("dataType" => "json", "length" => 0),
         "parent" => array("dataType" => "string", "length" => 50),
         "parentclid" => array("dataType" => "number", "length" => 10),
         "notes" => array("dataType" => "string", "length" => 500),
@@ -27,7 +28,7 @@ class Checklists{
         "footprintwkt" => array("dataType" => "text", "length" => 0),
         "percenteffort" => array("dataType" => "number", "length" => 11),
         "access" => array("dataType" => "string", "length" => 45),
-        "defaultsettings" => array("dataType" => "string", "length" => 250),
+        "defaultsettings" => array("dataType" => "json", "length" => 250),
         "iconurl" => array("dataType" => "string", "length" => 150),
         "headerurl" => array("dataType" => "string", "length" => 150),
         "uid" => array("dataType" => "number", "length" => 10),
@@ -86,6 +87,8 @@ class Checklists{
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
+            (new Permissions)->addPermission($GLOBALS['SYMB_UID'], 'ClAdmin', $newID);
+            (new Permissions)->setUserPermissions();
         }
         return $newID;
     }
@@ -122,6 +125,10 @@ class Checklists{
     public function deleteChecklistRecord($clid): int
     {
         $retVal = 1;
+        $sql = 'DELETE FROM userroles WHERE role = "ClAdmin" AND tablepk = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
         $sql = 'DELETE FROM fmchklstprojlink WHERE clid = ' . (int)$clid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
