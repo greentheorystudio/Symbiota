@@ -55,8 +55,8 @@ const taxaProfileImagePanel = {
         </template>
     `,
     setup(props, context) {
-        const store = useBaseStore();
-        const clientRoot = store.getClientRoot;
+        const baseStore = useBaseStore();
+        const clientRoot = baseStore.getClientRoot;
 
         function toggleImageCarousel(index) {
             context.emit('update:set-image-carousel', index);
