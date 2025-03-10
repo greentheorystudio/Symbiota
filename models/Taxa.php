@@ -3,6 +3,7 @@ include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/Occurrences.php');
 include_once(__DIR__ . '/TaxonHierarchy.php');
 include_once(__DIR__ . '/TaxonKingdoms.php');
+include_once(__DIR__ . '/TaxonMaps.php');
 include_once(__DIR__ . '/TaxonVernaculars.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -116,6 +117,9 @@ class Taxa{
             $retVal = (new Images)->deleteAssociatedImageRecords('tid', $tid);
             if($retVal){
                 $retVal = (new Media)->deleteAssociatedMediaRecords('tid', $tid);
+            }
+            if($retVal){
+                $retVal = (new TaxonMaps)->deleteTaxonMapRecord('tid', $tid);
             }
             $sql = 'DELETE FROM taxaenumtree WHERE tid = ' . (int)$tid . ' OR parenttid = ' . (int)$tid . ' ';
             //echo $sql;

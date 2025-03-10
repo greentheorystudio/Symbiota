@@ -47,27 +47,41 @@ class TaxonMaps{
         return $newID;
     }
 
-    public function deleteTaxonMapRecord($mid): int
+    public function deleteTaxonMapRecord($idType, $id): int
     {
         $retVal = 1;
-        $data = $this->getTaxonMapData($mid);
-        if($data['url'] && strpos($data['url'], '/') === 0){
+        $whereStr = '';
+        $data = $this->getTaxonMapData($idType, $id);
+        if($idType === 'mid'){
+            $whereStr = 'mid = ' . (int)$id . ' ';
+        }
+        elseif($idType === 'tid'){
+            $whereStr = 'tid = ' . (int)$id . ' ';
+        }
+        if($data && $data['url'] && strpos($data['url'], '/') === 0){
             $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['url']);
             FileSystemService::deleteFile($urlServerPath, true);
         }
-        $sql = 'DELETE FROM taxamaps WHERE mid = ' . (int)$mid . ' ';
+        $sql = 'DELETE FROM taxamaps WHERE ' . $whereStr . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         return $retVal;
     }
 
-    public function getTaxonMapData($mid): array
+    public function getTaxonMapData($idType, $id): array
     {
         $retArr = array();
+        $whereStr = '';
+        if($idType === 'mid'){
+            $whereStr = 'mid = ' . (int)$id . ' ';
+        }
+        elseif($idType === 'tid'){
+            $whereStr = 'tid = ' . (int)$id . ' ';
+        }
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM taxamaps WHERE mid = ' . (int)$mid . ' ';
+            'FROM taxamaps WHERE ' . $whereStr . ' ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);

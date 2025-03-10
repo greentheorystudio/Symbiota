@@ -17,8 +17,9 @@ if($action && SanitizerService::validateInternalRequest()){
         $includeSubtaxa = array_key_exists('includeSubtaxa',$_POST) && (int)$_POST['includeSubtaxa'] === 1;
         echo json_encode($taxonMaps->getTaxonMaps($_POST['tid'], $includeSubtaxa));
     }
-    elseif($action === 'deleteTaxonMapRecord' && $isEditor && $mid){
-        echo $taxonMaps->deleteTaxonMapRecord($mid);
+    elseif($action === 'deleteTaxonMapRecord' && $isEditor  && array_key_exists('idType', $_POST) && ($mid || array_key_exists('tid', $_POST))){
+        $id = $_POST['idType'] === 'mid' ? $mid : (int)$_POST['tid'];
+        echo $taxonMaps->deleteTaxonMapRecord($_POST['idType'], $id);
     }
     elseif($action === 'createTaxonMapRecord' && $isEditor && array_key_exists('map', $_POST)){
         echo $taxonMaps->createTaxonMapRecord(json_decode($_POST['map'], true));

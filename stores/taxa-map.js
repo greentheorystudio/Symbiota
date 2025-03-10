@@ -59,6 +59,7 @@ const useTaxaMapStore = Pinia.defineStore('taxa-map', {
         deleteTaxaMapRecord(callback) {
             const formData = new FormData();
             formData.append('mid', this.taxaMapId.toString());
+            formData.append('idType', 'mid');
             formData.append('action', 'deleteTaxonMapRecord');
             fetch(taxonMapApiUrl, {
                 method: 'POST',
