@@ -29,14 +29,41 @@ class TaxonVernaculars{
         $this->conn->close();
     }
 
-    public function addTaxonCommonName($tid, $name, $langId): bool
+    public function createTaxonCommonNameRecord($data): int
     {
-        if($tid && $name && $langId){
-            $sql = 'INSERT IGNORE INTO taxavernaculars(TID,VernacularName,langid) VALUES('.
-                (int)$tid . ',"' . SanitizerService::cleanInStr($this->conn, $name) . '",' . (int)$langId . ')';
-            return $this->conn->query($sql);
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'vid' && array_key_exists($field, $data)){
+                if($field === 'source'){
+                    $fieldNameArr[] = '`' . $field . '`';
+                }
+                else{
+                    $fieldNameArr[] = $field;
+                }
+                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+            }
         }
-        return false;
+        $fieldNameArr[] = 'initialtimestamp';
+        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+        $sql = 'INSERT IGNORE INTO taxavernaculars(' . implode(',', $fieldNameArr) . ') '.
+            'VALUES (' . implode(',', $fieldValueArr) . ') ';
+        //echo "<div>".$sql."</div>";
+        if($this->conn->query($sql)){
+            $newID = $this->conn->insert_id;
+        }
+        return $newID;
+    }
+
+    public function deleteTaxonCommonNameRecord($vid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM taxavernaculars WHERE vid = ' . (int)$vid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
     }
 
     public function getAutocompleteVernacularList($opts): array
@@ -45,10 +72,10 @@ class TaxonVernaculars{
         $term = array_key_exists('term', $opts) ? SanitizerService::cleanInStr($this->conn, $opts['term']) : null;
         if($term){
             $limit = array_key_exists('limit', $opts) ? (int)$opts['limit'] : null;
-            $sql = 'SELECT DISTINCT v.VernacularName '.
+            $sql = 'SELECT DISTINCT v.vernacularname '.
                 'FROM taxavernaculars AS v '.
-                'WHERE v.VernacularName LIKE "%' . $term . '%" '.
-                'ORDER BY v.VernacularName ';
+                'WHERE v.vernacularname LIKE "%' . $term . '%" '.
+                'ORDER BY v.vernacularname ';
             if($limit){
                 $sql .= 'LIMIT ' . $limit . ' ';
             }
@@ -72,18 +99,22 @@ class TaxonVernaculars{
     {
         $retArr = array();
         if($parentTid){
-            $sql = 'SELECT DISTINCT VID, VernacularName FROM taxavernaculars '.
-                'WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
-                'ORDER BY VernacularName '.
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' FROM taxavernaculars '.
+                'WHERE tid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
+                'ORDER BY vernacularname '.
                 'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
             //echo $sql;
             if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $rIndex => $row){
                     $nodeArr = array();
-                    $nodeArr['vid'] = $row['VID'];
-                    $nodeArr['vernacularname'] = $row['VernacularName'];
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
                     $retArr[] = $nodeArr;
                     unset($rows[$rIndex]);
                 }
@@ -95,14 +126,18 @@ class TaxonVernaculars{
     public function getCommonNamesFromTid($tid): array
     {
         $retArr = array();
-        $sql = 'SELECT VernacularName, langid FROM taxavernaculars WHERE TID = ' . (int)$tid . ' ';
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM taxavernaculars WHERE tid = ' . (int)$tid . ' ';
         if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
                 $nodeArr = array();
-                $nodeArr['commonname'] = $row['VernacularName'];
-                $nodeArr['langid'] = $row['langid'];
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
             }
@@ -113,8 +148,8 @@ class TaxonVernaculars{
     public function getHighestRankingTidByVernacular($vernacular): int
     {
         $returnVal = 0;
-        $sql = 'SELECT v.tid FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.TID = t.TID '.
-            'WHERE v.VernacularName = "' . SanitizerService::cleanInStr($this->conn, $vernacular) . '" ORDER BY t.RankId LIMIT 1 ';
+        $sql = 'SELECT v.tid FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.tid = t.tid '.
+            'WHERE v.vernacularname = "' . SanitizerService::cleanInStr($this->conn, $vernacular) . '" ORDER BY t.rankid LIMIT 1 ';
         $result = $this->conn->query($sql);
         if($row = $result->fetch_array(MYSQLI_ASSOC)){
             $returnVal = $row['tid'];
@@ -140,9 +175,9 @@ class TaxonVernaculars{
     {
         $whereStr = '';
         $sql = 'SELECT DISTINCT t.tid, t.sciname ' .
-            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.TID = v.TID ';
+            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid ';
         foreach($vernaculars as $name){
-            $whereStr .= "OR v.VernacularName = '" . SanitizerService::cleanInStr($this->conn, $name) . "' ";
+            $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, $name) . "' ";
         }
         $sql .= 'WHERE ' . substr($whereStr,3) . ' ';
         //echo "<div>sql: ".$sql."</div>";

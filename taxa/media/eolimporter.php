@@ -225,8 +225,8 @@ if(!$GLOBALS['SYMB_UID']) {
                     function addTaxonDescriptionStatement(statement) {
                         const formData = new FormData();
                         formData.append('statement', JSON.stringify(statement));
-                        formData.append('action', 'addTaxonDescriptionStatement');
-                        fetch(taxonDescriptionApiUrl, {
+                        formData.append('action', 'createTaxonDescriptionStatementRecord');
+                        fetch(taxonDescriptionStatementApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -243,8 +243,8 @@ if(!$GLOBALS['SYMB_UID']) {
                     function addTaxonDescriptionTab(descTab, statement = null) {
                         const formData = new FormData();
                         formData.append('description', JSON.stringify(descTab));
-                        formData.append('action', 'addTaxonDescriptionTab');
-                        fetch(taxonDescriptionApiUrl, {
+                        formData.append('action', 'createTaxonDescriptionBlockRecord');
+                        fetch(taxonDescriptionBlockApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -873,7 +873,7 @@ if(!$GLOBALS['SYMB_UID']) {
                             if(selectedMediaType.value === 'description'){
                                 formData.append('tid', currentTaxon.value['tid']);
                                 formData.append('action', 'getTaxonDescriptions');
-                                dataSource = taxonDescriptionApiUrl;
+                                dataSource = taxonDescriptionBlockApiUrl;
                             }
                             else{
                                 formData.append('property', 'tid');

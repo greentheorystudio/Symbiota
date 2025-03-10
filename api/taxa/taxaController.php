@@ -58,9 +58,7 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], true)));
     }
     elseif($action === 'getTaxonFromTid' && array_key_exists('tid',$_POST)){
-        $includeCommonNames = array_key_exists('includeCommonNames',$_POST) && $_POST['includeCommonNames'];
-        $includeChildren = array_key_exists('includeChildren',$_POST) && $_POST['includeChildren'];
-        echo json_encode($taxa->getTaxonFromTid($_POST['tid'], $includeCommonNames, $includeChildren));
+        echo json_encode($taxa->getTaxonFromTid($_POST['tid']));
     }
     elseif($isEditor && $action === 'updateTaxonTidAccepted' && $tId && array_key_exists('tidaccepted',$_POST) && (int)$_POST['tidaccepted']){
         $kingdom = array_key_exists('kingdom',$_POST) ? (int)$_POST['kingdom'] : 0;
@@ -72,10 +70,9 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($isEditor && $action === 'editTaxonParent' && $tId && array_key_exists('parenttid',$_POST) && (int)$_POST['parenttid']){
         echo $taxa->editTaxonParent((int)$_POST['parenttid'], $tId);
     }
-    elseif($action === 'getTaxonFromSciname' && array_key_exists('sciname',$_POST) && array_key_exists('kingdomid',$_POST)){
-        $includeCommonNames = array_key_exists('includeCommonNames',$_POST) && $_POST['includeCommonNames'];
-        $includeChildren = array_key_exists('includeChildren',$_POST) && $_POST['includeChildren'];
-        echo json_encode($taxa->getTaxonFromSciname($_POST['sciname'], (int)$_POST['kingdomid'], $includeCommonNames, $includeChildren));
+    elseif($action === 'getTaxonFromSciname' && array_key_exists('sciname',$_POST)){
+        $kingdomId = array_key_exists('kingdomid', $_POST) ? (int)$_POST['kingdomid'] : null;
+        echo json_encode($taxa->getTaxonFromSciname($_POST['sciname'], $kingdomId));
     }
     elseif($isEditor && $action === 'setUpdateFamiliesAccepted' && array_key_exists('parenttid', $_POST)){
         echo $taxa->setUpdateFamiliesAccepted((int)$_POST['parenttid']);

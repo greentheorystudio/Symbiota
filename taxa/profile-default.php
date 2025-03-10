@@ -1,3 +1,5 @@
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -113,6 +115,7 @@
         setup() {
             const { hideWorking, showWorking } = useCore();
             const baseStore = useBaseStore();
+            const taxaStore = useTaxaStore();
 
             const centralImage = Vue.ref(null);
             const clientRoot = baseStore.getClientRoot;
@@ -278,7 +281,7 @@
                 const formData = new FormData();
                 formData.append('tid', taxon.value['tid']);
                 formData.append('action', 'getTaxonDescriptions');
-                fetch(taxonDescriptionApiUrl, {
+                fetch(taxonDescriptionBlockApiUrl, {
                     method: 'POST',
                     body: formData
                 })
