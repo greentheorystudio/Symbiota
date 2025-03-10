@@ -113,6 +113,10 @@ class Taxa{
     {
         $retVal = 1;
         if($tid){
+            $retVal = (new Images)->deleteAssociatedImageRecords('tid', $tid);
+            if($retVal){
+                $retVal = (new Media)->deleteAssociatedMediaRecords('tid', $tid);
+            }
             $sql = 'DELETE FROM taxaenumtree WHERE tid = ' . (int)$tid . ' OR parenttid = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){

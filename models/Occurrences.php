@@ -582,10 +582,10 @@ class Occurrences{
                 $retVal = (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
             }
             if($retVal){
-                $retVal = (new Images)->deleteOccurrenceImageRecords($idType, $id);
+                $retVal = (new Images)->deleteAssociatedImageRecords($idType, $id);
             }
             if($retVal){
-                $retVal = (new Media)->deleteOccurrenceMediaRecords($idType, $id);
+                $retVal = (new Media)->deleteAssociatedMediaRecords($idType, $id);
             }
             if($retVal){
                 $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);

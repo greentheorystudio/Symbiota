@@ -37,7 +37,7 @@ const useTaxaDescriptionStatementStore = Pinia.defineStore('taxa-description-sta
             return state.taxaDescriptionStatementId;
         },
         getTaxaDescriptionStatementValid(state) {
-            return (state.taxaVernacularEditData['tdbid'] && state.taxaVernacularEditData['statement']);
+            return (state.taxaDescriptionStatementEditData['tdbid'] && state.taxaDescriptionStatementEditData['statement']);
         }
     },
     actions: {
