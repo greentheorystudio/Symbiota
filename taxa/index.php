@@ -5,10 +5,6 @@ header('X-Frame-Options: SAMEORIGIN');
 
 $taxonValue = array_key_exists('taxon', $_REQUEST) ? htmlspecialchars($_REQUEST['taxon']) : '';
 $clValue = array_key_exists('cl', $_REQUEST) ? (int)$_REQUEST['cl'] : 0;
-
-if(!$taxonValue && array_key_exists('quicksearchtaxon', $_REQUEST)){
-    $taxonValue = htmlspecialchars($_REQUEST['quicksearchtaxon']);
-}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

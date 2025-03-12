@@ -239,6 +239,48 @@ class Media{
         return $retArr;
     }
 
+    public function getTaxonArrDisplayMediaData($tidArr, $includeOccurrence = false, $limitPerTaxon = null, $sortsequenceLimit = null): array
+    {
+        $returnArr = array();
+        if($tidArr && is_array($tidArr) && count($tidArr) > 0){
+            $sql = 'SELECT m.mediaid, t.tidaccepted AS tid, m.occid, m.accessuri, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
+                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
+                'LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
+            if(!$includeOccurrence){
+                $sql .= 'AND ISNULL(m.occid) ';
+            }
+            if($sortsequenceLimit && (int)$sortsequenceLimit > 0){
+                $sql .= 'AND m.sortsequence <= ' . (int)$sortsequenceLimit . ' ';
+            }
+            $sql .= 'ORDER BY m.sortsequence ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if((int)$row['securitystatus'] !== 1 || (int)$row['occid'] === 0){
+                        if(!array_key_exists($row['tid'], $returnArr)){
+                            $returnArr[$row['tid']] = array();
+                        }
+                        if((int)$limitPerTaxon === 0 || count($returnArr[$row['tid']]) < (int)$limitPerTaxon){
+                            $nodeArr = array();
+                            foreach($fields as $val){
+                                $name = $val->name;
+                                $nodeArr[$name] = $row[$name];
+                            }
+                            $returnArr[$row['tid']][] = $nodeArr;
+                        }
+                    }
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $returnArr;
+    }
+
     public function updateMediaRecord($medId, $editData): int
     {
         $retVal = 0;
