@@ -243,11 +243,12 @@ class Media{
     {
         $returnArr = array();
         if($tidArr && is_array($tidArr) && count($tidArr) > 0){
-            $sql = 'SELECT m.mediaid, t.tidaccepted AS tid, m.occid, m.accessuri, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
-                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+            $sql = 'SELECT DISTINCT m.mediaid, t.tidaccepted AS tid, m.occid, m.accessuri, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
+                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers, te.parenttid '.
                 'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
-                'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
+                'LEFT JOIN taxaenumtree AS te ON t.tid = te.tid '.
+                'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') OR t.tidaccepted IN(SELECT tid FROM taxaenumtree WHERE parenttid IN(' . implode(',', $tidArr) . ')) ';
             if(!$includeOccurrence){
                 $sql .= 'AND ISNULL(m.occid) ';
             }
@@ -262,16 +263,17 @@ class Media{
                 $result->free();
                 foreach($rows as $index => $row){
                     if((int)$row['securitystatus'] !== 1 || (int)$row['occid'] === 0){
-                        if(!array_key_exists($row['tid'], $returnArr)){
-                            $returnArr[$row['tid']] = array();
+                        $tid = in_array($row['tid'], $tidArr, true) ? $row['tid'] : $row['parenttid'];
+                        if(!array_key_exists($tid, $returnArr)){
+                            $returnArr[$tid] = array();
                         }
-                        if((int)$limitPerTaxon === 0 || count($returnArr[$row['tid']]) < (int)$limitPerTaxon){
+                        if((int)$limitPerTaxon === 0 || count($returnArr[$tid]) < (int)$limitPerTaxon){
                             $nodeArr = array();
                             foreach($fields as $val){
                                 $name = $val->name;
                                 $nodeArr[$name] = $row[$name];
                             }
-                            $returnArr[$row['tid']][] = $nodeArr;
+                            $returnArr[$tid][] = $nodeArr;
                         }
                     }
                     unset($rows[$index]);

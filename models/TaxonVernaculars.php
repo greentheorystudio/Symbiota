@@ -127,7 +127,7 @@ class TaxonVernaculars{
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM taxavernaculars WHERE tid = ' . (int)$tid . ' ';
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM taxavernaculars WHERE tid = ' . (int)$tid . ' ORDER BY vernacularname ';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);

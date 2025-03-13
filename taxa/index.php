@@ -4,7 +4,6 @@ header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $taxonValue = array_key_exists('taxon', $_REQUEST) ? htmlspecialchars($_REQUEST['taxon']) : '';
-$clValue = array_key_exists('cl', $_REQUEST) ? (int)$_REQUEST['cl'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -30,7 +29,6 @@ $clValue = array_key_exists('cl', $_REQUEST) ? (int)$_REQUEST['cl'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const TAXON_VAL = '<?php echo $taxonValue; ?>';
-            const CL_VAL = <?php echo $clValue; ?>;
         </script>
     </head>
     <body>

@@ -20,14 +20,99 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             hybrid: null,
             securitystatus: null
         },
+        subtaxaImageData: {},
+        taxaAcceptedData: null,
+        taxaChildren: [],
         taxaData: {},
         taxaEditData: {},
+        taxaFuzzyMatches: [],
         taxaId: 0,
-        taxaUpdateData: {}
+        taxaIdentifiers: [],
+        taxaImageArr: [],
+        taxaImageCount: 0,
+        taxaMediaArr: [],
+        taxaParentData: {},
+        taxaStr: '',
+        taxaSynonyms: [],
+        taxaUpdateData: {},
+        taxaDescriptionBlockStore: useTaxaDescriptionBlockStore(),
+        taxaDescriptionStatementStore: useTaxaDescriptionStatementStore(),
+        taxaMapStore: useTaxaMapStore(),
+        taxaVernacularStore: useTaxaVernacularStore()
     }),
     getters: {
+        getAcceptedTaxonData(state) {
+            if(state.taxaAcceptedData){
+                return state.taxaAcceptedData;
+            }
+            else{
+                return state.taxaData;
+            }
+        },
+        getAcceptedTaxonTid(state) {
+            if(state.taxaAcceptedData){
+                return state.taxaAcceptedData['tid'];
+            }
+            else{
+                return state.taxaData['tid'];
+            }
+        },
+        getSubtaxaImageData(state) {
+            return state.subtaxaImageData;
+        },
+        getSubtaxaTidArr(state) {
+            const returnArr = [];
+            state.taxaChildren.forEach((child) => {
+                returnArr.push(child['tid']);
+            });
+            return returnArr;
+        },
+        getTaxaAcceptedData(state) {
+            return state.taxaAcceptedData;
+        },
+        getTaxaChildren(state) {
+            return state.taxaChildren;
+        },
         getTaxaData(state) {
             return state.taxaEditData;
+        },
+        getTaxaDescriptionBlockArr(state) {
+            return state.taxaDescriptionBlockStore.getTaxaDescriptionBlockArr;
+        },
+        getTaxaDescriptionDisplayArr(state) {
+            const displayArr = [];
+            if(state.taxaDescriptionBlockStore.getTaxaDescriptionBlockArr.length > 0 && Object.keys(state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData).length > 0){
+                state.taxaDescriptionBlockStore.getTaxaDescriptionBlockArr.forEach((desc) => {
+                    if(state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData.hasOwnProperty(desc['tdbid']) && state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData[desc['tdbid']].length > 0){
+                        const description = Object.assign({}, desc);
+                        if((!description['source'] || description['source'] === '') && description['sourceurl'] && description['sourceurl'] !== ''){
+                            description['source'] = description['sourceurl'];
+                        }
+                        description['stmts'] = [];
+                        state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData[desc['tdbid']].forEach((stmt) => {
+                            if(stmt['statement'] && stmt['statement'] !== ''){
+                                const statement = Object.assign({}, stmt);
+                                if(statement['statement'].startsWith('<p>')){
+                                    statement['statement'] = statement['statement'].slice(3);
+                                }
+                                if(statement['statement'].endsWith('</p>')){
+                                    statement['statement'] = statement['statement'].substring(0, statement['statement'].length - 4);
+                                }
+                                if(Number(statement['displayheader']) === 1 && statement['heading'] && statement['heading'] !== ''){
+                                    const headingText = '<span class="desc-statement-heading">' + statement['heading'] + '</span>: ';
+                                    statement['statement'] = headingText + statement['statement'];
+                                }
+                                description['stmts'].push(statement);
+                            }
+                        });
+                        displayArr.push(description);
+                    }
+                });
+            }
+            return displayArr;
+        },
+        getTaxaDescriptionStatementData(state) {
+            return state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData;
         },
         getTaxaEditsExist(state) {
             let exist = false;
@@ -40,18 +125,60 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             }
             return exist;
         },
+        getTaxaFuzzyMatches(state) {
+            return state.taxaFuzzyMatches;
+        },
         getTaxaID(state) {
             return state.taxaId;
+        },
+        getTaxaIdentifiers(state) {
+            return state.taxaIdentifiers;
+        },
+        getTaxaImageArr(state) {
+            return state.taxaImageArr;
+        },
+        getTaxaImageCount(state) {
+            return state.taxaImageCount;
+        },
+        getTaxaMapArr(state) {
+            return state.taxaMapStore.getTaxaMapArr;
+        },
+        getTaxaMediaArr(state) {
+            return state.taxaMediaArr;
+        },
+        getTaxaParentData(state) {
+            return state.taxaParentData;
+        },
+        getTaxaStr(state) {
+            return state.taxaStr;
+        },
+        getTaxaSynonyms(state) {
+            return state.taxaSynonyms;
         },
         getTaxaValid(state) {
             return (
                 (state.taxaEditData['kingdomid'] && state.taxaEditData['sciname'])
             );
+        },
+        getTaxaVernacularArr(state) {
+            return state.taxaVernacularStore.getTaxaVernacularArr;
         }
     },
     actions: {
         clearTaxaData() {
+            this.taxaStr = '';
             this.taxaData = Object.assign({}, this.blankTaxaRecord);
+            this.taxaAcceptedData = null;
+            this.taxaParentData = Object.assign({}, {});
+            this.taxaIdentifiers.length = 0;
+            this.taxaSynonyms.length = 0;
+            this.taxaChildren.length = 0;
+            this.taxaFuzzyMatches.length = 0;
+            this.subtaxaImageData = Object.assign({}, {});
+            this.taxaImageArr.length = 0;
+            this.taxaImageCount = 0;
+            this.taxaMediaArr.length = 0;
+            this.taxaId = 0;
         },
         createTaxaRecord(callback) {
             const formData = new FormData();
@@ -87,14 +214,19 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 callback(Number(res));
             });
         },
-        setTaxa(tid, callback = null) {
+        setTaxa(str, callback = null) {
             this.clearTaxaData();
-            if(Number(tid) > 0){
-                this.taxaEditData = Object.assign({}, {});
-                this.taxaId = Number(tid);
+            if(str.toString().length > 0){
+                this.taxaStr = str;
                 const formData = new FormData();
-                formData.append('tid', this.taxaId.toString());
-                formData.append('action', 'getTaxonFromTid');
+                if(Number(this.taxaStr) > 0){
+                    formData.append('tid', this.taxaStr.toString());
+                    formData.append('action', 'getTaxonFromTid');
+                }
+                else{
+                    formData.append('sciname', this.taxaStr.toString());
+                    formData.append('action', 'getTaxonFromSciname');
+                }
                 fetch(taxaApiUrl, {
                     method: 'POST',
                     body: formData
@@ -103,10 +235,23 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                     return response.ok ? response.json() : null;
                 })
                 .then((resObj) => {
-                    this.taxaData = Object.assign({}, resObj);
-                    this.taxaEditData = Object.assign({}, this.taxaData);
+                    if(resObj.hasOwnProperty('tid') && Number(resObj['tid'] > 0)){
+                        this.taxaEditData = Object.assign({}, {});
+                        this.taxaId = Number(resObj['tid']);
+                        this.taxaData = Object.assign({}, resObj);
+                        this.taxaEditData = Object.assign({}, this.taxaData);
+                        if(resObj['acceptedTaxon']){
+                            this.taxaAcceptedData = Object.assign({}, resObj['acceptedTaxon']);
+                        }
+                        this.taxaParentData = Object.assign({}, resObj['parentTaxon']);
+                        this.taxaIdentifiers = resObj['identifiers'];
+                        this.taxaSynonyms = resObj['synonyms'];
+                        this.taxaChildren = resObj['children'];
+                        this.taxaVernacularStore.setTaxaVernacularArr(this.getAcceptedTaxonTid);
+                        this.taxaMapStore.setTaxaMapArr(this.getAcceptedTaxonTid, true);
+                    }
                     if(callback){
-                        callback();
+                        callback(this.taxaId);
                     }
                 });
             }
@@ -116,6 +261,79 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                     callback();
                 }
             }
+        },
+        setFuzzyMatches() {
+            const formData = new FormData();
+            formData.append('sciname', this.taxaStr.toString());
+            formData.append('lev', '2');
+            formData.append('action', 'getSciNameFuzzyMatches');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                this.taxaFuzzyMatches = resObj;
+            });
+        },
+        setSubtaxaImageData() {
+            const formData = new FormData();
+            formData.append('tidArr', JSON.stringify(this.getSubtaxaTidArr));
+            formData.append('includeoccurrence', '1');
+            formData.append('limitPerTaxon', '1');
+            formData.append('sortsequenceLimit', '50');
+            formData.append('action', 'getTaxonArrDisplayImageData');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                this.subtaxaImageData = Object.assign({}, resObj);
+            });
+        },
+        setTaxaDescriptionData() {
+            this.taxaDescriptionBlockStore.setTaxaDescriptionBlockArr(this.getAcceptedTaxonTid);
+            this.taxaDescriptionStatementStore.setTaxaDescriptionStatementArr(this.getAcceptedTaxonTid);
+        },
+        setTaxaImageArr() {
+            const formData = new FormData();
+            formData.append('tidArr', JSON.stringify([this.getAcceptedTaxonTid]));
+            formData.append('includeoccurrence', '1');
+            formData.append('limitPerTaxon', '100');
+            formData.append('action', 'getTaxonArrDisplayImageData');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                this.taxaImageCount = resObj['count'];
+                this.taxaImageArr = resObj[this.getAcceptedTaxonTid];
+            });
+        },
+        setTaxaMediaArr() {
+            const formData = new FormData();
+            formData.append('tidArr', JSON.stringify([this.getAcceptedTaxonTid]));
+            formData.append('includeoccurrence', '1');
+            formData.append('limitPerTaxon', '100');
+            formData.append('action', 'getTaxonArrDisplayMediaData');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                this.taxaMediaArr = resObj[this.getAcceptedTaxonTid];
+            });
         },
         updateTaxaEditData(key, value) {
             this.taxaEditData[key] = value;

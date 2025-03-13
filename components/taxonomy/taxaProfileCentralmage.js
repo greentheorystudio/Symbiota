@@ -1,16 +1,8 @@
 const taxaProfileCentralImage = {
     props: {
-        centralImage: {
-            type: Object,
-            default: {}
-        },
         isEditor: {
             type: Boolean,
             default: false
-        },
-        taxon: {
-            type: Object,
-            default: {}
         }
     },
     template: `
@@ -21,7 +13,7 @@ const taxaProfileCentralImage = {
                         <q-img :src="centralImage.url" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
-                                <template v-if="taxon.sciName !== centralImage.sciname">
+                                <template v-if="taxon.sciname !== centralImage.sciname">
                                     <a :href="(clientRoot + '/taxa/index.php?taxon=' + centralImage.tid)"><span class="text-italic">{{ centralImage.sciname }}</span>. </a>
                                 </template>
                                 <span v-if="centralImage.photographer">Photo by: {{ centralImage.photographer }}. </span><span v-html="centralImage.caption"></span>
@@ -43,15 +35,24 @@ const taxaProfileCentralImage = {
         </q-card>
     `,
     setup(props, context) {
-        const store = useBaseStore();
-        const clientRoot = store.getClientRoot;
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const centralImage = Vue.computed(() => {
+            return (taxaImageArr.value && taxaImageArr.value.length > 0) ? taxaImageArr.value[0] : null;
+        });
+        const clientRoot = baseStore.getClientRoot;
+        const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+        const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
 
         function toggleImageCarousel(index) {
             context.emit('update:set-image-carousel', index);
         }
 
         return {
+            centralImage,
             clientRoot,
+            taxon,
             toggleImageCarousel
         }
     }
