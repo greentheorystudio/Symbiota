@@ -1632,6 +1632,18 @@ const occurrenceDataUploadModule = {
                         const wktFormat = new ol.format.WKT();
                         featureData['footprintwkt'] = wktFormat.writeGeometry(featureGeometry);
                         sourceDataFieldsFlatFile.value['footprintwkt'] = 'footprintwkt';
+                        if(profileConfigurationData.value['createPolygonCentroidCoordinates']){
+                            const geoJSONFormat = new ol.format.GeoJSON();
+                            const geojsonStr = geoJSONFormat.writeGeometry(featureGeometry);
+                            const polyCoords = JSON.parse(geojsonStr).coordinates;
+                            const centroid = turf.centroid(turf.polygon(polyCoords));
+                            if(centroid && centroid.hasOwnProperty('geometry')){
+                                featureData['centroidlatitude'] = centroid['geometry']['coordinates'][1];
+                                featureData['centroidlongitude'] = centroid['geometry']['coordinates'][0];
+                                sourceDataFieldsFlatFile.value['centroidlatitude'] = 'centroidlatitude';
+                                sourceDataFieldsFlatFile.value['centroidlongitude'] = 'centroidlongitude';
+                            }
+                        }
                     }
                     else if((geoType === 'Point' || geoType === 'MultiPoint') && (!featureData.hasOwnProperty('decimallatitude') || !featureData.hasOwnProperty('decimallongitude') || !featureData['decimallatitude'] || !featureData['decimallongitude'])){
                         const geoJSONFormat = new ol.format.GeoJSON();
