@@ -38,6 +38,7 @@ const occurrenceMediaFileUploadModule = {
         'selector-input-element': selectorInputElement
     },
     setup(props) {
+        const { showNotification } = useCore();
         const collectionMediaUploadParametersStore = useCollectionMediaUploadParametersStore();
         const collectionStore = useCollectionStore();
 
@@ -49,7 +50,7 @@ const occurrenceMediaFileUploadModule = {
         const showCollectionMediaUploadParametersEditorPopup = Vue.ref(false);
 
         function processMediaUpdate() {
-
+            showNotification('positive','Upload successful.');
         }
 
         function processParameterProfileSelection(spprid) {

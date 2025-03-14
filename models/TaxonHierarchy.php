@@ -37,6 +37,21 @@ class TaxonHierarchy{
         return $status;
     }
 
+    public function getParentTidArr($tid): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT parenttid FROM taxaenumtree WHERE tid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[] = $row['parenttid'];
+                unset($rows[$index]);
+            }
+        }
+        return $returnArr;
+    }
+
     public function getSubtaxaTidArrFromTid($tid): array
     {
         $retArr = array();

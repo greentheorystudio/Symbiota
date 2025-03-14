@@ -450,26 +450,27 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 body: formData
             })
             .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                    if(res && Number(res) > 0){
-                        if(this.occidArr[(this.occidArr.length - 1)] === 0){
-                            this.occidArr.splice((this.occidArr.length - 1), 1);
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) > 0){
+                    if(this.occidArr[(this.occidArr.length - 1)] === 0){
+                        this.occidArr.splice((this.occidArr.length - 1), 1);
+                    }
+                    this.occidArr.push(Number(res));
+                    if(this.getOccurrenceMofEditsExist){
+                        this.processMofEditData('occurrence', null, Number(res));
+                    }
+                    if(this.occurrenceEntryFormat !== 'observation'){
+                        if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
+                            this.setCurrentOccurrenceRecord(Number(res));
                         }
-                        this.occidArr.push(Number(res));
-                        if(this.getOccurrenceMofEditsExist){
-                            this.processMofEditData('occurrence', null, Number(res));
-                        }
-                        if(this.occurrenceEntryFormat !== 'observation'){
-                            if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
-                                this.setCurrentOccurrenceRecord(Number(res));
-                            }
-                            else{
-                                this.setCurrentOccurrenceRecord(0);
-                            }
+                        else{
+                            this.setCurrentOccurrenceRecord(0);
                         }
                     }
-                });
+                }
             });
         },
         deleteOccurrenceDeterminationRecord(callback = null) {
@@ -495,7 +496,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         deleteOccurrenceRecord(occid, callback) {
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());
-            formData.append('occid', occid);
+            formData.append('occid', occid.toString());
             formData.append('action', 'deleteOccurrenceRecord');
             fetch(occurrenceApiUrl, {
                 method: 'POST',

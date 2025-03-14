@@ -28,7 +28,7 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getOccurrenceDataLock' && $isEditor && $occid){
         echo json_encode($occurrences->getLock($occid));
     }
-    elseif($action === 'createOccurrenceRecord' && $isEditor){
+    elseif($action === 'createOccurrenceRecord' && $isEditor && array_key_exists('occurrence', $_POST)){
         echo $occurrences->createOccurrenceRecord(json_decode($_POST['occurrence'], true));
     }
     elseif($action === 'updateOccurrenceRecord' && $occid && $isEditor && array_key_exists('occurrenceData', $_POST)){

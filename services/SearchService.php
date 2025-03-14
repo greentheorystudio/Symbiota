@@ -72,6 +72,32 @@ class SearchService {
         return $returnArr;
     }
 
+    public function getSearchTidArr($searchTermsArr, $options): array
+    {
+        $returnArr = array();
+        if($searchTermsArr && $options){
+            $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
+            if($sqlWhere){
+                $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
+                $sql = 'SELECT DISTINCT t.tidaccepted ';
+                $sql .= $this->setFromSql($options['schema']);
+                $sql .= $this->setTableJoinsSql($searchTermsArr);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                $sql .= 'AND t.tidaccepted IS NOT NULL ';
+                //echo '<div>Tid sql: ' . $sql . '</div>';
+                if($result = $this->conn->query($sql)){
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $index => $row){
+                        $returnArr[] = $row['tidaccepted'];
+                        unset($rows[$index]);
+                    }
+                }
+            }
+        }
+        return $returnArr;
+    }
+
     public function prepareImageUploadDateWhereSql($searchTermsArr): string
     {
         $tempArr = array();

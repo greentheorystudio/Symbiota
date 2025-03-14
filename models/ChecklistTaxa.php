@@ -8,20 +8,16 @@ class ChecklistTaxa{
 	private $conn;
 
     private $fields = array(
+        "cltlid" => array("dataType" => "number", "length" => 10),
         "tid" => array("dataType" => "number", "length" => 10),
         "clid" => array("dataType" => "number", "length" => 10),
-        "morphospecies" => array("dataType" => "string", "length" => 45),
-        "familyoverride" => array("dataType" => "number", "length" => 50),
         "habitat" => array("dataType" => "string", "length" => 250),
         "abundance" => array("dataType" => "string", "length" => 50),
         "notes" => array("dataType" => "string", "length" => 2000),
-        "explicitexclude" => array("dataType" => "number", "length" => 6),
         "source" => array("dataType" => "string", "length" => 250),
         "nativity" => array("dataType" => "string", "length" => 50),
         "endemic" => array("dataType" => "string", "length" => 45),
         "invasive" => array("dataType" => "string", "length" => 45),
-        "internalnotes" => array("dataType" => "string", "length" => 250),
-        "dynamicproperties" => array("dataType" => "text", "length" => 0),
         "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
     );
 
@@ -33,6 +29,26 @@ class ChecklistTaxa{
  	public function __destruct(){
         $this->conn->close();
 	}
+
+    public function batchCreateChecklistTaxaRecordsFromTidArr($clid, $tidArr): int
+    {
+        $recordsCreated = 0;
+        $valueArr = array();
+        if($clid && count($tidArr) > 0){
+            foreach($tidArr as $tid){
+                $valueArr[] = '(' . (int)$clid . ', ' . (int)$tid . ', "' . date('Y-m-d H:i:s') . '")';
+            }
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO fmchklsttaxalink(clid, tid, initialtimestamp) '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $recordsCreated;
+    }
 
     public function createChecklistTaxonRecord($clid, $data): int
     {
@@ -58,10 +74,10 @@ class ChecklistTaxa{
         return $newID;
     }
 
-    public function deleteChecklistTaxonRecord($clid, $tid): int
+    public function deleteChecklistTaxonRecord($cltlid): int
     {
         $retVal = 1;
-        $sql = 'DELETE FROM fmchklsttaxalink WHERE tid = ' . (int)$tid . ' AND clid = ' . (int)$clid . ' ';
+        $sql = 'DELETE FROM fmchklsttaxalink WHERE cltlid = ' . (int)$cltlid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
@@ -73,11 +89,16 @@ class ChecklistTaxa{
         $retArr = array();
         $tempArr = array();
         if(count($clidArr) > 0){
-            $sql = 'SELECT t.tid, t.sciname, t.author, t.family, c.habitat, c.abundance, c.notes '.
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
+            $fieldNameArr[] = 't.sciname';
+            $fieldNameArr[] = 't.author';
+            $fieldNameArr[] = 't.family';
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
                 'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
                 $tidArr = array();
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -86,13 +107,15 @@ class ChecklistTaxa{
                         $tidArr[] = (int)$row['tid'];
                     }
                     $nodeArr = array();
-                    $nodeArr['tid'] = $row['tid'];
-                    $nodeArr['sciname'] = $row['sciname'];
-                    $nodeArr['author'] = $row['author'];
-                    $nodeArr['family'] = $row['family'] ?: '[Incertae Sedis]';
-                    $nodeArr['habitat'] = $row['habitat'];
-                    $nodeArr['abundance'] = $row['abundance'];
-                    $nodeArr['notes'] = $row['notes'];
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        if($name === 'family'){
+                            $retArr[$name] = $row['family'] ?: '[Incertae Sedis]';
+                        }
+                        else{
+                            $retArr[$name] = $row[$name];
+                        }
+                    }
                     if($includeKeyData){
                         $tempArr[] = $nodeArr;
                     }
@@ -136,18 +159,18 @@ class ChecklistTaxa{
         return $retArr;
     }
 
-    public function updateChecklistTaxonRecord($clid, $tid, $editData): int
+    public function updateChecklistTaxonRecord($cltlid, $editData): int
     {
         $retVal = 0;
         $sqlPartArr = array();
-        if($clid && $tid && $editData){
+        if($cltlid && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'initialtimestamp' && array_key_exists($field, $editData)){
                     $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                 }
             }
             $sql = 'UPDATE fmchklsttaxalink SET ' . implode(', ', $sqlPartArr) . ' '.
-                'WHERE tid = ' . (int)$tid . ' AND clid = ' . (int)$clid . ' ';
+                'WHERE cltlid = ' . (int)$cltlid . ' ';
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;

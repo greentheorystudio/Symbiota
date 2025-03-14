@@ -3,6 +3,7 @@ include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/Occurrences.php');
 include_once(__DIR__ . '/TaxonHierarchy.php');
 include_once(__DIR__ . '/TaxonKingdoms.php');
+include_once(__DIR__ . '/TaxonMaps.php');
 include_once(__DIR__ . '/TaxonVernaculars.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -113,19 +114,29 @@ class Taxa{
     {
         $retVal = 1;
         if($tid){
+            $retVal = (new Images)->deleteAssociatedImageRecords('tid', $tid);
+            if($retVal){
+                $retVal = (new Media)->deleteAssociatedMediaRecords('tid', $tid);
+            }
+            if($retVal){
+                $retVal = (new TaxonMaps)->deleteTaxonMapRecord('tid', $tid);
+            }
             $sql = 'DELETE FROM taxaenumtree WHERE tid = ' . (int)$tid . ' OR parenttid = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
-
-            $sql = 'DELETE FROM taxavernaculars WHERE TID = ' . (int)$tid . ' ';
+            $sql = 'DELETE FROM taxavernaculars WHERE tid = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
-
-            $sql = 'DELETE FROM taxa WHERE TID = ' . (int)$tid . ' ';
+            $sql = 'DELETE FROM glossarytaxalink WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM taxa WHERE tid = ' . (int)$tid . ' ';
             //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
@@ -301,18 +312,19 @@ class Taxa{
     public function getChildTaxaFromTid($tid): array
     {
         $retArr = array();
-        $sql = 'SELECT tid, sciname, author, rankid, family '.
-            'FROM taxa WHERE parenttid = ' . (int)$tid . ' AND tid = tidaccepted ';
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM taxa WHERE parenttid = ' . (int)$tid . ' AND tid = tidaccepted ORDER BY sciname ';
         if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
                 $nodeArr = array();
-                $nodeArr['tid'] = $row['tid'];
-                $nodeArr['sciname'] = $row['sciname'];
-                $nodeArr['author'] = $row['author'];
-                $nodeArr['rankid'] = $row['rankid'];
-                $nodeArr['family'] = $row['family'];
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
             }
@@ -487,19 +499,18 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxonFromSciname($sciname, $kingdomId, $includeCommonNames = false, $includeChildren = false): array
+    public function getTaxonFromSciname($sciname, $kingdomId = null): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
         $fieldNameArr[] = 'k.kingdom_name AS kingdom';
-        $fieldNameArr[] = 't2.sciname AS acceptedsciname';
-        $fieldNameArr[] = 't3.sciname AS parentsciname';
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
-            'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
-            'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
-            'WHERE t.sciname = "' . SanitizerService::cleanInStr($this->conn, $sciname) . '" AND t.kingdomId = ' . (int)$kingdomId . ' ';
-        if($result = $this->conn->query($sql)){
+            'FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
+            'WHERE t.sciname = "' . SanitizerService::cleanInStr($this->conn, $sciname) . '" ';
+        if($kingdomId){
+            $sql .= 'AND t.kingdomid = ' . (int)$kingdomId . ' ';
+        }
+        if(($result = $this->conn->query($sql)) && $result->num_rows === 1) {
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
             $result->free();
@@ -508,29 +519,25 @@ class Taxa{
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
                 }
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($row['tid']);
-                if($includeCommonNames){
-                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($row['tid']);
-                }
-                if($includeChildren){
-                    $retArr['children'] = $this->getChildTaxaFromTid($row['tid']);
-                }
+                $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted']) : null;
+                $acceptedTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['tid'] : (int)$row['tidaccepted'];
+                $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
+                $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
+                $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($acceptedTid);
+                $retArr['children'] = $this->getChildTaxaFromTid($acceptedTid);
             }
         }
         return $retArr;
     }
 
-    public function getTaxonFromTid($tid, $includeCommonNames = false, $includeChildren = false): array
+    public function getTaxonFromTid($tid): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
         $fieldNameArr[] = 'k.kingdom_name AS kingdom';
-        $fieldNameArr[] = 't2.sciname AS acceptedsciname';
-        $fieldNameArr[] = 't3.sciname AS parentsciname';
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
-            'LEFT JOIN taxa AS t3 ON t.parenttid = t3.TID '.
-            'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
+            'FROM taxa AS t LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
             'WHERE t.tid = ' . (int)$tid . ' ';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
@@ -541,13 +548,13 @@ class Taxa{
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
                 }
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($row['tid']);
-                if($includeCommonNames){
-                    $retArr['commonnames'] = (new TaxonVernaculars)->getCommonNamesFromTid($row['tid']);
-                }
-                if($includeChildren){
-                    $retArr['children'] = $this->getChildTaxaFromTid($row['tid']);
-                }
+                $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted']) : null;
+                $acceptedTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['tid'] : (int)$row['tidaccepted'];
+                $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
+                $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
+                $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($acceptedTid);
+                $retArr['children'] = $this->getChildTaxaFromTid($acceptedTid);
             }
         }
         return $retArr;
@@ -564,6 +571,29 @@ class Taxa{
                 $nodeArr = array();
                 $nodeArr['name'] = $row['name'];
                 $nodeArr['identifier'] = $row['identifier'];
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getTaxonSynonymsFromTid($tid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM taxa WHERE tidaccepted = ' . (int)$tid . ' AND tid <> tidaccepted '.
+            'ORDER BY sciname ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
             }
@@ -960,7 +990,7 @@ class Taxa{
         $sqlPartArr = array();
         if($tid && $editData){
             foreach($this->fields as $field => $fieldArr){
-                if(array_key_exists($field, $editData)){
+                if($field !== 'tid' && array_key_exists($field, $editData)){
                     if($field === 'source'){
                         $fieldStr = '`' . $field . '`';
                     }

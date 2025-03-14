@@ -1468,19 +1468,23 @@ const occurrenceDataUploadModule = {
                         }
                     }
                 });
-                if(occurrenceData.hasOwnProperty('eventdate') && occurrenceData['eventdate'] && occurrenceData['eventdate'].toString() !== '' && !occurrenceData['eventdate'].toString().includes('-')){
+                if(occurrenceData.hasOwnProperty('eventdate') && occurrenceData['eventdate'] && occurrenceData['eventdate'].toString() !== '' && !occurrenceData['eventdate'].toString().includes('-') && Number(occurrenceData['eventdate']) > 0){
                     const date = new Date(occurrenceData['eventdate']);
                     const day = date.toLocaleString('en-US', { day: '2-digit' });
                     const month = date.toLocaleString('en-US', { month: '2-digit' });
                     const year = date.getFullYear();
-                    occurrenceData['eventdate'] = year.toString() + '-' + month.toString() + '-' + day.toString();
+                    if(Number(year) > 0 && Number(month) > 0 && Number(day) > 0){
+                        occurrenceData['eventdate'] = year.toString() + '-' + month.toString() + '-' + day.toString();
+                    }
                 }
-                if(occurrenceData.hasOwnProperty('eventtime') && occurrenceData['eventtime'] && occurrenceData['eventtime'].toString() !== '' && !occurrenceData['eventtime'].toString().includes(':')){
+                if(occurrenceData.hasOwnProperty('eventtime') && occurrenceData['eventtime'] && occurrenceData['eventtime'].toString() !== '' && !occurrenceData['eventtime'].toString().includes(':') && Number(occurrenceData['eventtime']) > 0){
                     const time = new Date(occurrenceData['eventtime']);
                     const seconds = time.getUTCSeconds().toString().padStart(2, '0');
                     const minutes = time.getUTCMinutes().toString().padStart(2, '0');
                     const hours = time.getUTCHours().toString().padStart(2, '0');
-                    occurrenceData['eventtime'] = hours.toString() + ':' + minutes.toString() + ':' + seconds.toString();
+                    if(Number(hours) > 0 || Number(minutes) > 0 || Number(seconds) > 0){
+                        occurrenceData['eventtime'] = hours.toString() + ':' + minutes.toString() + ':' + seconds.toString();
+                    }
                 }
                 flatFileOccurrenceData.value.push(occurrenceData);
             });
@@ -1628,6 +1632,18 @@ const occurrenceDataUploadModule = {
                         const wktFormat = new ol.format.WKT();
                         featureData['footprintwkt'] = wktFormat.writeGeometry(featureGeometry);
                         sourceDataFieldsFlatFile.value['footprintwkt'] = 'footprintwkt';
+                        if(profileConfigurationData.value['createPolygonCentroidCoordinates']){
+                            const geoJSONFormat = new ol.format.GeoJSON();
+                            const geojsonStr = geoJSONFormat.writeGeometry(featureGeometry);
+                            const polyCoords = JSON.parse(geojsonStr).coordinates;
+                            const centroid = turf.centroid(turf.polygon(polyCoords));
+                            if(centroid && centroid.hasOwnProperty('geometry')){
+                                featureData['centroidlatitude'] = centroid['geometry']['coordinates'][1];
+                                featureData['centroidlongitude'] = centroid['geometry']['coordinates'][0];
+                                sourceDataFieldsFlatFile.value['centroidlatitude'] = 'centroidlatitude';
+                                sourceDataFieldsFlatFile.value['centroidlongitude'] = 'centroidlongitude';
+                            }
+                        }
                     }
                     else if((geoType === 'Point' || geoType === 'MultiPoint') && (!featureData.hasOwnProperty('decimallatitude') || !featureData.hasOwnProperty('decimallongitude') || !featureData['decimallatitude'] || !featureData['decimallongitude'])){
                         const geoJSONFormat = new ol.format.GeoJSON();

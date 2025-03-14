@@ -51,7 +51,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <li><a :href="(clientRoot + '/checklists/index.php')">Checklists</a></li>
                         <li><a :href="(clientRoot + '/checklists/dynamicmap.php?interface=checklist')">Dynamic Checklist</a></li>
                         <template v-if="keyModuleIsActive">
-                            <li><a :href="(clientRoot + '/checklists/dynamicmap.php?interface=key')">Dynamic Key</a></li>
+                            <li><a :href="(clientRoot + '/ident/key.php')">Dynamic Key</a></li>
                         </template>
                         <li><a :href="(clientRoot + '/taxa/dynamictaxalist.php')">Dynamic Taxonomy List</a></li>
                         <template v-if="glossaryModuleIsActive">

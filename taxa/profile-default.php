@@ -1,3 +1,8 @@
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-description-block.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-description-statement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-map.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -34,62 +39,57 @@
 <script type="text/javascript">
     const taxonProfilePage = Vue.createApp({
         template: `
-            <template v-if="loading">
-                <div class="fill-viewport"></div>
-            </template>
-            <template v-if="!loading">
-                <template v-if="taxon">
-                    <div class="profile-split-row">
-                        <div class="profile-column">
-                            <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass"></taxa-profile-sciname-header>
-                            <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
-                            <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
-                            <taxa-profile-taxon-vernaculars :vernaculars="taxon.vernaculars"></taxa-profile-taxon-vernaculars>
-                            <taxa-profile-taxon-synonyms :synonyms="taxon.synonyms"></taxa-profile-taxon-synonyms>
+            <template v-if="Number(taxon['tid']) > 0">
+                <div class="profile-split-row">
+                    <div class="profile-column">
+                        <taxa-profile-sciname-header></taxa-profile-sciname-header>
+                        <taxa-profile-taxon-family></taxa-profile-taxon-family>
+                        <taxa-profile-taxon-notes></taxa-profile-taxon-notes>
+                        <taxa-profile-taxon-vernaculars></taxa-profile-taxon-vernaculars>
+                        <taxa-profile-taxon-synonyms></taxa-profile-taxon-synonyms>
+                    </div>
+                    <template v-if="isEditor">
+                        <taxa-profile-edit-button></taxa-profile-edit-button>
+                    </template>
+                </div>
+                <div class="profile-split-row">
+                    <div class="left-column profile-column">
+                        <taxa-profile-central-image :is-editor="isEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
+                    </div>
+                    <div class="right-column profile-column">
+                        <taxa-profile-description-tabs></taxa-profile-description-tabs>
+                        <div class="right-inner-row">
+                            <taxa-profile-taxon-map></taxa-profile-taxon-map>
                         </div>
-                        <template v-if="isEditor">
-                            <taxa-profile-edit-button :tid="taxon.tid"></taxa-profile-edit-button>
+                        <template v-if="Number(taxaImageCount) > 100">
+                            <div class="right-inner-row">
+                                <taxa-profile-taxon-image-link></taxa-profile-taxon-image-link>
+                            </div>
                         </template>
-                    </div>
-                    <div class="profile-split-row">
-                        <div class="left-column profile-column">
-                            <taxa-profile-central-image :taxon="taxon" :central-image="centralImage" :is-editor="isEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
-                        </div>
-                        <div class="right-column profile-column">
-                            <taxa-profile-description-tabs :description-arr="descriptionArr" :glossary-arr="glossaryArr"></taxa-profile-description-tabs>
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
-                            </div>
-                            <template v-if="taxon.imageCnt > 100">
-                                <div class="right-inner-row">
-                                    <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
-                                </div>
-                            </template>
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-occurrence-link :taxon="taxon"></taxa-profile-taxon-occurrence-link>
-                            </div>
+                        <div class="right-inner-row">
+                            <taxa-profile-taxon-occurrence-link></taxa-profile-taxon-occurrence-link>
                         </div>
                     </div>
-                    <div class="q-mt-md">
-                        <taxa-profile-taxon-identifiers :identifiers="taxon.identifiers"></taxa-profile-taxon-identifiers>
-                    </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel" @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
-                    </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-media-panel :taxon="taxon"></taxa-profile-media-panel>
-                    </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-subtaxa-panel :subtaxa-arr="subtaxaArr" :subtaxa-label="subtaxaLabel" :subtaxa-expansion-label="subtaxaExpansionLabel" :is-editor="isEditor"></taxa-profile-subtaxa-panel>
-                    </div>
-                </template>
-                <template v-else>
-                    <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
-                </template>
-                <q-dialog v-model="imageCarousel" persistent full-width full-height>
-                    <taxa-profile-image-carousel :image-arr="taxon.images" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
-                </q-dialog>
+                </div>
+                <div class="q-mt-md">
+                    <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
+                </div>
+                <div class="profile-center-row">
+                    <taxa-profile-image-panel @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
+                </div>
+                <div class="profile-center-row">
+                    <taxa-profile-media-panel></taxa-profile-media-panel>
+                </div>
+                <div class="profile-center-row">
+                    <taxa-profile-subtaxa-panel :is-editor="isEditor"></taxa-profile-subtaxa-panel>
+                </div>
             </template>
+            <template v-else>
+                <taxa-profile-not-found></taxa-profile-not-found>
+            </template>
+            <q-dialog v-model="imageCarousel" persistent full-width full-height>
+                <taxa-profile-image-carousel :image-arr="taxaImageArr" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
+            </q-dialog>
         `,
         components: {
             'taxa-profile-edit-button': taxaProfileEditButton,
@@ -113,77 +113,17 @@
         setup() {
             const { hideWorking, showWorking } = useCore();
             const baseStore = useBaseStore();
+            const taxaStore = useTaxaStore();
 
-            const centralImage = Vue.ref(null);
             const clientRoot = baseStore.getClientRoot;
-            const clValue = CL_VAL;
-            const descriptionArr = Vue.ref([]);
-            const glossaryArr = Vue.ref([]);
             const imageCarousel = Vue.ref(false);
             const imageCarouselSlide = Vue.ref(null);
-            const imageExpansionLabel = Vue.ref('');
             const isEditor = Vue.ref(false);
-            const fuzzyMatches = Vue.ref([]);
-            const loading = Vue.ref(true);
-            const subtaxaArr = Vue.ref([]);
-            const subtaxaExpansionLabel = Vue.ref('');
-            const subtaxaLabel = Vue.ref('');
-            const styleClass = Vue.ref(null);
-            const taxon = Vue.ref(null);
+            const subtaxaArr = Vue.computed(() => taxaStore.getTaxaChildren);
+            const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+            const taxaImageCount = Vue.computed(() => taxaStore.getTaxaImageCount);
+            const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
             const taxonValue = TAXON_VAL;
-
-            function processDescriptions(descArr) {
-                if(descArr.length > 0){
-                    descArr.forEach((desc) => {
-                        if((!desc['source'] || desc['source'] === '') && (desc['sourceurl'] && desc['sourceurl'] !== '')){
-                            desc['source'] = desc['sourceurl'];
-                        }
-                        desc['stmts'].forEach((stmt) => {
-                            if(stmt['statement'] && stmt['statement'] !== ''){
-                                if(stmt['statement'].startsWith('<p>')){
-                                    stmt['statement'] = stmt['statement'].slice(3);
-                                }
-                                if(stmt['statement'].endsWith('</p>')){
-                                    stmt['statement'] = stmt['statement'].substring(0, stmt['statement'].length - 4);
-                                }
-                                if(Number(stmt['displayheader']) === 1 && stmt['heading'] && stmt['heading'] !== ''){
-                                    const headingText = '<span class="desc-statement-heading">' + stmt['heading'] + '</span>: ';
-                                    stmt['statement'] = headingText + stmt['statement'];
-                                }
-                            }
-                        });
-                    });
-                }
-                descriptionArr.value = descArr;
-            }
-
-            function processImages() {
-                centralImage.value = taxon.value['images'].length > 0 ? taxon.value['images'][0] : null;
-                if(Number(taxon.value['imageCnt']) > 100){
-                    imageExpansionLabel.value = 'View First 100 Images';
-                }
-                else{
-                    imageExpansionLabel.value = 'View All ' + taxon.value['images'].length + ' Images';
-                }
-                loading.value = false;
-                hideWorking();
-            }
-
-            function processSubtaxa() {
-                if(taxon.value['clName']){
-                    subtaxaLabel.value = 'Subtaxa within ' + taxon.value['clName'];
-                }
-                else{
-                    subtaxaLabel.value = 'Subtaxa';
-                }
-                subtaxaExpansionLabel.value = 'View All ' + subtaxaLabel.value;
-                for(let i in taxon.value['sppArr']){
-                    if(taxon.value['sppArr'].hasOwnProperty(i)){
-                        const subTaxon = taxon.value['sppArr'][i];
-                        subtaxaArr.value.push(subTaxon);
-                    }
-                }
-            }
 
             function setEditor() {
                 const formData = new FormData();
@@ -194,121 +134,10 @@
                     body: formData
                 })
                 .then((response) => {
-                    response.json().then((resData) => {
-                        isEditor.value = resData.includes('TaxonProfile');
-                    });
-                });
-            }
-
-            function setGlossary() {
-                const formData = new FormData();
-                formData.append('tid', taxon.value['tid']);
-                formData.append('action', 'getTaxonGlossary');
-                fetch(glossaryApiUrl, {
-                    method: 'POST',
-                    body: formData
+                    return response.ok ? response.json() : null;
                 })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            glossaryArr.value = resObj;
-                        });
-                    }
-                });
-            }
-
-            function setStyleClass() {
-                if(Number(taxon.value['rankId']) > 180){
-                    styleClass.value = 'species';
-                }
-                else if(Number(taxon.value['rankId']) === 180){
-                    styleClass.value = 'genus';
-                }
-                else{
-                    styleClass.value = 'higher';
-                }
-            }
-
-            function setTaxon() {
-                const formData = new FormData();
-                formData.append('taxonStr', taxonValue);
-                formData.append('clid', clValue);
-                formData.append('action', 'setTaxon');
-                fetch(taxaProfileApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            if(resObj.hasOwnProperty('submittedTid')){
-                                taxon.value = resObj;
-                                setStyleClass();
-                                setTaxonDescriptions();
-                                setGlossary();
-                                processSubtaxa();
-                                setTaxonMedia();
-                            }
-                            else if(taxonValue.value !== ''){
-                                const formData = new FormData();
-                                formData.append('sciname', taxonValue.value);
-                                formData.append('lev', '2');
-                                formData.append('action', 'getSciNameFuzzyMatches');
-                                fetch(taxaApiUrl, {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then((response) => {
-                                    if(response.status === 200){
-                                        response.json().then((matches) => {
-                                            fuzzyMatches.value = matches;
-                                        });
-                                    }
-                                });
-                            }
-                            else{
-                                window.location.href = clientRoot + '/index.php';
-                            }
-                        });
-                    }
-                });
-            }
-
-            function setTaxonDescriptions() {
-                const formData = new FormData();
-                formData.append('tid', taxon.value['tid']);
-                formData.append('action', 'getTaxonDescriptions');
-                fetch(taxonDescriptionApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            processDescriptions(resObj);
-                        });
-                    }
-                });
-            }
-
-            function setTaxonMedia() {
-                const formData = new FormData();
-                formData.append('tid', taxon.value['tid']);
-                formData.append('limit', '100');
-                formData.append('includeav', '1');
-                formData.append('action', 'getTaxonMedia');
-                fetch(taxaProfileApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            taxon.value['images'] = resObj['images'];
-                            taxon.value['media'] = resObj['media'];
-                            processImages();
-                        });
-                    }
+                .then((resData) => {
+                    isEditor.value = resData.includes('TaxonProfile');
                 });
             }
 
@@ -328,25 +157,32 @@
             Vue.onMounted(() => {
                 showWorking('Loading...');
                 setEditor();
-                setTaxon();
+                taxaStore.setTaxa(taxonValue, (tid) => {
+                    hideWorking();
+                    if(Number(tid) > 0){
+                        taxaStore.setTaxaDescriptionData();
+                        if(subtaxaArr.value.length > 0){
+                            taxaStore.setSubtaxaImageData();
+                        }
+                        taxaStore.setTaxaImageArr();
+                        taxaStore.setTaxaMediaArr();
+                    }
+                    else if(taxonValue.value && taxonValue.value !== ''){
+                        taxaStore.setFuzzyMatches();
+                    }
+                    else{
+                        window.location.href = clientRoot + '/index.php';
+                    }
+                });
             });
 
             return {
-                centralImage,
-                descriptionArr,
-                glossaryArr,
                 imageCarousel,
                 imageCarouselSlide,
-                imageExpansionLabel,
                 isEditor,
-                fuzzyMatches,
-                loading,
-                subtaxaArr,
-                subtaxaExpansionLabel,
-                subtaxaLabel,
-                styleClass,
+                taxaImageArr,
+                taxaImageCount,
                 taxon,
-                taxonValue,
                 showImageCarousel,
                 toggleImageCarousel,
                 updateImageCarousel
