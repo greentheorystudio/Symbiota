@@ -39,62 +39,57 @@
 <script type="text/javascript">
     const taxonProfilePage = Vue.createApp({
         template: `
-            <template v-if="loading">
-                <div class="fill-viewport"></div>
-            </template>
-            <template v-if="!loading">
-                <template v-if="Number(taxon['tid']) > 0">
-                    <div class="profile-split-row">
-                        <div class="profile-column">
-                            <taxa-profile-sciname-header></taxa-profile-sciname-header>
-                            <taxa-profile-taxon-family></taxa-profile-taxon-family>
-                            <taxa-profile-taxon-notes></taxa-profile-taxon-notes>
-                            <taxa-profile-taxon-vernaculars></taxa-profile-taxon-vernaculars>
-                            <taxa-profile-taxon-synonyms></taxa-profile-taxon-synonyms>
+            <template v-if="Number(taxon['tid']) > 0">
+                <div class="profile-split-row">
+                    <div class="profile-column">
+                        <taxa-profile-sciname-header></taxa-profile-sciname-header>
+                        <taxa-profile-taxon-family></taxa-profile-taxon-family>
+                        <taxa-profile-taxon-notes></taxa-profile-taxon-notes>
+                        <taxa-profile-taxon-vernaculars></taxa-profile-taxon-vernaculars>
+                        <taxa-profile-taxon-synonyms></taxa-profile-taxon-synonyms>
+                    </div>
+                    <template v-if="isEditor">
+                        <taxa-profile-edit-button></taxa-profile-edit-button>
+                    </template>
+                </div>
+                <div class="profile-split-row">
+                    <div class="left-column profile-column">
+                        <taxa-profile-central-image :is-editor="isEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
+                    </div>
+                    <div class="right-column profile-column">
+                        <taxa-profile-description-tabs></taxa-profile-description-tabs>
+                        <div class="right-inner-row">
+                            <taxa-profile-taxon-map></taxa-profile-taxon-map>
                         </div>
-                        <template v-if="isEditor">
-                            <taxa-profile-edit-button></taxa-profile-edit-button>
+                        <template v-if="Number(taxaImageCount) > 100">
+                            <div class="right-inner-row">
+                                <taxa-profile-taxon-image-link></taxa-profile-taxon-image-link>
+                            </div>
                         </template>
-                    </div>
-                    <div class="profile-split-row">
-                        <div class="left-column profile-column">
-                            <taxa-profile-central-image :is-editor="isEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
-                        </div>
-                        <div class="right-column profile-column">
-                            <taxa-profile-description-tabs></taxa-profile-description-tabs>
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-map></taxa-profile-taxon-map>
-                            </div>
-                            <template v-if="Number(taxaImageCount) > 100">
-                                <div class="right-inner-row">
-                                    <taxa-profile-taxon-image-link></taxa-profile-taxon-image-link>
-                                </div>
-                            </template>
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-occurrence-link></taxa-profile-taxon-occurrence-link>
-                            </div>
+                        <div class="right-inner-row">
+                            <taxa-profile-taxon-occurrence-link></taxa-profile-taxon-occurrence-link>
                         </div>
                     </div>
-                    <div class="q-mt-md">
-                        <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
-                    </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-image-panel @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
-                    </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-media-panel></taxa-profile-media-panel>
-                    </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-subtaxa-panel :is-editor="isEditor"></taxa-profile-subtaxa-panel>
-                    </div>
-                </template>
-                <template v-else>
-                    <taxa-profile-not-found></taxa-profile-not-found>
-                </template>
-                <q-dialog v-model="imageCarousel" persistent full-width full-height>
-                    <taxa-profile-image-carousel :image-arr="taxaImageArr" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
-                </q-dialog>
+                </div>
+                <div class="q-mt-md">
+                    <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
+                </div>
+                <div class="profile-center-row">
+                    <taxa-profile-image-panel @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
+                </div>
+                <div class="profile-center-row">
+                    <taxa-profile-media-panel></taxa-profile-media-panel>
+                </div>
+                <div class="profile-center-row">
+                    <taxa-profile-subtaxa-panel :is-editor="isEditor"></taxa-profile-subtaxa-panel>
+                </div>
             </template>
+            <template v-else>
+                <taxa-profile-not-found></taxa-profile-not-found>
+            </template>
+            <q-dialog v-model="imageCarousel" persistent full-width full-height>
+                <taxa-profile-image-carousel :image-arr="taxaImageArr" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
+            </q-dialog>
         `,
         components: {
             'taxa-profile-edit-button': taxaProfileEditButton,
@@ -124,7 +119,6 @@
             const imageCarousel = Vue.ref(false);
             const imageCarouselSlide = Vue.ref(null);
             const isEditor = Vue.ref(false);
-            const loading = Vue.ref(true);
             const subtaxaArr = Vue.computed(() => taxaStore.getTaxaChildren);
             const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
             const taxaImageCount = Vue.computed(() => taxaStore.getTaxaImageCount);
@@ -164,7 +158,6 @@
                 showWorking('Loading...');
                 setEditor();
                 taxaStore.setTaxa(taxonValue, (tid) => {
-                    loading.value = false;
                     hideWorking();
                     if(Number(tid) > 0){
                         taxaStore.setTaxaDescriptionData();
@@ -187,7 +180,6 @@
                 imageCarousel,
                 imageCarouselSlide,
                 isEditor,
-                loading,
                 taxaImageArr,
                 taxaImageCount,
                 taxon,
