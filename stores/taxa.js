@@ -314,8 +314,10 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 return response.ok ? response.json() : null;
             })
             .then((resObj) => {
-                this.taxaImageCount = resObj['count'];
-                this.taxaImageArr = resObj[this.getAcceptedTaxonTid];
+                if(resObj.hasOwnProperty(this.getAcceptedTaxonTid)){
+                    this.taxaImageCount = resObj['count'];
+                    this.taxaImageArr = resObj[this.getAcceptedTaxonTid];
+                }
             });
         },
         setTaxaMediaArr() {
@@ -332,7 +334,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 return response.ok ? response.json() : null;
             })
             .then((resObj) => {
-                this.taxaMediaArr = resObj[this.getAcceptedTaxonTid];
+                if(resObj.hasOwnProperty(this.getAcceptedTaxonTid)){
+                    this.taxaMediaArr = resObj[this.getAcceptedTaxonTid];
+                }
             });
         },
         updateTaxaEditData(key, value) {

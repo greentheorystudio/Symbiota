@@ -356,13 +356,13 @@ class Images{
     public function getTaxonArrDisplayImageData($tidArr, $includeOccurrence = false, $limitPerTaxon = null, $sortsequenceLimit = null): array
     {
         $returnArr = array();
+        $returnArr['count'] = 0;
         if($tidArr && is_array($tidArr) && count($tidArr) > 0){
             $sql = 'SELECT DISTINCT i.imgid, t.tidaccepted AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.photographer, i.owner, '.
-                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers, te.parenttid '.
+                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
-                'LEFT JOIN taxaenumtree AS te ON t.tid = te.tid '.
-                'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') OR t.tidaccepted IN(SELECT tid FROM taxaenumtree WHERE parenttid IN(' . implode(',', $tidArr) . ')) ';
+                'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
             if(!$includeOccurrence){
                 $sql .= 'AND ISNULL(i.occid) ';
             }
@@ -375,22 +375,60 @@ class Images{
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 if(count($tidArr) === 1){
-                    $returnArr['count'] = $result->num_rows;
+                    $returnArr['count'] += $result->num_rows;
                 }
                 $result->free();
                 foreach($rows as $index => $row){
                     if((int)$row['securitystatus'] !== 1 || (int)$row['occid'] === 0){
-                        $tid = in_array($row['tid'], $tidArr, true) ? $row['tid'] : $row['parenttid'];
-                        if(!array_key_exists($tid, $returnArr)){
-                            $returnArr[$tid] = array();
+                        if(!array_key_exists($row['tid'], $returnArr)){
+                            $returnArr[$row['tid']] = array();
                         }
-                        if((int)$limitPerTaxon === 0 || count($returnArr[$tid]) < (int)$limitPerTaxon){
+                        if((int)$limitPerTaxon === 0 || count($returnArr[$row['tid']]) < (int)$limitPerTaxon){
                             $nodeArr = array();
                             foreach($fields as $val){
                                 $name = $val->name;
                                 $nodeArr[$name] = $row[$name];
                             }
-                            $returnArr[$tid][] = $nodeArr;
+                            $returnArr[$row['tid']][] = $nodeArr;
+                        }
+                    }
+                    unset($rows[$index]);
+                }
+            }
+
+            $sql = 'SELECT DISTINCT i.imgid, te.parenttid AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.photographer, i.owner, '.
+                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
+                'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+                'LEFT JOIN taxaenumtree AS te ON t.tid = te.tid '.
+                'WHERE t.tidaccepted IN(SELECT tid FROM taxaenumtree WHERE parenttid IN(' . implode(',', $tidArr) . ')) ';
+            if(!$includeOccurrence){
+                $sql .= 'AND ISNULL(i.occid) ';
+            }
+            if($sortsequenceLimit && (int)$sortsequenceLimit > 0){
+                $sql .= 'AND i.sortsequence <= ' . (int)$sortsequenceLimit . ' ';
+            }
+            $sql .= 'ORDER BY i.sortsequence ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                if(count($tidArr) === 1){
+                    $returnArr['count'] += $result->num_rows;
+                }
+                $result->free();
+                foreach($rows as $index => $row){
+                    if((int)$row['securitystatus'] !== 1 || (int)$row['occid'] === 0){
+                        if(!array_key_exists($row['tid'], $returnArr)){
+                            $returnArr[$row['tid']] = array();
+                        }
+                        if((int)$limitPerTaxon === 0 || count($returnArr[$row['tid']]) < (int)$limitPerTaxon){
+                            $nodeArr = array();
+                            foreach($fields as $val){
+                                $name = $val->name;
+                                $nodeArr[$name] = $row[$name];
+                            }
+                            $returnArr[$row['tid']][] = $nodeArr;
                         }
                     }
                     unset($rows[$index]);

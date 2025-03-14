@@ -16,14 +16,7 @@ const taxaProfileTaxonOccurrenceLink = {
         const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
 
         function openOccurrenceSearch() {
-            let taxonType;
-            if(Number(taxon.value['rankid']) < 140){
-                taxonType = 4;
-            }
-            else{
-                taxonType = 1;
-            }
-            const url = clientRoot + '/collections/list.php?starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}';
+            const url = clientRoot + '/collections/list.php?starr={"imagetype":"all","usethes":true,"taxontype":"4","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}';
             window.open(url, '_blank');
         }
 
