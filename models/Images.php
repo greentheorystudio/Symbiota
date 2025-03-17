@@ -400,8 +400,8 @@ class Images{
                 't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
-                'LEFT JOIN taxaenumtree AS te ON t.tid = te.tid '.
-                'WHERE t.tidaccepted IN(SELECT tid FROM taxaenumtree WHERE parenttid IN(' . implode(',', $tidArr) . ')) ';
+                'LEFT JOIN taxaenumtree AS te ON t.tidaccepted = te.tid '.
+                'WHERE te.parenttid IN(' . implode(',', $tidArr) . ') ';
             if(!$includeOccurrence){
                 $sql .= 'AND ISNULL(i.occid) ';
             }
