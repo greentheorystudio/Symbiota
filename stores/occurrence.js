@@ -462,13 +462,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     if(this.getOccurrenceMofEditsExist){
                         this.processMofEditData('occurrence', null, Number(res));
                     }
-                    if(this.occurrenceEntryFormat !== 'observation'){
-                        if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
-                            this.setCurrentOccurrenceRecord(Number(res));
-                        }
-                        else{
-                            this.setCurrentOccurrenceRecord(0);
-                        }
+                    if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
+                        this.setCurrentOccurrenceRecord(Number(res));
+                    }
+                    else{
+                        this.setCurrentOccurrenceRecord(0);
                     }
                 }
             });
