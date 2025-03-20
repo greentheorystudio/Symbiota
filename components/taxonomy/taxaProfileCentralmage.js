@@ -6,7 +6,7 @@ const taxaProfileCentralImage = {
         }
     },
     template: `
-        <q-card class="overflow-hidden">
+        <q-card class="overflow-hidden fit">
             <template v-if="centralImage">
                 <div class="taxon-profile-central-image">
                     <a @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer">

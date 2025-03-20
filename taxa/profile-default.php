@@ -40,23 +40,23 @@
     const taxonProfilePage = Vue.createApp({
         template: `
             <template v-if="Number(taxon['tid']) > 0">
-                <div class="profile-split-row">
-                    <div class="profile-column">
+                <div class="row justify-between q-mt-sm">
+                    <div class="column">
                         <taxa-profile-sciname-header></taxa-profile-sciname-header>
                         <taxa-profile-taxon-family></taxa-profile-taxon-family>
                         <taxa-profile-taxon-notes></taxa-profile-taxon-notes>
                         <taxa-profile-taxon-vernaculars></taxa-profile-taxon-vernaculars>
                         <taxa-profile-taxon-synonyms></taxa-profile-taxon-synonyms>
                     </div>
-                    <template v-if="isEditor">
-                        <taxa-profile-edit-button></taxa-profile-edit-button>
+                    <template v-if="isTaxonEditor || isTaxonProfileEditor">
+                        <taxa-profile-edit-button :taxon-editor="isTaxonEditor" :taxon-profile-editor="isTaxonProfileEditor"></taxa-profile-edit-button>
                     </template>
                 </div>
-                <div class="profile-split-row">
-                    <div class="left-column profile-column">
-                        <taxa-profile-central-image :is-editor="isEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
+                <div class="row justify-between q-mt-sm">
+                    <div class="left-column column">
+                        <taxa-profile-central-image :is-editor="isTaxonProfileEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
                     </div>
-                    <div class="right-column profile-column">
+                    <div class="right-column column">
                         <taxa-profile-description-tabs></taxa-profile-description-tabs>
                         <div class="right-inner-row">
                             <taxa-profile-taxon-map></taxa-profile-taxon-map>
@@ -74,14 +74,14 @@
                 <div class="q-mt-md">
                     <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
                 </div>
-                <div class="profile-center-row">
+                <div class="row justify-center q-mt-md">
                     <taxa-profile-image-panel @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
                 </div>
-                <div class="profile-center-row">
+                <div class="row justify-center q-mt-md">
                     <taxa-profile-media-panel></taxa-profile-media-panel>
                 </div>
-                <div class="profile-center-row">
-                    <taxa-profile-subtaxa-panel :is-editor="isEditor"></taxa-profile-subtaxa-panel>
+                <div class="row justify-center q-mt-md">
+                    <taxa-profile-subtaxa-panel :is-editor="isTaxonProfileEditor"></taxa-profile-subtaxa-panel>
                 </div>
             </template>
             <template v-else>
@@ -118,7 +118,8 @@
             const clientRoot = baseStore.getClientRoot;
             const imageCarousel = Vue.ref(false);
             const imageCarouselSlide = Vue.ref(null);
-            const isEditor = Vue.ref(false);
+            const isTaxonEditor = Vue.ref(false);
+            const isTaxonProfileEditor = Vue.ref(false);
             const subtaxaArr = Vue.computed(() => taxaStore.getTaxaChildren);
             const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
             const taxaImageCount = Vue.computed(() => taxaStore.getTaxaImageCount);
@@ -127,7 +128,7 @@
 
             function setEditor() {
                 const formData = new FormData();
-                formData.append('permission', 'TaxonProfile');
+                formData.append('permissionJson', JSON.stringify(['TaxonProfile', 'Taxonomy']));
                 formData.append('action', 'validatePermission');
                 fetch(permissionApiUrl, {
                     method: 'POST',
@@ -137,7 +138,8 @@
                     return response.ok ? response.json() : null;
                 })
                 .then((resData) => {
-                    isEditor.value = resData.includes('TaxonProfile');
+                    isTaxonEditor.value = resData.includes('Taxonomy');
+                    isTaxonProfileEditor.value = resData.includes('TaxonProfile');
                 });
             }
 
@@ -179,7 +181,8 @@
             return {
                 imageCarousel,
                 imageCarouselSlide,
-                isEditor,
+                isTaxonEditor,
+                isTaxonProfileEditor,
                 taxaImageArr,
                 taxaImageCount,
                 taxon,
