@@ -1644,10 +1644,18 @@ const occurrenceDataUploadModule = {
                                 centroid = turf.centroid(turf.multiPolygon(polyCoords));
                             }
                             if(centroid && centroid.hasOwnProperty('geometry')){
-                                featureData['centroidlatitude'] = centroid['geometry']['coordinates'][1];
-                                featureData['centroidlongitude'] = centroid['geometry']['coordinates'][0];
-                                sourceDataFieldsFlatFile.value['centroidlatitude'] = 'centroidlatitude';
-                                sourceDataFieldsFlatFile.value['centroidlongitude'] = 'centroidlongitude';
+                                if(!featureData.hasOwnProperty('decimallatitude') || !featureData.hasOwnProperty('decimallongitude') || !featureData['decimallatitude'] || !featureData['decimallongitude']){
+                                    featureData['decimallatitude'] = centroid['geometry']['coordinates'][1];
+                                    featureData['decimallongitude'] = centroid['geometry']['coordinates'][0];
+                                    sourceDataFieldsFlatFile.value['decimallatitude'] = 'decimallatitude';
+                                    sourceDataFieldsFlatFile.value['decimallongitude'] = 'decimallongitude';
+                                }
+                                else{
+                                    featureData['centroidlatitude'] = centroid['geometry']['coordinates'][1];
+                                    featureData['centroidlongitude'] = centroid['geometry']['coordinates'][0];
+                                    sourceDataFieldsFlatFile.value['centroidlatitude'] = 'centroidlatitude';
+                                    sourceDataFieldsFlatFile.value['centroidlongitude'] = 'centroidlongitude';
+                                }
                             }
                         }
                     }
