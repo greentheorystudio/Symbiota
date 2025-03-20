@@ -508,20 +508,6 @@ body.processing .loadingModal {
 	width: 90%;
 	margin: 15px auto;
 }
-.profile-split-row{
-	display: flex;
-	justify-content: space-between;
-	margin-top: 10px;
-}
-.profile-center-row{
-	display: flex;
-	justify-content: center;
-	margin-top: 15px;
-}
-.profile-column{
-	display: flex;
-	flex-direction: column;
-}
 .expansion-container{
 	width: 100%;
 }

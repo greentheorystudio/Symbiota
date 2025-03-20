@@ -299,7 +299,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             if(Number(collid) > 0){
                 this.collectionId = Number(collid);
                 const formData = new FormData();
-                formData.append('permissionJson', JSON.stringify(["CollAdmin", "CollEditor"]));
+                formData.append('permissionJson', JSON.stringify(['CollAdmin', 'CollEditor']));
                 formData.append('key', collid.toString());
                 formData.append('action', 'validatePermission');
                 fetch(permissionApiUrl, {

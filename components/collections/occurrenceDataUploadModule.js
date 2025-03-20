@@ -1453,18 +1453,18 @@ const occurrenceDataUploadModule = {
                 const occurrenceData = {};
                 occurrenceData['dbpk'] = dataRow[idField];
                 Object.keys(dataRow).forEach((field) => {
-                    if(fieldMappingDataOccurrence.value.hasOwnProperty(field) && fieldMappingDataOccurrence.value[field] !== 'unmapped'){
-                        if(eventMofDataFields.value.hasOwnProperty(fieldMappingDataOccurrence.value[field]) || occurrenceMofDataFields.value.hasOwnProperty(fieldMappingDataOccurrence.value[field])){
+                    if(fieldMappingDataOccurrence.value.hasOwnProperty(field.toLowerCase()) && fieldMappingDataOccurrence.value[field.toLowerCase()] !== 'unmapped'){
+                        if(eventMofDataFields.value.hasOwnProperty(fieldMappingDataOccurrence.value[field.toLowerCase()]) || occurrenceMofDataFields.value.hasOwnProperty(fieldMappingDataOccurrence.value[field.toLowerCase()])){
                             if(dataRow[field]){
                                 const mofData = {};
                                 mofData['dbpk'] = dataRow[idField];
-                                mofData['field'] = fieldMappingDataOccurrence.value[field];
+                                mofData['field'] = fieldMappingDataOccurrence.value[field.toLowerCase()];
                                 mofData['datavalue'] = dataRow[field];
                                 flatFileMofData.value.push(mofData);
                             }
                         }
                         else{
-                            occurrenceData[fieldMappingDataOccurrence.value[field]] = dataRow[field];
+                            occurrenceData[fieldMappingDataOccurrence.value[field.toLowerCase()]] = dataRow[field];
                         }
                     }
                 });

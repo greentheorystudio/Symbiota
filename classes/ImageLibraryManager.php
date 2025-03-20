@@ -242,10 +242,7 @@ class ImageLibraryManager{
         $sql .= 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid ';
         $sql .= 'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
         $sql .= 'LEFT JOIN users AS u ON i.photographeruid = u.uid ';
-        $sql .= 'INNER JOIN taxa AS t ON i.tid = t.tid ';
-        if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
-            $sql .= 'INNER JOIN taxaenumtree AS te ON i.tid = te.tid ';
-        }
+        $sql .= 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
             $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
         }
