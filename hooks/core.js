@@ -111,6 +111,7 @@ function useCore() {
     }
 
     async function csvToArray(str) {
+        str = str.replaceAll('\r\r\n', '');
         const PROCESS_SIZE = 1000;
         let lineTermination;
         let resultArr = [];
