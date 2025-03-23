@@ -356,10 +356,10 @@ class OccurrenceManager{
                 }
                 if($this->taxaSearchType === 4 || $this->taxaSearchType === 5){
                     if($image){
-                        $sqlWhereTaxa = 'OR (te.parenttid = '.$tid.' OR te.tid = '.$tid.') ';
+                        $sqlWhereTaxa = 'OR t.tidaccepted IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$tid.') ';
                     }
                     else{
-                        $sqlWhereTaxa = 'OR (te.parenttid = '.$tid.' OR te.tid = '.$tid.') OR (ISNULL(o.tid) AND o.sciname = "'.SanitizerService::cleanInStr($this->conn,$name).'") ';
+                        $sqlWhereTaxa = 'OR t.tidaccepted IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$tid.') OR (ISNULL(o.tid) AND o.sciname = "'.SanitizerService::cleanInStr($this->conn,$name).'") ';
                     }
                 }
                 elseif($this->taxaSearchType === 2 || ($this->taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
@@ -376,10 +376,10 @@ class OccurrenceManager{
             }
             if($this->searchTidArr){
                 if($image){
-                    $sqlWhereTaxa .= 'OR (i.tid IN('.implode(',',$this->searchTidArr).')) ';
+                    $sqlWhereTaxa .= 'OR (t.tidaccepted IN('.implode(',',$this->searchTidArr).')) ';
                 }
                 else{
-                    $sqlWhereTaxa .= 'OR (o.tid IN('.implode(',',$this->searchTidArr).')) ';
+                    $sqlWhereTaxa .= 'OR (t.tidaccepted IN('.implode(',',$this->searchTidArr).')) ';
                 }
             }
             if($sqlWhereTaxa){
@@ -1143,9 +1143,6 @@ class OccurrenceManager{
     protected function setTableJoins($sqlWhere): string
     {
         $sqlJoin = '';
-        if(array_key_exists('taxontype',$this->searchTermsArr) && ((int)$this->searchTermsArr['taxontype'] === 4 || (int)$this->searchTermsArr['taxontype'] === 5)) {
-            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
-        }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }

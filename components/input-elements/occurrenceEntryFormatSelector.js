@@ -6,7 +6,7 @@ const occurrenceEntryFormatSelector = {
         }
     },
     template: `
-        <q-select class="occurrence-entry-format-selector" bg-color="white" outlined v-model="selectedOption" :options="formatSelectorOptions" option-value="value" option-label="label" label="Entry Format" popup-content-class="z-max" @update:model-value="changeEntryFormat" behavior="menu" dense options-dense />
+        <q-select class="selector-input-spacer" bg-color="white" outlined v-model="selectedOption" :options="formatSelectorOptions" option-value="value" option-label="label" label="Entry Format" popup-content-class="z-max" @update:model-value="changeEntryFormat" behavior="menu" dense options-dense />
     `,
     setup(props, context) {
         const formatSelectorOptions = [

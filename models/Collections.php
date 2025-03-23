@@ -1,7 +1,10 @@
 <?php
+include_once(__DIR__ . '/Occurrences.php');
+include_once(__DIR__ . '/../services/DataUploadService.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/SOLRService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class Collections {
 
@@ -41,7 +44,7 @@ class Collections {
         "dwcaurl" => array("dataType" => "string", "length" => 250),
         "bibliographiccitation" => array("dataType" => "string", "length" => 1000),
         "accessrights" => array("dataType" => "string", "length" => 1000),
-        "configjson" => array("dataType" => "text", "length" => 0),
+        "configjson" => array("dataType" => "json", "length" => 0),
         "ispublic" => array("dataType" => "number", "length" => 6),
         "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
     );
@@ -86,6 +89,79 @@ class Collections {
             (new SOLRService)->deleteSOLRDocument($delOccArr);
         }
         return 1;
+    }
+
+    public function createCollectionRecord($data): int
+    {
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        $collId = array_key_exists('collid', $data) ? (int)$data['collid'] : 0;
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $data)){
+                    $fieldNameArr[] = $field;
+                    if($field === 'configjson'){
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    }
+                }
+            }
+            $fieldNameArr[] = 'collectionguid';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
+            $fieldNameArr[] = 'securitykey';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
+            $sql = 'INSERT INTO omcollections(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+                $sql = 'INSERT INTO omcollectionstats(collid, recordcnt, uploadedby) '.
+                    'VALUES(' . $newID . ', 0, "' . $GLOBALS['USERNAME'] . '")';
+                $this->conn->query($sql);
+            }
+        }
+        return $newID;
+    }
+
+    public function deleteCollectionRecord($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Occurrences)->deleteOccurrenceRecord('collid', $collid);
+            if($retVal){
+                $retVal = (new DataUploadService)->clearOccurrenceUploadTables($collid, true);
+                $sql = 'DELETE FROM userroles WHERE (role = "CollAdmin" OR role = "CollEditor" OR role = "RareSppReader") AND tablepk = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE m.* FROM omcolldatauploadparameters AS u LEFT JOIN uploadspecmap AS m ON u.uspid = m.uspid '.
+                    'WHERE u.collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE FROM omcolldatauploadparameters WHERE collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE FROM omcollmediauploadparameters WHERE collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE FROM omcollectionstats WHERE collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE FROM omcrowdsourcecentral WHERE collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                return $retVal;
+            }
+        }
+        return $retVal;
     }
 
     public function getCollectionArr(): array
@@ -364,6 +440,32 @@ class Collections {
             'SET i.tid = o.tid '.
             'WHERE o.collid IN(' . $collidStr . ') AND i.tid <> o.tid ';
         $this->conn->query($sql);
+    }
+
+    public function updateCollectionRecord($collid, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($collid && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $editData)){
+                    $fieldNameArr[] = $field;
+                    if($field === 'configjson'){
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    }
+                }
+            }
+            $sql = 'UPDATE omcollections SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE collid = ' . (int)$collid . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function updateCollectionStatistics($collidStr): int

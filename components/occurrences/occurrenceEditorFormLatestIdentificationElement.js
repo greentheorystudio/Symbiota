@@ -80,6 +80,12 @@ const occurrenceEditorFormLatestIdentificationElement = {
         }
 
         function updateScientificNameValue(taxon) {
+            if(taxon && Number(taxon['securitystatus']) === 1){
+                occurrenceStore.updateOccurrenceEditData('localitysecurity', '1');
+            }
+            else if(Number(occurrenceData.value['localitysecurity']) && !occurrenceData.value['localitysecurityreason']){
+                occurrenceStore.updateOccurrenceEditData('localitysecurity', '0');
+            }
             occurrenceStore.updateOccurrenceEditDataTaxon(taxon);
         }
 

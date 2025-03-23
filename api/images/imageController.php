@@ -62,4 +62,10 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'batchPopulateOccurrenceImageGUIDs' && $collid){
         echo $images->batchCreateOccurrenceImageRecordGUIDs($collid);
     }
+    elseif($action === 'getTaxonArrDisplayImageData'  && array_key_exists('tidArr', $_POST)){
+        $includeOccurrence = array_key_exists('includeoccurrence',$_POST) && (int)$_POST['includeoccurrence'] === 1;
+        $limitPerTaxon = array_key_exists('limitPerTaxon',$_POST) ? (int)$_POST['limitPerTaxon'] : null;
+        $sortsequenceLimit = array_key_exists('sortsequenceLimit',$_POST) ? (int)$_POST['sortsequenceLimit'] : null;
+        echo json_encode($images->getTaxonArrDisplayImageData(json_decode($_POST['tidArr'], true), $includeOccurrence, $limitPerTaxon, $sortsequenceLimit));
+    }
 }

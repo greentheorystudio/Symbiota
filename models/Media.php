@@ -99,22 +99,7 @@ class Media{
         return $retVal;
     }
 
-    public function deleteMediaRecord($mediaid): int
-    {
-        $retVal = 1;
-        $data = $this->getMediaData($mediaid);
-        if($data['accessuri'] && strpos($data['accessuri'], '/') === 0){
-            $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['accessuri']);
-            FileSystemService::deleteFile($urlServerPath, true);
-        }
-        $sql = 'DELETE FROM media WHERE mediaid = ' . (int)$mediaid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
-        }
-        return $retVal;
-    }
-
-    public function deleteOccurrenceMediaFiles($idType, $id): void
+    public function deleteAssociatedMediaFiles($idType, $id): void
     {
         $sql = '';
         if($idType === 'occid'){
@@ -126,6 +111,9 @@ class Media{
         elseif($idType === 'collid'){
             $sql = 'SELECT m.accessuri FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
                 'WHERE o.collid = ' . (int)$id . ' ';
+        }
+        elseif($idType === 'tid'){
+            $sql = 'SELECT accessuri FROM media WHERE tid = ' . (int)$id . ' AND ISNULL(occid) ';
         }
         //echo '<div>'.$sql.'</div>';
         if($sql && $result = $this->conn->query($sql)){
@@ -140,24 +128,43 @@ class Media{
         }
     }
 
-    public function deleteOccurrenceMediaRecords($idType, $id): int
+    public function deleteAssociatedMediaRecords($idType, $id): int
     {
+        $this->deleteAssociatedMediaFiles($idType, $id);
         $retVal = 0;
         $whereStr = '';
         if($idType === 'occid'){
-            $whereStr = 'occid = ' . (int)$id;
+            $whereStr = 'occid = ' . (int)$id . ' ';
         }
         elseif($idType === 'occidArr'){
-            $whereStr = 'occid IN(' . implode(',', $id) . ')';
+            $whereStr = 'occid IN(' . implode(',', $id) . ') ';
         }
         elseif($idType === 'collid'){
-            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') ';
+        }
+        elseif($idType === 'tid'){
+            $whereStr = 'tid = ' . (int)$id . ' AND ISNULL(occid) ';
         }
         if($whereStr){
             $sql = 'DELETE FROM media WHERE ' . $whereStr . ' ';
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
+        }
+        return $retVal;
+    }
+
+    public function deleteMediaRecord($mediaid): int
+    {
+        $retVal = 1;
+        $data = $this->getMediaData($mediaid);
+        if($data['accessuri'] && strpos($data['accessuri'], '/') === 0){
+            $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['accessuri']);
+            FileSystemService::deleteFile($urlServerPath, true);
+        }
+        $sql = 'DELETE FROM media WHERE mediaid = ' . (int)$mediaid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
         }
         return $retVal;
     }
@@ -230,6 +237,84 @@ class Media{
             }
         }
         return $retArr;
+    }
+
+    public function getTaxonArrDisplayMediaData($tidArr, $includeOccurrence = false, $limitPerTaxon = null, $sortsequenceLimit = null): array
+    {
+        $returnArr = array();
+        if($tidArr && is_array($tidArr) && count($tidArr) > 0){
+            $sql = 'SELECT DISTINCT m.mediaid, t.tidaccepted AS tid, m.occid, m.accessuri, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
+                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
+                'LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
+            if(!$includeOccurrence){
+                $sql .= 'AND ISNULL(m.occid) ';
+            }
+            if($sortsequenceLimit && (int)$sortsequenceLimit > 0){
+                $sql .= 'AND m.sortsequence <= ' . (int)$sortsequenceLimit . ' ';
+            }
+            $sql .= 'ORDER BY m.sortsequence ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if((int)$row['securitystatus'] !== 1 || (int)$row['occid'] === 0){
+                        if(!array_key_exists($row['tid'], $returnArr)){
+                            $returnArr[$row['tid']] = array();
+                        }
+                        if((int)$limitPerTaxon === 0 || count($returnArr[$row['tid']]) < (int)$limitPerTaxon){
+                            $nodeArr = array();
+                            foreach($fields as $val){
+                                $name = $val->name;
+                                $nodeArr[$name] = $row[$name];
+                            }
+                            $returnArr[$row['tid']][] = $nodeArr;
+                        }
+                    }
+                    unset($rows[$index]);
+                }
+            }
+
+            $sql = 'SELECT DISTINCT m.mediaid, te.parenttid AS tid, m.occid, m.accessuri, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
+                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
+                'LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'LEFT JOIN taxaenumtree AS te ON t.tidaccepted = te.tid '.
+                'WHERE te.parenttid IN(' . implode(',', $tidArr) . ') ';
+            if(!$includeOccurrence){
+                $sql .= 'AND ISNULL(m.occid) ';
+            }
+            if($sortsequenceLimit && (int)$sortsequenceLimit > 0){
+                $sql .= 'AND m.sortsequence <= ' . (int)$sortsequenceLimit . ' ';
+            }
+            $sql .= 'ORDER BY m.sortsequence ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if((int)$row['securitystatus'] !== 1 || (int)$row['occid'] === 0){
+                        if(!array_key_exists($row['tid'], $returnArr)){
+                            $returnArr[$row['tid']] = array();
+                        }
+                        if((int)$limitPerTaxon === 0 || count($returnArr[$row['tid']]) < (int)$limitPerTaxon){
+                            $nodeArr = array();
+                            foreach($fields as $val){
+                                $name = $val->name;
+                                $nodeArr[$name] = $row[$name];
+                            }
+                            $returnArr[$row['tid']][] = $nodeArr;
+                        }
+                    }
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $returnArr;
     }
 
     public function updateMediaRecord($medId, $editData): int

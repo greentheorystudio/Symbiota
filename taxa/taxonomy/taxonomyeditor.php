@@ -108,11 +108,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 <i style="height:15px;width:15px;" class="fas fa-level-up-alt"></i>
             </a>
         </div>
-        <div style="float:right;" title="Add a New Taxon">
-            <a href="index.php">
-                <i style="height:20px;width:20px;color:green;" class="fas fa-plus"></i>
-            </a>
-        </div>
         <h1>
         <?php
             echo "<a href='../profile/tpeditor.php?tid=".$taxonEditorObj->getTid()."' style='color:inherit;text-decoration:none;'>";

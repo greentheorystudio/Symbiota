@@ -12,6 +12,9 @@ if($action && $options && $stArr && SanitizerService::validateInternalRequest())
     if($action === 'getSearchOccidArr'){
         echo json_encode($searchService->getSearchOccidArr($stArr, $options));
     }
+    elseif($action === 'getSearchTidArr'){
+        echo json_encode($searchService->getSearchTidArr($stArr, $options));
+    }
     elseif($action === 'processSearch'){
         echo json_encode($searchService->processSearch($stArr, $options));
     }

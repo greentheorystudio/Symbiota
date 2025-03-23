@@ -42,7 +42,7 @@ class Permissions{
     public function addPermission($uid, $role, $tablePk = null): void
     {
         if((int)$uid > 0){
-            $sql = 'INSERT IGNORE INTO userroles(uid,role,tablepk,uidassignedby) VALUES('.
+            $sql = 'INSERT IGNORE INTO userroles(uid, role, tablepk, uidassignedby) VALUES('.
                 (int)$uid . ','.
                 '"' . SanitizerService::cleanInStr($this->conn, $role) . '", '.
                 (($tablePk && (int)$tablePk > 0) ? (int)$tablePk : 'NULL') . ','.

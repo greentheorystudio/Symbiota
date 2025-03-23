@@ -161,11 +161,9 @@ class DataUploadService {
     {
         $retVal = 1;
         if($collid){
-            (new Images)->deleteOccurrenceImageFiles('collid', $collid);
-            (new Media)->deleteOccurrenceMediaFiles('collid', $collid);
-            $retVal = (new Images)->deleteOccurrenceImageRecords('collid', $collid);
+            $retVal = (new Images)->deleteAssociatedImageRecords('collid', $collid);
             if($retVal){
-                $retVal = (new Media)->deleteOccurrenceMediaRecords('collid', $collid);
+                $retVal = (new Media)->deleteAssociatedMediaRecords('collid', $collid);
             }
         }
         return $retVal;
@@ -221,8 +219,8 @@ class DataUploadService {
         $retVal = 1;
         if($collid){
             $occidArr = (new Occurrences)->getOccidArrNotIncludedInUpload($collid);
-            (new Images)->deleteOccurrenceImageFiles('occidArr', $occidArr);
-            (new Media)->deleteOccurrenceMediaFiles('occidArr', $occidArr);
+            (new Images)->deleteAssociatedImageRecords('occidArr', $occidArr);
+            (new Media)->deleteAssociatedMediaRecords('occidArr', $occidArr);
             $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
         }
         return $retVal;
@@ -605,6 +603,15 @@ class DataUploadService {
             if($retVal){
                 $retVal = (new UploadOccurrenceTemp)->removeExistingOccurrenceDataFromUpload($collid);
             }
+        }
+        return $retVal;
+    }
+
+    public function removePrimaryIdentifiersFromUploadedOccurrences($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new Occurrences)->removePrimaryIdentifiersFromUploadedOccurrences($collid);
         }
         return $retVal;
     }

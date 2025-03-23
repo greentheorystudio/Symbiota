@@ -39,6 +39,16 @@ const collectionDataUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
+                    <checkbox-input-element :disabled="disabled" label="Save primary identifiers from source data" :value="configurationData.saveSourcePrimaryIdentifier" @update:value="(value) => updateConfigurationData('saveSourcePrimaryIdentifier', value)"></checkbox-input-element>
+                </div>
+            </div>
+            <div v-if="Number(profileData.uploadtype) === 6" class="row q-col-gutter-sm">
+                <div class="col-grow">
+                    <checkbox-input-element :disabled="disabled" label="Get centroid coordinates from GeoJSON polygon features" :value="configurationData.createPolygonCentroidCoordinates" @update:value="(value) => updateConfigurationData('createPolygonCentroidCoordinates', value)"></checkbox-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
                     <checkbox-input-element :disabled="disabled" label="Match by Catalog or Other Catalog Number" :value="configurationData.matchOnCatalogNumber" @update:value="(value) => updateConfigurationData('matchOnCatalogNumber', value)"></checkbox-input-element>
                 </div>
             </div>

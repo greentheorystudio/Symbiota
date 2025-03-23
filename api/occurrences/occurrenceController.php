@@ -19,13 +19,16 @@ elseif($collid){
         $isEditor = true;
     }
 }
+elseif($action === 'updateLocalitySecurity' && array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS'])){
+    $isEditor = true;
+}
 
 if($action && SanitizerService::validateInternalRequest()){
     $occurrences = new Occurrences();
     if($action === 'getOccurrenceDataLock' && $isEditor && $occid){
         echo json_encode($occurrences->getLock($occid));
     }
-    elseif($action === 'createOccurrenceRecord' && $isEditor){
+    elseif($action === 'createOccurrenceRecord' && $isEditor && array_key_exists('occurrence', $_POST)){
         echo $occurrences->createOccurrenceRecord(json_decode($_POST['occurrence'], true));
     }
     elseif($action === 'updateOccurrenceRecord' && $occid && $isEditor && array_key_exists('occurrenceData', $_POST)){

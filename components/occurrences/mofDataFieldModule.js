@@ -21,13 +21,13 @@ const mofDataFieldModule = {
                     <q-btn color="secondary" @click="processSaveDataEdits();" :label="('Save ' + configuredDataLabel + ' Edits')" :disabled="!editsExist" />
                 </div>
             </div>
-            <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-col-gutter-sm">
+            <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-gutter-sm">
                 <template v-for="layoutElement in configuredDataFieldsLayoutData">
                     <template v-if="layoutElement.type === 'dataFieldRow'">
-                        <mof-data-field-row :fields="layoutElement.fields"></mof-data-field-row>
+                        <mof-data-field-row :editor="true" :configured-data="configuredData" :configured-data-fields="configuredDataFields" :fields="layoutElement.fields" @update:configured-edit-data="updateConfiguredEditData"></mof-data-field-row>
                     </template>
                     <template v-else-if="layoutElement.type === 'dataFieldRowGroup'">
-                        <mof-data-field-row-group :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion"></mof-data-field-row-group>
+                        <mof-data-field-row-group :editor="true" :configured-data="configuredData" :configured-data-fields="configuredDataFields" :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion" @update:configured-edit-data="updateConfiguredEditData"></mof-data-field-row-group>
                     </template>
                 </template>
             </div>
@@ -121,24 +121,23 @@ const mofDataFieldModule = {
             });
         }
 
-        function updateConfiguredEditData(key, value) {
+        function updateConfiguredEditData(data) {
             if(props.dataType === 'event'){
-                occurrenceStore.updateEventMofEditData(key, value);
+                occurrenceStore.updateEventMofEditData(data.key, data.value);
             }
             else{
-                occurrenceStore.updateOccurrenceMofEditData(key, value);
+                occurrenceStore.updateOccurrenceMofEditData(data.key, data.value);
             }
         }
 
-        Vue.provide('configuredEditData', configuredData);
-        Vue.provide('configuredDataFields', configuredDataFields);
-        Vue.provide('updateConfiguredEditData', updateConfiguredEditData);
-
         return {
+            configuredData,
+            configuredDataFields,
             configuredDataFieldsLayoutData,
             configuredDataLabel,
             editsExist,
-            processSaveDataEdits
+            processSaveDataEdits,
+            updateConfiguredEditData
         }
     }
 };

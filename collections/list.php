@@ -40,7 +40,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <div id="app-container">
             <div class="navpath">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
-                <b>Search Collections</b>
+                <span class="text-bold">Search Collections</span>
             </div>
             <div id="innertext">
                 <div class="fit">
@@ -282,23 +282,30 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <occurrence-info-window-popup :occurrence-id="recordInfoWindowId" :show-popup="showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
                 </template>
                 <template v-if="displayQueryPopup">
-                    <search-criteria-popup :show-popup="(displayQueryPopup && !showSpatialPopup)" :show-spatial="true" @open:spatial-popup="openSpatialPopup" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+                    <search-criteria-popup
+                        :show-popup="(displayQueryPopup && !showSpatialPopup)"
+                        :show-spatial="true"
+                        @open:spatial-popup="openSpatialPopup"
+                        @process:search-load-records="loadRecords"
+                        @close:popup="setQueryPopupDisplay(false)"
+                    ></search-criteria-popup>
                 </template>
                 <template v-if="showSpatialPopup">
                     <spatial-analysis-popup
-                            :bottom-lat="bottomLatitude"
-                            :circle-arr="circleArr"
-                            :left-long="leftLongitude"
-                            :point-lat="pointLatitude"
-                            :point-long="pointLongitude"
-                            :poly-arr="polyArr"
-                            :radius="radius"
-                            :right-long="rightLongitude"
-                            :upper-lat="upperLatitude"
-                            :show-popup="showSpatialPopup"
-                            :window-type="popupWindowType"
-                            @update:spatial-data="processSpatialData"
-                            @close:popup="closeSpatialPopup();"
+                        :bottom-lat="spatialInputValues['bottomLatitude']"
+                        :circle-arr="spatialInputValues['circleArr']"
+                        :left-long="spatialInputValues['leftLongitude']"
+                        :point-lat="spatialInputValues['pointLatitude']"
+                        :point-long="spatialInputValues['pointLongitude']"
+                        :poly-arr="spatialInputValues['polyArr']"
+                        :radius="spatialInputValues['radius']"
+                        :radius-units="spatialInputValues['radiusUnit']"
+                        :right-long="spatialInputValues['rightLongitude']"
+                        :upper-lat="spatialInputValues['upperLatitude']"
+                        :show-popup="showSpatialPopup"
+                        :window-type="popupWindowType"
+                        @update:spatial-data="processSpatialData"
+                        @close:popup="closeSpatialPopup();"
                     ></spatial-analysis-popup>
                 </template>
             </div>
@@ -331,6 +338,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/advancedQueryBuilder.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCollectionsBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopupTabControls.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRecordsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSelectionsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -357,6 +365,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerQuerySelectorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRow.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRowGroup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoTabModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -380,15 +390,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const baseStore = useBaseStore();
                     const searchStore = useSearchStore();
 
-                    const bottomLatitude = Vue.ref(null);
-                    const circleArr = Vue.ref(null);
                     const clientRoot = baseStore.getClientRoot;
                     const currentUserPermissions = Vue.ref(null);
                     const displayQueryPopup = Vue.ref(false);
-                    const isAdmin = baseStore.getIsAdmin;
+                    const isAdmin = Vue.computed(() => {
+                        return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
+                    });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const lazyLoadCnt = 100;
-                    const leftLongitude = Vue.ref(null);
                     const pageNumber = Vue.ref(1);
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecCnt);
                     const paginationFirstRecordNumber = Vue.computed(() => {
@@ -430,40 +439,22 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             rowsNumber: Number(searchRecordCount.value)
                         };
                     });
-                    const pointLatitude = Vue.ref(null);
-                    const pointLongitude = Vue.ref(null);
-                    const polyArr = Vue.ref(null);
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
-                    const radius = Vue.ref(null);
                     const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
                     const recordInfoWindowId = Vue.ref(null);
-                    const rightLongitude = Vue.ref(null);
-                    const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
                     const searchTermsPageNumber = Vue.computed(() => searchStore.getSearchTermsPageNumber);
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
+                    const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const stArrJson = STARRJSON;
                     const tab = Vue.ref('occurrence');
                     const taxaCnt = Vue.ref(0);
                     const taxaDataArr = Vue.reactive([]);
-                    const upperLatitude = Vue.ref(null);
 
                     function changeRecordPage(props) {
                         setTableRecordData(props.pagination.page);
-                    }
-
-                    function clearSpatialInputValues() {
-                        bottomLatitude.value = null;
-                        circleArr.value = null;
-                        leftLongitude.value = null;
-                        pointLatitude.value = null;
-                        pointLongitude.value = null;
-                        polyArr.value = null;
-                        radius.value = null;
-                        rightLongitude.value = null;
-                        upperLatitude.value = null;
                     }
 
                     function closeRecordInfoWindow(){
@@ -474,7 +465,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     function closeSpatialPopup() {
                         popupWindowType.value = null;
                         showSpatialPopup.value = false;
-                        clearSpatialInputValues();
+                        searchStore.clearSpatialInputValues();
                     }
 
                     function getTaxaData() {
@@ -520,7 +511,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function openSpatialPopup(type) {
-                        setSpatialInputValues();
+                        searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
                     }
@@ -572,26 +563,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             if(data && Object.keys(data).length > 0){
                                 currentUserPermissions.value = data;
                             }
-                            if(Number(queryId) === 0 && !stArrJson){
-                                displayQueryPopup.value = true;
-                            }
                         });
                     }
 
                     function setQueryPopupDisplay(val) {
                         displayQueryPopup.value = val;
-                    }
-
-                    function setSpatialInputValues() {
-                        bottomLatitude.value = searchTerms.value.hasOwnProperty('bottomlat') ? searchTerms.value['bottomlat'] : null;
-                        circleArr.value = searchTerms.value.hasOwnProperty('circleArr') ? searchTerms.value['circleArr'] : null;
-                        leftLongitude.value = searchTerms.value.hasOwnProperty('leftlong') ? searchTerms.value['leftlong'] : null;
-                        pointLatitude.value = searchTerms.value.hasOwnProperty('pointlat') ? searchTerms.value['pointlat'] : null;
-                        pointLongitude.value = searchTerms.value.hasOwnProperty('pointlong') ? searchTerms.value['pointlong'] : null;
-                        polyArr.value = searchTerms.value.hasOwnProperty('polyArr') ? searchTerms.value['polyArr'] : null;
-                        radius.value = searchTerms.value.hasOwnProperty('radius') ? searchTerms.value['radius'] : null;
-                        rightLongitude.value = searchTerms.value.hasOwnProperty('rightlong') ? searchTerms.value['rightlong'] : null;
-                        upperLatitude.value = searchTerms.value.hasOwnProperty('upperlat') ? searchTerms.value['upperlat'] : null;
                     }
 
                     function setTableRecordData(index) {
@@ -611,11 +587,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         pageNumber.value = Number(index);
                     }
 
-                    Vue.provide('loadRecords', loadRecords);
-                    Vue.provide('setQueryPopupDisplay', setQueryPopupDisplay);
-
                     Vue.onMounted(() => {
                         setCurrentUserPermissions();
+                        if(Number(queryId) === 0 && !stArrJson){
+                            displayQueryPopup.value = true;
+                        }
                         if(queryId || stArrJson){
                             showWorking('Loading...');
                         }
@@ -634,33 +610,26 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
 
                     return {
-                        bottomLatitude,
-                        circleArr,
                         clientRoot,
                         currentUserPermissions,
                         displayQueryPopup,
                         isAdmin,
                         keyModuleIsActive,
-                        leftLongitude,
                         pagination,
-                        pointLatitude,
-                        pointLongitude,
-                        polyArr,
                         popupWindowType,
-                        radius,
                         recordDataArr,
                         recordInfoWindowId,
-                        rightLongitude,
                         searchTermsJson,
                         showRecordInfoWindow,
                         showSpatialPopup,
+                        spatialInputValues,
                         tab,
                         taxaCnt,
                         taxaDataArr,
-                        upperLatitude,
                         changeRecordPage,
                         closeRecordInfoWindow,
                         closeSpatialPopup,
+                        loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
                         processSpatialData,

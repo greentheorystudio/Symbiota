@@ -1,17 +1,19 @@
 const useBaseStore = Pinia.defineStore('base', {
     state: () => ({
+        activateExsiccati: ACTIVATE_EXSICCATI,
         adminEmail: ADMIN_EMAIL,
         clientRoot: CLIENT_ROOT,
         defaultCollectionCategoryId: DEFAULT_COLLECTION_CATEGORY_ID,
         defaultLanguage: DEFAULT_LANG,
         defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
+        glossaryModuleIsActive: GLOSSARY_MOD_IS_ACTIVE,
         imageTagOptions: IMAGE_TAG_OPTIONS,
-        isAdmin: IS_ADMIN,
         keyModuleIsActive: KEY_MOD_IS_ACTIVE,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
+        rssActive: RSS_ACTIVE,
         showPasswordReset: SHOW_PASSWORD_RESET,
         solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
@@ -32,6 +34,9 @@ const useBaseStore = Pinia.defineStore('base', {
         validUser: VALID_USER
     }),
     getters: {
+        getActivateExsiccati(state) {
+            return state.activateExsiccati;
+        },
         getAdminEmail(state) {
             return state.adminEmail;
         },
@@ -50,11 +55,11 @@ const useBaseStore = Pinia.defineStore('base', {
         getEmailConfigured(state) {
             return state.emailConfigured;
         },
+        getGlossaryModuleIsActive(state) {
+            return state.glossaryModuleIsActive;
+        },
         getImageTagOptions(state) {
             return state.imageTagOptions;
-        },
-        getIsAdmin(state) {
-            return state.isAdmin;
         },
         getKeyModuleIsActive(state) {
             return state.keyModuleIsActive;
@@ -67,6 +72,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getRightsTerms(state) {
             return state.rightsTerms;
+        },
+        getRssActive(state) {
+            return state.rssActive;
         },
         getShowPasswordReset(state) {
             return state.showPasswordReset;

@@ -190,6 +190,12 @@ ALTER TABLE `fmchecklists`
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`;
 
+ALTER TABLE `fmchklsttaxalink`
+    ADD COLUMN `cltlid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (`cltlid`),
+    MODIFY COLUMN `morphospecies` varchar(45) NULL DEFAULT NULL AFTER `CLID`;
+
 CREATE TABLE `keycharacterheadings` (
     `chid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `headingname` varchar(255) NOT NULL,
@@ -347,6 +353,8 @@ CREATE TABLE `uploadmoftemp` (
 
 ALTER TABLE `uploadspecmap`
     ADD CONSTRAINT `Fk_uploadspecmap_uspid` FOREIGN KEY (`uspid`) REFERENCES `omcolldatauploadparameters` (`uspid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `uploadspecmap` DROP FOREIGN KEY `FK_uploadspecmap_usp`;
 
 ALTER TABLE `uploadspectemp`
     DROP COLUMN `recordNumberPrefix`,

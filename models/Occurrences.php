@@ -582,10 +582,10 @@ class Occurrences{
                 $retVal = (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
             }
             if($retVal){
-                $retVal = (new Images)->deleteOccurrenceImageRecords($idType, $id);
+                $retVal = (new Images)->deleteAssociatedImageRecords($idType, $id);
             }
             if($retVal){
-                $retVal = (new Media)->deleteOccurrenceMediaRecords($idType, $id);
+                $retVal = (new Media)->deleteAssociatedMediaRecords($idType, $id);
             }
             if($retVal){
                 $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);
@@ -1002,27 +1002,42 @@ class Occurrences{
         return $retArr;
     }
 
-    public function protectGlobalSpecies($collid = null): int
+    public function protectGlobalSpecies($collid): int
     {
         $returnVal = 0;
         $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
-            'SET o.localitySecurity = 1 WHERE t.securitystatus = 1 ';
-        if($collid) {
+            'SET o.localitysecurity = 1 WHERE t.securitystatus = 1 ';
+        if((int)$collid > 0) {
             $sql .= 'AND o.collid = ' . (int)$collid . ' ';
         }
         if($this->conn->query($sql)){
             $returnVal += $this->conn->affected_rows;
         }
         $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
-            'SET o.localitySecurity = 0 '.
-            'WHERE t.TID IS NOT NULL AND t.securitystatus <> 1 ';
-        if($collid) {
+            'SET o.localitysecurity = 0 '.
+            'WHERE t.TID IS NOT NULL AND t.securitystatus <> 1 AND ISNULL(o.localitysecurityreason) ';
+        if((int)$collid > 0) {
             $sql2 .= 'AND o.collid = ' . (int)$collid . ' ';
         }
         if($this->conn->query($sql2)){
             $returnVal += $this->conn->affected_rows;
         }
         return $returnVal;
+    }
+
+    public function removePrimaryIdentifiersFromUploadedOccurrences($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
+                'SET o.dbpk = NULL '.
+                'WHERE o.collid  = ' . (int)$collid . ' AND u.occid IS NOT NULL ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function transferOccurrenceRecord($occid, $transferToCollid): int
