@@ -110,10 +110,10 @@ class ChecklistTaxa{
                     foreach($fields as $val){
                         $name = $val->name;
                         if($name === 'family'){
-                            $retArr[$name] = $row['family'] ?: '[Incertae Sedis]';
+                            $nodeArr[$name] = $row['family'] ?: '[Incertae Sedis]';
                         }
                         else{
-                            $retArr[$name] = $row[$name];
+                            $nodeArr[$name] = $row[$name];
                         }
                     }
                     if($includeKeyData){
