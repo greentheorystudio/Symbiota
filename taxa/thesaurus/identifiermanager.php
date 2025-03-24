@@ -316,7 +316,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                 currentProcess.value = 'initializeUSDAImport';
                                 parseFile(selectedUsdaFile.value, (fileContents) => {
                                     csvToArray(fileContents).then((csvData) => {
-                                        if(csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
+                                        if(csvData[0] && csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
                                             processingArr.value = csvData;
                                             if(selectedKingdomName.value === 'Fungi'){
                                                 processUsdaFungiSymbolUpload();

@@ -142,18 +142,23 @@ function useCore() {
                         }
                         values.push(dataValue);
                     }
-                    return headers.reduce((object, header, index) => {
-                        let fieldName = header.trim();
-                        if(fieldName.indexOf('"') > -1){
-                            fieldName = fieldName.replaceAll('"', '');
-                        }
-                        let fieldValue = values[index] ? values[index].replace('\r', '') : '';
-                        if(fieldValue.indexOf('"') > -1){
-                            fieldValue = fieldValue.replaceAll('"','');
-                        }
-                        object[fieldName] = fieldValue;
-                        return object;
-                    }, {});
+                    if(values.length === headers.length){
+                        return headers.reduce((object, header, index) => {
+                            let fieldName = header.trim();
+                            if(fieldName.indexOf('"') > -1){
+                                fieldName = fieldName.replaceAll('"', '');
+                            }
+                            let fieldValue = values[index] ? values[index].replace('\r', '') : '';
+                            if(fieldValue.indexOf('"') > -1){
+                                fieldValue = fieldValue.replaceAll('"','');
+                            }
+                            object[fieldName] = fieldValue;
+                            return object;
+                        }, {});
+                    }
+                    else{
+                        return null;
+                    }
                 }
             });
             return Promise.all(promises);

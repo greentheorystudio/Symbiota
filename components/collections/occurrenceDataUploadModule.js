@@ -1561,29 +1561,31 @@ const occurrenceDataUploadModule = {
             if(csvData.length > 0){
                 let generateCoreIds = false;
                 csvData.forEach((dataObj, index) => {
-                    if(index === 0){
-                        if((occurrenceSourcePrimaryKeyField.value && !dataObj.hasOwnProperty(occurrenceSourcePrimaryKeyField.value)) || (!occurrenceSourcePrimaryKeyField.value && !dataObj.hasOwnProperty('id') && !dataObj.hasOwnProperty('coreid'))){
-                            generateCoreIds = true;
+                    if(dataObj){
+                        if(index === 0){
+                            if((occurrenceSourcePrimaryKeyField.value && !dataObj.hasOwnProperty(occurrenceSourcePrimaryKeyField.value)) || (!occurrenceSourcePrimaryKeyField.value && !dataObj.hasOwnProperty('id') && !dataObj.hasOwnProperty('coreid'))){
+                                generateCoreIds = true;
+                            }
+                            if(generateCoreIds){
+                                sourceDataFieldsFlatFile.value['id'] = occurrenceSourcePrimaryKeyField.value ? occurrenceSourcePrimaryKeyField.value : 'coreid';
+                            }
+                            Object.keys(dataObj).forEach((key) => {
+                                if(key.toLowerCase() === 'id' || key.toLowerCase() === 'coreid'){
+                                    sourceDataFieldsFlatFile.value[key.toLowerCase()] = 'coreid';
+                                }
+                                else if(key.toLowerCase() === 'eventid'){
+                                    sourceDataFieldsFlatFile.value[key.toLowerCase()] = 'coreeventid';
+                                }
+                                else{
+                                    sourceDataFieldsFlatFile.value[key.toLowerCase()] = key;
+                                }
+                            });
                         }
                         if(generateCoreIds){
-                            sourceDataFieldsFlatFile.value['id'] = occurrenceSourcePrimaryKeyField.value ? occurrenceSourcePrimaryKeyField.value : 'coreid';
+                            dataObj['id'] = (index + 1).toString();
                         }
-                        Object.keys(dataObj).forEach((key) => {
-                            if(key.toLowerCase() === 'id' || key.toLowerCase() === 'coreid'){
-                                sourceDataFieldsFlatFile.value[key.toLowerCase()] = 'coreid';
-                            }
-                            else if(key.toLowerCase() === 'eventid'){
-                                sourceDataFieldsFlatFile.value[key.toLowerCase()] = 'coreeventid';
-                            }
-                            else{
-                                sourceDataFieldsFlatFile.value[key.toLowerCase()] = key;
-                            }
-                        });
+                        sourceDataFlatFile.value.push(dataObj);
                     }
-                    if(generateCoreIds){
-                        dataObj['id'] = (index + 1).toString();
-                    }
-                    sourceDataFlatFile.value.push(dataObj);
                 });
             }
             validateFieldMappingData();

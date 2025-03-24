@@ -60,7 +60,7 @@ const spatialAnalysisModule = {
         'spatial-side-button-tray': spatialSideButtonTray
     },
     setup(props, context) {
-        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
+        const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, writeMySQLWktString } = useCore();
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
@@ -256,7 +256,7 @@ const spatialAnalysisModule = {
                         }
                     }
                     else{
-                        evt.feature.set('geoType',mapSettings.selectedDrawTool);
+                        evt.feature.set('geoType', mapSettings.selectedDrawTool);
                     }
                     updateMapSettings('selectedDrawTool', 'None');
                     map.removeInteraction(mapSettings.draw);
@@ -1519,8 +1519,65 @@ const spatialAnalysisModule = {
                     layersObj['pointv'].getSource().changed();
                 }
             });
-            map.getViewport().addEventListener('drop', () => {
-                showWorking('Loading...');
+            map.getViewport().addEventListener('drop', (event) => {
+                let filename = event.dataTransfer.files[0].name.split('.');
+                const fileType = filename.pop();
+                if(fileType === 'csv'){
+                    if(setDragDropTarget()){
+                        const pointArr = [];
+                        showWorking('Loading...');
+                        parseFile(event.dataTransfer.files[0], (fileContents) => {
+                            csvToArray(fileContents).then((csvData) => {
+                                csvData.forEach((dataObj) => {
+                                    if(dataObj){
+                                        let latitudeField, longitudeField;
+                                        latitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'decimallatitude');
+                                        if(!latitudeField){
+                                            latitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'latitude');
+                                        }
+                                        longitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'decimallongitude');
+                                        if(!longitudeField){
+                                            longitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'longitude');
+                                        }
+                                        if(latitudeField && dataObj[latitudeField] && !isNaN(dataObj[latitudeField]) && longitudeField && dataObj[longitudeField] && !isNaN(dataObj[longitudeField])){
+                                            const newPointGeometry = new ol.geom.Point(ol.proj.fromLonLat([Number(dataObj[longitudeField]), Number(dataObj[latitudeField])]));
+                                            const pointFeature = new ol.Feature(newPointGeometry);
+                                            Object.keys(dataObj).forEach((field) => {
+                                                if(field !== latitudeField && field !== longitudeField && dataObj[field] && dataObj[field] !== ''){
+                                                    pointFeature.set(field, dataObj[field]);
+                                                }
+                                            });
+                                            pointArr.push(pointFeature);
+                                        }
+                                    }
+                                });
+                                if(pointArr.length > 0){
+                                    const infoArr = [];
+                                    infoArr['id'] = mapSettings.dragDropTarget;
+                                    infoArr['type'] = 'userLayer';
+                                    infoArr['fileType'] = fileType;
+                                    infoArr['layerName'] = filename;
+                                    infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
+                                    infoArr['fillColor'] = mapSettings.dragDropFillColor;
+                                    infoArr['borderColor'] = mapSettings.dragDropBorderColor;
+                                    infoArr['borderWidth'] = mapSettings.dragDropBorderWidth;
+                                    infoArr['pointRadius'] = mapSettings.dragDropPointRadius;
+                                    infoArr['opacity'] = mapSettings.dragDropOpacity;
+                                    const sourceIndex = mapSettings.dragDropTarget + 'Source';
+                                    layersObj[sourceIndex] = new ol.source.Vector({
+                                        features: pointArr
+                                    });
+                                    layersObj[mapSettings.dragDropTarget].setSource(layersObj[sourceIndex]);
+                                    processAddedLayer(infoArr,true);
+                                    map.getView().fit(layersObj[sourceIndex].getExtent());
+                                }
+                                else{
+                                    hideWorking();
+                                }
+                            });
+                        });
+                    }
+                }
             });
             map.on('singleclick', (evt) => {
                 let infoHTML;

@@ -323,7 +323,7 @@ const mediaFileUploadInputElement = {
             if(csvFileData.length > 0){
                 taxaArr.value = [];
                 csvFileData.forEach((dataObj, index) => {
-                    if(dataObj.hasOwnProperty('filename') && dataObj['filename']){
+                    if(dataObj && dataObj.hasOwnProperty('filename') && dataObj['filename']){
                         if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.value.includes(dataObj['scientificname'])){
                             taxaArr.value.push(dataObj['scientificname']);
                         }
