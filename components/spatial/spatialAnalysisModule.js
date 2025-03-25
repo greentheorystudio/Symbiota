@@ -1543,7 +1543,7 @@ const spatialAnalysisModule = {
                                             const newPointGeometry = new ol.geom.Point(ol.proj.fromLonLat([Number(dataObj[longitudeField]), Number(dataObj[latitudeField])]));
                                             const pointFeature = new ol.Feature(newPointGeometry);
                                             Object.keys(dataObj).forEach((field) => {
-                                                if(field !== latitudeField && field !== longitudeField && dataObj[field] && dataObj[field] !== ''){
+                                                if(field !== latitudeField && field !== longitudeField){
                                                     pointFeature.set(field, dataObj[field]);
                                                 }
                                             });
@@ -1556,7 +1556,7 @@ const spatialAnalysisModule = {
                                     infoArr['id'] = mapSettings.dragDropTarget;
                                     infoArr['type'] = 'userLayer';
                                     infoArr['fileType'] = fileType;
-                                    infoArr['layerName'] = filename;
+                                    infoArr['layerName'] = filename[0];
                                     infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                                     infoArr['fillColor'] = mapSettings.dragDropFillColor;
                                     infoArr['borderColor'] = mapSettings.dragDropBorderColor;
@@ -1627,8 +1627,9 @@ const spatialAnalysisModule = {
                         if(feature){
                             const properties = feature.getKeys();
                             properties.forEach((prop) => {
-                                if(String(prop) !== 'geometry'){
-                                    infoHTML += '<b>' + prop + ':</b> ' + (feature.get(prop) ? feature.get(prop) : '') + '<br />';
+                                const propValue = feature.get(prop);
+                                if(String(prop) !== 'geometry' && propValue){
+                                    infoHTML += '<b>' + prop + ':</b> ' + propValue + '<br />';
                                 }
                             });
                             if(infoHTML){
@@ -1861,7 +1862,6 @@ const spatialAnalysisModule = {
             dragAndDropInteraction.on('addfeatures', (event) => {
                 let filename = event.file.name.split('.');
                 const fileType = filename.pop();
-                filename = filename.join("");
                 if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif' || fileType === 'tiff'){
                     if(fileType === 'geojson' || fileType === 'kml'){
                         if(setDragDropTarget()){
@@ -1869,7 +1869,7 @@ const spatialAnalysisModule = {
                             infoArr['id'] = mapSettings.dragDropTarget;
                             infoArr['type'] = 'userLayer';
                             infoArr['fileType'] = fileType;
-                            infoArr['layerName'] = filename;
+                            infoArr['layerName'] = filename[0];
                             infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                             infoArr['fillColor'] = mapSettings.dragDropFillColor;
                             infoArr['borderColor'] = mapSettings.dragDropBorderColor;
@@ -1898,7 +1898,7 @@ const spatialAnalysisModule = {
                                     infoArr['id'] = mapSettings.dragDropTarget;
                                     infoArr['type'] = 'userLayer';
                                     infoArr['fileType'] = 'zip';
-                                    infoArr['layerName'] = filename;
+                                    infoArr['layerName'] = filename[0];
                                     infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                                     infoArr['fillColor'] = mapSettings.dragDropFillColor;
                                     infoArr['borderColor'] = mapSettings.dragDropBorderColor;
@@ -1934,7 +1934,7 @@ const spatialAnalysisModule = {
                                         infoArr['id'] = mapSettings.dragDropTarget;
                                         infoArr['type'] = 'userLayer';
                                         infoArr['fileType'] = 'tif';
-                                        infoArr['layerName'] = filename;
+                                        infoArr['layerName'] = filename[0];
                                         infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                                         infoArr['colorScale'] = mapSettings.dragDropRasterColorScale;
                                         const sourceIndex = mapSettings.dragDropTarget + 'Source';
@@ -1988,7 +1988,7 @@ const spatialAnalysisModule = {
                                         layersObj[mapSettings.dragDropTarget].setSource(layersObj[sourceIndex]);
                                         map.addLayer(layersObj[mapSettings.dragDropTarget]);
                                         processAddedLayer(infoArr,true);
-                                        rasterLayersArr.value.push({value: mapSettings.dragDropTarget, label: filename});
+                                        rasterLayersArr.value.push({value: mapSettings.dragDropTarget, label: filename[0]});
                                         const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
                                         const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
                                         const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
