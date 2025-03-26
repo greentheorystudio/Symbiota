@@ -2424,14 +2424,14 @@ const occurrenceDataUploadModule = {
         }
 
         function setSymbiotaFlatFileFieldOptions() {
-            symbiotaFieldOptionsOccurrence.value.forEach((fieldOption) => {
-                symbiotaFieldOptionsFlatFile.value.push(fieldOption);
-            });
             Object.keys(eventMofDataFields.value).forEach((key) => {
                 symbiotaFieldOptionsFlatFile.value.push({value: key, label: eventMofDataFields.value[key]['label']});
             });
             Object.keys(occurrenceMofDataFields.value).forEach((key) => {
                 symbiotaFieldOptionsFlatFile.value.push({value: key, label: occurrenceMofDataFields.value[key]['label']});
+            });
+            symbiotaFieldOptionsOccurrence.value.forEach((fieldOption) => {
+                symbiotaFieldOptionsFlatFile.value.push(fieldOption);
             });
         }
 
