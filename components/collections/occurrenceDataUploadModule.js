@@ -539,7 +539,6 @@ const occurrenceDataUploadModule = {
         const symbiotaFieldOptionsFlatFile = Vue.ref([]);
         const symbiotaFieldOptionsMedia = Vue.ref([]);
         const symbiotaFieldOptionsMof = Vue.ref([
-            {value: 'unmapped', label: 'UNMAPPED'},
             {value: 'field', label: 'measurementtype'},
             {value: 'datavalue', label: 'measurementvalue'}
         ]);
@@ -607,9 +606,6 @@ const occurrenceDataUploadModule = {
             symbiotaFieldOptionsFlatFile.value.length = 0;
             symbiotaFieldOptionsMedia.value.length = 0;
             symbiotaFieldOptionsOccurrence.value.length = 0;
-            symbiotaFieldOptionsDetermination.value.push({value: 'unmapped', label: 'UNMAPPED'});
-            symbiotaFieldOptionsMedia.value.push({value: 'unmapped', label: 'UNMAPPED'});
-            symbiotaFieldOptionsOccurrence.value.push({value: 'unmapped', label: 'UNMAPPED'});
             sourceDataFieldsDetermination.value = Object.assign({}, {});
             sourceDataFieldsFlatFile.value = Object.assign({}, {});
             sourceDataFieldsMof.value = Object.assign({}, {});
