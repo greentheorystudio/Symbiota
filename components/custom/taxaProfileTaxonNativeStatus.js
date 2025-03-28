@@ -1,12 +1,4 @@
 const taxaProfileTaxonNativeStatus = {
-    props: [
-        'taxon'
-    ],
-    watch: {
-        taxon: function(){
-            this.getNativeStatus();
-        }
-    },
     template: `
         <template v-if="nativeStatus">
             <div class="text-weight-bold text-red">
@@ -14,31 +6,44 @@ const taxaProfileTaxonNativeStatus = {
             </div>
         </template>
     `,
-    data() {
-        return {
-            nativeStatus: Vue.ref(null)
-        }
-    },
-    mounted(){
-        this.getNativeStatus();
-    },
-    methods: {
-        getNativeStatus() {
-            const apiUrl = CLIENT_ROOT + '/api/custom/IRLController.php';
+    setup() {
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const clientRoot = baseStore.getClientRoot;
+        const nativeStatus = Vue.ref(null);
+        const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+
+        Vue.watch(taxon, () => {
+            getNativeStatus();
+        });
+
+        function getNativeStatus() {
+            const apiUrl = clientRoot + '/api/custom/IRLController.php';
             const formData = new FormData();
-            formData.append('tid', this.taxon['tid']);
+            formData.append('tid', taxon.value['tid']);
             formData.append('action', 'getNativeStatus');
             fetch(apiUrl, {
                 method: 'POST',
                 body: formData
             })
             .then((response) => {
-                if(response.status === 200){
-                    response.text().then((res) => {
-                        this.nativeStatus = res;
-                    });
-                }
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                nativeStatus.value = res;
             });
+        }
+
+        Vue.onMounted(() => {
+            if(Number(taxon.value['tid']) > 0){
+                getNativeStatus();
+            }
+        });
+
+        return {
+            nativeStatus,
+            taxon
         }
     }
 };
