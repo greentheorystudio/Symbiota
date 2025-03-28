@@ -64,7 +64,7 @@ class Users{
                 $sql .= 'AND password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $password) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) ';
+                $sql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) OR password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 256) ';
             }
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -123,7 +123,7 @@ class Users{
                 $sql .= 'UPDATE users SET password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $password) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'UPDATE users SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) ';
+                $sql .= 'UPDATE users SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 256) ';
             }
             $sql .= 'WHERE uid = ' . (int)$uid . ' ';
             if($this->conn->query($sql)){
@@ -211,7 +211,7 @@ class Users{
                 $fieldValueArr[] = 'PASSWORD("' . $password . '")';
             }
             else{
-                $fieldValueArr[] = 'SHA2("' . $password . '", 224)';
+                $fieldValueArr[] = 'SHA2("' . $password . '", 256)';
             }
             $sql = 'INSERT INTO users(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
@@ -395,7 +395,7 @@ class Users{
                 $sql .= 'SET password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '", 224) ';
+                $sql .= 'SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '", 256) ';
             }
             $sql .= 'WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
             if($this->conn->query($sql)){
