@@ -289,7 +289,6 @@ class Users{
         $result = $this->conn->query($sql);
         if($row = $result->fetch_array(MYSQLI_ASSOC)){
             $cnt = $row['cnt'];
-            $result->free();
         }
         $result->free();
         return $cnt;
