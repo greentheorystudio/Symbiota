@@ -1,14 +1,8 @@
 const taxaProfileTaxonVernaculars = {
-    props: {
-        vernaculars: {
-            type: Array,
-            default: []
-        }
-    },
     template: `
-        <template v-if="vernaculars.length">
+        <template v-if="vernacularArr.length">
             <div>
-                <template v-if="vernaculars.length > 1">
+                <template v-if="vernacularArr.length > 1">
                     <template v-if="!showAll">
                         {{ firstVernacular }}<span @click="showAll = true" class="cursor-pointer" title="Click here to show more common names">&nbsp;&nbsp;[more...]</span>
                     </template>
@@ -22,30 +16,30 @@ const taxaProfileTaxonVernaculars = {
             </div>
         </template>
     `,
-    setup(props) {
-        const firstVernacular = Vue.ref(null);
-        const propsRefs = Vue.toRefs(props);
-        const showAll = Vue.ref(false);
-        const vernacularStr = Vue.ref(null);
+    setup() {
+        const taxaStore = useTaxaStore();
 
-        Vue.watch(propsRefs.vernaculars, () => {
-            processVernaculars();
-        });
-
-        function processVernaculars() {
-            if(props.vernaculars.length > 0){
-                firstVernacular.value = props.vernaculars[0];
-                vernacularStr.value = props.vernaculars.join(', ');
+        const firstVernacular = Vue.computed(() => {
+            let firstVern = null;
+            if(vernacularArr.value.length > 0){
+                firstVern = vernacularArr.value[0]['vernacularname'];
             }
-        }
-
-        Vue.onMounted(() => {
-            processVernaculars();
+            return firstVern;
+        });
+        const showAll = Vue.ref(false);
+        const vernacularArr = Vue.computed(() => taxaStore.getTaxaVernacularArr);
+        const vernacularStr = Vue.computed(() => {
+            const vernArr = [];
+            vernacularArr.value.forEach((vern) => {
+                vernArr.push(vern['vernacularname']);
+            });
+            return vernArr.join(', ');
         });
 
         return {
             firstVernacular,
             showAll,
+            vernacularArr,
             vernacularStr
         }
     }

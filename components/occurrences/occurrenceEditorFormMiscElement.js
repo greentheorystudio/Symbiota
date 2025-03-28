@@ -21,10 +21,20 @@ const occurrenceEditorFormMiscElement = {
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-grow">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
+                        <template v-if="controlledVocabularies.hasOwnProperty('lifestage') && controlledVocabularies['lifestage'] && controlledVocabularies['lifestage'].length > 0 && (!occurrenceData.lifestage || controlledVocabularies['lifestage'].includes(occurrenceData.lifestage))">
+                            <selector-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :options="controlledVocabularies['lifestage']" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)" :clearable="true"></selector-input-element>
+                        </template>
+                        <template v-else>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
+                        </template>
                     </div>
                     <div class="col-12 col-sm-6 col-md-grow">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['sex']" label="Sex" :maxlength="occurrenceFields['sex'] ? occurrenceFields['sex']['length'] : 0" :value="occurrenceData.sex" @update:value="(value) => updateOccurrenceData('sex', value)"></text-field-input-element>
+                        <template v-if="controlledVocabularies.hasOwnProperty('sex') && controlledVocabularies['sex'] && controlledVocabularies['sex'].length > 0 && (!occurrenceData.sex || controlledVocabularies['sex'].includes(occurrenceData.sex))">
+                            <selector-input-element :definition="occurrenceFieldDefinitions['sex']" label="Sex" :options="controlledVocabularies['sex']" :value="occurrenceData.sex" @update:value="(value) => updateOccurrenceData('sex', value)" :clearable="true"></selector-input-element>
+                        </template>
+                        <template v-else>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['sex']" label="Sex" :maxlength="occurrenceFields['sex'] ? occurrenceFields['sex']['length'] : 0" :value="occurrenceData.sex" @update:value="(value) => updateOccurrenceData('sex', value)"></text-field-input-element>
+                        </template>
                     </div>
                     <template v-if="occurrenceEntryFormat === 'benthic'">
                         <div class="col-12 col-sm-6 col-md-grow">
@@ -107,6 +117,7 @@ const occurrenceEditorFormMiscElement = {
         const occurrenceStore = useOccurrenceStore();
 
         const basisOfRecordOptions = Vue.computed(() => occurrenceStore.getBasisOfRecordOptions);
+        const controlledVocabularies = Vue.computed(() => occurrenceStore.getOccurrenceFieldControlledVocabularies);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
@@ -151,6 +162,7 @@ const occurrenceEditorFormMiscElement = {
 
         return {
             basisOfRecordOptions,
+            controlledVocabularies,
             eventData,
             occurrenceData,
             occurrenceEntryFormat,

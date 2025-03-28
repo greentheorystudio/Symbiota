@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/KeyCharacterHeadings.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class KeyCharacters{
@@ -58,6 +59,26 @@ class KeyCharacters{
         return $retVal;
     }
 
+    public function getCharacterDependencies($cidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT cid, dcid, dcsid '.
+            'FROM keycharacterdependence WHERE cid IN(' . implode(',', $cidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['cid'] = $row['dcid'];
+                $nodeArr['csid'] = $row['dcsid'];
+                $retArr[$row['cid']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getKeyCharacterData($cid): array
     {
         $retArr = array();
@@ -73,6 +94,51 @@ class KeyCharacters{
                 foreach($fields as $val){
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getKeyCharactersArr($cidArr, $includeFullKeyData = false): array
+    {
+        $retArr = array();
+        $chidArr = array();
+        $tempArr = array();
+        if(count($cidArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM keycharacters WHERE cid IN(' . implode(',', $cidArr) . ') ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $retArr['characters'] = array();
+                $retArr['character-headings'] = array();
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($includeFullKeyData && !in_array((int)$row['chid'], $chidArr, true)){
+                        $chidArr[] = (int)$row['chid'];
+                    }
+                    if(!array_key_exists($row['cid'], $tempArr)){
+                        $tempArr[$row['cid']] = array();
+                    }
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        if($name !== 'cid'){
+                            $tempArr[$row['cid']][$name] = $row[$name];
+                        }
+                    }
+                    unset($rows[$index]);
+                }
+                $depArr = $this->getCharacterDependencies($cidArr);
+                foreach($tempArr as $cid => $cArr){
+                    $cArr['cid'] = $cid;
+                    $cArr['dependencies'] = array_key_exists($cid, $depArr) ? $depArr[$cid] : array();
+                    $retArr['characters'][] = $cArr;
+                }
+                if($includeFullKeyData){
+                    $retArr['character-headings'] = (new KeyCharacterHeadings)->getKeyCharacterHeadingsArr($chidArr);
                 }
             }
         }

@@ -134,7 +134,6 @@ else{
         $mapWhere = 'WHERE o.occid IN('.$occStr.') ';
     }
     $dwcaHandler->setSchemaType($schema);
-    $dwcaHandler->setVerboseMode(0);
     $dwcaHandler->setRedactLocalities(0);
     $dwcaHandler->setCustomWhereSql($mapWhere);
     $dwcaHandler->setIsPublicDownload();

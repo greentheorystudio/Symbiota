@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
@@ -25,6 +26,52 @@ class OccurrenceMeasurementsOrFacts{
         $this->conn->close();
 	}
 
+    public function createOccurrenceMofRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('mofid', 'enteredby', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    $fieldNameArr[] = $field;
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $sql = 'INSERT INTO ommofextension(' . implode(',', $fieldNameArr) . ') '.
+                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmoftemp '.
+                    'WHERE collid = ' . (int)$collId . ' AND (eventid IS NOT NULL OR occid IS NOT NULL) ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $retVal = 1;
+                }
+            }
+        }
+        return $retVal;
+    }
+
+    public function deleteOccurrenceMofRecords($idType, $id): int
+    {
+        $retVal = 0;
+        $whereStr = '';
+        if($idType === 'occid'){
+            $whereStr = 'occid = ' . (int)$id . ' OR eventid IN(SELECT eventid FROM omoccurrences WHERE occid = ' . (int)$id . ')';
+        }
+        elseif($idType === 'occidArr'){
+            $whereStr = 'occid IN(' . implode(',', $id) . ') OR eventid IN(SELECT eventid FROM omoccurrences WHERE occid IN(' . implode(',', $id) . '))';
+        }
+        elseif($idType === 'collid'){
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') OR eventid IN(SELECT eventid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+        }
+        if($whereStr){
+            $sql = 'DELETE FROM ommofextension WHERE ' . $whereStr . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function getMofDataByTypeAndId($type, $id): array
     {
         $retArr = array();
@@ -34,14 +81,25 @@ class OccurrenceMeasurementsOrFacts{
         else{
             $field = 'occid';
         }
-        $sql = 'SELECT mofid, field, datavalue, initialtimestamp '.
-            'FROM ommofextension WHERE ' . $field . ' = ' . (int)$id . ' ';
+        $sql = 'SELECT DISTINCT m.mofid, m.field, m.datavalue, m.initialtimestamp, o.collid, o.localitysecurity '.
+            'FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.' . $field . ' = o.' . $field . ' '.
+            'WHERE m.' . $field . ' = ' . (int)$id . ' ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $retArr[$row['field']] = $row['datavalue'];
+                $permitted = true;
+                $localitySecurity = (int)$row['localitysecurity'] === 1;
+                if($localitySecurity){
+                    $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                    if(!in_array((int)$row['collid'], $rareSpCollidAccessArr, true)){
+                        $permitted = false;
+                    }
+                }
+                if($permitted){
+                    $retArr[$row['field']] = $row['datavalue'];
+                }
                 unset($rows[$index]);
             }
         }

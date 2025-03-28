@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/KeyCharacters.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class KeyCharacterStates{
@@ -73,6 +74,70 @@ class KeyCharacterStates{
                 foreach($fields as $val){
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getTaxaKeyCharacterStates($tidArr): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
+        $sql = 'SELECT tl.tid, ' . implode(',', $fieldNameArr) . ' '.
+            'FROM keycharacterstatetaxalink AS tl LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
+            'WHERE tl.tid IN(' . implode(',', $tidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['tid'], $retArr)){
+                    $retArr[$row['tid']] = array();
+                }
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[$row['tid']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getKeyCharacterStatesArr($csidArr, $includeFullKeyData = false): array
+    {
+        $retArr = array();
+        $cidArr = array();
+        if(count($csidArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM keycharacterstates WHERE csid IN(' . implode(',', $csidArr) . ') ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $retArr['character-states'] = array();
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($includeFullKeyData && !in_array((int)$row['cid'], $cidArr, true)){
+                        $cidArr[] = (int)$row['cid'];
+                    }
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $retArr['character-states'][] = $nodeArr;
+                    unset($rows[$index]);
+                }
+                if($includeFullKeyData){
+                    $keyDataArr = (new KeyCharacters)->getKeyCharactersArr($cidArr, $includeFullKeyData);
+                    $retArr['characters'] = $keyDataArr['characters'];
+                    $retArr['character-headings'] = $keyDataArr['character-headings'];
                 }
             }
         }

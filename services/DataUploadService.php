@@ -1,8 +1,15 @@
 <?php
+include_once(__DIR__ . '/../models/Collections.php');
+include_once(__DIR__ . '/../models/Images.php');
+include_once(__DIR__ . '/../models/Media.php');
+include_once(__DIR__ . '/../models/Occurrences.php');
+include_once(__DIR__ . '/../models/OccurrenceDeterminations.php');
+include_once(__DIR__ . '/../models/OccurrenceMeasurementsOrFacts.php');
 include_once(__DIR__ . '/../models/UploadDeterminationTemp.php');
 include_once(__DIR__ . '/../models/UploadMediaTemp.php');
 include_once(__DIR__ . '/../models/UploadMofTemp.php');
 include_once(__DIR__ . '/../models/UploadOccurrenceTemp.php');
+include_once(__DIR__ . '/DataDownloadService.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/SanitizerService.php');
@@ -20,24 +27,257 @@ class DataUploadService {
         $this->conn->close();
     }
 
-    public function clearOccurrenceUploadTables($collid): int
+    public function cleanUploadCoordinates($collid): int
     {
         $retVal = 1;
         if($collid){
-            if(!(new UploadDeterminationTemp)->clearCollectionData($collid)){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadCoordinates($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadCountryStateNames($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadCountryStateNames($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadEventDates($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadEventDates($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomy($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomy($collid);
+        }
+        return $retVal;
+    }
+
+    public function clearOccurrenceUploadTables($collid, $optimizeTables): int
+    {
+        $retVal = 1;
+        if($collid){
+            if(!(new UploadDeterminationTemp)->clearCollectionData($collid, $optimizeTables)){
                 $retVal = 0;
             }
-            if(!(new UploadMediaTemp)->clearCollectionData($collid)){
+            if(!(new UploadMediaTemp)->clearCollectionData($collid, $optimizeTables)){
                 $retVal = 0;
             }
-            if(!(new UploadMofTemp)->clearCollectionData($collid)){
+            if(!(new UploadMofTemp)->clearCollectionData($collid, $optimizeTables)){
                 $retVal = 0;
             }
-            if(!(new UploadOccurrenceTemp)->clearCollectionData($collid)){
+            if(!(new UploadOccurrenceTemp)->clearCollectionData($collid, $optimizeTables)){
                 $retVal = 0;
             }
         }
         return $retVal;
+    }
+
+    public function executeCleaningScriptArr($collid, $cleaningScriptArr): int
+    {
+        $retVal = 1;
+        if($collid && count($cleaningScriptArr) > 0){
+            foreach($cleaningScriptArr as $scriptData){
+                if($retVal === 1){
+                    $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
+                }
+            }
+            (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferAddNewDeterminations($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceDeterminations)->createOccurrenceDeterminationRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferAddNewMedia($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Images)->createImageRecordsFromUploadData($collid);
+            if($retVal){
+                $retVal = (new Media)->createMediaRecordsFromUploadData($collid);
+            }
+        }
+        return $retVal;
+    }
+
+    public function finalTransferAddNewMof($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceMeasurementsOrFacts)->createOccurrenceMofRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferAddNewOccurrences($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
+            if($retVal){
+                (new Collections)->updateUploadDate($collid);
+            }
+        }
+        return $retVal;
+    }
+
+    public function finalTransferCleanMediaRecords($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->cleanMediaRecords($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferClearPreviousDeterminations($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords('collid', $collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferClearPreviousMediaRecords($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Images)->deleteAssociatedImageRecords('collid', $collid);
+            if($retVal){
+                $retVal = (new Media)->deleteAssociatedMediaRecords('collid', $collid);
+            }
+        }
+        return $retVal;
+    }
+
+    public function finalTransferClearPreviousMofRecords($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords('collid', $collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferPopulateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMofTemp)->populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveExistingDeterminationsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->removeExistingDeterminationDataFromUpload($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveExistingMediaRecordsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->removeExistingMediaDataFromUpload($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveExistingMofRecordsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMofTemp)->removeExistingMofDataFromUpload($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveUnmatchedOccurrences($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $occidArr = (new Occurrences)->getOccidArrNotIncludedInUpload($collid);
+            (new Images)->deleteAssociatedImageRecords('occidArr', $occidArr);
+            (new Media)->deleteAssociatedMediaRecords('occidArr', $occidArr);
+            $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferSetNewOccurrenceIds($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferUpdateExistingOccurrences($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function getUploadData($collid, $dataType, $index = null, $limit = null): array
+    {
+        $retArr = array();
+        if($collid){
+            if($dataType === 'exist'){
+                $retArr = (new Occurrences)->getOccurrenceRecordsNotIncludedInUpload($collid, $index, $limit);
+            }
+            else{
+                $retArr = (new UploadOccurrenceTemp)->getUploadData($collid, $dataType, $index, $limit);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getUploadedMofDataFields($collid): array
+    {
+        $retArr = array();
+        if($collid){
+            $retArr = (new UploadMofTemp)->getUploadedMofDataFields($collid);
+        }
+        return $retArr;
+    }
+
+    public function getUploadSummary($collid): array
+    {
+        $retArr = array();
+        if($collid){
+            $retArr = (new UploadOccurrenceTemp)->getUploadSummary($collid);
+            $retArr['exist'] = (new Occurrences)->getOccurrenceCountNotIncludedInUpload($collid);
+            $retArr['ident'] = (new UploadDeterminationTemp)->getUploadCount($collid);
+            $retArr['media'] = (new UploadMediaTemp)->getUploadCount($collid);
+            $retArr['mof'] = (new UploadMofTemp)->getUploadCount($collid);
+        }
+        return $retArr;
     }
 
     public function getUploadTableFieldData($tableArr): array
@@ -59,6 +299,24 @@ class DataUploadService {
             }
         }
         return $retArr;
+    }
+
+    public function linkExistingOccurrencesToUpload($collid, $updateAssociatedData, $matchByCatalogNumber, $linkField): int
+    {
+        $retVal = 0;
+        if($collid){
+            if($matchByCatalogNumber){
+                $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceDataByCatalogNumber($collid, $linkField);
+            }
+            else{
+                $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceData($collid);
+            }
+            if($retVal && $updateAssociatedData){
+                (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
+                (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
+            }
+        }
+        return $retVal;
     }
 
     public function processDwcaFileDataUpload($collid, $configArr): int
@@ -224,7 +482,7 @@ class DataUploadService {
     {
         $returnArr = array();
         $transferSuccess = false;
-        $targetPath = FileSystemService::getTempDwcaUploadPath($collid);
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
         if($targetPath && $dwcaPath){
             $fileName = 'dwca.zip';
             $fullTargetPath = $targetPath . '/' . $fileName;
@@ -235,11 +493,21 @@ class DataUploadService {
                 $transferSuccess = FileSystemService::transferSymbiotaDwcaToLocalTarget($fullTargetPath, $dwcaPath);
             }
             if($transferSuccess){
-                FileSystemService::unpackZipArchive($targetPath, $fullTargetPath);
-                FileSystemService::deleteFile($fullTargetPath);
-                $returnArr['baseFolderPath'] = $targetPath;
-                $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
+                $returnArr['targetPath'] = $targetPath;
+                $returnArr['archivePath'] = $fullTargetPath;
             }
+        }
+        return $returnArr;
+    }
+
+    public function processExternalDwcaUnpack($targetPath, $archivePath): array
+    {
+        $returnArr = array();
+        if($targetPath && $archivePath){
+            FileSystemService::unpackZipArchive($targetPath, $archivePath);
+            FileSystemService::deleteFile($archivePath);
+            $returnArr['baseFolderPath'] = $targetPath;
+            $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
         }
         return $returnArr;
     }
@@ -253,7 +521,6 @@ class DataUploadService {
         elseif($configArr['dataType'] === 'mof'){
             $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $data);
         }
-        FileSystemService::deleteFile($configArr['serverPath'] . '/' . $configArr['uploadFile']);
         return $recordsCreated;
     }
 
@@ -309,10 +576,68 @@ class DataUploadService {
         return $returnArr;
     }
 
-    public function uploadDwcaFile($collid, $dwcaFile): array
+    public function processUploadDataDownload($collid, $filename, $dataType): void
+    {
+        if($collid && $filename && $dataType){
+            if($dataType === 'exist'){
+                $sql = (new Occurrences)->getOccurrenceRecordsNotIncludedInUploadSql($collid);
+            }
+            else{
+                $sql = (new UploadOccurrenceTemp)->getUploadDataSql($collid, $dataType);
+            }
+            (new DataDownloadService)->processCsvDownloadFromSql($sql, $filename);
+        }
+    }
+
+    public function removeExistingOccurrencesFromUpload($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            if($retVal){
+                $retVal = (new UploadMediaTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            }
+            if($retVal){
+                $retVal = (new UploadMofTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            }
+            if($retVal){
+                $retVal = (new UploadOccurrenceTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            }
+        }
+        return $retVal;
+    }
+
+    public function removePrimaryIdentifiersFromUploadedOccurrences($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new Occurrences)->removePrimaryIdentifiersFromUploadedOccurrences($collid);
+        }
+        return $retVal;
+    }
+
+    public function removeUploadFiles($serverPath): int
+    {
+        $returnVal = 0;
+        if($serverPath && FileSystemService::deleteDirectory($serverPath)) {
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
+    public function setUploadLocalitySecurity($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->setUploadLocalitySecurity($collid);
+        }
+        return $retVal;
+    }
+
+    public function uploadDwcaFile($dwcaFile): array
     {
         $returnArr = array();
-        $targetPath = FileSystemService::getTempDwcaUploadPath($collid);
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
         if($targetPath && $dwcaFile['name'] && FileSystemService::moveUploadedFileToServer($dwcaFile, $targetPath, $dwcaFile['name'])) {
             $fullTargetPath = $targetPath . '/' . $dwcaFile['name'];
             FileSystemService::unpackZipArchive($targetPath, $fullTargetPath);

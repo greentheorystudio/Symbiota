@@ -10,8 +10,6 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class DwcArchiverCore extends Manager{
 
-    private $ts;
-
     protected $collArr;
     private $collID;
     private $customWhereSql;
@@ -43,14 +41,6 @@ class DwcArchiverCore extends Manager{
 
     public function __construct(){
         parent::__construct();
-        if(!class_exists('DOMDocument')){
-            exit('FATAL ERROR: PHP DOMDocument class is not installed, please contact your server admin');
-        }
-        $this->ts = time();
-        if($this->verboseMode){
-            $this->setLogFH($GLOBALS['LOG_PATH']);
-        }
-
         $this->securityArr = array('recordNumber','locality','locationRemarks','minimumElevationInMeters','maximumElevationInMeters','verbatimElevation',
             'decimalLatitude','decimalLongitude','geodeticDatum','coordinateUncertaintyInMeters','footprintWKT',
             'verbatimCoordinates','georeferenceRemarks','georeferencedBy','georeferenceProtocol','georeferenceSources',
@@ -479,9 +469,6 @@ class DwcArchiverCore extends Manager{
             }
             $rs->free();
         }
-        else{
-            $this->logOrEcho('ERROR creating occurrence file.');
-        }
         return $result;
     }
 
@@ -497,15 +484,15 @@ class DwcArchiverCore extends Manager{
                         $fileNameSeed .= ($fileNameSeed?'-':'') . $firstColl['collcode'];
                     }
                     if(!$fileNameSeed){
-                        $fileNameSeed = 'OccurrenceDataOutput_'.$this->ts;
+                        $fileNameSeed = 'OccurrenceDataOutput_'.time();
                     }
                 }
                 if($this->schemaType === 'backup'){
-                    $fileNameSeed .= '_backup_'.$this->ts;
+                    $fileNameSeed .= '_backup_'.time();
                 }
             }
             else{
-                $fileNameSeed = 'OccurrenceDataOutput_'.$this->ts;
+                $fileNameSeed = 'OccurrenceDataOutput_'.time();
             }
         }
         $fileName = str_replace(array(' ','"',"'"),'',$fileNameSeed).'_DwC-A.zip';
@@ -514,12 +501,7 @@ class DwcArchiverCore extends Manager{
             $this->setTargetPath();
         }
         $archiveFile = '';
-        $this->logOrEcho('Creating DwC-A file: '.$fileName."\n");
 
-        if(!class_exists('ZipArchive')){
-            $this->logOrEcho("FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin\n");
-            exit('FATAL ERROR: PHP ZipArchive class is not installed, please contact your server admin');
-        }
         $status = $this->writeOccurrenceFile();
         if($status){
             $archiveFile = $this->targetPath.$fileName;
@@ -532,67 +514,60 @@ class DwcArchiverCore extends Manager{
                 exit('FATAL ERROR: unable to create archive file: '.$status);
             }
 
-            $zipArchive->addFile($this->targetPath.$this->ts.'-occur'.$this->fileExt);
-            $zipArchive->renameName($this->targetPath.$this->ts.'-occur'.$this->fileExt,'occurrences'.$this->fileExt);
+            $zipArchive->addFile($this->targetPath.time().'-occur'.$this->fileExt);
+            $zipArchive->renameName($this->targetPath.time().'-occur'.$this->fileExt,'occurrences'.$this->fileExt);
             if($this->includeDets) {
                 $this->writeDeterminationFile();
-                $zipArchive->addFile($this->targetPath.$this->ts.'-det'.$this->fileExt);
-                $zipArchive->renameName($this->targetPath.$this->ts.'-det'.$this->fileExt,'identifications'.$this->fileExt);
+                $zipArchive->addFile($this->targetPath.time().'-det'.$this->fileExt);
+                $zipArchive->renameName($this->targetPath.time().'-det'.$this->fileExt,'identifications'.$this->fileExt);
             }
             if($this->includeImgs){
                 $this->writeImageFile();
-                $zipArchive->addFile($this->targetPath.$this->ts.'-images'.$this->fileExt);
-                $zipArchive->renameName($this->targetPath.$this->ts.'-images'.$this->fileExt,'images'.$this->fileExt);
+                $zipArchive->addFile($this->targetPath.time().'-images'.$this->fileExt);
+                $zipArchive->renameName($this->targetPath.time().'-images'.$this->fileExt,'images'.$this->fileExt);
             }
             if($this->includeAttributes){
                 $this->writeAttributeFile();
-                $zipArchive->addFile($this->targetPath.$this->ts.'-attr'.$this->fileExt);
-                $zipArchive->renameName($this->targetPath.$this->ts.'-attr'.$this->fileExt,'measurementOrFact'.$this->fileExt);
+                $zipArchive->addFile($this->targetPath.time().'-attr'.$this->fileExt);
+                $zipArchive->renameName($this->targetPath.time().'-attr'.$this->fileExt,'measurementOrFact'.$this->fileExt);
             }
             $this->writeMetaFile();
-            $zipArchive->addFile($this->targetPath.$this->ts.'-meta.xml');
-            $zipArchive->renameName($this->targetPath.$this->ts.'-meta.xml','meta.xml');
+            $zipArchive->addFile($this->targetPath.time().'-meta.xml');
+            $zipArchive->renameName($this->targetPath.time().'-meta.xml','meta.xml');
             $this->writeEmlFile();
-            $zipArchive->addFile($this->targetPath.$this->ts.'-eml.xml');
-            $zipArchive->renameName($this->targetPath.$this->ts.'-eml.xml','eml.xml');
+            $zipArchive->addFile($this->targetPath.time().'-eml.xml');
+            $zipArchive->renameName($this->targetPath.time().'-eml.xml','eml.xml');
 
             $zipArchive->close();
-            unlink($this->targetPath.$this->ts.'-occur'.$this->fileExt);
+            unlink($this->targetPath.time().'-occur'.$this->fileExt);
             if($this->includeDets) {
-                unlink($this->targetPath . $this->ts . '-det' . $this->fileExt);
+                unlink($this->targetPath . time() . '-det' . $this->fileExt);
             }
             if($this->includeImgs) {
-                unlink($this->targetPath . $this->ts . '-images' . $this->fileExt);
+                unlink($this->targetPath . time() . '-images' . $this->fileExt);
             }
             if($this->includeAttributes) {
-                unlink($this->targetPath . $this->ts . '-attr' . $this->fileExt);
+                unlink($this->targetPath . time() . '-attr' . $this->fileExt);
             }
-            unlink($this->targetPath.$this->ts.'-meta.xml');
+            unlink($this->targetPath.time().'-meta.xml');
             if($this->schemaType === 'dwc'){
-                rename($this->targetPath.$this->ts.'-eml.xml',$this->targetPath.str_replace('.zip','.eml',$fileName));
+                rename($this->targetPath.time().'-eml.xml',$this->targetPath.str_replace('.zip','.eml',$fileName));
             }
             else{
-                unlink($this->targetPath.$this->ts.'-eml.xml');
+                unlink($this->targetPath.time().'-eml.xml');
             }
         }
         else{
-            $errStr = "<span style='color:red;'>FAILED to create archive file due to failure to return occurrence records. ".
-                'Note that OccurrenceID GUID assignments are required for Darwin Core Archive publishing. ' .
-                'GUID (recordID) assignments are also required, which can be verified by the portal manager through running the GUID mapping utilitiy available in sitemap</span>';
-            $this->logOrEcho($errStr);
             if($collid) {
                 $this->deleteArchive($collid);
             }
             unset($this->collArr[$collid]);
         }
-        $this->logOrEcho("\n-----------------------------------------------------\n");
         return $archiveFile;
     }
 
     private function writeMetaFile(): void
     {
-        $this->logOrEcho('Creating meta.xml (' .date('h:i:s A'). ')... ');
-
         $newDoc = new DOMDocument('1.0', 'UTF-8');
 
         $rootElem = $newDoc->createElement('archive');
@@ -723,9 +698,8 @@ class DwcArchiverCore extends Manager{
             $rootElem->appendChild($extElem3);
         }
 
-        $newDoc->save($this->targetPath.$this->ts.'-meta.xml');
+        $newDoc->save($this->targetPath.time().'-meta.xml');
 
-        $this->logOrEcho('Done!! (' .date('h:i:s A').")\n");
     }
 
     private function getEmlArr(): array
@@ -833,13 +807,10 @@ class DwcArchiverCore extends Manager{
 
     private function writeEmlFile(): void
     {
-        $this->logOrEcho('Creating eml.xml (' .date('h:i:s A'). ')... ');
-
         $emlDoc = $this->getEmlDom();
 
-        $emlDoc->save($this->targetPath.$this->ts.'-eml.xml');
+        $emlDoc->save($this->targetPath.time().'-eml.xml');
 
-        $this->logOrEcho('Done!! (' .date('h:i:s A').")\n");
     }
 
     public function getEmlDom($emlArr = null): DOMDocument
@@ -1181,8 +1152,7 @@ class DwcArchiverCore extends Manager{
     }
 
     private function writeOccurrenceFile(){
-        $this->logOrEcho('Creating occurrence file (' .date('h:i:s A'). ')... ');
-        $filePath = $this->targetPath . $this->ts . '-occur' . $this->fileExt;
+        $filePath = $this->targetPath . time() . '-occur' . $this->fileExt;
         $fh = fopen($filePath, 'wb');
         if($fh){
             $hasRecords = false;
@@ -1206,25 +1176,8 @@ class DwcArchiverCore extends Manager{
             if($this->schemaType === 'dwc' || $this->schemaType === 'pensoft' || $this->schemaType === 'backup'){
                 unset($fieldArr['collId']);
             }
-            $fieldOutArr = array();
-            if($this->schemaType === 'coge'){
-                $glFields = array('specificEpithet'=>'Species','scientificNameAuthorship'=>'ScientificNameAuthor','recordedBy'=>'Collector','recordNumber'=>'CollectorNumber',
-                    'year'=>'YearCollected','month'=>'MonthCollected','day'=>'DayCollected','decimalLatitude'=>'Latitude','decimalLongitude'=>'Longitude',
-                    'minimumElevationInMeters'=>'MinimumElevation','maximumElevationInMeters'=>'MaximumElevation','maximumDepthInMeters'=>'MaximumDepth','minimumDepthInMeters'=>'MinimumDepth',
-                    'occurrenceRemarks'=>'Notes','dateEntered','dateLastModified','collId','recordId','references');
-                foreach($fieldArr as $k => $v){
-                    if(array_key_exists($k,$glFields)){
-                        $fieldOutArr[] = $glFields[$k];
-                    }
-                    else{
-                        $fieldOutArr[] = strtoupper($k[0]).substr($k,1);
-                    }
-                }
-            }
-            else{
-                $fieldOutArr = array_keys($fieldArr);
-            }
-            $this->writeOutRecord($fh,$fieldOutArr);
+            $fieldOutArr = array_keys($fieldArr);
+            fputcsv($fh, $fieldOutArr);
             if(!$this->collArr){
                 $sql1 = 'SELECT DISTINCT o.collid FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid '.
                     'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
@@ -1364,24 +1317,16 @@ class DwcArchiverCore extends Manager{
                         }
                     }
                     $this->addcslashesArr($r);
-                    $this->writeOutRecord($fh,$r);
+                    fputcsv($fh, $r);
                 }
                 $rs->free();
-            }
-            else{
-                $this->logOrEcho('ERROR creating occurrence file.');
             }
 
             fclose($fh);
             if(!$hasRecords){
                 $filePath = false;
-                $this->logOrEcho('No records returned. Modify query variables to be more inclusive.');
             }
         }
-        else{
-            $this->logOrEcho('ERROR establishing output file ('.$filePath.'), perhaps target folder is not readable by web server.');
-        }
-        $this->logOrEcho('Done!! (' .date('h:i:s A').")\n");
         return $filePath;
     }
 
@@ -1394,44 +1339,36 @@ class DwcArchiverCore extends Manager{
 
     private function writeDeterminationFile(): ?bool
     {
-        $this->logOrEcho('Creating identification file (' .date('h:i:s A'). ')... ');
-        $filePath = $this->targetPath.$this->ts.'-det'.$this->fileExt;
+        $filePath = $this->targetPath.time().'-det'.$this->fileExt;
         $fh = fopen($filePath, 'wb');
         if(!$fh){
-            $this->logOrEcho('ERROR establishing output file ('.$filePath.'), perhaps target folder is not readable by web server.');
             return false;
         }
 
         if(!$this->determinationFieldArr){
             $this->determinationFieldArr = DwcArchiverDetermination::getDeterminationArr($this->schemaType,$this->extended);
         }
-        $this->writeOutRecord($fh,array_keys($this->determinationFieldArr['fields']));
+        fputcsv($fh, array_keys($this->determinationFieldArr['fields']));
 
         $sql = DwcArchiverDetermination::getSqlDeterminations($this->determinationFieldArr['fields'],$this->conditionSql);
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             while($r = $rs->fetch_assoc()){
                 $r['recordId'] = 'urn:uuid:'.$r['recordId'];
                 $this->addcslashesArr($r);
-                $this->writeOutRecord($fh,$r);
+                fputcsv($fh, $r);
             }
             $rs->free();
         }
-        else{
-            $this->logOrEcho('ERROR creating identification file.');
-        }
 
         fclose($fh);
-        $this->logOrEcho('Done!! (' .date('h:i:s A').")\n");
         return true;
     }
 
     private function writeImageFile(): ?bool
     {
-        $this->logOrEcho('Creating image file (' .date('h:i:s A'). ')... ');
-        $filePath = $this->targetPath.$this->ts.'-images'.$this->fileExt;
+        $filePath = $this->targetPath.time().'-images'.$this->fileExt;
         $fh = fopen($filePath, 'wb');
         if(!$fh){
-            $this->logOrEcho('ERROR establishing output file ('.$filePath.'), perhaps target folder is not readable by web server.');
             return false;
         }
 
@@ -1439,7 +1376,7 @@ class DwcArchiverCore extends Manager{
             $this->imageFieldArr = DwcArchiverImage::getImageArr($this->schemaType);
         }
 
-        $this->writeOutRecord($fh,array_keys($this->imageFieldArr['fields']));
+        fputcsv($fh, array_keys($this->imageFieldArr['fields']));
 
         $sql = DwcArchiverImage::getSqlImages($this->imageFieldArr['fields'], $this->conditionSql, $this->redactLocalities, $this->rareReaderArr);
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
@@ -1512,27 +1449,21 @@ class DwcArchiverCore extends Manager{
                     }
                 }
                 $r['metadataLanguage'] = 'en';
-                $this->writeOutRecord($fh,$r);
+                fputcsv($fh, $r);
             }
             $rs->free();
-        }
-        else{
-            $this->logOrEcho('ERROR creating image file.');
         }
 
         fclose($fh);
 
-        $this->logOrEcho('Done!! (' .date('h:i:s A').")\n");
         return true;
     }
 
     private function writeAttributeFile(): ?bool
     {
-        $this->logOrEcho('Creating occurrence Attributes file as MeasurementsOrFact extension (' .date('h:i:s A'). ')... ');
-        $filePath = $this->targetPath.$this->ts.'-attr'.$this->fileExt;
+        $filePath = $this->targetPath.time().'-attr'.$this->fileExt;
         $fh = fopen($filePath, 'wb');
         if(!$fh){
-            $this->logOrEcho('ERROR establishing output file ('.$filePath.'), perhaps target folder is not readable by web server.');
             return false;
         }
 
@@ -1540,35 +1471,26 @@ class DwcArchiverCore extends Manager{
             $this->attributeFieldArr = DwcArchiverAttribute::getFieldArr();
         }
 
-        $this->writeOutRecord($fh,array_keys($this->attributeFieldArr['fields']));
+        fputcsv($fh, array_keys($this->attributeFieldArr['fields']));
 
         $sql = DwcArchiverAttribute::getSql($this->attributeFieldArr['fields'],$this->conditionSql);
         //echo $sql; exit;
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
             while($r = $rs->fetch_assoc()){
                 $this->addcslashesArr($r);
-                $this->writeOutRecord($fh,$r);
+                fputcsv($fh, $r);
             }
             $rs->free();
         }
-        else{
-            $this->logOrEcho('ERROR creating attribute.');
-        }
 
         fclose($fh);
-        $this->logOrEcho('Done!! (' .date('h:i:s A').")\n");
         return true;
-    }
-
-    private function writeOutRecord($fh,$outputArr): void
-    {
-        fputcsv($fh, $outputArr);
     }
 
     public function deleteArchive($collID): bool
     {
         $status = false;
-        $rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'webservices/dwc/rss.xml';
+        $rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
         if(file_exists($rssFile)) {
             $doc = new DOMDocument();
             $doc->load($rssFile);
@@ -1595,9 +1517,6 @@ class DwcArchiverCore extends Manager{
                 $sql = 'UPDATE omcollections SET dwcaUrl = NULL WHERE collid = '.$collID;
                 if($this->conn->query($sql)){
                     $status = true;
-                }
-                else{
-                    $this->logOrEcho('ERROR nullifying dwcaUrl while removing DWCA instance.');
                 }
             }
         }

@@ -2716,7 +2716,7 @@ INSERT INTO `paleochronostratigraphy` VALUES ('154', 'Phanerozoic', 'Cenozoic', 
 INSERT INTO `paleochronostratigraphy` VALUES ('155', 'Phanerozoic', 'Cenozoic', 'Quaternary', 'Pleistocene', 'Upper Pleistocene');
 INSERT INTO `paleochronostratigraphy` VALUES ('156', 'Phanerozoic', 'Cenozoic', 'Quaternary', 'Holocene', null);
 
-INSERT INTO users(uid,firstname,lastname,username,password,state,country,email,validated) VALUES (1,'General','Administrator','admin',SHA2('admin', 224),'NA','NA','NA',1);
+INSERT INTO users(uid,firstname,lastname,username,password,state,country,email,validated) VALUES (1,'General','Administrator','admin',SHA2('admin', 256),'NA','NA','NA',1);
 INSERT INTO userroles(uid,role) VALUES (1,'SuperAdmin');
 
 INSERT INTO `taxonunits`(`kingdomid`, `rankid`, `rankname`, `dirparentrankid`, `reqparentrankid`)

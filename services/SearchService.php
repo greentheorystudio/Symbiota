@@ -2,10 +2,14 @@
 include_once(__DIR__ . '/../models/Checklists.php');
 include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
+include_once(__DIR__ . '/../models/Permissions.php');
 include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../models/TaxonVernaculars.php');
+include_once(__DIR__ . '/DarwinCoreArchiverService.php');
+include_once(__DIR__ . '/DataDownloadService.php');
 include_once(__DIR__ . '/DataUtilitiesService.php');
 include_once(__DIR__ . '/DbService.php');
+include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/SanitizerService.php');
 
 class SearchService {
@@ -19,30 +23,6 @@ class SearchService {
 
     public function __destruct(){
         $this->conn->close();
-    }
-
-    public function clearSensitiveResultData($resultObj): array
-    {
-        $resultObj['recordnumber'] = null;
-        $resultObj['habitat'] = null;
-        $resultObj['date'] = null;
-        $resultObj['decimallatitude'] = null;
-        $resultObj['decimallongitude'] = null;
-        $resultObj['verbatimcoordinates'] = null;
-        $resultObj['eventdate'] = null;
-        $resultObj['year'] = null;
-        $resultObj['month'] = null;
-        $resultObj['day'] = null;
-        $resultObj['startdayofyear'] = null;
-        $resultObj['enddayofyear'] = null;
-        $resultObj['verbatimeventdate'] = null;
-        $resultObj['minimumelevationinmeters'] = null;
-        $resultObj['maximumelevationinmeters'] = null;
-        $resultObj['verbatimelevation'] = null;
-        $resultObj['substrate'] = null;
-        $resultObj['associatedtaxa'] = null;
-        $resultObj['locality'] = '[obscurred]';
-        return $resultObj;
     }
 
     public function getSearchOccidArr($searchTermsArr, $options): array
@@ -84,6 +64,32 @@ class SearchService {
                     $result->free();
                     foreach($rows as $index => $row){
                         $returnArr[] = $row['occid'];
+                        unset($rows[$index]);
+                    }
+                }
+            }
+        }
+        return $returnArr;
+    }
+
+    public function getSearchTidArr($searchTermsArr, $options): array
+    {
+        $returnArr = array();
+        if($searchTermsArr && $options){
+            $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
+            if($sqlWhere){
+                $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
+                $sql = 'SELECT DISTINCT t.tidaccepted ';
+                $sql .= $this->setFromSql($options['schema']);
+                $sql .= $this->setTableJoinsSql($searchTermsArr);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                $sql .= 'AND t.tidaccepted IS NOT NULL ';
+                //echo '<div>Tid sql: ' . $sql . '</div>';
+                if($result = $this->conn->query($sql)){
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $index => $row){
+                        $returnArr[] = $row['tidaccepted'];
                         unset($rows[$index]);
                     }
                 }
@@ -1002,15 +1008,67 @@ class SearchService {
         return $returnArr;
     }
 
+    public function processSearchDownload($searchTermsArr, $options): void
+    {
+        if($searchTermsArr && $options){
+            $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
+            if($contentType){
+                $targetPath = FileSystemService::getTempDownloadUploadPath();
+                if($options['type'] === 'zip'){
+                    $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, $searchTermsArr, $options);
+                }
+                else{
+                    $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
+                    $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
+                    $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
+                    $sqlFrom = (new SearchService)->setFromSql($options['schema']);
+                    $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+                    $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
+                    $outputFile = $outputFileData['outputPath'];
+                }
+                if($outputFile){
+                    (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, basename($outputFile), $outputFile);
+                    flush();
+                    readfile($outputFile);
+                    FileSystemService::deleteFile($outputFile, true);
+                }
+            }
+        }
+    }
+
+    public function processSearchSpatialDownload($searchTermsArr, $options): string
+    {
+        $fileContent = '';
+        if($searchTermsArr && $options){
+            $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
+            if($contentType){
+                $fileData = $this->processSearch($searchTermsArr, $options);
+                $fileName = $options['filename'] . '.' . $options['type'];
+                if($options['type'] === 'geojson'){
+                    $fileContent = json_encode($fileData);
+                }
+                elseif($options['type'] === 'gpx'){
+                    $fileContent = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileData);
+                }
+                elseif($options['type'] === 'kml'){
+                    $fileContent = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileData);
+                }
+                (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, $fileName, $fileContent);
+            }
+        }
+        return $fileContent;
+    }
+
     public function serializeGeoJsonResultArr($fields, $rows, $numRows): array
     {
+        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
         $featuresArr = array();
         foreach($rows as $index => $row){
             $rareSpReader = false;
             $localitySecurity = (int)$row['localitysecurity'] === 1;
             if($localitySecurity){
-                $rareSpReader = $this->verifyRareSpAccess($row['collid']);
+                $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
             }
             if(!$localitySecurity || $rareSpReader){
                 $geoArr = array();
@@ -1036,6 +1094,7 @@ class SearchService {
 
     public function serializeJsonResultArr($fields, $rows, $schema, $spatial): array
     {
+        $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
         $returnData = array();
         $idArr = array();
@@ -1056,9 +1115,9 @@ class SearchService {
                 $occid = $row['occid'];
                 $localitySecurity = (int)$row['localitysecurity'] === 1;
                 if($localitySecurity){
-                    $rareSpReader = $this->verifyRareSpAccess($row['collid']);
+                    $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                 }
-                if(!$localitySecurity || $rareSpReader || !$spatial){
+                if(($localitySecurity && $rareSpReader) || !$localitySecurity || !$spatial){
                     foreach($fields as $val){
                         $name = $val->name;
                         $returnData[$occid][$name] = $row[$name];
@@ -1068,7 +1127,7 @@ class SearchService {
                             $idArr[] = $occid;
                         }
                         else{
-                            $returnData[$occid] = $this->clearSensitiveResultData($returnData[$occid]);
+                            $returnData[$occid] = (new Occurrences)->clearSensitiveOccurrenceData($returnData[$occid]);
                         }
                     }
                 }
@@ -1205,23 +1264,5 @@ class SearchService {
             }
         }
         return $returnStr;
-    }
-
-    public function verifyRareSpAccess($collid): bool
-    {
-        $returnVal = false;
-        if($GLOBALS['USER_RIGHTS']){
-            if(
-                $GLOBALS['IS_ADMIN'] || 
-                array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || 
-                array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || 
-                array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS']) ||
-                (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)) ||
-                (array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true))
-            ){
-                $returnVal = true;
-            }
-        }
-        return $returnVal;
     }
 }

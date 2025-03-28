@@ -17,15 +17,15 @@ const occurrenceEditorCollectingEventModule = {
                             <template v-else-if="collectingEventCollectionArr.length > 0">
                                 <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" />
                             </template>
-                            <template v-if="Object.keys(configuredDataFields).length > 0">
-                                <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
-                            </template>
+                        </template>
+                        <template v-if="Object.keys(configuredDataFields).length > 0">
+                            <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
                         </template>
                         <template v-if="Number(eventId) === 0">
                             <q-btn color="secondary" @click="createCollectingEventRecord();" label="Create Event Record" :disabled="!eventValid" />
                         </template>
                         <template v-else>
-                            <q-btn color="secondary" @click="showEventEditorPopup = true" label="Edit Event" />
+                            <q-btn color="secondary" @click="processOpenEditor" label="Edit Event" />
                         </template>
                     </div>
                 </div>
@@ -68,15 +68,19 @@ const occurrenceEditorCollectingEventModule = {
             ></occurrence-collecting-event-editor-popup>
         </template>
         <template v-if="showConfiguredDataEditorPopup">
-            <event-mof-data-editor-popup
+            <mof-data-editor-popup
+                data-type="event"
+                :new-record="Number(eventId) === 0"
                 :show-popup="showConfiguredDataEditorPopup"
                 @close:popup="showConfiguredDataEditorPopup = false"
-            ></event-mof-data-editor-popup>
+            ></mof-data-editor-popup>
         </template>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
         'collecting-event-field-module': collectingEventFieldModule,
-        'event-mof-data-editor-popup': eventMofDataEditorPopup,
+        'confirmation-popup': confirmationPopup,
+        'mof-data-editor-popup': mofDataEditorPopup,
         'occurrence-collecting-event-benthic-taxa-editor-popup': occurrenceCollectingEventBenthicTaxaEditorPopup,
         'occurrence-collecting-event-benthic-taxa-list-popup': occurrenceCollectingEventBenthicTaxaListPopup,
         'occurrence-collecting-event-editor-popup': occurrenceCollectingEventEditorPopup,
@@ -92,6 +96,8 @@ const occurrenceEditorCollectingEventModule = {
         const collectingEventCollectionArr = Vue.computed(() => occurrenceStore.getCollectingEventCollectionArr);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
         const configuredDataLabel = Vue.computed(() => occurrenceStore.getEventMofDataLabel);
+        const confirmationPopupRef = Vue.ref(null);
+        const editorConfirmed = Vue.ref(false);
         const editTaxonPopupTaxonData = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
@@ -128,6 +134,21 @@ const occurrenceEditorCollectingEventModule = {
             showBenthicTaxaEditorPopup.value = true;
         }
 
+        function processOpenEditor() {
+            if(editorConfirmed.value){
+                showEventEditorPopup.value = true;
+            }
+            else{
+                const confirmText = 'If you want to edit this collecting event, click OK to continue. If you want to change the collecting event for this occurrence, click Cancel, and then click Change Event/Location button in the bottom section. ';
+                confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'Cancel', trueText: 'OK', callback: (val) => {
+                    editorConfirmed.value = true;
+                    if(val){
+                        showEventEditorPopup.value = true;
+                    }
+                }});
+            }
+        }
+
         function updateCollectingEventData(key, value) {
             occurrenceStore.updateCollectingEventEditData(key, value);
         }
@@ -142,6 +163,7 @@ const occurrenceEditorCollectingEventModule = {
             collectingEventCollectionArr,
             configuredDataFields,
             configuredDataLabel,
+            confirmationPopupRef,
             editTaxonPopupTaxonData,
             eventData,
             eventFields,
@@ -158,6 +180,7 @@ const occurrenceEditorCollectingEventModule = {
             closeBenthicTaxaEditorPopup,
             createCollectingEventRecord,
             processEditTaxonRequest,
+            processOpenEditor,
             updateCollectingEventData
         }
     }

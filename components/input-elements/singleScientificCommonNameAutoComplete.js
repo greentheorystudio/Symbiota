@@ -24,6 +24,10 @@ const singleScientificCommonNameAutoComplete = {
             type: Boolean,
             default: false
         },
+        kingdomId: {
+            type: Number,
+            default: 0
+        },
         label: {
             type: String,
             default: 'Scientific Name'
@@ -58,7 +62,7 @@ const singleScientificCommonNameAutoComplete = {
         }
     },
     template: `
-        <q-select v-model="sciname" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-class="z-max" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :disable="disabled">
+        <q-select v-model="sciname" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-top" behavior="menu" input-class="z-top" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :disable="disabled">
             <template v-if="!disabled && (sciname || definition)" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -192,6 +196,7 @@ const singleScientificCommonNameAutoComplete = {
                     const formData = new FormData();
                     formData.append('action', action);
                     formData.append('term', val);
+                    formData.append('kingdomid', props.kingdomId.toString());
                     formData.append('hideauth', props.hideAuthor);
                     formData.append('hideprotected', props.hideProtected);
                     formData.append('acceptedonly', props.acceptedTaxaOnly);

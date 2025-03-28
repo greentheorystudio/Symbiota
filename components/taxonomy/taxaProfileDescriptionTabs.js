@@ -1,14 +1,4 @@
 const taxaProfileDescriptionTabs = {
-    props: {
-        descriptionArr: {
-            type: Array,
-            default: []
-        },
-        glossaryArr: {
-            type: Array,
-            default: []
-        }
-    },
     template: `
         <q-card>
             <template v-if="descriptionArr.length || glossaryArr.length">
@@ -61,32 +51,57 @@ const taxaProfileDescriptionTabs = {
             </template>
         </q-card>
     `,
-    setup(props) {
-        const propsRefs = Vue.toRefs(props);
+    setup() {
+        const taxaStore = useTaxaStore();
+
+        const acceptedTid = Vue.computed(() => taxaStore.getAcceptedTaxonTid);
+        const descriptionArr = Vue.computed(() => taxaStore.getTaxaDescriptionDisplayArr);
+        const glossaryArr = Vue.ref([]);
         const selectedDescTab = Vue.ref(null);
 
-        Vue.watch(propsRefs.descriptionArr, () => {
-            processTabs();
+        Vue.watch(acceptedTid, () => {
+            setGlossary();
         });
 
-        Vue.watch(propsRefs.glossaryArr, () => {
+        Vue.watch(descriptionArr, () => {
             processTabs();
         });
 
         function processTabs() {
-            if(props.descriptionArr.length > 0){
-                selectedDescTab.value = props.descriptionArr[0]['tdbid'];
+            if(descriptionArr.value.length > 0){
+                selectedDescTab.value = descriptionArr.value[0]['tdbid'];
             }
-            else if(props.glossaryArr.length > 0){
+            else if(glossaryArr.value.length > 0){
                 selectedDescTab.value = 'glossaryTab';
             }
         }
 
+        function setGlossary() {
+            if(Number(acceptedTid.value) > 0){
+                const formData = new FormData();
+                formData.append('tid', acceptedTid.value);
+                formData.append('action', 'getTaxonGlossary');
+                fetch(glossaryApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((resObj) => {
+                    glossaryArr.value = resObj;
+                    processTabs();
+                });
+            }
+        }
+
         Vue.onMounted(() => {
-            processTabs();
+            setGlossary();
         });
 
         return {
+            descriptionArr,
+            glossaryArr,
             selectedDescTab
         }
     }

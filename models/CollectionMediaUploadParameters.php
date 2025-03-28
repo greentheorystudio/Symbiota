@@ -35,7 +35,12 @@ class CollectionMediaUploadParameters {
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $data)){
                     $fieldNameArr[] = $field;
-                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    if($field === 'configjson'){
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    }
                 }
             }
             $sql = 'INSERT INTO omcollmediauploadparameters(' . implode(',', $fieldNameArr) . ') '.
@@ -76,7 +81,12 @@ class CollectionMediaUploadParameters {
                     $nodeArr = array();
                     foreach($fields as $val){
                         $name = $val->name;
-                        $nodeArr[$name] = $row[$name];
+                        if($row[$name] && $name === 'configjson'){
+                            $nodeArr[$name] = json_decode($row[$name], true);
+                        }
+                        else{
+                            $nodeArr[$name] = $row[$name];
+                        }
                     }
                     $retArr[] = $nodeArr;
                     unset($rows[$index]);
@@ -93,7 +103,12 @@ class CollectionMediaUploadParameters {
         if($spprid && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
-                    $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    if($field === 'configjson'){
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    }
                 }
             }
             if(count($sqlPartArr) > 0){

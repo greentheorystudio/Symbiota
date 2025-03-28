@@ -27,7 +27,7 @@ const spatialAnalysisModule = {
         <template v-if="mapSettings.recordInfoWindowId">
             <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
         </template>
-        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
 
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
             <spatial-side-panel :show-panel="mapSettings.showSidePanel" :expanded-element="mapSettings.sidePanelExpandedElement"></spatial-side-panel>
@@ -60,7 +60,7 @@ const spatialAnalysisModule = {
         'spatial-side-button-tray': spatialSideButtonTray
     },
     setup(props, context) {
-        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
+        const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, writeMySQLWktString } = useCore();
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
@@ -211,14 +211,14 @@ const spatialAnalysisModule = {
                     }));
                 }
                 mapSettings.draw.on('drawend', (evt) => {
-                    if(props.inputWindowMode && props.inputWindowToolsArr.includes('point')){
+                    if(props.inputWindowMode && (props.inputWindowToolsArr.includes('point') || props.inputWindowToolsArr.includes('circle') || props.inputWindowToolsArr.includes('box'))){
+                        mapSettings.selectSource.clear();
+                        mapSettings.selectedFeatures.clear();
+                        mapSettings.uncertaintyCircleSource.clear();
                         const featureClone = evt.feature.clone();
                         const geoType = featureClone.getGeometry().getType();
                         const geoJSONFormat = new ol.format.GeoJSON();
                         if(geoType === 'Point'){
-                            mapSettings.selectSource.clear();
-                            mapSettings.selectedFeatures.clear();
-                            mapSettings.uncertaintyCircleSource.clear();
                             const selectiongeometry = featureClone.getGeometry();
                             const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
                             const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
@@ -240,9 +240,23 @@ const spatialAnalysisModule = {
                                 }
                             }
                         }
+                        else if(geoType === 'Circle'){
+                            let radius;
+                            const radiusM = featureClone.getGeometry().getRadius();
+                            if(mapSettings.radiusUnits === 'km'){
+                                radius = (Number(radiusM) / 1000);
+                            }
+                            else if(mapSettings.radiusUnits === 'mi'){
+                                radius = ((Number(radiusM) * 1.609344) / 1000);
+                            }
+                            else{
+                                radius = Number(radiusM);
+                            }
+                            updateMapSettings('uncertaintyRadiusValue', radius);
+                        }
                     }
                     else{
-                        evt.feature.set('geoType',mapSettings.selectedDrawTool);
+                        evt.feature.set('geoType', mapSettings.selectedDrawTool);
                     }
                     updateMapSettings('selectedDrawTool', 'None');
                     map.removeInteraction(mapSettings.draw);
@@ -351,9 +365,19 @@ const spatialAnalysisModule = {
         }
 
         function createCircleFromPointRadius(prad, selected) {
+            let radius;
+            if(prad.radiusunits === 'km'){
+                radius = (Number(prad.radius) * 1000);
+            }
+            else if(prad.radiusunits === 'mi'){
+                radius = ((Number(prad.radius) * 1.609344) * 1000);
+            }
+            else{
+                radius = Number(prad.radius);
+            }
             const centerCoords = ol.proj.fromLonLat([prad.pointlong, prad.pointlat]);
             const circle = new ol.geom.Circle(centerCoords);
-            circle.setRadius(Number(prad.radius));
+            circle.setRadius(radius);
             const circleFeature = new ol.Feature(circle);
             mapSettings.selectSource.addFeature(circleFeature);
             updateMapSettings('activeLayer', 'select');
@@ -769,7 +793,7 @@ const spatialAnalysisModule = {
 
         function handleWindowResize() {
             windowWidth.value = window.innerWidth;
-            updateMapSettings('showControlPanelTop', ((windowWidth.value >= 875 && !propsRefs.inputWindowMode.value) || (windowWidth.value >= 600 && propsRefs.inputWindowMode.value)));
+            updateMapSettings('showControlPanelTop', windowWidth.value >= 875);
         }
 
         function hideFeature(feature) {
@@ -1107,7 +1131,9 @@ const spatialAnalysisModule = {
                             pointlat: fixedcenter[1],
                             pointlong: fixedcenter[0],
                             radius: radius,
-                            groundradius: groundRadius
+                            radiusval: mapSettings.uncertaintyRadiusValue,
+                            groundradius: groundRadius,
+                            radiusunits: mapSettings.radiusUnits
                         };
                         geoCircleArr.value.push(circleObj);
                     }
@@ -1493,8 +1519,65 @@ const spatialAnalysisModule = {
                     layersObj['pointv'].getSource().changed();
                 }
             });
-            map.getViewport().addEventListener('drop', () => {
-                showWorking('Loading...');
+            map.getViewport().addEventListener('drop', (event) => {
+                let filename = event.dataTransfer.files[0].name.split('.');
+                const fileType = filename.pop();
+                if(fileType === 'csv'){
+                    if(setDragDropTarget()){
+                        const pointArr = [];
+                        showWorking('Loading...');
+                        parseFile(event.dataTransfer.files[0], (fileContents) => {
+                            csvToArray(fileContents).then((csvData) => {
+                                csvData.forEach((dataObj) => {
+                                    if(dataObj){
+                                        let latitudeField, longitudeField;
+                                        latitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'decimallatitude');
+                                        if(!latitudeField){
+                                            latitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'latitude');
+                                        }
+                                        longitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'decimallongitude');
+                                        if(!longitudeField){
+                                            longitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'longitude');
+                                        }
+                                        if(latitudeField && dataObj[latitudeField] && !isNaN(dataObj[latitudeField]) && longitudeField && dataObj[longitudeField] && !isNaN(dataObj[longitudeField])){
+                                            const newPointGeometry = new ol.geom.Point(ol.proj.fromLonLat([Number(dataObj[longitudeField]), Number(dataObj[latitudeField])]));
+                                            const pointFeature = new ol.Feature(newPointGeometry);
+                                            Object.keys(dataObj).forEach((field) => {
+                                                if(field !== latitudeField && field !== longitudeField){
+                                                    pointFeature.set(field, dataObj[field]);
+                                                }
+                                            });
+                                            pointArr.push(pointFeature);
+                                        }
+                                    }
+                                });
+                                if(pointArr.length > 0){
+                                    const infoArr = [];
+                                    infoArr['id'] = mapSettings.dragDropTarget;
+                                    infoArr['type'] = 'userLayer';
+                                    infoArr['fileType'] = fileType;
+                                    infoArr['layerName'] = filename[0];
+                                    infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
+                                    infoArr['fillColor'] = mapSettings.dragDropFillColor;
+                                    infoArr['borderColor'] = mapSettings.dragDropBorderColor;
+                                    infoArr['borderWidth'] = mapSettings.dragDropBorderWidth;
+                                    infoArr['pointRadius'] = mapSettings.dragDropPointRadius;
+                                    infoArr['opacity'] = mapSettings.dragDropOpacity;
+                                    const sourceIndex = mapSettings.dragDropTarget + 'Source';
+                                    layersObj[sourceIndex] = new ol.source.Vector({
+                                        features: pointArr
+                                    });
+                                    layersObj[mapSettings.dragDropTarget].setSource(layersObj[sourceIndex]);
+                                    processAddedLayer(infoArr,true);
+                                    map.getView().fit(layersObj[sourceIndex].getExtent());
+                                }
+                                else{
+                                    hideWorking();
+                                }
+                            });
+                        });
+                    }
+                }
             });
             map.on('singleclick', (evt) => {
                 let infoHTML;
@@ -1544,8 +1627,9 @@ const spatialAnalysisModule = {
                         if(feature){
                             const properties = feature.getKeys();
                             properties.forEach((prop) => {
-                                if(String(prop) !== 'geometry'){
-                                    infoHTML += '<b>' + prop + ':</b> ' + (feature.get(prop) ? feature.get(prop) : '') + '<br />';
+                                const propValue = feature.get(prop);
+                                if(String(prop) !== 'geometry' && propValue){
+                                    infoHTML += '<b>' + prop + ':</b> ' + propValue + '<br />';
                                 }
                             });
                             if(infoHTML){
@@ -1778,7 +1862,6 @@ const spatialAnalysisModule = {
             dragAndDropInteraction.on('addfeatures', (event) => {
                 let filename = event.file.name.split('.');
                 const fileType = filename.pop();
-                filename = filename.join("");
                 if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif' || fileType === 'tiff'){
                     if(fileType === 'geojson' || fileType === 'kml'){
                         if(setDragDropTarget()){
@@ -1786,7 +1869,7 @@ const spatialAnalysisModule = {
                             infoArr['id'] = mapSettings.dragDropTarget;
                             infoArr['type'] = 'userLayer';
                             infoArr['fileType'] = fileType;
-                            infoArr['layerName'] = filename;
+                            infoArr['layerName'] = filename[0];
                             infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                             infoArr['fillColor'] = mapSettings.dragDropFillColor;
                             infoArr['borderColor'] = mapSettings.dragDropBorderColor;
@@ -1815,7 +1898,7 @@ const spatialAnalysisModule = {
                                     infoArr['id'] = mapSettings.dragDropTarget;
                                     infoArr['type'] = 'userLayer';
                                     infoArr['fileType'] = 'zip';
-                                    infoArr['layerName'] = filename;
+                                    infoArr['layerName'] = filename[0];
                                     infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                                     infoArr['fillColor'] = mapSettings.dragDropFillColor;
                                     infoArr['borderColor'] = mapSettings.dragDropBorderColor;
@@ -1851,7 +1934,7 @@ const spatialAnalysisModule = {
                                         infoArr['id'] = mapSettings.dragDropTarget;
                                         infoArr['type'] = 'userLayer';
                                         infoArr['fileType'] = 'tif';
-                                        infoArr['layerName'] = filename;
+                                        infoArr['layerName'] = filename[0];
                                         infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                                         infoArr['colorScale'] = mapSettings.dragDropRasterColorScale;
                                         const sourceIndex = mapSettings.dragDropTarget + 'Source';
@@ -1905,7 +1988,7 @@ const spatialAnalysisModule = {
                                         layersObj[mapSettings.dragDropTarget].setSource(layersObj[sourceIndex]);
                                         map.addLayer(layersObj[mapSettings.dragDropTarget]);
                                         processAddedLayer(infoArr,true);
-                                        rasterLayersArr.value.push({value: mapSettings.dragDropTarget, label: filename});
+                                        rasterLayersArr.value.push({value: mapSettings.dragDropTarget, label: filename[0]});
                                         const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
                                         const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
                                         const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
@@ -2522,7 +2605,6 @@ const spatialAnalysisModule = {
         Vue.provide('layersConfigArr', layersConfigArr);
         Vue.provide('layersInfoObj', layersInfoObj);
         Vue.provide('layersObj', layersObj);
-        Vue.provide('loadRecords', loadRecords);
         Vue.provide('loadPointsLayer', loadPointsLayer);
         Vue.provide('map', Vue.computed(() => map));
         Vue.provide('mapSettings', mapSettings);
@@ -2604,6 +2686,7 @@ const spatialAnalysisModule = {
             createPolysFromPolyArr,
             createUncertaintyCircleFromPointRadius,
             emitClosePopup,
+            loadRecords,
             setQueryPopupDisplay,
             updateMapSettings,
             zoomToShapesLayer

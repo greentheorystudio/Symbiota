@@ -18,6 +18,18 @@ const useSearchStore = Pinia.defineStore('search', {
             advanced: [],
             mofextension: []
         },
+        blankSpatialInputValues: {
+            bottomLatitude: null,
+            circleArr: null,
+            leftLongitude: null,
+            pointLatitude: null,
+            pointLongitude: null,
+            polyArr: null,
+            radius: null,
+            radiusUnit: null,
+            rightLongitude: null,
+            upperLatitude: null
+        },
         dateId: null,
         queryBuilderFieldOptions: [
             {field: 'associatedcollectors', label: 'Associated Collectors'},
@@ -103,6 +115,10 @@ const useSearchStore = Pinia.defineStore('search', {
         ],
         queryId: 0,
         queryOccidArr: [],
+        radiusUnitOptions: [
+            {value: 'km', label: 'Kilometers'},
+            {value: 'mi', label: 'Miles'}
+        ],
         searchRecordData: [],
         searchTerms: {},
         searchTermsPageNumber: 0,
@@ -111,7 +127,8 @@ const useSearchStore = Pinia.defineStore('search', {
         solrFields: 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tid,scientificNameAuthorship,identifiedBy,' +
             'dateIdentified,typeStatus,recordedBy,recordNumber,eventDate,displayDate,coll_year,coll_month,coll_day,habitat,associatedTaxa,' +
             'cultivationStatus,country,StateProvince,county,municipality,locality,localitySecurity,localitySecurityReason,geo,minimumElevationInMeters,' +
-            'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily'
+            'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily',
+        spatialInputValues: {}
     }),
     getters: {
         getDateId(state) {
@@ -138,6 +155,12 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getQueryId(state) {
             return state.queryId;
+        },
+        getRadiusDisplayValue(state) {
+            return state.radiusUnitOptions;
+        },
+        getRadiusUnitOptions(state) {
+            return state.radiusUnitOptions;
         },
         getSearchOccidArr(state) {
             return state.queryOccidArr;
@@ -223,6 +246,14 @@ const useSearchStore = Pinia.defineStore('search', {
         getSOLRFields(state) {
             return state.solrFields;
         },
+        getSpatialInputValues(state) {
+            if(Object.keys(state.spatialInputValues).length > 0){
+                return state.spatialInputValues;
+            }
+            else{
+                return state.blankSpatialInputValues;
+            }
+        },
         getTimestringIdentifier() {
             return Date.now().toString();
         }
@@ -250,6 +281,9 @@ const useSearchStore = Pinia.defineStore('search', {
                 record.selected = false;
             });
         },
+        clearSpatialInputValues() {
+            this.spatialInputValues = Object.assign({}, this.blankSpatialInputValues);
+        },
         deselectAllCurrentRecords() {
             this.searchRecordData.forEach((record) => {
                 if(this.selectionsIds.indexOf(Number(record.occid)) > -1){
@@ -262,6 +296,22 @@ const useSearchStore = Pinia.defineStore('search', {
             const index = options.hasOwnProperty('index') ? Number(options['index']) : 0;
             const bottomLimit = numRows > 0 ? (index * numRows) : 0;
             return this.queryOccidArr.slice(bottomLimit, (bottomLimit + (numRows - 1)));
+        },
+        getSearchTidArr(options, callback){
+            const formData = new FormData();
+            formData.append('starr', this.getSearchTermsJson);
+            formData.append('options', JSON.stringify(options));
+            formData.append('action', 'getSearchTidArr');
+            fetch(searchServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
         },
         initializeSearchStorage(queryId) {
             this.dateId = this.getDateIdValue;
@@ -301,7 +351,7 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.setItem('searchTermsArr', JSON.stringify(searchTermsArr));
         },
         processDownloadRequest(options, callback){
-            options.filename = 'occurrence_data_' + (options.type === 'zip' ? 'DwCA_' : '') + this.getDateTimeString + '.' + options.type;
+            options.filename = 'occurrence_data_' + (options.type === 'zip' ? 'DwCA_' : '') + this.getDateTimeString;
             const formData = new FormData();
             if(options.selections){
                 formData.append('starr', JSON.stringify({
@@ -312,7 +362,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 formData.append('starr', this.getSearchTermsJson);
             }
             formData.append('options', JSON.stringify(options));
-            fetch(dataDownloadServiceApiUrl, {
+            formData.append('action', 'processSearchDownload');
+            fetch(searchServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -390,8 +441,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 this.updateSearchTerms('pointlong', data['circleArr'][0]['pointlong']);
                 this.updateSearchTerms('radius', data['circleArr'][0]['radius']);
                 this.updateSearchTerms('groundradius', data['circleArr'][0]['groundradius']);
-                this.updateSearchTerms('radiusval', (data['circleArr'][0]['radius'] / 1000));
-                this.updateSearchTerms('radiusunit', 'km');
+                this.updateSearchTerms('radiusval', data['circleArr'][0]['radiusval']);
+                this.updateSearchTerms('radiusunit', data['circleArr'][0]['radiusunits']);
             }
             else if(windowType === 'input' && (data.hasOwnProperty('circleArr') || data.hasOwnProperty('polyArr'))){
                 if(data.hasOwnProperty('circleArr')){
@@ -497,6 +548,18 @@ const useSearchStore = Pinia.defineStore('search', {
                 record.selected = (this.selectionsIds.indexOf(Number(record.occid)) > -1);
             });
             return recordArr;
+        },
+        setSpatialInputValues() {
+            this.spatialInputValues['bottomLatitude'] = this.searchTerms.hasOwnProperty('bottomlat') ? this.searchTerms['bottomlat'] : null;
+            this.spatialInputValues['circleArr'] = this.searchTerms.hasOwnProperty('circleArr') ? this.searchTerms['circleArr'] : null;
+            this.spatialInputValues['leftLongitude'] = this.searchTerms.hasOwnProperty('leftlong') ? this.searchTerms['leftlong'] : null;
+            this.spatialInputValues['pointLatitude'] = this.searchTerms.hasOwnProperty('pointlat') ? this.searchTerms['pointlat'] : null;
+            this.spatialInputValues['pointLongitude'] = this.searchTerms.hasOwnProperty('pointlong') ? this.searchTerms['pointlong'] : null;
+            this.spatialInputValues['polyArr'] = this.searchTerms.hasOwnProperty('polyArr') ? this.searchTerms['polyArr'] : null;
+            this.spatialInputValues['radius'] = this.searchTerms.hasOwnProperty('radiusval') ? this.searchTerms['radiusval'] : null;
+            this.spatialInputValues['radiusUnit'] = this.searchTerms.hasOwnProperty('radiusunit') ? this.searchTerms['radiusunit'] : null;
+            this.spatialInputValues['rightLongitude'] = this.searchTerms.hasOwnProperty('rightlong') ? this.searchTerms['rightlong'] : null;
+            this.spatialInputValues['upperLatitude'] = this.searchTerms.hasOwnProperty('upperlat') ? this.searchTerms['upperlat'] : null;
         },
         updateLocalStorageSearchTerms() {
             const stArr = JSON.parse(localStorage['searchTermsArr']);

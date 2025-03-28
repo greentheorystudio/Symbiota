@@ -184,7 +184,7 @@ const mediaFileUploadInputElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { getSubstringByRegEx, hideWorking, parseCsvFile, showNotification, showWorking } = useCore();
+        const { csvToArray, getSubstringByRegEx, hideWorking, parseFile, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const imageStore = useImageStore();
         const mediaStore = useMediaStore();
@@ -304,11 +304,26 @@ const mediaFileUploadInputElement = {
             }
         }
 
+        function parseScinameFromFilename(fileName) {
+            let adjustedFileName = fileName.replace(/_/g, ' ');
+            adjustedFileName = adjustedFileName.replace(/\s+/g, ' ').trim();
+            const lastDotIndex = adjustedFileName.lastIndexOf('.');
+            adjustedFileName = adjustedFileName.substring(0, lastDotIndex);
+            const lastSpaceIndex = adjustedFileName.lastIndexOf(' ');
+            if(lastSpaceIndex){
+                const lastPartAfterSpace = adjustedFileName.substring(lastSpaceIndex);
+                if(Number(lastPartAfterSpace) > 0){
+                    adjustedFileName = adjustedFileName.substring(0, lastSpaceIndex);
+                }
+            }
+            setTaxaData([adjustedFileName], fileName);
+        }
+
         function processCsvFileData() {
             if(csvFileData.length > 0){
                 taxaArr.value = [];
                 csvFileData.forEach((dataObj, index) => {
-                    if(dataObj.hasOwnProperty('filename') && dataObj['filename']){
+                    if(dataObj && dataObj.hasOwnProperty('filename') && dataObj['filename']){
                         if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.value.includes(dataObj['scientificname'])){
                             taxaArr.value.push(dataObj['scientificname']);
                         }
@@ -346,15 +361,14 @@ const mediaFileUploadInputElement = {
                         body: formData
                     })
                     .then((response) => {
-                        if(response.status === 200){
-                            response.json().then((resObj) => {
-                                file.height = resObj['fileHeight'];
-                                file.size = resObj['fileSize'];
-                                file.width = resObj['fileWidth'];
-                                validateFiles([file]);
-                                resetUrlMethodSettings();
-                            });
-                        }
+                        return response.ok ? response.json() : null;
+                    })
+                    .then((resObj) => {
+                        file.height = resObj['fileHeight'];
+                        file.size = resObj['fileSize'];
+                        file.width = resObj['fileWidth'];
+                        validateFiles([file]);
+                        resetUrlMethodSettings();
                     });
                 }
                 else{
@@ -460,7 +474,7 @@ const mediaFileUploadInputElement = {
         }
 
         function setFileIdentifierData() {
-            if(Number(props.taxonId) === 0 && taxaArr.value.length > 0){
+            if(!props.collection && Number(props.taxonId) === 0 && taxaArr.value.length > 0){
                 setTaxaData();
             }
             else if(collId.value > 0 && identifierArr.value.length > 0){
@@ -482,13 +496,14 @@ const mediaFileUploadInputElement = {
                 body: formData
             })
             .then((response) => {
-                response.json().then((resObj) => {
-                    identifierArr.value.length = 0;
-                    Object.keys(resObj).forEach((key) => {
-                        identifierData.value[key] = Object.assign({}, resObj[key]);
-                    });
-                    setFileIdentifierData();
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                identifierArr.value.length = 0;
+                Object.keys(resObj).forEach((key) => {
+                    identifierData.value[key] = Object.assign({}, resObj[key]);
                 });
+                setFileIdentifierData();
             });
         }
 
@@ -507,13 +522,15 @@ const mediaFileUploadInputElement = {
                 body: formData
             })
             .then((response) => {
-                response.json().then((resObj) => {
-                    taxaArr.value.length = 0;
-                    Object.keys(resObj).forEach((key) => {
-                        taxaData.value[key] = Object.assign({}, resObj[key]);
-                    });
-                    setFileIdentifierData();
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                taxaArr.value.length = 0;
+                Object.keys(resObj).forEach((key) => {
+                    taxaData.value[key] = Object.assign({}, resObj[key]);
                 });
+                uploaderRef.value.updateFileStatus(file, new Date().toTimeString());
+                setFileIdentifierData();
             });
         }
 
@@ -578,12 +595,13 @@ const mediaFileUploadInputElement = {
                             body: formData
                         })
                         .then((response) => {
-                            response.text().then((res) => {
-                                if(res && Number(res) > 0){
-                                    file['uploadMetadata']['occid'] = res;
-                                    processUpload(file);
-                                }
-                            });
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(res && Number(res) > 0){
+                                file['uploadMetadata']['occid'] = res;
+                                processUpload(file);
+                            }
                         });
                     }
                     else if((collId.value > 0 && Number(file['uploadMetadata']['occid']) > 0) || (collId.value === 0 && Number(file['uploadMetadata']['tid']) > 0)){
@@ -605,9 +623,10 @@ const mediaFileUploadInputElement = {
                 body: formData
             })
             .then((response) => {
-                response.text().then((res) => {
-                    callback(res, file);
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res, file);
             });
         }
 
@@ -623,9 +642,10 @@ const mediaFileUploadInputElement = {
                 body: formData
             })
             .then((response) => {
-                response.text().then((res) => {
-                    callback(res, file);
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res, file);
             });
         }
 
@@ -646,9 +666,11 @@ const mediaFileUploadInputElement = {
             files.forEach((file) => {
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){
-                    parseCsvFile(file, (csvData) => {
-                        csvFileData = csvData;
-                        processCsvFileData();
+                    parseFile(file, (fileContents) => {
+                        csvToArray(fileContents).then((csvData) => {
+                            csvFileData = csvData;
+                            processCsvFileData();
+                        });
                     });
                 }
                 else if(!existingData){
@@ -685,6 +707,22 @@ const mediaFileUploadInputElement = {
                                 file['uploadMetadata']['sortsequence'] = 50;
                             }
                             else{
+                                let tid = null;
+                                let csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
+                                if(!csvData){
+                                    csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
+                                }
+                                if(!csvData || !csvData.hasOwnProperty('scientificname')){
+                                    parseScinameFromFilename(file.name);
+                                }
+                                const sciname = (csvData && csvData.hasOwnProperty('scientificname')) ? csvData['scientificname'] : null;
+                                if(sciname){
+                                    if(taxaData.value.hasOwnProperty(sciname.toLowerCase())){
+                                        tid = taxaData.value[sciname.toLowerCase()]['tid'];
+                                    }
+                                }
+                                file['uploadMetadata']['scientificname'] = sciname;
+                                file['uploadMetadata']['tid'] = tid;
                                 file['uploadMetadata']['sortsequence'] = 20;
                             }
                             if(!file.hasOwnProperty('copyToServer')){

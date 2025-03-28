@@ -13,7 +13,7 @@ class CollectionDataUploadParameters {
         "title" => array("dataType" => "string", "length" => 45),
         "dwcpath" => array("dataType" => "text", "length" => 0),
         "queryparamjson" => array("dataType" => "json", "length" => 0),
-        "cleansql" => array("dataType" => "sql", "length" => 0),
+        "cleansql" => array("dataType" => "json", "length" => 0),
         "configjson" => array("dataType" => "json", "length" => 0),
         "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
     );
@@ -37,7 +37,12 @@ class CollectionDataUploadParameters {
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $data)){
                     $fieldNameArr[] = $field;
-                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    if($field === 'queryparamjson' || $field === 'cleansql' || $field === 'configjson'){
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    }
                 }
             }
             $sql = 'INSERT INTO omcolldatauploadparameters(' . implode(',', $fieldNameArr) . ') '.
@@ -87,7 +92,12 @@ class CollectionDataUploadParameters {
                     $nodeArr = array();
                     foreach($fields as $val){
                         $name = $val->name;
-                        $nodeArr[$name] = $row[$name];
+                        if($row[$name] && ($name === 'queryparamjson' || $name === 'cleansql' || $name === 'configjson')){
+                            $nodeArr[$name] = json_decode($row[$name], true);
+                        }
+                        else{
+                            $nodeArr[$name] = $row[$name];
+                        }
                     }
                     $retArr[] = $nodeArr;
                     unset($rows[$index]);
@@ -155,7 +165,12 @@ class CollectionDataUploadParameters {
         if($uspid && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
-                    $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    if($field === 'queryparamjson' || $field === 'cleansql' || $field === 'configjson'){
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    }
                 }
             }
             if(count($sqlPartArr) > 0){

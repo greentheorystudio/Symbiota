@@ -1,23 +1,36 @@
 const taxaProfileEditButton = {
     props: {
-        tid: {
-            type: Number,
-            default: 0
+        taxonEditor: {
+            type: Boolean,
+            default: false
+        },
+        taxonProfileEditor: {
+            type: Boolean,
+            default: false
         }
     },
     template: `
-        <div>
-            <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + tid)" title="Edit Taxon Data">
-                <q-icon name="far fa-edit" size="20px" class="cursor-pointer" />
-            </a>
+        <div class="column q-gutter-sm">
+            <div v-if="taxonEditor">
+                <q-btn color="grey-4" text-color="black" class="black-border text-bold" size="sm" :href="(clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + taxon['tid'])" label="Edit Taxon" no-wrap></q-btn>
+            </div>
+            <div v-if="taxonProfileEditor">
+                <q-btn color="grey-4" text-color="black" class="black-border text-bold" size="sm" :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + acceptedTaxon['tid'])" label="Edit Taxon Profile" no-wrap></q-btn>
+            </div>
         </div>
     `,
     setup() {
-        const store = useBaseStore();
-        const clientRoot = store.getClientRoot;
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const acceptedTaxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+        const clientRoot = baseStore.getClientRoot;
+        const taxon = Vue.computed(() => taxaStore.getTaxaData);
 
         return {
-            clientRoot
+            acceptedTaxon,
+            clientRoot,
+            taxon
         }
     }
 };

@@ -1,5 +1,8 @@
 <?php
+include_once(__DIR__ . '/ChecklistTaxa.php');
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class Checklists{
 
@@ -15,7 +18,7 @@ class Checklists{
         "authors" => array("dataType" => "string", "length" => 250),
         "type" => array("dataType" => "string", "length" => 50),
         "politicaldivision" => array("dataType" => "string", "length" => 45),
-        "searchterms" => array("dataType" => "text", "length" => 0),
+        "searchterms" => array("dataType" => "json", "length" => 0),
         "parent" => array("dataType" => "string", "length" => 50),
         "parentclid" => array("dataType" => "number", "length" => 10),
         "notes" => array("dataType" => "string", "length" => 500),
@@ -25,7 +28,7 @@ class Checklists{
         "footprintwkt" => array("dataType" => "text", "length" => 0),
         "percenteffort" => array("dataType" => "number", "length" => 11),
         "access" => array("dataType" => "string", "length" => 45),
-        "defaultsettings" => array("dataType" => "string", "length" => 250),
+        "defaultsettings" => array("dataType" => "json", "length" => 250),
         "iconurl" => array("dataType" => "string", "length" => 150),
         "headerurl" => array("dataType" => "string", "length" => 150),
         "uid" => array("dataType" => "number", "length" => 10),
@@ -53,7 +56,7 @@ class Checklists{
         $this->conn->query($sql2);
     }
 
-    public function createChecklistRecord($data, $dynamic = false): int
+    public function createChecklistRecord($data): int
     {
         $this->clearExpiredChecklists();
         $newID = 0;
@@ -67,12 +70,13 @@ class Checklists{
                 else{
                     $fieldNameArr[] = $field;
                 }
-                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                if($field === 'defaultsettings' || $field === 'searchterms'){
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                }
+                else{
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
             }
-        }
-        if($dynamic){
-            $fieldNameArr[] = 'expiration';
-            $fieldValueArr[] = '"' . date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))) . '"';
         }
         $fieldNameArr[] = 'uid';
         $fieldValueArr[] = $GLOBALS['SYMB_UID'] ?: 'NULL';
@@ -83,6 +87,37 @@ class Checklists{
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
+            (new Permissions)->addPermission($GLOBALS['SYMB_UID'], 'ClAdmin', $newID);
+            (new Permissions)->setUserPermissions();
+        }
+        return $newID;
+    }
+
+    public function createTemporaryChecklistFromTidArr($tidArr): int
+    {
+        $this->clearExpiredChecklists();
+        $newID = 0;
+        if(count($tidArr) > 0){
+            $guid = UuidService::getUuidV4();
+            $fieldNameArr = array();
+            $fieldValueArr = array();
+            $fieldNameArr[] = '`name`';
+            $fieldValueArr[] = '"' . $guid . '"';
+            $fieldNameArr[] = 'expiration';
+            $fieldValueArr[] = '"' . date('Y-m-d', mktime(0, 0, 0, date('m'), date('d') + 7, date('Y'))) . '"';
+            $fieldNameArr[] = 'uid';
+            $fieldValueArr[] = $GLOBALS['SYMB_UID'] ?: 'NULL';
+            $fieldNameArr[] = 'initialtimestamp';
+            $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+            $sql = 'INSERT INTO fmchecklists(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+                if(!(new ChecklistTaxa)->batchCreateChecklistTaxaRecordsFromTidArr($newID, $tidArr)){
+                    $newID = 0;
+                }
+            }
         }
         return $newID;
     }
@@ -90,6 +125,10 @@ class Checklists{
     public function deleteChecklistRecord($clid): int
     {
         $retVal = 1;
+        $sql = 'DELETE FROM userroles WHERE role = "ClAdmin" AND tablepk = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
         $sql = 'DELETE FROM fmchklstprojlink WHERE clid = ' . (int)$clid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
@@ -109,6 +148,22 @@ class Checklists{
         return $retVal;
     }
 
+    public function getChecklistChildClidArr($clidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(' . implode(',', $clidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['clidchild'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getChecklistData($clid): array
     {
         $retArr = array();
@@ -123,8 +178,16 @@ class Checklists{
             if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $row[$name];
+                    if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms')){
+                        $retArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $retArr[$name] = $row[$name];
+                    }
                 }
+                $clidArr = $this->getChecklistChildClidArr(array($clid));
+                $clidArr[] = $clid;
+                $retArr['clidArr'] = $clidArr;
             }
         }
         return $retArr;
@@ -186,7 +249,12 @@ class Checklists{
                     else{
                         $fieldName = $field;
                     }
-                    $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    if($field === 'defaultsettings' || $field === 'searchterms'){
+                        $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    }
                 }
             }
             $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';

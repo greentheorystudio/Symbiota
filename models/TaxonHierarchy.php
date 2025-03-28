@@ -37,6 +37,37 @@ class TaxonHierarchy{
         return $status;
     }
 
+    public function getParentTidArr($tid): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT parenttid FROM taxaenumtree WHERE tid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[] = $row['parenttid'];
+                unset($rows[$index]);
+            }
+        }
+        return $returnArr;
+    }
+
+    public function getSubtaxaTidArrFromTid($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.tid FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tid = te.tid '.
+            'WHERE te.parenttid = ' . (int)$tid . ' AND t.tid = t.tidaccepted ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['tid'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getTaxonomicTreeTaxonPath($tId): array
     {
         $retArr = array();
@@ -74,6 +105,59 @@ class TaxonHierarchy{
             }
         }
         return $retArr;
+    }
+
+    public function getUpperTaxonomyData(): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT t.sciname AS family, t2.sciname AS taxonorder '.
+            'FROM taxa AS t LEFT JOIN taxaenumtree AS e ON t.tid = e.tid LEFT JOIN taxa AS t2 ON e.parenttid = t2.tid '.
+            'WHERE t.rankid = 140 AND t2.rankid = 100';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[strtolower($row['family'])]['o'] = $row['taxonorder'];
+                unset($rows[$index]);
+            }
+        }
+
+        $sql = 'SELECT t.sciname AS orderName, t2.sciname AS taxonclass '.
+            'FROM taxa AS t LEFT JOIN taxaenumtree AS e ON t.tid = e.tid LEFT JOIN taxa AS t2 ON e.parenttid = t2.tid '.
+            'WHERE t.rankid = 100 AND t2.rankid = 60';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[strtolower($row['orderName'])]['c'] = $row['taxonclass'];
+                unset($rows[$index]);
+            }
+        }
+
+        $sql = 'SELECT t.sciname AS className, t2.sciname AS taxonphylum '.
+            'FROM taxa AS t LEFT JOIN taxaenumtree AS e ON t.tid = e.tid LEFT JOIN taxa AS t2 ON e.parenttid = t2.tid '.
+            'WHERE t.rankid = 60 AND t2.rankid = 30';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[strtolower($row['className'])]['p'] = $row['taxonphylum'];
+                unset($rows[$index]);
+            }
+        }
+
+        $sql = 'SELECT t.sciname AS phylum, t2.sciname AS kingdom '.
+            'FROM taxa AS t LEFT JOIN taxaenumtree AS e ON t.tid = e.tid LEFT JOIN taxa AS t2 ON e.parenttid = t2.tid '.
+            'WHERE t.rankid = 30 AND t2.rankid = 10';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[strtolower($row['phylum'])]['k'] = $row['kingdom'];
+                unset($rows[$index]);
+            }
+        }
+        return $returnArr;
     }
 
     public function populateHierarchyTable(): int

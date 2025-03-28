@@ -1,4 +1,6 @@
 <?php
+include_once(__DIR__ . '/Checklists.php');
+include_once(__DIR__ . '/KeyCharacterStates.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistTaxa{
@@ -6,13 +8,16 @@ class ChecklistTaxa{
 	private $conn;
 
     private $fields = array(
-        "vid" => array("dataType" => "number", "length" => 10),
+        "cltlid" => array("dataType" => "number", "length" => 10),
         "tid" => array("dataType" => "number", "length" => 10),
         "clid" => array("dataType" => "number", "length" => 10),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "editornotes" => array("dataType" => "string", "length" => 50),
-        "preferredimage" => array("dataType" => "number", "length" => 11),
-        "notes" => array("dataType" => "string", "length" => 250),
+        "habitat" => array("dataType" => "string", "length" => 250),
+        "abundance" => array("dataType" => "string", "length" => 50),
+        "notes" => array("dataType" => "string", "length" => 2000),
+        "source" => array("dataType" => "string", "length" => 250),
+        "nativity" => array("dataType" => "string", "length" => 50),
+        "endemic" => array("dataType" => "string", "length" => 45),
+        "invasive" => array("dataType" => "string", "length" => 45),
         "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
     );
 
@@ -25,11 +30,43 @@ class ChecklistTaxa{
         $this->conn->close();
 	}
 
-    public function createChecklistVoucherRecord($clid, $occid, $tid): int
+    public function batchCreateChecklistTaxaRecordsFromTidArr($clid, $tidArr): int
+    {
+        $recordsCreated = 0;
+        $valueArr = array();
+        if($clid && count($tidArr) > 0){
+            foreach($tidArr as $tid){
+                $valueArr[] = '(' . (int)$clid . ', ' . (int)$tid . ', "' . date('Y-m-d H:i:s') . '")';
+            }
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO fmchklsttaxalink(clid, tid, initialtimestamp) '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                //echo "<div>".$sql."</div>";
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $recordsCreated;
+    }
+
+    public function createChecklistTaxonRecord($clid, $data): int
     {
         $newID = 0;
-        $sql = 'INSERT INTO fmvouchers(clid, occid, tid) '.
-            'VALUES (' . (int)$clid . ', ' . (int)$occid . ', ' . ($tid ? (int)$tid : 'NULL') . ') ';
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        foreach($this->fields as $field => $fieldArr){
+            if($field !== 'clid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
+                $fieldNameArr[] = $field;
+                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+            }
+        }
+        $fieldNameArr[] = 'clid';
+        $fieldValueArr[] = (int)$clid;
+        $fieldNameArr[] = 'initialtimestamp';
+        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+        $sql = 'INSERT INTO fmchklsttaxalink(' . implode(',', $fieldNameArr) . ') '.
+            'VALUES (' . implode(',', $fieldValueArr) . ') ';
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
@@ -37,101 +74,108 @@ class ChecklistTaxa{
         return $newID;
     }
 
-    public function deleteChecklistVoucherRecord($clid, $occid): int
+    public function deleteChecklistTaxonRecord($cltlid): int
     {
         $retVal = 1;
-        if($clid && $occid){
-            $sql = 'DELETE FROM fmvouchers WHERE clid = ' . (int)$clid . ' AND occid = ' . (int)$occid . ' ';
-            //echo $sql;
-            if(!$this->conn->query($sql)){
-                $retVal = 0;
-            }
+        $sql = 'DELETE FROM fmchklsttaxalink WHERE cltlid = ' . (int)$cltlid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
         }
         return $retVal;
     }
 
-    public function getChecklistListByOccurrenceVoucher($occid): array
+    public function getChecklistTaxa($clidArr, $includeKeyData = false): array
     {
         $retArr = array();
-        if($occid){
-            $sql = 'SELECT c.clid, c.name '.
-                'FROM fmchecklists AS c LEFT JOIN fmvouchers AS v ON c.clid = v.clid '.
-                'WHERE v.occid = ' . (int)$occid . ' ORDER BY c.name ';
+        $tempArr = array();
+        if(count($clidArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
+            $fieldNameArr[] = 't.sciname';
+            $fieldNameArr[] = 't.author';
+            $fieldNameArr[] = 't.family';
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
+                'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
+            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $tidArr = array();
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
+                    if($includeKeyData && !in_array((int)$row['tid'], $tidArr, true)){
+                        $tidArr[] = (int)$row['tid'];
+                    }
                     $nodeArr = array();
-                    $nodeArr['clid'] = $row['clid'];
-                    $nodeArr['name'] = $row['name'];
-                    $retArr[] = $nodeArr;
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        if($name === 'family'){
+                            $nodeArr[$name] = $row['family'] ?: '[Incertae Sedis]';
+                        }
+                        else{
+                            $nodeArr[$name] = $row[$name];
+                        }
+                    }
+                    if($includeKeyData){
+                        $tempArr[] = $nodeArr;
+                    }
+                    else{
+                        $retArr[] = $nodeArr;
+                    }
                     unset($rows[$index]);
+                }
+                if($includeKeyData && count($tidArr) > 0){
+                    $keyDataArr = (new KeyCharacterStates)->getTaxaKeyCharacterStates($tidArr);
+                    foreach($tempArr as $taxonArr){
+                        if(array_key_exists($taxonArr['tid'], $keyDataArr)){
+                            $taxonArr['keyData'] = array_key_exists((int)$taxonArr['tid'], $keyDataArr) ? $keyDataArr[$taxonArr['tid']] : array();
+                            $retArr[] = $taxonArr;
+                        }
+                    }
                 }
             }
         }
         return $retArr;
     }
 
-    public function getChecklistVouchers($clid): array
+    public function getChecklistTaxonData($clid, $tid): array
     {
         $retArr = array();
-        if($clid){
-            $sql = 'SELECT v.tid, o.occid, c.institutioncode, o.catalognumber, o.othercatalognumbers, o.recordedby, o.recordnumber, o.eventdate '.
-                'FROM fmvouchers AS v LEFT JOIN omoccurrences AS o ON v.occid = o.occid '.
-                'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-                'WHERE v.clid = ' . (int)$clid . ' ORDER BY o.collid ';
-            if($result = $this->conn->query($sql)){
-                $rows = $result->fetch_all(MYSQLI_ASSOC);
-                $result->free();
-                foreach($rows as $index => $row){
-                    if(!array_key_exists($row['tid'], $retArr)){
-                        $retArr[$row['tid']] = array();
-                    }
-                    $nodeArr = array();
-                    $voucherLabel = '';
-                    if($row['recordedby']){
-                        $voucherLabel .= $row['recordedby'];
-                    }
-                    elseif($row['catalognumber']){
-                        $voucherLabel .= $row['catalognumber'];
-                    }
-                    elseif($row['othercatalognumbers']){
-                        $voucherLabel .= $row['othercatalognumbers'];
-                    }
-                    if(strlen($voucherLabel) > 25){
-                        $breakPoint = strpos($voucherLabel,';');
-                        if(!$breakPoint){
-                            $breakPoint = strpos($voucherLabel,',');
-                        }
-                        if(!$breakPoint){
-                            $breakPoint = strpos($voucherLabel,' ', 10);
-                        }
-                        if($breakPoint){
-                            $voucherLabel = substr($voucherLabel,0, $breakPoint) . '...';
-                        }
-                    }
-                    if($row['recordnumber']){
-                        $voucherLabel .= ' ' . $row['recordnumber'];
-                    }
-                    elseif($row['eventdate']){
-                        $voucherLabel .= $row['eventdate'];
-                    }
-                    $voucherLabel .= ' [' . $row['institutioncode'] . ']';
-                    $nodeArr['occid'] = $row['occid'];
-                    $nodeArr['label'] = trim($voucherLabel);
-                    $retArr[$row['tid']][] = $nodeArr;
-                    unset($rows[$index]);
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM fmchklsttaxalink WHERE tid = ' . (int)$tid . ' AND clid = ' . (int)$clid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $row[$name];
                 }
             }
         }
         return $retArr;
     }
 
-    public function updateTidFromOccurrenceRecord($occid, $tid): void
+    public function updateChecklistTaxonRecord($cltlid, $editData): int
     {
-        if((int)$occid > 0){
-            $sql = 'UPDATE fmvouchers SET tid = ' . (((int)$tid > 0) ? (int)$tid : 'NULL') . ' WHERE occid = ' . (int)$occid . ' ';
-            $this->conn->query($sql);
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($cltlid && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'initialtimestamp' && array_key_exists($field, $editData)){
+                    $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                }
+            }
+            $sql = 'UPDATE fmchklsttaxalink SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE cltlid = ' . (int)$cltlid . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
         }
+        return $retVal;
     }
 }

@@ -338,14 +338,6 @@ ol.mp_list li.mp_highlighted {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
 }
-.pmargin{
-	margin: 10px;
-}
-.sitemapDataManagementContainer{
-	margin: 30px 0 10px 10px;
-	padding-left: 25px;
-	padding-right: 15px;
-}
 .loadingModal {
 	display:    none;
 	position:   fixed;
@@ -515,20 +507,6 @@ body.processing .loadingModal {
 #inner-table{
 	width: 90%;
 	margin: 15px auto;
-}
-.profile-split-row{
-	display: flex;
-	justify-content: space-between;
-	margin-top: 10px;
-}
-.profile-center-row{
-	display: flex;
-	justify-content: center;
-	margin-top: 15px;
-}
-.profile-column{
-	display: flex;
-	flex-direction: column;
 }
 .expansion-container{
 	width: 100%;
@@ -804,36 +782,30 @@ body.processing .loadingModal {
 	width: 60%;
 	height: 60%;
 	border: 1px solid black;
-	min-width: 500px;
-	min-height: 500px;
 }
 .md-popup {
 	max-width: 75% !important;
 	width: 75% !important;
 	height: 70% !important;
 	border: 1px solid black;
-	min-width: 500px;
 }
 .lg-popup {
 	max-width: 90% !important;
 	width: 90% !important;
 	height: 85% !important;
 	border: 1px solid black;
-	min-width: 700px;
 }
 .xl-popup {
 	max-width: 98% !important;
 	width: 98% !important;
 	height: 95% !important;
 	border: 1px solid black;
-	min-width: 700px;
 }
 .search-criteria-popup {
 	max-width: 90% !important;
 	width: 90% !important;
 	height: 85% !important;
 	border: 1px solid black;
-	min-width: 300px;
 }
 .layer-controller-element {
 	width: 95%;
@@ -1080,7 +1052,7 @@ body.processing .loadingModal {
 .editor-inner-container {
 	width: 80%;
 }
-.occurrence-entry-format-selector {
+.selector-input-spacer {
 	min-width: 125px;
 }
 .black-border {
@@ -1112,4 +1084,23 @@ body.processing .loadingModal {
 }
 .upload-field-mapper-grid-cell {
 	border: 1px solid black;
+}
+.sticky-header-table {
+	height: 100%;
+}
+.sticky-header-table thead tr th {
+	position: sticky;
+	z-index: 1;
+}
+.sticky-header-table thead tr:first-child th {
+	top: 0;
+}
+.sticky-header-table.q-table--loading thead tr:last-child th {
+	top: 48px;
+}
+.sticky-header-table tbody {
+	scroll-margin-top: 48px;
+}
+.occurrence-individual-page-info-panel {
+	height: 800px;
 }

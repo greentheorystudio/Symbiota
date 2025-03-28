@@ -1,5 +1,9 @@
 const fieldMapperPopup = {
     props: {
+        disabled: {
+            type: Boolean,
+            default: false
+        },
         fieldMapping: {
             type: Object,
             default: {}
@@ -37,13 +41,13 @@ const fieldMapperPopup = {
                                 </div>
                             </div>
                             <template v-for="sourceField in Object.keys(sourceFields)">
-                                <template v-if="fieldMapping[sourceField.toLowerCase()] !== 'dbpk' && fieldMapping[sourceField.toLowerCase()] !== 'eventdbpk'">
+                                <template v-if="fieldMapping[sourceFields[sourceField].toLowerCase()] !== 'dbpk' && fieldMapping[sourceFields[sourceField].toLowerCase()] !== 'eventdbpk'">
                                     <div class="row">
-                                        <div class="col-4 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="fieldMapping[sourceField.toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
+                                        <div class="col-4 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
                                             {{ sourceFields[sourceField] }}
                                         </div>
-                                        <div class="col-8 q-pl-sm upload-field-mapper-grid-cell" :class="fieldMapping[sourceField.toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
-                                            <selector-input-element :options="targetFields" :value="fieldMapping[sourceField.toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
+                                        <div class="col-8 q-pl-sm upload-field-mapper-grid-cell" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
+                                            <selector-input-element :disabled="disabled" :options="targetFieldOptions" :value="fieldMapping[sourceFields[sourceField].toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
                                         </div>
                                     </div>
                                 </template>
@@ -62,6 +66,15 @@ const fieldMapperPopup = {
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const targetFieldOptions = Vue.computed(() => {
+            const initialArr = [
+                {value: 'unmapped', label: 'UNMAPPED'}
+            ];
+            const availableFieldArr = props.targetFields.filter(targetField => {
+                return !props.fieldMapping.hasOwnProperty(targetField.value);
+            });
+            return initialArr.concat(availableFieldArr);
+        });
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -96,6 +109,7 @@ const fieldMapperPopup = {
         return {
             contentRef,
             contentStyle,
+            targetFieldOptions,
             closePopup,
             updateFieldMapping
         }

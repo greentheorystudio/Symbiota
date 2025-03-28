@@ -55,7 +55,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                             from the <a href="https://plants.usda.gov/home/downloads" target="_blank">USDA PLANTS Download page</a> into a txt file, then upload the file below and click Start.
                                             <div class="row q-mt-xs">
                                                 <div class="col-grow">
-                                                    <file-picker-input-element :accepted-types="acceptedFileTypes" :disabled="loading" :value="selectedUsdaFile" :validate-file-size="false" @update:file="(value) => selectedUsdaFile = value[0]"></file-picker-input-element>
+                                                    <file-picker-input-element :accepted-types="acceptedFileTypes" :disabled="loading" :value="selectedUsdaFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                                 </div>
                                             </div>
                                             <div class="processor-tool-control-container">
@@ -152,7 +152,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     'taxa-kingdom-selector': taxaKingdomSelector
                 },
                 setup() {
-                    const { getErrorResponseText, parseCsvFile, showNotification } = useCore();
+                    const { csvToArray, getErrorResponseText, parseFile, showNotification } = useCore();
 
                     let abortController = null;
                     const acceptedFileTypes = ['csv', 'txt'];
@@ -314,19 +314,21 @@ if(!$GLOBALS['SYMB_UID']) {
                             if(selectedUsdaFile.value){
                                 adjustUIStart();
                                 currentProcess.value = 'initializeUSDAImport';
-                                parseCsvFile(selectedUsdaFile.value, (csvData) => {
-                                    if(csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
-                                        processingArr.value = csvData;
-                                        if(selectedKingdomName.value === 'Fungi'){
-                                            processUsdaFungiSymbolUpload();
+                                parseFile(selectedUsdaFile.value, (fileContents) => {
+                                    csvToArray(fileContents).then((csvData) => {
+                                        if(csvData[0] && csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
+                                            processingArr.value = csvData;
+                                            if(selectedKingdomName.value === 'Fungi'){
+                                                processUsdaFungiSymbolUpload();
+                                            }
+                                            else{
+                                                processUsdaPlantaeSymbolUpload();
+                                            }
                                         }
                                         else{
-                                            processUsdaPlantaeSymbolUpload();
+                                            showNotification('negative', 'There is an issue with processing the USDA data.');
                                         }
-                                    }
-                                    else{
-                                        showNotification('negative', 'There is an issue with processing the USDA data.');
-                                    }
+                                    });
                                 });
                             }
                             else{
@@ -370,6 +372,15 @@ if(!$GLOBALS['SYMB_UID']) {
                             processorDisplayArr.push(data);
                         });
                         resetScrollProcess();
+                    }
+
+                    function processFileSelection(file) {
+                        if(file){
+                            selectedUsdaFile.value = file[0];
+                        }
+                        else{
+                            selectedUsdaFile.value = null;
+                        }
                     }
 
                     function processSuccessResponse(text = null) {
@@ -557,6 +568,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         initializeUSDAImport,
                         processorDisplayScrollDown,
                         processorDisplayScrollUp,
+                        processFileSelection,
                         setScroller,
                         updateLoading,
                         updateSelectedKingdom

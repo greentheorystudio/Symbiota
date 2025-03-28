@@ -6,12 +6,20 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             uploadtype: null,
             title: null,
             dwcpath: null,
-            queryparamjson: null,
-            cleansql: null,
-            configjson: null
+            queryparamjson: {},
+            cleansql: [],
+            configjson: {}
         },
         blankConfigurations: {
-            existingRecords: 'update'
+            catalogNumberMatchField: 'catalognumber',
+            existingRecords: 'update',
+            existingDeterminationRecords: 'merge',
+            existingMediaRecords: 'merge',
+            existingMofRecords: 'merge',
+            saveSourcePrimaryIdentifier: true,
+            createPolygonCentroidCoordinates: false,
+            matchOnCatalogNumber: false,
+            removeUnmatchedRecords: false
         },
         collectionDataUploadParametersArr: [],
         collectionDataUploadParametersData: {},
@@ -21,12 +29,20 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         eventMofDataFields: {},
         occurrenceMofDataFields: {},
         uploadTypeOptions: [
-            {value: 6, label: 'File Upload (DwC-A, csv, geoJSON)'},
+            {value: 6, label: 'File Upload (DwC-A (zip), csv, txt, geojson, json)'},
             {value: 8, label: 'IPT/DwC-A Provider'},
             {value: 10, label: 'Symbiota Portal'}
         ]
     }),
     getters: {
+        getCleanSqlArr(state) {
+            if(state.collectionDataUploadParametersEditData.hasOwnProperty('cleansql') && state.collectionDataUploadParametersEditData.cleansql && state.collectionDataUploadParametersEditData.cleansql.length > 0){
+                return state.collectionDataUploadParametersEditData.cleansql;
+            }
+            else{
+                return [];
+            }
+        },
         getCollectionDataUploadParametersArr(state) {
             return state.collectionDataUploadParametersArr;
         },
@@ -53,8 +69,8 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             );
         },
         getConfigurations(state) {
-            if(state.collectionDataUploadParametersEditData.hasOwnProperty('configjson') && state.collectionDataUploadParametersEditData.configjson){
-                return JSON.parse(state.collectionDataUploadParametersEditData.configjson);
+            if(state.collectionDataUploadParametersEditData.hasOwnProperty('configjson') && state.collectionDataUploadParametersEditData.configjson && Object.keys(state.collectionDataUploadParametersEditData.configjson).length > 0){
+                return state.collectionDataUploadParametersEditData.configjson;
             }
             else{
                 return state.blankConfigurations;
@@ -78,6 +94,9 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             .then((response) => {
                 response.text().then((res) => {
                     callback(Number(res));
+                    if(Number(res) > 0){
+                        this.setCollectionDataUploadParametersArr(collid, Number(res));
+                    }
                 });
             });
         },
@@ -93,6 +112,10 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             .then((response) => {
                 response.text().then((val) => {
                     callback(Number(val));
+                    if(Number(val) === 1){
+                        this.setCollectionDataUploadParametersArr(collid);
+                        this.setCurrentCollectionDataUploadParametersRecord(0);
+                    }
                 });
             });
         },
@@ -100,16 +123,17 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             return this.collectionDataUploadParametersArr.find(params => Number(params.uspid) === this.collectionDataUploadParametersId);
         },
         setCurrentCollectionDataUploadParametersRecord(uspid) {
-            this.collectionDataUploadParametersId = Number(uspid);
-            if(this.collectionDataUploadParametersId > 0){
+            if(Number(uspid) > 0){
+                this.collectionDataUploadParametersId = Number(uspid);
                 this.collectionDataUploadParametersData = Object.assign({}, this.getCurrentCollectionDataUploadParametersData());
             }
             else{
+                this.collectionDataUploadParametersId = null;
                 this.collectionDataUploadParametersData = Object.assign({}, this.blankCollectionDataUploadParameterRecord);
             }
             this.collectionDataUploadParametersEditData = Object.assign({}, this.collectionDataUploadParametersData);
         },
-        setCollectionDataUploadParametersArr(collid) {
+        setCollectionDataUploadParametersArr(collid, uspid = null) {
             this.collectionDataUploadParametersArr.length = 0;
             const formData = new FormData();
             formData.append('collid', collid.toString());
@@ -123,6 +147,9 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             })
             .then((data) => {
                 this.collectionDataUploadParametersArr = data;
+                if(uspid){
+                    this.setCurrentCollectionDataUploadParametersRecord(uspid);
+                }
             });
         },
         updateCollectionDataUploadParametersEditData(key, value) {
@@ -142,6 +169,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                 response.text().then((res) => {
                     callback(Number(res));
                     if(res && Number(res) === 1){
+                        this.setCollectionDataUploadParametersArr(collid);
                         this.collectionDataUploadParametersData = Object.assign({}, this.collectionDataUploadParametersEditData);
                     }
                 });

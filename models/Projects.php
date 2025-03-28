@@ -1,4 +1,6 @@
 <?php
+include_once(__DIR__ . '/Checklists.php');
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class Projects{
@@ -17,7 +19,7 @@ class Projects{
         "headerurl" => array("dataType" => "string", "length" => 150),
         "occurrencesearch" => array("dataType" => "number", "length" => 10),
         "ispublic" => array("dataType" => "number", "length" => 10),
-        "dynamicproperties" => array("dataType" => "text", "length" => 0),
+        "dynamicproperties" => array("dataType" => "json", "length" => 0),
         "parentpid" => array("dataType" => "number", "length" => 10),
         "sortsequence" => array("dataType" => "number", "length" => 10),
         "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
@@ -40,7 +42,12 @@ class Projects{
         foreach($this->fields as $field => $fieldArr){
             if($field !== 'pid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
                 $fieldNameArr[] = $field;
-                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                if($field === 'dynamicproperties'){
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                }
+                else{
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
             }
         }
         $fieldNameArr[] = 'initialtimestamp';
@@ -50,6 +57,8 @@ class Projects{
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
+            (new Permissions)->addPermission($GLOBALS['SYMB_UID'], 'ProjAdmin', $newID);
+            (new Permissions)->setUserPermissions();
         }
         return $newID;
     }
@@ -57,6 +66,15 @@ class Projects{
     public function deleteProjectRecord($pid): int
     {
         $retVal = 1;
+        $sql = 'DELETE FROM userroles WHERE role = "ProjAdmin" AND tablepk = ' . (int)$pid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM fmchklstprojlink WHERE pid = ' . (int)$pid . ' ';
+        //echo $sql;
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
         $sql = 'DELETE FROM fmprojects WHERE pid = ' . (int)$pid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
@@ -64,9 +82,31 @@ class Projects{
         return $retVal;
     }
 
+    public function getProjectChecklists($pid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT c.clid, c.`name` '.
+            'FROM fmchklstprojlink AS p LEFT JOIN fmchecklists AS c ON p.clid = c.clid '.
+            'WHERE p.pid = ' . (int)$pid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['clid'] = $row['clid'];
+                $nodeArr['name'] = $row['name'];
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getProjectData($pid): array
     {
         $retArr = array();
+        $clidArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmprojects WHERE pid = ' . (int)$pid . ' ';
@@ -78,9 +118,20 @@ class Projects{
             if($row){
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $row[$name];
+                    if($row[$name] && ($name === 'dynamicproperties')){
+                        $retArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $retArr[$name] = $row[$name];
+                    }
                 }
             }
+            $retArr['checklists'] = $this->getProjectChecklists($pid);
+            foreach($retArr['checklists'] as $checklistArr) {
+                $clidArr[] = $checklistArr['clid'];
+            }
+            $childClidArr = (new Checklists)->getChecklistChildClidArr($clidArr);
+            $retArr['clidArr'] = array_unique(array_merge($childClidArr, $clidArr));
         }
         return $retArr;
     }
@@ -116,7 +167,12 @@ class Projects{
         if($pid && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'pid' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
-                    $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    if($field === 'dynamicproperties'){
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    }
                 }
             }
             $sql = 'UPDATE fmprojects SET ' . implode(', ', $sqlPartArr) . ' '.

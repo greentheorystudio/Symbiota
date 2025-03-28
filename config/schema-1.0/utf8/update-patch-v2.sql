@@ -190,6 +190,12 @@ ALTER TABLE `fmchecklists`
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`;
 
+ALTER TABLE `fmchklsttaxalink`
+    ADD COLUMN `cltlid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (`cltlid`),
+    MODIFY COLUMN `morphospecies` varchar(45) NULL DEFAULT NULL AFTER `CLID`;
+
 CREATE TABLE `keycharacterheadings` (
     `chid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `headingname` varchar(255) NOT NULL,
@@ -317,6 +323,10 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_uploadimg_occid` (`occid`),
     KEY `Index_uploadimg_collid` (`collid`),
     KEY `Index_uploadimg_dbpk` (`dbpk`),
+    KEY `Index_ url` (`url`),
+    KEY `Index_ originalurl` (`originalurl`),
+    KEY `Index_ accessuri` (`accessuri`),
+    KEY `Index_ format` (`format`),
     KEY `Index_uploadimg_ts` (`initialtimestamp`)
 );
 
@@ -343,6 +353,8 @@ CREATE TABLE `uploadmoftemp` (
 
 ALTER TABLE `uploadspecmap`
     ADD CONSTRAINT `Fk_uploadspecmap_uspid` FOREIGN KEY (`uspid`) REFERENCES `omcolldatauploadparameters` (`uspid`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `uploadspecmap` DROP FOREIGN KEY `FK_uploadspecmap_usp`;
 
 ALTER TABLE `uploadspectemp`
     DROP COLUMN `recordNumberPrefix`,
@@ -378,5 +390,7 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `locationCode` varchar(50) NULL AFTER `locationName`,
     ADD COLUMN `repCount` int(10) UNSIGNED NULL AFTER `duplicateQuantity`,
     ADD INDEX `Index_eventdbpk`(`eventdbpk`);
+
+DROP TRIGGER `uploadspectemp_delete`;
 
 SET FOREIGN_KEY_CHECKS = 1;

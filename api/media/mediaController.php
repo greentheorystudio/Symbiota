@@ -57,4 +57,10 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'updateMediaRecord' && $mediaid && $isEditor && array_key_exists('mediaData', $_POST)){
         echo $media->updateMediaRecord($mediaid, json_decode($_POST['mediaData'], true));
     }
+    elseif($action === 'getTaxonArrDisplayMediaData'  && array_key_exists('tidArr', $_POST)){
+        $includeOccurrence = array_key_exists('includeoccurrence',$_POST) && (int)$_POST['includeoccurrence'] === 1;
+        $limitPerTaxon = array_key_exists('limitPerTaxon',$_POST) ? (int)$_POST['limitPerTaxon'] : null;
+        $sortsequenceLimit = array_key_exists('sortsequenceLimit',$_POST) ? (int)$_POST['sortsequenceLimit'] : null;
+        echo json_encode($media->getTaxonArrDisplayMediaData(json_decode($_POST['tidArr'], true), $includeOccurrence, $limitPerTaxon, $sortsequenceLimit));
+    }
 }

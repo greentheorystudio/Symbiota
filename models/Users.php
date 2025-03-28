@@ -64,7 +64,7 @@ class Users{
                 $sql .= 'AND password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $password) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) ';
+                $sql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) OR password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 256) ';
             }
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -123,7 +123,7 @@ class Users{
                 $sql .= 'UPDATE users SET password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $password) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'UPDATE users SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) ';
+                $sql .= 'UPDATE users SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 256) ';
             }
             $sql .= 'WHERE uid = ' . (int)$uid . ' ';
             if($this->conn->query($sql)){
@@ -211,7 +211,7 @@ class Users{
                 $fieldValueArr[] = 'PASSWORD("' . $password . '")';
             }
             else{
-                $fieldValueArr[] = 'SHA2("' . $password . '", 224)';
+                $fieldValueArr[] = 'SHA2("' . $password . '", 256)';
             }
             $sql = 'INSERT INTO users(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
@@ -385,27 +385,27 @@ class Users{
         return $returnVal;
     }
 
-    public function resetPassword($uid, $admin): string
+    public function resetPassword($username, $admin): string
     {
-        $returnVal = 0;
-        if($uid && ($admin || $GLOBALS['EMAIL_CONFIGURED'])){
+        $returnVal = '0';
+        if($username && ($admin || $GLOBALS['EMAIL_CONFIGURED'])){
             $newPassword = $this->generateNewPassword();
             $sql = 'UPDATE users ';
             if($this->encryption === 'password'){
                 $sql .= 'SET password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'SET password = SHA2("' . SanitizerService::cleanInStr($this->conn,$newPassword) . '", 224) ';
+                $sql .= 'SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '", 256) ';
             }
-            $sql .= 'WHERE uid = ' . (int)$uid . ' ';
+            $sql .= 'WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
             if($this->conn->query($sql)){
                 if($admin){
                     $returnVal = $newPassword;
                 }
                 else{
-                    $returnVal = 1;
+                    $returnVal = '1';
                     $emailAddr = '';
-                    $sql = 'SELECT email FROM users WHERE uid = ' . (int)$uid . ' ';
+                    $sql = 'SELECT email FROM users WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
                     $result = $this->conn->query($sql);
                     if($row = $result->fetch_array(MYSQLI_ASSOC)){
                         $emailAddr = $row['email'];
@@ -419,7 +419,6 @@ class Users{
                             $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                         }
                         (new MailerService)->sendEmail($emailAddr, $subject, $bodyStr);
-                        $result->free();
                     }
                 }
             }
@@ -486,7 +485,6 @@ class Users{
                     $status = 1;
                 }
             }
-            $result->free();
         }
         return $status;
     }
