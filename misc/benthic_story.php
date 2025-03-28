@@ -46,7 +46,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -114,7 +114,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/msites_map.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/msites_map.jpg" alt="A map of the Smithsonian’s long-term benthic monitoring sites on the Indian River Lagoon. (Credit: Holly Sweat)" />
                     <figcaption style="width:500px;font-size: 17px;font-style: italic;margin-left:10px;margin-top:-10px;">
                         A map of the Smithsonian’s long-term benthic monitoring sites on the Indian River Lagoon. (Credit: Holly Sweat)
                     </figcaption>
@@ -126,8 +126,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin: 15px;">
                     <div style="display:flex;gap:20px;">
-                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/pristine.jpg" />
-                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impacted.jpg" />
+                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/pristine.jpg" alt="Pristine" />
+                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impacted.jpg" alt="Impacted" />
                     </div>
                     <figcaption style="width:800px;font-size: 17px;font-style: italic;">
                         The image on the left depicts an area of the lagoon with relatively pristine, healthy water conditions; at right, an area of the lagoon with highly impacted, degraded water conditions.  (Photos: Holly Sweat)
@@ -141,7 +141,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/jess_with_jars.jpg" />
+                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/jess_with_jars.jpg" alt="Program Coordinator Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon." />
                     <figcaption style="width:600px;font-size: 17px;font-style: italic;">
                         Program Coordinator Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon.  (Photo: Holly Sweat)
                     </figcaption>
@@ -158,7 +158,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/infauna.jpg" />
+                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/infauna.jpg" alt="A sampling of benthic infauna." />
                     <figcaption style="width:600px;font-size: 17px;font-style: italic;">
                         A sampling of benthic infauna. (Credit: Holly Sweat)
                     </figcaption>
@@ -188,7 +188,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure>
-                    <img style="border:0;width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Team_BEL.jpg" />
+                    <img style="border:0;width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Team_BEL.jpg" alt="From left, Program Coordinator Jess Glanz, Principal Investigator Dr. Holly Sweat and Technician Garrett O’Donnell sample for benthic infauna on the Indian River Lagoon." />
                     <figcaption style="width:100%;font-size: 17px;font-style: italic;">
                         From left, Program Coordinator Jess Glanz, Principal Investigator Dr. Holly Sweat and Technician Garrett O’Donnell sample for
                         benthic infauna on the Indian River Lagoon. (Photo: Scott Jones)
@@ -206,7 +206,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/odonnell_garret_fabricinuda_trilobata.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/odonnell_garret_fabricinuda_trilobata.jpg" alt="Thousands of these Fabricinuda trilobata worms were found in a sample of Indian River Lagoon sediment." />
                     <figcaption style="width:500px;font-size: 17px;font-style: italic;">
                         Thousands of these <i>Fabricinuda trilobata</i> worms were found in a sample of Indian River Lagoon sediment.  (Photo: Holly Sweat)
                     </figcaption>
@@ -226,9 +226,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;display:flex;flex-direction:column;justify-content: center;align-content: center;">
                     <div style="width:100%;display:flex;justify-content: center;align-content: center;gap:30px;">
-                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap1-historic-trim.jpg" />
-                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap2-current-trim.jpg" />
-                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap3-cerp-trim.jpg" />
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap1-historic-trim.jpg" alt="Historic flow map" />
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap2-current-trim.jpg" alt="Current flow map" />
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap3-cerp-trim.jpg" alt="CERP flow map" />
                     </div>
                     <figcaption style="width:80%;margin: 0 auto;font-size: 17px;font-style: italic;">
                         These maps show the historic, current and projected future water flow in southern Florida. A decades-long

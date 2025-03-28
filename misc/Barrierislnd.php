@@ -31,7 +31,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -122,7 +122,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_JTL_Aerial_Image.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_JTL_Aerial_Image.jpg" alt="An aerial view of the Indian River Lagoon." />
                     <figcaption>
                         An aerial view of the Indian River Lagoon. <i>Credit: J. Thurlow-Lippisch</i>
                     </figcaption>
@@ -143,7 +143,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_15_DunkertonT2.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_15_DunkertonT2.jpg" alt="Credit: T. Dunkerton" />
                     <figcaption>
                         <i>Credit: T. Dunkerton</i>
                     </figcaption>

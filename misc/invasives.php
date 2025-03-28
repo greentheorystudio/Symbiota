@@ -32,7 +32,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -127,7 +127,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Brazilian_pepper_tree_Forest_and_Kim_Starr_Wikimedia.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Brazilian_pepper_tree_Forest_and_Kim_Starr_Wikimedia.jpg" alt="Brazilian pepper tree, Schinus terebinthifolia." />
                     <figcaption style="width:500px;">
                         Brazilian pepper tree, <i>Schinus terebinthifolia</i>. <i>Credit: F. and K. Starr, Wikimedia Commons</i>
                     </figcaption>
@@ -162,7 +162,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Agama_picticauda.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Agama_picticauda.jpg" alt="Peter’s rock agama (Agama picticauda) is an easily sighted invader around the Indian River Lagoon and elsewhere in Florida." />
                     <figcaption style="width:500px;">
                         Peter’s rock agama (<i>Agama picticauda</i>) is an easily sighted invader around the Indian River Lagoon and
                         elsewhere in Florida. <i>Credit: Wikimedia Commons</i>

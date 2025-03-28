@@ -32,7 +32,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -121,7 +121,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/aedes_taeniorhynchus_sean_mccann_flickr.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/aedes_taeniorhynchus_sean_mccann_flickr.jpg" alt="Credit: S. McCann, Flickr" />
                     <figcaption>
                         <i>Credit: S. McCann, Flickr</i>
                     </figcaption>
@@ -140,7 +140,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="clear:both;">
                 <figure style="float: left;margin-right: 30px;">
-                    <img style="border:0;width:300px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Dusky_Seaside_Sparrow.jpg" />
+                    <img style="border:0;width:300px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Dusky_Seaside_Sparrow.jpg" alt="Dusky seaside sparrow." />
                     <figcaption style="width:300px;">
                         Dusky seaside sparrow. <i>Credit: P.W. Sykes, Wikimedia</i>
                     </figcaption>
@@ -172,7 +172,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;clear:both;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/mosquito-ditch-digging.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/mosquito-ditch-digging.jpg" alt="Workers prepare a drainage ditch for mosquito control in the 1920s." />
                     <figcaption style="width:500px;">
                         Workers prepare a drainage ditch for mosquito control in the 1920s. <i>Credit: J. Thurlow-Lippisch</i>
                     </figcaption>
@@ -194,7 +194,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 natural tidal fluctuation and flushing.
             </p>
             <figure style="float: left;margin-right: 30px;">
-                <img style="border:0;width:300px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impound.jpg" />
+                <img style="border:0;width:300px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impound.jpg" alt="Impoundment" />
             </figure>
             <p>
                 In 1974, seasonal impoundment was combined with active water management. Allowing tides to flush impoundments
@@ -209,7 +209,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impoundment_flooding_LHS.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impoundment_flooding_LHS.jpg" alt="An IRL impoundment area is flooded via a culvert connecting it to the larger estuary." />
                     <figcaption style="width:500px;">
                         An IRL impoundment area is flooded via a culvert connecting it to the larger estuary. <i>Credit: L. Sweat</i>
                     </figcaption>

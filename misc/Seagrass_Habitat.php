@@ -32,7 +32,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -125,7 +125,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_CorapiP2.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_CorapiP2.jpg" alt="Credit: P. Corapi" />
                     <figcaption>
                         <i>Credit: P. Corapi</i>
                     </figcaption>
@@ -154,19 +154,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_PriceN1.jpg" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_PriceN1.jpg" alt="Credit: N. Price" />
                     <figcaption>
                         <i>Credit: N. Price</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Bursatella_leachii_plei_L_Holly_Sweat.jpg" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Bursatella_leachii_plei_L_Holly_Sweat.jpg" alt="Credit: L. Sweat" />
                     <figcaption>
                         <i>Credit: L. Sweat</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/06DineenJ1.jpg" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/06DineenJ1.jpg" alt="Credit: J. Dineen" />
                     <figcaption>
                         <i>Credit: J. Dineen</i>
                     </figcaption>
@@ -207,7 +207,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/syringodium_filiforme_rhizome_FWSRI.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/syringodium_filiforme_rhizome_FWSRI.jpg" alt="S. filiforme rhizome creeping into an area denuded by propeller scarring." />
                     <figcaption style="width:500px;">
                         <i>S. filiforme</i> rhizome creeping into an area denuded by propeller scarring. <i>Credit: Florida
                         Fish and Wildlife Research Institute</i>
@@ -225,19 +225,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/turtle_in_seagrass_clifton_beard_flickr.jpg" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/turtle_in_seagrass_clifton_beard_flickr.jpg" alt="Credit: C. Beard (Flickr)" />
                     <figcaption>
                         <i>Credit: C. Beard (Flickr)</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Mr_Ray.jpg" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Mr_Ray.jpg" alt="Credit: L. Hall" />
                     <figcaption>
                         <i>Credit: L. Hall</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18SprattR3.jpg" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18SprattR3.jpg" alt="Credit: R. Spratt" />
                     <figcaption>
                         <i>Credit: R. Spratt</i>
                     </figcaption>
@@ -288,8 +288,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Prop_Scars_on_Shallows_in_Florida_Bay_NPSPhoto.jpg" />
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/prop_scar_FL_DEP.png" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Prop_Scars_on_Shallows_in_Florida_Bay_NPSPhoto.jpg" alt="Propeller scarring in seagrass beds in Florida Bay." />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/prop_scar_FL_DEP.png" alt="Propeller scarring in seagrass beds in Florida Bay." />
                     <figcaption>
                         Propeller scarring in seagrass beds in Florida Bay. <i>Credit: National Park Service, Florida DEP</i>
                     </figcaption>
@@ -318,7 +318,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18BrevardZoo2.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18BrevardZoo2.jpg" alt="Credit: Brevard Zoo" />
                     <figcaption>
                         <i>Credit: Brevard Zoo</i>
                     </figcaption>

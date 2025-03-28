@@ -26,7 +26,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <a href="https://storymaps.arcgis.com/stories/6370ba882c26422987b91030f588c100" >A River in Name Only.</a>
         </div>
         <a style="border:0;width:90%;margin: 0 auto;" href="https://storymaps.arcgis.com/stories/6370ba882c26422987b91030f588c100">
-            <img style="width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/StoryMapCover.jpg" />
+            <img style="width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/StoryMapCover.jpg" alt="Story map cover" />
         </a>
     </div>
     <?php

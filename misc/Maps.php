@@ -31,7 +31,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -111,7 +111,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 climate zones.
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
-                <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/IRLZonesMap.gif" />
+                <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/IRLZonesMap.gif" alt="IRL zones map." />
             </div>
             <p>
                 Designated as an “estuary of national significance” by the U.S. Environmental Protection Agency, the IRL
@@ -124,7 +124,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <div style="display:flex;justify-content: space-between">
                 <div style="width: 100%;">
                     <figure style="float: left;margin-right: 30px;">
-                        <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_16_MassaungJ1.jpg" />
+                        <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_16_MassaungJ1.jpg" alt="Aerial view of the Indian River Lagoon." />
                         <figcaption>
                             Aerial view of the Indian River Lagoon. <i>(Credit: J. Massaung)</i>
                         </figcaption>
@@ -164,7 +164,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                     </p>
                     <div style="margin: 15px 0;display:flex;justify-content: center;">
                         <figure style="margin: 15px;">
-                            <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_07_OwenP1.jpg" />
+                            <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_07_OwenP1.jpg" alt="Jupiter Inlet" />
                             <figcaption>
                                 Jupiter Inlet <i>(Credit: P. Owen)</i>
                             </figcaption>
@@ -182,7 +182,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/IRL_map_UMCES.png" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/IRL_map_UMCES.png" alt="Map courtesy Jane Thomas, University of Maryland Center for Environmental Science" />
                     <figcaption>
                         <i>Map courtesy Jane Thomas, University of Maryland Center for Environmental Science</i>
                     </figcaption>

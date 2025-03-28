@@ -32,7 +32,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -160,7 +160,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_beach_from_dune_walk_LHS.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_beach_from_dune_walk_LHS.jpg" alt="Credit: H. Sweat" />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -188,7 +188,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_railroad_vine_LHS.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_railroad_vine_LHS.jpg" alt="Railroad vine (Ipomoea pes-caprae)." />
                     <figcaption>
                         Railroad vine (<i>Ipomoea pes-caprae</i>). <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -214,7 +214,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <h4>Animals</h4>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Black_Skimmer_Beach1_WaltersL.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Black_Skimmer_Beach1_WaltersL.jpg" alt="Black skimmer." />
                     <figcaption>
                         Black skimmer. <i>Credit: L. Walters</i>
                     </figcaption>
@@ -234,7 +234,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <h4>Invertebrates</h4>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_Ocypode_quadrata_Maureen_McNally.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_Ocypode_quadrata_Maureen_McNally.jpg" alt="Atlantic ghost crab, Ocypode quadrata." />
                     <figcaption>
                         Atlantic ghost crab, <i>Ocypode quadrata</i>. <i>Credit: M. McNally</i>
                     </figcaption>
@@ -257,7 +257,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <h4>Birds</h4>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_I_Brought_Lunch_Mary_White.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_I_Brought_Lunch_Mary_White.jpg" alt="Credit: M. White" />
                     <figcaption>
                         <i>Credit: M. White</i>
                     </figcaption>
@@ -274,7 +274,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <h4>Reptiles</h4>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_11_DubrickU2.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_11_DubrickU2.jpg" alt="Credit: U. Dubrick" />
                     <figcaption>
                         <i>Credit: U. Dubrick</i>
                     </figcaption>

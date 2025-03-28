@@ -31,7 +31,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -112,7 +112,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/old_IRL_bidiversity_pie_chart.jpg" />
+                    <img style="border:0;width:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/old_IRL_bidiversity_pie_chart.jpg" alt="Old IRL total biodiversity pie chart." />
                 </figure>
             </div>
             <p>
@@ -154,9 +154,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/13_MillerC1.jpg" />
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/17EbaughT1.jpg" />
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Caretta_caretta_Sabrina_Bethurum.jpg" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/13_MillerC1.jpg" alt="River otters" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/17EbaughT1.jpg" alt="Pileated woodpeckers" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Caretta_caretta_Sabrina_Bethurum.jpg" alt="Loggerhead turtles" />
                     <figcaption style="width:800px;">
                         River otters, pileated woodpeckers and loggerhead turtles all rely on the IRL’s diversity of habitats
                         for their life cycles. <i>Credit: C. Miller, T. Ebaugh, S. Bethurum </i>
@@ -184,7 +184,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/06RaulersonD1.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/06RaulersonD1.jpg" alt="Land crabs on the march." />
                     <figcaption style="width:500px;">
                         Land crabs on the march. <i>Credit: D. Raulerson</i>
                     </figcaption>
@@ -217,7 +217,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Fort_Pierce_Inlet_Daniel_Piraino_Flickr.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Fort_Pierce_Inlet_Daniel_Piraino_Flickr.jpg" alt="Fort Pierce from the air." />
                     <figcaption style="width:500px;">
                         Fort Pierce from the air. <i>Credit: D. Piraino, Flickr</i>
                     </figcaption>

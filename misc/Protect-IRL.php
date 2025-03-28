@@ -31,7 +31,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -155,7 +155,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/HAB_2014_P_Shindel.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/HAB_2014_P_Shindel.jpg" alt="A harmful bloom of blue-green algae near Lake Okeechobee in 2014." />
                     <figcaption style="width:500px;">
                         A harmful bloom of blue-green algae near Lake Okeechobee in 2014. <i>Credit: P. Shindel</i>
                     </figcaption>
@@ -279,7 +279,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18WhiticarJ3.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18WhiticarJ3.jpg" alt="Credit: J. Whiticar" />
                     <figcaption style="width:500px;">
                         <i>Credit: J. Whiticar</i>
                     </figcaption>
@@ -340,7 +340,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_ReynoldsJ1.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_ReynoldsJ1.jpg" alt="A swallowtail butterfly visits native milkweed flowers (Asclepias incarnata)." />
                     <figcaption style="width:500px;">
                         A swallowtail butterfly visits native milkweed flowers (<i>Asclepias incarnata</i>). <i>Credit: J. Reynolds</i>
                     </figcaption>
@@ -419,7 +419,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/20WestM2_N.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/20WestM2_N.jpg" alt="Credit: M. West" />
                     <figcaption style="width:500px;">
                         <i>Credit: M. West</i>
                     </figcaption>
@@ -468,7 +468,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Volunteers_Restoration_Mosquito_Lagoon_Linda_Walters.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Volunteers_Restoration_Mosquito_Lagoon_Linda_Walters.jpg" alt="Volunteers help restore oyster reefs in the Mosquito Lagoon." />
                     <figcaption style="width:500px;">
                         Volunteers help restore oyster reefs in the Mosquito Lagoon. <i>Credit: L. Walters</i>
                     </figcaption>

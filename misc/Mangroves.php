@@ -32,7 +32,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
-            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" />
+            <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
@@ -169,7 +169,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <div id="mangrove-species-section" class="cd-section">
             <h4>Mangrove Species</h4>
             <figure style="float: left;margin-right: 30px;">
-                <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_Rhizophora_mangle_L_Holly_Sweat.jpg" />
+                <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_Rhizophora_mangle_L_Holly_Sweat.jpg" alt="Credit: H. Sweat" />
                 <figcaption>
                     <i>Credit: H. Sweat</i>
                 </figcaption>
@@ -192,7 +192,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="clear:both;">
                 <figure style="float: left;margin-right: 30px;">
-                    <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_Avicennia_germinans_L_Holly_Sweat.jpg" />
+                    <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_Avicennia_germinans_L_Holly_Sweat.jpg" alt="Credit: H. Sweat" />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -207,7 +207,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
             <div style="clear:both;">
                 <figure style="float: left;margin-right: 30px;">
-                    <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_white_mangrove_naturalist.jpg" />
+                    <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_white_mangrove_naturalist.jpg" alt="Credit: W. Hong, iNaturalist" />
                     <figcaption>
                         <i>Credit: W. Hong, iNaturalist</i>
                     </figcaption>
@@ -225,7 +225,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <div id="mangrove-distribution-section" class="cd-section" style="clear:both;">
             <h4>Mangrove Distribution</h4>
             <figure style="float: left;margin-right: 30px;">
-                <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/FL-Mangrove-dist.PNG" />
+                <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/FL-Mangrove-dist.PNG" alt="Credit: Wikimedia Commons" />
                 <figcaption>
                     <i>Credit: Wikimedia Commons</i>
                 </figcaption>
@@ -258,7 +258,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 taproots. However, specialized aerial roots allow mangroves to absorb oxygen despite their waterlogged environments.
             </p>
             <figure style="float: left;margin-right: 30px;">
-                <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_RedMangroveProps_WaltersLinda.jpg" />
+                <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_RedMangroveProps_WaltersLinda.jpg" alt="Credit: L. Walters" />
                 <figcaption>
                     <i>Credit: L. Walters</i>
                 </figcaption>
@@ -270,7 +270,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 or water-repelling, and block water from entering the trees’ roots even during high tide.
             </p>
             <figure style="float: left;margin-right: 30px;">
-                <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_BlackMangrovesBird_WaltersLinda.jpg" />
+                <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_BlackMangrovesBird_WaltersLinda.jpg" alt="Credit: L. Walters" />
                 <figcaption>
                     <i>Credit: L. Walters</i>
                 </figcaption>
@@ -287,7 +287,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;clear:both;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_Avicennia_germinans-salt_excretion.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_Avicennia_germinans-salt_excretion.jpg" alt="Credit: Ulf Mehlig, Wikimedia Commons" />
                     <figcaption>
                         <i>Credit: Ulf Mehlig, Wikimedia Commons</i>
                     </figcaption>
@@ -317,7 +317,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/8_red_mangrove_propagule.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/8_red_mangrove_propagule.jpg" alt="Credit: " />
                     <figcaption>
                         <i>Credit: </i>
                     </figcaption>
@@ -337,7 +337,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/20GillE1_S.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/20GillE1_S.jpg" alt="Credit: E. Gill" />
                     <figcaption>
                         <i>Credit: E. Gill</i>
                     </figcaption>
@@ -393,7 +393,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/9_12_VanOsE1.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/9_12_VanOsE1.jpg" alt="Credit: E. Van Os" />
                     <figcaption>
                         <i>Credit: E. Van Os</i>
                     </figcaption>
@@ -430,7 +430,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/10_Leaf_Litter_Lorae_Simpson.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/10_Leaf_Litter_Lorae_Simpson.jpg" alt="Mangrove leaf litter." />
                     <figcaption>
                         Mangrove leaf litter. <i>Credit: L. Simpson</i>
                     </figcaption>
@@ -466,7 +466,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_Littorina_angulifera_L_Holly_Sweat.jpg" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_Littorina_angulifera_L_Holly_Sweat.jpg" alt="Mangrove periwinkle, Littorina angulifera." />
                     <figcaption>
                         Mangrove periwinkle, <i>Littorina angulifera</i>. <i>Credit: H. Sweat</i>
                     </figcaption>
