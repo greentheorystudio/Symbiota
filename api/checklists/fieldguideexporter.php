@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ChecklistFGExportManager.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
 $clValue = array_key_exists('cl',$_REQUEST)?$_REQUEST['cl']:0;
@@ -11,27 +12,29 @@ $recLimit = array_key_exists('rows',$_REQUEST)?(int)$_REQUEST['rows']:0;
 $photogJson = array_key_exists('photogArr',$_REQUEST)?$_REQUEST['photogArr']:'';
 $photoNum = array_key_exists('photoNum',$_REQUEST)?$_REQUEST['photoNum']:0;
 
-$dataArr = array();
+if(SanitizerService::validateInternalRequest()){
+    $dataArr = array();
 
-$fgManager = new ChecklistFGExportManager();
-if($clValue){
-    $fgManager->setClValue($clValue);
-}
-elseif($dynClid){
-    $fgManager->setDynClid($dynClid);
-}
-$fgManager->setSqlVars();
-$fgManager->setRecIndex($index);
-$fgManager->setRecLimit($recLimit);
-$fgManager->setMaxPhoto($photoNum);
-$fgManager->setPhotogJson($photogJson);
+    $fgManager = new ChecklistFGExportManager();
+    if($clValue){
+        $fgManager->setClValue($clValue);
+    }
+    elseif($dynClid){
+        $fgManager->setDynClid($dynClid);
+    }
+    $fgManager->setSqlVars();
+    $fgManager->setRecIndex($index);
+    $fgManager->setRecLimit($recLimit);
+    $fgManager->setMaxPhoto($photoNum);
+    $fgManager->setPhotogJson($photogJson);
 
-if($clValue || $dynClid){
-    $fgManager->primeDataArr();
-    $fgManager->primeOrderData();
-    $fgManager->primeDescData();
-    $fgManager->primeVernaculars();
-    $fgManager->primeImages();
-    $dataArr = $fgManager->getDataArr();
+    if($clValue || $dynClid){
+        $fgManager->primeDataArr();
+        $fgManager->primeOrderData();
+        $fgManager->primeDescData();
+        $fgManager->primeVernaculars();
+        $fgManager->primeImages();
+        $dataArr = $fgManager->getDataArr();
+    }
+    echo json_encode($dataArr);
 }
-echo json_encode($dataArr);
