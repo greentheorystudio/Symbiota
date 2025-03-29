@@ -23,6 +23,10 @@ CREATE TABLE `omcolldatauploadparameters` (
     CONSTRAINT `omcolldatauploadparameters_ibfk_1` FOREIGN KEY (`CollID`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+INSERT INTO omcolldatauploadparameters(uspid,CollID,UploadType,title,dwcpath)
+SELECT uspid,CollID,UploadType,title,Path
+FROM uploadspecparameters;
+
 CREATE TABLE `omcollmediauploadparameters` (
     `spprid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `collid` int(10) unsigned NOT NULL,
@@ -351,10 +355,10 @@ CREATE TABLE `uploadmoftemp` (
     KEY `Index_datavalue` (`datavalue`)
 );
 
+ALTER TABLE `uploadspecmap` DROP FOREIGN KEY `FK_uploadspecmap_usp`;
+
 ALTER TABLE `uploadspecmap`
     ADD CONSTRAINT `Fk_uploadspecmap_uspid` FOREIGN KEY (`uspid`) REFERENCES `omcolldatauploadparameters` (`uspid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uploadspecmap` DROP FOREIGN KEY `FK_uploadspecmap_usp`;
 
 ALTER TABLE `uploadspectemp`
     DROP COLUMN `recordNumberPrefix`,
