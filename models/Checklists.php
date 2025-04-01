@@ -212,15 +212,14 @@ class Checklists{
         return $retArr;
     }
 
-    public function getChecklistListByUserRights(): array
+    public function getChecklistListByUid($uid): array
     {
         $retArr = array();
-        $cArr = array();
-        if(array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS'])) {
-            $cArr = $GLOBALS['USER_RIGHTS']['ClAdmin'];
-        }
-        if($cArr){
-            $sql = 'SELECT clid, name FROM fmchecklists WHERE clid IN('.implode(',', $cArr).') ORDER BY name ';
+        if((int)$uid > 0){
+            $sql = 'SELECT DISTINCT c.clid, c.name '.
+                'FROM userroles AS r LEFT JOIN fmchecklists AS c ON r.tablepk = c.clid '.
+                'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" '.
+                'ORDER BY c.name ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

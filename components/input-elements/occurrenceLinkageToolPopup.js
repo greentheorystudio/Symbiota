@@ -84,6 +84,7 @@ const occurrenceLinkageToolPopup = {
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
+        const baseStore = useBaseStore();
         const collectionStore = useCollectionStore();
         const occurrenceStore = useOccurrenceStore();
         const searchStore = useSearchStore();
@@ -100,6 +101,7 @@ const occurrenceLinkageToolPopup = {
             return !!(selectedCollection && (catalogNumberVal.value || recordedByVal.value || recordNumberVal.value));
         });
         const selectedCollection = Vue.ref(null);
+        const symbUid = baseStore.getSymbUid;
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -180,7 +182,7 @@ const occurrenceLinkageToolPopup = {
         }
 
         function setCollectionList() {
-            collectionStore.getCollectionListByUserRights((collListData) => {
+            collectionStore.getCollectionListByUid(symbUid, (collListData) => {
                 collectionOptions.value = collListData;
             });
         }

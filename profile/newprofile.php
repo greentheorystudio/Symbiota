@@ -14,16 +14,6 @@ header('X-Frame-Options: SAMEORIGIN');
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <style>
-            .human-validator-canvas {
-                border: 1px solid #000;
-                height: 50px;
-                width: 400px;
-            }
-            .create-account-container {
-                width: 90%;
-            }
-        </style>
     </head>
     <body>
         <?php
@@ -43,14 +33,14 @@ header('X-Frame-Options: SAMEORIGIN');
                             </q-input>
                         </div>
                         <div class="row justify-start q-gutter-md q-mt-xs">
-                            <password-input ref="passwordInputRef" :password="newAccount.pwd" @update:password="updatePassword"></password-input>
+                            <password-input ref="passwordInputRef" :password="newAccount.password" @update:password="(value) => updateAccountData({key: 'password', value: value})"></password-input>
                         </div>
                     </q-card-section>
                 </q-card>
                 <q-card class="create-account-container q-mt-md">
                     <q-card-section>
                         <div class="text-h6 q-mb-md">Account Details</div>
-                        <account-information-form ref="accountInformationFormRef" :user="newAccount" @update:account-information="updateAccountObj"></account-information-form>
+                        <account-information-form ref="accountInformationFormRef" @update:account-information="updateAccountData"></account-information-form>
                     </q-card-section>
                 </q-card>
                 <q-card class="create-account-container q-mt-md">
@@ -67,6 +57,11 @@ header('X-Frame-Options: SAMEORIGIN');
         include_once(__DIR__ . '/../footer.php');
         include_once(__DIR__ . '/../config/footer-includes.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/user.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/humanValidator.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -79,30 +74,14 @@ header('X-Frame-Options: SAMEORIGIN');
                 },
                 setup() {
                     const { showNotification } = useCore();
-                    const store = useBaseStore();
+                    const baseStore = useBaseStore();
+                    const userStore = useUserStore();
+
                     const accountInformationFormRef = Vue.ref(null);
-                    const adminEmail = store.getAdminEmail;
-                    const clientRoot = store.getClientRoot;
+                    const adminEmail = baseStore.getAdminEmail;
+                    const clientRoot = baseStore.getClientRoot;
                     const humanValidationInputRef = Vue.ref(null);
-                    const newAccount = Vue.ref({
-                        uid: null,
-                        firstname: null,
-                        middleinitial: null,
-                        lastname: null,
-                        title: null,
-                        institution: null,
-                        department: null,
-                        address: null,
-                        city: null,
-                        state: null,
-                        zip: null,
-                        country: null,
-                        email: null,
-                        url: null,
-                        biography: null,
-                        username: null,
-                        pwd: null
-                    });
+                    const newAccount = Vue.computed(() => userStore.getUserData);
                     const passwordInputRef = Vue.ref(null);
                     const usernameExists = (val) => {
                         return new Promise((resolve) => {
@@ -114,9 +93,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                 body: formData
                             })
                             .then((response) => {
-                                response.json().then((resObj) => {
-                                    resolve((!resObj.hasOwnProperty('uid') || Number(resObj['uid']) === 0) || 'Username is already associated with another account');
-                                });
+                                return response.ok ? response.json() : null;
+                            })
+                            .then((resObj) => {
+                                resolve((resObj && (!resObj.hasOwnProperty('uid') || Number(resObj['uid']) === 0)) || 'Username is already associated with another account');
                             });
                         });
                     };
@@ -134,26 +114,17 @@ header('X-Frame-Options: SAMEORIGIN');
                             !accountInformationFormRef.value.formHasErrors() &&
                             !humanValidationInputRef.value.formHasErrors()
                         ) {
-                            const formData = new FormData();
-                            formData.append('user', JSON.stringify(newAccount.value));
-                            formData.append('action', 'createAccount');
-                            fetch(profileApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                response.text().then((res) => {
-                                    if(Number(res) > 0){
-                                        window.location.href = clientRoot + '/profile/viewprofile.php';
+                            userStore.createUserRecord((res) => {
+                                if(Number(res) > 0){
+                                    window.location.href = clientRoot + '/profile/viewprofile.php';
+                                }
+                                else{
+                                    let errorText = 'An error occurred creating the account. ';
+                                    if(adminEmail !== ''){
+                                        errorText += 'Please contact system administrator at ' + adminEmail + ' for assistance.';
                                     }
-                                    else{
-                                        let errorText = 'An error occurred creating the account. ';
-                                        if(adminEmail !== ''){
-                                            errorText += 'Please contact system administrator at ' + adminEmail + ' for assistance.';
-                                        }
-                                        showNotification('negative',errorText);
-                                    }
-                                });
+                                    showNotification('negative',errorText);
+                                }
                             });
                         }
                         else{
@@ -161,13 +132,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
-                    function updatePassword(val) {
-                        newAccount.value.pwd = val;
+                    function updateAccountData(data) {
+                        userStore.updateUserEditData(data.key, data.value);
                     }
 
-                    function updateAccountObj(obj) {
-                        newAccount.value = Object.assign({}, obj);
-                    }
+                    Vue.onMounted(() => {
+                        userStore.setUser(0);
+                    });
                     
                     return {
                         accountInformationFormRef,
@@ -181,8 +152,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             val => usernameExists(val)
                         ],
                         createAccount,
-                        updatePassword,
-                        updateAccountObj
+                        updateAccountData
                     }
                 }
             });

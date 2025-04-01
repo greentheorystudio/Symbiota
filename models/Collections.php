@@ -242,19 +242,14 @@ class Collections {
         return $retArr;
     }
 
-    public function getCollectionListByUserRights(): array
+    public function getCollectionListByUid($uid): array
     {
         $retArr = array();
-        $cArr = array();
-        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])) {
-            $cArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
-        }
-        if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])) {
-            $cArr = array_merge($cArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
-        }
-        if($cArr){
-            $sql = 'SELECT collid, institutioncode, collectioncode, collectionname, colltype FROM omcollections '.
-                'WHERE collid IN(' . implode(',', $cArr) . ') ORDER BY collectionname ';
+        if((int)$uid > 0){
+            $sql = 'SELECT DISTINCT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.colltype '.
+                'FROM userroles AS r LEFT JOIN omcollections AS c ON r.tablepk = c.collid '.
+                'WHERE r.uid = ' . (int)$uid . ' AND (r.role = "CollAdmin" OR r.role = "CollEditor") '.
+                'ORDER BY c.collectionname ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
