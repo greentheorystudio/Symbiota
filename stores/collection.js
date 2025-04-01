@@ -280,9 +280,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 });
             });
         },
-        getCollectionListByUserRights(callback) {
+        getCollectionListByUid(uid, callback) {
             const formData = new FormData();
-            formData.append('action', 'getCollectionListByUserRights');
+            formData.append('uid', uid.toString());
+            formData.append('action', 'getCollectionListByUid');
             fetch(collectionApiUrl, {
                 method: 'POST',
                 body: formData

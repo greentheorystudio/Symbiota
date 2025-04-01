@@ -13,8 +13,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin', $GLOBALS['USER_RIGHTS'])
 
 if($action && SanitizerService::validateInternalRequest()){
     $checklists = new Checklists();
-    if($action === 'getChecklistListByUserRights'){
-        echo json_encode($checklists->getChecklistListByUserRights());
+    if($action === 'getChecklistListByUid' && array_key_exists('uid', $_POST)){
+        echo json_encode($checklists->getChecklistListByUid($_POST['uid']));
     }
     elseif($action === 'createChecklistRecord' && $GLOBALS['VALID_USER'] && array_key_exists('checklist', $_POST)){
         echo $checklists->createChecklistRecord(json_decode($_POST['checklist'], true));

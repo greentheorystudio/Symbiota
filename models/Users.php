@@ -193,10 +193,10 @@ class Users{
         $lastName = array_key_exists('lastname', $data) ? SanitizerService::cleanInStr($this->conn, $data['lastname']) : '';
         $email = array_key_exists('email', $data) ? SanitizerService::cleanInStr($this->conn, $data['email']) : '';
         $username = array_key_exists('username', $data) ? SanitizerService::cleanInStr($this->conn, $data['username']) : '';
-        $password = array_key_exists('pwd', $data) ? SanitizerService::cleanInStr($this->conn, $data['pwd']) : '';
+        $password = array_key_exists('password', $data) ? SanitizerService::cleanInStr($this->conn, $data['password']) : '';
         if($firstName && $lastName && $email && $username && $password){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'uid' && array_key_exists($field, $data)){
+                if($field !== 'uid' && $field !== 'password' && $field !== 'validated' && array_key_exists($field, $data)){
                     if($field === 'state'){
                         $fieldNameArr[] = '`' . $field . '`';
                     }
@@ -213,6 +213,8 @@ class Users{
             else{
                 $fieldValueArr[] = 'SHA2("' . $password . '", 256)';
             }
+            $fieldNameArr[] = 'validated';
+            $fieldValueArr[] = '0';
             $sql = 'INSERT INTO users(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             //echo "<div>".$sql."</div>";

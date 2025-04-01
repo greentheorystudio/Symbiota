@@ -120,6 +120,21 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 callback(Number(res));
             });
         },
+        getChecklistListByUid(uid, callback) {
+            const formData = new FormData();
+            formData.append('uid', uid.toString());
+            formData.append('action', 'getChecklistListByUid');
+            fetch(checklistApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                callback(resObj);
+            });
+        },
         setChecklist(clid, callback = null) {
             this.clearChecklistData();
             if(Number(clid) > 0){
