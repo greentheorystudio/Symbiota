@@ -164,7 +164,7 @@ if($occurArr){
         $specOccArr[] = $occid;
         if($collId !== $prevCollid){
             $prevCollid = $collId;
-            if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
+            if($GLOBALS['SYMB_UID'] && ($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) || (array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((int)$collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)))){
                 $isEditor = true;
             }
             $htmlStr .= '<tr><td colspan="2"><h2>';

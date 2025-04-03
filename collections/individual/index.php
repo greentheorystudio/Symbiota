@@ -54,10 +54,10 @@ $displayLocality = false;
 $isEditor = false;
 
 if($GLOBALS['SYMB_UID']){
-    if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
+    if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
         $isEditor = true;
     }
-    elseif((array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
+    elseif((array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
         $isEditor = true;
     }
     elseif($occArr['observeruid'] === $GLOBALS['SYMB_UID']){
@@ -70,7 +70,7 @@ if($GLOBALS['SYMB_UID']){
     if($isEditor || array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll',$GLOBALS['USER_RIGHTS'])){
         $displayLocality = true;
     }
-    elseif(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true)){
+    elseif(array_key_exists('RareSppReader',$GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['RareSppReader'], true)){
         $displayLocality = true;
     }
     elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) || array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
