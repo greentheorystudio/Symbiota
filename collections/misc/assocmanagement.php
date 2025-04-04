@@ -22,16 +22,16 @@ if($collid) {
     $collmeta = $assocHandler->getCollectionMetadata($collid);
 }
 
-$isEditor = 0; 
+$isEditor = 0;
 if($GLOBALS['SYMB_UID']){
-	if($GLOBALS['IS_ADMIN']){
-		$isEditor = 1;
-	}
-	elseif($collid){
-		if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
-			$isEditor = 1;
-		}
-	}
+    if($GLOBALS['IS_ADMIN']){
+        $isEditor = 1;
+    }
+    elseif($collid){
+        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+            $isEditor = 1;
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -51,71 +51,71 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     </script>
 </head>
 <body>
+<?php
+include(__DIR__ . '/../../header.php');
+?>
+<div class="navpath">
+    <a href="../../index.php">Home</a> &gt;&gt;
     <?php
-    include(__DIR__ . '/../../header.php');
+    if($collid) {
+        echo '<a href="collprofiles.php?collid=' . $collid . '&emode=1">Collection Management</a> &gt;&gt; ';
+    }
     ?>
-    <div class="navpath">
-        <a href="../../index.php">Home</a> &gt;&gt;
-        <?php
-        if($collid) {
-            echo '<a href="collprofiles.php?collid=' . $collid . '&emode=1">Collection Management</a> &gt;&gt; ';
+    <b>Occurrence Association Manager</b>
+</div>
+<div id="innertext">
+    <?php
+    if($isEditor){
+        if($formSubmit === 'Parse Associated Taxa'){
+            $assocHandler->parseAssociatedTaxa($collid);
         }
         ?>
-        <b>Occurrence Association Manager</b>
-    </div>
-    <div id="innertext">
+        <fieldset style="margin:20px;padding:15px">
+            <legend><b>Associated Taxa Parsing</b></legend>
+            <form name="" action="assocmanagement.php" method="post">
+                <div>
+                    <?php
+                    $statArr = $assocHandler->getParsingStats($collid);
+                    echo '<div style="margin:10px 0;font-weight:bold;">';
+                    if($collmeta){
+                        $code = '';
+                        $label = $collmeta['collname'];
+                        if($collmeta['instcode']){
+                            $code .= $collmeta['instcode'];
+                        }
+                        if($collmeta['collcode']){
+                            $code .= ($code?'-':'') . $collmeta['collcode'];
+                        }
+                        if($code){
+                            $label .= ' (' . $collmeta['collname'] . ')';
+                        }
+                        echo $label;
+                    }
+                    else{
+                        echo 'All Collections';
+                    }
+                    echo '</div>';
+                    echo '<div style="margin:3px"><b>Number of parsed occurrences:</b> '.$statArr['parsed'].'</div>';
+                    echo '<div style="margin:3px"><b>Number of unparsed occurrences:</b> '.$statArr['unparsed'].'</div>';
+                    echo '<div style="margin:3px"><b>Number of non-indexed parsing terms:</b> '.$statArr['failed'].' (from '.$statArr['failedOccur'].' occurrence records)'.'</div>';
+                    ?>
+                </div>
+                <div style="margin:20px;">
+                    <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+                    <input name="formsubmit" type="submit" value="Parse Associated Taxa" />
+                </div>
+            </form>
+        </fieldset>
         <?php
-        if($isEditor){
-            if($formSubmit === 'Parse Associated Taxa'){
-                $assocHandler->parseAssociatedTaxa($collid);
-            }
-            ?>
-            <fieldset style="margin:20px;padding:15px">
-                <legend><b>Associated Taxa Parsing</b></legend>
-                <form name="" action="assocmanagement.php" method="post">
-                    <div>
-                        <?php
-                        $statArr = $assocHandler->getParsingStats($collid);
-                        echo '<div style="margin:10px 0;font-weight:bold;">';
-                        if($collmeta){
-                            $code = '';
-                            $label = $collmeta['collname'];
-                            if($collmeta['instcode']){
-                                $code .= $collmeta['instcode'];
-                            }
-                            if($collmeta['collcode']){
-                                $code .= ($code?'-':'') . $collmeta['collcode'];
-                            }
-                            if($code){
-                                $label .= ' (' . $collmeta['collname'] . ')';
-                            }
-                            echo $label;
-                        }
-                        else{
-                            echo 'All Collections';
-                        }
-                        echo '</div>';
-                        echo '<div style="margin:3px"><b>Number of parsed occurrences:</b> '.$statArr['parsed'].'</div>';
-                        echo '<div style="margin:3px"><b>Number of unparsed occurrences:</b> '.$statArr['unparsed'].'</div>';
-                        echo '<div style="margin:3px"><b>Number of non-indexed parsing terms:</b> '.$statArr['failed'].' (from '.$statArr['failedOccur'].' occurrence records)'.'</div>';
-                        ?>
-                    </div>
-                    <div style="margin:20px;">
-                        <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
-                        <input name="formsubmit" type="submit" value="Parse Associated Taxa" />
-                    </div>
-                </form>
-            </fieldset>
-            <?php
-        }
-        else{
-            echo '<div style="font-weight:bold;">ERROR: permissions failure</div>';
-        }
-        ?>
-    </div>
-    <?php
-    include(__DIR__ . '/../../footer.php');
-    include_once(__DIR__ . '/../../config/footer-includes.php');
+    }
+    else{
+        echo '<div style="font-weight:bold;">ERROR: permissions failure</div>';
+    }
     ?>
+</div>
+<?php
+include(__DIR__ . '/../../footer.php');
+include_once(__DIR__ . '/../../config/footer-includes.php');
+?>
 </body>
 </html>
