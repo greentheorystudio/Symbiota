@@ -12,22 +12,22 @@ $harvManager = new OccurrenceSupport();
 $isEditor = 0;
 $collList = array();
 if($GLOBALS['IS_ADMIN']){
-	$isEditor = 1;
-	$collList[] = 'all';
+    $isEditor = 1;
+    $collList[] = 'all';
 }
 else{
-	if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
-		if(in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
-			$isEditor = 1;
-		}
-		$collList = $GLOBALS['USER_RIGHTS']['CollEditor'];
-	}
-	if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
-		if(in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
-			$isEditor = 1;
-		}
-		$collList = array_merge($collList,$GLOBALS['USER_RIGHTS']['CollAdmin']);
-	}
+    if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])){
+        if(in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+            $isEditor = 1;
+        }
+        $collList = $GLOBALS['USER_RIGHTS']['CollEditor'];
+    }
+    if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
+        if(in_array((int)$collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+            $isEditor = 1;
+        }
+        $collList = array_merge($collList,$GLOBALS['USER_RIGHTS']['CollAdmin']);
+    }
 }
 
 if($isEditor && $action === 'Download Records') {
