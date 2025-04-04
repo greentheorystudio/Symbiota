@@ -81,11 +81,11 @@ if($GLOBALS['SYMB_UID']){
         $occManager->setExsiccatiMode(true);
     }
 
-    if($GLOBALS['IS_ADMIN'] || ($collId && array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
+    if($GLOBALS['IS_ADMIN'] || ($collId && array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$collId, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
         $isEditor = 1;
     }
     else if($isGenObs){
-        if(!$occId && array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+        if(!$occId && array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array((int)$collId, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
             $isEditor = 2;
         }
         elseif($action){

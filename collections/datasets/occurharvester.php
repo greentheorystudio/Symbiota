@@ -23,7 +23,7 @@ else{
 		$collList = $GLOBALS['USER_RIGHTS']['CollEditor'];
 	}
 	if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
-		if(in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+		if(in_array((int)$collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 			$isEditor = 1;
 		}
 		$collList = array_merge($collList,$GLOBALS['USER_RIGHTS']['CollAdmin']);

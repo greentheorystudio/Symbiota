@@ -28,7 +28,7 @@ if($GLOBALS['SYMB_UID']){
 		$isEditor = 1;
 	}
 	elseif($collid){
-		if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+		if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array((int)$collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
 			$isEditor = 1;
 		}
 	}
