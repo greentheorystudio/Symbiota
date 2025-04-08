@@ -112,7 +112,7 @@ const useBaseStore = Pinia.defineStore('base', {
                 callback(resStr);
             });
         },
-        async logout() {
+        logout() {
             const url = profileApiUrl + '?action=logout';
             fetch(url)
             .then(() => {

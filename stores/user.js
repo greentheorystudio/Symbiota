@@ -142,6 +142,9 @@ const useUserStore = Pinia.defineStore('user', {
                 callback(Number(res));
             });
         },
+        revertUserEditData() {
+            this.userEditData = Object.assign({}, this.userData);
+        },
         setUser(uid, callback = null) {
             this.clearUserData();
             if(Number(uid) > 0){

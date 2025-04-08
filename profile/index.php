@@ -3,15 +3,15 @@ include_once(__DIR__ . '/../config/symbbase.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
-$uid = array_key_exists('uid',$_REQUEST)?(int)$_REQUEST['uid']:0;
-$confirmationCode = array_key_exists('confirmationcode',$_REQUEST)?htmlspecialchars($_REQUEST['confirmationcode']):'';
+$uid = array_key_exists('uid', $_REQUEST) ? (int)$_REQUEST['uid'] : 0;
+$confirmationCode = array_key_exists('confirmationcode', $_REQUEST) ? htmlspecialchars($_REQUEST['confirmationcode']) : '';
 
 $refUrl = '';
 if(strpos($_SERVER['REQUEST_URI'], 'refurl=')){
-    $fullRequest = str_replace('%22', '"',$_SERVER['REQUEST_URI']);
+    $fullRequest = str_replace('%22', '"', $_SERVER['REQUEST_URI']);
     $refUrl = substr($fullRequest, strpos($fullRequest, 'refurl=') + 7);
 }
-elseif(array_key_exists('refurl',$_REQUEST)){
+elseif(array_key_exists('refurl', $_REQUEST)){
     $refUrl = $_REQUEST['refurl'];
 }
 ?>
@@ -114,6 +114,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                     const baseStore = useBaseStore();
 
                     const adminEmail = baseStore.getAdminEmail;
+                    const clientRoot = baseStore.getClientRoot;
                     const confirmationCode = CONFIRMATION_CODE;
                     const email = Vue.ref(null);
                     const emailConfigured = baseStore.getEmailConfigured;
@@ -167,7 +168,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                                 response.text().then((res) => {
                                     if(Number(res) === 1){
                                         if(refUrl === '' || refUrl.startsWith('http') || refUrl.includes('newprofile.php')){
-                                            window.location.href = CLIENT_ROOT + '/index.php';
+                                            window.location.href = clientRoot + '/index.php';
                                         }
                                         else{
                                             window.location.href = refUrl;
