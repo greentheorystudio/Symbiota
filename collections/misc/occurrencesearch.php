@@ -4,7 +4,7 @@ include_once(__DIR__ . '/../../classes/OccurrenceSupport.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
-$targetId = (int)$_REQUEST['targetid'];
+$targetId = $_REQUEST['targetid'];
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
 $action = array_key_exists('action',$_POST)?htmlspecialchars($_POST['action']):'';
 $catalogNumber = array_key_exists('catalognumber',$_POST)?htmlspecialchars($_POST['catalognumber']):'';
