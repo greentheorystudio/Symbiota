@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	});
 
-	$("#ffsciname").autocomplete({ 
+	$("#ffsciname").autocomplete({
 		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		select: function(event, ui) {
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 
 	if(localityAutoLookup){
-		$("#fflocality").autocomplete({ 
+		$("#fflocality").autocomplete({
 			source: function( request, response ) {
 				$.getJSON( "../../api/occurrenceduplicates/getlocality.php", { recordedby: $( "input[name=recordedby]" ).val(), eventdate: $( "input[name=eventdate]" ).val(), locality: request.term }, response );
 			},
@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 	});
 
-	$("#ffcounty").autocomplete({ 
+	$("#ffcounty").autocomplete({
 		source: function( request, response ) {
 			$.getJSON( "../../api/geography/lookupCounty.php", { term: request.term, "state": document.fullform.stateprovince.value }, response );
 		},
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			return false;
 		}
 	});
-	
+
 	const apstatus = getCookie("autopstatus");
 	if(getCookie("autopstatus")) {
 		document.fullform.autoprocessingstatus.value = apstatus;
@@ -304,7 +304,7 @@ function recordNumberChanged(){
 	autoDupeSearch();
 }
 
-function stateProvinceChanged(stateVal){ 
+function stateProvinceChanged(stateVal){
 	fieldChanged('stateprovince');
 	const tidVal = $("#tid").val();
 	if(tidVal !== "" && stateVal !== ""){
@@ -480,7 +480,7 @@ function parseVerbatimCoordinates(f,verbose){
 				n = extractArr[1];
 			}
 		}
-		
+
 		if(z && e && n){
 			const datum = f.geodeticdatum.value;
 			const llStr = utm2LatLng(z, e, n, datum);
@@ -657,7 +657,7 @@ function verifyFullForm(f){
 
 function verifyFullFormEdits(f){
 	if(f.editedfields && f.editedfields.value === ""){
-		setTimeout(function () { 
+		setTimeout(function () {
 			if(f.editedfields.value){
 				f.submitaction.click();
 			}
@@ -737,7 +737,7 @@ function verifyDeletion(f){
 	const occId = f.occid.value;
 	document.getElementById("delverimgspan").style.display = "block";
 	verifyAssocImages(occId);
-	
+
 	document.getElementById("delvervouspan").style.display = "block";
 	verifyAssocVouchers(occId);
 }
@@ -825,15 +825,15 @@ function eventDateChanged(eventDateInput){
 				}
 			}
 			catch(e){}
-	
+
 			if(dateArr['m'] > 12){
 				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
 				eventDateInput.value = "";
 				return false;
 			}
-	
+
 			if(dateArr['d'] > 28){
-				if(dateArr['d'] > 31 
+				if(dateArr['d'] > 31
 					|| (dateArr['d'] == 30 && dateArr['m'] == 2)
 					|| (dateArr['d'] == 31 && (dateArr['m'] == 4 || dateArr['m'] == 6 || dateArr['m'] == 9 || dateArr['m'] == 11))){
 					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
@@ -910,7 +910,7 @@ function calculateEndDate(year){
 		}
 		fieldChanged("enddayofyear");
 	}
-    return true;
+	return true;
 }
 
 function parseDate(dateStr){
@@ -963,7 +963,7 @@ function parseDate(dateStr){
 }
 
 function initDetAutocomplete(f){
-	$( f.sciname ).autocomplete({ 
+	$( f.sciname ).autocomplete({
 		source: "../../api/taxa/getspeciessuggest.php",
 		minLength: 3,
 		select: function(event, ui) {
@@ -975,7 +975,7 @@ function initDetAutocomplete(f){
 				f.scientificnameauthorship.value = "";
 				f.family.value = "";
 				f.tidtoadd.value = "";
-			}				
+			}
 		}
 	});
 }
@@ -1007,7 +1007,7 @@ function verifyDetSciName(f,id = null){
 		}
 	};
 	http.send(params);
-} 
+}
 
 function detDateChanged(f){
 	let isNew = false;
@@ -1052,8 +1052,8 @@ function verifyDetForm(f){
 	if(pauseSubmit){
 		const date = new Date();
 		let curDate = null;
-		do{ 
-			curDate = new Date(); 
+		do{
+			curDate = new Date();
 		}
 		while(curDate - date < 5000 && pauseSubmit);
 	}
@@ -1061,14 +1061,14 @@ function verifyDetForm(f){
 }
 
 function verifyImgAddForm(f){
-    if(f.elements["imgfile"].value.replace(/\s/g, "") === ""){
+	if(f.elements["imgfile"].value.replace(/\s/g, "") === ""){
 		const imgUrl = f.elements["imgurl"].value.replaceAll(/\s/g, "");
 		if(imgUrl === ""){
-        	alert("Select an image file or enter the URL to an existing image");
+			alert("Select an image file or enter the URL to an existing image");
 			return false;
-        }
-    }
-    return true;
+		}
+	}
+	return true;
 }
 
 function verifyMediaAddForm(f){
@@ -1124,8 +1124,8 @@ function dwcDoc(dcTag){
 }
 
 function openOccurrenceSearch(target) {
-	collId = document.fullform.collid.value;
-	let occWindow = open("../misc/occurrencesearch.php?targetid=" + target + "&collid=" + collId, "occsearch", "resizable=1,scrollbars=1,toolbar=1,width=750,height=600,left=20,top=20");
+	const collId = document.getElementById('collid').value;
+	let occWindow = window.open("../misc/occurrencesearch.php?targetid=" + target + "&collid=" + collId, "occsearch", "resizable=1,scrollbars=1,toolbar=1,width=750,height=600,left=20,top=20");
 	occWindow.focus();
 	if (occWindow.opener == null) {
 		occWindow.opener = self;
