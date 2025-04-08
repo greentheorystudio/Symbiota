@@ -530,7 +530,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         }
     </script>
     <script type="text/javascript" src="../../js/collections.coordinateValidation.js?ver=20210218"></script>
-    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20230103"></script>
+    <script type="text/javascript" src="../../js/collections.occureditormain.js?ver=20250402"></script>
     <script type="text/javascript" src="../../js/collections.occureditortools.js?ver=20221204"></script>
     <script type="text/javascript" src="../../js/collections.occureditorimgtools.js?ver=20230103"></script>
     <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
@@ -1437,7 +1437,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         </fieldset>
                                         <div style="padding:10px;">
                                             <input type="hidden" name="occid" value="<?php echo $occId; ?>" />
-                                            <input type="hidden" name="collid" value="<?php echo $collId; ?>" />
+                                            <input type="hidden" name="collid" id="collid" value="<?php echo $collId; ?>" />
                                             <input type="hidden" name="observeruid" value="<?php echo $GLOBALS['SYMB_UID']; ?>" />
                                             <input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
                                             <input type="hidden" name="linkdupe" value="" />

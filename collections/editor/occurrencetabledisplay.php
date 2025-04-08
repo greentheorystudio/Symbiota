@@ -110,6 +110,7 @@ $headerMapBase = array(
     'othercatalognumbers'=>'Other Catalog Numbers',
     'ownerinstitutioncode'=>'Owner Code',
     'preparations'=>'Preparations',
+    'processingstatus' => 'Processing Status',
     'reproductivecondition'=>'Reproductive Condition',
     'samplingeffort'=>'Sampling Effort',
     'samplingprotocol'=>'Sampling Protocol',
