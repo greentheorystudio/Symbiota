@@ -64,7 +64,7 @@ class Users{
                 $sql .= 'AND password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $password) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) ';
+                $sql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) OR password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 256) ';
             }
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -123,7 +123,7 @@ class Users{
                 $sql .= 'UPDATE users SET password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $password) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'UPDATE users SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) ';
+                $sql .= 'UPDATE users SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 256) ';
             }
             $sql .= 'WHERE uid = ' . (int)$uid . ' ';
             if($this->conn->query($sql)){
@@ -193,10 +193,10 @@ class Users{
         $lastName = array_key_exists('lastname', $data) ? SanitizerService::cleanInStr($this->conn, $data['lastname']) : '';
         $email = array_key_exists('email', $data) ? SanitizerService::cleanInStr($this->conn, $data['email']) : '';
         $username = array_key_exists('username', $data) ? SanitizerService::cleanInStr($this->conn, $data['username']) : '';
-        $password = array_key_exists('pwd', $data) ? SanitizerService::cleanInStr($this->conn, $data['pwd']) : '';
+        $password = array_key_exists('password', $data) ? SanitizerService::cleanInStr($this->conn, $data['password']) : '';
         if($firstName && $lastName && $email && $username && $password){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'uid' && array_key_exists($field, $data)){
+                if($field !== 'uid' && $field !== 'password' && $field !== 'validated' && array_key_exists($field, $data)){
                     if($field === 'state'){
                         $fieldNameArr[] = '`' . $field . '`';
                     }
@@ -211,8 +211,10 @@ class Users{
                 $fieldValueArr[] = 'PASSWORD("' . $password . '")';
             }
             else{
-                $fieldValueArr[] = 'SHA2("' . $password . '", 224)';
+                $fieldValueArr[] = 'SHA2("' . $password . '", 256)';
             }
+            $fieldNameArr[] = 'validated';
+            $fieldValueArr[] = '0';
             $sql = 'INSERT INTO users(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             //echo "<div>".$sql."</div>";
@@ -289,7 +291,6 @@ class Users{
         $result = $this->conn->query($sql);
         if($row = $result->fetch_array(MYSQLI_ASSOC)){
             $cnt = $row['cnt'];
-            $result->free();
         }
         $result->free();
         return $cnt;
@@ -395,7 +396,7 @@ class Users{
                 $sql .= 'SET password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '", 224) ';
+                $sql .= 'SET password = SHA2("' . SanitizerService::cleanInStr($this->conn, $newPassword) . '", 256) ';
             }
             $sql .= 'WHERE username = "' . SanitizerService::cleanInStr($this->conn, $username) . '" ';
             if($this->conn->query($sql)){

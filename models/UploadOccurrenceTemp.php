@@ -162,7 +162,7 @@ class UploadOccurrenceTemp{
         $this->conn->close();
 	}
 
-    public function batchCreateRecords($collid, $data, $processingStatus, $fieldMapping =  null): int
+    public function batchCreateRecords($collid, $data, $processingStatus, $fieldMapping =  null, $secondaryFieldMapping =  null): int
     {
         $recordsCreated = 0;
         $fieldNameArr = array();
@@ -181,6 +181,12 @@ class UploadOccurrenceTemp{
                     }
                     if($fieldMapping){
                         $mappedKey = array_search((string)$field, $fieldMapping, true);
+                        if($mappedKey || (string)$mappedKey === '0'){
+                            $mappedFields[$field] = (string)$mappedKey;
+                        }
+                    }
+                    if($secondaryFieldMapping){
+                        $mappedKey = array_search((string)$field, $secondaryFieldMapping, true);
                         if($mappedKey || (string)$mappedKey === '0'){
                             $mappedFields[$field] = (string)$mappedKey;
                         }

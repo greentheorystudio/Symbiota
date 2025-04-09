@@ -8,6 +8,10 @@ const fieldMapperPopup = {
             type: Object,
             default: {}
         },
+        mappingType: {
+            type: String,
+            default: 'occurrence'
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -23,7 +27,7 @@ const fieldMapperPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="md-popup overflow-hidden">
+            <q-card class="overflow-hidden" :class="(mappingType === 'occurrence' || mappingType === 'flat-file') ? 'lg-popup' : 'md-popup'">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
@@ -33,22 +37,48 @@ const fieldMapperPopup = {
                     <div :style="contentStyle" class="overflow-auto">
                         <div class="full-width q-pa-md">
                             <div class="row">
-                                <div class="col-4 row upload-field-mapper-grid-cell text-body1 text-bold justify-center content-center">
-                                    <div>Source Field</div>
-                                </div>
-                                <div class="col-8 row upload-field-mapper-grid-cell text-body1 text-bold justify-center content-center">
-                                    Target Field
-                                </div>
+                                <template v-if="mappingType === 'occurrence' || mappingType === 'flat-file'">
+                                    <div class="col-2 row upload-field-mapper-grid-cell text-body1 text-bold justify-center content-center">
+                                        Source Field
+                                    </div>
+                                    <div class="col-5 row upload-field-mapper-grid-cell text-body1 text-bold justify-center content-center">
+                                        Primary Target Field
+                                    </div>
+                                    <div class="col-5 row upload-field-mapper-grid-cell text-body1 text-bold justify-center content-center">
+                                        Secondary Target Field
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <div class="col-4 row upload-field-mapper-grid-cell text-body1 text-bold justify-center content-center">
+                                        Source Field
+                                    </div>
+                                    <div class="col-8 row upload-field-mapper-grid-cell text-body1 text-bold justify-center content-center">
+                                        Target Field
+                                    </div>
+                                </template>
                             </div>
                             <template v-for="sourceField in Object.keys(sourceFields)">
                                 <template v-if="fieldMapping[sourceFields[sourceField].toLowerCase()] !== 'dbpk' && fieldMapping[sourceFields[sourceField].toLowerCase()] !== 'eventdbpk'">
                                     <div class="row">
-                                        <div class="col-4 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
-                                            {{ sourceFields[sourceField] }}
-                                        </div>
-                                        <div class="col-8 q-pl-sm upload-field-mapper-grid-cell" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
-                                            <selector-input-element :disabled="disabled" :options="targetFieldOptions" :value="fieldMapping[sourceFields[sourceField].toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
-                                        </div>
+                                        <template v-if="mappingType === 'occurrence' || mappingType === 'flat-file'">
+                                            <div class="col-2 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="(primaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' && secondaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped') ? 'bg-grey-5' : ''">
+                                                {{ sourceFields[sourceField] }}
+                                            </div>
+                                            <div class="col-5 q-pl-sm upload-field-mapper-grid-cell" :class="(primaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' && secondaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped') ? 'bg-grey-5' : ''">
+                                                <selector-input-element :disabled="disabled" :options="targetFieldOptions" :value="primaryFieldMapping[sourceFields[sourceField].toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
+                                            </div>
+                                            <div class="col-5 q-pl-sm upload-field-mapper-grid-cell" :class="(primaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' && secondaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped') ? 'bg-grey-5' : ''">
+                                                <selector-input-element :disabled="disabled" :options="targetFieldOptions" :value="secondaryFieldMapping[sourceFields[sourceField].toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value, false)"></selector-input-element>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+                                            <div class="col-4 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
+                                                {{ sourceFields[sourceField] }}
+                                            </div>
+                                            <div class="col-8 q-pl-sm upload-field-mapper-grid-cell" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
+                                                <selector-input-element :disabled="disabled" :options="targetFieldOptions" :value="fieldMapping[sourceFields[sourceField].toLowerCase()]" @update:value="(value) => updateFieldMapping(sourceFields[sourceField], value)"></selector-input-element>
+                                            </div>
+                                        </template>
                                     </div>
                                 </template>
                             </template>
@@ -66,6 +96,12 @@ const fieldMapperPopup = {
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const primaryFieldMapping = Vue.computed(() => {
+            return props.fieldMapping['primary'];
+        });
+        const secondaryFieldMapping = Vue.computed(() => {
+            return props.fieldMapping['secondary'];
+        });
         const targetFieldOptions = Vue.computed(() => {
             const initialArr = [
                 {value: 'unmapped', label: 'UNMAPPED'}
@@ -91,10 +127,19 @@ const fieldMapperPopup = {
             }
         }
 
-        function updateFieldMapping(field, targetFieldValue) {
-            const usedField = Object.keys(props.fieldMapping).find(field => props.fieldMapping[field] === targetFieldValue);
+        function updateFieldMapping(field, targetFieldValue, primary = true) {
+            let usedField;
+            if(props.mappingType === 'occurrence' || props.mappingType === 'flat-file'){
+                usedField = Object.keys(primaryFieldMapping.value).find(field => primaryFieldMapping.value[field] === targetFieldValue);
+                if(!usedField){
+                    usedField = Object.keys(secondaryFieldMapping.value).find(field => secondaryFieldMapping.value[field] === targetFieldValue);
+                }
+            }
+            else{
+                usedField = Object.keys(props.fieldMapping).find(field => props.fieldMapping[field] === targetFieldValue);
+            }
             if(!usedField || targetFieldValue === 'unmapped'){
-                context.emit('update:field-mapping', {sourceField: field.toLowerCase(), targetField: targetFieldValue});
+                context.emit('update:field-mapping', {sourceField: field.toLowerCase(), targetField: targetFieldValue, primary: primary});
             }
             else{
                 showNotification('negative', 'That Target Field is already mapped to a Source Field.');
@@ -109,6 +154,8 @@ const fieldMapperPopup = {
         return {
             contentRef,
             contentStyle,
+            primaryFieldMapping,
+            secondaryFieldMapping,
             targetFieldOptions,
             closePopup,
             updateFieldMapping

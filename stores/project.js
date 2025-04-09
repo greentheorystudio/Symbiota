@@ -81,6 +81,21 @@ const useProjectStore = Pinia.defineStore('project', {
                 callback(Number(res));
             });
         },
+        getProjectListByUid(uid, callback) {
+            const formData = new FormData();
+            formData.append('uid', uid.toString());
+            formData.append('action', 'getProjectListByUid');
+            fetch(projectApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                callback(resObj);
+            });
+        },
         setProject(pid, callback = null) {
             this.clearProjectData();
             if(Number(pid) > 0){

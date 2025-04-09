@@ -67,6 +67,7 @@ const occurrenceEditorChecklistVoucherModule = {
     setup() {
         const { showNotification } = useCore();
         const baseStore = useBaseStore();
+        const checklistStore = useChecklistStore();
         const occurrenceStore = useOccurrenceStore();
 
         const checklistOptions = Vue.shallowReactive([]);
@@ -76,6 +77,7 @@ const occurrenceEditorChecklistVoucherModule = {
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const selectedChecklist = Vue.ref(null);
+        const symbUid = baseStore.getSymbUid;
         const userChecklistArr = Vue.ref([]);
         const voucherChecklistArr = Vue.computed(() => occurrenceStore.getChecklistArr);
 
@@ -144,17 +146,9 @@ const occurrenceEditorChecklistVoucherModule = {
         }
 
         function setAccountChecklists() {
-            const formData = new FormData();
-            formData.append('action', 'getChecklistListByUserRights');
-            fetch(checklistApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.json().then((resObj) => {
-                    userChecklistArr.value = resObj;
-                    setChecklistOptions();
-                });
+            checklistStore.getChecklistListByUid(symbUid, (checklistData) => {
+                userChecklistArr.value = checklistData;
+                setChecklistOptions();
             });
         }
 

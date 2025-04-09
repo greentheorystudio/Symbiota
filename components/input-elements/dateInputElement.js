@@ -1,5 +1,13 @@
 const dateInputElement = {
     props: {
+        allowFutureDates: {
+            type: Boolean,
+            default: false
+        },
+        allowPastDates: {
+            type: Boolean,
+            default: true
+        },
         definition: {
             type: Object,
             default: null
@@ -103,8 +111,8 @@ const dateInputElement = {
         }
 
         function processValueChange(value) {
-            dateData.value = Object.assign({}, parseDate(value));
             if(value){
+                dateData.value = Object.assign({}, parseDate(value));
                 if(!dateData.value['year']){
                     showNotification('negative', 'Unable to interpret the date entered. Please use one of the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy.');
                 }
@@ -112,8 +120,11 @@ const dateInputElement = {
                     const testDate = new Date(dateData.value['year'], (dateData.value['month'] - 1), dateData.value['day']);
                     const today = new Date();
                     const diffYears = Math.abs(Math.round((((today.getTime() - testDate.getTime()) / 1000) / (60 * 60 * 24)) / 365.25));
-                    if(testDate > today){
+                    if(!props.allowFutureDates && testDate > today){
                         showNotification('negative', 'Date cannot be in the future.');
+                    }
+                    else if(!props.allowPastDates && testDate < today){
+                        showNotification('negative', 'Date cannot be in the past.');
                     }
                     else if(diffYears > 99){
                         popupText.value = 'That date is ' + diffYears.toString() + ' years ago, are you sure it\'s correct?';
@@ -123,6 +134,10 @@ const dateInputElement = {
                         emitValue();
                     }
                 }
+            }
+            else{
+                dateData.value = null;
+                emitValue();
             }
         }
 

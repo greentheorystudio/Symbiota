@@ -136,15 +136,14 @@ class Projects{
         return $retArr;
     }
 
-    public function getProjectListByUserRights(): array
+    public function getProjectListByUid($uid): array
     {
         $retArr = array();
-        $cArr = array();
-        if(array_key_exists('ProjAdmin',$GLOBALS['USER_RIGHTS'])) {
-            $cArr = $GLOBALS['USER_RIGHTS']['ProjAdmin'];
-        }
-        if($cArr){
-            $sql = 'SELECT pid, projname FROM fmprojects WHERE pid IN(' . implode(',', $cArr) . ') ORDER BY projname ';
+        if((int)$uid > 0){
+            $sql = 'SELECT DISTINCT p.pid, p.projname '.
+                'FROM userroles AS r LEFT JOIN fmprojects AS p ON r.tablepk = p.pid '.
+                'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ProjAdmin" '.
+                'ORDER BY p.projname ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

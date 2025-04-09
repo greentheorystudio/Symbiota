@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ReferenceManager.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
 $uid = array_key_exists('uid',$_REQUEST)?(int)$_REQUEST['uid']:0;
@@ -15,82 +16,84 @@ $field = array_key_exists('field',$_REQUEST)?$_REQUEST['field']:'';
 $id = array_key_exists('id',$_REQUEST)?(int)$_REQUEST['id']:0;
 $type = array_key_exists('type',$_REQUEST)?$_REQUEST['type']:'';
 
-$refManager = new ReferenceManager();
-if($action === 'addauthor'){
-	$refManager->addAuthor($refId,$refAuthId);
-	$authArr = $refManager->getRefAuthArr($refId);
-	$listHtml = '';
-	if($authArr){
-		$listHtml .= '<ul>';
-		foreach($authArr as $k => $v){
-			$listHtml .= '<li>';
-			$listHtml .= '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
-			$listHtml .= ' <button style="margin:0;padding:2px;" type="button" onclick="deleteRefAuthor('.$k.');" title="Delete author"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
-			$listHtml .= '</li>';
-		}
-		$listHtml .= '</ul>';
-	}
-	else{
-		$listHtml .= '<div><b>There are currently no authors connected with this reference.</b></div>';
-	}
-	echo $listHtml;
-}
-if($action === 'createauthor'){
-	$refManager->createAuthor($firstName,$middleName,$lastName);
-	$refAuthId = $refManager->getRefAuthId();
-	$refManager->addAuthor($refId,$refAuthId);
-	$authArr = $refManager->getRefAuthArr($refId);
-	$listHtml = '';
-	if($authArr){
-		$listHtml .= '<ul>';
-		foreach($authArr as $k => $v){
-			$listHtml .= '<li>';
-			$listHtml .= '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
-			$listHtml .= ' <button style="margin:0;padding:2px;" type="button" onclick="deleteRefAuthor('.$k.');" title="Delete author"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
-			$listHtml .= '</li>';
-		}
-		$listHtml .= '</ul>';
-	}
-	else{
-		$listHtml .= '<div><b>There are currently no authors connected with this reference.</b></div>';
-	}
-	echo $listHtml;
-}
-if($action === 'deleterefauthor'){
-	$refManager->deleteRefAuthor($refId,$refAuthId);
-	$authArr = $refManager->getRefAuthArr($refId);
-	$listHtml = '';
-	if($authArr){
-		$listHtml .= '<ul>';
-		foreach($authArr as $k => $v){
-			$listHtml .= '<li>';
-			$listHtml .= '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
-			$listHtml .= ' <button style="margin:0;padding:2px;" type="button" onclick="deleteRefAuthor('.$k.');" title="Delete author"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
-			$listHtml .= '</li>';
-		}
-		$listHtml .= '</ul>';
-	}
-	else{
-		$listHtml .= '<div><b>There are currently no authors connected with this reference.</b></div>';
-	}
-	echo $listHtml;
-}
-if($action === 'deletereflink'){
-	$refManager->deleteRefLink($refId,$table,$field,$id);
-	$authArr = $refManager->getRefAuthArr($refId);
-	$listHtml = '';
-	if($authArr){
-		$listHtml .= '<ul>';
-		foreach($authArr as $k => $v){
-			$onClick = "deleteRefLink('".$table."','".$field."','".$type."',".$k. ');';
-			$listHtml .= '<li>';
-			$listHtml .= $v;
-			$listHtml .= '</li>';
-		}
-		$listHtml .= '</ul>';
-	}
-	else{
-		$listHtml .= 'There are no '.$type.' linked with this reference';
-	}
-	echo $listHtml;
+if(SanitizerService::validateInternalRequest()){
+    $refManager = new ReferenceManager();
+    if($action === 'addauthor'){
+        $refManager->addAuthor($refId,$refAuthId);
+        $authArr = $refManager->getRefAuthArr($refId);
+        $listHtml = '';
+        if($authArr){
+            $listHtml .= '<ul>';
+            foreach($authArr as $k => $v){
+                $listHtml .= '<li>';
+                $listHtml .= '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
+                $listHtml .= ' <button style="margin:0;padding:2px;" type="button" onclick="deleteRefAuthor('.$k.');" title="Delete author"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
+                $listHtml .= '</li>';
+            }
+            $listHtml .= '</ul>';
+        }
+        else{
+            $listHtml .= '<div><b>There are currently no authors connected with this reference.</b></div>';
+        }
+        echo $listHtml;
+    }
+    if($action === 'createauthor'){
+        $refManager->createAuthor($firstName,$middleName,$lastName);
+        $refAuthId = $refManager->getRefAuthId();
+        $refManager->addAuthor($refId,$refAuthId);
+        $authArr = $refManager->getRefAuthArr($refId);
+        $listHtml = '';
+        if($authArr){
+            $listHtml .= '<ul>';
+            foreach($authArr as $k => $v){
+                $listHtml .= '<li>';
+                $listHtml .= '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
+                $listHtml .= ' <button style="margin:0;padding:2px;" type="button" onclick="deleteRefAuthor('.$k.');" title="Delete author"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
+                $listHtml .= '</li>';
+            }
+            $listHtml .= '</ul>';
+        }
+        else{
+            $listHtml .= '<div><b>There are currently no authors connected with this reference.</b></div>';
+        }
+        echo $listHtml;
+    }
+    if($action === 'deleterefauthor'){
+        $refManager->deleteRefAuthor($refId,$refAuthId);
+        $authArr = $refManager->getRefAuthArr($refId);
+        $listHtml = '';
+        if($authArr){
+            $listHtml .= '<ul>';
+            foreach($authArr as $k => $v){
+                $listHtml .= '<li>';
+                $listHtml .= '<a href="authoreditor.php?authid='.$k.'" target="_blank">'.$v.'</a>';
+                $listHtml .= ' <button style="margin:0;padding:2px;" type="button" onclick="deleteRefAuthor('.$k.');" title="Delete author"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></button>';
+                $listHtml .= '</li>';
+            }
+            $listHtml .= '</ul>';
+        }
+        else{
+            $listHtml .= '<div><b>There are currently no authors connected with this reference.</b></div>';
+        }
+        echo $listHtml;
+    }
+    if($action === 'deletereflink'){
+        $refManager->deleteRefLink($refId,$table,$field,$id);
+        $authArr = $refManager->getRefAuthArr($refId);
+        $listHtml = '';
+        if($authArr){
+            $listHtml .= '<ul>';
+            foreach($authArr as $k => $v){
+                $onClick = "deleteRefLink('".$table."','".$field."','".$type."',".$k. ');';
+                $listHtml .= '<li>';
+                $listHtml .= $v;
+                $listHtml .= '</li>';
+            }
+            $listHtml .= '</ul>';
+        }
+        else{
+            $listHtml .= 'There are no '.$type.' linked with this reference';
+        }
+        echo $listHtml;
+    }
 }

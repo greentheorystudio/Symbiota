@@ -1104,3 +1104,14 @@ body.processing .loadingModal {
 .occurrence-individual-page-info-panel {
 	height: 800px;
 }
+.login-container {
+	width: 30%;
+}
+.human-validator-canvas {
+	border: 1px solid #000;
+	height: 50px;
+	width: 400px;
+}
+.create-account-container {
+	width: 90%;
+}

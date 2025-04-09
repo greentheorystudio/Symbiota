@@ -66,7 +66,10 @@ const passwordInput = {
             pwd2Ref,
             passwordRules: [
                 val => (val !== null && val !== '') || 'Required',
-                val => (val && val.length > 6) || 'Password must be longer than six characters',
+                val => (val && /[A-Z]/.test(val)) || 'Password must include an uppercase letter',
+                val => (val && /[a-z]/.test(val)) || 'Password must include a lowercase letter',
+                val => (val && /[0-9~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g.test(val)) || 'Password must include a number or special character',
+                val => (val && val.length >= 12) || 'Password must be at least 12 characters',
                 () => validatePasswords()
             ],
             formHasErrors,

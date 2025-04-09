@@ -13,11 +13,6 @@ header('X-Frame-Options: SAMEORIGIN');
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <style>
-            .create-account-container {
-                width: 90%;
-            }
-        </style>
         <script type="text/javascript" src="../js/external/tiny_mce/tiny_mce.js"></script>
     </head>
     <body>
@@ -38,13 +33,13 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-tab-panels v-model="tab">
                         <q-tab-panel name="checklists">
                             <?php include_once(__DIR__ . '/../checklists/checklistadminmeta.php'); ?>
-                            <account-checklist-project-list :checklist-arr="checklistArr" :project-arr="projectArr"></account-checklist-project-list>
+                            <account-checklist-project-list></account-checklist-project-list>
                         </q-tab-panel>
                         <q-tab-panel name="occurrence">
-                            <view-profile-occurrence-module :account-info="accountInfo"></view-profile-occurrence-module>
+                            <view-profile-occurrence-module></view-profile-occurrence-module>
                         </q-tab-panel>
                         <q-tab-panel name="account">
-                            <view-profile-account-module :account-info="accountInfo" :checklist-arr="checklistArr" :project-arr="projectArr" :uid="uid" @update:account-information="updateAccountObj"></view-profile-account-module>
+                            <view-profile-account-module></view-profile-account-module>
                         </q-tab-panel>
                     </q-tab-panels>
                 </q-card>
@@ -54,7 +49,11 @@ header('X-Frame-Options: SAMEORIGIN');
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/user.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionCatalogNumberQuickSearch.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -65,75 +64,26 @@ header('X-Frame-Options: SAMEORIGIN');
         <script type="text/javascript">
             const viewProfileModule = Vue.createApp({
                 components: {
-                    'view-profile-account-module': viewProfileAccountModule,
                     'account-checklist-project-list': accountChecklistProjectList,
+                    'view-profile-account-module': viewProfileAccountModule,
                     'view-profile-occurrence-module': viewProfileOccurrenceModule
                 },
                 setup() {
-                    const store = useBaseStore();
-                    const accountInfo = Vue.ref(null);
-                    const checklistArr = Vue.ref([]);
-                    const clientRoot = store.getClientRoot;
-                    const projectArr = Vue.ref([]);
+                    const baseStore = useBaseStore();
+                    const userStore = useUserStore();
+
+                    const accountInfo = Vue.computed(() => userStore.getUserData);
+                    const clientRoot = baseStore.getClientRoot;
                     const tab = Vue.ref('account');
-                    const uid = store.getSymbUid;
-                    const validUser = store.getValidUser;
-
-                    function setAccountChecklists() {
-                        const formData = new FormData();
-                        formData.append('action', 'getChecklistListByUserRights');
-                        fetch(checklistApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            response.json().then((resObj) => {
-                                checklistArr.value = resObj;
-                            });
-                        });
-                    }
-
-                    function setAccountInfo() {
-                        const formData = new FormData();
-                        formData.append('uid', uid);
-                        formData.append('action', 'getUserByUid');
-                        fetch(profileApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            response.json().then((resObj) => {
-                                accountInfo.value = resObj;
-                            });
-                        });
-                    }
-
-                    function setAccountProjects() {
-                        const formData = new FormData();
-                        formData.append('action', 'getProjectListByUserRights');
-                        fetch(projectApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            response.json().then((resObj) => {
-                                projectArr.value = resObj;
-                            });
-                        });
-                    }
-
-                    function updateAccountObj(obj) {
-                        accountInfo.value = Object.assign({}, obj);
-                    }
+                    const uid = baseStore.getSymbUid;
+                    const validUser = baseStore.getValidUser;
 
                     Vue.onMounted(() => {
                         if(validUser){
                             tab.value = 'checklists';
                         }
                         if(Number(uid) > 0){
-                            setAccountInfo();
-                            setAccountChecklists();
-                            setAccountProjects();
+                            userStore.setUser(uid);
                         }
                         else{
                             window.location.href = clientRoot + '/index.php';
@@ -142,12 +92,9 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     return {
                         accountInfo,
-                        checklistArr,
-                        projectArr,
                         tab,
                         uid,
-                        validUser,
-                        updateAccountObj
+                        validUser
                     }
                 }
             });

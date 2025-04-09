@@ -1,28 +1,32 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/Configurations.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $jsonData = array_key_exists('data',$_REQUEST)?$_REQUEST['data']:'';
 $fileName = array_key_exists('filename',$_REQUEST)?$_REQUEST['filename']:'';
-if($jsonData){
-    $jsonData = str_replace('%<amp>%', '&', $jsonData);
-}
-if($fileName){
-    $fileName = str_replace('%<amp>%', '&', $fileName);
-}
 
-$confManager = new Configurations();
+if(SanitizerService::validateInternalRequest()){
+    if($jsonData){
+        $jsonData = str_replace('%<amp>%', '&', $jsonData);
+    }
+    if($fileName){
+        $fileName = str_replace('%<amp>%', '&', $fileName);
+    }
 
-if($GLOBALS['IS_ADMIN']){
-    if($action === 'saveMapServerConfig' && $jsonData){
-        echo $confManager->saveMapServerConfig($jsonData);
-    }
-    elseif($action === 'uploadMapDataFile'){
-        echo $confManager->uploadMapDataFile();
-    }
-    elseif($action === 'deleteMapDataFile'){
-        echo $confManager->deleteMapDataFile($fileName);
+    $confManager = new Configurations();
+
+    if($GLOBALS['IS_ADMIN']){
+        if($action === 'saveMapServerConfig' && $jsonData){
+            echo $confManager->saveMapServerConfig($jsonData);
+        }
+        elseif($action === 'uploadMapDataFile'){
+            echo $confManager->uploadMapDataFile();
+        }
+        elseif($action === 'deleteMapDataFile'){
+            echo $confManager->deleteMapDataFile($fileName);
+        }
     }
 }
