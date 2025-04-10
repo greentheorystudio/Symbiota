@@ -107,7 +107,12 @@ const fieldMapperPopup = {
                 {value: 'unmapped', label: 'UNMAPPED'}
             ];
             const availableFieldArr = props.targetFields.filter(targetField => {
-                return !props.fieldMapping.hasOwnProperty(targetField.value);
+                if(props.mappingType === 'occurrence' || props.mappingType === 'flat-file'){
+                    return (!primaryFieldMapping.value.hasOwnProperty(targetField.value) && !secondaryFieldMapping.value.hasOwnProperty(targetField.value));
+                }
+                else{
+                    return !props.fieldMapping.hasOwnProperty(targetField.value);
+                }
             });
             return initialArr.concat(availableFieldArr);
         });
