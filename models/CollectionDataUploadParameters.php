@@ -138,6 +138,9 @@ class CollectionDataUploadParameters {
             foreach($fieldMappingData['occurrence'] as $source => $target){
                 $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
             }
+            foreach($fieldMappingData['secondary'] as $source => $target){
+                $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
+            }
             foreach($fieldMappingData['determination'] as $source => $target){
                 $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
             }

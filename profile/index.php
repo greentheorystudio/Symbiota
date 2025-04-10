@@ -3,15 +3,15 @@ include_once(__DIR__ . '/../config/symbbase.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
-$uid = array_key_exists('uid',$_REQUEST)?(int)$_REQUEST['uid']:0;
-$confirmationCode = array_key_exists('confirmationcode',$_REQUEST)?htmlspecialchars($_REQUEST['confirmationcode']):'';
+$uid = array_key_exists('uid', $_REQUEST) ? (int)$_REQUEST['uid'] : 0;
+$confirmationCode = array_key_exists('confirmationcode', $_REQUEST) ? htmlspecialchars($_REQUEST['confirmationcode']) : '';
 
 $refUrl = '';
 if(strpos($_SERVER['REQUEST_URI'], 'refurl=')){
-    $fullRequest = str_replace('%22', '"',$_SERVER['REQUEST_URI']);
+    $fullRequest = str_replace('%22', '"', $_SERVER['REQUEST_URI']);
     $refUrl = substr($fullRequest, strpos($fullRequest, 'refurl=') + 7);
 }
-elseif(array_key_exists('refurl',$_REQUEST)){
+elseif(array_key_exists('refurl', $_REQUEST)){
     $refUrl = $_REQUEST['refurl'];
 }
 ?>
@@ -23,6 +23,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="<?php echo $GLOBALS['DEFAULT_TITLE']; ?> Login">
         <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <script type="text/javascript">
@@ -43,7 +44,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                         <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
                         <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm"></q-checkbox>
                         <div class="row justify-end q-pr-md">
-                            <q-btn color="secondary" @click="processLogin();" label="Login" dense></q-btn>
+                            <q-btn color="primary" @click="processLogin();" label="Login" dense></q-btn>
                         </div>
                     </q-card-section>
                     <q-separator size="1px" color="grey-8"></q-separator>
@@ -67,7 +68,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                                 </span>
                                 <template v-if="emailConfigured">
                                     <span class="row justify-center">
-                                        <a class="anchor-class text-primary cursor-pointer" @click="resetPassword();">Reset password</a>
+                                        <div class="anchor-class text-primary cursor-pointer" @click="resetPassword();">Reset password</div>
                                     </span>
                                 </template>
                             </div>
@@ -80,7 +81,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                                     </span>
                                     <template v-if="emailConfigured">
                                         <span class="row justify-center">
-                                            <a class="anchor-class text-primary cursor-pointer" @click="retrieveUsernameWindow = !retrieveUsernameWindow">Retrieve username</a>
+                                            <div class="anchor-class text-primary cursor-pointer" @click="retrieveUsernameWindow = !retrieveUsernameWindow">Retrieve username</div>
                                         </span>
                                     </template>
                                 </div>
@@ -114,6 +115,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                     const baseStore = useBaseStore();
 
                     const adminEmail = baseStore.getAdminEmail;
+                    const clientRoot = baseStore.getClientRoot;
                     const confirmationCode = CONFIRMATION_CODE;
                     const email = Vue.ref(null);
                     const emailConfigured = baseStore.getEmailConfigured;
@@ -167,7 +169,7 @@ elseif(array_key_exists('refurl',$_REQUEST)){
                                 response.text().then((res) => {
                                     if(Number(res) === 1){
                                         if(refUrl === '' || refUrl.startsWith('http') || refUrl.includes('newprofile.php')){
-                                            window.location.href = CLIENT_ROOT + '/index.php';
+                                            window.location.href = clientRoot + '/index.php';
                                         }
                                         else{
                                             window.location.href = refUrl;
