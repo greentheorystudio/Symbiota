@@ -11,6 +11,7 @@ header('X-Frame-Options: SAMEORIGIN');
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile</title>
+        <meta name="description" content="<?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -47,15 +48,15 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-card-section>
                         <human-validator ref="humanValidationInputRef"></human-validator>
                         <div class="row justify-end q-mt-md">
-                            <q-btn color="secondary" @click="createAccount();" label="Create Account" dense />
+                            <q-btn color="primary" @click="createAccount();" label="Create Account" dense />
                         </div>
                     </q-card-section>
                 </q-card>
             </div>
         </div>
         <?php
-        include_once(__DIR__ . '/../footer.php');
         include_once(__DIR__ . '/../config/footer-includes.php');
+        include_once(__DIR__ . '/../footer.php');
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
