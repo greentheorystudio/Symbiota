@@ -1,7 +1,7 @@
 <div id="topNavigation">
     <template v-if="windowWidth < 1440">
         <q-toolbar class="q-pa-md justify-start horizontalDropDown">
-            <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu">
+            <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Menu">
                 <q-menu>
                     <q-list dense>
                         <template v-for="item in navBarData">
