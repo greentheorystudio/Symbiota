@@ -28,8 +28,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 </div>
             </div>
         </div>
-        <div class="col-6 row justify-end q-col-gutter-sm">
-            <div class="col-4 column">
+        <div class="col-12 col-sm-6 row justify-end q-col-gutter-md">
+            <div class="col-12 col-sm-4 column q-gutter-md">
                 <div>
                     <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Maps.php')">
                         The Indian River Lagoon
@@ -61,7 +61,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     </a>
                 </div>
             </div>
-            <div class="col-4 column">
+            <div class="col-12 col-sm-4 column q-gutter-md">
                 <div>
                     <a class="text-white login-link text-h6" :href="(clientRoot + '/index.php')">
                         Home
