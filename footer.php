@@ -12,7 +12,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     <q-card flat bordered class="full-width black-border bg-white">
                         <q-card-section class="q-pa-xs">
                             <a href="https://naturalhistory.si.edu/research/smithsonian-marine-station" target="_blank">
-                                <q-img height="100px" fit="contain" :src="(clientRoot + '/content/imglib/layout/Smithsonian-Logo.png')"></q-img>
+                                <q-img height="100px" fit="contain" :src="(clientRoot + '/content/imglib/layout/Smithsonian-Logo.png')" alt="Smithsonian home"></q-img>
                             </a>
                         </q-card-section>
                     </q-card>
@@ -21,7 +21,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     <q-card flat bordered class="full-width black-border bg-white">
                         <q-card-section class="q-pa-xs">
                             <a href="https://onelagoon.org/" target="_blank">
-                                <q-img height="100px" fit="contain" :src="(clientRoot + '/content/imglib/layout/one_lagoon_logo.png')"></q-img>
+                                <q-img height="100px" fit="contain" :src="(clientRoot + '/content/imglib/layout/one_lagoon_logo.png')" alt="One Lagoon home"></q-img>
                             </a>
                         </q-card-section>
                     </q-card>
