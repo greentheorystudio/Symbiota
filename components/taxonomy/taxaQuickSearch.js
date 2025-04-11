@@ -11,7 +11,7 @@ const taxaQuickSearch = {
                 <div v-if="quicksearchLabel">
                     <span class="text-h6 text-bold">{{ quicksearchLabel }}</span>
                 </div>
-                <div class="q-mb-xs row justify-between">
+                <div class="q-mb-md row justify-between q-gutter-md">
                     <div>
                         <q-btn-toggle v-model="selectedTaxonType" :options="taxonTypeOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" @update:model-value="processTaxonTypeChange"></q-btn-toggle>
                     </div>
