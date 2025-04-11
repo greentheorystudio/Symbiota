@@ -26,9 +26,9 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 logout() {
                     const url = profileApiUrl + '?action=logout';
                     fetch(url)
-                        .then(() => {
-                            window.location.href = CLIENT_ROOT + '/index.php';
-                        })
+                    .then(() => {
+                        window.location.href = CLIENT_ROOT + '/index.php';
+                    })
                 }
             }
         });

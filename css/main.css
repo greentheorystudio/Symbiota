@@ -751,7 +751,7 @@ ol.report-caterories li p.heading {
 }
 
 .login-bar-wrapper {
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.7);
 	padding-left: 20px;
 	display: flex;
 	justify-content: flex-start;
