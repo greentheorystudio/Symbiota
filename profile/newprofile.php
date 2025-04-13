@@ -11,7 +11,7 @@ header('X-Frame-Options: SAMEORIGIN');
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile</title>
-        <meta name="description" content="<?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile">
+        <meta name="description" content="New User Profile">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
