@@ -23,6 +23,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Login</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Login">
         <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <script type="text/javascript">
@@ -40,10 +41,10 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                 <q-card class="login-container">
                     <q-card-section class="bg-indigo-1 column">
                         <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense></q-input>
-                        <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
+                        <q-input outlined v-model="password" type="password" autocomplete="current-password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
                         <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm"></q-checkbox>
                         <div class="row justify-end q-pr-md">
-                            <q-btn color="secondary" @click="processLogin();" label="Login" dense></q-btn>
+                            <q-btn color="primary" @click="processLogin();" label="Login" dense></q-btn>
                         </div>
                     </q-card-section>
                     <q-separator size="1px" color="grey-8"></q-separator>
@@ -67,7 +68,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                                 </span>
                                 <template v-if="emailConfigured">
                                     <span class="row justify-center">
-                                        <a class="anchor-class text-primary cursor-pointer" @click="resetPassword();">Reset password</a>
+                                        <div class="anchor-class text-primary cursor-pointer" @click="resetPassword();">Reset password</div>
                                     </span>
                                 </template>
                             </div>
@@ -80,7 +81,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                                     </span>
                                     <template v-if="emailConfigured">
                                         <span class="row justify-center">
-                                            <a class="anchor-class text-primary cursor-pointer" @click="retrieveUsernameWindow = !retrieveUsernameWindow">Retrieve username</a>
+                                            <div class="anchor-class text-primary cursor-pointer" @click="retrieveUsernameWindow = !retrieveUsernameWindow">Retrieve username</div>
                                         </span>
                                     </template>
                                 </div>

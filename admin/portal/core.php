@@ -164,7 +164,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
         <div class="field-block">
             <span class="field-label">Password:  <button type="button" onclick="showPassword('SMTP_PASSWORD');">Show</button></span>
             <span class="field-elem">
-                <input type="password" id="SMTP_PASSWORD" value="<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('SMTP_PASSWORD','<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>',false);" autocomplete="new-password" />
+                <input type="password" autocomplete="new-password" id="SMTP_PASSWORD" value="<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('SMTP_PASSWORD','<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>',false);" />
             </span>
         </div>
     </fieldset>
@@ -215,7 +215,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
         <div class="field-block">
             <span class="field-label">Password:  <button type="button" onclick="showPassword('GBIF_PASSWORD');">Show</button></span>
             <span class="field-elem">
-                <input type="password" id="GBIF_PASSWORD" value="<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GBIF_PASSWORD','<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>',false);" autocomplete="new-password" />
+                <input type="password" autocomplete="new-password" id="GBIF_PASSWORD" value="<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GBIF_PASSWORD','<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>',false);" />
             </span>
         </div>
     </fieldset>

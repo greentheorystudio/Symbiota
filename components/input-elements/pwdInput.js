@@ -6,12 +6,12 @@ const passwordInput = {
         }
     },
     template: `
-        <q-input ref="pwdRef" outlined bottom-slots v-model="passwordValue" type="password" label="Password" bg-color="white" class="col-4" dense lazy-rules :rules="passwordRules" @update:model-value="processChange">
+        <q-input ref="pwdRef" outlined bottom-slots v-model="passwordValue" type="password" autocomplete="new-password" label="Password" bg-color="white" class="col-4" dense lazy-rules :rules="passwordRules" @update:model-value="processChange">
             <template v-slot:hint>
                 Required
             </template>
         </q-input>
-        <q-input ref="pwd2Ref" outlined bottom-slots v-model="confirmationPasswordValue" type="password" label="Confirm Password" bg-color="white" class="col-4" dense lazy-rules :rules="passwordRules">
+        <q-input ref="pwd2Ref" outlined bottom-slots v-model="confirmationPasswordValue" type="password" autocomplete="new-password" label="Confirm Password" bg-color="white" class="col-4" dense lazy-rules :rules="passwordRules">
             <template v-slot:hint>
                 Required
             </template>

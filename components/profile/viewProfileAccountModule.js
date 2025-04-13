@@ -1,7 +1,7 @@
 const viewProfileAccountModule = {
     template: `
         <div class="row justify-center q-mt-md">
-            <template v-if="accountInfo.validated !== 1">
+            <template v-if="Number(accountInfo.validated) !== 1">
                 <q-card class="create-account-container">
                     <q-card-section>
                         <div class="row justify-between">
