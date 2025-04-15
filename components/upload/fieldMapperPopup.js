@@ -133,7 +133,7 @@ const fieldMapperPopup = {
             const availableFieldArr = props.targetFields.filter(targetField => {
                 let returnVal;
                 if(props.mappingType === 'occurrence' || props.mappingType === 'flat-file'){
-                    returnVal = (!primaryFieldMapping.value.hasOwnProperty(targetField.value) && !secondaryFieldMapping.value.hasOwnProperty(targetField.value));
+                    returnVal = ((!primaryFieldMapping.value.hasOwnProperty(targetField.value) || primaryFieldMapping.value[targetField.value] === 'unmapped') && (!secondaryFieldMapping.value.hasOwnProperty(targetField.value) || secondaryFieldMapping.value[targetField.value] === 'unmapped'));
                 }
                 else{
                     returnVal = !props.fieldMapping.hasOwnProperty(targetField.value);
