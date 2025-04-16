@@ -66,6 +66,7 @@ $headerMapBase = array(
     'datageneralizations'=>'Data Generalizations',
     'eventdate'=>'Date',
     'dateentered'=>'Date Entered',
+    'dateidentified'=>'Date Identified',
     'datelastmodified'=>'Date Last Modified',
     '`day`'=>'Day',
     'dbpk'=>'dbpk',
