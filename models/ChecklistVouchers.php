@@ -6,14 +6,14 @@ class ChecklistVouchers{
 	private $conn;
 
     private $fields = array(
-        "vid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "clid" => array("dataType" => "number", "length" => 10),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "editornotes" => array("dataType" => "string", "length" => 50),
-        "preferredimage" => array("dataType" => "number", "length" => 11),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'vid' => array('dataType' => 'number', 'length' => 10),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'clid' => array('dataType' => 'number', 'length' => 10),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'editornotes' => array('dataType' => 'string', 'length' => 50),
+        'preferredimage' => array('dataType' => 'number', 'length' => 11),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

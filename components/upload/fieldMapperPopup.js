@@ -130,17 +130,7 @@ const fieldMapperPopup = {
             const initialArr = [
                 {value: 'unmapped', label: 'UNMAPPED'}
             ];
-            const availableFieldArr = props.targetFields.filter(targetField => {
-                let returnVal;
-                if(props.mappingType === 'occurrence' || props.mappingType === 'flat-file'){
-                    returnVal = ((!primaryFieldMapping.value.hasOwnProperty(targetField.value) || primaryFieldMapping.value[targetField.value] === 'unmapped') && (!secondaryFieldMapping.value.hasOwnProperty(targetField.value) || secondaryFieldMapping.value[targetField.value] === 'unmapped'));
-                }
-                else{
-                    returnVal = !props.fieldMapping.hasOwnProperty(targetField.value);
-                }
-                return returnVal;
-            });
-            return initialArr.concat(availableFieldArr);
+            return initialArr.concat(props.targetFields);
         });
 
         Vue.watch(contentRef, () => {

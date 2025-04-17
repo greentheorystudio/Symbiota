@@ -6,16 +6,16 @@ class UploadMofTemp{
 	private $conn;
 
     private $fields = array(
-        "upmfid" => array("dataType" => "number", "length" => 50),
-        "collid" => array("dataType" => "number", "length" => 10),
-        "dbpk" => array("dataType" => "string", "length" => 150),
-        "eventdbpk" => array("dataType" => "string", "length" => 150),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "eventid" => array("dataType" => "number", "length" => 10),
-        "field" => array("dataType" => "string", "length" => 250),
-        "datavalue" => array("dataType" => "string", "length" => 1000),
-        "enteredby" => array("dataType" => "string", "length" => 250),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'upmfid' => array('dataType' => 'number', 'length' => 50),
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'dbpk' => array('dataType' => 'string', 'length' => 150),
+        'eventdbpk' => array('dataType' => 'string', 'length' => 150),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'eventid' => array('dataType' => 'number', 'length' => 10),
+        'field' => array('dataType' => 'string', 'length' => 250),
+        'datavalue' => array('dataType' => 'string', 'length' => 1000),
+        'enteredby' => array('dataType' => 'string', 'length' => 250),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

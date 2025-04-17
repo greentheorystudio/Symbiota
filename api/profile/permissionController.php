@@ -17,4 +17,20 @@ if($action && SanitizerService::validateInternalRequest()){
         }
         echo json_encode($permissions->validatePermission($permissionVal, $key));
     }
+    elseif($action === 'getCurrentUserRights'){
+        echo json_encode($permissions->getCurrentUserRights());
+    }
+    elseif($action === 'getPermissionsByUid' && array_key_exists('uid', $_POST)){
+        echo json_encode($permissions->getPermissionsByUid($_POST['uid']), JSON_FORCE_OBJECT);
+    }
+    elseif($action === 'deleteUserPermission' && array_key_exists('uid', $_POST) && array_key_exists('permission', $_POST)){
+        echo $permissions->deletePermission($_POST['permission'], $_POST['uid']);
+    }
+    elseif($action === 'deleteAllUserPermissions' && array_key_exists('uid', $_POST)){
+        echo $permissions->deleteAllPermissions($_POST['uid']);
+    }
+    elseif($action === 'addUserPermissions' && array_key_exists('uid', $_POST) && array_key_exists('permissionArr', $_POST)){
+        $expiration = $_POST['expiration'] ?? null;
+        echo $permissions->addPermissions(json_decode($_POST['permissionArr'], false), $_POST['uid'], $expiration);
+    }
 }

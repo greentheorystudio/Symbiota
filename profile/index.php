@@ -22,6 +22,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Login</title>
+        <meta name="description" content="Login">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Login">
         <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -108,11 +109,17 @@ elseif(array_key_exists('refurl', $_REQUEST)){
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/user.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const loginModule = Vue.createApp({
                 setup() {
                     const { showNotification } = useCore();
                     const baseStore = useBaseStore();
+                    const userStore = useUserStore();
 
                     const adminEmail = baseStore.getAdminEmail;
                     const clientRoot = baseStore.getClientRoot;
@@ -188,22 +195,13 @@ elseif(array_key_exists('refurl', $_REQUEST)){
 
                     function resetPassword() {
                         if(username.value){
-                            const formData = new FormData();
-                            formData.append('username', username.value);
-                            formData.append('action', 'resetPassword');
-                            fetch(profileApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                response.text().then((res) => {
-                                    if(Number(res) === 1){
-                                        showNotification('positive','Your new password has been emailed to the address associated with your account. Please check your junk folder if no email appears in your inbox.');
-                                    }
-                                    else{
-                                        showNotification('negative','There was an error resetting your password.');
-                                    }
-                                });
+                            userStore.resetPassword(username.value, false, (res) => {
+                                if(Number(res) === 1){
+                                    showNotification('positive','Your new password has been emailed to the address associated with your account. Please check your junk folder if no email appears in your inbox.');
+                                }
+                                else{
+                                    showNotification('negative','There was an error resetting your password.');
+                                }
                             });
                         }
                         else{

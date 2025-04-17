@@ -7,14 +7,14 @@ class TaxonDescriptionStatements{
 	private $conn;
 
     private $fields = array(
-        "tdsid" => array("dataType" => "number", "length" => 10),
-        "tdbid" => array("dataType" => "number", "length" => 10),
-        "heading" => array("dataType" => "string", "length" => 75),
-        "statement" => array("dataType" => "text", "length" => 0),
-        "displayheader" => array("dataType" => "number", "length" => 10),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "sortsequence" => array("dataType" => "number", "length" => 10),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'tdsid' => array('dataType' => 'number', 'length' => 10),
+        'tdbid' => array('dataType' => 'number', 'length' => 10),
+        'heading' => array('dataType' => 'string', 'length' => 75),
+        'statement' => array('dataType' => 'text', 'length' => 0),
+        'displayheader' => array('dataType' => 'number', 'length' => 10),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
