@@ -100,10 +100,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                                 <ul>
                                     <li><a :href="(clientRoot + '/glossary/index.php')">Manage Glossary</a></li>
                                 </ul>
-                                <div class="q-mt-md text-body1 text-bold">References</div>
-                                <ul>
-                                    <li><a :href="(clientRoot + '/references/index.php')">Manage References</a></li>
-                                </ul>
                                 <div class="q-mt-md text-body1 text-bold">Datasets</div>
                                 <ul>
                                     <li><a :href="(clientRoot + '/collections/datasets/index.php')">Manage Datasets</a></li>

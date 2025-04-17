@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/Users.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
-$action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
+$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 
 if($action && SanitizerService::validateInternalRequest()){
     $users = new Users();
@@ -53,5 +53,18 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'clearAccessTokens' && array_key_exists('uid', $_POST) && ((int)$_POST['uid'] === $GLOBALS['SYMB_UID'] || $GLOBALS['IS_ADMIN'])){
         echo $users->clearAccessTokens($_POST['uid']);
+    }
+    elseif($action === 'getUserListArr' && array_key_exists('userType', $_POST)){
+        $keywordFilter = (array_key_exists('keyword', $_POST) && $_POST['keyword']) ? $_POST['keyword'] : null;
+        echo json_encode($users->getUsers($keywordFilter, $_POST['userType']));
+    }
+    elseif($action === 'loginAsUser' && $GLOBALS['IS_ADMIN'] && array_key_exists('username', $_POST)){
+        echo $users->loginAsUser($_POST['username']);
+    }
+    elseif($action === 'deleteAllUnconfirmedUsers'){
+        echo $users->deleteAllUnconfirmedUsers();
+    }
+    elseif($action === 'validateAllUnconfirmedUsers'){
+        echo $users->validateAllUnconfirmedUsers();
     }
 }

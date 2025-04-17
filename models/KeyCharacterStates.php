@@ -7,15 +7,15 @@ class KeyCharacterStates{
 	private $conn;
 
     private $fields = array(
-        "csid" => array("dataType" => "number", "length" => 10),
-        "cid" => array("dataType" => "number", "length" => 10),
-        "characterstatename" => array("dataType" => "string", "length" => 255),
-        "description" => array("dataType" => "string", "length" => 255),
-        "infourl" => array("dataType" => "string", "length" => 255),
-        "language" => array("dataType" => "string", "length" => 45),
-        "langid" => array("dataType" => "number", "length" => 11),
-        "sortsequence" => array("dataType" => "number", "length" => 11),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'csid' => array('dataType' => 'number', 'length' => 10),
+        'cid' => array('dataType' => 'number', 'length' => 10),
+        'characterstatename' => array('dataType' => 'string', 'length' => 255),
+        'description' => array('dataType' => 'string', 'length' => 255),
+        'infourl' => array('dataType' => 'string', 'length' => 255),
+        'language' => array('dataType' => 'string', 'length' => 45),
+        'langid' => array('dataType' => 'number', 'length' => 11),
+        'sortsequence' => array('dataType' => 'number', 'length' => 11),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

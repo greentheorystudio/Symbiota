@@ -6,24 +6,24 @@ class UploadDeterminationTemp{
 	private $conn;
 
     private $fields = array(
-        "updid" => array("dataType" => "number", "length" => 50),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "collid" => array("dataType" => "number", "length" => 10),
-        "dbpk" => array("dataType" => "string", "length" => 150),
-        "identifiedby" => array("dataType" => "string", "length" => 60),
-        "dateidentified" => array("dataType" => "string", "length" => 45),
-        "dateidentifiedinterpreted" => array("dataType" => "date", "length" => 0),
-        "sciname" => array("dataType" => "string", "length" => 100),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "scientificnameauthorship" => array("dataType" => "string", "length" => 100),
-        "identificationqualifier" => array("dataType" => "string", "length" => 45),
-        "iscurrent" => array("dataType" => "number", "length" => 2),
-        "dettype" => array("dataType" => "string", "length" => 45),
-        "identificationreferences" => array("dataType" => "string", "length" => 255),
-        "identificationremarks" => array("dataType" => "string", "length" => 255),
-        "sourceidentifier" => array("dataType" => "string", "length" => 45),
-        "sortsequence" => array("dataType" => "number", "length" => 10),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'updid' => array('dataType' => 'number', 'length' => 50),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'dbpk' => array('dataType' => 'string', 'length' => 150),
+        'identifiedby' => array('dataType' => 'string', 'length' => 60),
+        'dateidentified' => array('dataType' => 'string', 'length' => 45),
+        'dateidentifiedinterpreted' => array('dataType' => 'date', 'length' => 0),
+        'sciname' => array('dataType' => 'string', 'length' => 100),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'scientificnameauthorship' => array('dataType' => 'string', 'length' => 100),
+        'identificationqualifier' => array('dataType' => 'string', 'length' => 45),
+        'iscurrent' => array('dataType' => 'number', 'length' => 2),
+        'dettype' => array('dataType' => 'string', 'length' => 45),
+        'identificationreferences' => array('dataType' => 'string', 'length' => 255),
+        'identificationremarks' => array('dataType' => 'string', 'length' => 255),
+        'sourceidentifier' => array('dataType' => 'string', 'length' => 45),
+        'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

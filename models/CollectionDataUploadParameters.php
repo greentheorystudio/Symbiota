@@ -7,15 +7,15 @@ class CollectionDataUploadParameters {
     private $conn;
 
     private $fields = array(
-        "uspid" => array("dataType" => "number", "length" => 10),
-        "collid" => array("dataType" => "number", "length" => 10),
-        "uploadtype" => array("dataType" => "number", "length" => 10),
-        "title" => array("dataType" => "string", "length" => 45),
-        "dwcpath" => array("dataType" => "text", "length" => 0),
-        "queryparamjson" => array("dataType" => "json", "length" => 0),
-        "cleansql" => array("dataType" => "json", "length" => 0),
-        "configjson" => array("dataType" => "json", "length" => 0),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'uspid' => array('dataType' => 'number', 'length' => 10),
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'uploadtype' => array('dataType' => 'number', 'length' => 10),
+        'title' => array('dataType' => 'string', 'length' => 45),
+        'dwcpath' => array('dataType' => 'text', 'length' => 0),
+        'queryparamjson' => array('dataType' => 'json', 'length' => 0),
+        'cleansql' => array('dataType' => 'json', 'length' => 0),
+        'configjson' => array('dataType' => 'json', 'length' => 0),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
 	public function __construct(){

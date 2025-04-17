@@ -7,17 +7,17 @@ class TaxonDescriptionBlocks{
 	private $conn;
 
     private $fields = array(
-        "tdbid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "caption" => array("dataType" => "string", "length" => 40),
-        "source" => array("dataType" => "string", "length" => 250),
-        "sourceurl" => array("dataType" => "string", "length" => 250),
-        "language" => array("dataType" => "string", "length" => 45),
-        "langid" => array("dataType" => "number", "length" => 11),
-        "displaylevel" => array("dataType" => "number", "length" => 10),
-        "uid" => array("dataType" => "number", "length" => 10),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'tdbid' => array('dataType' => 'number', 'length' => 10),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'caption' => array('dataType' => 'string', 'length' => 40),
+        'source' => array('dataType' => 'string', 'length' => 250),
+        'sourceurl' => array('dataType' => 'string', 'length' => 250),
+        'language' => array('dataType' => 'string', 'length' => 45),
+        'langid' => array('dataType' => 'number', 'length' => 11),
+        'displaylevel' => array('dataType' => 'number', 'length' => 10),
+        'uid' => array('dataType' => 'number', 'length' => 10),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

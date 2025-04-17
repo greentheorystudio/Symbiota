@@ -14,27 +14,27 @@ class Taxa{
 	private $conn;
 
     private $fields = array(
-        "tid" => array("dataType" => "number", "length" => 10),
-        "kingdomid" => array("dataType" => "number", "length" => 11),
-        "rankid" => array("dataType" => "number", "length" => 5),
-        "sciname" => array("dataType" => "string", "length" => 250),
-        "unitind1" => array("dataType" => "string", "length" => 1),
-        "unitname1" => array("dataType" => "string", "length" => 50),
-        "unitind2" => array("dataType" => "string", "length" => 1),
-        "unitname2" => array("dataType" => "string", "length" => 50),
-        "unitind3" => array("dataType" => "string", "length" => 15),
-        "unitname3" => array("dataType" => "string", "length" => 35),
-        "author" => array("dataType" => "string", "length" => 100),
-        "tidaccepted" => array("dataType" => "number", "length" => 10),
-        "parenttid" => array("dataType" => "number", "length" => 10),
-        "family" => array("dataType" => "string", "length" => 50),
-        "source" => array("dataType" => "string", "length" => 250),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "hybrid" => array("dataType" => "string", "length" => 50),
-        "securitystatus" => array("dataType" => "number", "length" => 10),
-        "modifieduid" => array("dataType" => "number", "length" => 10),
-        "modifiedtimestamp" => array("dataType" => "date", "length" => 0),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'kingdomid' => array('dataType' => 'number', 'length' => 11),
+        'rankid' => array('dataType' => 'number', 'length' => 5),
+        'sciname' => array('dataType' => 'string', 'length' => 250),
+        'unitind1' => array('dataType' => 'string', 'length' => 1),
+        'unitname1' => array('dataType' => 'string', 'length' => 50),
+        'unitind2' => array('dataType' => 'string', 'length' => 1),
+        'unitname2' => array('dataType' => 'string', 'length' => 50),
+        'unitind3' => array('dataType' => 'string', 'length' => 15),
+        'unitname3' => array('dataType' => 'string', 'length' => 35),
+        'author' => array('dataType' => 'string', 'length' => 100),
+        'tidaccepted' => array('dataType' => 'number', 'length' => 10),
+        'parenttid' => array('dataType' => 'number', 'length' => 10),
+        'family' => array('dataType' => 'string', 'length' => 50),
+        'source' => array('dataType' => 'string', 'length' => 250),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'hybrid' => array('dataType' => 'string', 'length' => 50),
+        'securitystatus' => array('dataType' => 'number', 'length' => 10),
+        'modifieduid' => array('dataType' => 'number', 'length' => 10),
+        'modifiedtimestamp' => array('dataType' => 'date', 'length' => 0),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -195,13 +195,13 @@ class Taxa{
     {
         $retArr = array();
         if($parentTid){
-            $sql = 'SELECT DISTINCT TID, SciName, parenttid FROM taxa '.
+            $sql = 'SELECT DISTINCT tid, sciname, parenttid FROM taxa '.
                 'WHERE TID = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ')) ';
             if($rankId){
-                $sql .= 'AND RankId = ' . (int)$rankId . ' ';
+                $sql .= 'AND rankid = ' . (int)$rankId . ' ';
             }
-            $sql .= 'ORDER BY SciName '.
+            $sql .= 'ORDER BY sciname '.
                 'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
             //echo $sql;
             if($result = $this->conn->query($sql)){
@@ -209,8 +209,8 @@ class Taxa{
                 $result->free();
                 foreach($rows as $rIndex => $row){
                     $nodeArr = array();
-                    $nodeArr['tid'] = $row['TID'];
-                    $nodeArr['sciname'] = $row['SciName'];
+                    $nodeArr['tid'] = $row['tid'];
+                    $nodeArr['sciname'] = $row['sciname'];
                     $nodeArr['parenttid'] = $row['parenttid'];
                     $retArr[] = $nodeArr;
                     unset($rows[$rIndex]);
@@ -223,24 +223,24 @@ class Taxa{
     public function getAudioCountsForTaxonomicGroup($tid, $index, $includeOcc = false): array
     {
         $retArr = array();
-        $sql = 'SELECT t.TID, t.SciName, t.RankId, COUNT(m.mediaid) AS cnt '.
+        $sql = 'SELECT t.tid, t.sciname, t.rankid, COUNT(m.mediaid) AS cnt '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
             'LEFT JOIN media AS m ON t.TID = m.tid '.
             'WHERE (te.parenttid = ' . (int)$tid . ' OR t.TID = ' . (int)$tid . ') AND t.TID = t.tidaccepted AND (m.format LIKE "audio/%" OR ISNULL(m.format)) ';
         if(!$includeOcc){
             $sql .= 'AND ISNULL(m.occid) ';
         }
-        $sql .= 'GROUP BY t.TID '.
-            'ORDER BY t.RankId, t.SciName '.
+        $sql .= 'GROUP BY t.tid '.
+            'ORDER BY t.rankid, t.sciname '.
             'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $rIndex => $row){
                 $resultArr = array();
-                $resultArr['tid'] = $row['TID'];
-                $resultArr['sciname'] = $row['SciName'];
-                $resultArr['rankid'] = $row['RankId'];
+                $resultArr['tid'] = $row['tid'];
+                $resultArr['sciname'] = $row['sciname'];
+                $resultArr['rankid'] = $row['rankid'];
                 $resultArr['cnt'] = $row['cnt'];
                 $retArr[] = $resultArr;
                 unset($rows[$rIndex]);

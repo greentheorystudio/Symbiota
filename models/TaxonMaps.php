@@ -9,11 +9,11 @@ class TaxonMaps{
 	private $conn;
 
     private $fields = array(
-        "mid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "url" => array("dataType" => "string", "length" => 255),
-        "title" => array("dataType" => "string", "length" => 100),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'mid' => array('dataType' => 'number', 'length' => 10),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'url' => array('dataType' => 'string', 'length' => 255),
+        'title' => array('dataType' => 'string', 'length' => 100),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
