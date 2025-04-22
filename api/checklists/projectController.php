@@ -31,4 +31,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteProjectRecord' && $pid && $isEditor){
         echo $projects->deleteProjectRecord($pid);
     }
+    elseif($action === 'getProjectArr'){
+        echo json_encode($projects->getProjectArr());
+    }
 }

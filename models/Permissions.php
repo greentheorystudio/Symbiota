@@ -6,6 +6,7 @@ CollEditor  		Edit collection records
 RareSppReader		View and map rare species collecton data for specific collections
 ClAdmin 			Checklist write access
 ProjAdmin			Project admin access
+PublicChecklist		Can create public checklists and biotic inventory projects
 RareSppAdmin		Add or remove species from rare species list
 RareSppReadAll		View and map rare species collection data for all collections
 KeyAdmin			Edit identification key characters and character states

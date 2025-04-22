@@ -152,7 +152,7 @@ function useCore() {
                             if(fieldValue.indexOf('"') > -1){
                                 fieldValue = fieldValue.replaceAll('"','');
                             }
-                            object[fieldName] = fieldValue;
+                            object[fieldName.toLowerCase()] = fieldValue;
                             return object;
                         }, {});
                     }

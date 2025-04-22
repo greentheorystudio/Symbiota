@@ -1457,7 +1457,7 @@ const occurrenceDataUploadModule = {
             const text = 'Processing data for upload';
             currentProcess.value = 'transferSourceData';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            const idField = Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === 'dbpk');
+            const idField = Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field.toLowerCase()] === 'dbpk');
             sourceDataFlatFile.value.forEach((dataRow) => {
                 const occurrenceData = {};
                 occurrenceData['dbpk'] = dataRow[idField];
@@ -1769,12 +1769,12 @@ const occurrenceDataUploadModule = {
                     sourceDataUploadCount.value = Number(res);
                     let resText = '';
                     if(configuration['dataType'] === 'occurrence'){
-                        recordsUploadedOccurrence.value = recordsUploadedOccurrence.value + Number(res);
+                        recordsUploadedOccurrence.value += Number(res);
                         totalRecordsLoaded = recordsUploadedOccurrence.value;
                         resText = Number(res) + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'mof'){
-                        recordsUploadedMof.value = recordsUploadedMof.value + Number(res);
+                        recordsUploadedMof.value += Number(res);
                         totalRecordsLoaded = recordsUploadedMof.value;
                         resText = Number(res) + ' records loaded'
                     }
