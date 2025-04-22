@@ -74,11 +74,10 @@ const useUserStore = Pinia.defineStore('user', {
         }
     },
     actions: {
-        addUserPermissions(permissionArr, expiration, callback) {
+        addUserPermissions(permissionArr, callback) {
             const formData = new FormData();
             formData.append('uid', this.userId.toString());
             formData.append('permissionArr', JSON.stringify(permissionArr));
-            formData.append('expiration', expiration);
             formData.append('action', 'addUserPermissions');
             fetch(permissionApiUrl, {
                 method: 'POST',
@@ -166,10 +165,11 @@ const useUserStore = Pinia.defineStore('user', {
                 }
             });
         },
-        deleteUserPermission(permission, callback) {
+        deleteUserPermission(permission, pk, callback) {
             const formData = new FormData();
             formData.append('uid', this.userId.toString());
             formData.append('permission', permission.toString());
+            formData.append('tablepk', (pk ? pk.toString() : ''));
             formData.append('action', 'deleteUserPermission');
             fetch(permissionApiUrl, {
                 method: 'POST',

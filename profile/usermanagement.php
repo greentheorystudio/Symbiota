@@ -1,686 +1,791 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../classes/PermissionsManager.php');
-include_once(__DIR__ . '/../models/Permissions.php');
-include_once(__DIR__ . '/../models/Users.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
-
-$loginAs = array_key_exists('loginas',$_REQUEST)?trim($_REQUEST['loginas']): '';
-$searchTerm = array_key_exists('searchterm',$_REQUEST)?trim($_REQUEST['searchterm']): '';
-$userId = array_key_exists('userid',$_REQUEST)?(int)$_REQUEST['userid']:0;
-$delRole = array_key_exists('delrole',$_REQUEST)?$_REQUEST['delrole']: '';
-$action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']: '';
-$listType = array_key_exists('listType',$_REQUEST)?$_REQUEST['listType']:'all';
-$tablePk = array_key_exists('tablepk',$_REQUEST)?(int)$_REQUEST['tablepk']:0;
-
-$userManager = new PermissionsManager();
-$permissions = new Permissions();
-$users = new Users();
-
-$newPw = '';
-
-if($GLOBALS['IS_ADMIN']){
-    if($loginAs){
-        $users->loginAsUser($loginAs);
-        header('Location: ../index.php');
-    }
-    elseif($delRole){
-        $permissions->deletePermission($userId, $delRole, $tablePk);
-    }
-    elseif(array_key_exists('apsubmit',$_POST)){
-        foreach($_POST['p'] as $pname){
-            $role = $pname;
-            $tablePk = '';
-            if(strpos($pname,'-')){
-                $tok = explode('-',$pname);
-                if($tok){
-                    $role = $tok[0];
-                    $tablePk = $tok[1];
-                }
-            }
-            $permissions->addPermission($userId, $role, $tablePk);
-        }
-    }
-    if($action){
-        if($action === 'validate'){
-            $users->validateUser($userId);
-        }
-        elseif($action === 'pwreset'){
-            $user = $users->getUserByUid($userId);
-            $newPw = $users->resetPassword($user['username'],true);
-        }
-        elseif($action === 'validateallunconfirmed'){
-            $users->validateAllUnconfirmedUsers();
-            $listType = 'all';
-        }
-        elseif($action === 'deleteallunconfirmed'){
-            $users->deleteAllUnconfirmedUsers();
-            $listType = 'all';
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
-<?php
-include_once(__DIR__ . '/../config/header-includes.php');
-?>
-<head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> User Management</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<?php
-include(__DIR__ . '/../header.php');
-?>
-<div id="innertext">
-    <div style="float:right;">
-        <div style="margin:10px 0 15px 0;">
-            <fieldset style="background-color:#FFFFCC;padding:0 10px 10px 10px;">
-                <legend style="font-weight:bold;">Search</legend>
-                Last Name or Login Name:
-                <form name='searchform1' action='usermanagement.php' method='post'>
-                    <input type='text' name='searchterm' title='Enter Last Name'><br/>
-                    <input name='submit' type='submit' value='Search'>
-                </form>
-                Quick Search:
-                <div style='margin:2px 0 0 10px;'>
-                    <div><a href='usermanagement.php?searchterm=A'>A</a>|<a href='usermanagement.php?searchterm=B'>B</a>|<a href='usermanagement.php?searchterm=C'>C</a>|<a href='usermanagement.php?searchterm=D'>D</a>|<a href='usermanagement.php?searchterm=E'>E</a>|<a href='usermanagement.php?searchterm=F'>F</a>|<a href='usermanagement.php?searchterm=G'>G</a>|<a href='usermanagement.php?searchterm=H'>H</a></div>
-                    <div><a href='usermanagement.php?searchterm=I'>I</a>|<a href='usermanagement.php?searchterm=J'>J</a>|<a href='usermanagement.php?searchterm=K'>K</a>|<a href='usermanagement.php?searchterm=L'>L</a>|<a href='usermanagement.php?searchterm=M'>M</a>|<a href='usermanagement.php?searchterm=N'>N</a>|<a href='usermanagement.php?searchterm=O'>O</a>|<a href='usermanagement.php?searchterm=P'>P</a>|<a href='usermanagement.php?searchterm=Q'>Q</a></div>
-                    <div><a href='usermanagement.php?searchterm=R'>R</a>|<a href='usermanagement.php?searchterm=S'>S</a>|<a href='usermanagement.php?searchterm=T'>T</a>|<a href='usermanagement.php?searchterm=U'>U</a>|<a href='usermanagement.php?searchterm=V'>V</a>|<a href='usermanagement.php?searchterm=W'>W</a>|<a href='usermanagement.php?searchterm=X'>X</a>|<a href='usermanagement.php?searchterm=Y'>Y</a>|<a href='usermanagement.php?searchterm=Z'>Z</a></div>
-                </div>
-            </fieldset>
-        </div>
-    </div>
     <?php
-    if($GLOBALS['IS_ADMIN']){
-        if($userId){
-            $user = $users->getUserByUid($userId);
-            ?>
-            <h1>
-                <?php
-                echo $user['firstname']. ' ' .$user['lastname']. ' (#' .$user['uid']. ') ';
-                echo "<a href='viewprofile.php?emode=1&tabindex=2&&userid=".$user['uid']. "'><i style='height:15px;width:15px;' class='far fa-edit'></i></a>";
-                ?>
-            </h1>
-            <div style="margin-left:10px;">
-                <div style="clear:left;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">Title: </div>
-                    <div style="float:left;"><?php echo $user['title'];?></div>
-                </div>
-                <div style="clear:left;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">Institution: </div>
-                    <div style="float:left;"><?php echo $user['institution'];?></div>
-                </div>
-                <div style="clear:left;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">City: </div>
-                    <div style="float:left;"><?php echo $user['city'];?></div>
-                </div>
-                <div style="clear:left;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">State: </div>
-                    <div style="float:left;"><?php echo $user['state'];?></div>
-                </div>
-                <div style="clear:left;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">Zip: </div>
-                    <div style="float:left;"><?php echo $user['zip'];?></div>
-                </div>
-                <div style="clear:left;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">Country: </div>
-                    <div style="float:left;"><?php echo $user['country'];?></div>
-                </div>
-                <div style="clear:left;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">Email: </div>
-                    <div style="float:left;"><?php echo $user['email'];?></div>
-                </div>
-                <div style="clear:left;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">URL: </div>
-                    <div style="float:left;">
-                        <a href='<?php echo $user['url'];?>'>
-                            <?php echo $user['url'];?>
-                        </a>
-                    </div>
-                </div>
-                <div style="clear:left;margin-bottom:10px;">
-                    <div style="float:left;font-weight:bold;margin-right:8px;">Login: </div>
-                    <div style="float:left;"><?php echo ($user['username']?$user['username'].' (last login: '.$user['lastlogindate'].')':'login not registered for this user'); ?></div>
-                </div>
-                <?php
-                if((int)$user['validated'] !== 1){
-                    ?>
-                    <div style="clear:left;margin-top:20px;">
-                        <span style="font-weight:bold;margin-right:8px;color:red">UNCONFIRMED USER </span>
-                        <span>
-                                <a href="usermanagement.php?action=validate&userid=<?php echo $userId; ?>"><input type="button" value="Confirm" /></a>
-                            </span>
-                    </div>
-                    <?php
-                }
-                ?>
-                <div style="clear:left;margin-top:20px;">
-                    <div>
-                            <span>
-                                <a href="usermanagement.php?action=pwreset&userid=<?php echo $userId; ?>"><input type="button" value="Reset Password" /></a>
-                            </span>
-                    </div>
-                    <?php
-                    if($newPw){
-                        ?>
-                        <div style="clear:left;margin-top:10px;color:red;">
-                            Notify user that their password has been reset to: <span style="font-weight: bold"><?php echo $newPw; ?></span>
-                        </div>
-                        <?php
-                    }
-                    ?>
-                </div>
-            </div>
-            <?php
-            if($user['username']){
-                ?>
-                <div style="clear:both;margin:30px 0 20px 30px;">
-                    <a href="usermanagement.php?loginas=<?php echo $user['username']; ?>">Login as this user</a>
-                </div>
-                <?php
-            }
-            ?>
-            <fieldset style="clear:both;margin:10px;padding: 15px 15px 15px 25px;">
-                <legend><b>Current Permissions</b></legend>
-                <?php
-                $userPermissions = $userManager->getUserPermissions($userId);
-                if($userPermissions){
-                    ?>
-                    <div>
-                        <ul>
-                            <?php
-                            if(array_key_exists('SuperAdmin',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b><?php
-                                        echo '<span title="'.$userPermissions['SuperAdmin']['aby'].'">';
-                                        echo str_replace('SuperAdmin','Super Administrator',$userPermissions['SuperAdmin']['role']);
-                                        echo '</span>';
-                                        ?></b>
-                                    <a href="usermanagement.php?delrole=SuperAdmin&userid=<?php echo $userId; ?>">
-                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('Taxonomy',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b><?php
-                                        echo '<span title="'.$userPermissions['Taxonomy']['aby'].'">';
-                                        echo str_replace('Taxonomy','Taxonomy Editor',$userPermissions['Taxonomy']['role']);
-                                        echo '</span>';
-                                        ?></b>
-                                    <a href="usermanagement.php?delrole=Taxonomy&userid=<?php echo $userId; ?>">
-                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('TaxonProfile',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b><?php
-                                        echo '<span title="'.$userPermissions['TaxonProfile']['aby'].'">';
-                                        echo str_replace('TaxonProfile','Taxon Profile Editor',$userPermissions['TaxonProfile']['role']);
-                                        echo '</span>';
-                                        ?></b>
-                                    <a href="usermanagement.php?delrole=TaxonProfile&userid=<?php echo $userId; ?>">
-                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('KeyAdmin',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b><?php
-                                        echo '<span title="'.$userPermissions['KeyAdmin']['aby'].'">';
-                                        echo str_replace('KeyAdmin','Identification Keys Administrator',$userPermissions['KeyAdmin']['role']);
-                                        echo '</span>';
-                                        ?></b>
-                                    <a href="usermanagement.php?delrole=KeyAdmin&userid=<?php echo $userId; ?>">
-                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('KeyEditor',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b><?php
-                                        echo '<span title="'.$userPermissions['KeyEditor']['aby'].'">';
-                                        echo str_replace('KeyEditor','Identification Keys Editor',$userPermissions['KeyEditor']['role']);
-                                        echo '</span>';
-                                        ?></b>
-                                    <a href="usermanagement.php?delrole=KeyEditor&userid=<?php echo $userId; ?>">
-                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('PublicChecklist',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b><?php
-                                        echo '<span title="'.$userPermissions['PublicChecklist']['aby'].'">';
-                                        echo str_replace('PublicChecklist','Can Create Public Checklists and Biotic Inventory Projects',$userPermissions['PublicChecklist']['role']);
-                                        echo '</span>';
-                                        ?></b>
-                                    <a href="usermanagement.php?delrole=PublicChecklist&userid=<?php echo $userId; ?>">
-                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('RareSppAdmin',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b><?php
-                                        echo '<span title="'.$userPermissions['RareSppAdmin']['aby'].'">';
-                                        echo str_replace('RareSppAdmin','Rare Species List Administrator',$userPermissions['RareSppAdmin']['role']);
-                                        echo '</span>';
-                                        ?></b>
-                                    <a href="usermanagement.php?delrole=RareSppAdmin&userid=<?php echo $userId; ?>">
-                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('RareSppReadAll',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b><?php
-                                        echo '<span title="'.$userPermissions['RareSppReadAll']['aby'].'">';
-                                        echo str_replace('RareSppReadAll','View and Map Occurrences of Rare Species from all Collections',$userPermissions['RareSppReadAll']['role']);
-                                        echo '</span>';
-                                        ?></b>
-                                    <a href="usermanagement.php?delrole=RareSppReadAll&userid=<?php echo $userId; ?>">
-                                        <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                    </a>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('CollAdmin',$userPermissions)){
-                                echo '<li><b>Collection Administrator for following collections</b></li>';
-                                $collList = $userPermissions['CollAdmin'];
-                                echo '<ul>';
-                                foreach($collList as $k => $v){
-                                    $cName = '';
-                                    echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid='.$k.'" target="_blank">'.$v['name'].'</a></span>';
-                                    echo "<a href='usermanagement.php?delrole=CollAdmin&tablepk=$k&userid=$userId'>";
-                                    echo '<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>';
-                                    echo '</a></li>';
-                                }
-                                echo '</ul>';
-                            }
-                            if(array_key_exists('CollEditor',$userPermissions)){
-                                echo '<li><b>Collection Editor for following collections</b></li>';
-                                $collList = $userPermissions['CollEditor'];
-                                echo '<ul>';
-                                foreach($collList as $k => $v){
-                                    echo '<li><span title="'.$v['aby'].'"><a href="../collections/misc/collprofiles.php?collid='.$k.'" target="_blank">'.$v['name'].'</a></span>';
-                                    echo "<a href='usermanagement.php?delrole=CollEditor&tablepk=$k&userid=$userId'>";
-                                    echo '<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>';
-                                    echo '</a></li>';
-                                }
-                                echo '</ul>';
-                            }
-                            if(array_key_exists('RareSppReader',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b>View and Map Occurrences of Rare Species from following Collections</b>
-                                    <ul>
-                                        <?php
-                                        $rsrArr = $userPermissions['RareSppReader'];
-                                        foreach($rsrArr as $collId => $v){
-                                            ?>
-                                            <li>
-                                                <?php echo '<span title="'.$v['aby'].'">'.$v['name'].'</span>'; ?>
-                                                <a href="usermanagement.php?delrole=RareSppReader&tablepk=<?php echo $collId?>&userid=<?php echo $userId; ?>">
-                                                    <i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>
-                                                </a>
-                                            </li>
-                                            <?php
-                                        }
-                                        ?>
-                                    </ul>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('ProjAdmin',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b>Administrator for following inventory projects</b>
-                                    <ul>
-                                        <?php
-                                        $projList = $userPermissions['ProjAdmin'];
-                                        asort($projList);
-                                        foreach($projList as $k => $v){
-                                            echo '<li><a href="../projects/index.php?pid='.$k.'" target="_blank"><span title="'.$v['aby'].'">'.$v['name'].'</span></a>';
-                                            echo "<a href='usermanagement.php?delrole=ProjAdmin&tablepk=$k&userid=$userId'>";
-                                            echo '<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>';
-                                            echo '</a></li>';
-                                        }
-                                        ?>
-                                    </ul>
-                                </li>
-                                <?php
-                            }
-                            if(array_key_exists('ClAdmin',$userPermissions)){
-                                ?>
-                                <li>
-                                    <b>Administrator for following checklists</b>
-                                    <ul>
-                                        <?php
-                                        $clList = $userPermissions['ClAdmin'];
-                                        asort($clList);
-                                        foreach($clList as $k => $v){
-                                            $name = $v['name'] ?? '&lt;resource deleted&gt;';
-                                            echo '<li>';
-                                            echo '<a href="../checklists/checklist.php?cl='.$k.'" target="_blank">';
-                                            echo '<span title="'.$v['aby'].'">'.$name.'</span>';
-                                            echo '</a>';
-                                            echo "<a href='usermanagement.php?delrole=ClAdmin&tablepk=$k&userid=$userId'>";
-                                            echo '<i style="height:15px;width:15px;" title="Delete permission" class="far fa-trash-alt"></i>';
-                                            echo '</a></li>';
-                                        }
-                                        ?>
-                                    </ul>
-                                </li>
-                                <?php
-                            }
-                            ?>
-                        </ul>
-                    </div>
-                    <?php
-                }
-                else{
-                    echo "<h3 style='margin:20px;'>No permissions have to been assigned to this user</h3>";
-                }
-                ?>
-                <form name="addpermissions" action="usermanagement.php" method="post">
-                    <fieldset style="margin-top:10px;padding:0 10px 10px 10px;">
-                        <legend style="font-weight:bold;">Assign New Permissions</legend>
-                        <div style="margin:5px;">
-                            <div style="float:right;margin:10px">
-                                <input type="submit" name="apsubmit" value="Add Permission" />
-                            </div>
-                            <?php
-                            if(!array_key_exists('SuperAdmin',$userPermissions)){
-                                echo '<div><input type="checkbox" name="p[]" value="SuperAdmin" /> Super Administrator</div>';
-                            }
-                            if(!array_key_exists('Taxonomy',$userPermissions)){
-                                echo "<div><input type='checkbox' name='p[]' value='Taxonomy' /> Taxonomy Editor</div>";
-                            }
-                            if(!array_key_exists('TaxonProfile',$userPermissions)){
-                                echo "<div><input type='checkbox' name='p[]' value='TaxonProfile' /> Taxon Profile Editor</div>";
-                            }
-                            if(!array_key_exists('KeyAdmin',$userPermissions)){
-                                echo "<div><input type='checkbox' name='p[]' value='KeyAdmin' /> Identification Key Administrator</div>";
-                            }
-                            if(!array_key_exists('KeyEditor',$userPermissions)){
-                                echo "<div><input type='checkbox' name='p[]' value='KeyEditor' /> Identification Key Editor</div>";
-                            }
-                            if(!array_key_exists('PublicChecklist',$userPermissions)){
-                                echo "<div><input type='checkbox' name='p[]' value='PublicChecklist' /> Can Create Public Checklists and Biotic Inventory Projects</div>";
-                            }
-                            ?>
-                        </div>
-                        <hr/>
-                        <h2>Occurrence Management</h2>
-                        <?php
-                        $showRareSppOption = true;
-                        if(array_key_exists('RareSppAdmin', $userPermissions)) {
-                            $showRareSppOption = false;
-                        }
-                        else {
-                            $isRareSppDude = false;
-                            ?>
-                            <div style="margin-left:5px;">
-                                <input type='checkbox' name='p[]' value='RareSppAdmin' />
-                                Rare Species Administrator (add/remove species from list)
-                            </div>
-                            <?php
-                        }
-                        if(array_key_exists('RareSppReadAll', $userPermissions)) {
-                            $showRareSppOption = false;
-                        }
-                        else {
-                            ?>
-                            <div style="margin-left:5px;">
-                                <input type='checkbox' name='p[]' value='RareSppReadAll' />
-                                Can read Rare Species data for all collections
-                            </div>
-                            <?php
-                        }
-                        $collArr = $userManager->getCollectionMetadata(0,'specimens');
-                        $obserArr = $userManager->getCollectionMetadata(0,'observations');
-                        if(array_key_exists('CollAdmin',$userPermissions)){
-                            $collArr = array_diff_key($collArr,$userPermissions['CollAdmin']);
-                            $obserArr = array_diff_key($obserArr,$userPermissions['CollAdmin']);
-                        }
-                        if($collArr){
-                            ?>
-                            <div style="float:right;margin:10px;">
-                                <input type='submit' name='apsubmit' value='Add Permission' />
-                            </div>
-                            <h3>Collections</h3>
-                            <table>
-                                <tr>
-                                    <th>Admin</th>
-                                    <th>Editor</th>
-                                    <?php
-                                    if($showRareSppOption) {
-                                        echo '<th>Rare</th>';
-                                    }
-                                    ?>
-                                    <th>&nbsp;</th>
-                                </tr>
-                                <?php
-                                foreach($collArr as $collid => $cArr){
-                                    ?>
-                                    <tr>
-                                        <td style="text-align: center;">
-                                            <input type='checkbox' name='p[]' value='CollAdmin-<?php echo $collid;?>' title='Collection Administrator' />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <input type='checkbox' name='p[]' value='CollEditor-<?php echo $collid;?>' title='Able to add and edit occurrence data' <?php echo ((isset($userPermissions['CollEditor'][$collid]))?'DISABLED':'');?> />
-                                        </td>
-                                        <?php
-                                        if($showRareSppOption){
-                                            ?>
-                                            <td style="text-align: center;">
-                                                <input type='checkbox' name='p[]' value='RareSppReader-<?php echo $collid;?>' title='Able to read occurrence details for rare species' <?php echo ((isset($userPermissions['RareSppReader'][$collid]))?'DISABLED':'');?> />
-                                            </td>
-                                            <?php
-                                        }
-                                        ?>
-                                        <td>
-                                            <?php
-                                            echo $cArr['collectionname'];
-                                            $code = '';
-                                            if($cArr['institutioncode']){
-                                                $code .= $cArr['institutioncode'];
-                                            }
-                                            if($cArr['collectioncode']){
-                                                $code .= ($code?'-':'') . $cArr['institutioncode'];
-                                            }
-                                            if($code){
-                                                echo ' ('.$code.')';
-                                            }
-                                            ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                }
-                                ?>
-                            </table>
-                            <?php
-                        }
-                        if($obserArr){
-                            ?>
-                            <div style="float:right;margin:10px;">
-                                <input type='submit' name='apsubmit' value='Add Permission' />
-                            </div>
-                            <h3>Observation Projects</h3>
-                            <table>
-                                <tr>
-                                    <th>Admin</th>
-                                    <th>Editor</th>
-                                    <?php
-                                    if($showRareSppOption) {
-                                        echo '<th>Rare</th>';
-                                    }
-                                    ?>
-                                    <th>&nbsp;</th>
-                                </tr>
-                                <?php
-                                foreach($obserArr as $obsid => $oArr){
-                                    ?>
-                                    <tr>
-                                        <td style="text-align: center;">
-                                            <input type='checkbox' name='p[]' value='CollAdmin-<?php echo $obsid;?>' title='Collection Administrator' <?php echo ((isset($userPermissions['CollAdmin'][$obsid]))?'DISABLED':'');?> />
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <input type='checkbox' name='p[]' value='CollEditor-<?php echo $obsid;?>' title='Able to add and edit occurrence data' <?php echo ((isset($userPermissions['CollEditor'][$obsid]))?'DISABLED':'');?> />
-                                        </td>
-                                        <?php
-                                        if($showRareSppOption){
-                                            ?>
-                                            <td style="text-align: center;">
-                                                <input type='checkbox' name='p[]' value='RareSppReader-<?php echo $obsid;?>' title='Able to read occurrence details for rare species' <?php echo ((isset($userPermissions['RareSppReader'][$obsid]))?'DISABLED':'');?> />
-                                            </td>
-                                            <?php
-                                        }
-                                        ?>
-                                        <td>
-                                            <?php
-                                            echo $oArr['collectionname'];
-                                            $code = '';
-                                            if($oArr['institutioncode']){
-                                                $code .= $oArr['institutioncode'];
-                                            }
-                                            if($oArr['collectioncode']){
-                                                $code .= ($code?'-':'') . $oArr['institutioncode'];
-                                            }
-                                            if($code){
-                                                echo ' ('.$code.')';
-                                            }
-                                            ?>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                }
-                                ?>
-                            </table>
-                            <?php
-                        }
-                        $pidArr = array();
-                        if(array_key_exists('ProjAdmin',$userPermissions)){
-                            $pidArr = array_keys($userPermissions['ProjAdmin']);
-                        }
-                        $projectArr = $userManager->getProjectArr($pidArr);
-                        if($projectArr){
-                            ?>
-                            <div><hr/></div>
-                            <div style="float:right;margin:10px;">
-                                <input type='submit' name='apsubmit' value='Add Permission' />
-                            </div>
-                            <h2>Inventory Project Management</h2>
-                            <?php
-                            foreach($projectArr as $k=>$v){
-                                ?>
-                                <div style='margin-left:15px;'>
-                                    <?php
-                                    echo '<input type="checkbox" name="p[]" value="ProjAdmin-'.$k.'" />';
-                                    echo '<a href="../projects/index.php?pid='.$k.'" target="_blank">'.$v.'</a>';
-                                    ?>
-                                </div>
-                                <?php
-                            }
-                        }
-                        $cidArr = array();
-                        if(array_key_exists('ClAdmin',$userPermissions)){
-                            $cidArr = array_keys($userPermissions['ClAdmin']);
-                        }
-                        $checklistArr = $userManager->getChecklistArr($cidArr);
-                        if($checklistArr){
-                            ?>
-                            <div><hr/></div>
-                            <div style="float:right;margin:10px;">
-                                <input type='submit' name='apsubmit' value='Add Permission' />
-                            </div>
-                            <h2>Checklist Management</h2>
-                            <?php
-                            foreach($checklistArr as $k=>$v){
-                                ?>
-                                <div style='margin-left:15px;'>
-                                    <?php
-                                    echo '<input type="checkbox" name="p[]" value="ClAdmin-'.$k.'" /> ';
-                                    echo '<a href="../checklists/checklist.php?cl='.$k.'" target="_blank">'.$v.'</a>';
-                                    ?>
-                                </div>
-                                <?php
-                            }
-                        }
-                        ?>
-                        <input type="hidden" name="userid" value="<?php echo $userId;?>" />
-                    </fieldset>
-                </form>
-            </fieldset>
-            <?php
-        }
-        else{
-            if($GLOBALS['EMAIL_CONFIGURED']){
-                $users->clearOldUnregisteredUsers();
-            }
-            $userList = $userManager->getUsers($listType, $searchTerm);
-            ?>
-            <h1>Users</h1>
-            <div style="height:30px;display:flex;gap:20px;">
-                <div>
-                    <form id="userlistform" action="usermanagement.php" method="post">
-                        <select name="listType" onchange="this.form.submit();">
-                            <option value="all" <?php echo ($listType === 'all'?'selected':''); ?>>All Users</option>
-                            <option value="confirmed" <?php echo ($listType === 'confirmed'?'selected':''); ?>>Confirmed Users</option>
-                            <option value="unconfirmed" <?php echo ($listType === 'unconfirmed'?'selected':''); ?>>Unconfirmed Users</option>
-                        </select>
-                        <input name="searchterm" type="hidden" value="<?php echo $searchTerm;?>" />
-                    </form>
-                </div>
-                <?php
-                if($listType === 'unconfirmed'){
-                    ?>
-                    <div>
-                        <a href="usermanagement.php?action=validateallunconfirmed"><input type="button" value="Confirm All" /></a>
-                    </div>
-                    <div>
-                        <a href="usermanagement.php?action=deleteallunconfirmed"><input type="button" value="Delete All" /></a>
-                    </div>
-                    <?php
-                }
-                ?>
-            </div>
-            <?php
-            foreach($userList as $id => $name){
-                echo "<div><a href='usermanagement.php?userid=".$id."'>".$name. '</a></div>';
-            }
-        }
-    }
-    else{
-        echo '<h3>You must login and have administrator permissions to manage users</h3>';
-    }
+    include_once(__DIR__ . '/../config/header-includes.php');
     ?>
-</div>
-<?php
-include_once(__DIR__ . '/../config/footer-includes.php');
-include(__DIR__ . '/../footer.php');
-?>
-</body>
+    <head>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> User Management</title>
+        <meta name="description" content="User Management">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <?php
+        include(__DIR__ . '/../header.php');
+        ?>
+        <div id="app-container" class="q-pa-md column q-gutter-sm">
+            <template v-if="isAdmin">
+                <template v-if="Number(currentUserId) > 0">
+                    <div class="column q-gutter-sm">
+                        <div class="cursor-pointer text-body1 text-bold" @click="processUserChange(0);">
+                            Back to user list
+                        </div>
+                        <q-card>
+                            <q-card-section class="row justify-between q-col-gutter-md">
+                                <div class="col-12 col-sm-6 col-md-6 column">
+                                    <div class="row justify-start q-gutter-md">
+                                        <div class="text-body1 text-bold">
+                                            {{ userInfo['firstname'] + ' ' + userInfo['lastname'] + '(#' + userInfo['uid'] + ')' }}
+                                        </div>
+                                        <div class="cursor-pointer">
+                                            <q-btn icon="far fa-edit" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="showAccountEditorPopup = true"></q-btn>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">Title:</div>
+                                        <div>{{ userInfo['title'] }}</div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">Institution:</div>
+                                        <div>{{ userInfo['institution'] }}</div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">City:</div>
+                                        <div>{{ userInfo['city'] }}</div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">State:</div>
+                                        <div>{{ userInfo['state'] }}</div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">Zip:</div>
+                                        <div>{{ userInfo['zip'] }}</div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">Country:</div>
+                                        <div>{{ userInfo['country'] }}</div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">Email:</div>
+                                        <div>{{ userInfo['email'] }}</div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">URL:</div>
+                                        <div v-if="userInfo['url']"><a :href="userInfo['url']" target="_blank">{{ userInfo['url'] }}</a></div>
+                                    </div>
+                                    <div class="row justify-start q-gutter-sm">
+                                        <div class="text-bold">Login:</div>
+                                        <div>{{ userInfo['username'] + (userInfo['lastlogindate'] ? (' (last login: ' + userInfo['lastlogindate'] + ')') : '') }}</div>
+                                    </div>
+                                    <div v-if="Number(userInfo['validated']) !== 1" class="row justify-start q-gutter-sm">
+                                        <div class="text-bold text-red">UNCONFIRMED USER</div>
+                                        <div><q-btn label="Confirm User" color="grey-4" text-color="black" class="black-border" size="sm" dense @click="confirmUser();"></q-btn></div>
+                                    </div>
+                                    <div v-if="isAdmin" class="q-mt-sm column justify-start q-gutter-sm">
+                                        <div>
+                                            <q-btn label="Reset Password" color="grey-4" text-color="black" class="black-border" size="md" dense @click="resetPassword();"></q-btn>
+                                        </div>
+                                        <div v-if="resetPasswordValue" class="text-red">
+                                            Notify user that their password has been reset to: <span class="text-bold">{{ resetPasswordValue }}</span>
+                                        </div>
+                                        <div>
+                                            <q-btn label="Login as this user" color="grey-4" text-color="black" class="black-border" size="md" dense @click="loginAsUser();"></q-btn>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-6">
+                                    <q-card flat bordered>
+                                        <q-card-section class="column q-gutter-xs">
+                                            <div class="text-body1 text-bold q-mb-sm">Current Permissions</div>
+                                            <template v-if="Object.keys(userPermissions).length > 0">
+                                                <template v-if="isAdmin">
+                                                    <template v-if="userPermissions.hasOwnProperty('SuperAdmin')">
+                                                        <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                            <div class="text-bold">Super Administrator</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('SuperAdmin', null);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template v-if="userPermissions.hasOwnProperty('Taxonomy')">
+                                                        <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                            <div class="text-bold">Taxonomy Editor</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('Taxonomy', null);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template v-if="userPermissions.hasOwnProperty('TaxonProfile')">
+                                                        <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                            <div class="text-bold">Taxon Profile Editor</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('TaxonProfile', null);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template v-if="userPermissions.hasOwnProperty('KeyAdmin')">
+                                                        <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                            <div class="text-bold">Identification Keys Administrator</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('KeyAdmin', null);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template v-if="userPermissions.hasOwnProperty('KeyEditor')">
+                                                        <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                            <div class="text-bold">Identification Keys Editor</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('KeyEditor', null);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template v-if="userPermissions.hasOwnProperty('PublicChecklist')">
+                                                        <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                            <div class="text-bold">Can Create Public Checklists and Biotic Inventory Projects</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('PublicChecklist', null);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template v-if="userPermissions.hasOwnProperty('RareSppAdmin')">
+                                                        <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                            <div class="text-bold">Rare Species List Administrator</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppAdmin', null);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                    <template v-if="userPermissions.hasOwnProperty('RareSppReadAll')">
+                                                        <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                            <div class="text-bold">View and Map Occurrences of Rare Species from all Collections</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppReadAll', null);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                <template v-if="collAdminPermissionArr.length > 0">
+                                                    <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                        <div class="text-bold">Collection Administrator for following collections</div>
+                                                    </div>
+                                                    <template v-for="perm in collAdminPermissionArr">
+                                                        <div class="q-pl-lg row justify-start q-gutter-sm">
+                                                            <div>{{ perm['name'] }}</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('CollAdmin', perm['id']);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                <template v-if="collEditorPermissionArr.length > 0">
+                                                    <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                        <div class="text-bold">Collection Editor for following collections</div>
+                                                    </div>
+                                                    <template v-for="perm in collEditorPermissionArr">
+                                                        <div class="q-pl-lg row justify-start q-gutter-sm">
+                                                            <div>{{ perm['name'] }}</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('CollEditor', perm['id']);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                <template v-if="collRarePermissionArr.length > 0">
+                                                    <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                        <div class="text-bold">View and Map Occurrences of Rare Species from following Collections</div>
+                                                    </div>
+                                                    <template v-for="perm in collRarePermissionArr">
+                                                        <div class="q-pl-lg row justify-start q-gutter-sm">
+                                                            <div>{{ perm['name'] }}</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppReader', perm['id']);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                <template v-if="projAdminPermissionArr.length > 0">
+                                                    <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                        <div class="text-bold">Administrator for following inventory projects</div>
+                                                    </div>
+                                                    <template v-for="perm in projAdminPermissionArr">
+                                                        <div class="q-pl-lg row justify-start q-gutter-sm">
+                                                            <div>{{ perm['name'] }}</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('ProjAdmin', perm['id']);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                                <template v-if="clAdminPermissionArr.length > 0">
+                                                    <div class="q-pl-sm row justify-start q-gutter-sm">
+                                                        <div class="text-bold">Administrator for following checklists</div>
+                                                    </div>
+                                                    <template v-for="perm in clAdminPermissionArr">
+                                                        <div class="q-pl-lg row justify-start q-gutter-sm">
+                                                            <div>{{ perm['name'] }}</div>
+                                                            <div class="cursor-pointer">
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('ClAdmin', perm['id']);"></q-btn>
+                                                            </div>
+                                                        </div>
+                                                    </template>
+                                                </template>
+                                            </template>
+                                            <template v-else>
+                                                <div>No permissions have to been assigned to this user</div>
+                                            </template>
+                                            <template v-if="isAdmin">
+                                                <div v-if="Object.keys(userPermissions).length > 0" class="cursor-pointer">
+                                                    <q-btn label="Delete All Permissions" color="grey-4" text-color="black" class="black-border" size="sm" dense @click="deleteAllPermissions();"></q-btn>
+                                                </div>
+                                            </template>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                        <q-card>
+                            <q-card-section class="column q-gutter-sm">
+                                <div class="text-body1 text-bold q-mb-sm">Assign New Permissions</div>
+                                <template v-if="userPermissions.hasOwnProperty('SuperAdmin')">
+                                    <div>There are no new permissions to be added</div>
+                                </template>
+                                <template v-else>
+                                    <div class="column">
+                                        <div>
+                                            <checkbox-input-element label="Super Administrator" :value="false" @update:value="addPermissions([{role: 'SuperAdmin', rolepk: null}])"></checkbox-input-element>
+                                        </div>
+                                        <div v-if="!userPermissions.hasOwnProperty('Taxonomy')">
+                                            <checkbox-input-element label="Taxonomy Editor" :value="false" @update:value="addPermissions([{role: 'Taxonomy', rolepk: null}])"></checkbox-input-element>
+                                        </div>
+                                        <div v-if="!userPermissions.hasOwnProperty('TaxonProfile')">
+                                            <checkbox-input-element label="Taxon Profile Editor" :value="false" @update:value="addPermissions([{role: 'TaxonProfile', rolepk: null}])"></checkbox-input-element>
+                                        </div>
+                                        <div v-if="!userPermissions.hasOwnProperty('KeyAdmin')">
+                                            <checkbox-input-element label="Identification Key Administrator" :value="false" @update:value="addPermissions([{role: 'KeyAdmin', rolepk: null}])"></checkbox-input-element>
+                                        </div>
+                                        <div v-if="!userPermissions.hasOwnProperty('KeyEditor')">
+                                            <checkbox-input-element label="Identification Key Editor" :value="false" @update:value="addPermissions([{role: 'KeyEditor', rolepk: null}])"></checkbox-input-element>
+                                        </div>
+                                        <div v-if="!userPermissions.hasOwnProperty('RareSppAdmin')">
+                                            <checkbox-input-element label="Rare Species Administrator (add/remove species from list)" :value="false" @update:value="addPermissions([{role: 'RareSppAdmin', rolepk: null}])"></checkbox-input-element>
+                                        </div>
+                                        <div v-if="!userPermissions.hasOwnProperty('RareSppReadAll')">
+                                            <checkbox-input-element label="Can read Rare Species data for all collections" :value="false" @update:value="addPermissions([{role: 'RareSppReadAll', rolepk: null}])"></checkbox-input-element>
+                                        </div>
+                                        <div v-if="!userPermissions.hasOwnProperty('PublicChecklist')">
+                                            <checkbox-input-element label="Can Create Public Checklists and Biotic Inventory Projects" :value="false" @update:value="addPermissions([{role: 'PublicChecklist', rolepk: null}])"></checkbox-input-element>
+                                        </div>
+                                    </div>
+                                    <template v-if="collectionArr.length > 0">
+                                        <q-card class="full-width" flat bordered>
+                                            <q-card-section class="column q-col-gutter-xs">
+                                                <div class="full-width row justify-between q-gutter-md">
+                                                    <div class="text-body1 text-bold q-mb-sm">Collections</div>
+                                                    <div class="row justify-end">
+                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense />
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-1 text-bold row justify-center">Admin</div>
+                                                    <div class="col-1 text-bold row justify-center">Editor</div>
+                                                    <div class="col-1 text-bold row justify-center">Rare</div>
+                                                    <div class="col-9"></div>
+                                                </div>
+                                                <template v-for="collection in collectionArr">
+                                                    <div class="full-width row q-ma-none q-pa-none">
+                                                        <div class="col-1 row justify-center">
+                                                            <checkbox-input-element :value="(userPermissions.hasOwnProperty('CollAdmin') && userPermissions['CollAdmin'].hasOwnProperty(collection['collid'])) || !!newPermissionArr.find(perm => (perm['role'] === 'CollAdmin' && perm['rolepk'] === collection['collid']))" @update:value="(value) => processPermissionArrChange({role: 'CollAdmin', rolepk: collection['collid']}, value)" :disabled="(userPermissions.hasOwnProperty('CollAdmin') && userPermissions['CollAdmin'].hasOwnProperty(collection['collid']))"></checkbox-input-element>
+                                                        </div>
+                                                        <div class="col-1 row justify-center">
+                                                            <checkbox-input-element :value="(userPermissions.hasOwnProperty('CollEditor') && userPermissions['CollEditor'].hasOwnProperty(collection['collid'])) || !!newPermissionArr.find(perm => (perm['role'] === 'CollEditor' && perm['rolepk'] === collection['collid']))" @update:value="(value) => processPermissionArrChange({role: 'CollEditor', rolepk: collection['collid']}, value)" :disabled="((userPermissions.hasOwnProperty('CollAdmin') && userPermissions['CollAdmin'].hasOwnProperty(collection['collid'])) || (userPermissions.hasOwnProperty('CollEditor') && userPermissions['CollEditor'].hasOwnProperty(collection['collid'])))"></checkbox-input-element>
+                                                        </div>
+                                                        <div class="col-1 row justify-center">
+                                                            <checkbox-input-element :value="(userPermissions.hasOwnProperty('RareSppReader') && userPermissions['RareSppReader'].hasOwnProperty(collection['collid'])) || !!newPermissionArr.find(perm => (perm['role'] === 'RareSppReader' && perm['rolepk'] === collection['collid']))" @update:value="(value) => processPermissionArrChange({role: 'RareSppReader', rolepk: collection['collid']}, value)" :disabled="((userPermissions.hasOwnProperty('CollAdmin') && userPermissions['CollAdmin'].hasOwnProperty(collection['collid'])) || (userPermissions.hasOwnProperty('CollEditor') && userPermissions['CollEditor'].hasOwnProperty(collection['collid'])) || (userPermissions.hasOwnProperty('RareSppReader') && userPermissions['RareSppReader'].hasOwnProperty(collection['collid'])))"></checkbox-input-element>
+                                                        </div>
+                                                        <div class="col-9">
+                                                            {{ collection['collectionname'] + collection['acroStr'] }}
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </q-card-section>
+                                        </q-card>
+                                    </template>
+                                    <template v-if="projectArr.length > 0">
+                                        <q-card class="full-width" flat bordered>
+                                            <q-card-section class="column q-col-gutter-xs">
+                                                <div class="full-width row justify-between q-gutter-md">
+                                                    <div class="text-body1 text-bold q-mb-sm">Biotic Inventory Project Management</div>
+                                                    <div class="row justify-end">
+                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense />
+                                                    </div>
+                                                </div>
+                                                <template v-for="project in projectArr">
+                                                    <checkbox-input-element :label="project['projname']" :value="(userPermissions.hasOwnProperty('ProjAdmin') && userPermissions['ProjAdmin'].hasOwnProperty(project['pid'])) || !!newPermissionArr.find(perm => (perm['role'] === 'ProjAdmin' && perm['rolepk'] === project['pid']))" @update:value="(value) => processPermissionArrChange({role: 'ProjAdmin', rolepk: project['pid']}, value)"></checkbox-input-element>
+                                                </template>
+                                            </q-card-section>
+                                        </q-card>
+                                    </template>
+                                    <template v-if="checklistArr.length > 0">
+                                        <q-card class="full-width" flat bordered>
+                                            <q-card-section class="column q-col-gutter-xs">
+                                                <div class="full-width row justify-between q-gutter-md">
+                                                    <div class="text-body1 text-bold q-mb-sm">Checklist Management</div>
+                                                    <div class="row justify-end">
+                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense />
+                                                    </div>
+                                                </div>
+                                                <template v-for="checklist in checklistArr">
+                                                    <checkbox-input-element :label="checklist['name']" :value="(userPermissions.hasOwnProperty('ClAdmin') && userPermissions['ClAdmin'].hasOwnProperty(checklist['clid'])) || !!newPermissionArr.find(perm => (perm['role'] === 'ClAdmin' && perm['rolepk'] === checklist['clid']))" @update:value="(value) => processPermissionArrChange({role: 'ClAdmin', rolepk: checklist['clid']}, value)"></checkbox-input-element>
+                                                </template>
+                                            </q-card-section>
+                                        </q-card>
+                                    </template>
+                                </template>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                </template>
+                <template v-else>
+                    <q-card>
+                        <q-card-section class="column q-gutter-xs">
+                            <div class="text-body1 text-bold">Search</div>
+                            <div>
+                                <text-field-input-element label="Last Name or Login Name" :value="userListFilter" @update:value="processFilterChange"></text-field-input-element>
+                            </div>
+                            <div class="row q-gutter-xs">
+                                <template v-for="letter in filterOptions">
+                                    <span class="cursor-pointer text-body1 text-bold" @click="processFilterChange(letter);">
+                                        {{ letter }}
+                                    </span>
+                                </template>
+                            </div>
+                            <div class="full-width row justify-start q-gutter-sm">
+                                <div class="col-3">
+                                    <selector-input-element label="Display" :options="userListDisplayOptions" :value="userListDisplaySelectedOption" @update:value="(value) => processListDisplayOptionChange(value)"></selector-input-element>
+                                </div>
+                                <template v-if="userListDisplaySelectedOption === 'unconfirmed' && userList.length > 0">
+                                    <div>
+                                        <q-btn color="secondary" @click="validateAllUnconfirmedUsers();" label="Confirm All" dense />
+                                    </div>
+                                    <div>
+                                        <q-btn color="secondary" @click="deleteAllUnconfirmedUsers();" label="Delete All" dense />
+                                    </div>
+                                </template>
+                            </div>
+                        </q-card-section>
+                    </q-card>
+                    <q-card>
+                        <q-card-section class="column q-gutter-xs">
+                            <div class="text-body1 text-bold q-mb-sm">Users</div>
+                            <template v-if="userList.length > 0">
+                                <template v-for="user in userList">
+                                    <div class="text-body1 cursor-pointer" @click="processUserChange(user['uid']);">
+                                        {{ (user['lastname'] ? user['lastname'] : '') + ((user['lastname'] && user['firstname']) ? ', ' : '') + (user['firstname'] ? user['firstname'] : '') + ' (' + user['username'] + ')' }}
+                                    </div>
+                                </template>
+                            </template>
+                            <template v-else>
+                                <div>There are no users to display</div>
+                            </template>
+                        </q-card-section>
+                    </q-card>
+                </template>
+            </template>
+            <template v-if="showAccountEditorPopup">
+                <account-information-editor-popup
+                    :show-popup="showAccountEditorPopup"
+                    @account:edit="setUserList"
+                    @close:popup="showAccountEditorPopup = false"
+                ></account-information-editor-popup>
+            </template>
+        </div>
+        <?php
+        include_once(__DIR__ . '/../config/footer-includes.php');
+        include(__DIR__ . '/../footer.php');
+        ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/user.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script>
+            const userManagementModule = Vue.createApp({
+                components: {
+                    'account-information-editor-popup': accountInformationEditorPopup,
+                    'checkbox-input-element': checkboxInputElement,
+                    'date-input-element': dateInputElement,
+                    'selector-input-element': selectorInputElement,
+                    'text-field-input-element': textFieldInputElement
+                },
+                setup() {
+                    const { showNotification } = useCore();
+                    const baseStore = useBaseStore();
+                    const userStore = useUserStore();
+
+                    const checklistArr = Vue.ref([]);
+                    const clAdminPermissionArr = Vue.computed(() => {
+                        const returnArr = [];
+                        if(userPermissions.value.hasOwnProperty('ClAdmin')){
+                            Object.keys(userPermissions.value['ClAdmin']).forEach((id) => {
+                                const permObj = {};
+                                permObj['id'] = id;
+                                permObj['name'] = userPermissions.value['ClAdmin'][id];
+                                returnArr.push(permObj);
+                            });
+                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
+                        return returnArr;
+                    });
+                    const clientRoot = baseStore.getClientRoot;
+                    const collAdminPermissionArr = Vue.computed(() => {
+                        const returnArr = [];
+                        if(userPermissions.value.hasOwnProperty('CollAdmin')){
+                            Object.keys(userPermissions.value['CollAdmin']).forEach((id) => {
+                                const permObj = {};
+                                permObj['id'] = id;
+                                permObj['name'] = userPermissions.value['CollAdmin'][id];
+                                returnArr.push(permObj);
+                            });
+                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
+                        return returnArr;
+                    });
+                    const collectionArr = Vue.ref([]);
+                    const collEditorPermissionArr = Vue.computed(() => {
+                        const returnArr = [];
+                        if(userPermissions.value.hasOwnProperty('CollEditor')){
+                            Object.keys(userPermissions.value['CollEditor']).forEach((id) => {
+                                const permObj = {};
+                                permObj['id'] = id;
+                                permObj['name'] = userPermissions.value['CollEditor'][id];
+                                returnArr.push(permObj);
+                            });
+                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
+                        return returnArr;
+                    });
+                    const collRarePermissionArr = Vue.computed(() => {
+                        const returnArr = [];
+                        if(userPermissions.value.hasOwnProperty('RareSppReader')){
+                            Object.keys(userPermissions.value['RareSppReader']).forEach((id) => {
+                                const permObj = {};
+                                permObj['id'] = id;
+                                permObj['name'] = userPermissions.value['RareSppReader'][id];
+                                returnArr.push(permObj);
+                            });
+                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
+                        return returnArr;
+                    });
+                    const currentUserId = Vue.ref(null);
+                    const currentUserRights = Vue.computed(() => baseStore.getUserRights);
+                    const filterOptions = Vue.computed(() => {
+                        const filterStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                        return filterStr.split('');
+                    });
+                    const isAdmin = Vue.computed(() => {
+                        return currentUserRights.value.hasOwnProperty('SuperAdmin') && currentUserRights.value['SuperAdmin'];
+                    });
+                    const newPermissionArr = Vue.reactive([]);
+                    const projAdminPermissionArr = Vue.computed(() => {
+                        const returnArr = [];
+                        if(userPermissions.value.hasOwnProperty('ProjAdmin')){
+                            Object.keys(userPermissions.value['ProjAdmin']).forEach((id) => {
+                                const permObj = {};
+                                permObj['id'] = id;
+                                permObj['name'] = userPermissions.value['ProjAdmin'][id];
+                                returnArr.push(permObj);
+                            });
+                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
+                        return returnArr;
+                    });
+                    const projectArr = Vue.ref([]);
+                    const resetPasswordValue = Vue.ref(null);
+                    const showAccountEditorPopup = Vue.ref(false);
+                    const userInfo = Vue.computed(() => userStore.getUserData);
+                    const userList = Vue.ref([]);
+                    const userListDisplayOptions = Vue.ref([
+                        {value: 'all', label: 'All Users'},
+                        {value: 'confirmed', label: 'Confirmed Users'},
+                        {value: 'unconfirmed', label: 'Unconfirmed Users'}
+                    ]);
+                    const userListDisplaySelectedOption = Vue.ref('all');
+                    const userListFilter = Vue.ref(null);
+                    const userPermissions = Vue.computed(() => userStore.getUserPermissionData);
+
+                    Vue.watch(currentUserRights, () => {
+                        validateCurrentUser();
+                    });
+
+                    function addPermissions(permissionArr = null) {
+                        userStore.addUserPermissions((permissionArr ? permissionArr : newPermissionArr), (res) => {
+                            if(Number(res) === 1){
+                                showNotification('positive','Permissions added.');
+                                newPermissionArr.length = 0;
+                            }
+                            else{
+                                showNotification('negative', 'An error occurred while adding the permissions.');
+                            }
+                        });
+                    }
+
+                    function confirmUser() {
+                        userStore.updateUserEditData('validated', '1');
+                        if(userStore.getUserEditsExist){
+                            userStore.updateUserRecord((res) => {
+                                if(Number(res) === 1){
+                                    showNotification('positive','User confirmed.');
+                                }
+                                else{
+                                    showNotification('negative', 'An error occurred while confirming this user.');
+                                }
+                            });
+                        }
+                    }
+
+                    function deleteAllPermissions() {
+                        userStore.deleteAllUserPermissions((res) => {
+                            if(Number(res) === 0){
+                                showNotification('negative', 'An error occurred while deleting the permissions.');
+                            }
+                        });
+                    }
+
+                    function deleteAllUnconfirmedUsers() {
+                        userStore.deleteAllUnconfirmedUsers((res) => {
+                            if(Number(res) === 1){
+                                setUserList();
+                            }
+                            else{
+                                showNotification('negative', 'An error occurred while deleting the unconfirmed users.');
+                            }
+                        });
+                    }
+
+                    function deletePermission(permission, pk) {
+                        userStore.deleteUserPermission(permission, pk, (res) => {
+                            if(Number(res) === 0){
+                                showNotification('negative', 'An error occurred while deleting the permission.');
+                            }
+                        });
+                    }
+
+                    function loginAsUser() {
+                        const formData = new FormData();
+                        formData.append('username', userInfo.value['username']);
+                        formData.append('action', 'loginAsUser');
+                        fetch(profileApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) === 1){
+                                window.location.href = clientRoot + '/index.php';
+                            }
+                            else{
+                                showNotification('negative', 'An error occurred while logging in as this user.');
+                            }
+                        });
+                    }
+
+                    function processFilterChange(value) {
+                        userListFilter.value = value;
+                        setUserList();
+                    }
+
+                    function processListDisplayOptionChange(value) {
+                        userListDisplaySelectedOption.value = value;
+                        setUserList();
+                    }
+
+                    function processPermissionArrChange(permission, value) {
+                        if(value){
+                            newPermissionArr.push(permission);
+                        }
+                        else{
+                            const index = newPermissionArr.indexOf(permission);
+                            newPermissionArr.splice(index, 1);
+                        }
+                    }
+
+                    function processUserChange(uid) {
+                        currentUserId.value = uid;
+                        userStore.setUser(uid);
+                        newPermissionArr.length = 0;
+                        resetPasswordValue.value = null;
+                    }
+
+                    function resetPassword() {
+                        userStore.resetPassword(userInfo.value['username'], true, (res) => {
+                            if(res.toString() !== '0'){
+                                resetPasswordValue.value = res;
+                            }
+                            else{
+                                showNotification('negative','An error occurred while resetting the user password.');
+                            }
+                        });
+                    }
+
+                    function setChecklistArr() {
+                        const formData = new FormData();
+                        formData.append('action', 'getChecklistArr');
+                        fetch(checklistApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((resData) => {
+                            if(resData && resData.length > 0){
+                                checklistArr.value = resData;
+                            }
+                        });
+                    }
+
+                    function setCollectionArr() {
+                        const formData = new FormData();
+                        formData.append('action', 'getCollectionArr');
+                        fetch(collectionApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((resData) => {
+                            if(resData && resData.length > 0){
+                                resData.forEach((collection) => {
+                                    let acroStr = '';
+                                    if(collection['institutioncode'] || collection['collectioncode']){
+                                        acroStr += ' (';
+                                    }
+                                    if(collection['institutioncode']){
+                                        acroStr += collection['institutioncode'];
+                                    }
+                                    if(collection['institutioncode'] && collection['collectioncode']){
+                                        acroStr += '-';
+                                    }
+                                    if(collection['collectioncode']){
+                                        acroStr += collection['collectioncode'];
+                                    }
+                                    if(collection['institutioncode'] || collection['collectioncode']){
+                                        acroStr += ')';
+                                    }
+                                    collection['acroStr'] = acroStr;
+                                });
+                                collectionArr.value = resData;
+                            }
+                        });
+                    }
+
+                    function setProjectArr() {
+                        const formData = new FormData();
+                        formData.append('action', 'getProjectArr');
+                        fetch(projectApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((resData) => {
+                            if(resData && resData.length > 0){
+                                projectArr.value = resData;
+                            }
+                        });
+                    }
+
+                    function setUserList() {
+                        userStore.getUserListArr(userListFilter.value, userListDisplaySelectedOption.value, (data) => {
+                            userList.value = data;
+                        });
+                    }
+
+                    function validateAllUnconfirmedUsers() {
+                        userStore.validateAllUnconfirmedUsers((res) => {
+                            if(Number(res) === 1){
+                                setUserList();
+                            }
+                            else{
+                                showNotification('negative', 'An error occurred while confirming the unconfirmed users.');
+                            }
+                        });
+                    }
+
+                    function validateCurrentUser() {
+                        if(!isAdmin.value){
+                            window.location.href = clientRoot + '/index.php';
+                        }
+                        else{
+                            setUserList();
+                            setCollectionArr();
+                            setChecklistArr();
+                            setProjectArr();
+                        }
+                    }
+
+                    Vue.onMounted(() => {
+                        baseStore.setUserRights();
+                    });
+
+                    return {
+                        checklistArr,
+                        clAdminPermissionArr,
+                        clientRoot,
+                        collAdminPermissionArr,
+                        collectionArr,
+                        collEditorPermissionArr,
+                        collRarePermissionArr,
+                        currentUserId,
+                        filterOptions,
+                        isAdmin,
+                        newPermissionArr,
+                        projAdminPermissionArr,
+                        projectArr,
+                        resetPasswordValue,
+                        showAccountEditorPopup,
+                        userInfo,
+                        userList,
+                        userListDisplayOptions,
+                        userListDisplaySelectedOption,
+                        userListFilter,
+                        userPermissions,
+                        addPermissions,
+                        confirmUser,
+                        deleteAllPermissions,
+                        deleteAllUnconfirmedUsers,
+                        deletePermission,
+                        loginAsUser,
+                        processFilterChange,
+                        processListDisplayOptionChange,
+                        processPermissionArrChange,
+                        processUserChange,
+                        resetPassword,
+                        setUserList,
+                        validateAllUnconfirmedUsers
+                    }
+                }
+            });
+            userManagementModule.use(Quasar, { config: {} });
+            userManagementModule.use(Pinia.createPinia());
+            userManagementModule.mount('#app-container');
+        </script>
+    </body>
 </html>
