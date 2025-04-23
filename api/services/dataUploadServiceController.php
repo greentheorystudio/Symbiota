@@ -121,6 +121,9 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'finalTransferClearPreviousMofRecords'){
         echo $dataUploadService->finalTransferClearPreviousMofRecords($collid);
     }
+    elseif($action === 'finalTransferClearPreviousMofRecordsForUpload'){
+        echo $dataUploadService->finalTransferClearPreviousMofRecordsForUpload($collid);
+    }
     elseif($action === 'finalTransferAddNewMof'){
         echo $dataUploadService->finalTransferAddNewMof($collid);
     }

@@ -1,6 +1,6 @@
 <?php
+include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
-include_once(__DIR__ . '/OccurrenceManager.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageLibraryManager{
@@ -62,7 +62,14 @@ class ImageLibraryManager{
         if($inTaxon){
             $taxon = SanitizerService::cleanInStr($this->conn,$inTaxon);
             if(strpos($taxon, ' ')) {
-                $tidArr = array_keys(OccurrenceManager::getSynonyms($taxon));
+                $taxonData = (new Taxa)->getTaxonFromSciname($taxon);
+                if(array_key_exists('synonyms', $taxonData) && count($taxonData['synonyms']) > 0){
+                    foreach($taxonData['synonyms'] as $synonym){
+                        if($synonym && array_key_exists('tid', $synonym) && (int)$synonym['tid'] > 0){
+                            $tidArr[] = $synonym['tid'];
+                        }
+                    }
+                }
             }
         }
         $sql = 'SELECT DISTINCT t.tid, t.SciName ';

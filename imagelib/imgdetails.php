@@ -12,8 +12,10 @@ $imgManager = new ImageDetailManager($imgId);
 
 $imgArr = $imgManager->getImageMetadata();
 $isEditor = false;
-if($GLOBALS['IS_ADMIN'] || $imgArr['username'] === $GLOBALS['USERNAME'] || ($imgArr['photographeruid'] && $imgArr['photographeruid'] === $GLOBALS['SYMB_UID'])){
-	$isEditor = true;
+if($imgArr){
+    if($GLOBALS['IS_ADMIN'] || $imgArr['username'] === $GLOBALS['USERNAME'] || ($imgArr['photographeruid'] && $imgArr['photographeruid'] === $GLOBALS['SYMB_UID'])){
+        $isEditor = true;
+    }
 }
 
 $status = '';
