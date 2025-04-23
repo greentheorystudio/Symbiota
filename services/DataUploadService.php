@@ -178,6 +178,15 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearPreviousMofRecordsForUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecordsForUpload($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferPopulateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
     {
         $retVal = 1;

@@ -34,7 +34,7 @@ const collectionDataUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <selector-input-element :disabled="disabled" label="Existing Measurement or Fact Records" :options="existingAssociatedDataOptions" :value="configurationData.existingMofRecords" @update:value="(value) => updateConfigurationData('existingMofRecords', value)"></selector-input-element>
+                    <selector-input-element :disabled="disabled" label="Existing Measurement or Fact Records" :options="existingAssociatedMofDataOptions" :value="configurationData.existingMofRecords" @update:value="(value) => updateConfigurationData('existingMofRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
@@ -81,6 +81,11 @@ const collectionDataUploadParametersFieldModule = {
             {value: 'merge', label: 'Import new records while leaving existing records'},
             {value: 'replace', label: 'Replace existing records with new records'}
         ];
+        const existingAssociatedMofDataOptions = [
+            {value: 'merge', label: 'Import new data while leaving existing data'},
+            {value: 'update', label: 'Replace existing data for records included in this upload'},
+            {value: 'replace', label: 'Replace existing data for entire collection'}
+        ];
         const existingRecordOptions = [
             {value: 'update', label: 'Update existing records (Replaces records with incoming records)'},
             {value: 'skip', label: 'Skip existing records (Do not update)'}
@@ -102,6 +107,7 @@ const collectionDataUploadParametersFieldModule = {
             catalogNumberMatchOptions,
             configurationData,
             existingAssociatedDataOptions,
+            existingAssociatedMofDataOptions,
             existingRecordOptions,
             profileData,
             uploadTypeOptions,

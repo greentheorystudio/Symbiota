@@ -72,6 +72,22 @@ class OccurrenceMeasurementsOrFacts{
         return $retVal;
     }
 
+    public function deleteOccurrenceMofRecordsForUpload($collid): int
+    {
+        $retVal = 0;
+        $sql = 'DELETE FROM ommofextension WHERE occid IN(SELECT DISTINCT occid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND occid IS NOT NULL) ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE FROM ommofextension WHERE eventid IN(SELECT DISTINCT eventid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND eventid IS NOT NULL) ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
+    }
+
     public function getMofDataByTypeAndId($type, $id): array
     {
         $retArr = array();

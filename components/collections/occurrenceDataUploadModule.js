@@ -875,6 +875,32 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferClearPreviousMofRecordsForUpload() {
+            const text = 'Clearing previous measurement or fact records for records included in upload';
+            currentProcess.value = 'finalTransferClearPreviousMofRecordsForUpload';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferClearPreviousMofRecordsForUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMof();
+                }
+                else{
+                    processErrorResponse('An error occurred while clearing previous measurement or fact records included in upload');
+                    adjustUIEnd();
+                }
+            });
+        }
+
         function finalTransferPopulateMofIdentifiers() {
             const text = 'Populating identifiers for measurement or fact records in upload';
             currentProcess.value = 'finalTransferPopulateMofIdentifiers';
@@ -894,8 +920,11 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
+                    if(profileConfigurationData.value['existingMofRecords'] === 'merge'){
                         finalTransferRemoveExistingMofRecordsFromUpload();
+                    }
+                    else if(profileConfigurationData.value['existingMofRecords'] === 'update'){
+                        finalTransferClearPreviousMofRecordsForUpload();
                     }
                     else{
                         finalTransferClearPreviousMofRecords();
