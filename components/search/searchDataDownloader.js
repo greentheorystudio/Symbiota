@@ -74,7 +74,7 @@ const searchDataDownloader = {
                     const objectUrl = window.URL.createObjectURL(dataBlob);
                     const anchor = document.createElement('a');
                     anchor.href = objectUrl;
-                    anchor.download = filename;
+                    anchor.download = (filename + '.' + requestOptions['type']);
                     document.body.appendChild(anchor);
                     anchor.click();
                     anchor.remove();
@@ -94,7 +94,7 @@ const searchDataDownloader = {
 
         function processTaxaDownload(){
             showWorking();
-            const filename = 'occurrence_search_taxa_list_' + searchStore.getDateTimeString + '.csv';
+            const filename = 'occurrence_search_taxa_list_' + searchStore.getDateTimeString;
             searchStore.processSearch(requestOptions, (res) => {
                 hideWorking();
                 processCsvDownload(res, filename);
