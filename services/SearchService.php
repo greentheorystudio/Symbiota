@@ -25,6 +25,50 @@ class SearchService {
         $this->conn->close();
     }
 
+    public function getSearchMofData($fromStr, $whereStr): array
+    {
+        $returnArr = array();
+        $headerArr = array();
+        $eventArr = array();
+        $occurrenceArr = array();
+        if($fromStr && $whereStr){
+            $sql = 'SELECT eventid, occid, field, datavalue FROM ommofextension WHERE ';
+            $sql .= 'eventid IN(SELECT DISTINCT o.eventid ' . $fromStr . $whereStr . ') OR ';
+            $sql .= 'occid IN(SELECT DISTINCT o.occid ' . $fromStr . $whereStr . ') ';
+            //echo '<div>Tid sql: ' . $sql . '</div>';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($row['field']){
+                        if(!in_array($row['field'], $headerArr, true)){
+                            $headerArr[] = $row['field'];
+                        }
+                        if((int)$row['eventid'] > 0){
+                            if(!array_key_exists($row['eventid'], $eventArr)){
+                                $eventArr[$row['eventid']] = array();
+                            }
+                            $eventArr[$row['eventid']][$row['field']] = $row['datavalue'];
+                        }
+                        elseif((int)$row['occid'] > 0){
+                            if(!array_key_exists($row['occid'], $occurrenceArr)){
+                                $occurrenceArr[$row['occid']] = array();
+                            }
+                            $occurrenceArr[$row['occid']][$row['field']] = $row['datavalue'];
+                        }
+                    }
+                    unset($rows[$index]);
+                }
+            }
+            if(count($headerArr) > 0){
+                $returnArr['headers'] = $headerArr;
+                $returnArr['event'] = $eventArr;
+                $returnArr['occurrence'] = $occurrenceArr;
+            }
+        }
+        return $returnArr;
+    }
+
     public function getSearchOccidArr($searchTermsArr, $options): array
     {
         $returnArr = array();
@@ -983,24 +1027,29 @@ class SearchService {
     public function processSearch($searchTermsArr, $options): array
     {
         $returnArr = array();
+        $mofDataArr = array();
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $numRows = array_key_exists('numRows', $options) ? (int)$options['numRows'] : 0;
-                $sql = $this->setSelectSql($options['schema']);
-                $sql .= $this->setFromSql($options['schema']);
-                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                $selectStr = $this->setSelectSql($options['schema']);
+                $fromStr = $this->setFromSql($options['schema']);
+                $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
+                    $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
+                }
+                $sql = $selectStr . $fromStr . $whereStr;
                 //echo '<div>Search sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
                     $fields = mysqli_fetch_fields($result);
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
                     if($options['output'] === 'geojson'){
-                        $returnArr = $this->serializeGeoJsonResultArr($fields, $rows, $numRows);
+                        $returnArr = $this->serializeGeoJsonResultArr($fields, $rows, $numRows, ($mofDataArr ?: null));
                     }
                     else{
-                        $returnArr = $this->serializeJsonResultArr($fields, $rows, $options['schema'], $spatial);
+                        $returnArr = $this->serializeJsonResultArr($fields, $rows, $options['schema'], $spatial, ($mofDataArr ?: null));
                     }
                 }
             }
@@ -1059,7 +1108,7 @@ class SearchService {
         return $fileContent;
     }
 
-    public function serializeGeoJsonResultArr($fields, $rows, $numRows): array
+    public function serializeGeoJsonResultArr($fields, $rows, $numRows, $mofData = null): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
@@ -1081,6 +1130,18 @@ class SearchService {
                     $name = $val->name;
                     $geoArr['properties'][$name] = $row[$name];
                 }
+                if($mofData){
+                    if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
+                        foreach($mofData['event'][$row['eventid']] as $field => $value){
+                            $geoArr['properties'][$field] = $value;
+                        }
+                    }
+                    if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
+                        foreach($mofData['occurrence'][$row['occid']] as $field => $value){
+                            $geoArr['properties'][$field] = $value;
+                        }
+                    }
+                }
                 $featuresArr[] = $geoArr;
             }
             unset($rows[$index]);
@@ -1092,7 +1153,7 @@ class SearchService {
         return $returnArr;
     }
 
-    public function serializeJsonResultArr($fields, $rows, $schema, $spatial): array
+    public function serializeJsonResultArr($fields, $rows, $schema, $spatial, $mofData = null): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
@@ -1121,6 +1182,18 @@ class SearchService {
                     foreach($fields as $val){
                         $name = $val->name;
                         $returnData[$occid][$name] = $row[$name];
+                    }
+                    if($mofData){
+                        if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
+                            foreach($mofData['event'][$row['eventid']] as $field => $value){
+                                $returnData[$occid][$field] = $value;
+                            }
+                        }
+                        if($mofData['occurrence'] && array_key_exists($occid, $mofData['occurrence'])){
+                            foreach($mofData['occurrence'][$occid] as $field => $value){
+                                $returnData[$occid][$field] = $value;
+                            }
+                        }
                     }
                     if(!$spatial){
                         if(!$localitySecurity || $rareSpReader){
