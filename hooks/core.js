@@ -164,7 +164,7 @@ function useCore() {
             return Promise.all(promises);
         };
         for(let i = 0; rows.length > 0; i += PROCESS_SIZE) {
-            const batch = rows.slice(i, i + PROCESS_SIZE);
+            const batch = rows.slice(0, PROCESS_SIZE);
             rows.splice(0, PROCESS_SIZE);
             resultArr = resultArr.concat(await processRows(batch));
         }
