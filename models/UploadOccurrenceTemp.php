@@ -424,12 +424,26 @@ class UploadOccurrenceTemp{
 
     public function getDuplicateDbpkCount($collid): int
     {
+        $dbpkArr = array();
         $returnVal = 0;
         if($collid){
-            $sql = 'SELECT dbpk FROM uploadspectemp GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+            $sql = 'SELECT DISTINCT dbpk FROM uploadspectemp GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
             if($result = $this->conn->query($sql)){
-                $returnVal = $result->num_rows;
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
+                foreach($rows as $index => $row){
+                    if($row['dbpk']){
+                        $dbpkArr[] = $row['dbpk'];
+                    }
+                    unset($rows[$index]);
+                }
+                if(count($dbpkArr) > 0){
+                    $sql = 'SELECT upspid FROM uploadspectemp WHERE dbpk IN("' . implode('","', $dbpkArr) . '") ';
+                    if($result = $this->conn->query($sql)){
+                        $returnVal = $result->num_rows;
+                        $result->free();
+                    }
+                }
             }
         }
         return $returnVal;
@@ -532,11 +546,23 @@ class UploadOccurrenceTemp{
         if($collid && $dataType){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM uploadspectemp ';
-            if($dataType !== 'dupdbpk'){
-                $sql .= 'WHERE collid  = ' . (int)$collid . ' ';
+                'FROM uploadspectemp WHERE collid  = ' . (int)$collid . ' ';
+            if($dataType === 'dupdbpk'){
+                $dbpkArr = array();
+                $dbpkSql = 'SELECT DISTINCT dbpk FROM uploadspectemp GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+                if($result = $this->conn->query($dbpkSql)){
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $index => $row){
+                        if($row['dbpk']){
+                            $dbpkArr[] = $row['dbpk'];
+                        }
+                        unset($rows[$index]);
+                    }
+                    $sql .= 'AND dbpk IN("' . (count($dbpkArr) > 0 ? implode('","', $dbpkArr) : '') . '") ';
+                }
             }
-            if($dataType === 'new'){
+            elseif($dataType === 'new'){
                 $sql .= 'AND ISNULL(occid) ';
             }
             elseif($dataType === 'update'){
@@ -544,9 +570,6 @@ class UploadOccurrenceTemp{
             }
             elseif($dataType === 'nulldbpk'){
                 $sql .= 'AND ISNULL(dbpk) ';
-            }
-            elseif($dataType === 'dupdbpk'){
-                $sql .= 'GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
             }
         }
         return $sql;
@@ -607,6 +630,32 @@ class UploadOccurrenceTemp{
             }
             if($this->conn->query($sql)){
                 $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function removeDuplicateDbpkRecordsFromUpload($collid): int
+    {
+        $returnVal = 1;
+        $dbpkArr = array();
+        if($collid){
+            $sql = 'SELECT DISTINCT dbpk FROM uploadspectemp GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if($row['dbpk']){
+                        $dbpkArr[] = $row['dbpk'];
+                    }
+                    unset($rows[$index]);
+                }
+                if(count($dbpkArr) > 0){
+                    $sql = 'DELETE up.*, u.* FROM uploadspectemppoints AS up LEFT JOIN uploadspectemp AS u ON up.upspid = u.upspid WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IN("' . implode('","', $dbpkArr) . '") ';
+                    if(!$this->conn->query($sql)){
+                        $returnVal = 0;
+                    }
+                }
             }
         }
         return $returnVal;

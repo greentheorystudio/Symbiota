@@ -196,6 +196,15 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferRemoveDuplicateDbpkRecordsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->removeDuplicateDbpkRecordsFromUpload($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferRemoveExistingDeterminationsFromUpload($collid): int
     {
         $retVal = 1;

@@ -78,7 +78,7 @@ const uploadDataTableViewerPopup = {
         const paginationFirstRecordNumber = Vue.computed(() => {
             let recordNumber = 1;
             if(Number(props.pageNumber) > 1){
-                recordNumber = recordNumber + ((Number(props.pageNumber) - 1) * Number(props.loadCount));
+                recordNumber += ((Number(props.pageNumber) - 1) * Number(props.loadCount));
             }
             return recordNumber;
         });

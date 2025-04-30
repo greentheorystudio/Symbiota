@@ -211,7 +211,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div v-if="Number(uploadSummaryData['dupdbpk']) > 0" class="row q-col-gutter-xs">
                                             <div>
-                                                Records that have a duplicate primary identifier: {{ uploadSummaryData['dupdbpk'] }}
+                                                Records with duplicate primary identifiers (will not upload): {{ uploadSummaryData['dupdbpk'] }}
                                             </div>
                                             <div class="q-ml-xs">
                                                 <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('dupdbpk');" icon="fas fa-list" dense>
@@ -654,11 +654,16 @@ const occurrenceDataUploadModule = {
 
         function finalTransfer() {
             adjustUIStart();
-            if(profileConfigurationData.value['existingRecords'] === 'skip'){
-                finalTransferRemoveUnmatchedOccurrences();
+            if(Number(uploadSummaryData.value['dupdbpk']) > 0){
+                finalTransferRemoveDuplicateDbpkRecordsFromUpload();
             }
             else{
-                finalTransferUpdateExistingOccurrences();
+                if(profileConfigurationData.value['existingRecords'] === 'skip'){
+                    finalTransferRemoveUnmatchedOccurrences();
+                }
+                else{
+                    finalTransferUpdateExistingOccurrences();
+                }
             }
         }
 
@@ -1051,6 +1056,37 @@ const occurrenceDataUploadModule = {
             else{
                 finalTransferPostProcessUpdateCollStats();
             }
+        }
+
+        function finalTransferRemoveDuplicateDbpkRecordsFromUpload() {
+            const text = 'Removing records with duplicate primary identifiers from upload';
+            currentProcess.value = 'finalTransferRemoveDuplicateDbpkRecordsFromUpload';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferRemoveDuplicateDbpkRecordsFromUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    if(profileConfigurationData.value['existingRecords'] === 'skip'){
+                        finalTransferRemoveUnmatchedOccurrences();
+                    }
+                    else{
+                        finalTransferUpdateExistingOccurrences();
+                    }
+                }
+                else{
+                    processErrorResponse('An error occurred while removing records with duplicate primary identifiers from upload');
+                    adjustUIEnd();
+                }
+            });
         }
 
         function finalTransferRemoveExistingDeterminationsFromUpload() {
