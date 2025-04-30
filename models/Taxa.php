@@ -629,7 +629,7 @@ class Taxa{
 
         $sql = 'SELECT t.TID, t.SciName, t.Author, tu.rankname '.
             'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid  '.
-            'WHERE t.parenttid = '.$tId.' AND TID = tidaccepted '.
+            'WHERE t.parenttid = ' . $tId . ' AND TID = tidaccepted '.
             'ORDER BY tu.rankid, t.SciName ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);

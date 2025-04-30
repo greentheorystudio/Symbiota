@@ -136,4 +136,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'removePrimaryIdentifiersFromUploadedOccurrences'){
         echo $dataUploadService->removePrimaryIdentifiersFromUploadedOccurrences($collid);
     }
+    elseif($action === 'finalTransferRemoveDuplicateDbpkRecordsFromUpload'){
+        echo $dataUploadService->finalTransferRemoveDuplicateDbpkRecordsFromUpload($collid);
+    }
 }
