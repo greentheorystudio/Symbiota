@@ -1,5 +1,24 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
+ALTER TABLE `configurations`
+    MODIFY COLUMN `configurationValue` longtext NOT NULL AFTER `configurationDataType`;
+
+ALTER TABLE `fmchecklists`
+    MODIFY COLUMN `searchterms` longtext NULL AFTER `politicalDivision`,
+    MODIFY COLUMN `footprintWKT` longtext NULL AFTER `pointradiusmeters`,
+    MODIFY COLUMN `defaultSettings` text NULL AFTER `Access`;
+
+ALTER TABLE `fmprojects`
+    MODIFY COLUMN `dynamicProperties` longtext NULL AFTER `ispublic`;
+
+ALTER TABLE `omcolldatauploadparameters`
+    MODIFY COLUMN `queryparamjson` longtext NULL AFTER `dwcpath`,
+    MODIFY COLUMN `cleansql` longtext NULL AFTER `queryparamjson`,
+    MODIFY COLUMN `configjson` longtext NULL AFTER `cleansql`;
+
+ALTER TABLE `omcollmediauploadparameters`
+    MODIFY COLUMN `configjson` longtext NULL AFTER `patternmatchfield`;
+
 ALTER TABLE `omcollections`
     ADD COLUMN `ccpk` int(10) UNSIGNED NULL AFTER `CollID`,
     ADD COLUMN `isPublic` smallint(1) NOT NULL DEFAULT 1 AFTER `SortSeq`,

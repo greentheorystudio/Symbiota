@@ -150,9 +150,15 @@ const occurrenceEditorFormMiscElement = {
         function updateCultivationStatusSetting(value) {
             if(Number(value) === 1){
                 updateOccurrenceData('cultivationstatus', value);
+                if(!occurrenceData.value['establishmentmeans']){
+                    updateOccurrenceData('establishmentmeans', 'Cultivated');
+                }
             }
             else{
                 updateOccurrenceData('cultivationstatus', '0');
+                if(occurrenceData.value['establishmentmeans'] === 'Cultivated'){
+                    updateOccurrenceData('establishmentmeans', null);
+                }
             }
         }
 
