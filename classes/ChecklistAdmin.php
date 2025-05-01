@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/ProfileManager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../models/Permissions.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistAdmin{
 
@@ -10,7 +10,7 @@ class ChecklistAdmin{
 	private $clName;
 
 	public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -27,17 +27,17 @@ class ChecklistAdmin{
 			$sql = 'SELECT c.clid, c.name, c.locality, c.publication, ' .
                 'c.abstract, c.authors, c.parentclid, c.notes, ' .
                 'c.latcentroid, c.longcentroid, c.pointradiusmeters, c.access, c.defaultsettings, ' .
-                'c.dynamicsql, c.datelastmodified, c.uid, c.type, c.initialtimestamp, c.footprintwkt ' .
+                'c.searchterms, c.datelastmodified, c.uid, c.type, c.initialtimestamp, c.footprintwkt ' .
                 'FROM fmchecklists AS c WHERE c.clid = ' .$this->clid.' ';
 	 		$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
-				$this->clName = Sanitizer::cleanOutStr($row->name);
-				$retArr['locality'] = Sanitizer::cleanOutStr($row->locality);
-				$retArr['notes'] = Sanitizer::cleanOutStr($row->notes);
+				$this->clName = SanitizerService::cleanOutStr($row->name);
+				$retArr['locality'] = SanitizerService::cleanOutStr($row->locality);
+				$retArr['notes'] = SanitizerService::cleanOutStr($row->notes);
 				$retArr['type'] = $row->type;
-				$retArr['publication'] = Sanitizer::cleanOutStr($row->publication);
-				$retArr['abstract'] = Sanitizer::cleanOutStr($row->abstract);
-				$retArr['authors'] = Sanitizer::cleanOutStr($row->authors);
+				$retArr['publication'] = SanitizerService::cleanOutStr($row->publication);
+				$retArr['abstract'] = SanitizerService::cleanOutStr($row->abstract);
+				$retArr['authors'] = SanitizerService::cleanOutStr($row->authors);
 				$retArr['parentclid'] = $row->parentclid;
 				$retArr['uid'] = $row->uid;
 				$retArr['latcentroid'] = $row->latcentroid;
@@ -45,7 +45,7 @@ class ChecklistAdmin{
 				$retArr['pointradiusmeters'] = $row->pointradiusmeters;
 				$retArr['access'] = $row->access;
 				$retArr['defaultsettings'] = $row->defaultsettings;
-				$retArr['dynamicsql'] = $row->dynamicsql;
+				$retArr['searchterms'] = $row->searchterms;
 				$retArr['datelastmodified'] = $row->datelastmodified;
                 $retArr['footprintwkt'] = $row->footprintwkt;
 				$retArr['hasfootprintwkt'] = ($row->footprintwkt?'1':'0');
@@ -72,19 +72,19 @@ class ChecklistAdmin{
         $sql = 'INSERT INTO fmchecklists(name,authors,type,locality,publication,abstract,notes,latcentroid,longcentroid,'.
             'pointradiusmeters,footprintwkt,parentclid,access,uid,defaultsettings) '.
             'VALUES('.
-            ($postArr['name']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['name']).'"':'NULL').','.
-            ($postArr['authors']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['authors']).'"':'NULL').','.
-            ((array_key_exists('type',$postArr) && $postArr['type'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['type']).'"':'NULL').','.
-            ($postArr['locality']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['locality']).'"':'NULL').','.
-            ($postArr['publication']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['publication']).'"':'NULL').','.
-            ($postArr['abstract']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['abstract']).'"':'NULL').','.
-            ($postArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').','.
-            ($postArr['latcentroid']?Sanitizer::cleanInStr($this->conn,$postArr['latcentroid']):'NULL').','.
-            ($postArr['longcentroid']?Sanitizer::cleanInStr($this->conn,$postArr['longcentroid']):'NULL').','.
-            ($postArr['pointradiusmeters']?Sanitizer::cleanInStr($this->conn,$postArr['pointradiusmeters']):'NULL').','.
-            ($postArr['footprintwkt']?"'".Sanitizer::cleanInStr($this->conn,$postArr['footprintwkt'])."'":'NULL').','.
-            ($postArr['parentclid']?Sanitizer::cleanInStr($this->conn,$postArr['parentclid']):'NULL').','.
-            (($GLOBALS['PUBLIC_CHECKLIST'] && $postArr['access'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['access']).'"':'NULL').','.
+            ($postArr['name']?'"'.SanitizerService::cleanInStr($this->conn,$postArr['name']).'"':'NULL').','.
+            ($postArr['authors']?'"'.SanitizerService::cleanInStr($this->conn,$postArr['authors']).'"':'NULL').','.
+            ((array_key_exists('type',$postArr) && $postArr['type'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['type']).'"':'NULL').','.
+            ($postArr['locality']?'"'.SanitizerService::cleanInStr($this->conn,$postArr['locality']).'"':'NULL').','.
+            ($postArr['publication']?'"'.SanitizerService::cleanInStr($this->conn,$postArr['publication']).'"':'NULL').','.
+            ($postArr['abstract']?'"'.SanitizerService::cleanInStr($this->conn,$postArr['abstract']).'"':'NULL').','.
+            ($postArr['notes']?'"'.SanitizerService::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').','.
+            ($postArr['latcentroid']?SanitizerService::cleanInStr($this->conn,$postArr['latcentroid']):'NULL').','.
+            ($postArr['longcentroid']?SanitizerService::cleanInStr($this->conn,$postArr['longcentroid']):'NULL').','.
+            ($postArr['pointradiusmeters']?SanitizerService::cleanInStr($this->conn,$postArr['pointradiusmeters']):'NULL').','.
+            ($postArr['footprintwkt']?"'".SanitizerService::cleanInStr($this->conn,$postArr['footprintwkt'])."'":'NULL').','.
+            ($postArr['parentclid']?SanitizerService::cleanInStr($this->conn,$postArr['parentclid']):'NULL').','.
+            (($GLOBALS['PUBLIC_CHECKLIST'] && $postArr['access'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['access']).'"':'NULL').','.
             $GLOBALS['SYMB_UID'].','.
             ($postArr['defaultsettings']?"'".$postArr['defaultsettings']."'":'NULL').
             ')';
@@ -92,9 +92,7 @@ class ChecklistAdmin{
 		if($this->conn->query($sql)){
 			$newClId = $this->conn->insert_id;
 			$this->conn->query('INSERT INTO userroles (uid, role, tablename, tablepk) VALUES('.$GLOBALS['SYMB_UID'].',"ClAdmin","fmchecklists",'.$newClId.') ');
-			$newPManager = new ProfileManager();
-			$newPManager->setUserName($GLOBALS['USERNAME']);
-			$newPManager->authenticate();
+			(new Permissions)->setUserPermissions();
 		}
 		return $newClId;
 	}
@@ -124,7 +122,7 @@ class ChecklistAdmin{
                 $setSql .= ', '.$fieldName." = '".strip_tags($postArr['defaultsettings'], '<i><u><b><a>')."'";
             }
             else{
-                $v = Sanitizer::cleanInStr($this->conn,$postArr[$fieldName]);
+                $v = SanitizerService::cleanInStr($this->conn,$postArr[$fieldName]);
                 if($fieldName !== 'abstract') {
                     $v = strip_tags($v, '<i><u><b><a>');
                 }
@@ -212,7 +210,7 @@ class ChecklistAdmin{
     {
 		$status = true;
 		if($this->clid){
-			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.Sanitizer::cleanInStr($this->conn,$polygonStr).'"':'NULL').' WHERE clid = '.$this->clid.' ';
+			$sql = 'UPDATE fmchecklists SET footprintwkt = '.($polygonStr?'"'.SanitizerService::cleanInStr($this->conn,$polygonStr).'"':'NULL').' WHERE clid = '.$this->clid.' ';
 			if(!$this->conn->query($sql)){
 				echo 'ERROR saving polygon to checklist.';
 				$status = false;
@@ -326,7 +324,7 @@ class ChecklistAdmin{
 					$valueSql .= ','.$v;
 				}
 				else{
-					$valueSql .= ',"'.Sanitizer::cleanInStr($this->conn,$v).'"';
+					$valueSql .= ',"'.SanitizerService::cleanInStr($this->conn,$v).'"';
 				}
 			}
 			else{

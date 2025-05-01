@@ -1,5 +1,5 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistFGExportManager {
 
@@ -22,7 +22,7 @@ class ChecklistFGExportManager {
     private $maxPhoto = 0;
 
 	public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 

@@ -81,7 +81,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 			return true;
 		}
 	</script>
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -356,8 +355,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		?>
 	</div>
 	<?php
-    include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

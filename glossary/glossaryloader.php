@@ -69,7 +69,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
 	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/glossary.index.js?ver=20230103"></script>
+    <script type="text/javascript" src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 	<script type="text/javascript">
         const taxArr = [];
 
@@ -321,8 +321,8 @@ else{
 	</div>
 	<?php 
 }
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

@@ -40,14 +40,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script src="../js/external/all.min.js" type="text/javascript"></script>
-	<script src="../js/external/jquery.js" type="text/javascript"></script>
+    <script src="../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
 	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
-    <script src="../js/images.index.js?ver=20221115" type="text/javascript"></script>
-    <script src="../js/search.term.manager.js?ver=20230901" type="text/javascript"></script>
-	<?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script src="../js/images.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 	<script type="text/javascript">
         let stArr = {};
         let phArr = [];
@@ -557,9 +555,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		
 		</div>
 	</div>
-	<?php 
-	include(__DIR__ . '/../footer.php');
+	<?php
     include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

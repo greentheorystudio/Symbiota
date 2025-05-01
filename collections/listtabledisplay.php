@@ -33,6 +33,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collections Search Results Table</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         table.styledtable td {
             white-space: nowrap;
@@ -50,13 +51,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" type="text/css" />
-    <script src="../js/external/all.min.js" type="text/javascript"></script>
     <script src="../js/external/jquery.js" type="text/javascript"></script>
     <script src="../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
-    <script src="../js/collections.search.js?ver=20231011" type="text/javascript"></script>
-    <script type="text/javascript" src="../js/search.term.manager.js?ver=20230901"></script>
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
+    <script src="../js/collections.search.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script type="text/javascript" src="../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript">
         let stArr = {};
         let collJson = '';
@@ -154,8 +153,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <?php
         echo '<span class="navpath">';
         echo '<a href="../index.php">Home</a> &gt;&gt; ';
-        echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'index.php\');">Collections</a> &gt;&gt; ';
-        echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'harvestparams.php\');">Search Criteria</a> &gt;&gt; ';
+        echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'list.php\');">Search Criteria</a> &gt;&gt; ';
         echo '<b>Specimen Records Table</b>';
         echo '</span>';
         ?>

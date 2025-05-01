@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../models/Configurations.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 
 if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../../index.php');
 }
 
-$confManager = new ConfigurationManager();
+$confManager = new Configurations();
 $taxaUtilities = new TaxonomyUtilities();
 
 $fullConfArr = $confManager->getConfigurationsArr();

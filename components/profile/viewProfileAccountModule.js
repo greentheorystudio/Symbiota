@@ -1,25 +1,7 @@
 const viewProfileAccountModule = {
-    props: {
-        accountInfo: {
-            type: Object,
-            default: null
-        },
-        checklistArr: {
-            type: Array,
-            default: []
-        },
-        projectArr: {
-            type: Array,
-            default: []
-        },
-        uid: {
-            type: Number,
-            default: null
-        }
-    },
     template: `
         <div class="row justify-center q-mt-md">
-            <template v-if="accountInfo.validated !== 1">
+            <template v-if="Number(accountInfo.validated) !== 1">
                 <q-card class="create-account-container">
                     <q-card-section>
                         <div class="row justify-between">
@@ -40,9 +22,16 @@ const viewProfileAccountModule = {
                     <div class="row justify-start q-gutter-md">
                         <q-input outlined v-model="accountInfo.username" label="Username" bg-color="white" class="col-4" dense disable></q-input>
                     </div>
-                    <account-information-form ref="accountInformationFormRef" :user="accountInfo" @update:account-information="updateAccountObj"></account-information-form>
-                    <div class="row justify-end q-gutter-md q-mt-xs">
-                        <q-btn color="secondary" @click="editeAccount();" label="Save Edits" dense />
+                    <account-information-form ref="accountInformationFormRef" @update:account-information="updateAccountData"></account-information-form>
+                    <div class="row justify-between q-mt-md">
+                        <div>
+                            <template v-if="editsExist">
+                                <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
+                            </template>
+                        </div>
+                        <div class="row justify-end">
+                            <q-btn color="secondary" @click="editAccount();" label="Save Edits" :disabled="!editsExist || !userValid" dense />
+                        </div>
                     </div>
                 </q-card-section>
             </q-card>
@@ -106,167 +95,121 @@ const viewProfileAccountModule = {
             </q-card>
         </q-dialog>
     `,
-    data() {
-        return {
-            deleteConfirmation: Vue.ref(false),
-            newPassword: Vue.ref(null)
-        }
-    },
     components: {
         'account-information-form': accountInformationForm,
         'password-input': passwordInput
     },
-    setup () {
-        const $q = useQuasar();
-        const passwordInputRef = Vue.ref(null);
+    setup(props) {
+        const { showNotification } = useCore();
+        const baseStore = useBaseStore();
+        const userStore = useUserStore();
+        
+        const accessTokenCnt = Vue.computed(() => userStore.getTokenCnt);
+        const accountInfo = Vue.computed(() => userStore.getUserData);
         const accountInformationFormRef = Vue.ref(null);
+        const checklistArr = Vue.computed(() => userStore.getChecklistArr);
+        const clientRoot = baseStore.getClientRoot;
+        const deleteConfirmation = Vue.ref(false);
+        const editsExist = Vue.computed(() => userStore.getUserEditsExist);
+        const newPassword = Vue.ref(null);
+        const passwordInputRef = Vue.ref(null);
+        const projectArr = Vue.computed(() => userStore.getProjectArr);
+        const uid = Vue.computed(() => userStore.getUserID);
+        const userValid = Vue.computed(() => userStore.getUserValid);
+
+        function changePassword() {
+            passwordInputRef.value.validateForm();
+            if(!passwordInputRef.value.formHasErrors()) {
+                userStore.updateUserPassword(newPassword.value, (res) => {
+                    if(Number(res) === 1){
+                        showNotification('positive','Your password has been changed.');
+                    }
+                    else{
+                        showNotification('negative','An error occurred changing your password.');
+                    }
+                });
+            }
+            else{
+                showNotification('negative','Please correct the errors noted in red to change your password.');
+            }
+        }
+
+        function clearAccessTokens() {
+            userStore.clearUserAccessTokens((res) => {
+                if(Number(res) === 1){
+                    showNotification('positive','Your access tokens have been cleared and you have been logged out of all devices.');
+                }
+                else{
+                    showNotification('negative','An error occurred clearing your access tokens.');
+                }
+            });
+        }
+
+        function deleteAccount() {
+            userStore.deleteUserRecord(uid.value, (res) => {
+                if(Number(res) === 1){
+                    window.location.href = clientRoot + '/index.php';
+                }
+                else{
+                    showNotification('negative','An error occurred deleting your account.');
+                }
+            });
+        }
+
+        function editAccount() {
+            if(!accountInformationFormRef.value.formHasErrors()) {
+                userStore.updateUserRecord((res) => {
+                    if(Number(res) === 1){
+                        showNotification('positive','The edits to your account have been saved.');
+                    }
+                    else{
+                        showNotification('negative','An error occurred saving the edits to your account.');
+                    }
+                });
+            }
+            else{
+                showNotification('negative','Please correct the errors noted in red to save the edits to your account.');
+            }
+        }
+
+        function resendConfirmationEmail() {
+            userStore.resendConfirmationEmail((res) => {
+                if(Number(res) === 1){
+                    showNotification('positive','Your confirmation email has been sent.');
+                }
+                else{
+                    showNotification('negative','There was an error sending your confirmation email.');
+                }
+            });
+        }
+
+        function updateAccountData(data) {
+            userStore.updateUserEditData(data.key, data.value);
+        }
+
+        function updatePassword(val) {
+            newPassword.value = val;
+        }
+
         return {
-            passwordInputRef,
+            accessTokenCnt,
+            accountInfo,
             accountInformationFormRef,
-            showNotification(type, text){
-                $q.notify({
-                    type: type,
-                    icon: null,
-                    message: text,
-                    multiLine: true,
-                    position: 'top',
-                    timeout: 5000
-                });
-            }
-        }
-    },
-    mounted() {
-        if(Number(this.uid) > 0){
-            this.setAccessTokenCnt();
-        }
-    },
-    methods: {
-        changePassword(){
-            this.$refs.passwordInputRef.validateForm();
-            if(!this.$refs.passwordInputRef.formHasErrors()) {
-                const formData = new FormData();
-                formData.append('uid', this.uid);
-                formData.append('pwd', this.newPassword);
-                formData.append('action', 'changePassword');
-                fetch(profileApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    response.text().then((res) => {
-                        if(Number(res) === 1){
-                            this.showNotification('positive','Your password has been changed.');
-                        }
-                        else{
-                            this.showNotification('negative','An error occurred changing your password.');
-                        }
-                    });
-                });
-            }
-            else{
-                this.showNotification('negative','Please correct the errors noted in red to change your password.');
-            }
-        },
-        clearAccessTokens(){
-            const formData = new FormData();
-            formData.append('uid', this.uid);
-            formData.append('action', 'clearAccessTokens');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(Number(res) === 1){
-                        this.showNotification('positive','Your access tokens have been cleared and you have been logged out of all devices.');
-                    }
-                    else{
-                        this.showNotification('negative','An error occurred clearing your access tokens.');
-                    }
-                });
-            });
-        },
-        deleteAccount(){
-            const formData = new FormData();
-            formData.append('uid', this.uid);
-            formData.append('action', 'deleteAccount');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(Number(res) === 1){
-                        window.location.href = CLIENT_ROOT + '/index.php';
-                    }
-                    else{
-                        this.showNotification('negative','An error occurred deleting your account.');
-                    }
-                });
-            });
-        },
-        editeAccount(){
-            if(!this.$refs.accountInformationFormRef.formHasErrors()) {
-                const formData = new FormData();
-                formData.append('user', JSON.stringify(this.accountInfo));
-                formData.append('action', 'editAccount');
-                fetch(profileApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    response.text().then((res) => {
-                        if(Number(res) === 1){
-                            this.showNotification('positive','The edits to your account have been saved.');
-                        }
-                        else{
-                            this.showNotification('negative','An error occurred saving the edits to your account.');
-                        }
-                    });
-                });
-            }
-            else{
-                this.showNotification('negative','Please correct the errors noted in red to save the edits to your account.');
-            }
-        },
-        resendConfirmationEmail(){
-            const formData = new FormData();
-            formData.append('uid', this.uid);
-            formData.append('action', 'sendConfirmationEmail');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(Number(res) === 1){
-                        this.showNotification('positive','Your confirmation email has been sent.');
-                    }
-                    else{
-                        this.showNotification('negative','There was an error sending your confirmation email.');
-                    }
-                });
-            });
-        },
-        setAccessTokenCnt(){
-            const formData = new FormData();
-            formData.append('uid', this.uid);
-            formData.append('action', 'getAccessTokenCnt');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-                .then((response) => {
-                    response.text().then((res) => {
-                        this.accessTokenCnt = Number(res);
-                    });
-                });
-        },
-        updatePassword(val) {
-            this.newPassword = val;
-        },
-        updateAccountObj(obj) {
-            this.$emit('update:account-information', obj);
+            checklistArr,
+            deleteConfirmation,
+            editsExist,
+            newPassword,
+            passwordInputRef,
+            projectArr,
+            uid,
+            userValid,
+            changePassword,
+            clearAccessTokens,
+            deleteAccount,
+            editAccount,
+            resendConfirmationEmail,
+            updateAccountData,
+            updatePassword
         }
     }
 };

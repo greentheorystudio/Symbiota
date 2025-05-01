@@ -28,6 +28,7 @@ $printMode = array_key_exists('printmode',$_REQUEST)?(int)$_REQUEST['printmode']
 $statusStr='';
 $locStr = '';
 $isEditor = false;
+$taxaArray = array();
 
 if($action !== 'Rebuild List' && $action !== 'Download List') {
     $searchSynonyms = 1;
@@ -164,7 +165,6 @@ if($clArray){
             $statusStr = $clAdmin->addNewSpecies($dataArr,$setRareSpp);
         }
     }
-    $taxaArray = array();
     if($clValue || $dynClid){
         $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
         if($GLOBALS['CHECKLIST_FG_EXPORT']){
@@ -197,11 +197,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
-    <?php include_once(__DIR__ . '/../config/googleanalytics.php'); ?>
     <script type="text/javascript">
         <?php
         if($clid) {
@@ -238,13 +236,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
             const starrObj = {
                 usethes: true,
                 taxa: tid,
-                targetclid: clid
+                clid: clid
             };
-            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj) + '&targettid=' + clid;
+            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj);
             openPopup(url);
         }
     </script>
-    <script type="text/javascript" src="../js/checklists.checklist.js?ver=20230103"></script>
+    <script type="text/javascript" src="../js/checklists.checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>
@@ -252,22 +250,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/vfs_fonts.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=20230103" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <?php
     }
     ?>
     <style>
-        #sddm{margin:0;padding:0;z-index:30;}
-        #sddm:hover {background-color:#EAEBD8;}
-        #sddm img{padding:3px;}
-        #sddm:hover img{background-color:#EAEBD8;}
-        #sddm li{margin:0;padding: 0;list-style: none;float: left;font: bold 11px arial}
-        #sddm li a{display: block;margin: 0 1px 0 0;padding: 4px 10px;width: 60px;background: #5970B2;color: #FFF;text-align: center;text-decoration: none}
-        #sddm li a:hover{background: #49A3FF}
-        #sddm div{position: absolute;visibility:hidden;margin:0;padding:0;background:#EAEBD8;border:1px solid #5970B2}
-        #sddm div a	{position: relative;display:block;margin:0;padding:5px 10px;width:auto;white-space:nowrap;text-align:left;text-decoration:none;background:#EAEBD8;color:#2875DE;font-weight:bold;}
-        #sddm div a:hover{background:#49A3FF;color:#FFF}
-
         a.boxclose{
             float:right;
             width:36px;
@@ -344,7 +331,7 @@ if(!$printMode){
         if($activateKey && !$printMode){
             ?>
             <div>
-                <a href="../ident/key.php?cl=<?php echo $clValue. '&proj=' .$pid. '&dynclid=' .$dynClid;?>&taxon=All+Species">
+                <a href="../ident/key.php?clid=<?php echo $clValue. '&pid=' .$pid;?>">
                     <i style='width:15px; height:15px;' class="fas fa-key"></i>
                 </a>
             </div>
@@ -353,20 +340,10 @@ if(!$printMode){
         if(!$printMode && $taxaArray){
             ?>
             <div>
-                <span onmouseover="mopen('m1')" onmouseout="mclosetime()">
-                    <i class="fas fa-gamepad"></i>
-                </span>
-                <ul id="sddm">
-                    <li>
-                        <div id="m1" onmouseover="mcancelclosetime()" onmouseout="mclosetime()">
-                            <?php
-                            $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon. '&thesfilter=' .$thesFilter. '&showsynonyms=' .$showSynonyms;
-                            ?>
-                            <a href="../games/namegame.php<?php echo $varStr; ?>">Name Game</a>
-                            <a href="../games/flashcards.php<?php echo $varStr; ?>">Flash Card Quiz</a>
-                        </div>
-                    </li>
-                </ul>
+                <?php
+                $varStr = '?clid=' .$clid. '&dynclid=' .$dynClid. '&listname=' .$clManager->getClName(). '&taxonfilter=' .$taxonFilter. '&showcommon=' .$showCommon. '&thesfilter=' .$thesFilter. '&showsynonyms=' .$showSynonyms;
+                ?>
+                <a href="../games/flashcards.php<?php echo $varStr; ?>"><i class="fas fa-gamepad"></i></a>
             </div>
             <?php
         }
@@ -743,7 +720,7 @@ if(!$printMode){
                                 <i style='width:13px;height:13px;cursor:pointer;' title='edit details' class="fas fa-edit" onclick="openPopup('clsppeditor.php?tid=<?php echo $tid. '&clid=' .$clid; ?>');"></i>
                             </span>
                             <?php
-                            if($showVouchers && array_key_exists('dynamicsql',$clArray) && $clArray['dynamicsql']){
+                            if($showVouchers && array_key_exists('searchterms',$clArray) && $clArray['searchterms']){
                                 ?>
                                 <span class="editspp" style="display:none;">
                                     <i style='width:13px;height:13px;cursor:pointer;' title='Link Voucher Occurrences' class="fas fa-link" onclick="setPopup(<?php echo $tid . ',' . $clid;?>);"></i>
@@ -816,6 +793,7 @@ if(!$printMode){
 <div style="clear:both;"></div>
 <?php
 if(!$printMode) {
+    include_once(__DIR__ . '/../config/footer-includes.php');
     include(__DIR__ . '/../footer.php');
 }
 
@@ -924,7 +902,6 @@ if($GLOBALS['CHECKLIST_FG_EXPORT']){
     </div>
     <?php
 }
-include_once(__DIR__ . '/../config/footer-includes.php');
 ?>
 </body>
 </html>

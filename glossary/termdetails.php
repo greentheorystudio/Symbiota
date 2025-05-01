@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $glossId = array_key_exists('glossid',$_REQUEST)?(int)$_REQUEST['glossid']:0;
@@ -113,10 +113,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
 			font-weight: normal;
 		}
 	</style>
-    <script src="../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/external/jquery.js"></script>
+    <script type="text/javascript" src="../js/external/jquery.js"></script>
 	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/glossary.index.js?ver=20230103"></script>
+    <script type="text/javascript" src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 	<script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
 			<?php 

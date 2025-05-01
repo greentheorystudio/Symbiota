@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/OccurrenceChecklistManager.php');
-include_once(__DIR__ . '/../classes/SOLRManager.php');
+include_once(__DIR__ . '/../services/SOLRService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 $checklistManager = new OccurrenceChecklistManager();
 
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST)?(int)$_REQUEST['taxonfilter']:1;
@@ -30,7 +30,7 @@ if($GLOBALS['SOLR_MODE']){
 
 $dynClid = $checklistManager->buildOccurrenceChecklist($taxonFilter,$tidArr);
 if($interface === 'key'){
-	header('Location: ../ident/key.php?dynclid=' .$dynClid. '&taxon=All Species');
+	header('Location: ../ident/key.php?clid=' .$dynClid);
 }
 else{
 	header('Location: ../checklists/checklist.php?dynclid=' .$dynClid);

@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceAccessStats {
 
@@ -17,7 +17,7 @@ class OccurrenceAccessStats {
 	private $errorMessage;
 
 	public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
 	    $this->conn = $connection->getConnection();
 	}
 
@@ -42,16 +42,16 @@ class OccurrenceAccessStats {
 	{
 		$status = false;
 		if(is_numeric($occid)){
-			$sql = 'INSERT INTO omoccuraccessstats '.
-				'SET occid='.$occid.', accessdate="'.date('Y-m-d').'", ipaddress="'.Sanitizer::cleanInStr($this->conn,$_SERVER['REMOTE_ADDR']).'", '.
-				'cnt=1, accesstype="'.Sanitizer::cleanInStr($this->conn,$accessType).'" ON DUPLICATE KEY UPDATE cnt=cnt+1';
+			$sql = 'INSERT IGNORE INTO omoccuraccessstats '.
+				'SET occid='.$occid.', accessdate="'.date('Y-m-d').'", ipaddress="'.SanitizerService::cleanInStr($this->conn,$_SERVER['REMOTE_ADDR']).'", '.
+				'cnt=1, accesstype="'.SanitizerService::cleanInStr($this->conn,$accessType).'" ON DUPLICATE KEY UPDATE cnt=cnt+1';
 			//echo $sql.'<br/>';
 			if($this->conn->query($sql)){
 				$status = true;
 			}
 			else{
 				$this->errorMessage = date('Y-m-d H:i:s').' - ERROR recording access event.';
-				$this->logError($sql);
+				//$this->logError($sql);
 			}
 		}
 		return $status;
@@ -130,13 +130,13 @@ class OccurrenceAccessStats {
     public function batchRecordEventsBySql($sqlFrag,$accessType): bool
     {
         $status = true;
-        $sql = 'INSERT INTO omoccuraccessstats(occid,accessdate,ipaddress,cnt,accesstype) '.
-            'SELECT o.occid, "'.date('Y-m-d').'", "'.Sanitizer::cleanInStr($this->conn,$_SERVER['REMOTE_ADDR']).'", 1, "'.Sanitizer::cleanInStr($this->conn,$accessType).'" ';
+        $sql = 'INSERT IGNORE INTO omoccuraccessstats(occid,accessdate,ipaddress,cnt,accesstype) '.
+            'SELECT o.occid, "'.date('Y-m-d').'", "'.SanitizerService::cleanInStr($this->conn,$_SERVER['REMOTE_ADDR']).'", 1, "'.SanitizerService::cleanInStr($this->conn,$accessType).'" ';
         $sql .= $sqlFrag;
         $sql .= 'ON DUPLICATE KEY UPDATE cnt = cnt+1';
         if(!$this->conn->query($sql)){
             $this->errorMessage = date('Y-m-d H:i:s').' - ERROR batch recording access event.';
-            $this->logError($sql);
+            //$this->logError($sql);
         }
         return $status;
     }

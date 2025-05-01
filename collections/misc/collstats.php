@@ -239,10 +239,9 @@ if($action !== 'Update Statistics'){
         <link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
         <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
         <link rel="stylesheet" href="../../css/external/jquery-ui.css?ver=20221204" type="text/css" />
-        <script src="../../js/external/all.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="../../js/external/jquery.js"></script>
         <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-        <script type="text/javascript" src="../../js/search.term.manager.js?ver=20230901"></script>
+        <script type="text/javascript" src="../../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
         <script type="text/javascript">
             document.addEventListener("DOMContentLoaded", function() {
                 $("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
@@ -984,8 +983,8 @@ if($action !== 'Update Statistics'){
             </div>
         </div>
         <?php
-        include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
         ?>
     </body>
 	</html>

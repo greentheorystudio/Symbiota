@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -15,7 +15,7 @@ $reset = (array_key_exists('reset', $_REQUEST) && $_REQUEST['reset']);
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 if($crowdSourceMode) {
     $occManager->setCrowdSourceMode(1);
@@ -196,7 +196,7 @@ if($GLOBALS['SYMB_UID']){
 	$navStr .= '</div>';
 }
 else{
-	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+	header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -213,10 +213,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     </style>
 	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script src="../../js/external/jquery.js" type="text/javascript"></script>
+    <script src="../../js/external/jquery.js" type="text/javascript"></script>
 	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
+    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;border:0;">
 	<div>

@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceGeorefTools.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -54,7 +54,7 @@ if(!$georeferenceVerificationStatus) {
 }
 
 $geoManager = new OccurrenceGeorefTools();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 $geoManager->setCollId($collId);
 
 $editor = false;
@@ -112,10 +112,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js"></script>
     <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=20230103"></script>
+    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
@@ -126,26 +125,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 mapWindow.close();
                 mapWindow = null;
             });
-        }
-
-        function geoCloneTool(){
-            const selObj = document.getElementById("locallist");
-            let cloneWindow;
-            if (selObj.selectedIndex > -1) {
-                const f = document.queryform;
-                let url = "georefclone.php?";
-                url = url + "locality=" + selObj.options[selObj.selectedIndex].text;
-                url = url + "&country=" + f.qcountry.value;
-                url = url + "&state=" + f.qstate.value;
-                url = url + "&county=" + f.qcounty.value;
-                url = url + "&collid=" + f.collid.value;
-                cloneWindow = open(url, "geoclonetool", "resizable=1,scrollbars=1,toolbar=1,width=1000,height=800,left=20,top=20");
-                if (cloneWindow.opener == null) {
-                    cloneWindow.opener = self;
-                }
-            } else {
-                alert("Select a locality in list to open that record set in the editor");
-            }
         }
     </script>
 </head>
@@ -280,9 +259,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 <div style="clear:both;">
                     <form name="georefform" method="post" action="batchgeoreftool.php" onsubmit="return verifyGeorefForm(this)">
                         <div style="float:right;">
-                            <span>
-                                <a href="#" onclick="geoCloneTool();"><i style="height:15px;width:15px;" title="Search for clones previously georeferenced" class="fas fa-list"></i></a>
-                            </span>
                             <span style="margin-left:10px;">
                                 <a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png" title="GeoLocate locality" style="width:15px;" /></a>
                             </span>

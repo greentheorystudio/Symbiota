@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceDataset.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
@@ -45,7 +45,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         legend{ font-weight: bold; }
         .dataset-item{ margin-bottom: 10px }
     </style>
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../../js/external/jquery.js"></script>
     <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
     <script type="text/javascript">
@@ -217,8 +216,8 @@ include(__DIR__ . '/../../header.php');
     </div>
 </div>
 <?php
-include(__DIR__ . '/../../footer.php');
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

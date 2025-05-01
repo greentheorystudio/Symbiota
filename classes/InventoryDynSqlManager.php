@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
  
 class InventoryDynSqlManager {
 
@@ -9,7 +9,7 @@ class InventoryDynSqlManager {
 	private $clName;
 	
 	public function __construct($id) {
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 		if(is_numeric($id)){
 			$this->clid = $id;
@@ -26,11 +26,11 @@ class InventoryDynSqlManager {
 	{
 		$sqlStr = '';
 		if($this->clid){
-			$sql = 'SELECT c.dynamicsql FROM fmchecklists c WHERE (c.clid = '.$this->clid.')';
+			$sql = 'SELECT c.searchterms FROM fmchecklists c WHERE (c.clid = '.$this->clid.')';
 			//echo $sql;
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
-				$sqlStr = $row->dynamicsql;
+				$sqlStr = $row->searchterms;
 			}
 			$rs->close();
 		}
@@ -39,7 +39,7 @@ class InventoryDynSqlManager {
 	
 	public function testSql($strFrag): bool
 	{
-		$sql = 'SELECT * FROM omoccurrences o WHERE '.Sanitizer::cleanInStr($this->conn,$strFrag);
+		$sql = 'SELECT * FROM omoccurrences o WHERE '.SanitizerService::cleanInStr($this->conn,$strFrag);
 		if($this->conn->query($sql)){
 			return true;
 		}
@@ -48,7 +48,7 @@ class InventoryDynSqlManager {
 	
 	public function saveSql($sqlFrag): void
 	{
-		$sql = 'UPDATE fmchecklists c SET c.dynamicsql = "'.Sanitizer::cleanInStr($this->conn,$sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
+		$sql = 'UPDATE fmchecklists c SET c.searchterms = "'.SanitizerService::cleanInStr($this->conn,$sqlFrag).'" WHERE (c.clid = '.$this->clid.')';
 		$this->conn->query($sql);
 	}
 

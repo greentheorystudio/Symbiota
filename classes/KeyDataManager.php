@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/Manager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class KeyDataManager extends Manager{
 
@@ -11,7 +11,7 @@ class KeyDataManager extends Manager{
 	private $clName;
 	private $clAuthors;
 	private $clType;
-	private $dynamicSql;
+	private $searchterms;
 	private $charArr = array();
 	private $taxaCount;
 	private $lang;
@@ -29,7 +29,7 @@ class KeyDataManager extends Manager{
 			$this->pid = $projValue;
 		}
 		else{
-			$sql = "SELECT p.pid FROM fmprojects p WHERE (p.projname = '".Sanitizer::cleanInStr($this->conn,$projValue)."')";
+			$sql = "SELECT p.pid FROM fmprojects p WHERE (p.projname = '".SanitizerService::cleanInStr($this->conn,$projValue)."')";
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$this->pid = $row->pid;
@@ -43,7 +43,7 @@ class KeyDataManager extends Manager{
 	{
         $this->lang = $l;
         $this->langArr[] = $l;
-        $sql = "SELECT iso639_1 FROM adminlanguages WHERE langname = '".Sanitizer::cleanInStr($this->conn,$l)."' ";
+        $sql = "SELECT iso639_1 FROM adminlanguages WHERE langname = '".SanitizerService::cleanInStr($this->conn,$l)."' ";
         $result = $this->conn->query($sql);
         if($row = $result->fetch_object()){
             $this->langArr[] = $row->iso639_1;
@@ -98,7 +98,7 @@ class KeyDataManager extends Manager{
 
 	public function setTaxonFilter($t): void
 	{
-		$this->taxonFilter = Sanitizer::cleanInStr($this->conn,$t);
+		$this->taxonFilter = SanitizerService::cleanInStr($this->conn,$t);
 	}
 
 	public function setClValue($clv){
@@ -114,11 +114,11 @@ class KeyDataManager extends Manager{
 		}
 		else{
 			if(is_numeric($clv)){
-				$sql = 'SELECT cl.CLID, cl.Name, cl.Authors, cl.Type, cl.dynamicsql ' .
+				$sql = 'SELECT cl.CLID, cl.Name, cl.Authors, cl.Type, cl.searchterms ' .
 					'FROM fmchecklists cl WHERE (cl.CLID = ' .$clv. ')';
 			}
 			else{
-				$sql = 'SELECT cl.CLID, cl.Name, cl.Authors, cl.Type, cl.dynamicsql ' .
+				$sql = 'SELECT cl.CLID, cl.Name, cl.Authors, cl.Type, cl.searchterms ' .
 					"FROM fmchecklists cl WHERE (cl.Name = '".$clv."') OR (cl.Title = '".$clv."')";
 			}
 			$result = $this->conn->query($sql);
@@ -127,7 +127,7 @@ class KeyDataManager extends Manager{
 				$this->clName = $row->Name;
 				$this->clAuthors = $row->Authors;
 				$this->clType = ($row->Type?:'static');
-				$this->dynamicSql = $row->dynamicsql;
+				$this->searchterms = $row->searchterms;
 			}
 			$result->close();
 		}
@@ -444,7 +444,7 @@ class KeyDataManager extends Manager{
         if(!$this->sql){
             $sqlBase = 'SELECT DISTINCT t.tid, t.family, ' .($this->commonDisplay?'IFNULL(v.VernacularName,t.SciName)':'t.SciName'). ' AS DisplayName, t.parenttid ';
             if($this->dynClid){
-                $sqlFromBase = 'INNER JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
+                $sqlFromBase = 'LEFT JOIN fmdyncltaxalink AS clk ON t.tid = clk.tid ';
                 $sqlWhere = 'WHERE clk.dynclid = ' .$this->dynClid. ' AND t.RankId = 220 ';
             }
             else{
@@ -455,7 +455,7 @@ class KeyDataManager extends Manager{
                     $sqlFromBase = 'INNER JOIN fmchklsttaxalink AS clk ON t.tid = clk.tid ';
                 }
                 if($this->clType === 'dynamic'){
-                    $sqlWhere = 'WHERE t.RankId = 220 AND (' .$this->dynamicSql. ') ';
+                    $sqlWhere = 'WHERE t.RankId = 220 AND (' .$this->searchterms. ') ';
                 }
                 else{
                     $sqlWhere = 'WHERE clk.clid = ' .$this->clid. ' AND t.RankId = 220 ';

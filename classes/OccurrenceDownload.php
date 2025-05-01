@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceAccessStats.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceDownload{
 
@@ -10,18 +10,16 @@ class OccurrenceDownload{
 	private $rareReaderArr = array();
 	private $schemaType = 'native';
 	private $extended = 0;
-	private $delimiter = ',';
 	private $zipFile = false;
  	private $sqlWhere = '';
  	private $conditionArr = array();
-    private $taxonFilter;
     private $errorArr = array();
     private $tidArr = array();
     private $isPublicDownload = false;
     private $occArr = array();
 
  	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->conn = $connection->getConnection();
 
 		if($GLOBALS['IS_ADMIN'] || array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) || array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
@@ -43,7 +41,6 @@ class OccurrenceDownload{
 
 	public function downloadData(): void
 	{
-		$outstream = null;
 		$contentDesc = '';
 		$filePath = $this->getOutputFilePath();
 		$fileName = $this->getOutputFileName();
@@ -75,18 +72,8 @@ class OccurrenceDownload{
 					$tempName = 'occurrence';
 				}
 				$tempPath = $filePath.$tempName.'_'.time();
-				if($this->delimiter === "\t"){
-					$tempPath .= '.tab';
-					$tempName .= '.tab';
-				}
-				elseif($this->delimiter === ','){
-					$tempPath .= '.csv';
-					$tempName .= '.csv';
-				}
-				else{
-					$tempPath .= '.txt';
-					$tempName .= '.txt';
-				}
+                $tempPath .= '.csv';
+                $tempName .= '.csv';
 				$fh = fopen($tempPath, 'wb');
 				$this->writeOutData($fh);
 				fclose($fh);
@@ -128,20 +115,10 @@ class OccurrenceDownload{
 				$outputHeader = true;
 				while($row = $result->fetch_assoc()){
 					if($outputHeader){
-						if($this->delimiter === ','){
-							fputcsv($outstream, array_keys($row));
-						}
-						else{
-							fwrite($outstream, implode($this->delimiter, array_keys($row))."\n");
-						}
+                        fputcsv($outstream, array_keys($row));
 						$outputHeader = false;
 					}
-					if($this->delimiter === ','){
-						fputcsv($outstream, $row);
-					}
-					else{
-						fwrite($outstream, implode($this->delimiter,$row)."\n");
-					}
+                    fputcsv($outstream, $row);
 					if($this->isPublicDownload && $this->schemaType !== 'checklist' && array_key_exists('occid', $row)) {
 						$statsManager->recordAccessEvent($row['occid'], 'download');
 					}
@@ -296,7 +273,7 @@ class OccurrenceDownload{
 				$cond = 'EQUALS';
 			}
 			if($value || ($cond === 'NULL' || $cond === 'NOTNULL')){
-				$this->conditionArr[$field][$cond][] = Sanitizer::cleanInStr($this->conn,$value);
+				$this->conditionArr[$field][$cond][] = SanitizerService::cleanInStr($this->conn,$value);
 			}
 		}
 	}
@@ -496,14 +473,8 @@ class OccurrenceDownload{
 		if($this->zipFile){
 			$retStr .= '.zip';
 		}
-		elseif($this->delimiter === "\t"){
-			$retStr .= '.tab';
-		}
-		elseif($this->delimiter === ','){
-			$retStr .= '.csv';
-		}
 		else{
-			$retStr .= '.txt';
+            $retStr .= '.csv';
 		}
 		return $retStr;
 	}
@@ -571,27 +542,12 @@ class OccurrenceDownload{
 		$this->extended = $e;
 	}
 
-	public function setDelimiter($d): void
-	{
-		if($d === 'tab' || $d === "\t"){
-			$this->delimiter = "\t";
-		}
-		elseif($d === 'csv' || $d === 'comma' || $d === ','){
-			$this->delimiter = ',';
-		}
-		else{
-			$this->delimiter = $d;
-		}
-	}
-
 	private function getContentType(): ?string
 	{
-		$retStr = 'text/html; charset=UTF-8';
-	    if ($this->zipFile) {
+		if($this->zipFile) {
             $retStr = 'application/zip; charset=UTF-8';
 		}
-
-		if($this->delimiter === 'comma' || $this->delimiter === ',') {
+        else{
             $retStr = 'text/csv; charset=UTF-8';
 		}
 

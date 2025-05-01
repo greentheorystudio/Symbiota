@@ -2,9 +2,9 @@
 include_once(__DIR__ . '/SpecUpload.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
 include_once(__DIR__ . '/OccurrenceUtilities.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class SpecUploadBase extends SpecUpload{
 
@@ -824,7 +824,7 @@ class SpecUploadBase extends SpecUpload{
             }
             foreach($editArr as $appliedStatus => $eArr){
                 $sql = 'INSERT INTO omoccurrevisions(occid, oldValues, newValues, externalSource, reviewStatus, appliedStatus) '.
-                    'VALUES('.$r['occid'].',"'.Sanitizer::cleanInStr($this->conn,json_encode($eArr['old'])).'","'.Sanitizer::cleanInStr($this->conn,json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
+                    'VALUES('.$r['occid'].',"'.SanitizerService::cleanInStr($this->conn,json_encode($eArr['old'])).'","'.SanitizerService::cleanInStr($this->conn,json_encode($eArr['new'])).'","Notes from Nature Expedition",1,'.$appliedStatus.')';
                 if(!$this->conn->query($sql)){
                     $this->outputMsg('<li style="margin-left:10px;">ERROR adding edit revision</li>');
                 }
@@ -1048,7 +1048,7 @@ class SpecUploadBase extends SpecUpload{
         }
 
         $this->outputMsg('<li style="margin-left:10px;">Populating global unique identifiers (GUIDs) for all records... </li>');
-        $uuidManager = new UuidFactory();
+        $uuidManager = new GUIDManager();
         $uuidManager->setSilent(1);
         $uuidManager->populateGuids();
 
@@ -1141,7 +1141,7 @@ class SpecUploadBase extends SpecUpload{
                 }
                 unset($recMap['genus'], $recMap['specificepithet'], $recMap['taxonrank'], $recMap['infraspecificepithet']);
                 if(!array_key_exists('scientificnameauthorship',$recMap) || !$recMap['scientificnameauthorship']){
-                    $parsedArr = (new TaxonomyUtilities)->parseScientificName($recMap['sciname']);
+                    $parsedArr = (new TaxonomyService)->parseScientificName($recMap['sciname']);
                     if(array_key_exists('unitind1',$parsedArr)){
                         $parsedArr['unitname1'] = $parsedArr['unitind1'].' '.$parsedArr['unitname1'];
                     }
@@ -1276,7 +1276,7 @@ class SpecUploadBase extends SpecUpload{
             if(strncmp($symbField, 'unmapped', 8) !== 0){
                 $sqlFields .= ','.$symbField;
                 $valueStr = $this->encodeString($valueStr);
-                $valueStr = Sanitizer::cleanInStr($this->conn,$valueStr);
+                $valueStr = SanitizerService::cleanInStr($this->conn,$valueStr);
                 if($valueStr) {
                     $hasValue = true;
                 }
@@ -1537,8 +1537,6 @@ class SpecUploadBase extends SpecUpload{
 
     protected function encodeString($inStr): string
     {
-        $retStr = $inStr;
-
         $badwordchars=array("\xe2\x80\x98",
             "\xe2\x80\x99",
             "\xe2\x80\x9c",
@@ -1547,11 +1545,6 @@ class SpecUploadBase extends SpecUpload{
             "\xe2\x80\xa6"
         );
         $fixedwordchars=array("'", "'", '"', '"', '-', '...');
-        $inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
-
-        if($inStr && mb_detect_encoding($inStr, 'UTF-8,ISO-8859-1', true) === 'ISO-8859-1') {
-            $retStr = utf8_encode($inStr);
-        }
-        return $retStr;
+        return str_replace($badwordchars, $fixedwordchars, $inStr);
     }
 }

@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = (int)$_REQUEST['collid'];
@@ -15,7 +15,7 @@ $tabTarget = array_key_exists('tabtarget',$_REQUEST)?(int)$_REQUEST['tabtarget']
 $formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']):'';
 
 $occManager = new OccurrenceEditorDeterminations();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 $occManager->setCollId($collid);
 $occManager->getCollMap();
@@ -71,7 +71,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
     <script src="../../js/external/jquery.js" type="text/javascript"></script>
     <script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -399,14 +398,6 @@ include(__DIR__ . '/../../header.php');
                                     <input type="text" name="scientificnameauthorship" style="width:200px;" />
                                 </div>
                                 <div style='margin:3px;'>
-                                    <b>Confidence of Determination:</b>
-                                    <select name="confidenceranking">
-                                        <option value="8">High</option>
-                                        <option value="5" selected>Medium</option>
-                                        <option value="2">Low</option>
-                                    </select>
-                                </div>
-                                <div style='margin:3px;'>
                                     <b>Determiner:</b>
                                     <input type="text" name="identifiedby" id="identifiedby" style="background-color:lightyellow;width:200px;" />
                                 </div>
@@ -534,8 +525,8 @@ include(__DIR__ . '/../../header.php');
     ?>
 </div>
 <?php
-include(__DIR__ . '/../../footer.php');
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

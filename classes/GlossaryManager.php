@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/TaxonomyUtilities.php');
 
 class GlossaryManager{
@@ -35,7 +35,7 @@ class GlossaryManager{
 	private $errorStr;
 	
  	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->conn = $connection->getConnection();
 		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($this->imageRootPath,-1) !== '/') {
@@ -67,14 +67,14 @@ class GlossaryManager{
 		$retArr = array();
 		$sqlWhere = '';
 		if($keyword){
-			$sqlWhere .= 'AND (g.term LIKE "'.Sanitizer::cleanInStr($this->conn,$keyword).'%" OR g.term LIKE "% '.Sanitizer::cleanInStr($this->conn,$keyword).'%" ';
+			$sqlWhere .= 'AND (g.term LIKE "'.SanitizerService::cleanInStr($this->conn,$keyword).'%" OR g.term LIKE "% '.SanitizerService::cleanInStr($this->conn,$keyword).'%" ';
 			if($deepSearch) {
-				$sqlWhere .= 'OR g.definition LIKE "%' . Sanitizer::cleanInStr($this->conn,$keyword) . '%"';
+				$sqlWhere .= 'OR g.definition LIKE "%' . SanitizerService::cleanInStr($this->conn,$keyword) . '%"';
 			}
 			$sqlWhere .= ') ';
 		}
 		if($language){
-			$sqlWhere .= 'AND (g.`language` = "'.Sanitizer::cleanInStr($this->conn,$language).'") ';
+			$sqlWhere .= 'AND (g.`language` = "'.SanitizerService::cleanInStr($this->conn,$language).'") ';
 		}
 		if(is_numeric($tid)){
 			$sqlWhere .= 'AND (t.tid = '.$tid.' OR t2.tid = '.$tid.' OR (t.tid IS NULL AND t2.tid IS NULL)) ';
@@ -304,14 +304,14 @@ class GlossaryManager{
 	public function createTerm($pArr): bool
 	{
 		$status = true;
-		$term = Sanitizer::cleanInStr($this->conn,$pArr['term']);
-		$def = Sanitizer::cleanInStr($this->conn,$pArr['definition']);
-		$lang = Sanitizer::cleanInStr($this->conn,$pArr['language']);
-		$source = Sanitizer::cleanInStr($this->conn,$pArr['source']);
-		$author = Sanitizer::cleanInStr($this->conn,$pArr['author']);
-		$translator = Sanitizer::cleanInStr($this->conn,$pArr['translator']);
-		$notes = Sanitizer::cleanInStr($this->conn,$pArr['notes']);
-		$resourceUrl = Sanitizer::cleanInStr($this->conn,$pArr['resourceurl']);
+		$term = SanitizerService::cleanInStr($this->conn,$pArr['term']);
+		$def = SanitizerService::cleanInStr($this->conn,$pArr['definition']);
+		$lang = SanitizerService::cleanInStr($this->conn,$pArr['language']);
+		$source = SanitizerService::cleanInStr($this->conn,$pArr['source']);
+		$author = SanitizerService::cleanInStr($this->conn,$pArr['author']);
+		$translator = SanitizerService::cleanInStr($this->conn,$pArr['translator']);
+		$notes = SanitizerService::cleanInStr($this->conn,$pArr['notes']);
+		$resourceUrl = SanitizerService::cleanInStr($this->conn,$pArr['resourceurl']);
 		$sql = 'INSERT INTO glossary(term,definition,`language`,source,author,translator,notes,resourceurl,uid) '.
 			'VALUES("'.$term.'",'.($def?'"'.$def.'"':'NULL').','.($lang?'"'.$lang.'"':'NULL').','.
 			($source?'"'.$source.'"':'NULL').','.($author?'"'.$author.'"':'NULL').','.($translator?'"'.$translator.'"':'NULL').','.
@@ -339,7 +339,7 @@ class GlossaryManager{
 			if((isset($pArr['tid']) && $pArr['tid']) || (isset($pArr['taxagroup']) && $pArr['taxagroup'])){
 				$tid = $pArr['tid'];
 				if($tid){
-					$taxon = Sanitizer::cleanInStr($this->conn,$pArr['taxagroup']);
+					$taxon = SanitizerService::cleanInStr($this->conn,$pArr['taxagroup']);
 					if(preg_match('/^(\D+)\s\(/', $taxon, $m)){
 						$taxon = $m[1];
 					}
@@ -372,14 +372,14 @@ class GlossaryManager{
 		if(!is_numeric($pArr['glossid'])) {
 			return false;
 		}
-		$term = Sanitizer::cleanInStr($this->conn,$pArr['term']);
-		$lang = Sanitizer::cleanInStr($this->conn,$pArr['language']);
-		$def = Sanitizer::cleanInStr($this->conn,$pArr['definition']);
-		$source = Sanitizer::cleanInStr($this->conn,$pArr['source']);
-		$translator = Sanitizer::cleanInStr($this->conn,$pArr['translator']);
-		$author = Sanitizer::cleanInStr($this->conn,$pArr['author']);
-		$notes = Sanitizer::cleanInStr($this->conn,$pArr['notes']);
-		$resourceUrl = Sanitizer::cleanInStr($this->conn,$pArr['resourceurl']);
+		$term = SanitizerService::cleanInStr($this->conn,$pArr['term']);
+		$lang = SanitizerService::cleanInStr($this->conn,$pArr['language']);
+		$def = SanitizerService::cleanInStr($this->conn,$pArr['definition']);
+		$source = SanitizerService::cleanInStr($this->conn,$pArr['source']);
+		$translator = SanitizerService::cleanInStr($this->conn,$pArr['translator']);
+		$author = SanitizerService::cleanInStr($this->conn,$pArr['author']);
+		$notes = SanitizerService::cleanInStr($this->conn,$pArr['notes']);
+		$resourceUrl = SanitizerService::cleanInStr($this->conn,$pArr['resourceurl']);
 		$sql = 'UPDATE glossary SET term = "'.$term.'",language = "'.$lang.'",definition = '.($def?'"'.$def.'"':'NULL').
 			',source = '.($source?'"'.$source.'"':'NULL').
 			',translator = '.($translator?'"'.$translator.'"':'NULL').
@@ -497,7 +497,7 @@ class GlossaryManager{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'glossid' && $k !== 'glimgid' && $k !== 'glossgrpid'){
-					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.SanitizerService::cleanInStr($this->conn,$v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE glossaryimages SET '.substr($sql,1).' WHERE (glimgid = '.$glimgId.')';
@@ -561,10 +561,10 @@ class GlossaryManager{
 	{
 		$status = true;
 		if(is_numeric($pArr['tid'])){
-			$terms = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributorTerm']);
-			$images = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributorImage']);
-			$translator = Sanitizer::cleanInStr($this->conn,$_REQUEST['translator']);
-			$sources = Sanitizer::cleanInStr($this->conn,$_REQUEST['additionalSources']);
+			$terms = SanitizerService::cleanInStr($this->conn,$_REQUEST['contributorTerm']);
+			$images = SanitizerService::cleanInStr($this->conn,$_REQUEST['contributorImage']);
+			$translator = SanitizerService::cleanInStr($this->conn,$_REQUEST['translator']);
+			$sources = SanitizerService::cleanInStr($this->conn,$_REQUEST['additionalSources']);
 			$sql = 'INSERT INTO glossarysources(tid,contributorTerm,contributorImage,translator,additionalSources) '.
 				'VALUES('.$pArr['tid'].','.($terms?'"'.$terms.'"':'NULL').','.($images?'"'.$images.'"':'NULL').','.
 				($translator?'"'.$translator.'"':'NULL').','.($sources?'"'.$sources.'"':'NULL').')';
@@ -581,10 +581,10 @@ class GlossaryManager{
 	{
 		$status = true;
 		if(is_numeric($pArr['tid'])){
-			$terms = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributorTerm']);
-			$images = Sanitizer::cleanInStr($this->conn,$_REQUEST['contributorImage']);
-			$translator = Sanitizer::cleanInStr($this->conn,$_REQUEST['translator']);
-			$sources = Sanitizer::cleanInStr($this->conn,$_REQUEST['additionalSources']);
+			$terms = SanitizerService::cleanInStr($this->conn,$_REQUEST['contributorTerm']);
+			$images = SanitizerService::cleanInStr($this->conn,$_REQUEST['contributorImage']);
+			$translator = SanitizerService::cleanInStr($this->conn,$_REQUEST['translator']);
+			$sources = SanitizerService::cleanInStr($this->conn,$_REQUEST['additionalSources']);
 			$sql = 'UPDATE glossarysources '.
 				'SET contributorTerm = '.($terms?'"'.$terms.'"':'NULL').', contributorImage = '.($images?'"'.$images.'"':'NULL').', '.
 				'translator = '.($translator?'"'.$translator.'"':'NULL').', additionalSources = '.($sources?'"'.$sources.'"':'NULL').' '.
@@ -845,7 +845,7 @@ class GlossaryManager{
 		$glossId = $_REQUEST['glossid'];
 		$status = 'File added successfully!';
 		$sql = 'INSERT INTO glossaryimages(glossid,url,thumbnailurl,structures,notes,createdBy,uid) '.
-			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.Sanitizer::cleanInStr($this->conn,$_REQUEST['structures']).'","'.Sanitizer::cleanInStr($this->conn,$_REQUEST['notes']).'","'.Sanitizer::cleanInStr($this->conn,$_REQUEST['createdBy']).'",'.$GLOBALS['SYMB_UID'].') ';
+			'VALUES('.$glossId.',"'.$imgWebUrl.'","'.$imgTnUrl.'","'.SanitizerService::cleanInStr($this->conn,$_REQUEST['structures']).'","'.SanitizerService::cleanInStr($this->conn,$_REQUEST['notes']).'","'.SanitizerService::cleanInStr($this->conn,$_REQUEST['createdBy']).'",'.$GLOBALS['SYMB_UID'].') ';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
 			$status = 'ERROR Loading Data.';

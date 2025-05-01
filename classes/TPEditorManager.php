@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class TPEditorManager {
 
@@ -16,7 +16,7 @@ class TPEditorManager {
 	protected $errorStr = '';
 	
  	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->taxonCon = $connection->getConnection();
  	}
  	
@@ -129,7 +129,7 @@ class TPEditorManager {
 	
 	public function addVernacular($inArray): string
 	{
-		$newVerns = Sanitizer::cleanInArray($this->taxonCon,$inArray);
+		$newVerns = SanitizerService::cleanInArray($this->taxonCon,$inArray);
 		$sql = 'INSERT INTO taxavernaculars (tid,'.implode(',',array_keys($newVerns)).') VALUES ('.$this->getTid().',"'.implode('","',$newVerns).'")';
 		//echo $sql;
 		$status = '';

@@ -1,14 +1,4 @@
 const accountChecklistProjectList = {
-    props: {
-        checklistArr: {
-            type: Array,
-            default: []
-        },
-        projectArr: {
-            type: Array,
-            default: []
-        }
-    },
     template: `
         <template v-if="checklistArr.length > 0">
             <q-list bordered class="rounded-borders q-mt-md">
@@ -77,9 +67,18 @@ const accountChecklistProjectList = {
             </q-card>
         </template>
     `,
-    data() {
+    setup() {
+        const baseStore = useBaseStore();
+        const userStore = useUserStore();
+
+        const checklistArr = Vue.computed(() => userStore.getChecklistArr);
+        const clientRoot = baseStore.getClientRoot;
+        const projectArr = Vue.computed(() => userStore.getProjectArr);
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            checklistArr,
+            clientRoot,
+            projectArr
         }
     }
 };

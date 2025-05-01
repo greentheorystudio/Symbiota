@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/ConfigurationManager.php');
+include_once(__DIR__ . '/../../models/Configurations.php');
 
 if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../../index.php');
 }
 
-$confManager = new ConfigurationManager();
+$confManager = new Configurations();
 
 $fullConfArr = $confManager->getConfigurationsArr();
 $coreConfArr = $fullConfArr['core'];
@@ -93,12 +93,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             </span>
         </div>
         <div class="field-block">
-            <span class="field-label">Google Analytics Key:</span>
-            <span class="field-elem">
-                <input type="text" id="GOOGLE_ANALYTICS_KEY" value="<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GOOGLE_ANALYTICS_KEY','<?php echo (array_key_exists('GOOGLE_ANALYTICS_KEY',$coreConfArr)?$coreConfArr['GOOGLE_ANALYTICS_KEY']:''); ?>',false);" />
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Default Collection Category:</span>
             <span class="field-elem">
                 <select id="DEFAULTCATID" style="width:600px;" onchange="processTextConfigurationChange('DEFAULTCATID','<?php echo (array_key_exists('DEFAULTCATID',$coreConfArr)?$coreConfArr['DEFAULTCATID']:''); ?>',false);" >
@@ -111,12 +105,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
                     }
                     ?>
                 </select>
-            </span>
-        </div>
-        <div class="field-block">
-            <span class="field-label">Display Common Names:</span>
-            <span class="field-elem">
-                <input type="checkbox" id="DISPLAY_COMMON_NAMES" value="1" onchange="processCheckConfigurationChange('DISPLAY_COMMON_NAMES');" <?php echo (array_key_exists('DISPLAY_COMMON_NAMES',$coreConfArr) && $coreConfArr['DISPLAY_COMMON_NAMES']?'CHECKED':''); ?> />
             </span>
         </div>
         <div class="field-block">
@@ -176,7 +164,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
         <div class="field-block">
             <span class="field-label">Password:  <button type="button" onclick="showPassword('SMTP_PASSWORD');">Show</button></span>
             <span class="field-elem">
-                <input type="password" id="SMTP_PASSWORD" value="<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('SMTP_PASSWORD','<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>',false);" autocomplete="new-password" />
+                <input type="password" autocomplete="new-password" id="SMTP_PASSWORD" value="<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('SMTP_PASSWORD','<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>',false);" />
             </span>
         </div>
     </fieldset>
@@ -192,12 +180,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             <span class="field-label">Thumbnail Image Width (px):</span>
             <span class="field-elem">
                 <input type="text" id="IMG_TN_WIDTH" value="<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_TN_WIDTH','<?php echo (array_key_exists('IMG_TN_WIDTH',$coreConfArr)?$coreConfArr['IMG_TN_WIDTH']:''); ?>',true);" />
-            </span>
-        </div>
-        <div class="field-block">
-            <span class="field-label">Large Image Width (px):</span>
-            <span class="field-elem">
-                <input type="text" id="IMG_LG_WIDTH" value="<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('IMG_LG_WIDTH','<?php echo (array_key_exists('IMG_LG_WIDTH',$coreConfArr)?$coreConfArr['IMG_LG_WIDTH']:''); ?>',true);" />
             </span>
         </div>
     </fieldset>
@@ -233,7 +215,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
         <div class="field-block">
             <span class="field-label">Password:  <button type="button" onclick="showPassword('GBIF_PASSWORD');">Show</button></span>
             <span class="field-elem">
-                <input type="password" id="GBIF_PASSWORD" value="<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GBIF_PASSWORD','<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>',false);" autocomplete="new-password" />
+                <input type="password" autocomplete="new-password" id="GBIF_PASSWORD" value="<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GBIF_PASSWORD','<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>',false);" />
             </span>
         </div>
     </fieldset>

@@ -18,7 +18,7 @@
 /misc/usagepolicy.php
 /robots.txt
 /temp
-/webservices/dwc/rss.xml
+/rss.xml
 
 /vendor
 /composer.lock

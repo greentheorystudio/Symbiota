@@ -1,15 +1,12 @@
 const taxaProfileTaxonMap = {
-    props: [
-        'taxon'
-    ],
     template: `
         <div class="map-thumb-frame">
             <q-card class="taxon-profile-taxon-map-card">
                 <div class="map-thumb-container">
-                    <template v-if="taxon.map">
+                    <template v-if="taxonMap">
                         <div class="map-thumb-image">
                             <a @click="openMapPopup(true);" class="cursor-pointer">
-                                <q-img :src="taxon.map" :fit="contain" :title="taxon.sciName" :alt="taxon.sciName"></q-img>
+                                <q-img :src="taxonMap['url']" :fit="contain" :title="taxon.sciname" :alt="taxon.sciname"></q-img>
                             </a>
                         </div>
                     </template>
@@ -20,17 +17,34 @@ const taxaProfileTaxonMap = {
             </q-card>
         </div>
     `,
-    methods: {
-        openMapPopup(clustering){
+    setup() {
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const clientRoot = baseStore.getClientRoot;
+        const taxaMapData = Vue.computed(() => taxaStore.getAcceptedTaxonTid);
+        const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+        const taxonId = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+        const taxonMap = Vue.computed(() => {
+            return taxaMapData.value.hasOwnProperty(taxonId.value) ? taxaMapData.value[taxonId.value] : null;
+        });
+
+        function openMapPopup(clustering) {
             let taxonType;
-            if(Number(this.taxon['rankId']) < 140){
+            if(Number(taxon.value['rankid']) < 140){
                 taxonType = 4;
             }
             else{
                 taxonType = 1;
             }
-            const url = CLIENT_ROOT + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
+            const url = clientRoot + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
             window.open(url, '_blank');
+        }
+
+        return {
+            taxon,
+            taxonMap,
+            openMapPopup
         }
     }
 };

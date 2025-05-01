@@ -58,6 +58,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE'] . ($targetTid?' Dynamic Species List: ' . $listManager->getSciName():''); ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
@@ -141,7 +142,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
         function processSelection(id,value){
             document.getElementById('targettid').value = value;
-            if(id !== 'kingdomSelect'){
+            /*if(id !== 'kingdomSelect'){
                 document.getElementById('kingdomSelect').value = '';
             }
             if(id !== 'phylumSelect'){
@@ -161,7 +162,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             }
             if(id !== 'commoninput'){
                 document.getElementById('commoninput').value = '';
-            }
+            }*/
         }
 
         function verifySubmit(){
@@ -266,7 +267,7 @@ include(__DIR__ . '/../header.php');
                         </div>
                         <div style="margin-top:90px;">
                             <div style="float:left;">
-                                <input type="checkbox" name="desclimit" value="1" <?php echo (((!$_POST && !$_GET) || $descLimit)?'CHECKED':''); ?> /> Limit to species with information
+                                <input type="checkbox" name="desclimit" value="1" <?php echo ($descLimit ? 'CHECKED' : ''); ?> /> Limit to species with information
                             </div>
                             <div style="float:right;">
                                 <input name="targettid" id="targettid" type="hidden" value="<?php echo $targetTid; ?>" />
@@ -369,8 +370,8 @@ include(__DIR__ . '/../header.php');
     </div>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

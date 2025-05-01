@@ -4,13 +4,10 @@ include_once(__DIR__ . '/SpecUploadBase.php');
 class SpecUploadFile extends SpecUploadBase{
 
     private $ulFileName;
-    private $delimiter = ',';
-    private $isCsv = false;
 
     public function __construct() {
         parent::__construct();
         $this->setUploadTargetPath();
-        ini_set('auto_detect_line_endings', true);
     }
 
     public function uploadFile(){
@@ -191,20 +188,8 @@ class SpecUploadFile extends SpecUploadBase{
 
     private function getHeaderArr($fHandler): array
     {
-        $headerData = fgets($fHandler);
-        if((strpos($headerData, ',') === false) && strpos($headerData, "\t") !== false) {
-            $this->delimiter = "\t";
-        }
-        if(strpos($headerData,$this->delimiter.'"') !== false || strtolower(substr($this->ulFileName, -4)) === '.csv'){
-            $this->isCsv = true;
-        }
-        if($this->isCsv){
-            rewind($fHandler);
-            $headerArr = fgetcsv($fHandler,0,$this->delimiter);
-        }
-        else{
-            $headerArr = explode($this->delimiter,$headerData);
-        }
+        rewind($fHandler);
+        $headerArr = fgetcsv($fHandler,0);
         $retArr = array();
         foreach($headerArr as $field){
             $fieldStr = strtolower(trim($field));
@@ -219,17 +204,7 @@ class SpecUploadFile extends SpecUploadBase{
     }
 
     private function getRecordArr($fHandler){
-        $recordArr = array();
-        if($this->isCsv){
-            $recordArr = fgetcsv($fHandler,0,$this->delimiter);
-        }
-        else{
-            $record = fgets($fHandler);
-            if($record) {
-                $recordArr = explode($this->delimiter, $record);
-            }
-        }
-        return $recordArr;
+        return fgetcsv($fHandler,0);
     }
 
     public function setUploadFileName($ulFile): void

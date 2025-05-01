@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ?>
@@ -10,19 +10,11 @@ header('X-Frame-Options: SAMEORIGIN');
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - New User Profile</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> New Profile</title>
+        <meta name="description" content="New Profile">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <style>
-            .human-validator-canvas {
-                border: 1px solid #000;
-                height: 50px;
-                width: 400px;
-            }
-            .create-account-container {
-                width: 90%;
-            }
-        </style>
     </head>
     <body>
         <?php
@@ -42,155 +34,131 @@ header('X-Frame-Options: SAMEORIGIN');
                             </q-input>
                         </div>
                         <div class="row justify-start q-gutter-md q-mt-xs">
-                            <password-input ref="passwordInputRef" :password="newAccount.pwd" @update:password="updatePassword"></password-input>
+                            <password-input ref="passwordInputRef" :password="newAccount.password" @update:password="(value) => updateAccountData({key: 'password', value: value})"></password-input>
                         </div>
                     </q-card-section>
                 </q-card>
                 <q-card class="create-account-container q-mt-md">
                     <q-card-section>
                         <div class="text-h6 q-mb-md">Account Details</div>
-                        <account-information-form ref="accountInformationFormRef" :user="newAccount" @update:account-information="updateAccountObj"></account-information-form>
+                        <account-information-form ref="accountInformationFormRef" @update:account-information="updateAccountData"></account-information-form>
                     </q-card-section>
                 </q-card>
                 <q-card class="create-account-container q-mt-md">
                     <q-card-section>
                         <human-validator ref="humanValidationInputRef"></human-validator>
                         <div class="row justify-end q-mt-md">
-                            <q-btn color="secondary" @click="createAccount();" label="Create Account" dense />
+                            <q-btn color="primary" @click="createAccount();" label="Create Account" dense />
                         </div>
                     </q-card-section>
                 </q-card>
             </div>
         </div>
         <?php
-        include_once(__DIR__ . '/../footer.php');
         include_once(__DIR__ . '/../config/footer-includes.php');
+        include_once(__DIR__ . '/../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/pwdInput.js?ver=20230702" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=20230707" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/humanValidator.js?ver=20230702" type="text/javascript"></script>
-        <script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/user.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/humanValidator.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script type="text/javascript">
             const createAccountModule = Vue.createApp({
-                data() {
-                    return {
-                        newAccount: Vue.ref({
-                            uid: null,
-                            firstname: null,
-                            middleinitial: null,
-                            lastname: null,
-                            title: null,
-                            institution: null,
-                            department: null,
-                            address: null,
-                            city: null,
-                            state: null,
-                            zip: null,
-                            country: null,
-                            email: null,
-                            url: null,
-                            biography: null,
-                            username: null,
-                            pwd: null
-                        })
-                    }
-                },
                 components: {
                     'account-information-form': accountInformationForm,
                     'human-validator': humanValidator,
                     'password-input': passwordInput
                 },
-                setup () {
-                    const $q = useQuasar();
-                    const usernameRef = Vue.ref(null);
-                    const passwordInputRef = Vue.ref(null);
+                setup() {
+                    const { showNotification } = useCore();
+                    const baseStore = useBaseStore();
+                    const userStore = useUserStore();
+
                     const accountInformationFormRef = Vue.ref(null);
+                    const adminEmail = baseStore.getAdminEmail;
+                    const clientRoot = baseStore.getClientRoot;
                     const humanValidationInputRef = Vue.ref(null);
-                    const usernameRegex = /^[0-9A-Za-z_!@#$\s.+\-]+$/;
+                    const newAccount = Vue.computed(() => userStore.getUserData);
+                    const passwordInputRef = Vue.ref(null);
                     const usernameExists = (val) => {
                         return new Promise((resolve) => {
                             const formData = new FormData();
                             formData.append('username', val);
-                            formData.append('action', 'getUidFromUsername');
+                            formData.append('action', 'getUserFromUsername');
                             fetch(profileApiUrl, {
                                 method: 'POST',
                                 body: formData
                             })
                             .then((response) => {
-                                response.text().then((res) => {
-                                    resolve(Number(res) === 0 || 'Username is already associated with another account');
-                                });
+                                return response.ok ? response.json() : null;
+                            })
+                            .then((resObj) => {
+                                resolve((resObj && (!resObj.hasOwnProperty('uid') || Number(resObj['uid']) === 0)) || 'Username is already associated with another account');
                             });
                         });
                     };
+                    const usernameRef = Vue.ref(null);
+                    const usernameRegex = /^[0-9A-Za-z_!@#$\s.+\-]+$/;
+
+                    function createAccount() {
+                        usernameRef.value.validate();
+                        passwordInputRef.value.validateForm();
+                        accountInformationFormRef.value.validateForm();
+                        humanValidationInputRef.value.validateForm();
+                        if(
+                            !usernameRef.value.hasError &&
+                            !passwordInputRef.value.formHasErrors() &&
+                            !accountInformationFormRef.value.formHasErrors() &&
+                            !humanValidationInputRef.value.formHasErrors()
+                        ) {
+                            userStore.createUserRecord((res) => {
+                                if(Number(res) > 0){
+                                    window.location.href = clientRoot + '/profile/viewprofile.php';
+                                }
+                                else{
+                                    let errorText = 'An error occurred creating the account. ';
+                                    if(adminEmail !== ''){
+                                        errorText += 'Please contact system administrator at ' + adminEmail + ' for assistance.';
+                                    }
+                                    showNotification('negative',errorText);
+                                }
+                            });
+                        }
+                        else{
+                            showNotification('negative','Please correct the errors noted in red to create a new account.');
+                        }
+                    }
+
+                    function updateAccountData(data) {
+                        userStore.updateUserEditData(data.key, data.value);
+                    }
+
+                    Vue.onMounted(() => {
+                        userStore.setUser(0);
+                    });
+                    
                     return {
-                        usernameRef,
-                        passwordInputRef,
                         accountInformationFormRef,
                         humanValidationInputRef,
+                        newAccount,
+                        passwordInputRef,
+                        usernameRef,
                         usernameRules: [
                             val => (val !== null && val !== '') || 'Required',
                             val => usernameRegex.test(val) || 'Please enter a valid username',
                             val => usernameExists(val)
                         ],
-                        showNotification(type, text){
-                            $q.notify({
-                                type: type,
-                                icon: null,
-                                message: text,
-                                multiLine: true,
-                                position: 'top',
-                                timeout: 5000
-                            });
-                        }
-                    }
-                },
-                methods: {
-                    createAccount(){
-                        this.usernameRef.validate();
-                        this.$refs.passwordInputRef.validateForm();
-                        this.$refs.accountInformationFormRef.validateForm();
-                        this.$refs.humanValidationInputRef.validateForm();
-                        if(
-                            !this.usernameRef.hasError &&
-                            !this.$refs.passwordInputRef.formHasErrors() &&
-                            !this.$refs.accountInformationFormRef.formHasErrors() &&
-                            !this.$refs.humanValidationInputRef.formHasErrors()
-                        ) {
-                            const formData = new FormData();
-                            formData.append('user', JSON.stringify(this.newAccount));
-                            formData.append('action', 'createAccount');
-                            fetch(profileApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                response.text().then((res) => {
-                                    if(Number(res) === 1){
-                                        window.location.href = CLIENT_ROOT + '/profile/viewprofile.php';
-                                    }
-                                    else{
-                                        let errorText = 'An error occurred creating the account. ';
-                                        if(ADMIN_EMAIL !== ''){
-                                            errorText += 'Please contact system administrator at ' + ADMIN_EMAIL + ' for assistance.';
-                                        }
-                                        this.showNotification('negative',errorText);
-                                    }
-                                });
-                            });
-                        }
-                        else{
-                            this.showNotification('negative','Please correct the errors noted in red to create a new account.');
-                        }
-                    },
-                    updatePassword(val) {
-                        this.newAccount.pwd = val;
-                    },
-                    updateAccountObj(obj) {
-                        this.newAccount = Object.assign({}, obj);
+                        createAccount,
+                        updateAccountData
                     }
                 }
             });
             createAccountModule.use(Quasar, { config: {} });
+            createAccountModule.use(Pinia.createPinia());
             createAccountModule.mount('#innertext');
         </script>
     </body>
