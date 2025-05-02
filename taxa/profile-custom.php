@@ -314,7 +314,7 @@
                             taxaStore.setSubtaxaImageData();
                         }
                         taxaStore.setTaxaImageArr();
-                        if(Number(taxon.value['rankId']) > 180){
+                        if(Number(taxon.value['rankid']) > 180){
                             setTaxonFieldImages(100);
                         }
                         else{
