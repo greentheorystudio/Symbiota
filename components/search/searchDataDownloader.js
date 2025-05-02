@@ -12,7 +12,7 @@ const searchDataDownloader = {
     template: `
         <div class="row">
             <div class="download-type-dropdown self-center">
-                <selector-input-element :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
+                <selector-input-element class="download-type-dropdown" :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
             </div>
             <div class="q-ml-sm self-center">
                 <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="initializeDownload();" icon="fas fa-download" dense>
