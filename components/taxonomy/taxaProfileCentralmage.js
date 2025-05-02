@@ -1,5 +1,9 @@
 const taxaProfileCentralImage = {
     props: {
+        image: {
+            type: Object,
+            default: null
+        },
         isEditor: {
             type: Boolean,
             default: false
@@ -39,7 +43,14 @@ const taxaProfileCentralImage = {
         const taxaStore = useTaxaStore();
 
         const centralImage = Vue.computed(() => {
-            return (taxaImageArr.value && taxaImageArr.value.length > 0) ? taxaImageArr.value[0] : null;
+            let centralImage;
+            if(props.image){
+                centralImage = props.image;
+            }
+            else{
+                centralImage = (taxaImageArr.value && taxaImageArr.value.length > 0) ? taxaImageArr.value[0] : null;
+            }
+            return centralImage;
         });
         const clientRoot = baseStore.getClientRoot;
         const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
