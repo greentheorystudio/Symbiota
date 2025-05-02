@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 <template v-if="Number(taxon.rankid) > 180 && fieldImageArr.length > 0">
-                    <div class="profile-center-row">
+                    <div class="q-mt-md profile-center-row">
                         <div class="expansion-container">
                             <q-card>
                                 <div class="q-pt-sm q-pl-md q-mb-md text-h6 text-weight-bold image-sideways-scroller-label">
@@ -211,8 +211,6 @@
                 else{
                     centralImage.value = specimenImageArr.value[0];
                 }
-
-                console.log(fieldImageArr.value.length);
             }
 
             function setEditor() {
