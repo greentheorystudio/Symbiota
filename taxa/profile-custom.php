@@ -55,41 +55,80 @@
                 </div>
                 <div class="row justify-between q-mt-sm">
                     <div class="left-column column">
-                        <taxa-profile-central-image :is-editor="isTaxonProfileEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
+                        <taxa-profile-central-image :image="centralImage" :is-editor="isTaxonProfileEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
                     </div>
                     <div class="right-column column">
                         <taxa-profile-description-tabs></taxa-profile-description-tabs>
-                        <div class="right-inner-row">
-                            <taxa-profile-taxon-map></taxa-profile-taxon-map>
+                    </div>
+                </div>
+                <div class="row justify-between items-center q-mt-md">
+                    <div>
+                        <taxa-profile-taxon-occurrence-link></taxa-profile-taxon-occurrence-link>
+                    </div>
+                    <template v-if="taxon.imageCnt > 100">
+                        <div>
+                            <taxa-profile-taxon-image-link></taxa-profile-taxon-image-link>
                         </div>
-                        <template v-if="Number(taxaImageCount) > 100">
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-image-link></taxa-profile-taxon-image-link>
-                            </div>
-                        </template>
-                        <div class="right-inner-row">
-                            <taxa-profile-taxon-occurrence-link></taxa-profile-taxon-occurrence-link>
+                    </template>
+                    <div>
+                        <taxa-profile-taxon-map></taxa-profile-taxon-map>
+                    </div>
+                </div>
+                <template v-if="Number(taxon.rankid) > 180 && fieldImageArr.length > 0">
+                    <div class="profile-center-row">
+                        <div class="expansion-container">
+                            <q-card>
+                                <div class="q-pt-sm q-pl-md q-mb-md text-h6 text-weight-bold image-sideways-scroller-label">
+                                    Field Images
+                                </div>
+                                <q-scroll-area class="q-px-md img-sideways-scroller">
+                                    <div class="row no-wrap q-gutter-md">
+                                        <div v-for="image in fieldImageArr" :key="image" class="img-thumb q-mb-sm">
+                                            <a @click="showFieldImageCarousel(image.url);" class="cursor-pointer">
+                                                <q-img :src="image.url" fit="contain" height="240px" :title="image.caption" :alt="image.sciname"></q-img>
+                                            </a>
+                                            <div class="photographer">
+                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)">
+                                                    <span>{{ image.photographer }}</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </q-scroll-area>
+                            </q-card>
                         </div>
                     </div>
-                </div>
-
-                <div class="profile-split-row">
-                    <div class="left-column profile-column">
-                        <taxa-profile-central-image :taxon="taxon" :central-image="centralImage" :is-editor="isEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
+                </template>
+                <template v-if="Number(taxon.rankid) > 180 && specimenImageArr.length > 0">
+                    <div class="profile-center-row">
+                        <div class="expansion-container">
+                            <q-card>
+                                <div class="q-pt-sm q-pl-md q-mb-md text-h6 text-weight-bold image-sideways-scroller-label">
+                                    Specimen Images
+                                </div>
+                                <q-scroll-area class="q-px-md img-sideways-scroller">
+                                    <div class="row no-wrap q-gutter-md">
+                                        <div v-for="image in specimenImageArr" :key="image" class="img-thumb q-mb-sm">
+                                            <a @click="showSpecimenImageCarousel(image.url);" class="cursor-pointer">
+                                                <q-img :src="image.url" fit="contain" height="240px" :title="image.caption" :alt="image.sciname"></q-img>
+                                            </a>
+                                            <div class="photographer">
+                                                <a :href="(clientRoot + '/collections/individual/index.php?occid=' + image.occid)" target="_blank">
+                                                    <template v-if="image.catalognumber || image.othercatalognumbers">
+                                                        {{ image.catalognumber ? image.catalognumber : '' }}{{ image.catalognumber && image.othercatalognumbers ? '/' : '' }}{{ image.othercatalognumbers ? image.othercatalognumbers : '' }}
+                                                    </template>
+                                                    <template v-else>
+                                                        [See Full Record]
+                                                    </template>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </q-scroll-area>
+                            </q-card>
+                        </div>
                     </div>
-                    <div class="right-column profile-column">
-                        <taxa-profile-description-tabs :description-arr="descriptionArr" :glossary-arr="glossaryArr"></taxa-profile-description-tabs>
-                    </div>
-                </div>
-                <div class="q-mt-md">
-                    <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
-                </div>
-                <div class="row justify-center q-mt-md">
-                    <taxa-profile-image-panel @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
-                </div>
-                <div class="row justify-center q-mt-md">
-                    <taxa-profile-media-panel></taxa-profile-media-panel>
-                </div>
+                </template>
                 <div class="row justify-center q-mt-md">
                     <taxa-profile-subtaxa-panel :is-editor="isTaxonProfileEditor"></taxa-profile-subtaxa-panel>
                 </div>
@@ -97,9 +136,14 @@
             <template v-else>
                 <taxa-profile-not-found></taxa-profile-not-found>
             </template>
-            <q-dialog v-model="imageCarousel" persistent full-width full-height>
-                <taxa-profile-image-carousel :image-arr="taxaImageArr" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
-            </q-dialog>
+            <template v-if="Number(taxon.rankid) > 180">
+                <q-dialog v-model="fieldImageCarousel" persistent full-width full-height>
+                    <taxa-profile-image-carousel :image-arr="fieldImageArr" :image-index="fieldImageCarouselSlide" @update:show-image-carousel="toggleFieldImageCarousel" @update:current-image="updateFieldImageCarousel"></taxa-profile-image-carousel>
+                </q-dialog>
+                <q-dialog v-model="specimenImageCarousel" persistent full-width full-height>
+                    <taxa-profile-image-carousel :image-arr="specimenImageArr" :image-index="specimenImageCarouselSlide" @update:show-image-carousel="toggleSpecimenImageCarousel" @update:current-image="updateSpecimenImageCarousel"></taxa-profile-image-carousel>
+                </q-dialog>
+            </template>
         `,
         components: {
             'taxa-profile-edit-button': taxaProfileEditButton,
@@ -126,10 +170,12 @@
             const baseStore = useBaseStore();
             const taxaStore = useTaxaStore();
 
+            const centralImage = Vue.ref(null);
             const clientRoot = baseStore.getClientRoot;
             const fieldImageArr = Vue.ref([]);
             const fieldImageCarousel = Vue.ref(false);
             const fieldImageCarouselSlide = Vue.ref(null);
+            const imageArr = Vue.ref([]);
             const imageCarousel = Vue.ref(false);
             const imageCarouselSlide = Vue.ref(null);
             const isTaxonEditor = Vue.ref(false);
@@ -144,29 +190,29 @@
             const taxonValue = TAXON_VAL;
 
             function processImages() {
-                this.taxon['images'].forEach((image) => {
+                imageArr.value.forEach((image) => {
                     if(Number(image['occid']) > 0){
-                        image['anchorUrl'] = CLIENT_ROOT + '/collections/individual/index.php?occid=' + image['occid'];
+                        image['anchorUrl'] = clientRoot + '/collections/individual/index.php?occid=' + image['occid'];
                         if(image['basisofrecord'].includes('Observation')){
-                            this.fieldImageArr.push(image);
+                            fieldImageArr.value.push(image);
                         }
                         else{
-                            this.specimenImageArr.push(image);
+                            specimenImageArr.value.push(image);
                         }
                     }
                     else{
-                        image['anchorUrl'] = CLIENT_ROOT + '/imagelib/imgdetails.php?imgid=' + image['id'];
-                        this.fieldImageArr.push(image);
+                        image['anchorUrl'] = clientRoot + '/imagelib/imgdetails.php?imgid=' + image['id'];
+                        fieldImageArr.value.push(image);
                     }
                 });
-                if(this.fieldImageArr.length > 0){
-                    this.centralImage = this.fieldImageArr[0];
+                if(fieldImageArr.value.length > 0){
+                    centralImage.value = fieldImageArr.value[0];
                 }
                 else{
-                    this.centralImage = this.specimenImageArr[0];
+                    centralImage.value = specimenImageArr.value[0];
                 }
-                this.loading = false;
-                this.hideLoading();
+
+                console.log(fieldImageArr.value.length);
             }
 
             function setEditor() {
@@ -188,60 +234,75 @@
 
             function setTaxonFieldImages(limit) {
                 const formData = new FormData();
-                formData.append('tid', this.taxon['tid']);
-                formData.append('mediatypa', 'taxon');
-                formData.append('limit', limit);
-                formData.append('action', 'getTaxonMedia');
-                fetch(taxaProfileApiUrl, {
+                formData.append('tidArr', JSON.stringify([taxon.value['tid']]));
+                formData.append('includeoccurrence', '0');
+                formData.append('limitPerTaxon', limit);
+                formData.append('action', 'getTaxonArrDisplayImageData');
+                fetch(imageApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            this.taxon['images'] = resObj['images'];
-                            if(Number(this.taxon['rankId']) > 180){
-                                this.setTaxonSpecimenImages();
-                            }
-                            else{
-                                this.processImages();
-                            }
-                        });
+                    return response.ok ? response.json() : null;
+                })
+                .then((resObj) => {
+                    if(resObj.hasOwnProperty(taxon.value['tid'])){
+                        imageArr.value = resObj[taxon.value['tid']];
+                        if(Number(taxon.value['rankid']) > 180){
+                            setTaxonSpecimenImages();
+                        }
+                        else{
+                            processImages();
+                        }
                     }
                 });
             }
 
             function setTaxonSpecimenImages() {
                 const formData = new FormData();
-                formData.append('tid', this.taxon['tid']);
-                formData.append('mediatypa', 'occurrence');
-                formData.append('limit', '100');
-                formData.append('action', 'getTaxonMedia');
-                fetch(taxaProfileApiUrl, {
+                formData.append('tidArr', JSON.stringify([taxon.value['tid']]));
+                formData.append('limittooccurrence', '1');
+                formData.append('limitPerTaxon', '100');
+                formData.append('action', 'getTaxonArrDisplayImageData');
+                fetch(imageApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            this.taxon['images'] = this.taxon['images'].concat(resObj['images']);;
-                            this.processImages();
-                        });
+                    return response.ok ? response.json() : null;
+                })
+                .then((resObj) => {
+                    if(resObj.hasOwnProperty(taxon.value['tid'])){
+                        imageArr.value = imageArr.value.concat(resObj[taxon.value['tid']]);
+                        processImages();
                     }
                 });
             }
 
-            function showImageCarousel(index) {
-                imageCarouselSlide.value = index;
-                imageCarousel.value = true;
+            function showFieldImageCarousel(index) {
+                fieldImageCarouselSlide.value = index;
+                fieldImageCarousel.value = true;
             }
 
-            function toggleImageCarousel(val) {
-                imageCarousel.value = val;
+            function showSpecimenImageCarousel(index) {
+                specimenImageCarouselSlide.value = index;
+                specimenImageCarousel.value = true;
             }
 
-            function updateImageCarousel(val) {
-                imageCarouselSlide.value = val;
+            function toggleFieldImageCarousel(val) {
+                fieldImageCarousel.value = val;
+            }
+
+            function toggleSpecimenImageCarousel(val) {
+                specimenImageCarousel.value = val;
+            }
+
+            function updateFieldImageCarousel(val) {
+                fieldImageCarouselSlide.value = val;
+            }
+
+            function updateSpecimenImageCarousel(val) {
+                specimenImageCarouselSlide.value = val;
             }
 
             Vue.onMounted(() => {
@@ -254,6 +315,7 @@
                         if(subtaxaArr.value.length > 0){
                             taxaStore.setSubtaxaImageData();
                         }
+                        taxaStore.setTaxaImageArr();
                         if(Number(taxon.value['rankId']) > 180){
                             setTaxonFieldImages(100);
                         }
@@ -271,16 +333,27 @@
             });
 
             return {
+                centralImage,
+                clientRoot,
+                fieldImageArr,
+                fieldImageCarousel,
+                fieldImageCarouselSlide,
                 imageCarousel,
                 imageCarouselSlide,
                 isTaxonEditor,
                 isTaxonProfileEditor,
+                specimenImageArr,
+                specimenImageCarousel,
+                specimenImageCarouselSlide,
                 taxaImageArr,
                 taxaImageCount,
                 taxon,
-                showImageCarousel,
-                toggleImageCarousel,
-                updateImageCarousel
+                showFieldImageCarousel,
+                showSpecimenImageCarousel,
+                toggleFieldImageCarousel,
+                toggleSpecimenImageCarousel,
+                updateFieldImageCarousel,
+                updateSpecimenImageCarousel
             }
         }
     });
