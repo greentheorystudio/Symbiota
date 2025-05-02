@@ -353,7 +353,7 @@ class Images{
         return $returnArr;
     }
 
-    public function getTaxonArrDisplayImageData($tidArr, $includeOccurrence = false, $limitPerTaxon = null, $sortsequenceLimit = null): array
+    public function getTaxonArrDisplayImageData($tidArr, $includeOccurrence, $limitToOccurrence, $limitPerTaxon = null, $sortsequenceLimit = null): array
     {
         $returnArr = array();
         $returnArr['count'] = 0;
@@ -363,7 +363,10 @@ class Images{
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                 'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
-            if(!$includeOccurrence){
+            if($limitToOccurrence){
+                $sql .= 'AND i.occid IS NOT NULL ';
+            }
+            elseif(!$includeOccurrence){
                 $sql .= 'AND ISNULL(i.occid) ';
             }
             if($sortsequenceLimit && (int)$sortsequenceLimit > 0){
