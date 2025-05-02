@@ -934,6 +934,25 @@ const spatialAnalysisModule = {
             }
         }
 
+        function mapPostLoadInitialize() {
+            spatialModuleInitialising.value = false;
+            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
+                showWorking('Loading...');
+            }
+            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
+                if(props.stArrJson){
+                    searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
+                }
+                if(searchStore.getSearchTermsValid){
+                    updateMapSettings('loadPointsEvent', true);
+                    createShapesFromSearchTermsArr();
+                    loadRecords();
+                }
+            }
+            window.addEventListener('resize', handleWindowResize);
+            handleWindowResize();
+        }
+
         function openRecordInfoWindow(id){
             updateMapSettings('recordInfoWindowId', id);
             updateMapSettings('showRecordInfoWindow', true);
@@ -1714,6 +1733,11 @@ const spatialAnalysisModule = {
                             map.getTargetElement().style.cursor = '';
                         }
                     }
+                }
+            });
+            map.on('loadend', () => {
+                if(spatialModuleInitialising.value){
+                    mapPostLoadInitialize();
                 }
             });
         }
@@ -2632,9 +2656,6 @@ const spatialAnalysisModule = {
         Vue.provide('zoomToSelections', zoomToSelections);
 
         Vue.onMounted(() => {
-            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
-                showWorking('Loading...');
-            }
             spatialModuleInitialising.value = true;
             setMapLayersInteractions();
             setMapOverlays();
@@ -2649,20 +2670,9 @@ const spatialAnalysisModule = {
             if(!props.clusterPoints){
                 updateMapSettings('clusterPoints', false);
             }
-            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
-                if(props.stArrJson){
-                    searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
-                }
-                if(searchStore.getSearchTermsValid){
-                    updateMapSettings('loadPointsEvent', true);
-                    createShapesFromSearchTermsArr();
-                    loadRecords();
-                }
-            }
             updateMapSettings('drawToolFreehandMode', getPlatformProperty('has.touch'));
             changeDraw();
             controlPanelRef.value.changeBaseMap();
-            spatialModuleInitialising.value = false;
             window.addEventListener('resize', handleWindowResize);
             handleWindowResize();
         });

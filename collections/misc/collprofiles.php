@@ -82,7 +82,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                         <div>
                                             {{ collectionData['institutionname'] }}
                                         </div>
-                                        <div v-if="collectionPermissions.value.includes('CollAdmin')">
+                                        <div v-if="collectionPermissions.includes('CollAdmin')">
                                             <a :href="(clientRoot + '/collections/misc/institutioneditor.php?emode=1&targetcollid=' + collId + '&iid=' + collectionData.iid)" title="Edit institution information">
                                                 <q-icon name="far fa-edit" size="13px" class="cursor-pointer" />
                                             </a>
