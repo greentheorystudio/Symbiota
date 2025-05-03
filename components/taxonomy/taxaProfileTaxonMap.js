@@ -1,8 +1,8 @@
 const taxaProfileTaxonMap = {
     template: `
         <div class="map-thumb-frame">
-            <q-card class="taxon-profile-taxon-map-card">
-                <div class="map-thumb-container cursor-pointer" @click="openMapPopup(true);">
+            <q-card class="taxon-profile-taxon-map-card cursor-pointer" @click="openMapPopup(true);">
+                <div class="map-thumb-container">
                     <template v-if="taxonMap">
                         <div class="map-thumb-image">
                             <a @click="openMapPopup(true);" class="cursor-pointer">
