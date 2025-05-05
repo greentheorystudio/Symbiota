@@ -5,13 +5,20 @@ const viewProfileAccountModule = {
                 <q-card class="create-account-container">
                     <q-card-section>
                         <div class="row justify-between">
-                            <div class="row col-8 text-red text-bold">
-                                You have one more step to confirm your account. A confirmation email was sent to the email address for your account.
-                                Please follow the instructions in that email to confirm your account.
-                            </div>
-                            <div class="row col-3 self-center justify-end">
-                                <q-btn color="secondary" @click="resendConfirmationEmail();" label="Resend Confirmation Email" dense />
-                            </div>
+                            <template v-if="emailConfigured">
+                                <div class="row col-8 text-red text-bold">
+                                    You have one more step to confirm your account. A confirmation email was sent to the email address for your account.
+                                    Please follow the instructions in that email to confirm your account.
+                                </div>
+                                <div class="row col-3 self-center justify-end">
+                                    <q-btn color="secondary" @click="resendConfirmationEmail();" label="Resend Confirmation Email" dense />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div class="row col-8 text-red text-bold">
+                                    Your account needs to be confirmed to be fully active.{{ (adminEmail ? (' Please contact ' + adminEmail + ' for assistance in confirming your account.') : '') }}
+                                </div>
+                            </template>
                         </div>
                     </q-card-section>
                 </q-card>
@@ -99,7 +106,7 @@ const viewProfileAccountModule = {
         'account-information-form': accountInformationForm,
         'password-input': passwordInput
     },
-    setup(props) {
+    setup() {
         const { showNotification } = useCore();
         const baseStore = useBaseStore();
         const userStore = useUserStore();
@@ -107,10 +114,12 @@ const viewProfileAccountModule = {
         const accessTokenCnt = Vue.computed(() => userStore.getTokenCnt);
         const accountInfo = Vue.computed(() => userStore.getUserData);
         const accountInformationFormRef = Vue.ref(null);
+        const adminEmail = baseStore.getAdminEmail;
         const checklistArr = Vue.computed(() => userStore.getChecklistArr);
         const clientRoot = baseStore.getClientRoot;
         const deleteConfirmation = Vue.ref(false);
         const editsExist = Vue.computed(() => userStore.getUserEditsExist);
+        const emailConfigured = baseStore.getEmailConfigured;
         const newPassword = Vue.ref(null);
         const passwordInputRef = Vue.ref(null);
         const projectArr = Vue.computed(() => userStore.getProjectArr);
@@ -195,9 +204,11 @@ const viewProfileAccountModule = {
             accessTokenCnt,
             accountInfo,
             accountInformationFormRef,
+            adminEmail,
             checklistArr,
             deleteConfirmation,
             editsExist,
+            emailConfigured,
             newPassword,
             passwordInputRef,
             projectArr,
