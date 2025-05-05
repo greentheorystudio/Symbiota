@@ -1135,11 +1135,13 @@ class SearchService {
                         foreach($mofData['event'][$row['eventid']] as $field => $value){
                             $geoArr['properties'][$field] = $value;
                         }
+                        unset($mofData['event'][$row['eventid']]);
                     }
                     if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
                         foreach($mofData['occurrence'][$row['occid']] as $field => $value){
                             $geoArr['properties'][$field] = $value;
                         }
+                        unset($mofData['occurrence'][$row['occid']]);
                     }
                 }
                 $featuresArr[] = $geoArr;
@@ -1188,11 +1190,13 @@ class SearchService {
                             foreach($mofData['event'][$row['eventid']] as $field => $value){
                                 $returnData[$occid][$field] = $value;
                             }
+                            unset($mofData['event'][$row['eventid']]);
                         }
                         if($mofData['occurrence'] && array_key_exists($occid, $mofData['occurrence'])){
                             foreach($mofData['occurrence'][$occid] as $field => $value){
                                 $returnData[$occid][$field] = $value;
                             }
+                            unset($mofData['occurrence'][$row['occid']]);
                         }
                     }
                     if(!$spatial){
