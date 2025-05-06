@@ -1041,16 +1041,11 @@ class SearchService {
                 }
                 $sql = $selectStr . $fromStr . $whereStr;
                 //echo '<div>Search sql: ' . $sql . '</div>';
-                if($result = $this->conn->query($sql)){
-                    $fields = mysqli_fetch_fields($result);
-                    $rows = $result->fetch_all(MYSQLI_ASSOC);
-                    $result->free();
-                    if($options['output'] === 'geojson'){
-                        $returnArr = $this->serializeGeoJsonResultArr($fields, $rows, $numRows, ($mofDataArr ?: null));
-                    }
-                    else{
-                        $returnArr = $this->serializeJsonResultArr($fields, $rows, $options['schema'], $spatial, ($mofDataArr ?: null));
-                    }
+                if($options['output'] === 'geojson'){
+                    $returnArr = $this->serializeGeoJsonResultArr($sql, $numRows, ($mofDataArr ?: null));
+                }
+                else{
+                    $returnArr = $this->serializeJsonResultArr($sql, $options['schema'], $spatial, ($mofDataArr ?: null));
                 }
             }
         }
@@ -1108,104 +1103,113 @@ class SearchService {
         return $fileContent;
     }
 
-    public function serializeGeoJsonResultArr($fields, $rows, $numRows, $mofData = null): array
+    public function serializeGeoJsonResultArr($sql, $numRows, $mofData = null): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
         $featuresArr = array();
-        foreach($rows as $index => $row){
-            $rareSpReader = false;
-            $localitySecurity = (int)$row['localitysecurity'] === 1;
-            if($localitySecurity){
-                $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
-            }
-            if(!$localitySecurity || $rareSpReader){
-                $geoArr = array();
-                $geoArr['type'] = 'Feature';
-                $geoArr['geometry']['type'] = 'Point';
-                $geoArr['geometry']['coordinates'] = [$row['decimallongitude'], $row['decimallatitude']];
-                $geoArr['properties'] = array();
-                $geoArr['properties']['id'] = $row['occid'];
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $geoArr['properties'][$name] = $row[$name];
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            while($row = $result->fetch_assoc()){
+                $rareSpReader = false;
+                $localitySecurity = (int)$row['localitysecurity'] === 1;
+                if($localitySecurity){
+                    $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                 }
-                if($mofData){
-                    if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
-                        foreach($mofData['event'][$row['eventid']] as $field => $value){
-                            $geoArr['properties'][$field] = $value;
+                if(!$localitySecurity || $rareSpReader){
+                    $geoArr = array();
+                    $geoArr['type'] = 'Feature';
+                    $geoArr['geometry']['type'] = 'Point';
+                    $geoArr['geometry']['coordinates'] = [$row['decimallongitude'], $row['decimallatitude']];
+                    $geoArr['properties'] = array();
+                    $geoArr['properties']['id'] = $row['occid'];
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        if($name !== 'footprintwkt'){
+                            $geoArr['properties'][$name] = $row[$name];
                         }
                     }
-                    if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
-                        foreach($mofData['occurrence'][$row['occid']] as $field => $value){
-                            $geoArr['properties'][$field] = $value;
+                    if($mofData){
+                        if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
+                            foreach($mofData['event'][$row['eventid']] as $field => $value){
+                                $geoArr['properties'][$field] = $value;
+                            }
+                            unset($mofData['event'][$row['eventid']]);
+                        }
+                        if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
+                            foreach($mofData['occurrence'][$row['occid']] as $field => $value){
+                                $geoArr['properties'][$field] = $value;
+                            }
+                            unset($mofData['occurrence'][$row['occid']]);
                         }
                     }
+                    $featuresArr[] = $geoArr;
                 }
-                $featuresArr[] = $geoArr;
             }
-            unset($rows[$index]);
+            $result->free();
+            $returnArr['type'] = 'FeatureCollection';
+            $returnArr['numFound'] = $numRows;
+            $returnArr['start'] = 0;
+            $returnArr['features'] = $featuresArr;
         }
-        $returnArr['type'] = 'FeatureCollection';
-        $returnArr['numFound'] = $numRows;
-        $returnArr['start'] = 0;
-        $returnArr['features'] = $featuresArr;
         return $returnArr;
     }
 
-    public function serializeJsonResultArr($fields, $rows, $schema, $spatial, $mofData = null): array
+    public function serializeJsonResultArr($sql, $schema, $spatial, $mofData = null): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
         $returnData = array();
         $idArr = array();
-        if($schema === 'taxa'){
-            foreach($rows as $index => $row){
-                $recordArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $recordArr[$name] = $row[$name];
-                }
-                $returnArr[] = $recordArr;
-                unset($rows[$index]);
-            }
-        }
-        else{
-            foreach($rows as $index => $row){
-                $rareSpReader = false;
-                $occid = $row['occid'];
-                $localitySecurity = (int)$row['localitysecurity'] === 1;
-                if($localitySecurity){
-                    $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
-                }
-                if(($localitySecurity && $rareSpReader) || !$localitySecurity || !$spatial){
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            while($row = $result->fetch_assoc()){
+                if($schema === 'taxa'){
+                    $recordArr = array();
                     foreach($fields as $val){
                         $name = $val->name;
-                        $returnData[$occid][$name] = $row[$name];
+                        $recordArr[$name] = $row[$name];
                     }
-                    if($mofData){
-                        if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
-                            foreach($mofData['event'][$row['eventid']] as $field => $value){
-                                $returnData[$occid][$field] = $value;
+                    $returnArr[] = $recordArr;
+                }
+                else{
+                    $rareSpReader = false;
+                    $occid = $row['occid'];
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
+                    if($localitySecurity){
+                        $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
+                    }
+                    if(($localitySecurity && $rareSpReader) || !$localitySecurity || !$spatial){
+                        foreach($fields as $val){
+                            $name = $val->name;
+                            $returnData[$occid][$name] = $row[$name];
+                        }
+                        if($mofData){
+                            if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
+                                foreach($mofData['event'][$row['eventid']] as $field => $value){
+                                    $returnData[$occid][$field] = $value;
+                                }
+                                unset($mofData['event'][$row['eventid']]);
+                            }
+                            if($mofData['occurrence'] && array_key_exists($occid, $mofData['occurrence'])){
+                                foreach($mofData['occurrence'][$occid] as $field => $value){
+                                    $returnData[$occid][$field] = $value;
+                                }
+                                unset($mofData['occurrence'][$row['occid']]);
                             }
                         }
-                        if($mofData['occurrence'] && array_key_exists($occid, $mofData['occurrence'])){
-                            foreach($mofData['occurrence'][$occid] as $field => $value){
-                                $returnData[$occid][$field] = $value;
+                        if(!$spatial){
+                            if(!$localitySecurity || $rareSpReader){
+                                $idArr[] = $occid;
                             }
-                        }
-                    }
-                    if(!$spatial){
-                        if(!$localitySecurity || $rareSpReader){
-                            $idArr[] = $occid;
-                        }
-                        else{
-                            $returnData[$occid] = (new Occurrences)->clearSensitiveOccurrenceData($returnData[$occid]);
+                            else{
+                                $returnData[$occid] = (new Occurrences)->clearSensitiveOccurrenceData($returnData[$occid]);
+                            }
                         }
                     }
                 }
-                unset($rows[$index]);
             }
+            $result->free();
         }
         if(!$spatial && $schema === 'occurrence' && count($idArr) > 0){
             $returnData = $this->setResultsImageData($returnData, $idArr);
