@@ -1209,6 +1209,7 @@ class SearchService {
                     }
                 }
             }
+            $result->free();
         }
         if(!$spatial && $schema === 'occurrence' && count($idArr) > 0){
             $returnData = $this->setResultsImageData($returnData, $idArr);
