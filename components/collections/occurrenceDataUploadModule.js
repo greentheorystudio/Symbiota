@@ -1443,6 +1443,27 @@ const occurrenceDataUploadModule = {
             };
         }
 
+        function getOccurrenceFieldMappingOption(fieldName, mappingData) {
+            let fieldOption;
+            if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10 || (uploadedFile.value && uploadedFile.value.name.endsWith('.zip'))){
+                if(Object.keys(mappingData).length === 0 || !mappingData.hasOwnProperty(fieldName.toLowerCase())){
+                    fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
+                }
+                else{
+                    fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === mappingData[fieldName.toLowerCase()]);
+                }
+            }
+            else{
+                if(Object.keys(mappingData).length === 0 || !mappingData.hasOwnProperty(fieldName.toLowerCase())){
+                    fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
+                }
+                else{
+                    fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === mappingData[fieldName.toLowerCase()]);
+                }
+            }
+            return fieldOption;
+        }
+
         function getPopupViewerRecords(pageNumber) {
             popupPageNumber.value = pageNumber;
             getUploadData(popupDataType.value, (data) => {
@@ -2406,28 +2427,25 @@ const occurrenceDataUploadModule = {
                     showNotification('negative', (uploadedFile.value.name + ' cannot be uploaded because it is ' + fileSizeMb.toString() + 'MB, which exceeds the server limit of ' + maxUploadFilesize.toString() + 'MB for uploads.'));
                 }
             }
-            else if(uploadedFile.value.name.endsWith('.csv') || uploadedFile.value.name.endsWith('.txt')){
-                const text = 'Processing source data';
-                currentProcess.value = 'processSourceData';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                flatFileMode.value = true;
-                setSymbiotaFlatFileFieldOptions();
-                parseFile(uploadedFile.value, (fileContents) => {
-                    csvToArray(fileContents).then((csvData) => {
-                        processFlatFileCsvData(csvData);
-                    });
-                });
-            }
             else{
                 const text = 'Processing source data';
                 currentProcess.value = 'processSourceData';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 flatFileMode.value = true;
                 setSymbiotaFlatFileFieldOptions();
-                parseFile(uploadedFile.value, (fileContents) => {
-                    const uploadData = JSON.parse(fileContents);
-                    processFlatFileGeoJson(uploadData);
-                });
+                if(uploadedFile.value.name.endsWith('.csv') || uploadedFile.value.name.endsWith('.txt')){
+                    parseFile(uploadedFile.value, (fileContents) => {
+                        csvToArray(fileContents).then((csvData) => {
+                            processFlatFileCsvData(csvData);
+                        });
+                    });
+                }
+                else{
+                    parseFile(uploadedFile.value, (fileContents) => {
+                        const uploadData = JSON.parse(fileContents);
+                        processFlatFileGeoJson(uploadData);
+                    });
+                }
             }
         }
 
@@ -2667,24 +2685,12 @@ const occurrenceDataUploadModule = {
                 fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'eventdbpk';
             }
             else if(!fieldMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
-                let fieldOption;
-                if(Object.keys(savedMappingDataOccurrence.value).length === 0 || !savedMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
-                    fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
-                }
-                else{
-                    fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === savedMappingDataOccurrence.value[fieldName.toLowerCase()]);
-                }
+                const fieldOption = getOccurrenceFieldMappingOption(fieldName, savedMappingDataOccurrence.value);
                 const usedField = fieldOption ? Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === fieldOption.value) : null;
                 fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
             }
             if(!fieldMappingDataSecondary.value.hasOwnProperty(fieldName.toLowerCase())){
-                let fieldOption;
-                if(Object.keys(savedMappingDataSecondary.value).length === 0 || !savedMappingDataSecondary.value.hasOwnProperty(fieldName.toLowerCase())){
-                    fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
-                }
-                else{
-                    fieldOption = symbiotaFieldOptionsFlatFile.value.find(option => option.value.toLowerCase() === savedMappingDataSecondary.value[fieldName.toLowerCase()]);
-                }
+                const fieldOption = getOccurrenceFieldMappingOption(fieldName, savedMappingDataSecondary.value);
                 let usedField = fieldOption ? Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field] === fieldOption.value) : null;
                 if(!usedField){
                     usedField = fieldOption ? Object.keys(fieldMappingDataSecondary.value).find(field => fieldMappingDataSecondary.value[field] === fieldOption.value) : null;
@@ -2758,6 +2764,7 @@ const occurrenceDataUploadModule = {
             processParameterProfileSelection,
             processUploadFile,
             saveMapping,
+            setScroller,
             setSourceDataPrimaryIdentifier,
             startUpload
         }

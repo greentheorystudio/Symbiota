@@ -62,7 +62,7 @@ const fieldMapperPopup = {
                                     <div class="row">
                                         <template v-if="mappingType === 'occurrence' || mappingType === 'flat-file'">
                                             <template v-if="sourceFields[sourceField].toLowerCase() !== sourceEventPrimaryKey.toLowerCase() && sourceFields[sourceField].toLowerCase() !== sourcePrimaryKey.toLowerCase()">
-                                                <div class="col-2 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="(primaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' && secondaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped') ? 'bg-grey-5' : ''">
+                                                <div class="col-2 q-pl-md upload-field-mapper-grid-cell content-center" :class="(primaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' && secondaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped') ? 'bg-grey-5' : ''">
                                                     {{ sourceFields[sourceField] }}
                                                 </div>
                                                 <div class="col-5 q-pl-sm upload-field-mapper-grid-cell" :class="(primaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' && secondaryFieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped') ? 'bg-grey-5' : ''">
@@ -75,7 +75,7 @@ const fieldMapperPopup = {
                                         </template>
                                         <template v-else>
                                             <template v-if="sourceFields[sourceField].toLowerCase() !== sourceEventPrimaryKey.toLowerCase() && sourceFields[sourceField].toLowerCase() !== sourcePrimaryKey.toLowerCase()">
-                                                <div class="col-4 q-pl-md upload-field-mapper-grid-cell text-body1 content-center" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
+                                                <div class="col-4 q-pl-md upload-field-mapper-grid-cell content-center" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
                                                     {{ sourceFields[sourceField] }}
                                                 </div>
                                                 <div class="col-8 q-pl-sm upload-field-mapper-grid-cell" :class="fieldMapping[sourceFields[sourceField].toLowerCase()] === 'unmapped' ? 'bg-grey-5' : ''">
