@@ -713,7 +713,7 @@ class DarwinCoreArchiverService {
                             if(!$localitySecurity && !$rareSpReader){
                                 $row = (new Occurrences)->clearSensitiveOccurrenceData($row);
                             }
-                            if(!$row['occurrenceID']){
+                            if(is_array($row) && array_key_exists('occurrenceID', $row) && !$row['occurrenceID']){
                                 $guidTarget = $returnArr['collectionData'][$row['collid']]['guidtarget'];
                                 if($guidTarget === 'catalogNumber'){
                                     $row['occurrenceID'] = $row['catalogNumber'];
@@ -771,6 +771,7 @@ class DarwinCoreArchiverService {
                                     $row['t_kingdom'] = $upperTaxonomyData[$phyStr]['k'];
                                 }
                             }
+
                             FileSystemService::writeRowToCsv($fileHandler, $row);
                             $dataIncluded = true;
                         }
