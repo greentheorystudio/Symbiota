@@ -17,24 +17,24 @@ const occurrenceDataUploadModule = {
                                         <div class="row justify-between q-col-gutter-sm">
                                             <div class="col-12 col-sm-9">
                                                 <template v-if="collectionDataUploadParametersArr.length > 0">
-                                                    <selector-input-element :disabled="currentTab !== 'configuration' || currentProcess" label="Select Upload Profile" :options="collectionDataUploadParametersArr" option-value="uspid" option-label="title" :value="collectionDataUploadParametersId" @update:value="(value) => processParameterProfileSelection(value)"></selector-input-element>
+                                                    <selector-input-element :disabled="currentTab !== 'configuration' || !!currentProcess" label="Select Upload Profile" :options="collectionDataUploadParametersArr" option-value="uspid" option-label="title" :value="collectionDataUploadParametersId" @update:value="(value) => processParameterProfileSelection(value)"></selector-input-element>
                                                 </template>
                                             </div>
                                             <div class="col-12 col-sm-3 row justify-end">
                                                 <div>
-                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" :disabled="currentTab !== 'configuration' || currentProcess" dense />
+                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" :disabled="currentTab !== 'configuration' || !!currentProcess" dense />
                                                 </div>
                                             </div>
                                         </div>
                                         <div v-if="Number(profileData.uploadtype) === 6" class="row">
                                             <div class="col-grow">
-                                                <file-picker-input-element :disabled="currentTab !== 'configuration' || currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
+                                                <file-picker-input-element :disabled="currentTab !== 'configuration' || !!currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                             </div>
                                         </div>
-                                        <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || currentProcess"></collection-data-upload-parameters-field-module>
+                                        <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || !!currentProcess"></collection-data-upload-parameters-field-module>
                                         <div class="row justify-end">
                                             <div>
-                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || currentProcess || !initializeValid" dense />
+                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || !!currentProcess || !initializeValid" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -50,12 +50,12 @@ const occurrenceDataUploadModule = {
                                             <template v-if="profileConfigurationData['saveSourcePrimaryIdentifier']">
                                                 <div class="q-mb-sm row q-gutter-sm">
                                                     <div class="text-body1 text-bold self-center">Source Primary ID</div> 
-                                                    <selector-input-element :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('occurrence', value)"></selector-input-element>
+                                                    <selector-input-element :disabled="currentTab !== 'mapping' || !!currentProcess" :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('occurrence', value)"></selector-input-element>
                                                 </div>
                                                 <template v-if="collectionData['datarecordingmethod'] === 'lot' || collectionData['datarecordingmethod'] === 'benthic' || Object.keys(eventMofDataFields).length > 0">
                                                     <div class="q-mb-sm row q-gutter-sm">
                                                         <div class="text-body1 text-bold self-center">Source Event Primary ID</div> 
-                                                        <selector-input-element :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('event', value)"></selector-input-element>
+                                                        <selector-input-element :disabled="currentTab !== 'mapping' || !!currentProcess" :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('event', value)"></selector-input-element>
                                                     </div>
                                                 </template>
                                             </template>
@@ -71,35 +71,35 @@ const occurrenceDataUploadModule = {
                                             </div>
                                             <template v-if="determinationDataIncluded">
                                                 <div class="row q-gutter-sm">
-                                                    <checkbox-input-element :value="includeDeterminationData" @update:value="(value) => includeDeterminationData = value" :disabled="currentTab !== 'mapping' || currentProcess"></checkbox-input-element>
+                                                    <checkbox-input-element :value="includeDeterminationData" @update:value="(value) => includeDeterminationData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Identification History</div>
                                                     <div class="cursor-pointer" @click="openFieldMapperPopup('determination');">(view mapping)</div>
                                                 </div>
                                             </template>
                                             <template v-if="multimediaDataIncluded">
                                                 <div class="row q-gutter-sm">
-                                                    <checkbox-input-element :value="includeMultimediaData" @update:value="(value) => includeMultimediaData = value" :disabled="currentTab !== 'mapping' || currentProcess"></checkbox-input-element>
+                                                    <checkbox-input-element :value="includeMultimediaData" @update:value="(value) => includeMultimediaData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Media Records</div>
                                                     <div class="cursor-pointer" @click="openFieldMapperPopup('multimedia');">(view mapping)</div>
                                                 </div>
                                             </template>
                                             <template v-if="mofDataIncluded">
                                                 <div class="row q-gutter-sm">
-                                                    <checkbox-input-element :value="includeMofData" @update:value="(value) => includeMofData = value" :disabled="currentTab !== 'mapping' || currentProcess"></checkbox-input-element>
+                                                    <checkbox-input-element :value="includeMofData" @update:value="(value) => includeMofData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Measurement or Fact Records</div>
                                                     <div class="cursor-pointer" @click="openFieldMapperPopup('mof');">(view mapping)</div>
                                                 </div>
                                             </template>
                                         </template>
                                         <div class="q-mt-sm">
-                                            <selector-input-element label="Incoming Records Processing Status" :options="processingStatusOptions" :value="selectedProcessingStatus" @update:value="(value) => selectedProcessingStatus = value" :clearable="true" :disabled="currentTab !== 'mapping' || currentProcess"></selector-input-element>
+                                            <selector-input-element label="Incoming Records Processing Status" :options="processingStatusOptions" :value="selectedProcessingStatus" @update:value="(value) => selectedProcessingStatus = value" :clearable="true" :disabled="currentTab !== 'mapping' || !!currentProcess"></selector-input-element>
                                         </div>
                                         <div class="q-mt-sm row justify-end q-gutter-sm">
                                             <div v-if="collectionDataUploadParametersId">
-                                                <q-btn color="secondary" @click="saveMapping();" label="Save Mapping" :disabled="currentTab !== 'mapping' || currentProcess" dense />
+                                                <q-btn color="secondary" @click="saveMapping();" label="Save Mapping" :disabled="currentTab !== 'mapping' || !!currentProcess" dense />
                                             </div>
                                             <div>
-                                                <q-btn color="secondary" @click="startUpload();" label="Start Upload" :disabled="currentTab !== 'mapping' || currentProcess || !mappingValid" dense />
+                                                <q-btn color="secondary" @click="startUpload();" label="Start Upload" :disabled="currentTab !== 'mapping' || !!currentProcess || !mappingValid" dense />
                                             </div>
                                         </div>
                                     </div>
@@ -245,7 +245,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div class="q-mt-sm row justify-end">
                                             <div>
-                                                <q-btn color="secondary" @click="finalTransfer();" label="Transfer Records to Central Occurrence Table" :disabled="currentTab !== 'summary' || currentProcess" dense />
+                                                <q-btn color="secondary" @click="finalTransfer();" label="Transfer Records to Central Occurrence Table" :disabled="currentTab !== 'summary' || !!currentProcess" dense />
                                             </div>
                                         </div>
                                     </div>
