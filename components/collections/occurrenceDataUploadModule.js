@@ -426,6 +426,85 @@ const occurrenceDataUploadModule = {
             }
         });
         const fieldMappingDataDetermiation = Vue.ref({});
+        const fieldMappingDataDwcaDetermiation = Vue.computed(() => {
+            const dwcMappingData = {};
+            Object.keys(fieldMappingDataDetermiation.value).forEach((field) => {
+                if(fieldMappingDataDetermiation.value[field] !== 'unmapped'){
+                    if(fieldMappingDataDetermiation.value[field] === 'dbpk'){
+                        dwcMappingData[fieldMappingDataDetermiation.value[field]] = Object.keys(sourceDataFieldsDetermination.value).find(key => sourceDataFieldsDetermination.value[key].toLowerCase() === 'coreid');
+                    }
+                    else{
+                        dwcMappingData[fieldMappingDataDetermiation.value[field]] = Object.keys(sourceDataFieldsDetermination.value).find(key => sourceDataFieldsDetermination.value[key].toLowerCase() === field.toLowerCase());
+                    }
+                }
+            });
+            return dwcMappingData;
+        });
+        const fieldMappingDataDwcaMedia = Vue.computed(() => {
+            const dwcMappingData = {};
+            Object.keys(fieldMappingDataMedia.value).forEach((field) => {
+                if(fieldMappingDataMedia.value[field] !== 'unmapped'){
+                    if(fieldMappingDataMedia.value[field] === 'dbpk'){
+                        dwcMappingData[fieldMappingDataMedia.value[field]] = Object.keys(sourceDataFieldsMultimedia.value).find(key => sourceDataFieldsMultimedia.value[key].toLowerCase() === 'coreid');
+                    }
+                    else{
+                        dwcMappingData[fieldMappingDataMedia.value[field]] = Object.keys(sourceDataFieldsMultimedia.value).find(key => sourceDataFieldsMultimedia.value[key].toLowerCase() === field.toLowerCase());
+                    }
+                }
+            });
+            return dwcMappingData;
+        });
+        const fieldMappingDataDwcaMof = Vue.computed(() => {
+            const dwcMappingData = {};
+            Object.keys(fieldMappingDataMof.value).forEach((field) => {
+                if(fieldMappingDataMof.value[field] !== 'unmapped'){
+                    if(fieldMappingDataMof.value[field] === 'dbpk'){
+                        dwcMappingData[fieldMappingDataMof.value[field]] = Object.keys(sourceDataFieldsMof.value).find(key => sourceDataFieldsMof.value[key].toLowerCase() === 'coreid');
+                    }
+                    else if(fieldMappingDataMof.value[field] === 'eventdbpk'){
+                        dwcMappingData[fieldMappingDataMof.value[field]] = Object.keys(sourceDataFieldsMof.value).find(key => sourceDataFieldsMof.value[key].toLowerCase() === 'coreeventid');
+                    }
+                    else{
+                        dwcMappingData[fieldMappingDataMof.value[field]] = Object.keys(sourceDataFieldsMof.value).find(key => sourceDataFieldsMof.value[key].toLowerCase() === field.toLowerCase());
+                    }
+                }
+            });
+            return dwcMappingData;
+        });
+        const fieldMappingDataDwcaOccurrence = Vue.computed(() => {
+            const dwcMappingData = {};
+            Object.keys(fieldMappingDataOccurrence.value).forEach((field) => {
+                if(fieldMappingDataOccurrence.value[field] !== 'unmapped'){
+                    if(fieldMappingDataOccurrence.value[field] === 'dbpk'){
+                        dwcMappingData[fieldMappingDataOccurrence.value[field]] = Object.keys(sourceDataFieldsOccurrence.value).find(key => sourceDataFieldsOccurrence.value[key].toLowerCase() === 'coreid');
+                    }
+                    else if(fieldMappingDataOccurrence.value[field] === 'eventdbpk'){
+                        dwcMappingData[fieldMappingDataOccurrence.value[field]] = Object.keys(sourceDataFieldsOccurrence.value).find(key => sourceDataFieldsOccurrence.value[key].toLowerCase() === 'coreeventid');
+                    }
+                    else{
+                        dwcMappingData[fieldMappingDataOccurrence.value[field]] = Object.keys(sourceDataFieldsOccurrence.value).find(key => sourceDataFieldsOccurrence.value[key].toLowerCase() === field.toLowerCase());
+                    }
+                }
+            });
+            return dwcMappingData;
+        });
+        const fieldMappingDataDwcaSecondary = Vue.computed(() => {
+            const dwcMappingData = {};
+            Object.keys(fieldMappingDataSecondary.value).forEach((field) => {
+                if(fieldMappingDataSecondary.value[field] !== 'unmapped'){
+                    if(fieldMappingDataSecondary.value[field] === 'dbpk'){
+                        dwcMappingData[fieldMappingDataSecondary.value[field]] = Object.keys(sourceDataFieldsOccurrence.value).find(key => sourceDataFieldsOccurrence.value[key].toLowerCase() === 'coreid');
+                    }
+                    else if(fieldMappingDataSecondary.value[field] === 'eventdbpk'){
+                        dwcMappingData[fieldMappingDataSecondary.value[field]] = Object.keys(sourceDataFieldsOccurrence.value).find(key => sourceDataFieldsOccurrence.value[key].toLowerCase() === 'coreeventid');
+                    }
+                    else{
+                        dwcMappingData[fieldMappingDataSecondary.value[field]] = Object.keys(sourceDataFieldsOccurrence.value).find(key => sourceDataFieldsOccurrence.value[key].toLowerCase() === field.toLowerCase());
+                    }
+                }
+            });
+            return dwcMappingData;
+        });
         const fieldMappingDataMedia = Vue.ref({});
         const fieldMappingDataMof = Vue.ref({});
         const fieldMappingDataOccurrence = Vue.ref({});
@@ -791,12 +870,41 @@ const occurrenceDataUploadModule = {
                     if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
                         finalTransferRemoveExistingMediaRecordsFromUpload();
                     }
+                    else if(profileConfigurationData.value['existingMediaRecords'] === 'sync'){
+                        finalTransferClearExistingMediaNotInUpload();
+                    }
                     else{
                         finalTransferClearPreviousMediaRecords();
                     }
                 }
                 else{
                     processErrorResponse('An error occurred while cleaning media records in upload');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferClearExistingMediaNotInUpload() {
+            const text = 'Syncing existing media with records included in upload';
+            currentProcess.value = 'finalTransferClearExistingMediaNotInUpload';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferClearExistingMediaNotInUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMedia();
+                }
+                else{
+                    processErrorResponse('An error occurred while syncing existing media with records included in upload');
                     adjustUIEnd();
                 }
             });
@@ -2162,8 +2270,8 @@ const occurrenceDataUploadModule = {
                 }
                 configuration['uploadFile'] = sourceDataFilesOccurrence.value[0];
                 configuration['dataType'] = 'occurrence';
-                configuration['fieldMap'] = Object.assign({}, fieldMappingDataOccurrence.value);
-                configuration['secondaryFieldMap'] = Object.assign({}, fieldMappingDataSecondary.value);
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataDwcaOccurrence.value);
+                configuration['secondaryFieldMap'] = Object.assign({}, fieldMappingDataDwcaSecondary.value);
                 sourceDataFilesOccurrence.value.splice(0, 1);
                 currentComplete = sourceDataFilesOccurrence.value.length === 0;
             }
@@ -2177,7 +2285,7 @@ const occurrenceDataUploadModule = {
                 }
                 configuration['uploadFile'] = sourceDataFilesDetermination.value[0];
                 configuration['dataType'] = 'determination';
-                configuration['fieldMap'] = Object.assign({}, fieldMappingDataDetermiation.value);
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataDwcaDetermiation.value);
                 sourceDataFilesDetermination.value.splice(0, 1);
                 currentComplete = sourceDataFilesDetermination.value.length === 0;
             }
@@ -2191,7 +2299,7 @@ const occurrenceDataUploadModule = {
                 }
                 configuration['uploadFile'] = sourceDataFilesMultimedia.value[0];
                 configuration['dataType'] = 'multimedia';
-                configuration['fieldMap'] = Object.assign({}, fieldMappingDataMedia.value);
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataDwcaMedia.value);
                 sourceDataFilesMultimedia.value.splice(0, 1);
                 currentComplete = sourceDataFilesMultimedia.value.length === 0;
             }
@@ -2205,7 +2313,7 @@ const occurrenceDataUploadModule = {
                 }
                 configuration['uploadFile'] = sourceDataFilesMof.value[0];
                 configuration['dataType'] = 'mof';
-                configuration['fieldMap'] = Object.assign({}, fieldMappingDataMof.value);
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataDwcaMof.value);
                 sourceDataFilesMof.value.splice(0, 1);
                 currentComplete = sourceDataFilesMof.value.length === 0;
             }
@@ -2222,37 +2330,38 @@ const occurrenceDataUploadModule = {
                     return response.ok ? response.text() : null;
                 })
                 .then((res) => {
+                    const resValue = isNaN(Number(res)) ? 0 : Number(res);
                     if(!countChange && sourceDataUploadCount.value !== Number(res)){
                         countChange = true;
                     }
-                    sourceDataUploadCount.value = Number(res);
+                    sourceDataUploadCount.value = resValue;
                     let resText = '';
                     if(configuration['dataType'] === 'occurrence'){
-                        recordsUploadedOccurrence.value = recordsUploadedOccurrence.value + Number(res);
+                        recordsUploadedOccurrence.value += resValue;
                         totalRecordsLoaded = recordsUploadedOccurrence.value;
-                        resText = Number(res) + ' records loaded'
+                        resText = resValue + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'determination'){
-                        recordsUploadedDetermination.value = recordsUploadedDetermination.value + Number(res);
+                        recordsUploadedDetermination.value += resValue;
                         totalRecordsLoaded = recordsUploadedDetermination.value;
-                        resText = Number(res) + ' records loaded'
+                        resText = resValue + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'multimedia'){
-                        recordsUploadedMultimedia.value = recordsUploadedMultimedia.value + Number(res);
+                        recordsUploadedMultimedia.value += resValue;
                         totalRecordsLoaded = recordsUploadedMultimedia.value;
-                        resText = Number(res) + ' records loaded'
+                        resText = resValue + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'mof'){
-                        recordsUploadedMof.value = recordsUploadedMof.value + Number(res);
+                        recordsUploadedMof.value += resValue;
                         totalRecordsLoaded = recordsUploadedMof.value;
-                        resText = Number(res) + ' records loaded'
+                        resText = resValue + ' records loaded'
                     }
                     if(countChange){
                         addSubprocessToProcessorDisplay('text', resText);
                         processSubprocessSuccessResponse(currentProcess.value, false);
                     }
                     if(currentComplete){
-                        processSuccessResponse('Complete: ' + totalRecordsLoaded + ' total records loaded');
+                        processSuccessResponse('Complete: ' + (isNaN(Number(totalRecordsLoaded)) ? '0' : totalRecordsLoaded) + ' total records loaded');
                     }
                     processSourceDataFiles();
                 });
