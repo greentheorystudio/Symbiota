@@ -43,6 +43,18 @@ class Media{
         $this->conn->close();
 	}
 
+    public function clearExistingMediaNotInUpload($collid): int
+    {
+        $retVal = 0;
+        $sql = 'DELETE m.* FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+            'LEFT JOIN uploadmediatemp AS um ON m.occid = um.occid AND m.accessuri = um.accessuri '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(um.upmid) ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        return $retVal;
+    }
+
     public function createMediaRecord($data): int
     {
         $newID = 0;

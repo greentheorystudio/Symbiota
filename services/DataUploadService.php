@@ -148,6 +148,18 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearExistingMediaNotInUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Images)->clearExistingImagesNotInUpload($collid);
+            if($retVal){
+                $retVal = (new Media)->clearExistingMediaNotInUpload($collid);
+            }
+        }
+        return $retVal;
+    }
+
     public function finalTransferClearPreviousDeterminations($collid): int
     {
         $retVal = 1;

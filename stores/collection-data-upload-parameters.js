@@ -14,7 +14,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             catalogNumberMatchField: 'catalognumber',
             existingRecords: 'update',
             existingDeterminationRecords: 'merge',
-            existingMediaRecords: 'merge',
+            existingMediaRecords: 'sync',
             existingMofRecords: 'update',
             saveSourcePrimaryIdentifier: true,
             createPolygonCentroidCoordinates: false,

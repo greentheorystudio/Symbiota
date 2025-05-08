@@ -39,26 +39,39 @@ class UploadDeterminationTemp{
     {
         $recordsCreated = 0;
         $fieldNameArr = array();
-        $sourceKeyArr = array();
         $valueArr = array();
+        $skipFields = array('updid', 'occid', 'collid', 'tid', 'initialtimestamp');
+        $mappedFields = array();
         if($collid){
-            $sourceDataKeys = array_keys($data[0]);
             $fieldNameArr[] = 'collid';
-            foreach($sourceDataKeys as $key){
-                if($key || (string)$key === '0'){
-                    if(($fieldMapping && array_key_exists($key, $fieldMapping) && $fieldMapping[$key] !== 'unmapped') || !$fieldMapping){
-                        $field = $fieldMapping ? $fieldMapping[$key] : $key;
-                        $fieldNameArr[] = $field;
-                        $sourceKeyArr[] = $key;
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    $fieldNameArr[] = $field;
+                    if($fieldMapping){
+                        $mappedFieldVal = null;
+                        $mappedKey = $fieldMapping[$field] ?? null;
+                        if(($mappedKey && (string)$mappedKey !== 'unmapped') || (string)$mappedKey === '0'){
+                            $mappedFieldVal = (string)$mappedKey;
+                        }
+                        $mappedFields[$field] = $mappedFieldVal;
+                    }
+                    elseif(array_key_exists($field, $data[0])){
+                        $mappedFields[$field] = $field;
                     }
                 }
             }
             foreach($data as $dataArr){
                 $dataValueArr = array();
+                $detData = array();
                 $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
-                foreach($sourceKeyArr as $key){
-                    $targetField = $fieldMapping ? $fieldMapping[$key] : $key;
-                    $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataArr[$key], $this->fields[$targetField]);
+                foreach($mappedFields as $field => $key){
+                    $detData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
+                }
+                foreach($this->fields as $field => $fieldArr){
+                    if(!in_array($field, $skipFields)){
+                        $dataValue = $detData[$field] ?? null;
+                        $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataValue, $fieldArr);
+                    }
                 }
                 $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
             }
