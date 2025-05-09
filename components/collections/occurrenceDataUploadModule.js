@@ -1966,12 +1966,12 @@ const occurrenceDataUploadModule = {
                     if(configuration['dataType'] === 'occurrence'){
                         recordsUploadedOccurrence.value += resValue;
                         totalRecordsLoaded = recordsUploadedOccurrence.value;
-                        resText = resValue + ' records loaded'
+                        resText = recordsUploadedOccurrence.value + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'mof'){
                         recordsUploadedMof.value += resValue;
                         totalRecordsLoaded = recordsUploadedMof.value;
-                        resText = resValue + ' records loaded'
+                        resText = recordsUploadedMof.value + ' records loaded'
                     }
                     if(countChange){
                         addSubprocessToProcessorDisplay('text', resText);
@@ -2341,22 +2341,22 @@ const occurrenceDataUploadModule = {
                     if(configuration['dataType'] === 'occurrence'){
                         recordsUploadedOccurrence.value += resValue;
                         totalRecordsLoaded = recordsUploadedOccurrence.value;
-                        resText = resValue + ' records loaded'
+                        resText = recordsUploadedOccurrence.value + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'determination'){
                         recordsUploadedDetermination.value += resValue;
                         totalRecordsLoaded = recordsUploadedDetermination.value;
-                        resText = resValue + ' records loaded'
+                        resText = recordsUploadedDetermination.value + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'multimedia'){
                         recordsUploadedMultimedia.value += resValue;
                         totalRecordsLoaded = recordsUploadedMultimedia.value;
-                        resText = resValue + ' records loaded'
+                        resText = recordsUploadedMultimedia.value + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'mof'){
                         recordsUploadedMof.value += resValue;
                         totalRecordsLoaded = recordsUploadedMof.value;
-                        resText = resValue + ' records loaded'
+                        resText = recordsUploadedMof.value + ' records loaded'
                     }
                     if(countChange){
                         addSubprocessToProcessorDisplay('text', resText);
