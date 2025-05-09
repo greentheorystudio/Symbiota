@@ -330,10 +330,10 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_uploadimg_occid` (`occid`),
     KEY `Index_uploadimg_collid` (`collid`),
     KEY `Index_uploadimg_dbpk` (`dbpk`),
-    KEY `Index_ url` (`url`),
-    KEY `Index_ originalurl` (`originalurl`),
-    KEY `Index_ accessuri` (`accessuri`),
-    KEY `Index_ format` (`format`),
+    KEY `Index_url` (`url`),
+    KEY `Index_originalurl` (`originalurl`),
+    KEY `Index_accessuri` (`accessuri`),
+    KEY `Index_format` (`format`),
     KEY `Index_uploadimg_ts` (`initialtimestamp`)
 );
 
