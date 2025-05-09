@@ -95,35 +95,47 @@ class Images{
 
     public function clearExistingImagesNotInUpload($collid, $clearDerivatives): int
     {
-        $retVal = 0;
+        $retVal = 1;
         $imgIdArr = array();
         $sql = 'SELECT DISTINCT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
             'LEFT JOIN uploadmediatemp AS um ON i.occid = um.occid AND i.url = um.url '.
             'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(um.upmid) ';
-        if($result = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $row){
+        if($result = $this->conn->query($sql)){
+            while(($row = $result->fetch_assoc()) && $retVal){
                 $imgIdArr[] = $row['imgid'];
-            }
-            if($clearDerivatives){
-                $this->deleteAssociatedImageFiles('imgidArr', $imgIdArr);
-            }
-            $sql = 'DELETE t.* FROM imagetag AS t WHERE t.imgid IN(' . implode(',', $imgIdArr) . ') ';
-            if($this->conn->query($sql)){
-                $retVal = 1;
-            }
-            if($retVal){
-                $sql = 'DELETE g.* FROM guidimages AS g WHERE g.imgid IN(' . implode(',', $imgIdArr) . ') ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
+                if(count($imgIdArr) === 10000){
+                    $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
+                    $imgIdArr = array();
                 }
             }
-            if($retVal){
-                $sql = 'DELETE i.* FROM images AS i WHERE i.imgid IN(' . implode(',', $imgIdArr) . ') ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
+            $result->free();
+            if(count($imgIdArr) > 0){
+                $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
+            }
+        }
+        return $retVal;
+    }
+
+    public function clearImagesByArr($imgIdArr, $clearDerivatives): int
+    {
+        $retVal = 0;
+        if($clearDerivatives){
+            $this->deleteAssociatedImageFiles('imgidArr', $imgIdArr);
+        }
+        $sql = 'DELETE t.* FROM imagetag AS t WHERE t.imgid IN(' . implode(',', $imgIdArr) . ') ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE g.* FROM guidimages AS g WHERE g.imgid IN(' . implode(',', $imgIdArr) . ') ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        if($retVal){
+            $sql = 'DELETE i.* FROM images AS i WHERE i.imgid IN(' . implode(',', $imgIdArr) . ') ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
             }
         }
         return $retVal;
