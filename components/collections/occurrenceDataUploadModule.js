@@ -1957,20 +1957,21 @@ const occurrenceDataUploadModule = {
                     return response.ok ? response.text() : null;
                 })
                 .then((res) => {
-                    if(!countChange && sourceDataUploadCount.value !== Number(res)){
+                    const resValue = isNaN(Number(res)) ? 0 : Number(res);
+                    if(!countChange && ((sourceDataUploadCount.value + resValue) !== sourceDataUploadCount.value)){
                         countChange = true;
                     }
-                    sourceDataUploadCount.value = Number(res);
+                    sourceDataUploadCount.value += resValue;
                     let resText = '';
                     if(configuration['dataType'] === 'occurrence'){
-                        recordsUploadedOccurrence.value += Number(res);
+                        recordsUploadedOccurrence.value += resValue;
                         totalRecordsLoaded = recordsUploadedOccurrence.value;
-                        resText = Number(res) + ' records loaded'
+                        resText = resValue + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'mof'){
-                        recordsUploadedMof.value += Number(res);
+                        recordsUploadedMof.value += resValue;
                         totalRecordsLoaded = recordsUploadedMof.value;
-                        resText = Number(res) + ' records loaded'
+                        resText = resValue + ' records loaded'
                     }
                     if(countChange){
                         addSubprocessToProcessorDisplay('text', resText);
@@ -1978,6 +1979,7 @@ const occurrenceDataUploadModule = {
                     }
                     if(currentComplete){
                         processSuccessResponse('Complete: ' + totalRecordsLoaded + ' total records loaded');
+                        sourceDataUploadCount.value = 0;
                     }
                     processFlatFileSourceData();
                 });
@@ -2331,10 +2333,10 @@ const occurrenceDataUploadModule = {
                 })
                 .then((res) => {
                     const resValue = isNaN(Number(res)) ? 0 : Number(res);
-                    if(!countChange && sourceDataUploadCount.value !== Number(res)){
+                    if(!countChange && ((sourceDataUploadCount.value + resValue) !== sourceDataUploadCount.value)){
                         countChange = true;
                     }
-                    sourceDataUploadCount.value = resValue;
+                    sourceDataUploadCount.value += resValue;
                     let resText = '';
                     if(configuration['dataType'] === 'occurrence'){
                         recordsUploadedOccurrence.value += resValue;
@@ -2362,6 +2364,7 @@ const occurrenceDataUploadModule = {
                     }
                     if(currentComplete){
                         processSuccessResponse('Complete: ' + (isNaN(Number(totalRecordsLoaded)) ? '0' : totalRecordsLoaded) + ' total records loaded');
+                        sourceDataUploadCount.value = 0;
                     }
                     processSourceDataFiles();
                 });

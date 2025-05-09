@@ -138,7 +138,7 @@ class OccurrenceDeterminations{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $sql = 'INSERT INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
+                $sql = 'INSERT IGNORE INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
                     'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploaddetermtemp '.
                     'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL ';
                 //echo "<div>".$sql."</div>";
