@@ -44,7 +44,7 @@ const collectionDataUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <checkbox-input-element :disabled="disabled" label="Clear old image derivatives from server (may take several minutes)" :value="configurationData.cleanImageDerivatives" @update:value="(value) => updateConfigurationData('cleanImageDerivatives', value)"></checkbox-input-element>
+                    <checkbox-input-element :disabled="disabled" label="Clear orphan image derivatives from server (may take several minutes)" :value="configurationData.cleanImageDerivatives" @update:value="(value) => updateConfigurationData('cleanImageDerivatives', value)"></checkbox-input-element>
                 </div>
             </div>
             <div v-if="Number(profileData.uploadtype) === 6" class="row q-col-gutter-sm">
