@@ -140,6 +140,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         echo $dataUploadService->finalTransferRemoveDuplicateDbpkRecordsFromUpload($collid);
     }
     elseif($action === 'finalTransferClearExistingMediaNotInUpload'){
-        echo $dataUploadService->finalTransferClearExistingMediaNotInUpload($collid);
+        $clearDerivatives = array_key_exists('clearImageDerivatives',$_POST) && (int)$_POST['clearImageDerivatives'] === 1;
+        echo $dataUploadService->finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives);
     }
 }

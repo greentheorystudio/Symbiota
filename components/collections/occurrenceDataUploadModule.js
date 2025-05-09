@@ -714,6 +714,9 @@ const occurrenceDataUploadModule = {
         }
 
         function clearOccurrenceUploadTables() {
+            const text = 'Clearing upload tables';
+            currentProcess.value = 'clearOccurrenceUploadTables';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'clearOccurrenceUploadTables');
@@ -725,8 +728,21 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 0){
-                    showNotification('negative', 'An error occurred while clearing the upload tables. Please contact the portal administrator before proceeding.');
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    const text = 'Setting Symbiota field mapping data';
+                    currentProcess.value = 'setFieldMappingData';
+                    addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                    if(Number(collectionDataUploadParametersId.value) > 0){
+                        getFieldMapping();
+                    }
+                    else{
+                        getFieldData();
+                    }
+                }
+                else{
+                    processErrorResponse('An error occurred while clearing upload tables');
+                    adjustUIEnd();
                 }
             });
         }
@@ -885,11 +901,15 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferClearExistingMediaNotInUpload() {
-            const text = 'Syncing existing media with records included in upload';
+            let text = 'Syncing existing media with records included in upload';
+            if(profileData.value['cleanImageDerivatives']){
+                text += ' and clearing old image derivatives (this could take several minutes)';
+            }
             currentProcess.value = 'finalTransferClearExistingMediaNotInUpload';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
+            formData.append('clearImageDerivatives', (profileData.value['cleanImageDerivatives'] ? '1' : '0'));
             formData.append('action', 'finalTransferClearExistingMediaNotInUpload');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -1631,15 +1651,7 @@ const occurrenceDataUploadModule = {
         function initializeUpload() {
             adjustUIStart();
             clearData();
-            const text = 'Setting Symbiota field mapping data';
-            currentProcess.value = 'setFieldMappingData';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            if(Number(collectionDataUploadParametersId.value) > 0){
-                getFieldMapping();
-            }
-            else{
-                getFieldData();
-            }
+            clearOccurrenceUploadTables();
         }
 
         function openFieldMapperPopup(type) {
@@ -2813,7 +2825,6 @@ const occurrenceDataUploadModule = {
 
         Vue.onMounted(() => {
             if(Number(props.collid) > 0){
-                clearOccurrenceUploadTables();
                 collectionDataUploadParametersStore.setCollectionDataUploadParametersArr(props.collid);
             }
         });
