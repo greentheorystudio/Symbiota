@@ -901,11 +901,15 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferClearExistingMediaNotInUpload() {
-            const text = 'Syncing existing media with records included in upload';
+            let text = 'Syncing existing media with records included in upload';
+            if(profileData.value['cleanImageDerivatives']){
+                text += ' and clearing old image derivatives (this could take several minutes)';
+            }
             currentProcess.value = 'finalTransferClearExistingMediaNotInUpload';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
+            formData.append('clearImageDerivatives', (profileData.value['cleanImageDerivatives'] ? '1' : '0'));
             formData.append('action', 'finalTransferClearExistingMediaNotInUpload');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',

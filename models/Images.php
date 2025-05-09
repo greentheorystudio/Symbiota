@@ -93,7 +93,7 @@ class Images{
         return $returnVal;
     }
 
-    public function clearExistingImagesNotInUpload($collid): int
+    public function clearExistingImagesNotInUpload($collid, $clearDerivatives): int
     {
         $retVal = 0;
         $imgIdArr = array();
@@ -106,7 +106,9 @@ class Images{
             foreach($rows as $row){
                 $imgIdArr[] = $row['imgid'];
             }
-            $this->deleteAssociatedImageFiles('imgidArr', $imgIdArr);
+            if($clearDerivatives){
+                $this->deleteAssociatedImageFiles('imgidArr', $imgIdArr);
+            }
             $sql = 'DELETE t.* FROM imagetag AS t WHERE t.imgid IN(' . implode(',', $imgIdArr) . ') ';
             if($this->conn->query($sql)){
                 $retVal = 1;
