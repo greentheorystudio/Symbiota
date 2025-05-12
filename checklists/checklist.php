@@ -2,7 +2,6 @@
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistManager.php');
 include_once(__DIR__ . '/../classes/ChecklistAdmin.php');
-include_once(__DIR__ . '/../classes/ChecklistFGExportManager.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -38,7 +37,6 @@ if($action === 'Rebuild List') {
 }
 
 $clManager = new ChecklistManager();
-$fgManager = new ChecklistFGExportManager();
 if($clValue){
     $statusStr = $clManager->setClValue($clValue);
 }
@@ -167,16 +165,6 @@ if($clArray){
     }
     if($clValue || $dynClid){
         $taxaArray = $clManager->getTaxaList($pageNumber,($printMode?0:500));
-        if($GLOBALS['CHECKLIST_FG_EXPORT']){
-            if($clValue){
-                $fgManager->setClValue($clValue);
-            }
-            elseif($dynClid){
-                $fgManager->setDynClid($dynClid);
-            }
-            $fgManager->setSqlVars();
-            $fgManager->primeDataArr();
-        }
     }
     if($clArray['locality']){
         $locStr = $clArray['locality'];
@@ -217,25 +205,6 @@ include_once(__DIR__ . '/../config/header-includes.php');
         const checklistNotes = "<?php echo (array_key_exists('notes',$clArray)?$clArray['notes']:''); ?>";
         const fieldguideDisclaimer = "This field guide was produced through the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal. This field guide is intended for educational use only, no commercial uses are allowed. It is created under Fair Use copyright provisions supporting educational uses of information. All rights are reserved to authors and photographers unless otherwise specified.";
 
-        function lazyLoadData(index,callback){
-            let startindex = 0;
-            if(index > 0){
-                startindex = (index * lazyLoadCnt) + 1;
-            }
-            const http = new XMLHttpRequest();
-            const url = "<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/checklists/fieldguideexporter.php";
-            const params = 'rows=' + lazyLoadCnt + '&photogArr=' + encodeURIComponent(JSON.stringify(photog)) + '&photoNum=' + photoNum + '&start=' + startindex + '&cl=<?php echo $clValue . '&pid=' . $pid . '&dynclid=' . $dynClid; ?>';
-            //console.log(url+'?'+params);
-            http.open("POST", url, true);
-            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            http.onreadystatechange = function() {
-                if(http.readyState === 4 && http.status === 200) {
-                    callback(http.responseText);
-                }
-            };
-            http.send(params);
-        }
-
         function setPopup(tid,clid){
             const starrObj = {
                 usethes: true,
@@ -247,23 +216,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
         }
     </script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-    <?php
-    if($GLOBALS['CHECKLIST_FG_EXPORT']){
-        ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/pdfmake.min.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/vfs_fonts.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.fieldguideexport.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <?php
-    }
-    ?>
     <style>
         a.boxclose{
             float:right;
             width:36px;
             height:36px;
-            background:transparent url(../images/spatial_close_icon.png) repeat top left;
+            background:transparent url('../images/spatial_close_icon.png') repeat top left;
             margin-top:-35px;
             margin-right:-35px;
             cursor:pointer;
@@ -504,15 +462,6 @@ if(!$printMode){
                                     </div>
                                 </div>
                             </div>
-                            <?php
-                            if($GLOBALS['CHECKLIST_FG_EXPORT']){
-                                ?>
-                                <div style="margin:5px 0 0 5px;clear:both;">
-                                    <a class="" href="#" onclick="openFieldGuideExporter();"><b>Open Export Panel</b></a>
-                                </div>
-                                <?php
-                            }
-                            ?>
                         </fieldset>
                     </form>
                     <?php
@@ -799,112 +748,6 @@ if(!$printMode){
 if(!$printMode) {
     include_once(__DIR__ . '/../config/footer-includes.php');
     include(__DIR__ . '/../footer.php');
-}
-
-if($GLOBALS['CHECKLIST_FG_EXPORT']){
-    ?>
-    <div id="fieldguideexport" data-role="popup" class="well" style="width:600px;min-height:250px;">
-        <a class="boxclose fieldguideexport_close" id="boxclose"></a>
-        <h2>Fieldguide Export Settings</h2>
-
-        <div style="margin-top:5px;">
-            <b>Primary Description Source:</b>
-            <select data-role='none' name='fgPriDescSource' id='fgPriDescSource'>
-                <?php
-                $descSourceList = $fgManager->getDescSourceList();
-                foreach($descSourceList as $source){
-                    echo "<option value='".$source."'>".$source."</option>\n";
-                }
-                ?>
-            </select>
-        </div>
-        <div style="margin-top:5px;">
-            <b>Secondary Description Source:</b>
-            <select data-role='none' name='fgSecDescSource' id='fgSecDescSource'>
-                <?php
-                foreach($descSourceList as $source){
-                    echo "<option value='".$source."'>".$source."</option>\n";
-                }
-                ?>
-            </select>
-        </div>
-        <div style="margin-top:5px;">
-            <b>Use Other Description Sources:</b>
-            <input data-role='none' name='fgUseAltDesc' id='fgUseAltDesc' type='checkbox' value='1' checked />
-        </div>
-        <div style="margin-top:5px;">
-            <b>Photographers:</b>
-            <input data-role='none' name='fgUseAllPhotog' id='fgUseAllPhotog' type='checkbox' value='1' onclick="selectAllPhotog();" checked /> Use All
-            <a href="#" id='fgShowPhotog' title="Show Photographers List" style="margin-left:8px;" onclick="toggle('fgPhotogBox');toggle('fgShowPhotog');toggle('fgHidePhotog');return false;">Show Photographers</a>
-            <a href="#" id='fgHidePhotog' title="Hide Photographers List" style="display:none;margin-left:8px;" onclick="toggle('fgPhotogBox');toggle('fgShowPhotog');toggle('fgHidePhotog');return false;">Hide Photographers</a>
-            <div id='fgPhotogBox' style="display:none;width:570px;margin-top:10px;margin-bottom:10px;">
-                <table style="font-family:Arial,serif;">
-                    <?php
-                    $photogList = array();
-                    $i = 1;
-                    $innerHtml = '';
-                    $innerHtml .= '<tr>';
-                    $photogList = $fgManager->getPhotogList();
-                    ksort($photogList, SORT_STRING | SORT_FLAG_CASE);
-                    foreach($photogList as $name => $id){
-                        if($name){
-                            $value = $id.'---'.$name;
-                            if((($i % 3) === 1)) {
-                                $innerHtml .= '</tr><tr>';
-                            }
-                            $innerHtml .= '<td style="width:190px;">';
-                            $innerHtml .= "<input data-role='none' name='photog[]' type='checkbox' value='".$value."' onclick='checkPhotogSelections();' checked /> ".$name;
-                            $innerHtml .= '</td>';
-                            $i++;
-                        }
-                    }
-                    $innerHtml .= '</tr>';
-                    echo $innerHtml;
-                    ?>
-                </table>
-            </div>
-        </div>
-        <div style="margin-top:5px;">
-            <b>Max Images Per Taxon:</b>
-            <input data-role="none" name="fgMaxImages" type="radio" value="0" checked /> 0
-            <input data-role="none" name="fgMaxImages" type="radio" value="1"/> 1
-            <input data-role="none" name="fgMaxImages" type="radio" value="2"/> 2
-            <input data-role="none" name="fgMaxImages" type="radio" value="3"/> 3
-        </div>
-        <?php
-        if($clManager->getTaxaCount() > 300){
-            $highIndex = ceil(($clManager->getTaxaCount()/300));
-            ?>
-            <div style="margin-top:5px;">
-                <b>File set:</b>
-                <select data-role='none' id='zipindex'>
-                    <?php
-                    $optIndex = 1;
-                    while($optIndex <= $highIndex) {
-                        echo "<option value='".$optIndex."'>".$optIndex."</option>\n";
-                        $optIndex++;
-                    }
-                    ?>
-                </select>
-            </div>
-            <?php
-        }
-        else{
-            ?>
-            <input type="hidden" id="zipindex" value="1" />
-            <?php
-        }
-        ?>
-        <div style="margin-top:10px;float:right;">
-            <button data-role="none" type="button" onclick='prepareFieldGuideExport(<?php echo $clManager->getTaxaCount(); ?>);' >Export Field Guide</button>
-        </div>
-    </div>
-
-    <div class="loadingModal">
-        <div class="vine-native-spinner" style="width:200px;height:200px;"></div>
-        <div id="loaderMessage">This may take several minutes...</div>
-    </div>
-    <?php
 }
 ?>
 </body>

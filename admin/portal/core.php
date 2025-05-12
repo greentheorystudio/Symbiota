@@ -233,12 +233,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
                 <input type="checkbox" id="ACTIVATE_EXSICCATI" value="1" onchange="processCheckConfigurationChange('ACTIVATE_EXSICCATI');" <?php echo (array_key_exists('ACTIVATE_EXSICCATI',$coreConfArr) && $coreConfArr['ACTIVATE_EXSICCATI']?'CHECKED':''); ?> />
             </span>
         </div>
-        <div class="field-block">
-            <span class="field-label">Activate Checklist FieldGuide Export:</span>
-            <span class="field-elem">
-                <input type="checkbox" id="ACTIVATE_CHECKLIST_FG_EXPORT" value="1" onchange="processCheckConfigurationChange('ACTIVATE_CHECKLIST_FG_EXPORT');" <?php echo (array_key_exists('ACTIVATE_CHECKLIST_FG_EXPORT',$coreConfArr) && $coreConfArr['ACTIVATE_CHECKLIST_FG_EXPORT']?'CHECKED':''); ?> />
-            </span>
-        </div>
     </fieldset>
     <div style="margin-top:20px;">
         <b>php version:</b> <?php echo $confManager->getPhpVersion(); ?><br />

@@ -36,7 +36,6 @@ class Configurations{
     );
 
     public $coreConfigurations = array(
-        'ACTIVATE_CHECKLIST_FG_EXPORT',
         'ACTIVATE_EXSICCATI',
         'ADMIN_EMAIL',
         'CLIENT_ROOT',
