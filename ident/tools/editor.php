@@ -41,9 +41,11 @@ if($isEditor && $action === 'Submit Changes') {
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Identification Character Editor</title>
-	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Character Administration</title>
+    <meta name="description" content="Identification key character administration for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <script>
         let dataChanged = false;
         window.onbeforeunload = verifyClose;
@@ -65,8 +67,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	include(__DIR__ . '/../../header.php');
 ?>
 <div class="navpath">
-    <a href="../../index.php">Home</a> &gt;&gt;
-    <b>Character Editor</b>
+    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+    <b>Character Administration</b>
 </div>
 <div style="margin:15px;">
 <?php 

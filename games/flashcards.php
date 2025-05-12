@@ -25,9 +25,11 @@ $sciArr = array();
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Flash Cards</title>
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Flash Card Game</title>
+    <meta name="description" content="Flash card game for checklists in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
         const imageArr = [];
         const sciNameArr = [];
@@ -154,7 +156,7 @@ echo '<a href="../index.php">Home</a> &gt;&gt; ';
 echo '<a href="../checklists/checklist.php?cl='.$clid.'">';
 echo $fcManager->getClName();
 echo '</a> &gt;&gt; ';
-echo ' <b>Flashcard Game</b>';
+echo ' <b>Flash Card Game</b>';
 echo '</div>';
 ?>
 <div id='innertext'>

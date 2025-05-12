@@ -27,15 +27,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
     <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> GUID/UUID Generator</title>
-	<link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-    <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
+    <meta name="description" content="GUID/UUID generator for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <?php 
 include(__DIR__ . '/../../header.php');
 ?>
 <div class="navpath">
-    <a href="../../index.php">Home</a> &gt;&gt;
+    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
     <?php
     if($collId){
         echo '<a href="../../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">Collection Control Panel</a> &gt;&gt;';

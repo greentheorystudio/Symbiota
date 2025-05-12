@@ -14,9 +14,10 @@ if(!$GLOBALS['SYMB_UID']) {
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxa Media Batch Uploader</title>
+        <meta name="description" content="Taxa media batch uploader for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .instruction-container {
                 margin-bottom: 20px;
@@ -28,7 +29,7 @@ if(!$GLOBALS['SYMB_UID']) {
         include(__DIR__ . '/../../header.php');
         ?>
         <div class="navpath">
-            <a href="../../index.php">Home</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
             <b>Taxa Media Batch Uploader</b>
         </div>
         <div id="innertext">

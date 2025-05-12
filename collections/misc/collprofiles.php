@@ -11,10 +11,11 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
     include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <head>
-        <title>Collection Profile</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Profile</title>
+        <meta name="description" content="Collection profile page in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .coll-icon-image {
                 border-width: 1px;

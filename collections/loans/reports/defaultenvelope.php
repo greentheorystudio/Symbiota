@@ -98,9 +98,11 @@ if($export){
 else{
 	?>
 	<!DOCTYPE html>
-<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+    <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
-			<title>Addressed Envelope</title>
+			<title><?php echo $identifier; ?> Addressed Envelope</title>
+            <meta name="description" content="Addressed envelope for loan id: <?php echo $identifier; ?>">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
 			<style>
 				<?php 
 					include_once(__DIR__ . '/../../../css/main.css');

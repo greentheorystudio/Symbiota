@@ -99,8 +99,10 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Institution Editor</title>
-	<link type="text/css" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
-	<link type="text/css" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
+    <meta name="description" content="Collection institution editor">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <script>
 		function validateAddCollectionForm(f){
 			if(f.addcollid.value === ""){
@@ -116,7 +118,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 include(__DIR__ . '/../../header.php');
 ?>
 <div class='navpath'>
-	<a href='../../index.php'>Home</a> &gt;&gt; 
+	<a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
 	<?php 
 	if(!$targetCollid && count($collList) === 1){
 		$targetCollid = key($collList);

@@ -22,11 +22,10 @@ elseif(array_key_exists('refurl', $_REQUEST)){
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Login</title>
-        <meta name="description" content="Login">
+        <meta name="description" content="Login to the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Login">
-        <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <script type="text/javascript">
             const CONFIRMATION_CODE = '<?php echo $confirmationCode; ?>';
             const REF_URL = '<?php echo $refUrl; ?>';

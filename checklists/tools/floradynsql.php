@@ -33,9 +33,11 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Flora Linkage Builder </title>
-	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Voucher Query Builder</title>
+    <meta name="description" content="Build occurrence query to find checklist voucher records">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
 		function updateSql(){
             const country = document.getElementById("countryinput").value;

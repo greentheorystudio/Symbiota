@@ -77,9 +77,11 @@ if($formSubmit === 'dlexsiccati'){
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati</title>
-    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati Index</title>
+    <meta name="description" content="Index of collection exsiccati records">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
 		function toggleExsEditDiv(){
 			toggle('exseditdiv');
@@ -246,7 +248,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	include(__DIR__ . '/../../header.php');
 	?>
 	<div class='navpath'>
-		<a href="../../index.php">Home</a> &gt;&gt;
+		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
 		<?php
 		if($ometId || $omenId){
 			echo '<a href="index.php"><b>Return to main Exsiccati Index</b></a>';

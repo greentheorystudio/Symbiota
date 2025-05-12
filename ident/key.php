@@ -14,6 +14,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Interactive Key</title>
+        <meta name="description" content="Interactive key for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />

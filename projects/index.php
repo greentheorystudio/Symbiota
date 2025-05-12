@@ -79,25 +79,27 @@ if(!$researchList && !$editMode){
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Biotic Inventory Projects</title>
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Biotic Inventory Projects Index</title>
+    <meta name="description" content="Biotic inventory projects index for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
     <style>
         a.boxclose{
             float:right;
             width:36px;
             height:36px;
-            background:transparent url('../../images/spatial_close_icon.png') repeat top left;
+            background:transparent url('<?php echo $GLOBALS['CLIENT_ROOT']; ?>/images/spatial_close_icon.png') repeat top left;
             margin-top:-35px;
             margin-right:-35px;
             cursor:pointer;
         }
     </style>
-    <script type="text/javascript" src="../js/external/jquery.js"></script>
-    <script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/external/jquery.popupoverlay.js"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
     <script type="text/javascript">
         let tabIndex = <?php echo $tabIndex; ?>;
 
@@ -171,7 +173,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         }
 
         function openSpatialViewerWindow(coordArrJson) {
-            let mapWindow = open("../spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
+            let mapWindow = open("<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }

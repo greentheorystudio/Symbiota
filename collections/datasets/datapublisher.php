@@ -83,15 +83,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
 	<title>Darwin Core Archive Publisher</title>
-	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
-	<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <meta name="description" content="Publish occurrence Darwin Core Archives for collections in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
 	<style>
 		.nowrap { white-space: nowrap; }
 	</style>
-    <script type="text/javascript" src="../../js/external/jquery.js"></script>
-	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.gbifpublisher.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
 		function verifyDwcaAdminForm(){
             const dbElements = document.getElementsByName("coll[]");
@@ -129,16 +131,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 include(__DIR__ . '/../../header.php');
 ?>
 <div class='navpath'>
-	<a href="../../index.php">Home</a> &gt;&gt;
+	<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
 	<?php
 	if($collId){
 		?>
-		<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
 		<?php
 	}
 	else{
 		?>
-		<a href="../../sitemap.php">Sitemap</a> &gt;&gt;
+		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php">Sitemap</a> &gt;&gt;
 		<?php
 	}
 	?>
@@ -186,7 +188,7 @@ include(__DIR__ . '/../../header.php');
 		<div style="margin:10px;">
 			<h3>Data Usage Policy:</h3>
 			Use of these datasets requires agreement with the terms and conditions in our
-			<a href="../../misc/usagepolicy.php">Data Usage Policy</a>.
+			<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/usagepolicy.php">Data Usage Policy</a>.
 			Locality details for rare, threatened, or sensitive records have been redacted from these data files.
 			One must contact the collections directly to obtain access to sensitive locality data.
 		</div>

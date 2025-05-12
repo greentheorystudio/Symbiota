@@ -192,11 +192,13 @@ if($clArray){
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Research Checklist: <?php echo $clManager->getClName(); ?></title>
-    <link type="text/css" href="../css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" />
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> <?php echo $clManager->getClName(); ?> checklist</title>
+    <meta name="description" content="Information for the <?php echo $clManager->getClName(); ?> checklist">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/bootstrap.min.css?ver=20221225" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.popupoverlay.js" type="text/javascript"></script>
@@ -217,9 +219,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
         function lazyLoadData(index,callback){
             let startindex = 0;
-            if(index > 0) startindex = (index*lazyLoadCnt) + 1;
+            if(index > 0){
+                startindex = (index * lazyLoadCnt) + 1;
+            }
             const http = new XMLHttpRequest();
-            const url = "../api/checklists/fieldguideexporter.php";
+            const url = "<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/checklists/fieldguideexporter.php";
             const params = 'rows=' + lazyLoadCnt + '&photogArr=' + encodeURIComponent(JSON.stringify(photog)) + '&photoNum=' + photoNum + '&start=' + startindex + '&cl=<?php echo $clValue . '&pid=' . $pid . '&dynclid=' . $dynClid; ?>';
             //console.log(url+'?'+params);
             http.open("POST", url, true);
@@ -238,11 +242,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 taxa: tid,
                 clid: clid
             };
-            const url = '../collections/list.php?starr=' + JSON.stringify(starrObj);
+            const url = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/list.php?starr=' + JSON.stringify(starrObj);
             openPopup(url);
         }
     </script>
-    <script type="text/javascript" src="../js/checklists.checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <?php
     if($GLOBALS['CHECKLIST_FG_EXPORT']){
         ?>

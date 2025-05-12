@@ -9,6 +9,7 @@ header('Content-Type: text/html; charset=UTF-8' );
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
+        <meta name="description" content="Site map for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />

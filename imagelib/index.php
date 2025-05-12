@@ -15,9 +15,11 @@ $imgLibManager = new ImageLibraryManager();
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Library</title>
-	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Library</title>
+    <meta name="description" content="Image library for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
 	<meta name='keywords' content='' />
 </head>
 <body>
@@ -57,7 +59,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 			</div>
 			<div style="font-weight:bold;margin:15px 10px 0 20px;">
 				<div>
-					<a href="../misc/usagepolicy.php">Image Copyright Policy</a>
+					<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/usagepolicy.php">Image Copyright Policy</a>
 				</div>
 				<div>
 					<a href="contributors.php">Image Contributors</a>

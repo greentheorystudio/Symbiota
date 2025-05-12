@@ -11,8 +11,9 @@ $occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
     include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Detailed Collection Record Information</title>
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Record Information</title>
+        <meta name="description" content="Individual occurrence record information">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
