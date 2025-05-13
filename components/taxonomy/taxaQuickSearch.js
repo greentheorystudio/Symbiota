@@ -171,7 +171,7 @@ const taxaQuickSearch = {
 
         Vue.onMounted(() => {
             selectedTaxon.value = Object.assign({}, {});
-            selectedTaxonType.value = props.defaultTaxonType;
+            processTaxonTypeChange(props.defaultTaxonType);
         });
 
         return {
