@@ -26,7 +26,9 @@ if($GLOBALS['SYMB_UID']){
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 	<head>
-		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Default Annotations</title>
+		<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Annotation Labels</title>
+        <meta name="description" content="Print annotation labels for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
 			body {font-family:arial,sans-serif;}
 			table.labels {page-break-before:auto;page-break-inside:avoid;border-spacing:5px;}

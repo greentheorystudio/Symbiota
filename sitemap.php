@@ -9,6 +9,7 @@ header('Content-Type: text/html; charset=UTF-8' );
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
+        <meta name="description" content="Site map for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -17,8 +18,8 @@ header('Content-Type: text/html; charset=UTF-8' );
         <?php
         include(__DIR__ . '/header.php');
         ?>
-        <div id="app-container">
-            <div id="innertext">
+        <div id="mainContainer">
+            <div class="q-pa-md">
                 <div class="text-h5 text-bold">Site Map</div>
                 <div class="q-pa-md column">
                     <div class="text-h6 text-bold">Collections</div>
@@ -174,7 +175,7 @@ header('Content-Type: text/html; charset=UTF-8' );
             });
             siteMapModule.use(Quasar, { config: {} });
             siteMapModule.use(Pinia.createPinia());
-            siteMapModule.mount('#app-container');
+            siteMapModule.mount('#mainContainer');
         </script>
     </body>
 </html>

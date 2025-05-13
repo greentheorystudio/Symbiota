@@ -29,7 +29,7 @@ else{
 }
 ?>
 
-<div id="innertext" style="background-color:white;">
+<div id="mainContainer" style="padding: 10px 15px 15px;background-color:white;">
 	<div style="display:flex;justify-content: space-between;align-content: center;align-items: center;">
         <div style='font-weight:bold;margin-left:5px'>
             <?php

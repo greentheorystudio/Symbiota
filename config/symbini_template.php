@@ -44,7 +44,6 @@ $GLOBALS['EOL_KEY'] = '';						//Not required, but good to add a key if you plan
 $GLOBALS['PORTAL_TAXA_DESC'] = '';				//Preferred taxa descriptions for the portal.
 $GLOBALS['DYN_CHECKLIST_RADIUS'] = 10;			//Controls size of concentric rings that are sampled when building Dynamic Checklist
 $GLOBALS['ACTIVATE_EXSICCATI'] = 0;			//Activates exsiccati fields within data entry pages; adding link to exsiccati search tools to portal menu is recommended
-$GLOBALS['ACTIVATE_CHECKLIST_FG_EXPORT'] = 0;			//Activates checklist fieldguide export tool
 $GLOBALS['GENBANK_SUB_TOOL_PATH'] = '';	//Path to GenBank Submission tool installation
 
 $GLOBALS['RIGHTS_TERMS'] = array(
