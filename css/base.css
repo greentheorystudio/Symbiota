@@ -6,7 +6,15 @@ body{
 }
 body.printfriendly{
 	background-color: #ffffff;
+	border: none;
 }
+body.printfriendly #main-container{
+	background-color: #ffffff;
+}
+body.printfriendly #bannerContainer, body.printfriendly #topNavigation, body.printfriendly #footer{
+	display: none;
+}
+
 h1 {
 	font-size: 2em;
 	font-weight: bold;
@@ -41,9 +49,6 @@ h6 {
 	background-color: #FFFFFF;
 	min-height:400px;
 	padding-top: 15px;
-}
-#main-container.printfriendly{
-	background-color: #ffffff;
 }
 a{
 	color: 		#424242;
