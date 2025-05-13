@@ -267,29 +267,25 @@
 	url('fonts/fira-sans-v10-latin-900italic.svg#FiraSans') format('svg'); /* Legacy iOS */
 }
 
-html {
-	font-size: 90%;
-}
-
 body, html {
 	height: 100%;
 }
 
 body{
+	font-size: 16px;
 	font-family: 'Fira Sans';
 	margin: 0;
 }
 
-#innertext{
+#mainContainer{
 	width: 80%;
 	margin: 0 auto;
-	padding: 10px 15px 15px;
 	font-family: 'Fira Sans';
 	font-size: 18px;
 	z-index: 1;
 }
 
-div.navpath {
+#breadcrumbs {
 	padding-top: 8px;
 	padding-bottom: 0;
 	padding-left: 10px;
@@ -300,7 +296,7 @@ div.navpath {
 	font-variant: small-caps;
 }
 
-div.navpath a, div.navpath a:hover {
+#breadcrumbs a, #breadcrumbs a:hover {
 	color: #242038;
 }
 
