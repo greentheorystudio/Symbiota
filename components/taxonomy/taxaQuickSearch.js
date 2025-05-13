@@ -161,6 +161,7 @@ const taxaQuickSearch = {
 
         function processTaxonTypeChange(value) {
             selectedTaxon.value = Object.assign({}, {});
+            selectedTaxonType.value = value;
             if(value === 'common'){
                 autoCompleteLabel.value = 'Common Name';
             }
