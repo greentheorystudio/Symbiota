@@ -1,5 +1,9 @@
 const taxaQuickSearch = {
     props: {
+        defaultTaxonType: {
+            type: String,
+            default: 'common'
+        },
         quicksearchLabel: {
             type: String,
             default: null
@@ -47,7 +51,7 @@ const taxaQuickSearch = {
         const autoCompleteOptions = Vue.ref([]);
         const clientRoot = baseStore.getClientRoot;
         const selectedTaxon = Vue.ref({});
-        const selectedTaxonType = Vue.ref('common');
+        const selectedTaxonType = Vue.ref(null);
         const taxonTypeOptions = [
             {label: 'Common Name', value: 'common'},
             {label: 'Scientific Name', value: 'scientific'}
@@ -167,6 +171,7 @@ const taxaQuickSearch = {
 
         Vue.onMounted(() => {
             selectedTaxon.value = Object.assign({}, {});
+            selectedTaxonType.value = props.defaultTaxonType;
         });
 
         return {
