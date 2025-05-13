@@ -4,17 +4,23 @@ body{
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
 }
-body.printfriendly{
-	background-color: #ffffff;
-	border: none;
+@media print {
+	body, #appContainer{
+		background-color: #ffffff !important;
+		border: 0 solid black !important;
+	}
+	#appContainer{
+		display: flex !important;
+		flex-direction: column !important;
+		justify-content: flex-start !important;
+	}
+	#mainContainer{
+		background-color: #ffffff !important;
+	}
+	#bannerContainer, #topNavigation, #breadcrumbs, #footer{
+		display: none !important;
+	}
 }
-body.printfriendly #main-container{
-	background-color: #ffffff;
-}
-body.printfriendly #bannerContainer, body.printfriendly #topNavigation, body.printfriendly #footer{
-	display: none;
-}
-
 h1 {
 	font-size: 2em;
 	font-weight: bold;
@@ -44,11 +50,9 @@ h6 {
 	font-weight: bold;
 	line-height: normal;
 }
-#main-container{
-	margin:	10px;
+#mainContainer{
 	background-color: #FFFFFF;
 	min-height:400px;
-	padding-top: 15px;
 }
 a{
 	color: 		#424242;
@@ -109,13 +113,13 @@ table.styledtable tr.alt td {
 	color:				#000000;
 	background-color: #dfdfdf;
 }
-div.navpath {
+#breadcrumbs {
 	color: #000000;
 }
-div.navpath a {
+#breadcrumbs a {
 	color: #000000;
 }
-div.navpath a:hover {
+#breadcrumbs a:hover {
 	color: #C0C0C0;
 }
 button:hover{
@@ -515,7 +519,7 @@ body.processing .loadingModal {
 }
 
 /* Taxon Profile page styles */
-#inner-table{
+.taxon-profile{
 	width: 90%;
 	margin: 15px auto;
 }

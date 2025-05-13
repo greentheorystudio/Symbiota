@@ -59,7 +59,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body style="overflow-x:hidden;overflow-y:auto;width:700px;margin-left:auto;margin-right:auto;">
-    <div id="main-container" style="width:680px;margin-left:0;margin-right:0;">
+    <div id="mainContainer" style="padding: 10px 15px 15px;width:680px;">
 		<div id="tabs" style="padding:10px;margin:0;">
 			<div style="clear:both;">
 				<?php

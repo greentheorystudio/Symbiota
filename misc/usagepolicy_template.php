@@ -18,8 +18,8 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="main-container">
-            <div id="main-container">
+        <div id="mainContainer">
+            <div class="q-pa-md">
                 <div class="text-h5 text-bold">Guidelines for Acceptable Use of Data</div>
                 <div class="q-mt-md text-h6 text-bold">Recommended Citation Formats</div>
                 <div class="q-pl-md q-mt-md q-mb-md">
@@ -134,7 +134,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             usagePolicyModule.use(Quasar, { config: {} });
             usagePolicyModule.use(Pinia.createPinia());
-            usagePolicyModule.mount('#main-container');
+            usagePolicyModule.mount('#mainContainer');
         </script>
     </body>
 </html>

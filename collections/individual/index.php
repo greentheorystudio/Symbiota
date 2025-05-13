@@ -36,7 +36,7 @@ $occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div id="main-container" class="occurrence-individual-page-info-panel">
+        <div id="mainContainer" class="occurrence-individual-page-info-panel">
             <occurrence-info-tab-module :occurrence-id="occid"></occurrence-info-tab-module>
         </div>
         <?php
@@ -72,7 +72,7 @@ $occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
             });
             occurrenceIndividualInfoPage.use(Quasar, { config: {} });
             occurrenceIndividualInfoPage.use(Pinia.createPinia());
-            occurrenceIndividualInfoPage.mount('#main-container');
+            occurrenceIndividualInfoPage.mount('#mainContainer');
         </script>
     </body>
 </html>

@@ -19,7 +19,7 @@ header('Content-Type: text/html; charset=UTF-8' );
         <?php
         include(__DIR__ . '/header.php');
         ?>
-        <div id="main-container">
+        <div id="mainContainer" style="padding: 10px 15px 15px;">
             <h1>Welcome to your portal!</h1>
 
             <p>

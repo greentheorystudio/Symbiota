@@ -20,7 +20,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="main-container">
+        <div id="mainContainer" class="q-pa-md">
             <h1>Create New Account</h1>
             <div class="row justify-center q-mt-md">
                 <q-card class="create-account-container">
@@ -159,7 +159,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             createAccountModule.use(Quasar, { config: {} });
             createAccountModule.use(Pinia.createPinia());
-            createAccountModule.mount('#main-container');
+            createAccountModule.mount('#mainContainer');
         </script>
     </body>
 </html>

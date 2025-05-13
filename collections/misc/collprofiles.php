@@ -34,13 +34,13 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div id="moduleContainer">
-            <div class="q-mt-xs q-ml-xs row justify-start">
-                <a :href="clientRoot + '/index.php'">Home</a> &gt;&gt;
-                <a :href="clientRoot + '/collections/list.php'">Collection Search Page</a> &gt;&gt;
-                <span class="text-body1 text-bold">{{ collectionData.collectionname }} Details</span>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/collections/list.php')">Collection Search Page</a> &gt;&gt;
+                <span class="text-bold">{{ collectionData.collectionname }} Details</span>
             </div>
-            <div id="main-container">
+            <div class="q-pa-md">
                 <template v-if="collId > 0">
                     <div class="column q-gutter-md">
                         <div class="text-h4 text-bold">
@@ -376,7 +376,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
             });
             collectionProfileModule.use(Quasar, { config: {} });
             collectionProfileModule.use(Pinia.createPinia());
-            collectionProfileModule.mount('#moduleContainer');
+            collectionProfileModule.mount('#mainContainer');
         </script>
     </body>
 </html>

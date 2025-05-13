@@ -83,7 +83,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     </script>
 </head>
 <body style="background-color: white;">
-	<div id="main-container">
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
 		<?php 
 		if($GLOBALS['IS_ADMIN'] || $collEditorArr){
 			?>

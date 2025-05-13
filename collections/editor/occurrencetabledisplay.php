@@ -350,7 +350,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 			}
 			?>
 			<div style="width:790px;clear:both;">
-				<span class='navpath'>
+				<span id="breadcrumbs">
 						<a href="../../index.php">Home</a> &gt;&gt;
 						<?php
                         if($crowdSourceMode){

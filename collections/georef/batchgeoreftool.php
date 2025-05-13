@@ -131,12 +131,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     </script>
 </head>
 <body>
-    <div  id="main-container">
+    <div id="mainContainer" style="padding: 10px 15px 15px;">
         <div style="float:left;">
             <div style="font-weight:bold;margin-top:6px;">
                 <?php echo $geoManager->getCollName(); ?>
             </div>
-            <div class='navpath' style="margin:10px;">
+            <div id="breadcrumbs" style="margin:10px;">
                 <a href='../../index.php'>Home</a> &gt;&gt;
                 <a href='../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Control Panel</a> &gt;&gt;
                 <b>Batch Georeference Occurrences</b>

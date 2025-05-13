@@ -161,7 +161,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
         function printFriendlyMode(status){
             if(status){
-                $(".navpath").hide();
+                $("#breadcrumbs").hide();
                 $(".header").hide();
                 $(".navbarDiv").hide();
                 $(".returnDiv").show();
@@ -170,7 +170,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 $(".footer").hide();
             }
             else{
-                $(".navpath").show();
+                $("#breadcrumbs").show();
                 $(".header").show();
                 $(".navbarDiv").show();
                 $(".returnDiv").hide();
@@ -191,7 +191,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <body>
     <?php
     include(__DIR__ . '/../../header.php');
-    echo '<div class="navpath">';
+    echo '<div id="breadcrumbs">';
     echo '<a href="../../index.php">Home</a> &gt;&gt; ';
     if($reviewManager->getObsUid()){
         echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
@@ -202,7 +202,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     echo '<b>Review/Verify Occurrence Edits</b>';
     echo '</div>';
     ?>
-    <div id="main-container" style="min-width:1100px">
+    <div id="mainContainer" style="padding: 10px 15px 15px;min-width:1100px">
         <?php
         if($collid && $isEditor){
             ?>

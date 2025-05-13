@@ -18,8 +18,8 @@ header('Content-Type: text/html; charset=UTF-8' );
         <?php
         include(__DIR__ . '/header.php');
         ?>
-        <div id="main-container">
-            <div id="main-container">
+        <div id="mainContainer">
+            <div class="q-pa-md">
                 <div class="text-h5 text-bold">Site Map</div>
                 <div class="q-pa-md column">
                     <div class="text-h6 text-bold">Collections</div>
@@ -175,7 +175,7 @@ header('Content-Type: text/html; charset=UTF-8' );
             });
             siteMapModule.use(Quasar, { config: {} });
             siteMapModule.use(Pinia.createPinia());
-            siteMapModule.mount('#main-container');
+            siteMapModule.mount('#mainContainer');
         </script>
     </body>
 </html>

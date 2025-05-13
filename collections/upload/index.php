@@ -27,41 +27,43 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <?php
             include(__DIR__ . '/../../header.php');
         ?>
-        <div class="navpath">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
-            <b>Occurrence Data Upload Module</b>
-        </div>
-        <div id="main-container">
-            <div class="text-h5 text-bold">Occurrence Data Upload Module</div>
-            <div v-if="Number(collectionData.collid) > 0" class="q-ml-md column q-mb-sm">
-                <div class="text-bold">
-                    {{ collectionData.collectionname }}
-                </div>
-                <div>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId + '&emode=1')">Collection Control Panel</a> &gt;&gt;
+                <span class="text-bold">Occurrence Data Upload Module</span>
+            </div>
+            <div class="q-pa-md">
+                <div class="text-h5 text-bold">Occurrence Data Upload Module</div>
+                <div v-if="Number(collectionData.collid) > 0" class="q-ml-md column q-mb-sm">
+                    <div class="text-bold">
+                        {{ collectionData.collectionname }}
+                    </div>
+                    <div>
                     <span class="text-bold">
                         Last Data Upload Date:
                     </span>
-                    {{ collectionData.uploaddate }}
+                        {{ collectionData.uploaddate }}
+                    </div>
                 </div>
+                <template v-if="isEditor">
+                    <q-card>
+                        <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
+                            <q-tab name="occurrence" label="Data" no-caps></q-tab>
+                            <q-tab name="media" label="Media Files" no-caps></q-tab>
+                        </q-tabs>
+                        <q-separator></q-separator>
+                        <q-tab-panels v-model="tab">
+                            <q-tab-panel name="occurrence">
+                                <occurrence-data-upload-module :collid="collId"></occurrence-data-upload-module>
+                            </q-tab-panel>
+                            <q-tab-panel name="media">
+                                <occurrence-media-file-upload-module :collid="collId"></occurrence-media-file-upload-module>
+                            </q-tab-panel>
+                        </q-tab-panels>
+                    </q-card>
+                </template>
             </div>
-            <template v-if="isEditor">
-                <q-card>
-                    <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
-                        <q-tab name="occurrence" label="Data" no-caps></q-tab>
-                        <q-tab name="media" label="Media Files" no-caps></q-tab>
-                    </q-tabs>
-                    <q-separator></q-separator>
-                    <q-tab-panels v-model="tab">
-                        <q-tab-panel name="occurrence">
-                            <occurrence-data-upload-module :collid="collId"></occurrence-data-upload-module>
-                        </q-tab-panel>
-                        <q-tab-panel name="media">
-                            <occurrence-media-file-upload-module :collid="collId"></occurrence-media-file-upload-module>
-                        </q-tab-panel>
-                    </q-tab-panels>
-                </q-card>
-            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -99,6 +101,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const baseStore = useBaseStore();
                     const collectionStore = useCollectionStore();
 
+                    const clientRoot = baseStore.getClientRoot;
                     const collectionData = Vue.computed(() => collectionStore.getCollectionData);
                     const collId = COLLID;
                     const isEditor = Vue.computed(() => {
@@ -115,6 +118,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     });
 
                     return {
+                        clientRoot,
                         collectionData,
                         collId,
                         isEditor,
@@ -124,7 +128,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             });
             collectionOccurrenceDataUploadModule.use(Quasar, { config: {} });
             collectionOccurrenceDataUploadModule.use(Pinia.createPinia());
-            collectionOccurrenceDataUploadModule.mount('#main-container');
+            collectionOccurrenceDataUploadModule.mount('#mainContainer');
         </script>
     </body>
 </html>

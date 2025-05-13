@@ -52,12 +52,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 	include(__DIR__ . '/../../header.php');
 ?>
-<div class="navpath">
+<div id="breadcrumbs">
     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
     <b>Data Exporter and Backup</b>
 </div>
-<div id="main-container">
+<div id="mainContainer" style="padding: 10px 15px 15px;">
 	<h2>Data Exporter and Backup Module</h2>
 	<?php
 	if($isEditor && $collid){

@@ -17,7 +17,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS'
         return true;
     }
 </script>
-<div id="main-container">
+<div id="mainContainer" style="padding: 10px 15px 15px;">
     <?php
     if($isEditor){
         ?>

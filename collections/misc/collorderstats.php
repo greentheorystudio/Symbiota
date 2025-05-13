@@ -52,7 +52,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <?php
     include(__DIR__ . '/../../header.php');
     ?>
-    <div id="main-container">
+    <div id="mainContainer" style="padding: 10px 15px 15px;">
         <fieldset id="orderdistbox" style="clear:both;margin-top:15px;width:800px;">
             <legend><b>Order Distribution</b></legend>
             <table class="styledtable" style="font-family:Arial,serif;width:780px;">

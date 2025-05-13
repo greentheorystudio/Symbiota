@@ -77,7 +77,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
         }
     }
 </script>
-<div id="main-container" style="background-color:white;">
+<div id="mainContainer" style="padding: 10px 15px 15px;background-color:white;">
     <?php
     if($collid && $isEditor){
         echo '<div style="clear:both;">';

@@ -26,7 +26,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<?php
 	include(__DIR__ . '/../header.php');
 	?>
-	<div id="main-container">
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
 		<h1>Species with Images</h1>
 		<div style="margin:0 0 5px 20px;">This page provides a complete list to taxa that have images.
 		Use the controls below to browse and search for images by family, genus, or species. 

@@ -43,7 +43,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div id="main-container">
+<div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="tabs" style="width:95%;">
         <ul>
             <li><a href='core.php'>Core Configurations</a></li>

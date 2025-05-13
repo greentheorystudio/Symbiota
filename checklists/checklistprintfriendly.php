@@ -69,7 +69,7 @@ if($clValue || $dynClid){
 	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<div id="main-container">
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
 		<?php
 		if($clValue || $dynClid){
 			?>

@@ -36,7 +36,7 @@ $taxonValue = array_key_exists('taxon', $_REQUEST) ? htmlspecialchars($_REQUEST[
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="inner-table"></div>
+        <div id="mainContainer" class="taxon-profile"></div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');

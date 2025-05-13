@@ -40,22 +40,22 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="main-container">
-            <div class="navpath">
+        <div id="mainContainer">
+            <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="Number(clId) > 0">
                     <a :href="(clientRoot + '/checklists/checklist.php?cl=' + clId + '&proj=' + pId)">Checklist: {{ checklistName }}</a> &gt;&gt;
-                    <span class="q-ml-xs text-bold">Key: {{ checklistName }}</span>
+                    <span class="text-bold">Key: {{ checklistName }}</span>
                 </template>
                 <template v-else-if="Number(pId) > 0">
                     <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">Project Checklists</a> &gt;&gt;
-                    <span class="q-ml-xs text-bold">Key: {{ projectName }} Project</span>
+                    <span class="text-bold">Key: {{ projectName }} Project</span>
                 </template>
                 <template v-else>
                     <span class="text-bold">Dynamic Key</span>
                 </template>
             </div>
-            <div id="main-container">
+            <div class="q-pa-md">
                 <template v-if="Number(clId) > 0 || Number(pId) > 0">
                     <div class="full-width row q-gutter-sm">
                         <div class="col-4 column q-col-gutter-sm">
@@ -693,7 +693,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             });
             keyIdentificationModule.use(Quasar, { config: {} });
             keyIdentificationModule.use(Pinia.createPinia());
-            keyIdentificationModule.mount('#main-container');
+            keyIdentificationModule.mount('#mainContainer');
         </script>
     </body>
 </html>

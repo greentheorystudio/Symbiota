@@ -152,7 +152,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div style="width:790px;clear:both;">
         <?php
-        echo '<span class="navpath">';
+        echo '<span id="breadcrumbs">';
         echo '<a href="../index.php">Home</a> &gt;&gt; ';
         echo '<a style="cursor:pointer;font-weight:bold;" onclick="redirectWithQueryId(\'list.php\');">Search Criteria</a> &gt;&gt; ';
         echo '<b>Specimen Records Table</b>';
