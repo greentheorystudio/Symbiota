@@ -63,9 +63,11 @@ if($formatArr){
     }
     ?>
     <!DOCTYPE html>
-<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+    <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Labels</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Labels</title>
+        <meta name="description" content="Occurrence labels for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body style="background-color:white;">
     <?php

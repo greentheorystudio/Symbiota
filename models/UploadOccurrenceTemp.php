@@ -180,16 +180,18 @@ class UploadOccurrenceTemp{
                         $fieldNameArr[] = $field;
                     }
                     if($fieldMapping){
-                        $mappedKey = array_search((string)$field, $fieldMapping, true);
-                        if($mappedKey || (string)$mappedKey === '0'){
-                            $mappedFields[$field] = (string)$mappedKey;
+                        $mappedFieldVal = null;
+                        $mappedKey = $fieldMapping[(string)$field] ?? null;
+                        if(($mappedKey && (string)$mappedKey !== 'unmapped') || (string)$mappedKey === '0'){
+                            $mappedFieldVal = (string)$mappedKey;
                         }
-                    }
-                    if($secondaryFieldMapping){
-                        $mappedKey = array_search((string)$field, $secondaryFieldMapping, true);
-                        if($mappedKey || (string)$mappedKey === '0'){
-                            $mappedFields[$field] = (string)$mappedKey;
+                        elseif($secondaryFieldMapping){
+                            $mappedKey = $secondaryFieldMapping[(string)$field] ?? null;
+                            if(($mappedKey && (string)$mappedKey !== 'unmapped') || (string)$mappedKey === '0'){
+                                $mappedFieldVal = (string)$mappedKey;
+                            }
                         }
+                        $mappedFields[$field] = $mappedFieldVal;
                     }
                     elseif(array_key_exists($field, $data[0])){
                         $mappedFields[$field] = $field;
@@ -201,7 +203,7 @@ class UploadOccurrenceTemp{
                 $occurrenceData = array();
                 $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
                 foreach($mappedFields as $field => $key){
-                    $occurrenceData[$field] = $dataArr[$key];
+                    $occurrenceData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
                 }
                 if($processingStatus){
                     $occurrenceData['processingstatus'] = $processingStatus;

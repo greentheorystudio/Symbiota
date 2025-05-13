@@ -331,7 +331,7 @@ class DataUtilitiesService {
             }
         }
         if(array_key_exists('taxonrank',$occData)){
-            $tr = strtolower($occData['taxonrank']);
+            $tr = $occData['taxonrank'] ? strtolower($occData['taxonrank']) : '';
             if($tr === 'species' || !array_key_exists('specificepithet',$occData)){
                 $occData['taxonrank'] = '';
             }

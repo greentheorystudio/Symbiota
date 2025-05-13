@@ -10,16 +10,16 @@ header('X-Frame-Options: SAMEORIGIN');
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> User Management</title>
-        <meta name="description" content="User Management">
+        <meta name="description" content="Manage users for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     </head>
     <body>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="app-container" class="q-pa-md column q-gutter-sm">
+        <div id="mainContainer" class="q-pa-md column q-gutter-sm">
             <template v-if="isAdmin">
                 <template v-if="Number(currentUserId) > 0">
                     <div class="column q-gutter-sm">
@@ -785,7 +785,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             userManagementModule.use(Quasar, { config: {} });
             userManagementModule.use(Pinia.createPinia());
-            userManagementModule.mount('#app-container');
+            userManagementModule.mount('#mainContainer');
         </script>
     </body>
 </html>

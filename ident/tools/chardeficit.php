@@ -35,14 +35,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Character Deficit Finder</title>
-	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <meta name="description" content="Identification key character deficit finder for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
 		function openPopup(urlStr,windowName){
             let wWidth = 900;
             try{
-				if(document.getElementById('innertext').offsetWidth){
-					wWidth = document.getElementById('innertext').offsetWidth*1.05;
+				if(document.getElementById('main-container').offsetWidth){
+					wWidth = document.getElementById('main-container').offsetWidth*1.05;
 				}
 				else if(document.body.offsetWidth){
 					wWidth = document.body.offsetWidth*0.9;
@@ -61,7 +63,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <?php
     include(__DIR__ . '/../../header.php');
     ?>
-    <div id="innertext">
+    <div id="mainContainer" style="padding: 10px 15px 15px;">
     <?php
     if($editable){
         ?>

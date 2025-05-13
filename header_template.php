@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/services/SanitizerService.php');
 ?>
-<div id="mainContainer">
+<div id="appContainer">
     <div id="bannerContainer">
         <h1 class="title">Your New Portal</h1>
     </div>

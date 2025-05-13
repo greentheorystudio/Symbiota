@@ -24,12 +24,12 @@ const collectionDataUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <selector-input-element :disabled="disabled" label="Existing Identification Records" :options="existingAssociatedDataOptions" :value="configurationData.existingDeterminationRecords" @update:value="(value) => updateConfigurationData('existingDeterminationRecords', value)"></selector-input-element>
+                    <selector-input-element :disabled="disabled" label="Existing Identification Records" :options="existingAssociatedDeterminationOptions" :value="configurationData.existingDeterminationRecords" @update:value="(value) => updateConfigurationData('existingDeterminationRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <selector-input-element :disabled="disabled" label="Existing Media Records" :options="existingAssociatedDataOptions" :value="configurationData.existingMediaRecords" @update:value="(value) => updateConfigurationData('existingMediaRecords', value)"></selector-input-element>
+                    <selector-input-element :disabled="disabled" label="Existing Media Records" :options="existingAssociatedMediaOptions" :value="configurationData.existingMediaRecords" @update:value="(value) => updateConfigurationData('existingMediaRecords', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
@@ -40,6 +40,11 @@ const collectionDataUploadParametersFieldModule = {
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
                     <checkbox-input-element :disabled="disabled" label="Save primary identifiers from source data" :value="configurationData.saveSourcePrimaryIdentifier" @update:value="(value) => updateConfigurationData('saveSourcePrimaryIdentifier', value)"></checkbox-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
+                    <checkbox-input-element :disabled="disabled" label="Clear orphaned image derivatives from server (may take several minutes)" :value="configurationData.cleanImageDerivatives" @update:value="(value) => updateConfigurationData('cleanImageDerivatives', value)"></checkbox-input-element>
                 </div>
             </div>
             <div v-if="Number(profileData.uploadtype) === 6" class="row q-col-gutter-sm">
@@ -77,8 +82,13 @@ const collectionDataUploadParametersFieldModule = {
             {value: 'othercatalognumbers', label: 'Other Catalog Numbers'}
         ];
         const configurationData = Vue.computed(() => collectionDataUploadParametersStore.getConfigurations);
-        const existingAssociatedDataOptions = [
+        const existingAssociatedDeterminationOptions = [
             {value: 'merge', label: 'Import new records while leaving existing records'},
+            {value: 'replace', label: 'Replace existing records with new records'}
+        ];
+        const existingAssociatedMediaOptions = [
+            {value: 'merge', label: 'Import new records while leaving existing records'},
+            {value: 'sync', label: 'Sync records with the new records (removing records not in upload)'},
             {value: 'replace', label: 'Replace existing records with new records'}
         ];
         const existingAssociatedMofDataOptions = [
@@ -106,7 +116,8 @@ const collectionDataUploadParametersFieldModule = {
         return {
             catalogNumberMatchOptions,
             configurationData,
-            existingAssociatedDataOptions,
+            existingAssociatedDeterminationOptions,
+            existingAssociatedMediaOptions,
             existingAssociatedMofDataOptions,
             existingRecordOptions,
             profileData,

@@ -36,17 +36,19 @@ elseif($action === 'addSelectedToDataset' && $GLOBALS['VALID_USER']){
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Manager</title>
-    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Dataset Index</title>
+    <meta name="description" content="Index of occurrence datasets in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
     <style>
         fieldset{ padding:15px;margin:15px; }
         legend{ font-weight: bold; }
-        .dataset-item{ margin-bottom: 10px }
+        .dataset-item{ margin-bottom: 10px; }
     </style>
-    <script type="text/javascript" src="../../js/external/jquery.js"></script>
-    <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript">
         function validateAddForm(f){
             if(f.adduser.value === ""){
@@ -81,8 +83,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div class='navpath'>
-    <a href='../../index.php'>Home</a> &gt;&gt;
+<div id="breadcrumbs">
+    <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
     <?php
     echo '<a href="../../profile/viewprofile.php?tabindex=1">My Profile</a> &gt;&gt; ';
     ?>
@@ -90,7 +92,7 @@ include(__DIR__ . '/../../header.php');
         <b>Dataset Listing</b>
     </a>
 </div>
-<div id="innertext">
+<div id="mainContainer" style="padding: 10px 15px 15px;">
     <?php
     if($statusStr){
         $color = 'green';

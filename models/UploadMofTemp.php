@@ -31,29 +31,42 @@ class UploadMofTemp{
     {
         $recordsCreated = 0;
         $fieldNameArr = array();
-        $sourceKeyArr = array();
         $valueArr = array();
+        $skipFields = array('upmfid', 'collid', 'occid', 'eventid', 'enteredby', 'initialtimestamp');
+        $mappedFields = array();
         if($collid){
-            $sourceDataKeys = array_keys($data[0]);
             $fieldNameArr[] = 'collid';
-            $sourceDataFieldNameIndex = $fieldMapping ? array_search('field', $fieldMapping, true) : 'field';
-            foreach($sourceDataKeys as $key){
-                if($key || (string)$key === '0'){
-                    if(($fieldMapping && array_key_exists($key, $fieldMapping) && $fieldMapping[$key] !== 'unmapped') || !$fieldMapping){
-                        $field = $fieldMapping ? $fieldMapping[$key] : $key;
-                        $fieldNameArr[] = $field;
-                        $sourceKeyArr[] = $key;
+            $fieldNameArr[] = 'enteredby';
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    $fieldNameArr[] = $field;
+                    if($fieldMapping){
+                        $mappedFieldVal = null;
+                        $mappedKey = $fieldMapping[$field] ?? null;
+                        if(($mappedKey && (string)$mappedKey !== 'unmapped') || (string)$mappedKey === '0'){
+                            $mappedFieldVal = (string)$mappedKey;
+                        }
+                        $mappedFields[$field] = $mappedFieldVal;
+                    }
+                    elseif(array_key_exists($field, $data[0])){
+                        $mappedFields[$field] = $field;
                     }
                 }
             }
             foreach($data as $dataArr){
-                $fieldName = $dataArr[$sourceDataFieldNameIndex];
-                if(!$fieldMapping || (($eventMofFields || $occurrenceMofFields) && (array_key_exists($fieldName, $eventMofFields) || array_key_exists($fieldName, $occurrenceMofFields)))){
-                    $dataValueArr = array();
-                    $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
-                    foreach($sourceKeyArr as $key){
-                        $targetField = $fieldMapping ? $fieldMapping[$key] : $key;
-                        $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataArr[$key], $this->fields[$targetField]);
+                $dataValueArr = array();
+                $mofData = array();
+                $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
+                $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $GLOBALS['USERNAME'], $this->fields['enteredby']);
+                foreach($mappedFields as $field => $key){
+                    $mofData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
+                }
+                if(array_key_exists('field', $mofData) && array_key_exists('datavalue', $mofData) && (!$fieldMapping || (($eventMofFields || $occurrenceMofFields) && (array_key_exists($mofData['field'], $eventMofFields) || array_key_exists($mofData['field'], $occurrenceMofFields))))) {
+                    foreach($this->fields as $field => $fieldArr){
+                        if(!in_array($field, $skipFields, true)){
+                            $dataValue = $mofData[$field] ?? null;
+                            $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataValue, $fieldArr);
+                        }
                     }
                     $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
                 }

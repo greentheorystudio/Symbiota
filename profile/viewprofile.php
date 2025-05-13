@@ -10,17 +10,17 @@ header('X-Frame-Options: SAMEORIGIN');
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> View Profile</title>
-        <meta name="description" content="View Profile">
+        <meta name="description" content="View and manage account profile for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="../js/external/tiny_mce/tiny_mce.js"></script>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/tiny_mce/tiny_mce.js" type="text/javascript"></script>
     </head>
     <body>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="innertext">
+        <div id="mainContainer" class="q-pa-md">
             <template v-if="accountInfo">
                 <q-card class="q-mt-lg">
                     <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
@@ -101,7 +101,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             viewProfileModule.use(Quasar, { config: {} });
             viewProfileModule.use(Pinia.createPinia());
-            viewProfileModule.mount('#innertext');
+            viewProfileModule.mount('#mainContainer');
         </script>
     </body>
 </html>

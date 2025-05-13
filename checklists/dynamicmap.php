@@ -15,7 +15,9 @@ $dynClManager = new DynamicChecklistManager();
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> - Dynamic Checklist Generator</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Dynamic Checklist Generator</title>
+    <meta name="description" content="Dynamically create a checklist in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
@@ -42,7 +44,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         document.addEventListener("DOMContentLoaded", function() {
             $( "#taxa" ).autocomplete({
                 source: function( request, response ) {
-                    $.getJSON( "../api/taxa/speciessuggest.php", { term: request.term, level: 'high' }, response );
+                    $.getJSON( "<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/taxa/speciessuggest.php", { term: request.term, level: 'high' }, response );
                 },
                 minLength: 2,
                 autoFocus: true,
@@ -68,11 +70,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <?php
 include(__DIR__ . '/../header.php');
 ?>
-<div class='navpath'>
+<div id="breadcrumbs">
     <a href='../index.php'>Home</a> &gt;
     <b>Dynamic Map</b>
 </div>
-<div id='innertext'>
+<div id="mainContainer" style="padding: 10px 15px 15px;">
     <form name="mapForm" action="dynamicchecklist.php" method="post" onsubmit="return checkForm();">
         <div style="width:95%;margin-left:auto;margin-right:auto;">
             Click and drag anywhere on the map to pan the map in any direction. Use the + and - buttons in the top-right corner

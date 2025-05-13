@@ -93,6 +93,54 @@ class Images{
         return $returnVal;
     }
 
+    public function clearExistingImagesNotInUpload($collid, $clearDerivatives): int
+    {
+        $retVal = 1;
+        $imgIdArr = array();
+        $sql = 'SELECT DISTINCT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+            'LEFT JOIN uploadmediatemp AS um ON i.occid = um.occid AND i.url = um.url '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(um.upmid) ';
+        if($result = $this->conn->query($sql)){
+            while(($row = $result->fetch_assoc()) && $retVal){
+                $imgIdArr[] = $row['imgid'];
+                if(count($imgIdArr) === 10000){
+                    $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
+                    $imgIdArr = array();
+                }
+            }
+            $result->free();
+            if(count($imgIdArr) > 0){
+                $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
+            }
+        }
+        return $retVal;
+    }
+
+    public function clearImagesByArr($imgIdArr, $clearDerivatives): int
+    {
+        $retVal = 0;
+        if($clearDerivatives){
+            $this->deleteAssociatedImageFiles('imgidArr', $imgIdArr);
+        }
+        $sql = 'DELETE t.* FROM imagetag AS t WHERE t.imgid IN(' . implode(',', $imgIdArr) . ') ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE g.* FROM guidimages AS g WHERE g.imgid IN(' . implode(',', $imgIdArr) . ') ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        if($retVal){
+            $sql = 'DELETE i.* FROM images AS i WHERE i.imgid IN(' . implode(',', $imgIdArr) . ') ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
+    }
+
     public function createImageRecord($data): int
     {
         $newID = 0;
@@ -165,6 +213,9 @@ class Images{
         elseif($idType === 'occidArr'){
             $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE occid IN(' . implode(',', $id) . ') ';
         }
+        elseif($idType === 'imgidArr'){
+            $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE imgid IN(' . implode(',', $id) . ') ';
+        }
         elseif($idType === 'collid'){
             $sql = 'SELECT i.url, i.thumbnailurl, i.originalurl FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                 'WHERE o.collid = ' . (int)$id . ' ';
@@ -177,13 +228,13 @@ class Images{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                if(strpos($row['url'], '/') === 0){
+                if($row['url'] && strncmp($row['url'], '/', 1) === 0){
                     FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['url']), true);
                 }
-                if(strpos($row['thumbnailurl'], '/') === 0){
+                if($row['thumbnailurl'] && strncmp($row['thumbnailurl'], '/', 1) === 0){
                     FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['thumbnailurl']), true);
                 }
-                if(strpos($row['originalurl'], '/') === 0){
+                if($row['originalurl'] && strncmp($row['originalurl'], '/', 1) === 0){
                     FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['originalurl']), true);
                 }
                 unset($rows[$index]);
@@ -221,8 +272,8 @@ class Images{
             }
             if($retVal){
                 $sql = 'DELETE i.* FROM images AS i WHERE ' . $whereStr . ' ';
-                if($this->conn->query($sql)){
-                    $retVal = 1;
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
                 }
             }
         }

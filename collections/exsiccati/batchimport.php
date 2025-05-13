@@ -44,9 +44,11 @@ if($isEditor && $formSubmit){
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati Batch Transfer</title>
-    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati Importer</title>
+    <meta name="description" content="Import exsiccati records into the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
 	<script type="text/javascript">
 		function verifyExsTableForm(f){
             let formVerified = false;
@@ -91,8 +93,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
 		function openIndPU(occId){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+				wWidth = document.getElementById('main-container').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
@@ -106,8 +108,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
 		function openExsPU(omenid){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+				wWidth = document.getElementById('main-container').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
@@ -124,12 +126,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<?php 
 	include(__DIR__ . '/../../header.php');
 	?>
-	<div class='navpath'>
-		<a href="../../index.php">Home</a> &gt;&gt; 
+	<div id="breadcrumbs">
+		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
 		<a href="index.php">Exsiccati Index</a> &gt;&gt; 
 		<a href="batchimport.php">Batch Import Module</a>
 	</div>
-	<div id="innertext">
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
 		<?php
 		if($statusStr){
 			echo '<hr/>';
