@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/services/SanitizerService.php');
 ?>
-<div id="mainContainer">
+<div id="appContainer">
     <div id="bannerContainer">
         <div style="width:850px;margin-left:auto;margin-right:auto;">
             <img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/wiscflora_banner6.png" />

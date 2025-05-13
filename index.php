@@ -33,7 +33,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                         records, and more.
                     </p>
                     <div>
-                        <taxa-quick-search></taxa-quick-search>
+                        <taxa-quick-search default-taxon-type="scientific"></taxa-quick-search>
                     </div>
                     <ul>
                         <li><span class="text-bold">Enter a genus, species, or common name to view the species description pages.</span></li>
