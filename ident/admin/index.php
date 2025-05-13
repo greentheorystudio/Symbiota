@@ -68,7 +68,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		<a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
 		<b>Character Management</b>
 	</div>
-	<div id="innertext">
+	<div id="main-container">
 		<?php 
 		if($isEditor){
 			?>

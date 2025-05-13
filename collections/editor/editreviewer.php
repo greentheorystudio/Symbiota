@@ -202,7 +202,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     echo '<b>Review/Verify Occurrence Edits</b>';
     echo '</div>';
     ?>
-    <div id="innertext" style="min-width:1100px">
+    <div id="main-container" style="min-width:1100px">
         <?php
         if($collid && $isEditor){
             ?>

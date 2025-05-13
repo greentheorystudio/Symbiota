@@ -40,7 +40,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="app-container">
+        <div id="main-container">
             <div class="navpath">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="Number(clId) > 0">
@@ -55,7 +55,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     <span class="text-bold">Dynamic Key</span>
                 </template>
             </div>
-            <div id="innertext">
+            <div id="main-container">
                 <template v-if="Number(clId) > 0 || Number(pId) > 0">
                     <div class="full-width row q-gutter-sm">
                         <div class="col-4 column q-col-gutter-sm">
@@ -693,7 +693,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             });
             keyIdentificationModule.use(Quasar, { config: {} });
             keyIdentificationModule.use(Pinia.createPinia());
-            keyIdentificationModule.mount('#app-container');
+            keyIdentificationModule.mount('#main-container');
         </script>
     </body>
 </html>

@@ -19,8 +19,8 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="app-container">
-            <div id="innertext">
+        <div id="main-container">
+            <div id="main-container">
                 <div class="column q-gutter-md">
                     <div class="row justify-between">
                         <div class="text-h5 text-bold">Protected Species</div>
@@ -311,7 +311,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             protectedTaxaModule.use(Quasar, { config: {} });
             protectedTaxaModule.use(Pinia.createPinia());
-            protectedTaxaModule.mount('#app-container');
+            protectedTaxaModule.mount('#main-container');
         </script>
     </body>
 </html>

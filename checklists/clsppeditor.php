@@ -135,7 +135,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </script>
 </head>
 <body onload="<?php  echo (!$status?$followUpAction:''); ?>" >
-    <div id='innertext'>
+    <div id="main-container">
         <h2>
             <?php echo '<i>' .$vManager->getTaxonName(). '</i> of ' .$vManager->getClName();?>
         </h2>

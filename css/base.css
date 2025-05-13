@@ -4,6 +4,9 @@ body{
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
 }
+body.printfriendly{
+	background-color: #ffffff;
+}
 h1 {
 	font-size: 2em;
 	font-weight: bold;
@@ -33,11 +36,14 @@ h6 {
 	font-weight: bold;
 	line-height: normal;
 }
-#innertext{
+#main-container{
 	margin:	10px;
 	background-color: #FFFFFF;
 	min-height:400px;
 	padding-top: 15px;
+}
+#main-container.printfriendly{
+	background-color: #ffffff;
 }
 a{
 	color: 		#424242;

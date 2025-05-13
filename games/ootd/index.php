@@ -135,7 +135,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <?php
 	include(__DIR__ . '/../../header.php');
 	?>
-	<div id="innertext" style="">
+	<div id="main-container" style="">
 		<div style="width:80%;margin-left:auto;margin-right:auto;">
 			<div style="text-align:center;margin-bottom:20px;">
 				<h1><?php echo ($ootdGameTitle ?? 'Organism of the Day'); ?></h1>

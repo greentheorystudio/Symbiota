@@ -19,7 +19,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="app-container" class="q-pa-md column q-gutter-sm">
+        <div id="main-container" class="q-pa-md column q-gutter-sm">
             <template v-if="isAdmin">
                 <template v-if="Number(currentUserId) > 0">
                     <div class="column q-gutter-sm">
@@ -785,7 +785,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             userManagementModule.use(Quasar, { config: {} });
             userManagementModule.use(Pinia.createPinia());
-            userManagementModule.mount('#app-container');
+            userManagementModule.mount('#main-container');
         </script>
     </body>
 </html>

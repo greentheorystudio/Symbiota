@@ -211,8 +211,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
 		function openIndPU(occId){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+				wWidth = document.getElementById('main-container').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
@@ -258,7 +258,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		}
 		?>
 	</div>
-	<div id="innertext" style="width:95%;">
+	<div id="main-container" style="width:95%;">
 		<?php
 		if($statusStr){
 			echo '<hr/>';

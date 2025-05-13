@@ -123,7 +123,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<script src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
-	<div id="innertext">
+	<div id="main-container">
 		<?php 
 		if($statusStr){
 			?>

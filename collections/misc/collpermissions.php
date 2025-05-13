@@ -94,7 +94,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <b>Manage Permissions</b>
     </div>
 
-	<div id="innertext">
+	<div id="main-container">
 		<?php
 		if($isEditor){
 			$collPerms = $permManager->getCollectionEditors($collId);

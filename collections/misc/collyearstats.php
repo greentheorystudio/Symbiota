@@ -56,7 +56,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <?php
     include(__DIR__ . '/../../header.php');
     ?>
-    <div id="innertext">
+    <div id="main-container">
         <fieldset id="yearstatsbox" style="clear:both;margin-top:15px;width:97%;">
             <legend><b>Month Totals</b></legend>
             <table class="styledtable" style="font-family:Arial,serif;width:98%;">

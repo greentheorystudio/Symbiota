@@ -68,7 +68,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div id="innertext">
+<div id="main-container">
     <div style="display:flex;justify-content:space-between;">
         <div id="fields" style="width:48%;">
             <h2>Fields Available</h2>

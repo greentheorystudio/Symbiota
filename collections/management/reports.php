@@ -23,7 +23,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
  	$isEditor = true;
 }
 ?>
-<div id="innertext" style="background-color:white;">
+<div id="main-container" style="background-color:white;">
 	<?php
 	if($isEditor){
 		$reportTypes = array(0 => 'General Stats', 1 => 'User Stats', 2 => 'Georeference Stats');

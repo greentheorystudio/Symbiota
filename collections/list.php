@@ -38,12 +38,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="app-container">
+        <div id="main-container">
             <div class="navpath">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <span class="text-bold">Search Collections</span>
             </div>
-            <div id="innertext">
+            <div id="main-container">
                 <div class="fit">
                     <q-card flat bordered>
                         <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
@@ -640,7 +640,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             });
             searchListDisplayModule.use(Quasar, { config: {} });
             searchListDisplayModule.use(Pinia.createPinia());
-            searchListDisplayModule.mount('#app-container');
+            searchListDisplayModule.mount('#main-container');
         </script>
     </body>
 </html>

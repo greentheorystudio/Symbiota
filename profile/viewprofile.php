@@ -20,7 +20,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="innertext">
+        <div id="main-container">
             <template v-if="accountInfo">
                 <q-card class="q-mt-lg">
                     <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
@@ -101,7 +101,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             viewProfileModule.use(Quasar, { config: {} });
             viewProfileModule.use(Pinia.createPinia());
-            viewProfileModule.mount('#innertext');
+            viewProfileModule.mount('#main-container');
         </script>
     </body>
 </html>

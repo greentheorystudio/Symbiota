@@ -137,7 +137,7 @@ include(__DIR__ . '/../../header.php');
 	}
 	?>
 </div>
-<div id="innertext">
+<div id="main-container">
 	<?php
 	if($clid && $isEditor){
 		if($cidValue) {

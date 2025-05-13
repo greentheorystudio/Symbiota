@@ -32,7 +32,7 @@ if(!$GLOBALS['SYMB_UID']) {
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
             <b>Taxa Media Batch Uploader</b>
         </div>
-        <div id="innertext">
+        <div id="main-container">
             <h1>Taxa Media Batch Uploader</h1>
             <template v-if="isEditor">
                 <div>
@@ -111,7 +111,7 @@ if(!$GLOBALS['SYMB_UID']) {
             });
             taxaBatchMediaUploaderModule.use(Quasar, { config: {} });
             taxaBatchMediaUploaderModule.use(Pinia.createPinia());
-            taxaBatchMediaUploaderModule.mount('#innertext');
+            taxaBatchMediaUploaderModule.mount('#main-container');
         </script>
     </body>
 </html>

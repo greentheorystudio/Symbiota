@@ -369,7 +369,7 @@ if($action !== 'Update Statistics'){
             <a href='collprofiles.php'>Collections</a> &gt;&gt;
             <b>Collection Statistics</b>
         </div>
-        <div id="innertext">
+        <div id="main-container">
             <h3>Select Collections to be Analyzed</h3>
             <div id="tabs" style="margin:0;">
                 <ul>

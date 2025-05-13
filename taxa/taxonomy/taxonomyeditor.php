@@ -91,7 +91,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <a href="index.php">Taxonomy Editor</a> &gt;&gt;
     <b>Editing: <?php echo '<i>' .$taxonEditorObj->getSciName(). '</i> ' .$taxonEditorObj->getAuthor(). ' [' .$taxonEditorObj->getTid(). ']'; ?></b>
 </div>
-<div id="innertext">
+<div id="main-container">
     <?php
     if($statusStr){
         ?>

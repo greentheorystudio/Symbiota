@@ -403,7 +403,7 @@ include(__DIR__ . '/../../header.php');
     <a href="labelmanager.php?collid=<?php echo $collid; ?>&emode=1">Print Labels/Annotations</a> &gt;&gt;
     <b>Label Profile Manager</b>
 </div>
-<div id="innertext">
+<div id="main-container">
     <?php
     if($statusStr){
         ?>

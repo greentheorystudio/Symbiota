@@ -81,7 +81,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 	include(__DIR__ . '/../../header.php');
 	?>
-	<div id='innertext'>
+	<div id="main-container">
 		<?php
 		if($clid  && $isEditable){ ?>
 			<h2><?php echo $dynSqlManager->getClName(); ?></h2>

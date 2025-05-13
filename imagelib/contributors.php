@@ -28,7 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		<b>Image contributors</b> 
 	</div>
 
-    <div id="innertext">
+    <div id="main-container">
         <?php
         $pList = $pManager->getPhotographerList();
         if($pList){

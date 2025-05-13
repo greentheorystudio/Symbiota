@@ -133,8 +133,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
         function tellMe(){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-                wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+                wWidth = document.getElementById('main-container').offsetWidth*1.05;
             }
             else if(document.body.offsetWidth){
                 wWidth = document.body.offsetWidth*0.9;
@@ -159,7 +159,7 @@ echo '</a> &gt;&gt; ';
 echo ' <b>Flash Card Game</b>';
 echo '</div>';
 ?>
-<div id='innertext'>
+<div id="main-container">
     <div style="width:420px;margin-left:auto;margin-right:auto;">
         <div style="width:420px;height:420px;text-align:center;">
             <div>

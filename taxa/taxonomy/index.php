@@ -70,7 +70,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
     <b>Taxonomy Editor</b>
 </div>
-<div id="innertext">
+<div id="main-container">
 	<h1>Taxonomy Editor</h1>
 	<?php
 	if($isEditor){

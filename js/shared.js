@@ -90,8 +90,8 @@ function hideWorking(){
 
 function openPopup(url){
 	let wWidth = 900;
-	if(document.getElementById('innertext')){
-        wWidth = document.getElementById('innertext').offsetWidth*1.05;
+	if(document.getElementById('main-container')){
+        wWidth = document.getElementById('main-container').offsetWidth*1.05;
     }
     else if(document.body.offsetWidth){
         wWidth = document.body.offsetWidth*0.9;

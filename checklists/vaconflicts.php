@@ -41,7 +41,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 		f.submit();
 	}
 </script>
-<div id="innertext" style="background-color:white;">
+<div id="main-container" style="background-color:white;">
 	<h2>Possible Voucher Conflicts</h2>
 	<div style="margin-bottom:10px;">
 		List of vouchers where the current identifications conflict with the checklist.

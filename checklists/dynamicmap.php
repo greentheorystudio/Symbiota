@@ -74,7 +74,7 @@ include(__DIR__ . '/../header.php');
     <a href='../index.php'>Home</a> &gt;
     <b>Dynamic Map</b>
 </div>
-<div id='innertext'>
+<div id="main-container">
     <form name="mapForm" action="dynamicchecklist.php" method="post" onsubmit="return checkForm();">
         <div style="width:95%;margin-left:auto;margin-right:auto;">
             Click and drag anywhere on the map to pan the map in any direction. Use the + and - buttons in the top-right corner

@@ -36,7 +36,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="innertext">
+        <div id="main-container">
             <div class="row justify-center q-mt-lg q-mb-xl">
                 <q-card class="login-container">
                     <q-card-section class="bg-indigo-1 column">
@@ -258,7 +258,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
             });
             loginModule.use(Quasar, { config: {} });
             loginModule.use(Pinia.createPinia());
-            loginModule.mount('#innertext');
+            loginModule.mount('#main-container');
         </script>
     </body>
 </html>	

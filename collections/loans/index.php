@@ -115,7 +115,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
         <a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management</b></a>
     </div>
-	<div id="innertext">
+	<div id="main-container">
 		<?php 
 		if($GLOBALS['SYMB_UID'] && $isEditor && $collId){
 			if($statusStr){

@@ -166,7 +166,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div id="innertext">
+<div id="main-container">
     <div style="padding: 0 20px 10px;display:flex;justify-content: space-between;">
         <div id="statusStr" style="font-weight:bold;color:red;"></div>
         <div onclick="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">

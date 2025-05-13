@@ -27,7 +27,7 @@ if(!$GLOBALS['SYMB_UID']) {
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
             <b>Encyclopedia of Life Media Importer</b>
         </div>
-        <div id="innertext">
+        <div id="main-container">
             <h1>Encyclopedia of Life Media Importer</h1>
             <template v-if="isEditor">
                 <div class="processor-container">
@@ -979,7 +979,7 @@ if(!$GLOBALS['SYMB_UID']) {
             });
             eolMediaImporterModule.use(Quasar, { config: {} });
             eolMediaImporterModule.use(Pinia.createPinia());
-            eolMediaImporterModule.mount('#innertext');
+            eolMediaImporterModule.mount('#main-container');
         </script>
     </body>
 </html>

@@ -206,7 +206,7 @@ else{
 echo '</div>';
 ?>
 
-<div id="innertext">
+<div id="main-container">
     <?php
     if($statusStr){
         ?>

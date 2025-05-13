@@ -290,7 +290,7 @@ include(__DIR__ . '/../../header.php');
     </a> &gt;&gt;
     <b>Dataset Manager</b>
 </div>
-<div id="innertext">
+<div id="main-container">
     <?php
     if($statusStr){
         $color = 'green';

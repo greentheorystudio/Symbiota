@@ -217,8 +217,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
         function openPopup(urlStr){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-                wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+                wWidth = document.getElementById('main-container').offsetWidth*1.05;
             }
             else if(document.body.offsetWidth){
                 wWidth = document.body.offsetWidth*0.9;
@@ -334,7 +334,7 @@ include(__DIR__ . '/../../header.php');
     ?>
     <b>Batch Determinations/Nomenclatural Adjustments</b>
 </div>
-<div id="innertext">
+<div id="main-container">
     <?php
     if($isEditor){
         echo '<h2>'.$occManager->getCollName().'</h2>';

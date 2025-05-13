@@ -132,7 +132,7 @@ include(__DIR__ . '/../../header.php');
 	?>
 	<b>Institution Editor</b> 
 </div>
-<div id="innertext">
+<div id="main-container">
 	<?php
 	if($statusStr){
 		?>

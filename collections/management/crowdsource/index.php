@@ -39,7 +39,7 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
     echo '<b>Crowdsourcing Score Board</b>';
     echo '</div>';
 	?>
-    <div id="innertext">
+    <div id="main-container">
 		<h1>Crowdsourcing Score Board</h1>
         <div style="margin-left:20px;float:left;">
 			<h2>Top Scores</h2>

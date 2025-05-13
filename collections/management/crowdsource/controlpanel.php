@@ -26,7 +26,7 @@ elseif($collid){
 $statusStr = '';
 $projArr = $csManager->getProjectDetails();
 ?>
-<div id="innertext" style="background-color:white;">
+<div id="main-container" style="background-color:white;">
 	<?php
 	if($statusStr){
 		?>

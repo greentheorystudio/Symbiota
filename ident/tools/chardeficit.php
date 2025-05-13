@@ -43,8 +43,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		function openPopup(urlStr,windowName){
             let wWidth = 900;
             try{
-				if(document.getElementById('innertext').offsetWidth){
-					wWidth = document.getElementById('innertext').offsetWidth*1.05;
+				if(document.getElementById('main-container').offsetWidth){
+					wWidth = document.getElementById('main-container').offsetWidth*1.05;
 				}
 				else if(document.body.offsetWidth){
 					wWidth = document.body.offsetWidth*0.9;
@@ -63,7 +63,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <?php
     include(__DIR__ . '/../../header.php');
     ?>
-    <div id="innertext">
+    <div id="main-container">
     <?php
     if($editable){
         ?>

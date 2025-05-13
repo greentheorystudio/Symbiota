@@ -33,7 +33,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
             <b>Taxonomy Management Module</b>
         </div>
-        <div id="innertext">
+        <div id="main-container">
             <template v-if="isEditor">
                 <div class="row justify-between q-px-md q-mb-sm">
                     <div class="text-h6 text-weight-bold">
@@ -2108,7 +2108,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             });
             occurrenceTaxonomyManagementModule.use(Quasar, { config: {} });
             occurrenceTaxonomyManagementModule.use(Pinia.createPinia());
-            occurrenceTaxonomyManagementModule.mount('#innertext');
+            occurrenceTaxonomyManagementModule.mount('#main-container');
         </script>
     </body>
 </html>

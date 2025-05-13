@@ -120,7 +120,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     echo '<b>View Access Statistics</b>';
     echo '</div>';
     ?>
-    <div id="innertext" style="min-width:1100px">
+    <div id="main-container" style="min-width:1100px">
         <div>
             <div style="float:left;"><b><u>User Access Statistics</u></b></div>
             <div id="desc_details" style="clear:both;display:none;width:500px;">Displays general user access statistics for all occurrences within collection.

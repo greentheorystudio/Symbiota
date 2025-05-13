@@ -400,7 +400,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     echo '<b>Image Search</b>';
     echo '</div>';
 	?> 
-	<div id="innertext">
+	<div id="main-container">
 		<div id="tabs" style="margin:0;">
 			<ul>
 				<li><a href="#criteriadiv">Search Criteria</a></li>

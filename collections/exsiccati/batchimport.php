@@ -93,8 +93,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
 		function openIndPU(occId){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+				wWidth = document.getElementById('main-container').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
@@ -108,8 +108,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
 		function openExsPU(omenid){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+				wWidth = document.getElementById('main-container').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
@@ -131,7 +131,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		<a href="index.php">Exsiccati Index</a> &gt;&gt; 
 		<a href="batchimport.php">Batch Import Module</a>
 	</div>
-	<div id="innertext">
+	<div id="main-container">
 		<?php
 		if($statusStr){
 			echo '<hr/>';

@@ -43,7 +43,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 		<a href='index.php'> <b>Main Glossary</b></a> &gt;&gt;
 		<b>Glossary Contributors</b>
 	</div>
-	<div id="innertext">
+	<div id="main-container">
 		<?php
 		if($editMode){
 			if($isEditor){

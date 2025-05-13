@@ -57,7 +57,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
     <b>Data Exporter and Backup</b>
 </div>
-<div id="innertext">
+<div id="main-container">
 	<h2>Data Exporter and Backup Module</h2>
 	<?php
 	if($isEditor && $collid){

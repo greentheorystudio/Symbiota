@@ -56,7 +56,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     echo '<b>Image Processor</b>';
     echo '</div>';
     ?>
-    <div id="innertext">
+    <div id="main-container">
         <h2><?php echo $specManager->getCollectionName(); ?></h2>
         <?php
         if($isEditor){

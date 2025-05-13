@@ -67,7 +67,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		?>
 		<a href="checklistloader.php?clid=<?php echo $clid.'&pid='.$pid; ?>"><b>Checklists Loader</b></a>
 	</div>
-	<div id="innertext">
+	<div id="main-container">
 		<h2>
 			<a href="<?php echo $GLOBALS['CLIENT_ROOT']. '/checklists/checklist.php?cl=' .$clid.'&pid='.$pid; ?>">
 				<?php echo $clMeta['name']; ?>

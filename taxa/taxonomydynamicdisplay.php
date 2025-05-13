@@ -46,7 +46,7 @@ header('X-Frame-Options: SAMEORIGIN');
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
             <a href="taxonomydynamicdisplay.php"><b>Taxonomy Explorer</b></a>
         </div>
-        <div id="innertext">
+        <div id="main-container">
             <q-card class="target-taxon-card">
                 <q-card-section>
                     <div class="q-my-sm">
@@ -247,7 +247,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             taxonomyDynamicDisplayModule.use(Quasar, { config: {} });
             taxonomyDynamicDisplayModule.use(Pinia.createPinia());
-            taxonomyDynamicDisplayModule.mount('#innertext');
+            taxonomyDynamicDisplayModule.mount('#main-container');
         </script>
     </body>
 </html>

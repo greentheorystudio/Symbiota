@@ -114,7 +114,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		<b>Duplicate Merging Module</b>
 	</div>
 
-	<div id="innertext" style="background-color:white;">
+	<div id="main-container" style="background-color:white;">
 		<?php
         echo '<h2>'.$collMap['collectionname'].($collMap['code']?' ('.$collMap['code'].')':'').'</h2>';
 		if($isEditor){

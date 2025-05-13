@@ -62,7 +62,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		?>
 		<b>Thumbnail Builder</b>
 	</div>
-	<div id="innertext">
+	<div id="main-container">
 		<?php
 		if($isEditor){
 			if($action){

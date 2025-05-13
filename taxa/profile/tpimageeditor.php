@@ -19,7 +19,7 @@ if($tid){
 	 
 }
 ?>
-<div id="innertext" style="background-color:white;">
+<div id="main-container" style="background-color:white;">
 	<?php 
 	if($editable && $tid){
 		if($category === 'imagequicksort'){

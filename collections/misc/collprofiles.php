@@ -40,7 +40,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                 <a :href="clientRoot + '/collections/list.php'">Collection Search Page</a> &gt;&gt;
                 <span class="text-body1 text-bold">{{ collectionData.collectionname }} Details</span>
             </div>
-            <div id="innertext">
+            <div id="main-container">
                 <template v-if="collId > 0">
                     <div class="column q-gutter-md">
                         <div class="text-h4 text-bold">

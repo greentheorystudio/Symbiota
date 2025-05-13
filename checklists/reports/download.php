@@ -62,7 +62,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	</script>
 </head>
 <body>
-	<div id="innertext">
+	<div id="main-container">
 		<h2>Data Usage Guidelines</h2>
 	 	 <div style="margin:15px;">
 	 	 	By downloading data, the user confirms that he/she has read and agrees with the general

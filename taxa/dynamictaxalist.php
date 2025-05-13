@@ -183,7 +183,7 @@ include(__DIR__ . '/../header.php');
     <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
     <a href="dynamictaxalist.php"><b>Dynamic Species List</b></a>
 </div>
-<div id="innertext">
+<div id="main-container">
     <?php
     if($statusStr){
         ?>

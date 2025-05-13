@@ -8,7 +8,7 @@ $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
 ?>
-<div id="innertext" style="background-color:white;">
+<div id="main-container" style="background-color:white;">
 	<div style="float:right;">
 		<a href="#" onclick="toggle('addchilddiv')"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
 	</div>

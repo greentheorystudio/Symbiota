@@ -102,7 +102,7 @@ include(__DIR__ . '/../header.php');
 	<b>Checklist Administration</b>
 </div>
 
-<div id='innertext'>
+<div id="main-container">
 <div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">
 	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>

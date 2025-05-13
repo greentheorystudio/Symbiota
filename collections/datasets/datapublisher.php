@@ -146,7 +146,7 @@ include(__DIR__ . '/../../header.php');
 	?>
 	<b>Darwin Core Archive Publisher</b>
 </div>
-<div id="innertext">
+<div id="main-container">
 	<?php
 	if(!$collId && $GLOBALS['IS_ADMIN']){
 		?>

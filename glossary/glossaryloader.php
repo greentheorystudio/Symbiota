@@ -137,7 +137,7 @@ include(__DIR__ . '/../header.php');
 
 if($isEditor){
 	?>
-	<div id="innertext">
+	<div id="main-container">
 		<h1>Glossary Term Batch Loader</h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">

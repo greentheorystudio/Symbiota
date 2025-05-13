@@ -45,7 +45,7 @@ include(__DIR__ . '/../../header.php');
     ?>
     <b>GUID/UUID Generator</b>
 </div>
-<div id="innertext">
+<div id="main-container">
 	<?php 
 	if($isEditor){
 		if($action === 'Generate Collection GUIDs/UUIDs'){

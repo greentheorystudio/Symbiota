@@ -32,7 +32,7 @@ if(!$GLOBALS['SYMB_UID']) {
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
             <b>Taxonomic Identifier Manager</b>
         </div>
-        <div id="innertext">
+        <div id="main-container">
             <h1>Taxonomic Identifier Manager</h1>
             <template v-if="isEditor">
                 <q-card>
@@ -578,7 +578,7 @@ if(!$GLOBALS['SYMB_UID']) {
             });
             taxonomicThesaurusManagerModule.use(Quasar, { config: {} });
             taxonomicThesaurusManagerModule.use(Pinia.createPinia());
-            taxonomicThesaurusManagerModule.mount('#innertext');
+            taxonomicThesaurusManagerModule.mount('#main-container');
         </script>
     </body>
 </html>

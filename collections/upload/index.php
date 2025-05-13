@@ -32,7 +32,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
             <b>Occurrence Data Upload Module</b>
         </div>
-        <div id="innertext">
+        <div id="main-container">
             <div class="text-h5 text-bold">Occurrence Data Upload Module</div>
             <div v-if="Number(collectionData.collid) > 0" class="q-ml-md column q-mb-sm">
                 <div class="text-bold">
@@ -124,7 +124,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             });
             collectionOccurrenceDataUploadModule.use(Quasar, { config: {} });
             collectionOccurrenceDataUploadModule.use(Pinia.createPinia());
-            collectionOccurrenceDataUploadModule.mount('#innertext');
+            collectionOccurrenceDataUploadModule.mount('#main-container');
         </script>
     </body>
 </html>

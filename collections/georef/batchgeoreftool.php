@@ -131,7 +131,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     </script>
 </head>
 <body>
-    <div  id='innertext'>
+    <div  id="main-container">
         <div style="float:left;">
             <div style="font-weight:bold;margin-top:6px;">
                 <?php echo $geoManager->getCollName(); ?>
