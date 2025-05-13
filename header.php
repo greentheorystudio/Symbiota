@@ -2,7 +2,7 @@
 include_once(__DIR__ . '/services/SanitizerService.php');
 ?>
 <div id="mainContainer">
-    <div id="bannerDiv">
+    <div id="bannerContainer">
         <div style="float:right;margin-top:20px;">
             <img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/calIBIS-logo.png" />
         </div>
@@ -173,7 +173,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     },
                     slideShow() {
                         setTimeout(() => {
-                            document.getElementById('bannerDiv').style.backgroundImage = this.imgArray[this.curIndex];
+                            document.getElementById('bannerContainer').style.backgroundImage = this.imgArray[this.curIndex];
                             if(this.photographerArray[this.curIndex] !== ""){
                                 document.getElementById('imageCredit').innerHTML = '<div style="background-color:white;opacity:60%;color:black;padding:5px;font-size: 12px;">(photographer: ' + this.photographerArray[this.curIndex] + ')</div>';
                             }

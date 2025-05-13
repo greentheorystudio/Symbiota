@@ -32,7 +32,7 @@ body{
 	color: white;
 }
 
-#bannerDiv {
+#bannerContainer {
 	position: relative;
 	height: 325px;
 	background: url(/content/imglib/layout/Image01.JPG) no-repeat center;
