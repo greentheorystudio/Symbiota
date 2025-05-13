@@ -17,7 +17,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <?php
 include(__DIR__ . '/../header.php');
 ?>
-<div id="innertext">
+<div id="mainContainer" style="padding: 10px 15px 15px;">
     <h1>Links</h1>
     <div style="margin-left:10px;">
         <div>

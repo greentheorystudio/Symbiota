@@ -3,7 +3,7 @@ body{
 	font-size: 90%;
 }
 
-#mainContainer{
+#appContainer{
 	background-color:#FFFFFF;
 	display: block;
 	width: 80%;
@@ -23,10 +23,9 @@ body{
 	clear: both;
 }
 
-#innertext{
+#mainContainer{
 	min-height:400px;
 	margin: 0 auto;
-	padding: 10px 15px 15px;
 }
 
 a{
@@ -34,7 +33,7 @@ a{
 	text-decoration: none;
 }
 
-div.navpath {
+#breadcrumbs {
 	padding-top: 8px;
 	padding-bottom: 0;
 	padding-left: 10px;
