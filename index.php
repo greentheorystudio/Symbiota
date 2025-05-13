@@ -118,7 +118,7 @@ include_once(__DIR__ . '/config/header-includes.php');
             Photo credit: <span id="photographerName"></span>
         </div>
     </div>
-    <div id="innertext">
+    <div id="mainContainer" style="padding: 10px 15px 15px;">
         <div class="totals-row">
             <div class="totals-box">
                 <i style="height:60px;width:60px;" class="fas fa-leaf"></i>
