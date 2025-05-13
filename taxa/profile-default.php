@@ -194,5 +194,5 @@
     });
     taxonProfilePage.use(Quasar, { config: {} });
     taxonProfilePage.use(Pinia.createPinia());
-    taxonProfilePage.mount('#inner-table');
+    taxonProfilePage.mount('#mainContainer');
 </script>

@@ -6,43 +6,43 @@ class UploadMediaTemp{
 	private $conn;
 
     private $fields = array(
-        "upmid" => array("dataType" => "number", "length" => 50),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "url" => array("dataType" => "string", "length" => 255),
-        "thumbnailurl" => array("dataType" => "string", "length" => 255),
-        "originalurl" => array("dataType" => "string", "length" => 255),
-        "accessuri" => array("dataType" => "string", "length" => 2048),
-        "photographer" => array("dataType" => "string", "length" => 100),
-        "title" => array("dataType" => "string", "length" => 255),
-        "imagetype" => array("dataType" => "string", "length" => 50),
-        "format" => array("dataType" => "string", "length" => 45),
-        "caption" => array("dataType" => "string", "length" => 100),
-        "description" => array("dataType" => "string", "length" => 1000),
-        "creator" => array("dataType" => "string", "length" => 45),
-        "owner" => array("dataType" => "string", "length" => 100),
-        "type" => array("dataType" => "string", "length" => 45),
-        "sourceurl" => array("dataType" => "string", "length" => 255),
-        "furtherinformationurl" => array("dataType" => "string", "length" => 2048),
-        "referenceurl" => array("dataType" => "string", "length" => 255),
-        "language" => array("dataType" => "string", "length" => 45),
-        "copyright" => array("dataType" => "string", "length" => 255),
-        "accessrights" => array("dataType" => "string", "length" => 255),
-        "usageterms" => array("dataType" => "string", "length" => 255),
-        "rights" => array("dataType" => "string", "length" => 255),
-        "locality" => array("dataType" => "string", "length" => 250),
-        "locationcreated" => array("dataType" => "string", "length" => 1000),
-        "bibliographiccitation" => array("dataType" => "string", "length" => 255),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "collid" => array("dataType" => "number", "length" => 10),
-        "dbpk" => array("dataType" => "string", "length" => 150),
-        "publisher" => array("dataType" => "string", "length" => 255),
-        "contributor" => array("dataType" => "string", "length" => 255),
-        "sourceidentifier" => array("dataType" => "string", "length" => 150),
-        "notes" => array("dataType" => "string", "length" => 350),
-        "anatomy" => array("dataType" => "string", "length" => 100),
-        "username" => array("dataType" => "string", "length" => 45),
-        "sortsequence" => array("dataType" => "number", "length" => 10),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'upmid' => array('dataType' => 'number', 'length' => 50),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'url' => array('dataType' => 'string', 'length' => 255),
+        'thumbnailurl' => array('dataType' => 'string', 'length' => 255),
+        'originalurl' => array('dataType' => 'string', 'length' => 255),
+        'accessuri' => array('dataType' => 'string', 'length' => 2048),
+        'photographer' => array('dataType' => 'string', 'length' => 100),
+        'title' => array('dataType' => 'string', 'length' => 255),
+        'imagetype' => array('dataType' => 'string', 'length' => 50),
+        'format' => array('dataType' => 'string', 'length' => 45),
+        'caption' => array('dataType' => 'string', 'length' => 100),
+        'description' => array('dataType' => 'string', 'length' => 1000),
+        'creator' => array('dataType' => 'string', 'length' => 45),
+        'owner' => array('dataType' => 'string', 'length' => 100),
+        'type' => array('dataType' => 'string', 'length' => 45),
+        'sourceurl' => array('dataType' => 'string', 'length' => 255),
+        'furtherinformationurl' => array('dataType' => 'string', 'length' => 2048),
+        'referenceurl' => array('dataType' => 'string', 'length' => 255),
+        'language' => array('dataType' => 'string', 'length' => 45),
+        'copyright' => array('dataType' => 'string', 'length' => 255),
+        'accessrights' => array('dataType' => 'string', 'length' => 255),
+        'usageterms' => array('dataType' => 'string', 'length' => 255),
+        'rights' => array('dataType' => 'string', 'length' => 255),
+        'locality' => array('dataType' => 'string', 'length' => 250),
+        'locationcreated' => array('dataType' => 'string', 'length' => 1000),
+        'bibliographiccitation' => array('dataType' => 'string', 'length' => 255),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'dbpk' => array('dataType' => 'string', 'length' => 150),
+        'publisher' => array('dataType' => 'string', 'length' => 255),
+        'contributor' => array('dataType' => 'string', 'length' => 255),
+        'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
+        'notes' => array('dataType' => 'string', 'length' => 350),
+        'anatomy' => array('dataType' => 'string', 'length' => 100),
+        'username' => array('dataType' => 'string', 'length' => 45),
+        'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -58,31 +58,44 @@ class UploadMediaTemp{
     {
         $recordsCreated = 0;
         $fieldNameArr = array();
-        $sourceKeyArr = array();
         $valueArr = array();
+        $skipFields = array('upmid', 'tid', 'occid', 'collid', 'initialtimestamp');
+        $mappedFields = array();
         if($collid){
-            $sourceDataKeys = array_keys($data[0]);
             $fieldNameArr[] = 'collid';
-            foreach($sourceDataKeys as $key){
-                if($key || (string)$key === '0'){
-                    if(($fieldMapping && array_key_exists($key, $fieldMapping) && $fieldMapping[$key] !== 'unmapped') || !$fieldMapping){
-                        $field = $fieldMapping ? $fieldMapping[$key] : $key;
-                        if($field === 'language' || $field === 'owner'){
-                            $fieldNameArr[] = '`' . $field . '`';
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    if($field === 'language' || $field === 'owner'){
+                        $fieldNameArr[] = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldNameArr[] = $field;
+                    }
+                    if($fieldMapping){
+                        $mappedFieldVal = null;
+                        $mappedKey = $fieldMapping[(string)$field] ?? null;
+                        if(($mappedKey && (string)$mappedKey !== 'unmapped') || (string)$mappedKey === '0'){
+                            $mappedFieldVal = (string)$mappedKey;
                         }
-                        else{
-                            $fieldNameArr[] = $field;
-                        }
-                        $sourceKeyArr[] = $key;
+                        $mappedFields[$field] = $mappedFieldVal;
+                    }
+                    elseif(array_key_exists($field, $data[0])){
+                        $mappedFields[$field] = $field;
                     }
                 }
             }
             foreach($data as $dataArr){
                 $dataValueArr = array();
+                $mediaData = array();
                 $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $collid, $this->fields['collid']);
-                foreach($sourceKeyArr as $key){
-                    $targetField = $fieldMapping ? $fieldMapping[$key] : $key;
-                    $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataArr[$key], $this->fields[$targetField]);
+                foreach($mappedFields as $field => $key){
+                    $mediaData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
+                }
+                foreach($this->fields as $field => $fieldArr){
+                    if(!in_array($field, $skipFields)){
+                        $dataValue = $mediaData[$field] ?? null;
+                        $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataValue, $fieldArr);
+                    }
                 }
                 $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
             }

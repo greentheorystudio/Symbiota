@@ -8,17 +8,17 @@ class ChecklistTaxa{
 	private $conn;
 
     private $fields = array(
-        "cltlid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "clid" => array("dataType" => "number", "length" => 10),
-        "habitat" => array("dataType" => "string", "length" => 250),
-        "abundance" => array("dataType" => "string", "length" => 50),
-        "notes" => array("dataType" => "string", "length" => 2000),
-        "source" => array("dataType" => "string", "length" => 250),
-        "nativity" => array("dataType" => "string", "length" => 50),
-        "endemic" => array("dataType" => "string", "length" => 45),
-        "invasive" => array("dataType" => "string", "length" => 45),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'cltlid' => array('dataType' => 'number', 'length' => 10),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'clid' => array('dataType' => 'number', 'length' => 10),
+        'habitat' => array('dataType' => 'string', 'length' => 250),
+        'abundance' => array('dataType' => 'string', 'length' => 50),
+        'notes' => array('dataType' => 'string', 'length' => 2000),
+        'source' => array('dataType' => 'string', 'length' => 250),
+        'nativity' => array('dataType' => 'string', 'length' => 50),
+        'endemic' => array('dataType' => 'string', 'length' => 45),
+        'invasive' => array('dataType' => 'string', 'length' => 45),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

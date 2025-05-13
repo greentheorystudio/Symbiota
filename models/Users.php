@@ -12,27 +12,27 @@ class Users{
     private $encryption;
 
     private $fields = array(
-        "uid" => array("dataType" => "number", "length" => 10),
-        "firstname" => array("dataType" => "string", "length" => 45),
-        "middleinitial" => array("dataType" => "string", "length" => 2),
-        "lastname" => array("dataType" => "string", "length" => 45),
-        "username" => array("dataType" => "string", "length" => 45),
-        "password" => array("dataType" => "string", "length" => 255),
-        "title" => array("dataType" => "string", "length" => 150),
-        "institution" => array("dataType" => "string", "length" => 200),
-        "department" => array("dataType" => "string", "length" => 200),
-        "address" => array("dataType" => "string", "length" => 255),
-        "city" => array("dataType" => "string", "length" => 100),
-        "state" => array("dataType" => "string", "length" => 50),
-        "zip" => array("dataType" => "string", "length" => 15),
-        "country" => array("dataType" => "string", "length" => 50),
-        "email" => array("dataType" => "string", "length" => 100),
-        "url" => array("dataType" => "string", "length" => 400),
-        "biography" => array("dataType" => "string", "length" => 1500),
-        "guid" => array("dataType" => "string", "length" => 45),
-        "validated" => array("dataType" => "string", "length" => 45),
-        "lastlogindate" => array("dataType" => "date", "length" => 0),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'uid' => array('dataType' => 'number', 'length' => 10),
+        'firstname' => array('dataType' => 'string', 'length' => 45),
+        'middleinitial' => array('dataType' => 'string', 'length' => 2),
+        'lastname' => array('dataType' => 'string', 'length' => 45),
+        'username' => array('dataType' => 'string', 'length' => 45),
+        'password' => array('dataType' => 'string', 'length' => 255),
+        'title' => array('dataType' => 'string', 'length' => 150),
+        'institution' => array('dataType' => 'string', 'length' => 200),
+        'department' => array('dataType' => 'string', 'length' => 200),
+        'address' => array('dataType' => 'string', 'length' => 255),
+        'city' => array('dataType' => 'string', 'length' => 100),
+        'state' => array('dataType' => 'string', 'length' => 50),
+        'zip' => array('dataType' => 'string', 'length' => 15),
+        'country' => array('dataType' => 'string', 'length' => 50),
+        'email' => array('dataType' => 'string', 'length' => 100),
+        'url' => array('dataType' => 'string', 'length' => 400),
+        'biography' => array('dataType' => 'string', 'length' => 1500),
+        'guid' => array('dataType' => 'string', 'length' => 45),
+        'validated' => array('dataType' => 'string', 'length' => 45),
+        'lastlogindate' => array('dataType' => 'date', 'length' => 0),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -230,24 +230,26 @@ class Users{
         return $newID;
     }
 
-    public function deleteAllUnconfirmedUsers(): void
+    public function deleteAllUnconfirmedUsers(): int
     {
-        $sql = 'SELECT uid FROM users WHERE validated <> 1 ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $sql = 'DELETE FROM useraccesstokens WHERE uid = ' . $row['uid'] . ' ';
-                $this->conn->query($sql);
-                $sql = 'DELETE FROM userroles WHERE uid = ' . $row['uid'] . ' ';
-                $this->conn->query($sql);
-                $sql = 'DELETE FROM usertaxonomy WHERE uid = ' . $row['uid'] . ' ';
-                $this->conn->query($sql);
-                $sql = 'DELETE FROM users WHERE uid = ' . $row['uid'] . ' ';
-                $this->conn->query($sql);
-                unset($rows[$index]);
+        $retuenVal = 0;
+        $sql = 'DELETE t.* FROM useraccesstokens AS t LEFT JOIN users AS u ON t.uid = u.uid WHERE u.validated <> 1 ';
+        if($this->conn->query($sql)){
+            $retuenVal = 1;
+        }
+        if($retuenVal){
+            $sql = 'DELETE r.* FROM userroles AS r LEFT JOIN users AS u ON r.uid = u.uid WHERE u.validated <> 1 ';
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
             }
         }
+        if($retuenVal){
+            $sql = 'DELETE FROM users WHERE validated <> 1 ';
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
+        }
+        return $retuenVal;
     }
 
     public function deleteToken($uid, $token): void
@@ -360,6 +362,42 @@ class Users{
             }
         }
         return $returnArr;
+    }
+
+    public function getUsers($keyword, $userType): array
+    {
+        $this->clearOldUnregisteredUsers();
+        $retArr = array();
+        $whereArr = array();
+        $sql = 'SELECT uid, firstname, lastname, username FROM users ';
+        if($userType === 'confirmed'){
+            $whereArr[] = 'validated = "1"';
+        }
+        elseif($userType === 'unconfirmed'){
+            $whereArr[] = 'validated <> "1"';
+        }
+        if($keyword){
+            $whereArr[] = '(lastname LIKE "'. SanitizerService::cleanInStr($this->conn, $keyword) . '%" OR username LIKE "' . SanitizerService::cleanInStr($this->conn, $keyword) . '%")';
+        }
+        if(count($whereArr) > 0){
+            $sql .= 'WHERE ' . implode(' AND ', $whereArr) . ' ';
+        }
+        $sql .= 'ORDER BY lastname, firstname';
+        //echo "<div>".$sql."</div>";
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['uid'] = $row['uid'];
+                $nodeArr['firstname'] = $row['firstname'];
+                $nodeArr['lastname'] = $row['lastname'];
+                $nodeArr['username'] = $row['username'];
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 
     public function loginAsUser($username): int
@@ -541,18 +579,14 @@ class Users{
         return $retVal;
     }
 
-    public function validateAllUnconfirmedUsers(): void
+    public function validateAllUnconfirmedUsers(): int
     {
-        $sql = 'SELECT uid FROM users WHERE validated <> 1 ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $sql = 'UPDATE users SET validated = 1 WHERE uid = ' . $row['uid'] . ' ';
-                $this->conn->query($sql);
-                unset($rows[$index]);
-            }
+        $returnVal = 0;
+        $sql = 'UPDATE users SET validated = 1 WHERE validated <> 1 ';
+        if($this->conn->query($sql)){
+            $returnVal = 1;
         }
+        return $returnVal;
     }
 
     public function validateFromConfirmationEmail($uid, $confirmationCode): int
@@ -576,7 +610,6 @@ class Users{
     {
         if($userId){
             $sql = 'UPDATE users SET validated = 1 WHERE uid = ' . (int)$userId . ' ';
-            //echo $sql; Exit;
             $this->conn->query($sql);
         }
     }

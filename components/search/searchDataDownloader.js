@@ -12,7 +12,7 @@ const searchDataDownloader = {
     template: `
         <div class="row">
             <div class="download-type-dropdown self-center">
-                <selector-input-element :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
+                <selector-input-element class="download-type-dropdown" :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
             </div>
             <div class="q-ml-sm self-center">
                 <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="initializeDownload();" icon="fas fa-download" dense>
@@ -74,7 +74,7 @@ const searchDataDownloader = {
                     const objectUrl = window.URL.createObjectURL(dataBlob);
                     const anchor = document.createElement('a');
                     anchor.href = objectUrl;
-                    anchor.download = filename;
+                    anchor.download = (filename + '.' + requestOptions['type']);
                     document.body.appendChild(anchor);
                     anchor.click();
                     anchor.remove();
@@ -94,7 +94,7 @@ const searchDataDownloader = {
 
         function processTaxaDownload(){
             showWorking();
-            const filename = 'occurrence_search_taxa_list_' + searchStore.getDateTimeString + '.csv';
+            const filename = 'occurrence_search_taxa_list_' + searchStore.getDateTimeString;
             searchStore.processSearch(requestOptions, (res) => {
                 hideWorking();
                 processCsvDownload(res, filename);

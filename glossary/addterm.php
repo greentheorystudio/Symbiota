@@ -63,12 +63,14 @@ if($isEditor && $formSubmit === 'Create Term') {
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Glossary - Add New Term</title>
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="../js/external/jquery.js"></script>
-	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Add New Glossary Term</title>
+    <meta name="description" content="Add a new glossary term for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function() {
 			<?php 
@@ -103,7 +105,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
 			$.ajax({
 				type: "POST",
-				url: "../api/glossary/checkterm.php",
+				url: "<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/glossary/checkterm.php",
 				data: { term: f.term.value, language: f.language.value, tid: tidValue, relglossid: f.relglossid.value }
 			}).success(function( data ) {
 				if(data === "1"){
@@ -121,7 +123,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<script src="../js/glossary.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
-	<div id="innertext">
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
 		<?php 
 		if($statusStr){
 			?>

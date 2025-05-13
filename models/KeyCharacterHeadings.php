@@ -6,12 +6,12 @@ class KeyCharacterHeadings{
 	private $conn;
 
     private $fields = array(
-        "chid" => array("dataType" => "number", "length" => 10),
-        "headingname" => array("dataType" => "string", "length" => 255),
-        "language" => array("dataType" => "string", "length" => 45),
-        "langid" => array("dataType" => "number", "length" => 11),
-        "sortsequence" => array("dataType" => "number", "length" => 11),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'chid' => array('dataType' => 'number', 'length' => 10),
+        'headingname' => array('dataType' => 'string', 'length' => 255),
+        'language' => array('dataType' => 'string', 'length' => 45),
+        'langid' => array('dataType' => 'number', 'length' => 11),
+        'sortsequence' => array('dataType' => 'number', 'length' => 11),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

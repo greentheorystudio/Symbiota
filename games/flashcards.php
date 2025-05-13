@@ -25,9 +25,11 @@ $sciArr = array();
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Flash Cards</title>
-    <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Flash Card Game</title>
+    <meta name="description" content="Flash card game for checklists in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
         const imageArr = [];
         const sciNameArr = [];
@@ -131,8 +133,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
         function tellMe(){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-                wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+                wWidth = document.getElementById('main-container').offsetWidth*1.05;
             }
             else if(document.body.offsetWidth){
                 wWidth = document.body.offsetWidth*0.9;
@@ -149,15 +151,15 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <body onload="init();">
 <?php
 include(__DIR__ . '/../header.php');
-echo '<div class="navpath">';
+echo '<div id="breadcrumbs">';
 echo '<a href="../index.php">Home</a> &gt;&gt; ';
 echo '<a href="../checklists/checklist.php?cl='.$clid.'">';
 echo $fcManager->getClName();
 echo '</a> &gt;&gt; ';
-echo ' <b>Flashcard Game</b>';
+echo ' <b>Flash Card Game</b>';
 echo '</div>';
 ?>
-<div id='innertext'>
+<div id="mainContainer" style="padding: 10px 15px 15px;">
     <div style="width:420px;margin-left:auto;margin-right:auto;">
         <div style="width:420px;height:420px;text-align:center;">
             <div>

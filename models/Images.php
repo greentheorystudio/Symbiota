@@ -11,30 +11,30 @@ class Images{
 	private $conn;
 
     private $fields = array(
-        "imgid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "url" => array("dataType" => "string", "length" => 255),
-        "thumbnailurl" => array("dataType" => "string", "length" => 255),
-        "originalurl" => array("dataType" => "string", "length" => 255),
-        "photographer" => array("dataType" => "string", "length" => 100),
-        "photographeruid" => array("dataType" => "number", "length" => 10),
-        "format" => array("dataType" => "string", "length" => 45),
-        "caption" => array("dataType" => "string", "length" => 750),
-        "owner" => array("dataType" => "string", "length" => 250),
-        "sourceurl" => array("dataType" => "string", "length" => 255),
-        "referenceurl" => array("dataType" => "string", "length" => 255),
-        "copyright" => array("dataType" => "string", "length" => 255),
-        "rights" => array("dataType" => "string", "length" => 255),
-        "locality" => array("dataType" => "string", "length" => 250),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "notes" => array("dataType" => "string", "length" => 350),
-        "anatomy" => array("dataType" => "string", "length" => 100),
-        "username" => array("dataType" => "string", "length" => 45),
-        "sourceidentifier" => array("dataType" => "string", "length" => 150),
-        "mediamd5" => array("dataType" => "string", "length" => 45),
-        "dynamicproperties" => array("dataType" => "text", "length" => 0),
-        "sortsequence" => array("dataType" => "number", "length" => 10),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'imgid' => array('dataType' => 'number', 'length' => 10),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'url' => array('dataType' => 'string', 'length' => 255),
+        'thumbnailurl' => array('dataType' => 'string', 'length' => 255),
+        'originalurl' => array('dataType' => 'string', 'length' => 255),
+        'photographer' => array('dataType' => 'string', 'length' => 100),
+        'photographeruid' => array('dataType' => 'number', 'length' => 10),
+        'format' => array('dataType' => 'string', 'length' => 45),
+        'caption' => array('dataType' => 'string', 'length' => 750),
+        'owner' => array('dataType' => 'string', 'length' => 250),
+        'sourceurl' => array('dataType' => 'string', 'length' => 255),
+        'referenceurl' => array('dataType' => 'string', 'length' => 255),
+        'copyright' => array('dataType' => 'string', 'length' => 255),
+        'rights' => array('dataType' => 'string', 'length' => 255),
+        'locality' => array('dataType' => 'string', 'length' => 250),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'notes' => array('dataType' => 'string', 'length' => 350),
+        'anatomy' => array('dataType' => 'string', 'length' => 100),
+        'username' => array('dataType' => 'string', 'length' => 45),
+        'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
+        'mediamd5' => array('dataType' => 'string', 'length' => 45),
+        'dynamicproperties' => array('dataType' => 'text', 'length' => 0),
+        'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -91,6 +91,54 @@ class Images{
             }
         }
         return $returnVal;
+    }
+
+    public function clearExistingImagesNotInUpload($collid, $clearDerivatives): int
+    {
+        $retVal = 1;
+        $imgIdArr = array();
+        $sql = 'SELECT DISTINCT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+            'LEFT JOIN uploadmediatemp AS um ON i.occid = um.occid AND i.url = um.url '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(um.upmid) ';
+        if($result = $this->conn->query($sql)){
+            while(($row = $result->fetch_assoc()) && $retVal){
+                $imgIdArr[] = $row['imgid'];
+                if(count($imgIdArr) === 10000){
+                    $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
+                    $imgIdArr = array();
+                }
+            }
+            $result->free();
+            if(count($imgIdArr) > 0){
+                $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
+            }
+        }
+        return $retVal;
+    }
+
+    public function clearImagesByArr($imgIdArr, $clearDerivatives): int
+    {
+        $retVal = 0;
+        if($clearDerivatives){
+            $this->deleteAssociatedImageFiles('imgidArr', $imgIdArr);
+        }
+        $sql = 'DELETE t.* FROM imagetag AS t WHERE t.imgid IN(' . implode(',', $imgIdArr) . ') ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE g.* FROM guidimages AS g WHERE g.imgid IN(' . implode(',', $imgIdArr) . ') ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        if($retVal){
+            $sql = 'DELETE i.* FROM images AS i WHERE i.imgid IN(' . implode(',', $imgIdArr) . ') ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
     }
 
     public function createImageRecord($data): int
@@ -165,6 +213,9 @@ class Images{
         elseif($idType === 'occidArr'){
             $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE occid IN(' . implode(',', $id) . ') ';
         }
+        elseif($idType === 'imgidArr'){
+            $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE imgid IN(' . implode(',', $id) . ') ';
+        }
         elseif($idType === 'collid'){
             $sql = 'SELECT i.url, i.thumbnailurl, i.originalurl FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                 'WHERE o.collid = ' . (int)$id . ' ';
@@ -177,13 +228,13 @@ class Images{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                if(strpos($row['url'], '/') === 0){
+                if($row['url'] && strncmp($row['url'], '/', 1) === 0){
                     FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['url']), true);
                 }
-                if(strpos($row['thumbnailurl'], '/') === 0){
+                if($row['thumbnailurl'] && strncmp($row['thumbnailurl'], '/', 1) === 0){
                     FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['thumbnailurl']), true);
                 }
-                if(strpos($row['originalurl'], '/') === 0){
+                if($row['originalurl'] && strncmp($row['originalurl'], '/', 1) === 0){
                     FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['originalurl']), true);
                 }
                 unset($rows[$index]);
@@ -221,8 +272,8 @@ class Images{
             }
             if($retVal){
                 $sql = 'DELETE i.* FROM images AS i WHERE ' . $whereStr . ' ';
-                if($this->conn->query($sql)){
-                    $retVal = 1;
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
                 }
             }
         }
@@ -353,17 +404,20 @@ class Images{
         return $returnArr;
     }
 
-    public function getTaxonArrDisplayImageData($tidArr, $includeOccurrence = false, $limitPerTaxon = null, $sortsequenceLimit = null): array
+    public function getTaxonArrDisplayImageData($tidArr, $includeOccurrence, $limitToOccurrence, $limitPerTaxon = null, $sortsequenceLimit = null): array
     {
         $returnArr = array();
         $returnArr['count'] = 0;
         if($tidArr && is_array($tidArr) && count($tidArr) > 0){
             $sql = 'SELECT DISTINCT i.imgid, t.tidaccepted AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.photographer, i.owner, '.
-                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                't.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                 'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
-            if(!$includeOccurrence){
+            if($limitToOccurrence){
+                $sql .= 'AND i.occid IS NOT NULL ';
+            }
+            elseif(!$includeOccurrence){
                 $sql .= 'AND ISNULL(i.occid) ';
             }
             if($sortsequenceLimit && (int)$sortsequenceLimit > 0){
@@ -397,7 +451,7 @@ class Images{
             }
 
             $sql = 'SELECT DISTINCT i.imgid, te.parenttid AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.photographer, i.owner, '.
-                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                't.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                 'LEFT JOIN taxaenumtree AS te ON t.tidaccepted = te.tid '.

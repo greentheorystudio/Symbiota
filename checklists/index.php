@@ -15,9 +15,11 @@ $clManager->setProj($pid);
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Species Lists</title>
-	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklists</title>
+    <meta name="description" content="Checklist index for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
         function openSpatialViewerWindow(coordArrJson) {
             let mapWindow = open("../spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
@@ -35,12 +37,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <body>
     <?php
 	include(__DIR__ . '/../header.php');
-	echo "<div class='navpath'>";
+	echo '<div id="breadcrumbs">';
 	echo "<a href='../index.php'>Home</a> &gt;&gt; ";
 	echo ' <b>Checklists</b>';
 	echo '</div>';
 	?>
-	<div id="innertext">
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
 		<h2>Checklists</h2>
         <div style='margin:20px;'>
 			<?php 

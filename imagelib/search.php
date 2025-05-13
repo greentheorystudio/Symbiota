@@ -36,16 +36,18 @@ if($stArrJson){
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Search</title>
-	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script src="../js/external/jquery.js" type="text/javascript"></script>
-	<script src="../js/external/jquery-ui.js" type="text/javascript"></script>
-	<script src="../js/external/jquery.manifest.js" type="text/javascript"></script>
-	<script src="../js/external/jquery.marcopolo.js" type="text/javascript"></script>
-    <script src="../js/images.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-    <script src="../js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Image Search</title>
+    <meta name="description" content="Image search for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.manifest.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.marcopolo.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/images.index.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 	<script type="text/javascript">
         let stArr = {};
         let phArr = [];
@@ -62,7 +64,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 			$('#photographer').manifest({
 				required: true,
 				marcoPolo: {
-					url: '../api/search/imagesearchautofill.php',
+					url: '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/search/imagesearchautofill.php',
 					data: {
 						t: 'photographer'
 					},
@@ -74,7 +76,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
             $('#taxainput').manifest({
                 marcoPolo: {
-                    url: '../api/search/imagesearchautofill.php',
+                    url: '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/search/imagesearchautofill.php',
                     data: {
                         t: 'taxa'
                     },
@@ -86,7 +88,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
             $('#commoninput').manifest({
                 marcoPolo: {
-                    url: '../api/search/imagesearchautofill.php',
+                    url: '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/search/imagesearchautofill.php',
                     data: {
                         t: 'common'
                     },
@@ -98,7 +100,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 
             $('#keywordsinput').manifest({
                 marcoPolo: {
-                    url: '../api/search/imagesearchautofill.php',
+                    url: '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/search/imagesearchautofill.php',
                     data: {
                         t: 'keywords'
                     },
@@ -229,7 +231,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             }
             document.getElementById("imagebox").innerHTML = '<div>Loading...<span style="margin-left:15px;">' + getSmallWorkingSpinnerHtml(12) + '</span></div>';
             const http = new XMLHttpRequest();
-            const url = "../api/search/changeimagepage.php";
+            const url = "<?php echo $GLOBALS['CLIENT_ROOT']; ?>/api/search/changeimagepage.php";
             const queryid = document.getElementById('queryId').value;
             const params = 'starr='+encodeURIComponent(JSON.stringify(stArr))+'&queryId='+queryid+'&page='+page+'&view='+view+'&taxon='+taxon;
             //console.log(url+'?'+params);
@@ -392,13 +394,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <body>
 	<?php
 	include(__DIR__ . '/../header.php');
-    echo '<div class="navpath">';
+    echo '<div id="breadcrumbs">';
     echo '<a href="../index.php">Home</a> &gt;&gt; ';
     echo '<a href="contributors.php">Image Contributors</a> &gt;&gt; ';
     echo '<b>Image Search</b>';
     echo '</div>';
 	?> 
-	<div id="innertext">
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
 		<div id="tabs" style="margin:0;">
 			<ul>
 				<li><a href="#criteriadiv">Search Criteria</a></li>

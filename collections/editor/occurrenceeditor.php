@@ -19,6 +19,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Editor</title>
+        <meta name="description" content="Edit an occurrence record">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />
@@ -42,7 +43,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
         </script>
     </head>
     <body>
-        <div id="occurrence-editor-container" class="q-mt-lg">
+        <div id="mainContainer" class="q-mt-lg">
             <template v-if="displayMode !== 3">
                 <occurrence-editor-single-display></occurrence-editor-single-display>
             </template>
@@ -247,7 +248,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
             });
             occurrenceEditorControllerModule.use(Quasar, { config: {} });
             occurrenceEditorControllerModule.use(Pinia.createPinia());
-            occurrenceEditorControllerModule.mount('#occurrence-editor-container');
+            occurrenceEditorControllerModule.mount('#mainContainer');
         </script>
     </body>
 </html>

@@ -40,21 +40,23 @@ $statusStr = '';
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-    <title>Occurrence Processor Control Panel</title>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Processor Control Panel</title>
+    <meta name="description" content="Processor control panel for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
 </head>
 <body>
     <?php
     include(__DIR__ . '/../../header.php');
-    echo '<div class="navpath">';
+    echo '<div id="breadcrumbs">';
     echo '<a href="../../index.php">Home</a> &gt;&gt; ';
     echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
     echo '<a href="../upload/index.php?collid='.$collid.'&tabindex='.$tabIndex.'"><b>Occurrence Data Upload Module</b></a> &gt;&gt; ';
     echo '<b>Image Processor</b>';
     echo '</div>';
     ?>
-    <div id="innertext">
+    <div id="mainContainer" style="padding: 10px 15px 15px;">
         <h2><?php echo $specManager->getCollectionName(); ?></h2>
         <?php
         if($isEditor){

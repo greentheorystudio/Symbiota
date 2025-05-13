@@ -11,10 +11,11 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
     include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <head>
-        <title>Collection Profile</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Profile</title>
+        <meta name="description" content="Collection profile page in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .coll-icon-image {
                 border-width: 1px;
@@ -33,13 +34,13 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div id="moduleContainer">
-            <div class="q-mt-xs q-ml-xs row justify-start">
-                <a :href="clientRoot + '/index.php'">Home</a> &gt;&gt;
-                <a :href="clientRoot + '/collections/list.php'">Collection Search Page</a> &gt;&gt;
-                <span class="text-body1 text-bold">{{ collectionData.collectionname }} Details</span>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/collections/list.php')">Collection Search Page</a> &gt;&gt;
+                <span class="text-bold">{{ collectionData.collectionname }} Details</span>
             </div>
-            <div id="innertext">
+            <div class="q-pa-md">
                 <template v-if="collId > 0">
                     <div class="column q-gutter-md">
                         <div class="text-h4 text-bold">
@@ -82,7 +83,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                         <div>
                                             {{ collectionData['institutionname'] }}
                                         </div>
-                                        <div v-if="collectionPermissions.value.includes('CollAdmin')">
+                                        <div v-if="collectionPermissions.includes('CollAdmin')">
                                             <a :href="(clientRoot + '/collections/misc/institutioneditor.php?emode=1&targetcollid=' + collId + '&iid=' + collectionData.iid)" title="Edit institution information">
                                                 <q-icon name="far fa-edit" size="13px" class="cursor-pointer" />
                                             </a>
@@ -375,7 +376,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
             });
             collectionProfileModule.use(Quasar, { config: {} });
             collectionProfileModule.use(Pinia.createPinia());
-            collectionProfileModule.mount('#moduleContainer');
+            collectionProfileModule.mount('#mainContainer');
         </script>
     </body>
 </html>

@@ -1,5 +1,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
+ALTER TABLE `configurations`
+    MODIFY COLUMN `configurationValue` longtext NOT NULL AFTER `configurationDataType`;
+
 ALTER TABLE `omcollections`
     ADD COLUMN `ccpk` int(10) UNSIGNED NULL AFTER `CollID`,
     ADD COLUMN `isPublic` smallint(1) NOT NULL DEFAULT 1 AFTER `SortSeq`,
@@ -327,10 +330,10 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_uploadimg_occid` (`occid`),
     KEY `Index_uploadimg_collid` (`collid`),
     KEY `Index_uploadimg_dbpk` (`dbpk`),
-    KEY `Index_ url` (`url`),
-    KEY `Index_ originalurl` (`originalurl`),
-    KEY `Index_ accessuri` (`accessuri`),
-    KEY `Index_ format` (`format`),
+    KEY `Index_url` (`url`),
+    KEY `Index_originalurl` (`originalurl`),
+    KEY `Index_accessuri` (`accessuri`),
+    KEY `Index_format` (`format`),
     KEY `Index_uploadimg_ts` (`initialtimestamp`)
 );
 
@@ -396,5 +399,21 @@ ALTER TABLE `uploadspectemp`
     ADD INDEX `Index_eventdbpk`(`eventdbpk`);
 
 DROP TRIGGER `uploadspectemp_delete`;
+
+ALTER TABLE `fmchecklists`
+    MODIFY COLUMN `searchterms` longtext NULL AFTER `politicalDivision`,
+    MODIFY COLUMN `footprintWKT` longtext NULL AFTER `pointradiusmeters`,
+    MODIFY COLUMN `defaultSettings` text NULL AFTER `Access`;
+
+ALTER TABLE `fmprojects`
+    MODIFY COLUMN `dynamicProperties` longtext NULL AFTER `ispublic`;
+
+ALTER TABLE `omcolldatauploadparameters`
+    MODIFY COLUMN `queryparamjson` longtext NULL AFTER `dwcpath`,
+    MODIFY COLUMN `cleansql` longtext NULL AFTER `queryparamjson`,
+    MODIFY COLUMN `configjson` longtext NULL AFTER `cleansql`;
+
+ALTER TABLE `omcollmediauploadparameters`
+    MODIFY COLUMN `configjson` longtext NULL AFTER `patternmatchfield`;
 
 SET FOREIGN_KEY_CHECKS = 1;

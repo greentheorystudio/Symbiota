@@ -11,42 +11,42 @@ class Collections {
     private $conn;
 
     private $fields = array(
-        "collid" => array("dataType" => "number", "length" => 10),
-        "ccpk" => array("dataType" => "number", "length" => 10),
-        "institutioncode" => array("dataType" => "string", "length" => 45),
-        "collectioncode" => array("dataType" => "string", "length" => 45),
-        "collectionname" => array("dataType" => "string", "length" => 150),
-        "collectionid" => array("dataType" => "string", "length" => 100),
-        "datasetid" => array("dataType" => "string", "length" => 250),
-        "datasetname" => array("dataType" => "string", "length" => 100),
-        "iid" => array("dataType" => "number", "length" => 10),
-        "fulldescription" => array("dataType" => "string", "length" => 2000),
-        "homepage" => array("dataType" => "string", "length" => 250),
-        "individualurl" => array("dataType" => "string", "length" => 500),
-        "contact" => array("dataType" => "string", "length" => 250),
-        "email" => array("dataType" => "string", "length" => 45),
-        "latitudedecimal" => array("dataType" => "number", "length" => 8),
-        "longitudedecimal" => array("dataType" => "number", "length" => 9),
-        "icon" => array("dataType" => "string", "length" => 250),
-        "colltype" => array("dataType" => "string", "length" => 45),
-        "managementtype" => array("dataType" => "string", "length" => 45),
-        "datarecordingmethod" => array("dataType" => "string", "length" => 45),
-        "defaultrepcount" => array("dataType" => "number", "length" => 11),
-        "collectionguid" => array("dataType" => "string", "length" => 45),
-        "securitykey" => array("dataType" => "string", "length" => 45),
-        "guidtarget" => array("dataType" => "string", "length" => 45),
-        "rightsholder" => array("dataType" => "string", "length" => 250),
-        "rights" => array("dataType" => "string", "length" => 250),
-        "usageterm" => array("dataType" => "string", "length" => 250),
-        "publishtogbif" => array("dataType" => "number", "length" => 11),
-        "publishtoidigbio" => array("dataType" => "number", "length" => 11),
-        "aggkeysstr" => array("dataType" => "string", "length" => 1000),
-        "dwcaurl" => array("dataType" => "string", "length" => 250),
-        "bibliographiccitation" => array("dataType" => "string", "length" => 1000),
-        "accessrights" => array("dataType" => "string", "length" => 1000),
-        "configjson" => array("dataType" => "json", "length" => 0),
-        "ispublic" => array("dataType" => "number", "length" => 6),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'ccpk' => array('dataType' => 'number', 'length' => 10),
+        'institutioncode' => array('dataType' => 'string', 'length' => 45),
+        'collectioncode' => array('dataType' => 'string', 'length' => 45),
+        'collectionname' => array('dataType' => 'string', 'length' => 150),
+        'collectionid' => array('dataType' => 'string', 'length' => 100),
+        'datasetid' => array('dataType' => 'string', 'length' => 250),
+        'datasetname' => array('dataType' => 'string', 'length' => 100),
+        'iid' => array('dataType' => 'number', 'length' => 10),
+        'fulldescription' => array('dataType' => 'string', 'length' => 2000),
+        'homepage' => array('dataType' => 'string', 'length' => 250),
+        'individualurl' => array('dataType' => 'string', 'length' => 500),
+        'contact' => array('dataType' => 'string', 'length' => 250),
+        'email' => array('dataType' => 'string', 'length' => 45),
+        'latitudedecimal' => array('dataType' => 'number', 'length' => 8),
+        'longitudedecimal' => array('dataType' => 'number', 'length' => 9),
+        'icon' => array('dataType' => 'string', 'length' => 250),
+        'colltype' => array('dataType' => 'string', 'length' => 45),
+        'managementtype' => array('dataType' => 'string', 'length' => 45),
+        'datarecordingmethod' => array('dataType' => 'string', 'length' => 45),
+        'defaultrepcount' => array('dataType' => 'number', 'length' => 11),
+        'collectionguid' => array('dataType' => 'string', 'length' => 45),
+        'securitykey' => array('dataType' => 'string', 'length' => 45),
+        'guidtarget' => array('dataType' => 'string', 'length' => 45),
+        'rightsholder' => array('dataType' => 'string', 'length' => 250),
+        'rights' => array('dataType' => 'string', 'length' => 250),
+        'usageterm' => array('dataType' => 'string', 'length' => 250),
+        'publishtogbif' => array('dataType' => 'number', 'length' => 11),
+        'publishtoidigbio' => array('dataType' => 'number', 'length' => 11),
+        'aggkeysstr' => array('dataType' => 'string', 'length' => 1000),
+        'dwcaurl' => array('dataType' => 'string', 'length' => 250),
+        'bibliographiccitation' => array('dataType' => 'string', 'length' => 1000),
+        'accessrights' => array('dataType' => 'string', 'length' => 1000),
+        'configjson' => array('dataType' => 'json', 'length' => 0),
+        'ispublic' => array('dataType' => 'number', 'length' => 6),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
 	public function __construct(){
@@ -279,6 +279,21 @@ class Collections {
             }
         }
         return $retArr;
+    }
+
+    public function getCollectionPermissionLabels($permissionArr): array
+    {
+        $idStr = implode(',', array_keys($permissionArr));
+        $sql = 'SELECT collid, collectionname FROM omcollections WHERE collid IN(' . $idStr . ') ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $permissionArr[$row['collid']] = $row['collectionname'];
+                unset($rows[$index]);
+            }
+        }
+        return $permissionArr;
     }
 
     public function getGeographicDistributionData($collId, $country = null, $state = null): array

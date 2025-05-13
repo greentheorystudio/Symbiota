@@ -67,10 +67,12 @@ else{
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-    <title>View Access Statistics</title>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Access Statistics</title>
+    <meta name="description" content="Access statistics for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script>
@@ -84,7 +86,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
         function printFriendlyMode(status){
             if(status){
-                $(".navpath").hide();
+                $("#breadcrumbs").hide();
                 $(".header").hide();
                 $(".navbarDiv").hide();
                 $(".returnDiv").show();
@@ -92,7 +94,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 $(".footer").hide();
             }
             else{
-                $(".navpath").show();
+                $("#breadcrumbs").show();
                 $(".header").show();
                 $(".navbarDiv").show();
                 $(".returnDiv").hide();
@@ -112,13 +114,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <body>
     <?php
     include(__DIR__ . '/../../header.php');
-    echo '<div class="navpath">';
+    echo '<div id="breadcrumbs">';
     echo '<a href="../../index.php">Home</a> &gt;&gt; ';
     echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
     echo '<b>View Access Statistics</b>';
     echo '</div>';
     ?>
-    <div id="innertext" style="min-width:1100px">
+    <div id="mainContainer" style="padding: 10px 15px 15px;min-width:1100px;">
         <div>
             <div style="float:left;"><b><u>User Access Statistics</u></b></div>
             <div id="desc_details" style="clear:both;display:none;width:500px;">Displays general user access statistics for all occurrences within collection.

@@ -31,4 +31,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'createTemporaryChecklistFromTidArr' && array_key_exists('tidArr', $_POST)){
         echo $checklists->createTemporaryChecklistFromTidArr(json_decode($_POST['tidArr'], true));
     }
+    elseif($action === 'getChecklistArr'){
+        echo json_encode($checklists->getChecklistArr());
+    }
 }

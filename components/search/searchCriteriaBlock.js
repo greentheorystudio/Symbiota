@@ -166,7 +166,7 @@ const searchCriteriaBlock = {
             </template>
             <div class="row q-col-gutter-md">
                 <div class="col-12 col-sm-6 column q-gutter-sm">
-                    <div v-if="Number(collectionId) > 0">
+                    <div>
                         <checkbox-input-element label="Limit to records without images" :value="searchTerms.withoutimages" @update:value="(value) => updateSearchTerms('withoutimages', value)"></checkbox-input-element>
                     </div>
                     <div>

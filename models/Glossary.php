@@ -7,17 +7,17 @@ class Glossary{
 	private $conn;
 
     private $fields = array(
-        "glossid" => array("dataType" => "number", "length" => 10),
-        "term" => array("dataType" => "string", "length" => 150),
-        "definition" => array("dataType" => "string", "length" => 2000),
-        "language" => array("dataType" => "string", "length" => 45),
-        "source" => array("dataType" => "string", "length" => 1000),
-        "translator" => array("dataType" => "string", "length" => 250),
-        "author" => array("dataType" => "string", "length" => 250),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "resourceurl" => array("dataType" => "string", "length" => 600),
-        "uid" => array("dataType" => "number", "length" => 10),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'glossid' => array('dataType' => 'number', 'length' => 10),
+        'term' => array('dataType' => 'string', 'length' => 150),
+        'definition' => array('dataType' => 'string', 'length' => 2000),
+        'language' => array('dataType' => 'string', 'length' => 45),
+        'source' => array('dataType' => 'string', 'length' => 1000),
+        'translator' => array('dataType' => 'string', 'length' => 250),
+        'author' => array('dataType' => 'string', 'length' => 250),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'resourceurl' => array('dataType' => 'string', 'length' => 600),
+        'uid' => array('dataType' => 'number', 'length' => 10),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

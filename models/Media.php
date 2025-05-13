@@ -10,28 +10,28 @@ class Media{
 	private $conn;
 
     private $fields = array(
-        "mediaid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "accessuri" => array("dataType" => "string", "length" => 2048),
-        "sourceurl" => array("dataType" => "string", "length" => 255),
-        "title" => array("dataType" => "string", "length" => 255),
-        "creatoruid" => array("dataType" => "number", "length" => 10),
-        "creator" => array("dataType" => "string", "length" => 45),
-        "type" => array("dataType" => "string", "length" => 45),
-        "format" => array("dataType" => "string", "length" => 45),
-        "owner" => array("dataType" => "string", "length" => 250),
-        "furtherinformationurl" => array("dataType" => "string", "length" => 2048),
-        "language" => array("dataType" => "string", "length" => 45),
-        "usageterms" => array("dataType" => "string", "length" => 255),
-        "rights" => array("dataType" => "string", "length" => 255),
-        "bibliographiccitation" => array("dataType" => "string", "length" => 255),
-        "publisher" => array("dataType" => "string", "length" => 255),
-        "contributor" => array("dataType" => "string", "length" => 255),
-        "locationcreated" => array("dataType" => "string", "length" => 1000),
-        "description" => array("dataType" => "string", "length" => 1000),
-        "sortsequence" => array("dataType" => "number", "length" => 10),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'mediaid' => array('dataType' => 'number', 'length' => 10),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'accessuri' => array('dataType' => 'string', 'length' => 2048),
+        'sourceurl' => array('dataType' => 'string', 'length' => 255),
+        'title' => array('dataType' => 'string', 'length' => 255),
+        'creatoruid' => array('dataType' => 'number', 'length' => 10),
+        'creator' => array('dataType' => 'string', 'length' => 45),
+        'type' => array('dataType' => 'string', 'length' => 45),
+        'format' => array('dataType' => 'string', 'length' => 45),
+        'owner' => array('dataType' => 'string', 'length' => 250),
+        'furtherinformationurl' => array('dataType' => 'string', 'length' => 2048),
+        'language' => array('dataType' => 'string', 'length' => 45),
+        'usageterms' => array('dataType' => 'string', 'length' => 255),
+        'rights' => array('dataType' => 'string', 'length' => 255),
+        'bibliographiccitation' => array('dataType' => 'string', 'length' => 255),
+        'publisher' => array('dataType' => 'string', 'length' => 255),
+        'contributor' => array('dataType' => 'string', 'length' => 255),
+        'locationcreated' => array('dataType' => 'string', 'length' => 1000),
+        'description' => array('dataType' => 'string', 'length' => 1000),
+        'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -42,6 +42,18 @@ class Media{
  	public function __destruct(){
         $this->conn->close();
 	}
+
+    public function clearExistingMediaNotInUpload($collid): int
+    {
+        $retVal = 0;
+        $sql = 'DELETE m.* FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+            'LEFT JOIN uploadmediatemp AS um ON m.occid = um.occid AND m.accessuri = um.accessuri '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(um.upmid) ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        return $retVal;
+    }
 
     public function createMediaRecord($data): int
     {

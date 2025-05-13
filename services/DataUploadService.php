@@ -148,6 +148,18 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Images)->clearExistingImagesNotInUpload($collid, $clearDerivatives);
+            if($retVal){
+                $retVal = (new Media)->clearExistingMediaNotInUpload($collid);
+            }
+        }
+        return $retVal;
+    }
+
     public function finalTransferClearPreviousDeterminations($collid): int
     {
         $retVal = 1;
@@ -178,11 +190,29 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearPreviousMofRecordsForUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecordsForUpload($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferPopulateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
     {
         $retVal = 1;
         if($collid){
             $retVal = (new UploadMofTemp)->populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveDuplicateDbpkRecordsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->removeDuplicateDbpkRecordsFromUpload($collid);
         }
         return $retVal;
     }

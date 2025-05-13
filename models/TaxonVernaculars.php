@@ -7,17 +7,17 @@ class TaxonVernaculars{
     private $conn;
 
     private $fields = array(
-        "vid" => array("dataType" => "number", "length" => 11),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "vernacularname" => array("dataType" => "string", "length" => 80),
-        "language" => array("dataType" => "string", "length" => 15),
-        "langid" => array("dataType" => "number", "length" => 11),
-        "source" => array("dataType" => "string", "length" => 50),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "username" => array("dataType" => "string", "length" => 45),
-        "isupperterm" => array("dataType" => "number", "length" => 11),
-        "sortsequence" => array("dataType" => "number", "length" => 11),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'vid' => array('dataType' => 'number', 'length' => 11),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'vernacularname' => array('dataType' => 'string', 'length' => 80),
+        'language' => array('dataType' => 'string', 'length' => 15),
+        'langid' => array('dataType' => 'number', 'length' => 11),
+        'source' => array('dataType' => 'string', 'length' => 50),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'username' => array('dataType' => 'string', 'length' => 45),
+        'isupperterm' => array('dataType' => 'number', 'length' => 11),
+        'sortsequence' => array('dataType' => 'number', 'length' => 11),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -85,8 +85,8 @@ class TaxonVernaculars{
                 foreach($rows as $index => $row){
                     $scinameArr = array();
                     $scinameArr['tid'] = '';
-                    $scinameArr['label'] = $row['VernacularName'];
-                    $scinameArr['name'] = $row['VernacularName'];
+                    $scinameArr['label'] = $row['vernacularname'];
+                    $scinameArr['name'] = $row['vernacularname'];
                     $retArr[] = $scinameArr;
                     unset($rows[$index]);
                 }

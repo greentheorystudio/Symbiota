@@ -9,17 +9,18 @@ header('X-Frame-Options: SAMEORIGIN');
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title>Protected Species</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Protected Species List</title>
+        <meta name="description" content="Protected species list for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="app-container">
-            <div id="innertext">
+        <div id="mainContainer">
+            <div class="q-pa-md">
                 <div class="column q-gutter-md">
                     <div class="row justify-between">
                         <div class="text-h5 text-bold">Protected Species</div>
@@ -310,7 +311,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             protectedTaxaModule.use(Quasar, { config: {} });
             protectedTaxaModule.use(Pinia.createPinia());
-            protectedTaxaModule.mount('#app-container');
+            protectedTaxaModule.mount('#mainContainer');
         </script>
     </body>
 </html>

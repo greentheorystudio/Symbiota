@@ -11,8 +11,9 @@ $occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
     include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Detailed Collection Record Information</title>
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Record Information</title>
+        <meta name="description" content="Individual occurrence record information">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
@@ -35,13 +36,17 @@ $occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div id="app-container" class="occurrence-individual-page-info-panel">
+        <div id="mainContainer" class="occurrence-individual-page-info-panel">
             <occurrence-info-tab-module :occurrence-id="occid"></occurrence-info-tab-module>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
         include(__DIR__ . '/../../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialBaseLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/determinationRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -67,7 +72,7 @@ $occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
             });
             occurrenceIndividualInfoPage.use(Quasar, { config: {} });
             occurrenceIndividualInfoPage.use(Pinia.createPinia());
-            occurrenceIndividualInfoPage.mount('#app-container');
+            occurrenceIndividualInfoPage.mount('#mainContainer');
         </script>
     </body>
 </html>

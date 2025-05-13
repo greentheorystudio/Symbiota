@@ -14,9 +14,10 @@ if(!$GLOBALS['SYMB_UID']) {
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomic Identifier Manager</title>
+        <meta name="description" content="Taxonomic identifier manager for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .top-tool-container {
                 width: 500px;
@@ -27,117 +28,119 @@ if(!$GLOBALS['SYMB_UID']) {
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div class="navpath">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <b>Taxonomic Identifier Manager</b>
-        </div>
-        <div id="innertext">
-            <h1>Taxonomic Identifier Manager</h1>
-            <template v-if="isEditor">
-                <q-card>
-                    <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
-                        <q-tab name="datafileupload" label="Upload Data File" no-caps></q-tab>
-                    </q-tabs>
-                    <q-separator></q-separator>
-                    <q-tab-panels v-model="tab">
-                        <q-tab-panel name="datafileupload">
-                            <div class="processor-container">
-                                <div class="processor-control-container">
-                                    <div class="row q-mb-md">
-                                        <taxa-kingdom-selector :disable="loading" :selected-kingdom="selectedKingdom" label="Target Kingdom" class="col-grow" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <span class="text-bold">Taxonomic Identifier Manager</span>
+            </div>
+            <div class="q-pa-md">
+                <h1>Taxonomic Identifier Manager</h1>
+                <template v-if="isEditor">
+                    <q-card>
+                        <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
+                            <q-tab name="datafileupload" label="Upload Data File" no-caps></q-tab>
+                        </q-tabs>
+                        <q-separator></q-separator>
+                        <q-tab-panels v-model="tab">
+                            <q-tab-panel name="datafileupload">
+                                <div class="processor-container">
+                                    <div class="processor-control-container">
+                                        <div class="row q-mb-md">
+                                            <taxa-kingdom-selector :disable="loading" :selected-kingdom="selectedKingdom" label="Target Kingdom" class="col-grow" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+                                        </div>
+                                        <q-card class="processor-control-card">
+                                            <q-card-section>
+                                                <div class="process-header">
+                                                    Upload USDA Symbol data file
+                                                </div>
+                                                Copy and save the <a href="https://plants.usda.gov/csvdownload?plantLst=nonLichenFungiSymbol" target="_blank">Fungi data</a> or <a href="https://plants.usda.gov/csvdownload?plantLst=plantCompleteList" target="_blank">Plant data</a>
+                                                from the <a href="https://plants.usda.gov/home/downloads" target="_blank">USDA PLANTS Download page</a> into a txt file, then upload the file below and click Start.
+                                                <div class="row q-mt-xs">
+                                                    <div class="col-grow">
+                                                        <file-picker-input-element :accepted-types="acceptedFileTypes" :disabled="loading" :value="selectedUsdaFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
+                                                    </div>
+                                                </div>
+                                                <div class="processor-tool-control-container">
+                                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                                        <template v-if="processCancelling && currentProcess === 'initializeUSDAImport'">
+                                                            Cancelling, please wait
+                                                        </template>
+                                                    </div>
+                                                    <div class="processor-tool-button-container">
+                                                        <div>
+                                                            <q-btn :loading="currentProcess === 'initializeUSDAImport'" :disabled="currentProcess && currentProcess !== 'initializeUSDAImport'" color="secondary" @click="initializeUSDAImport();" label="Start" dense />
+                                                        </div>
+                                                        <div>
+                                                            <q-btn v-if="currentProcess === 'initializeUSDAImport'" :disabled="processCancelling && currentProcess === 'initializeUSDAImport'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                            </q-card-section>
+                                        </q-card>
                                     </div>
-                                    <q-card class="processor-control-card">
-                                        <q-card-section>
-                                            <div class="process-header">
-                                                Upload USDA Symbol data file
-                                            </div>
-                                            Copy and save the <a href="https://plants.usda.gov/csvdownload?plantLst=nonLichenFungiSymbol" target="_blank">Fungi data</a> or <a href="https://plants.usda.gov/csvdownload?plantLst=plantCompleteList" target="_blank">Plant data</a>
-                                            from the <a href="https://plants.usda.gov/home/downloads" target="_blank">USDA PLANTS Download page</a> into a txt file, then upload the file below and click Start.
-                                            <div class="row q-mt-xs">
-                                                <div class="col-grow">
-                                                    <file-picker-input-element :accepted-types="acceptedFileTypes" :disabled="loading" :value="selectedUsdaFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
-                                                </div>
-                                            </div>
-                                            <div class="processor-tool-control-container">
-                                                <div class="processor-cancel-message-container text-negative text-bold">
-                                                    <template v-if="processCancelling && currentProcess === 'initializeUSDAImport'">
-                                                        Cancelling, please wait
-                                                    </template>
-                                                </div>
-                                                <div class="processor-tool-button-container">
-                                                    <div>
-                                                        <q-btn :loading="currentProcess === 'initializeUSDAImport'" :disabled="currentProcess && currentProcess !== 'initializeUSDAImport'" color="secondary" @click="initializeUSDAImport();" label="Start" dense />
-                                                    </div>
-                                                    <div>
-                                                        <q-btn v-if="currentProcess === 'initializeUSDAImport'" :disabled="processCancelling && currentProcess === 'initializeUSDAImport'" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                                        </q-card-section>
-                                    </q-card>
-                                </div>
 
-                                <div class="processor-display-container">
-                                    <q-card class="bg-grey-3 q-pa-sm">
-                                        <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
-                                            <q-list dense>
-                                                <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
-                                                    <q-item>
+                                    <div class="processor-display-container">
+                                        <q-card class="bg-grey-3 q-pa-sm">
+                                            <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
+                                                <q-list dense>
+                                                    <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
+                                                        <q-item>
+                                                            <q-item-section>
+                                                                <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                                            </q-item-section>
+                                                        </q-item>
+                                                    </template>
+                                                    <q-item v-for="proc in processorDisplayArr">
                                                         <q-item-section>
-                                                            <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
-                                                        </q-item-section>
-                                                    </q-item>
-                                                </template>
-                                                <q-item v-for="proc in processorDisplayArr">
-                                                    <q-item-section>
-                                                        <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
-                                                        <template v-if="!proc.loading && proc.resultText">
-                                                            <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
-                                                                {{proc.resultText}}
-                                                            </div>
-                                                            <div v-if="proc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
-                                                                {{proc.resultText}}
-                                                            </div>
-                                                        </template>
-                                                        <template v-if="proc.type === 'multi' && proc.subs.length">
-                                                            <div class="q-ml-sm">
-                                                                <div v-for="subproc in proc.subs">
-                                                                    <template v-if="subproc.type === 'text' || subproc.type === 'undo'">
-                                                                        <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
-                                                                        <template v-if="!subproc.loading && subproc.resultText">
-                                                                            <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="text-weight-bold text-green-9">
-                                                                                <span class="text-weight-bold text-green-9">{{subproc.resultText}}</span>
-                                                                            </div>
-                                                                            <div v-if="subproc.result === 'error'" class="text-weight-bold text-negative">
-                                                                                {{subproc.resultText}}
-                                                                            </div>
-                                                                        </template>
-                                                                    </template>
+                                                            <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                                            <template v-if="!proc.loading && proc.resultText">
+                                                                <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
+                                                                    {{proc.resultText}}
                                                                 </div>
-                                                            </div>
-                                                        </template>
-                                                    </q-item-section>
-                                                </q-item>
-                                                <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
-                                                    <q-item>
-                                                        <q-item-section>
-                                                            <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                                                <div v-if="proc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
+                                                                    {{proc.resultText}}
+                                                                </div>
+                                                            </template>
+                                                            <template v-if="proc.type === 'multi' && proc.subs.length">
+                                                                <div class="q-ml-sm">
+                                                                    <div v-for="subproc in proc.subs">
+                                                                        <template v-if="subproc.type === 'text' || subproc.type === 'undo'">
+                                                                            <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                                                            <template v-if="!subproc.loading && subproc.resultText">
+                                                                                <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="text-weight-bold text-green-9">
+                                                                                    <span class="text-weight-bold text-green-9">{{subproc.resultText}}</span>
+                                                                                </div>
+                                                                                <div v-if="subproc.result === 'error'" class="text-weight-bold text-negative">
+                                                                                    {{subproc.resultText}}
+                                                                                </div>
+                                                                            </template>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
                                                         </q-item-section>
                                                     </q-item>
-                                                </template>
-                                            </q-list>
-                                        </q-scroll-area>
-                                    </q-card>
+                                                    <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
+                                                        <q-item>
+                                                            <q-item-section>
+                                                                <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                                            </q-item-section>
+                                                        </q-item>
+                                                    </template>
+                                                </q-list>
+                                            </q-scroll-area>
+                                        </q-card>
+                                    </div>
                                 </div>
-                            </div>
-                        </q-tab-panel>
-                    </q-tab-panels>
-                </q-card>
-            </template>
-            <template v-else>
-                <div class="text-weight-bold">You do not have permissions to access this tool</div>
-            </template>
+                            </q-tab-panel>
+                        </q-tab-panels>
+                    </q-card>
+                </template>
+                <template v-else>
+                    <div class="text-weight-bold">You do not have permissions to access this tool</div>
+                </template>
+            </div>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -153,9 +156,11 @@ if(!$GLOBALS['SYMB_UID']) {
                 },
                 setup() {
                     const { csvToArray, getErrorResponseText, parseFile, showNotification } = useCore();
+                    const baseStore = useBaseStore();
 
                     let abortController = null;
                     const acceptedFileTypes = ['csv', 'txt'];
+                    const clientRoot = baseStore.getClientRoot;
                     const currentProcess = Vue.ref(null);
                     const isEditor = Vue.ref(false);
                     const loading = Vue.ref(false);
@@ -553,6 +558,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     
                     return {
                         acceptedFileTypes,
+                        clientRoot,
                         currentProcess,
                         isEditor,
                         loading,
@@ -577,7 +583,7 @@ if(!$GLOBALS['SYMB_UID']) {
             });
             taxonomicThesaurusManagerModule.use(Quasar, { config: {} });
             taxonomicThesaurusManagerModule.use(Pinia.createPinia());
-            taxonomicThesaurusManagerModule.mount('#innertext');
+            taxonomicThesaurusManagerModule.mount('#mainContainer');
         </script>
     </body>
 </html>

@@ -14,9 +14,10 @@ if(!$GLOBALS['SYMB_UID']) {
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomic Thesaurus Manager</title>
+        <meta name="description" content="Taxonomic thesaurus manager for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .top-tool-container {
                 width: 500px;
@@ -27,46 +28,48 @@ if(!$GLOBALS['SYMB_UID']) {
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div class="navpath">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <b>Taxonomic Thesaurus Manager</b>
-        </div>
-        <div id="innertext">
-            <h1>Taxonomic Thesaurus Manager</h1>
-            <template v-if="isEditor">
-                <q-card class="top-tool-container q-mb-md">
-                    <q-card-section>
-                        <div class="q-my-sm">
-                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Enter Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
-                        </div>
-                        <div class="q-my-sm q-mt-md">
-                            <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
-                        </div>
-                    </q-card-section>
-                </q-card>
-                <q-card>
-                    <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
-                        <q-tab name="importer" label="Data Import/Update" no-caps></q-tab>
-                        <q-tab name="fileupload" label="Load Data File" no-caps></q-tab>
-                        <q-tab name="maintenance" label="Maintenance Tools" no-caps></q-tab>
-                    </q-tabs>
-                    <q-separator></q-separator>
-                    <q-tab-panels v-model="tab">
-                        <q-tab-panel name="importer">
-                            <taxonomy-data-source-import-update-module :kingdom-id="kingdomId" :loading="loading" :required-ranks="requiredRanks" :selected-ranks="selectedRanks" :selected-ranks-high="selectedRanksHigh" :taxonomic-group="taxonomicGroup" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomy-data-source-import-update-module>
-                        </q-tab-panel>
-                        <q-tab-panel name="fileupload">
-                            <?php include_once(__DIR__ . '/batchloader.php'); ?>
-                        </q-tab-panel>
-                        <q-tab-panel name="maintenance">
-                            <taxonomic-thesaurus-maintenance-module :loading="loading" :selected-ranks="selectedRanks" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomic-thesaurus-maintenance-module>
-                        </q-tab-panel>
-                    </q-tab-panels>
-                </q-card>
-            </template>
-            <template v-else>
-                <div class="text-weight-bold">You do not have permissions to access this tool</div>
-            </template>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <span class="text-bold">Taxonomic Thesaurus Manager</span>
+            </div>
+            <div class="q-pa-md">
+                <h1>Taxonomic Thesaurus Manager</h1>
+                <template v-if="isEditor">
+                    <q-card class="top-tool-container q-mb-md">
+                        <q-card-section>
+                            <div class="q-my-sm">
+                                <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Enter Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                            </div>
+                            <div class="q-my-sm q-mt-md">
+                                <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
+                            </div>
+                        </q-card-section>
+                    </q-card>
+                    <q-card>
+                        <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
+                            <q-tab name="importer" label="Data Import/Update" no-caps></q-tab>
+                            <q-tab name="fileupload" label="Load Data File" no-caps></q-tab>
+                            <q-tab name="maintenance" label="Maintenance Tools" no-caps></q-tab>
+                        </q-tabs>
+                        <q-separator></q-separator>
+                        <q-tab-panels v-model="tab">
+                            <q-tab-panel name="importer">
+                                <taxonomy-data-source-import-update-module :kingdom-id="kingdomId" :loading="loading" :required-ranks="requiredRanks" :selected-ranks="selectedRanks" :selected-ranks-high="selectedRanksHigh" :taxonomic-group="taxonomicGroup" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomy-data-source-import-update-module>
+                            </q-tab-panel>
+                            <q-tab-panel name="fileupload">
+                                <?php include_once(__DIR__ . '/batchloader.php'); ?>
+                            </q-tab-panel>
+                            <q-tab-panel name="maintenance">
+                                <taxonomic-thesaurus-maintenance-module :loading="loading" :selected-ranks="selectedRanks" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomic-thesaurus-maintenance-module>
+                            </q-tab-panel>
+                        </q-tab-panels>
+                    </q-card>
+                </template>
+                <template v-else>
+                    <div class="text-weight-bold">You do not have permissions to access this tool</div>
+                </template>
+            </div>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -87,7 +90,9 @@ if(!$GLOBALS['SYMB_UID']) {
                     'taxonomy-data-source-import-update-module': taxonomyDataSourceImportUpdateModule
                 },
                 setup() {
-                    const store = useBaseStore();
+                    const baseStore = useBaseStore();
+
+                    const clientRoot = baseStore.getClientRoot;
                     const isEditor = Vue.ref(false);
                     const kingdomId = Vue.ref(null);
                     const loading = Vue.ref(false);
@@ -139,11 +144,12 @@ if(!$GLOBALS['SYMB_UID']) {
 
                     Vue.onMounted(() => {
                         setEditor();
-                        selectedRanks.value = store.getTaxonomicRanks;
+                        selectedRanks.value = baseStore.getTaxonomicRanks;
                         setRankHigh();
                     });
                     
                     return {
+                        clientRoot,
                         isEditor,
                         kingdomId,
                         loading,
@@ -161,7 +167,7 @@ if(!$GLOBALS['SYMB_UID']) {
             });
             taxonomicThesaurusManagerModule.use(Quasar, { config: {} });
             taxonomicThesaurusManagerModule.use(Pinia.createPinia());
-            taxonomicThesaurusManagerModule.mount('#innertext');
+            taxonomicThesaurusManagerModule.mount('#mainContainer');
         </script>
     </body>
 </html>

@@ -33,6 +33,7 @@ const useUserStore = Pinia.defineStore('user', {
         userData: {},
         userEditData: {},
         userId: 0,
+        userPermissionData: {},
         userUpdateData: {}
     }),
     getters: {
@@ -65,11 +66,33 @@ const useUserStore = Pinia.defineStore('user', {
         getUserID(state) {
             return state.userId;
         },
+        getUserPermissionData(state) {
+            return state.userPermissionData;
+        },
         getUserValid(state) {
             return (state.userEditData['firstname']  && state.userEditData['lastname'] && state.userEditData['username'] && state.userEditData['email']);
         }
     },
     actions: {
+        addUserPermissions(permissionArr, callback) {
+            const formData = new FormData();
+            formData.append('uid', this.userId.toString());
+            formData.append('permissionArr', JSON.stringify(permissionArr));
+            formData.append('action', 'addUserPermissions');
+            fetch(permissionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(Number(res) === 1){
+                    this.setUserPermissionData();
+                }
+            });
+        },
         clearUserAccessTokens(callback) {
             const formData = new FormData();
             formData.append('uid', this.userId.toString());
@@ -92,6 +115,7 @@ const useUserStore = Pinia.defineStore('user', {
             this.checklistArr.length = 0;
             this.collectionArr.length = 0;
             this.projectArr.length = 0;
+            this.userPermissionData = Object.assign({}, {});
             this.userData = Object.assign({}, this.blankUserRecord);
         },
         createUserRecord(callback) {
@@ -107,6 +131,58 @@ const useUserStore = Pinia.defineStore('user', {
             })
             .then((res) => {
                 callback(Number(res));
+            });
+        },
+        deleteAllUnconfirmedUsers(callback) {
+            const formData = new FormData();
+            formData.append('action', 'deleteAllUnconfirmedUsers');
+            fetch(profileApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
+        deleteAllUserPermissions(callback) {
+            const formData = new FormData();
+            formData.append('uid', this.userId.toString());
+            formData.append('action', 'deleteAllUserPermissions');
+            fetch(permissionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(Number(res) === 1){
+                    this.setUserPermissionData();
+                }
+            });
+        },
+        deleteUserPermission(permission, pk, callback) {
+            const formData = new FormData();
+            formData.append('uid', this.userId.toString());
+            formData.append('permission', permission.toString());
+            formData.append('tablepk', (pk ? pk.toString() : ''));
+            formData.append('action', 'deleteUserPermission');
+            fetch(permissionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(Number(res) === 1){
+                    this.setUserPermissionData();
+                }
             });
         },
         deleteUserRecord(uid, callback) {
@@ -127,6 +203,22 @@ const useUserStore = Pinia.defineStore('user', {
                 }
             });
         },
+        getUserListArr(keyword, userType, callback) {
+            const formData = new FormData();
+            formData.append('keyword', (keyword ? keyword.toString() : ''));
+            formData.append('userType', userType);
+            formData.append('action', 'getUserListArr');
+            fetch(profileApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                callback(resObj);
+            });
+        },
         resendConfirmationEmail(callback) {
             const formData = new FormData();
             formData.append('uid', this.userId.toString());
@@ -140,6 +232,22 @@ const useUserStore = Pinia.defineStore('user', {
             })
             .then((res) => {
                 callback(Number(res));
+            });
+        },
+        resetPassword(username, admin, callback) {
+            const formData = new FormData();
+            formData.append('username', username.toString());
+            formData.append('admin', (admin ? '1' : '0'));
+            formData.append('action', 'resetPassword');
+            fetch(profileApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res);
             });
         },
         revertUserEditData() {
@@ -169,6 +277,7 @@ const useUserStore = Pinia.defineStore('user', {
                         this.setUserCollections();
                         this.setUserProjects();
                     }
+                    this.setUserPermissionData();
                     if(callback){
                         callback();
                     }
@@ -204,6 +313,21 @@ const useUserStore = Pinia.defineStore('user', {
         setUserCollections() {
             this.collectionStore.getCollectionListByUid(this.userId, (collectionData) => {
                 this.collectionArr = collectionData;
+            });
+        },
+        setUserPermissionData() {
+            const formData = new FormData();
+            formData.append('uid', this.userId.toString());
+            formData.append('action', 'getPermissionsByUid');
+            fetch(permissionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                this.userPermissionData = Object.assign({}, resObj);
             });
         },
         setUserProjects() {
@@ -248,6 +372,20 @@ const useUserStore = Pinia.defineStore('user', {
                     this.userData = Object.assign({}, this.userEditData);
                 }
             });
-        }
+        },
+        validateAllUnconfirmedUsers(callback) {
+            const formData = new FormData();
+            formData.append('action', 'validateAllUnconfirmedUsers');
+            fetch(profileApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
     }
 });

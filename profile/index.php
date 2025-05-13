@@ -22,10 +22,10 @@ elseif(array_key_exists('refurl', $_REQUEST)){
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Login</title>
+        <meta name="description" content="Login to the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="<?php echo $GLOBALS['DEFAULT_TITLE']; ?> Login">
-        <link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
         <script type="text/javascript">
             const CONFIRMATION_CODE = '<?php echo $confirmationCode; ?>';
             const REF_URL = '<?php echo $refUrl; ?>';
@@ -36,12 +36,12 @@ elseif(array_key_exists('refurl', $_REQUEST)){
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="innertext">
+        <div id="mainContainer" class="q-pa-md">
             <div class="row justify-center q-mt-lg q-mb-xl">
                 <q-card class="login-container">
                     <q-card-section class="bg-indigo-1 column">
                         <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense></q-input>
-                        <q-input outlined v-model="password" type="password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
+                        <q-input outlined v-model="password" type="password" autocomplete="current-password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
                         <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm"></q-checkbox>
                         <div class="row justify-end q-pr-md">
                             <q-btn color="primary" @click="processLogin();" label="Login" dense></q-btn>
@@ -108,11 +108,17 @@ elseif(array_key_exists('refurl', $_REQUEST)){
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/collection.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/user.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const loginModule = Vue.createApp({
                 setup() {
                     const { showNotification } = useCore();
                     const baseStore = useBaseStore();
+                    const userStore = useUserStore();
 
                     const adminEmail = baseStore.getAdminEmail;
                     const clientRoot = baseStore.getClientRoot;
@@ -188,22 +194,13 @@ elseif(array_key_exists('refurl', $_REQUEST)){
 
                     function resetPassword() {
                         if(username.value){
-                            const formData = new FormData();
-                            formData.append('username', username.value);
-                            formData.append('action', 'resetPassword');
-                            fetch(profileApiUrl, {
-                                method: 'POST',
-                                body: formData
-                            })
-                            .then((response) => {
-                                response.text().then((res) => {
-                                    if(Number(res) === 1){
-                                        showNotification('positive','Your new password has been emailed to the address associated with your account. Please check your junk folder if no email appears in your inbox.');
-                                    }
-                                    else{
-                                        showNotification('negative','There was an error resetting your password.');
-                                    }
-                                });
+                            userStore.resetPassword(username.value, false, (res) => {
+                                if(Number(res) === 1){
+                                    showNotification('positive','Your new password has been emailed to the address associated with your account. Please check your junk folder if no email appears in your inbox.');
+                                }
+                                else{
+                                    showNotification('negative','There was an error resetting your password.');
+                                }
                             });
                         }
                         else{
@@ -261,7 +258,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
             });
             loginModule.use(Quasar, { config: {} });
             loginModule.use(Pinia.createPinia());
-            loginModule.mount('#innertext');
+            loginModule.mount('#mainContainer');
         </script>
     </body>
 </html>	
