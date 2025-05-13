@@ -1,16 +1,13 @@
-html {
-	font-size: 90%;
-}
-
 body{
 	background-color:#728099;
+	font-size: 90%;
 }
 
 .title {
 	font-weight: bold;
 }
 
-#mainContainer{
+#appContainer{
 	display: block;
 	width: 80%;
 	min-width:950px;
@@ -35,21 +32,20 @@ body{
 #bannerContainer {
 	position: relative;
 	height: 325px;
-	background: url(/content/imglib/layout/Image01.JPG) no-repeat center;
+	background: url('/content/imglib/layout/Image01.JPG') no-repeat center;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
 }
 
-#innertext{
+#mainContainer{
 	min-height:400px;
 	margin: 0 auto;
-	padding: 10px 15px 15px;
 	font-family: Calibri, Candara, Segoe, "Segoe UI", Optima, Arial, sans-serif;
 }
 
-div.navpath {
+#breadcrumbs {
 	padding-top: 8px;
 	padding-bottom: 0;
 	padding-left: 10px;
