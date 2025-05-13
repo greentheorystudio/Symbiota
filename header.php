@@ -1,4 +1,4 @@
-<div class="banner-container">
+<div id="bannerContainer">
     <div style="background-color:#2F507F;width:100%;clear:both;height:200px;border-bottom:1px solid #333333;"></div>
     <div class="top-shade-container"></div>
     <div class="logo-container">

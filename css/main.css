@@ -700,7 +700,7 @@ ol.report-caterories li p.heading {
 	font-style:italic;
 }
 
-.banner-container {
+#bannerContainer {
 	width: 100%;
 	height: 267px;
 	position: relative;
