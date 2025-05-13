@@ -19,17 +19,24 @@ header('Content-Type: text/html; charset=UTF-8' );
         <?php
         include(__DIR__ . '/header.php');
         ?>
-        <div id="mainContainer" style="padding: 10px 15px 15px;">
-            <h1>Welcome to your portal!</h1>
+        <div id="mainContainer">
+            <div class="q-pa-md">
+                <h1>Welcome to your portal!</h1>
 
-            <p>
-                Here's where all the great stuff on your homepage goes.
-            </p>
+                <p>
+                    Here's where all the great stuff on your homepage goes.
+                </p>
+            </div>
         </div>
-
         <?php
-        include_once(__DIR__ . '/config/footer-includes.php');
         include(__DIR__ . '/footer.php');
+        include_once(__DIR__ . '/config/footer-includes.php');
         ?>
+        <script>
+            const homePageModule = Vue.createApp();
+            homePageModule.use(Quasar, { config: {} });
+            homePageModule.use(Pinia.createPinia());
+            homePageModule.mount('#mainContainer');
+        </script>
     </body>
 </html>
