@@ -18,8 +18,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklists</title>
     <meta name="description" content="Checklist index for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
         function openSpatialViewerWindow(coordArrJson) {
             let mapWindow = open("../spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
