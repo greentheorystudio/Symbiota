@@ -50,7 +50,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                     <ul>
                         <li><a :href="(clientRoot + '/projects/index.php')">Biotic Inventory Projects</a></li>
                         <li><a :href="(clientRoot + '/checklists/index.php')">Checklists</a></li>
-                        <li><a :href="(clientRoot + '/checklists/dynamicmap.php?interface=checklist')">Dynamic Checklist</a></li>
+                        <li><a :href="(clientRoot + '/checklists/checklist.php')">Dynamic Checklist</a></li>
                         <template v-if="keyModuleIsActive">
                             <li><a :href="(clientRoot + '/ident/key.php')">Dynamic Key</a></li>
                         </template>

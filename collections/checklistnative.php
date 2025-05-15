@@ -33,5 +33,5 @@ if($interface === 'key'){
 	header('Location: ../ident/key.php?clid=' .$dynClid);
 }
 else{
-	header('Location: ../checklists/checklist.php?dynclid=' .$dynClid);
+	header('Location: ../checklists/checklist.php?clid=' .$dynClid);
 }

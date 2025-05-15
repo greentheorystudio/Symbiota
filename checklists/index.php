@@ -72,7 +72,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 							<ul>
 								<?php 
 								foreach($projArr['clid'] as $clid => $clName){
-									echo "<li><a href='checklist.php?cl=".$clid."'>".$clName."</a></li>\n";
+									echo "<li><a href='checklist.php?clid=".$clid."'>".$clName."</a></li>\n";
 								}
 								?>
 							</ul>

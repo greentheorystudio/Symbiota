@@ -35,9 +35,6 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         checklistVoucherArr: []
     }),
     getters: {
-        getChecklistTaxaArr(state) {
-            return state.checklistTaxaStore.getChecklistTaxaArr;
-        },
         getBlankChecklistRecord(state) {
             return state.blankChecklistRecord;
         },
@@ -57,6 +54,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         getChecklistID(state) {
             return state.checklistId;
+        },
+        getChecklistTaxaArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaArr;
         },
         getChecklistValid(state) {
             return !!state.checklistEditData['name'];
@@ -135,13 +135,31 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 callback(resObj);
             });
         },
+        saveTemporaryChecklist(searchTermsJson, callback) {
+            const formData = new FormData();
+            formData.append('clid', this.checklistId.toString());
+            formData.append('searchTermsJson', searchTermsJson);
+            formData.append('action', 'saveTemporaryChecklist');
+            fetch(checklistApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) === 1){
+                    this.setChecklist(this.checklistId);
+                }
+            });
+        },
         setChecklist(clid, callback = null) {
             this.clearChecklistData();
             if(Number(clid) > 0){
                 this.checklistEditData = Object.assign({}, {});
-                this.checklistId = Number(clid);
                 const formData = new FormData();
-                formData.append('clid', this.checklistId.toString());
+                formData.append('clid', clid.toString());
                 formData.append('action', 'getChecklistData');
                 fetch(checklistApiUrl, {
                     method: 'POST',
@@ -151,10 +169,13 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     return response.ok ? response.json() : null;
                 })
                 .then((resObj) => {
-                    this.checklistData = Object.assign({}, resObj);
-                    this.checklistEditData = Object.assign({}, this.checklistData);
+                    if(resObj.hasOwnProperty('clid') && Number(resObj['clid']) === Number(clid)){
+                        this.checklistId = Number(clid);
+                        this.checklistData = Object.assign({}, resObj);
+                        this.checklistEditData = Object.assign({}, this.checklistData);
+                    }
                     if(callback){
-                        callback();
+                        callback(this.checklistId);
                     }
                 });
             }
@@ -164,6 +185,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     callback();
                 }
             }
+        },
+        setChecklistTaxaArr(clid, includeKeyData, callback = null) {
+            this.checklistTaxaStore.setChecklistTaxaArr(clid, includeKeyData, callback);
         },
         updateChecklistEditData(key, value) {
             this.checklistEditData[key] = value;

@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../config/symbbase.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
-$clid = array_key_exists('clid',$_REQUEST) ? (int)$_REQUEST['clid'] : 0;
+$clid = array_key_exists('clid', $_REQUEST) ? (int)$_REQUEST['clid'] : 0;
 $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
-$pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
+$pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -16,10 +16,10 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Interactive Key</title>
         <meta name="description" content="Interactive key for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
@@ -44,8 +44,14 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="Number(clId) > 0">
-                    <a :href="(clientRoot + '/checklists/checklist.php?cl=' + clId + '&proj=' + pId)">Checklist: {{ checklistName }}</a> &gt;&gt;
-                    <span class="text-bold">Key: {{ checklistName }}</span>
+                    <template v-if="temporaryChecklist">
+                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Dynamic Checklist</a> &gt;&gt;
+                        <span class="text-bold">Dynamic Key</span>
+                    </template>
+                    <template v-else>
+                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Checklist: {{ checklistName }}</a> &gt;&gt;
+                        <span class="text-bold">Key: {{ checklistName }}</span>
+                    </template>
                 </template>
                 <template v-else-if="Number(pId) > 0">
                     <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">Project Checklists</a> &gt;&gt;
@@ -108,7 +114,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="col-8 column q-col-gutter-sm q-pl-lg">
                             <div class="column">
                                 <div class="full-width row justify-end text-h5 text-bold">
-                                    <a :href="(clientRoot + '/checklists/checklist.php?cl=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
+                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
                                 </div>
                                 <div class="full-width row justify-end text-body1">
                                     Taxa Count: {{ taxaCount }}
@@ -203,6 +209,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -274,6 +281,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const { hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
                     const checklistStore = useChecklistStore();
+                    const projectStore = useProjectStore();
                     const searchStore = useSearchStore();
 
                     const activeChidArr = Vue.computed(() => {
@@ -289,12 +297,30 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const activeFamilyArr = Vue.ref([]);
                     const activeTidArr = Vue.ref([]);
                     const characterDependencyDataArr = Vue.ref([]);
-                    const checklistData = Vue.ref({});
+                    const checklistData = Vue.computed(() => checklistStore.getChecklistData);
                     const checklistName = Vue.computed(() => {
-                        return checklistData.value.hasOwnProperty('name') ? checklistData.value['name'] : '';
+                        let returnVal = 'Dynamic Key';
+                        if(!temporaryChecklist.value){
+                            if(checklistData.value.hasOwnProperty('name') && checklistData.value['name']){
+                                returnVal = checklistData.value['name'];
+                            }
+                            else if(projectData.value.hasOwnProperty('projname') && projectData.value['projname']){
+                                returnVal = projectData.value['projname'];
+                            }
+                        }
+                        return returnVal;
                     });
                     const clId = Vue.ref(CLID);
-                    const clidArr = Vue.ref([]);
+                    const clidArr = Vue.computed(() => {
+                        let returnArr = [];
+                        if(checklistData.value.hasOwnProperty('clidArr') && checklistData.value['clidArr'].length > 0){
+                            returnArr = checklistData.value['clidArr'].slice();
+                        }
+                        else if(projectData.value.hasOwnProperty('clidArr') && projectData.value['clidArr'].length > 0){
+                            returnArr = projectData.value['clidArr'].slice();
+                        }
+                        return returnArr;
+                    });
                     const clientRoot = baseStore.getClientRoot;
                     const commonNameData = Vue.ref({});
                     const csidArr = Vue.ref([]);
@@ -306,7 +332,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const languageArr = [];
                     const pId = Vue.ref(PID);
                     const popupWindowType = Vue.ref(null);
-                    const projectData = Vue.ref({});
+                    const projectData = Vue.computed(() => projectStore.getProjectData);
                     const projectName = Vue.computed(() => {
                         return projectData.value.hasOwnProperty('projname') ? projectData.value['projname'] : '';
                     });
@@ -330,8 +356,53 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const taxaCount = Vue.computed(() => {
                         return activeTidArr.value.length;
                     });
-                    const taxaDataArr = Vue.ref([]);
-                    const taxaDisplayDataArr = Vue.ref([]);
+                    const taxaDataArr = Vue.computed(() => checklistStore.getChecklistTaxaArr);
+                    const taxaDisplayDataArr = Vue.computed(() => {
+                        const newDataArr = [];
+                        if(taxaDataArr.value.length > 0){
+                            taxaDataArr.value.forEach(taxon => {
+                                if(selectedSortByOption.value === 'family'){
+                                    const familyObj = newDataArr.find(family => family['familyName'] === taxon['family']);
+                                    if(familyObj){
+                                        familyObj['taxa'].push(taxon);
+                                    }
+                                    else{
+                                        const taxaArr = [taxon];
+                                        newDataArr.push({
+                                            familyName: taxon['family'],
+                                            taxa: taxaArr
+                                        });
+                                    }
+                                }
+                                else{
+                                    newDataArr.push(taxon);
+                                }
+                            });
+                            if(selectedSortByOption.value === 'family'){
+                                newDataArr.sort((a, b) => {
+                                    return a['familyName'].localeCompare(b['familyName']);
+                                });
+                                newDataArr.forEach(family => {
+                                    family['taxa'].sort((a, b) => {
+                                        return a['sciname'].localeCompare(b['sciname']);
+                                    });
+                                });
+                            }
+                            else{
+                                newDataArr.sort((a, b) => {
+                                    return a['sciname'].localeCompare(b['sciname']);
+                                });
+                            }
+                        }
+                        return newDataArr.slice();
+                    });
+                    const temporaryChecklist = Vue.computed(() => {
+                        let returnVal = false;
+                        if(checklistData.value.hasOwnProperty('clid') && Number(checklistData.value['clid']) > 0 && checklistData.value['expiration']){
+                            returnVal = true;
+                        }
+                        return returnVal;
+                    });
                     const tidArr = Vue.ref([]);
 
                     function buildChecklist(){
@@ -426,7 +497,6 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processSortByChange(value) {
                         selectedSortByOption.value = value;
-                        setTaxaDisplayData();
                     }
 
                     function processSpatialData(data) {
@@ -450,7 +520,6 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 });
                             }
                         });
-                        setTaxaDisplayData();
                         setKeyData();
                     }
 
@@ -526,20 +595,10 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setChecklistData() {
-                        const formData = new FormData();
-                        formData.append('clid', clId.value.toString());
-                        formData.append('action', 'getChecklistData');
-                        fetch(checklistApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                                return response.ok ? response.json() : null;
-                            })
-                        .then((data) => {
-                            checklistData.value = Object.assign({}, data);
-                            clidArr.value = checklistData.value['clidArr'].slice();
-                            setTaxaData();
+                        checklistStore.setChecklist(clId.value, (clid) => {
+                            if(Number(clid) > 0){
+                                setTaxaData();
+                            }
                         });
                     }
 
@@ -561,20 +620,13 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setProjectData() {
-                        const formData = new FormData();
-                        formData.append('pid', pId.value.toString());
-                        formData.append('action', 'getProjectData');
-                        fetch(projectApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            return response.ok ? response.json() : null;
-                        })
-                        .then((data) => {
-                            projectData.value = Object.assign({}, data);
-                            clidArr.value = Object.values(projectData.value['clidArr']).slice();
-                            setTaxaData();
+                        projectStore.setProject(pId.value, (pid) => {
+                            if(Number(clId.value) === 0 && Number(pid) > 0){
+                                setTaxaData();
+                            }
+                            else{
+                                showNotification('negative', 'An error occurred while setting the project data.');
+                            }
                         });
                     }
 
@@ -583,67 +635,17 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setTaxaData() {
-                        const formData = new FormData();
-                        formData.append('clidArr', JSON.stringify(clidArr.value));
-                        formData.append('includeKeyData', '1');
-                        formData.append('action', 'getChecklistTaxa');
-                        fetch(checklistTaxaApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            return response.ok ? response.json() : null;
-                        })
-                        .then((data) => {
-                            taxaDataArr.value = data;
+                        checklistStore.setChecklistTaxaArr(clidArr.value, true, () => {
                             processTaxaData();
                         });
                     }
 
-                    function setTaxaDisplayData() {
-                        const newDataArr = [];
-                        taxaDataArr.value.forEach(taxon => {
-                            if(selectedSortByOption.value === 'family'){
-                                const familyObj = newDataArr.find(family => family['familyName'] === taxon['family']);
-                                if(familyObj){
-                                    familyObj['taxa'].push(taxon);
-                                }
-                                else{
-                                    const taxaArr = [taxon];
-                                    newDataArr.push({
-                                        familyName: taxon['family'],
-                                        taxa: taxaArr
-                                    });
-                                }
-                            }
-                            else{
-                                newDataArr.push(taxon);
-                            }
-                        });
-                        if(selectedSortByOption.value === 'family'){
-                            newDataArr.sort((a, b) => {
-                                return a['familyName'].localeCompare(b['familyName']);
-                            });
-                            newDataArr.forEach(family => {
-                                family['taxa'].sort((a, b) => {
-                                    return a['sciname'].localeCompare(b['sciname']);
-                                });
-                            });
-                        }
-                        else{
-                            newDataArr.sort((a, b) => {
-                                return a['sciname'].localeCompare(b['sciname']);
-                            });
-                        }
-                        taxaDisplayDataArr.value = newDataArr.slice();
-                    }
-
                     Vue.onMounted(() => {
-                        if(Number(clId.value) > 0){
+                        if(Number(clId.value) > 0 || Number(pId.value) > 0){
                             setChecklistData();
-                        }
-                        else if(Number(pId.value) > 0){
-                            setProjectData();
+                            if(Number(pId.value) > 0){
+                                setProjectData();
+                            }
                         }
                         else{
                             if(Number(queryId) === 0){
@@ -679,6 +681,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         spatialInputValues,
                         taxaCount,
                         taxaDisplayDataArr,
+                        temporaryChecklist,
                         buildChecklist,
                         closeSpatialPopup,
                         openSpatialPopup,

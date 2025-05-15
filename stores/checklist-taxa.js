@@ -94,10 +94,17 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             }
             this.checklistTaxaEditData = Object.assign({}, this.checklistTaxaData);
         },
-        setChecklistTaxaArr(clid) {
-            const clidArr = [clid]
+        setChecklistTaxaArr(clid, includeKeyData, callback) {
+            let clidArr;
+            if(Array.isArray(clid)){
+                clidArr = clid.slice();
+            }
+            else{
+                clidArr = [clid];
+            }
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr));
+            formData.append('includeKeyData', (includeKeyData ? '1' : '0'));
             formData.append('action', 'getChecklistTaxa');
             fetch(checklistTaxaApiUrl, {
                 method: 'POST',
@@ -108,6 +115,9 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             })
             .then((data) => {
                 this.checklistTaxaArr = data;
+                if(callback){
+                    callback();
+                }
             });
         },
         updateChecklistTaxaEditData(key, value) {
