@@ -65,8 +65,8 @@ if($clValue || $dynClid){
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> <?php echo $clManager->getClName(); ?> print friendly</title>
     <meta name="description" content="Print friendly version of the <?php echo $clManager->getClName(); ?> checklist">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">

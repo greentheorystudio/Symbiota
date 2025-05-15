@@ -98,13 +98,13 @@ include(__DIR__ . '/../header.php');
 ?>
 <div id="breadcrumbs">
 	<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
+	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
 	<b>Checklist Administration</b>
 </div>
 
 <div id="mainContainer" style="padding: 10px 15px 15px;">
 <div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
+	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
 </div>
@@ -411,9 +411,9 @@ if($clid && $isEditor){
 				<div style="margin:25px;height:400px;">
 					<ul>
 						<li><a href="reports/voucherreporthandler.php?rtype=fullcsv&clid=<?php echo $clid; ?>">Full species list (CSV)</a></li>
-						<li><a href="checklist.php?printmode=1&showvouchers=0&defaultoverride=1&cl=<?php echo $clid; ?>" target="_blank">Full species list (Print Friendly)</a></li>
+						<li><a href="checklist.php?printmode=1&showvouchers=0&defaultoverride=1&clid=<?php echo $clid; ?>" target="_blank">Full species list (Print Friendly)</a></li>
 						<li><a href="reports/voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo $clid; ?>">Full species list with vouchers (CSV)</a></li>
-						<li><a href="checklist.php?printmode=1&showvouchers=1&defaultoverride=1&cl=<?php echo $clid; ?>" target="_blank">Full species list with vouchers (Print Friendly)</a></li>
+						<li><a href="checklist.php?printmode=1&showvouchers=1&defaultoverride=1&clid=<?php echo $clid; ?>" target="_blank">Full species list with vouchers (Print Friendly)</a></li>
 						<li><a href="reports/voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo $clid; ?>" target="_blank">Pensoft Excel Export</a></li>
 						<li><a href="#" onclick="openPopup('reports/download.php?clid=<?php echo $clid; ?>');return false;">Occurrence vouchers only (DwC-A, CSV, Tab-delimited)</a></li>
 						<li>Possible species additions based on occurrence vouchers</li>

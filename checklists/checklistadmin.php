@@ -21,7 +21,7 @@ $clManager->setClid($clid);
 
 if($action === 'SubmitAdd' && $GLOBALS['VALID_USER']){
 	$newClid = $clManager->createChecklist($_POST);
-	header('Location: checklist.php?cl=' .$newClid. '&emode=1');
+	header('Location: checklist.php?clid=' .$newClid. '&emode=1');
 }
 
 $statusStr = '';
@@ -34,7 +34,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 		if(array_key_exists('footprintwkt',$_POST) && $_POST['footprintwkt'] !== ''){
             $clManager->savePolygon($_POST['footprintwkt']);
         }
-		header('Location: checklist.php?cl='.$clid.'&pid='.$pid);
+		header('Location: checklist.php?clid='.$clid.'&pid='.$pid);
 	}
 	elseif($action === 'DeleteCheck'){
 		$statusStr = $clManager->deleteChecklist($_POST['delclid']);
@@ -89,13 +89,13 @@ include(__DIR__ . '/../header.php');
 ?>
 <div id="breadcrumbs">
 	<a href="../index.php">Home</a> &gt;&gt;
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
+	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
 	<b> Checklist Administration</b>
 </div>
 
 <div id="mainContainer" style="padding: 10px 15px 15px;">
 <div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
+	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
 </div>
