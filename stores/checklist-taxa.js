@@ -16,7 +16,11 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         checklistTaxaData: {},
         checklistTaxaEditData: {},
         checklistTaxaId: 0,
-        checklistTaxaUpdateData: {}
+        checklistTaxaUpdateData: {},
+        countFamilies: 0,
+        countGenera: 0,
+        countSpecies: 0,
+        countTotalTaxa: 0
     }),
     getters: {
         getChecklistTaxaArr(state) {
@@ -43,6 +47,18 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             return (
                 state.checklistTaxaEditData['tid'] && state.checklistTaxaEditData['clid']
             );
+        },
+        getCountFamilies(state) {
+            return state.countFamilies;
+        },
+        getCountGenera(state) {
+            return state.countGenera;
+        },
+        getCountSpecies(state) {
+            return state.countSpecies;
+        },
+        getCountTotalTaxa(state) {
+            return state.countTotalTaxa;
         }
     },
     actions: {
@@ -94,7 +110,7 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             }
             this.checklistTaxaEditData = Object.assign({}, this.checklistTaxaData);
         },
-        setChecklistTaxaArr(clid, includeKeyData, callback) {
+        setChecklistTaxaArr(clid, includeKeyData, includeSynonymyData, includeVernacularData, callback) {
             let clidArr;
             if(Array.isArray(clid)){
                 clidArr = clid.slice();
@@ -105,6 +121,8 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr));
             formData.append('includeKeyData', (includeKeyData ? '1' : '0'));
+            formData.append('includeSynonymyData', (includeSynonymyData ? '1' : '0'));
+            formData.append('includeVernacularData', (includeVernacularData ? '1' : '0'));
             formData.append('action', 'getChecklistTaxa');
             fetch(checklistTaxaApiUrl, {
                 method: 'POST',
@@ -115,10 +133,46 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             })
             .then((data) => {
                 this.checklistTaxaArr = data;
+                if(!includeKeyData && this.checklistTaxaArr.length > 0){
+                    this.setTaxaCounts();
+                }
                 if(callback){
                     callback();
                 }
             });
+        },
+        setTaxaCounts() {
+            const totalArr = [];
+            const speciesArr = [];
+            const generaArr = [];
+            const familyArr = [];
+            this.checklistTaxaArr.forEach(taxon => {
+                if(!totalArr.includes(taxon['sciname'])){
+                    totalArr.push(taxon['sciname']);
+                }
+                if(taxon['family'] && taxon['family'] !== '[Incertae Sedis]' && !familyArr.includes(taxon['family'])){
+                    familyArr.push(taxon['family']);
+                }
+                if(Number(taxon['rankid']) === 180 && !generaArr.includes(taxon['sciname'])){
+                    generaArr.push(taxon['sciname']);
+                }
+                else if(Number(taxon['rankid']) >= 220){
+                    const unitNameArr = taxon['sciname'].split(' ');
+                    if(!generaArr.includes(unitNameArr[0])){
+                        generaArr.push(unitNameArr[0]);
+                    }
+                    if(Number(taxon['rankid']) === 220 && !speciesArr.includes(taxon['sciname'])){
+                        speciesArr.push(taxon['sciname']);
+                    }
+                    else if(!speciesArr.includes((unitNameArr[0] + ' ' + unitNameArr[1]))){
+                        speciesArr.push((unitNameArr[0] + ' ' + unitNameArr[1]));
+                    }
+                }
+            });
+            this.countFamilies = familyArr.length;
+            this.countGenera = generaArr.length;
+            this.countSpecies = speciesArr.length;
+            this.countTotalTaxa = totalArr.length;
         },
         updateChecklistTaxaEditData(key, value) {
             this.checklistTaxaEditData[key] = value;

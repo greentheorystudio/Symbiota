@@ -145,6 +145,29 @@ class TaxonVernaculars{
         return $retArr;
     }
 
+    public function getVernacularArrFromTidArr($tidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT t.tidaccepted, v.vernacularname '.
+            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid '.
+            'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['tidaccepted'], $retArr)){
+                    $retArr[$row['tidaccepted']] = array();
+                }
+                $nodeArr = array();
+                $nodeArr['vernacularname'] = $row['vernacularname'];
+                $retArr[$row['tidaccepted']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getHighestRankingTidByVernacular($vernacular): int
     {
         $returnVal = 0;

@@ -158,34 +158,55 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             </div>
                         </template>
                     </template>
-                    <div class="q-mb-lg full-width">
+                    <div class="q-mb-sm full-width">
                         <q-separator ></q-separator>
                     </div>
-                    <div class="full-width row q-gutter-sm">
-                        <div class="col-4 column q-col-gutter-sm">
-                            <div class="full-width">
-                                <q-card flat bordered>
-                                    <q-card-section class="column q-gutter-xs">
-                                        <div class="full-width">
-                                            <selector-input-element label="Sort by" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
-                                        </div>
-                                        <div class="full-width">
-                                            <checkbox-input-element label="Display Common Names" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
-                                        </div>
-                                        <div class="full-width">
-                                            <checkbox-input-element label="Display Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
-                                        </div>
-                                    </q-card-section>
-                                </q-card>
+                    <div class="q-mb-xs full-width row justify-between q-gutter-sm">
+                        <div class="col-8 column q-gutter-xs">
+                            <div class="q-mb-sm row q-col-gutter-sm">
+                                <div class="col-4">
+                                    <selector-input-element label="Sort Taxa" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
+                                </div>
+                                <div class="col-8">
+                                    <selector-input-element label="Sort by" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
+                                </div>
+                            </div>
+                            <div class="row q-col-gutter-sm">
+                                <div class="col-2">
+                                    <div class="q-mr-md text-body1 text-bold">Display:</div>
+                                </div>
+                                <div class="col-10 row q-gutter-sm q-pa-xs">
+                                    <div>
+                                        <checkbox-input-element label="Synonyms" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Common Names" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Notes & Vouchers" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Taxon Authors" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-8 column q-col-gutter-sm q-pl-lg">
-                            <div class="column">
-                                <div class="full-width row justify-end text-h5 text-bold">
-                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
+                        <div class="col-4 column q-col-gutter-sm q-pl-lg">
+                            <div class="q-mt-sm column">
+                                <div class="full-width row justify-end text-body1">
+                                    <span class="text-bold q-mr-sm">Families: </span>{{ countFamilies }}
                                 </div>
                                 <div class="full-width row justify-end text-body1">
-                                    Taxa Count: {{ taxaCount }}
+                                    <span class="text-bold q-mr-sm">Genera: </span>{{ countGenera }}
+                                </div>
+                                <div class="full-width row justify-end text-body1">
+                                    <span class="text-bold q-mr-sm">Species: </span>{{ countSpecies }}
+                                </div>
+                                <div class="full-width row justify-end text-body1">
+                                    <span class="text-bold q-mr-sm">Total Taxa: </span>{{ countTotalTaxa }}
                                 </div>
                             </div>
                         </div>
@@ -240,6 +261,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -316,6 +338,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const searchStore = useSearchStore();
 
                     const checklistData = Vue.computed(() => checklistStore.getChecklistData);
+                    const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
                     const checklistLocalityText = Vue.computed(() => {
                         let returnVal = null;
                         if((checklistData.value.hasOwnProperty('locality') && checklistData.value['locality']) || (checklistData.value.hasOwnProperty('latcentroid') && checklistData.value['latcentroid'])){
@@ -335,6 +358,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         }
                         return returnVal;
                     });
+                    const checklistSynonymyData = Vue.computed(() => checklistStore.getChecklistSynonymyData);
+                    const checklistVernacularData = Vue.computed(() => checklistStore.getChecklistVernacularData);
+                    const checklistVoucherData = Vue.computed(() => checklistStore.getChecklistVoucherData);
                     const clId = Vue.ref(CLID);
                     const clidArr = Vue.computed(() => {
                         let returnArr = [];
@@ -347,11 +373,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return returnArr;
                     });
                     const clientRoot = baseStore.getClientRoot;
-                    const commonNameData = Vue.ref({});
+                    const countFamilies = Vue.computed(() => checklistStore.getCountFamilies);
+                    const countGenera = Vue.computed(() => checklistStore.getCountGenera);
+                    const countSpecies = Vue.computed(() => checklistStore.getCountSpecies);
+                    const countTotalTaxa = Vue.computed(() => checklistStore.getCountTotalTaxa);
                     const displayCommonNamesVal = Vue.ref(false);
                     const displayImagesVal = Vue.ref(false);
                     const displayQueryPopup = Vue.ref(false);
-                    const imageData = Vue.ref({});
                     const isEditor = Vue.ref(false);
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const pId = Vue.ref(PID);
@@ -500,7 +528,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         checklistStore.setChecklist(clId.value, (clid) => {
                             console.log(checklistData.value);
                             if(Number(clid) > 0){
-                                checklistStore.setChecklistTaxaArr(clidArr.value, false);
+                                checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true);
+                                checklistStore.setChecklistImageData(clidArr.value, 1);
+                                checklistStore.setChecklistVoucherData(clidArr.value);
                             }
                         });
                     }
@@ -527,7 +557,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
                             if(Number(clId.value) === 0 && Number(pid) > 0){
-                                checklistStore.setChecklistTaxaArr(clidArr.value, false);
+                                checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true);
                             }
                             else{
                                 showNotification('negative', 'An error occurred while setting the project data.');
@@ -560,6 +590,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         checklistName,
                         clId,
                         clientRoot,
+                        countFamilies,
+                        countGenera,
+                        countSpecies,
+                        countTotalTaxa,
                         displayCommonNamesVal,
                         displayImagesVal,
                         displayQueryPopup,

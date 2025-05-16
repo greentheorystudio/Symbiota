@@ -482,6 +482,28 @@ class Taxa{
         return $retArr;
     }
 
+    public function getTaxaSynonymArrFromTidArr($tidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT tid, tidaccepted, sciname FROM taxa WHERE tidaccepted IN(' . implode(',', $tidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['tidaccepted'], $retArr)){
+                    $retArr[$row['tidaccepted']] = array();
+                }
+                $nodeArr = array();
+                $nodeArr['tid'] = $row['tid'];
+                $nodeArr['sciname'] = $row['sciname'];
+                $retArr[$row['tidaccepted']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getTaxaIdDataFromNameArr($nameArr): array
     {
         $retArr = array();

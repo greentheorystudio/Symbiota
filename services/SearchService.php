@@ -163,7 +163,7 @@ class SearchService {
             if($eDate2){
                 $tempArr[] = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
             }
-            else if(substr($eDate1,-5) === '00-00'){
+            elseif(substr($eDate1,-5) === '00-00'){
                 $tempArr[] = '(i.initialtimestamp REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '")';
             }
             elseif(substr($eDate1,-2) === '00'){
@@ -224,7 +224,7 @@ class SearchService {
                                 $advSqlWhereStr .= '"' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
                             }
                         }
-                        else if($criteriaArr['operator'] === 'STARTS WITH'){
+                        elseif($criteriaArr['operator'] === 'STARTS WITH'){
                             $advSqlWhereStr .= ' REGEXP "^' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
                         }
                         elseif($criteriaArr['operator'] === 'ENDS WITH'){
@@ -581,7 +581,7 @@ class SearchService {
                 if($eDate2){
                     $returnStr = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
                 }
-                else if(substr($eDate1,-5) === '00-00'){
+                elseif(substr($eDate1,-5) === '00-00'){
                     $returnStr = '(o.eventdate REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '")';
                 }
                 elseif(substr($eDate1,-2) === '00'){
@@ -661,7 +661,7 @@ class SearchService {
                                 $mofSqlWhereStr .= '"' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
                             }
                         }
-                        else if($criteriaArr['operator'] === 'STARTS WITH'){
+                        elseif($criteriaArr['operator'] === 'STARTS WITH'){
                             $mofSqlWhereStr .= ' REGEXP "^' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
                         }
                         elseif($criteriaArr['operator'] === 'ENDS WITH'){
@@ -793,7 +793,7 @@ class SearchService {
             if(is_numeric($trimmedName)) {
                 $searchTidArr[] = $trimmedName;
             }
-            else if($taxaSearchType !== 5){
+            elseif($taxaSearchType !== 5){
                 $taxaDataArr[$trimmedName] = 0;
             }
             else{
