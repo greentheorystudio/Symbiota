@@ -35,7 +35,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                         <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Select Kingdom" @update:selected-kingdom="(value) => selectedKingdom = value"></taxa-kingdom-selector>
                                     </div>
                                     <div class="col-6">
-                                        <single-scientific-common-name-auto-complete :disabled="!selectedKingdom" :kingdom-id="selectedKingdom ? selectedKingdom['id'] : null" :sciname="selectedTaxon ? selectedTaxon['sciname'] : null" label="Taxon or Taxonomic Group" :accepted-taxa-only="true" :limit-to-thesaurus="true" @update:sciname="(value) => selectedTaxon = value"></single-scientific-common-name-auto-complete>
+                                        <single-scientific-common-name-auto-complete :disabled="!selectedKingdom" :kingdom-id="selectedKingdom ? selectedKingdom['id'] : null" :sciname="selectedTaxon ? selectedTaxon['sciname'] : null" label="Taxon or Taxonomic Group" :accepted-taxa-only="true" :limit-to-options="true" @update:sciname="(value) => selectedTaxon = value"></single-scientific-common-name-auto-complete>
                                     </div>
                                 </div>
                                 <div class="row justify-between">

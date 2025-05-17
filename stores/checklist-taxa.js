@@ -20,7 +20,8 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         countFamilies: 0,
         countGenera: 0,
         countSpecies: 0,
-        countTotalTaxa: 0
+        countTotalTaxa: 0,
+        taxaFilterOptions: [],
     }),
     getters: {
         getChecklistTaxaArr(state) {
@@ -59,11 +60,19 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         },
         getCountTotalTaxa(state) {
             return state.countTotalTaxa;
+        },
+        getTaxaFilterOptions(state) {
+            return state.taxaFilterOptions;
         }
     },
     actions: {
         clearChecklistTaxaArr() {
             this.checklistTaxaArr.length = 0;
+            this.countFamilies = 0;
+            this.countGenera = 0;
+            this.countSpecies = 0;
+            this.countTotalTaxa = 0;
+            this.taxaFilterOptions.length = 0;
         },
         createChecklistTaxaRecord(clid, callback) {
             const formData = new FormData();
@@ -150,8 +159,14 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                 if(!totalArr.includes(taxon['sciname'])){
                     totalArr.push(taxon['sciname']);
                 }
+                if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === taxon['sciname'])){
+                    this.taxaFilterOptions.push({sciname: taxon['sciname'], label: taxon['sciname'], rankid: taxon['rankid']});
+                }
                 if(taxon['family'] && taxon['family'] !== '[Incertae Sedis]' && !familyArr.includes(taxon['family'])){
                     familyArr.push(taxon['family']);
+                    if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === taxon['family'])){
+                        this.taxaFilterOptions.push({sciname: taxon['family'], label: taxon['family'], rankid: 140});
+                    }
                 }
                 if(Number(taxon['rankid']) === 180 && !generaArr.includes(taxon['sciname'])){
                     generaArr.push(taxon['sciname']);
@@ -160,12 +175,18 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                     const unitNameArr = taxon['sciname'].split(' ');
                     if(!generaArr.includes(unitNameArr[0])){
                         generaArr.push(unitNameArr[0]);
+                        if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === unitNameArr[0])){
+                            this.taxaFilterOptions.push({sciname: unitNameArr[0], label: unitNameArr[0], rankid: 180});
+                        }
                     }
                     if(Number(taxon['rankid']) === 220 && !speciesArr.includes(taxon['sciname'])){
                         speciesArr.push(taxon['sciname']);
                     }
                     else if(!speciesArr.includes((unitNameArr[0] + ' ' + unitNameArr[1]))){
                         speciesArr.push((unitNameArr[0] + ' ' + unitNameArr[1]));
+                        if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === (unitNameArr[0] + ' ' + unitNameArr[1]))){
+                            this.taxaFilterOptions.push({sciname: (unitNameArr[0] + ' ' + unitNameArr[1]), label: (unitNameArr[0] + ' ' + unitNameArr[1]), rankid: 220});
+                        }
                     }
                 }
             });
@@ -173,6 +194,9 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             this.countGenera = generaArr.length;
             this.countSpecies = speciesArr.length;
             this.countTotalTaxa = totalArr.length;
+            this.taxaFilterOptions.sort((a, b) => {
+                return a['sciname'].toLowerCase().localeCompare(b['sciname'].toLowerCase());
+            });
         },
         updateChecklistTaxaEditData(key, value) {
             this.checklistTaxaEditData[key] = value;

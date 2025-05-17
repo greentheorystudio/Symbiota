@@ -77,6 +77,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                         <div class="full-width">
                                             <checkbox-input-element label="Display Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
                                         </div>
+                                        <div class="full-width">
+                                            <checkbox-input-element label="Display Synonyms" :value="displaySynonymsVal" @update:value="processDisplaySynonymsChange"></checkbox-input-element>
+                                        </div>
+                                        <div class="full-width">
+                                            <checkbox-input-element label="Display Taxon Authors" :value="displayAuthorsVal" @update:value="processDisplayAuthorsChange"></checkbox-input-element>
+                                        </div>
                                     </q-card-section>
                                 </q-card>
                             </div>
@@ -323,12 +329,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return returnArr;
                     });
                     const clientRoot = baseStore.getClientRoot;
-                    const commonNameData = Vue.ref({});
                     const csidArr = Vue.ref([]);
-                    const displayCommonNamesVal = Vue.ref(false);
-                    const displayImagesVal = Vue.ref(false);
+                    const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
+                    const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
+                    const displayImagesVal = Vue.computed(() => checklistStore.getDisplayImages);
                     const displayQueryPopup = Vue.ref(false);
-                    const imageData = Vue.ref({});
+                    const displaySynonymsVal = Vue.computed(() => checklistStore.getDisplaySynonyms);
                     const keyDataArr = Vue.ref([]);
                     const languageArr = [];
                     const pId = Vue.ref(PID);
@@ -346,13 +352,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         const valueArr = selectedStateArr.value.length > 0 ? selectedStateArr.value.map(state => Number(state['csid'])) : [];
                         return valueArr.length > 0 ? valueArr.filter((value, index, array) => array.indexOf(value) === index) : [];
                     });
-                    const selectedSortByOption = Vue.ref('family');
+                    const selectedSortByOption = Vue.computed(() => checklistStore.getDisplaySortVal);
                     const selectedStateArr = Vue.ref([]);
                     const showSpatialPopup = Vue.ref(false);
-                    const sortByOptions = Vue.ref([
-                        {value: 'family', label: 'Family/Scientific Name'},
-                        {value: 'sciname', label: 'Scientific Name'}
-                    ]);
+                    const sortByOptions = Vue.computed(() => checklistStore.getDisplaySortByOptions);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const taxaCount = Vue.computed(() => {
                         return activeTidArr.value.length;
@@ -462,12 +465,20 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         setActiveTaxa();
                     }
 
+                    function processDisplayAuthorsChange(value) {
+                        checklistStore.setDisplayAuthors(value);
+                    }
+
                     function processDisplayCommonNameChange(value) {
-                        displayCommonNamesVal.value = Number(value) === 1;
+                        checklistStore.setDisplayVernaculars(value);
                     }
 
                     function processDisplayImagesChange(value) {
-                        displayImagesVal.value = Number(value) === 1;
+                        checklistStore.setDisplayImages(value);
+                    }
+
+                    function processDisplaySynonymsChange(value) {
+                        checklistStore.setDisplaySynonyms(value);
                     }
 
                     function processKeyData(keyData) {
@@ -497,7 +508,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function processSortByChange(value) {
-                        selectedSortByOption.value = value;
+                        checklistStore.setDisplaySortVal(value);
                     }
 
                     function processSpatialData(data) {
@@ -665,9 +676,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         checklistName,
                         clId,
                         clientRoot,
+                        displayAuthorsVal,
                         displayCommonNamesVal,
                         displayImagesVal,
                         displayQueryPopup,
+                        displaySynonymsVal,
                         keyDataArr,
                         languageArr,
                         pId,
@@ -687,8 +700,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         closeSpatialPopup,
                         openSpatialPopup,
                         processCharacterStateSelectionChange,
+                        processDisplayAuthorsChange,
                         processDisplayCommonNameChange,
                         processDisplayImagesChange,
+                        processDisplaySynonymsChange,
                         processSortByChange,
                         processSpatialData,
                         setQueryPopupDisplay
