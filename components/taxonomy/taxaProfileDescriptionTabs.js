@@ -16,7 +16,7 @@ const taxaProfileDescriptionTabs = {
                         <q-tab-panels v-model="selectedDescTab">
                             <template v-for="desc in descriptionArr">
                                 <q-tab-panel :name="desc.tdbid">
-                                    <div class="desc-tab-panels" style="width: 400px;">
+                                    <div class="desc-tab-panels">
                                         <template v-if="desc.source || desc.sourceurl">
                                             <div class="desc-source">
                                                 <template v-if="desc.sourceurl">
