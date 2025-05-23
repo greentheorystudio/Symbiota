@@ -83,50 +83,73 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
+                                <div v-if="Object.keys(checklistVoucherData).length > 0">
+                                    <q-btn text-color="black" size="sm" :href="mapViewUrl" icon="fas fa-globe" dense unelevated :ripple="false">
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            View Vouchers in Interactive Map
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
                             </div>
                         </div>
                         <div class="row justify-end q-gutter-sm items-center">
-                            <template v-if="Number(clId) > 0 && validUser">
-                                <template v-if="temporaryChecklist">
-                                    <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="saveTemporaryChecklist();" icon="fas fa-save" dense>
-                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Save Checklist
-                                            </q-tooltip>
-                                        </q-btn>
-                                    </div>
-                                </template>
-                                <template v-else-if="isEditor">
-                                    <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/checklistadmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-cog" dense>
-                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Open Checklist Administration
-                                            </q-tooltip>
-                                        </q-btn>
-                                    </div>
-                                    <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/voucheradmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-link" dense>
-                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Open Voucher Administration
-                                            </q-tooltip>
-                                        </q-btn>
-                                    </div>
-                                    <div>
-                                        <template v-if="taxaEditingActive">
-                                            <q-btn color="grey-4" text-color="red" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-times-circle" dense>
+                            <template v-if="Number(clId) > 0">
+                                <div>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklistCsv();" icon="fas fa-download" dense>
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Download Checklist as CSV
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                                <div>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklistWord();" icon="far fa-file-word" dense>
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Download Checklist as Word Document
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                                <template v-if="validUser">
+                                    <template v-if="temporaryChecklist">
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="saveTemporaryChecklist();" icon="fas fa-save" dense>
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    Toggle Taxa Editing Off
+                                                    Save Checklist
                                                 </q-tooltip>
                                             </q-btn>
-                                        </template>
-                                        <template v-else>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense>
+                                        </div>
+                                    </template>
+                                    <template v-else-if="isEditor">
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/checklistadmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-cog" dense>
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    Toggle Taxa Editing On
+                                                    Open Checklist Administration
                                                 </q-tooltip>
                                             </q-btn>
-                                        </template>
-                                    </div>
+                                        </div>
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/voucheradmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-link" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Open Voucher Administration
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                        <div>
+                                            <template v-if="taxaEditingActive">
+                                                <q-btn color="grey-4" text-color="red" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-times-circle" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Toggle Taxa Editing Off
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </template>
+                                            <template v-else>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Toggle Taxa Editing On
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </template>
+                                        </div>
+                                    </template>
                                 </template>
                             </template>
                         </div>
@@ -149,43 +172,64 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <span class="text-bold">Notes: </span>{{ checklistData['notes'] }}
                             </div>
                             <div class="text-body1 text-bold text-blue cursor-pointer">
-                                <a @click="showMoreDescription = false" class="text-primary">Less Details</a>
+                                <a @click="processDisplayDetailsChange(false);" class="text-primary">Less Details</a>
                             </div>
                         </template>
                         <template v-else>
                             <div class="text-body1 text-bold text-blue cursor-pointer">
-                                <a @click="showMoreDescription = true" class="text-primary">More Details</a>
+                                <a @click="processDisplayDetailsChange(true);" class="text-primary">More Details</a>
                             </div>
                         </template>
                     </template>
-                    <div class="q-mb-lg full-width">
+                    <div class="q-mb-sm full-width">
                         <q-separator ></q-separator>
                     </div>
-                    <div class="full-width row q-gutter-sm">
-                        <div class="col-4 column q-col-gutter-sm">
-                            <div class="full-width">
-                                <q-card flat bordered>
-                                    <q-card-section class="column q-gutter-xs">
-                                        <div class="full-width">
-                                            <selector-input-element label="Sort by" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
-                                        </div>
-                                        <div class="full-width">
-                                            <checkbox-input-element label="Display Common Names" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
-                                        </div>
-                                        <div class="full-width">
-                                            <checkbox-input-element label="Display Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
-                                        </div>
-                                    </q-card-section>
-                                </q-card>
+                    <div class="q-mb-xs full-width row justify-between q-gutter-sm">
+                        <div class="col-8 column q-gutter-xs">
+                            <div class="q-mb-sm row q-col-gutter-sm">
+                                <div class="col-4">
+                                    <selector-input-element label="Sort Taxa" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
+                                </div>
+                                <div class="col-8">
+                                    <single-scientific-common-name-auto-complete :sciname="(taxonFilterVal ? taxonFilterVal.sciname : null)" label="Taxon Filter" limit-to-options="true" @update:sciname="processTaxonFilterValChange"></single-scientific-common-name-auto-complete>
+                                </div>
+                            </div>
+                            <div class="row q-col-gutter-sm">
+                                <div class="col-2">
+                                    <div class="q-mr-md text-body1 text-bold">Display:</div>
+                                </div>
+                                <div class="col-10 row q-gutter-sm q-pa-xs">
+                                    <div>
+                                        <checkbox-input-element label="Synonyms" :value="displaySynonymsVal" @update:value="processDisplaySynonymsChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Common Names" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Notes & Vouchers" :value="displayVouchersVal" @update:value="processDisplayVouchersChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Taxon Authors" :value="displayAuthorsVal" @update:value="processDisplayAuthorsChange"></checkbox-input-element>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-8 column q-col-gutter-sm q-pl-lg">
-                            <div class="column">
-                                <div class="full-width row justify-end text-h5 text-bold">
-                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
+                        <div class="col-4 column q-col-gutter-sm q-pl-lg">
+                            <div class="q-mt-sm column">
+                                <div class="full-width row justify-end text-body1">
+                                    <span class="text-bold q-mr-sm">Families: </span>{{ countFamilies }}
                                 </div>
                                 <div class="full-width row justify-end text-body1">
-                                    Taxa Count: {{ taxaCount }}
+                                    <span class="text-bold q-mr-sm">Genera: </span>{{ countGenera }}
+                                </div>
+                                <div class="full-width row justify-end text-body1">
+                                    <span class="text-bold q-mr-sm">Species: </span>{{ countSpecies }}
+                                </div>
+                                <div class="full-width row justify-end text-body1">
+                                    <span class="text-bold q-mr-sm">Total Taxa: </span>{{ countTotalTaxa }}
                                 </div>
                             </div>
                         </div>
@@ -240,6 +284,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -256,6 +301,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -306,16 +352,18 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     'checkbox-input-element': checkboxInputElement,
                     'search-criteria-popup': searchCriteriaPopup,
                     'selector-input-element': selectorInputElement,
+                    'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
                     'spatial-analysis-popup': spatialAnalysisPopup
                 },
                 setup() {
-                    const { hideWorking, showNotification, showWorking } = useCore();
+                    const { hideWorking, processCsvDownload, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
                     const checklistStore = useChecklistStore();
                     const projectStore = useProjectStore();
                     const searchStore = useSearchStore();
 
                     const checklistData = Vue.computed(() => checklistStore.getChecklistData);
+                    const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
                     const checklistLocalityText = Vue.computed(() => {
                         let returnVal = null;
                         if((checklistData.value.hasOwnProperty('locality') && checklistData.value['locality']) || (checklistData.value.hasOwnProperty('latcentroid') && checklistData.value['latcentroid'])){
@@ -335,6 +383,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         }
                         return returnVal;
                     });
+                    const checklistSynonymyData = Vue.computed(() => checklistStore.getChecklistSynonymyData);
+                    const checklistVernacularData = Vue.computed(() => checklistStore.getChecklistVernacularData);
+                    const checklistVoucherData = Vue.computed(() => checklistStore.getChecklistVoucherData);
                     const clId = Vue.ref(CLID);
                     const clidArr = Vue.computed(() => {
                         let returnArr = [];
@@ -347,13 +398,21 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return returnArr;
                     });
                     const clientRoot = baseStore.getClientRoot;
-                    const commonNameData = Vue.ref({});
-                    const displayCommonNamesVal = Vue.ref(false);
-                    const displayImagesVal = Vue.ref(false);
+                    const countFamilies = Vue.computed(() => checklistStore.getCountFamilies);
+                    const countGenera = Vue.computed(() => checklistStore.getCountGenera);
+                    const countSpecies = Vue.computed(() => checklistStore.getCountSpecies);
+                    const countTotalTaxa = Vue.computed(() => checklistStore.getCountTotalTaxa);
+                    const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
+                    const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
+                    const displayImagesVal = Vue.computed(() => checklistStore.getDisplayImages);
                     const displayQueryPopup = Vue.ref(false);
-                    const imageData = Vue.ref({});
+                    const displaySynonymsVal = Vue.computed(() => checklistStore.getDisplaySynonyms);
+                    const displayVouchersVal = Vue.computed(() => checklistStore.getDisplayVouchers);
                     const isEditor = Vue.ref(false);
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
+                    const mapViewUrl = Vue.computed(() => {
+                        return (clientRoot + '/spatial/index.php?starr={"clid":"' + clId.value + '"}');
+                    });
                     const pId = Vue.ref(PID);
                     const popupWindowType = Vue.ref(null);
                     const projectData = Vue.computed(() => projectStore.getProjectData);
@@ -361,13 +420,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return projectData.value.hasOwnProperty('projname') ? projectData.value['projname'] : '';
                     });
                     const queryId = QUERYID;
-                    const selectedSortByOption = Vue.ref('family');
-                    const showMoreDescription = Vue.ref(false);
+                    const selectedSortByOption = Vue.computed(() => checklistStore.getDisplaySortVal);
+                    const showMoreDescription = Vue.computed(() => checklistStore.getDisplayDetails);
                     const showSpatialPopup = Vue.ref(false);
-                    const sortByOptions = Vue.ref([
-                        {value: 'family', label: 'Family/Scientific Name'},
-                        {value: 'sciname', label: 'Scientific Name'}
-                    ]);
+                    const sortByOptions = Vue.computed(() => checklistStore.getDisplaySortByOptions);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const taxaCount = Vue.computed(() => {
                         return 0;
@@ -413,6 +469,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return newDataArr.slice();
                     });
                     const taxaEditingActive = Vue.ref(false);
+                    const taxaFilterOptions = Vue.computed(() => checklistStore.getTaxaFilterOptions);
+                    const taxonFilterVal = Vue.computed(() => checklistStore.getDisplayTaxonFilterVal);
                     const temporaryChecklist = Vue.computed(() => {
                         let returnVal = false;
                         if(checklistData.value.hasOwnProperty('clid') && Number(checklistData.value['clid']) > 0 && checklistData.value['expiration']){
@@ -460,30 +518,57 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         searchStore.clearSpatialInputValues();
                     }
 
+                    function downloadChecklistCsv() {
+
+                    }
+
+                    function downloadChecklistWord() {
+
+                    }
+
                     function openSpatialPopup(type) {
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
                     }
 
+                    function processDisplayAuthorsChange(value) {
+                        checklistStore.setDisplayAuthors(value);
+                    }
+
                     function processDisplayCommonNameChange(value) {
-                        displayCommonNamesVal.value = Number(value) === 1;
+                        checklistStore.setDisplayVernaculars(value);
+                    }
+
+                    function processDisplayDetailsChange(value) {
+                        checklistStore.setDisplayDetails(value);
                     }
 
                     function processDisplayImagesChange(value) {
-                        displayImagesVal.value = Number(value) === 1;
+                        checklistStore.setDisplayImages(value);
+                    }
+
+                    function processDisplaySynonymsChange(value) {
+                        checklistStore.setDisplaySynonyms(value);
+                    }
+
+                    function processDisplayVouchersChange(value) {
+                        checklistStore.setDisplayVouchers(value);
                     }
 
                     function processSortByChange(value) {
-                        selectedSortByOption.value = value;
+                        checklistStore.setDisplaySortVal(value);
                     }
 
                     function processSpatialData(data) {
                         searchStore.processSpatialPopupData(popupWindowType.value, data);
                     }
 
+                    function processTaxonFilterValChange(taxon) {
+                        checklistStore.setDisplayTaxonFilterVal(taxon);
+                    }
+
                     function saveTemporaryChecklist() {
-                        console.log(searchStore.getSearchTermsJson);
                         checklistStore.saveTemporaryChecklist(searchStore.getSearchTermsJson, (res) => {
                             if(Number(res) === 1){
                                 showNotification('positive','Checklist saved.');
@@ -500,7 +585,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         checklistStore.setChecklist(clId.value, (clid) => {
                             console.log(checklistData.value);
                             if(Number(clid) > 0){
-                                checklistStore.setChecklistTaxaArr(clidArr.value, false);
+                                checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true);
+                                checklistStore.setChecklistImageData(clidArr.value, 1);
+                                checklistStore.setChecklistVoucherData(clidArr.value);
                             }
                         });
                     }
@@ -527,7 +614,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
                             if(Number(clId.value) === 0 && Number(pid) > 0){
-                                checklistStore.setChecklistTaxaArr(clidArr.value, false);
+                                checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true);
                             }
                             else{
                                 showNotification('negative', 'An error occurred while setting the project data.');
@@ -556,15 +643,27 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     return {
                         checklistData,
+                        checklistImageData,
                         checklistLocalityText,
                         checklistName,
+                        checklistSynonymyData,
+                        checklistVernacularData,
+                        checklistVoucherData,
                         clId,
                         clientRoot,
+                        countFamilies,
+                        countGenera,
+                        countSpecies,
+                        countTotalTaxa,
+                        displayAuthorsVal,
                         displayCommonNamesVal,
                         displayImagesVal,
                         displayQueryPopup,
+                        displaySynonymsVal,
+                        displayVouchersVal,
                         isEditor,
                         keyModuleIsActive,
+                        mapViewUrl,
                         pId,
                         popupWindowType,
                         projectData,
@@ -577,15 +676,24 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         taxaCount,
                         taxaDisplayDataArr,
                         taxaEditingActive,
+                        taxaFilterOptions,
+                        taxonFilterVal,
                         temporaryChecklist,
                         validUser,
                         buildChecklist,
                         closeSpatialPopup,
+                        downloadChecklistCsv,
+                        downloadChecklistWord,
                         openSpatialPopup,
+                        processDisplayAuthorsChange,
                         processDisplayCommonNameChange,
+                        processDisplayDetailsChange,
                         processDisplayImagesChange,
+                        processDisplaySynonymsChange,
+                        processDisplayVouchersChange,
                         processSortByChange,
                         processSpatialData,
+                        processTaxonFilterValChange,
                         saveTemporaryChecklist,
                         setQueryPopupDisplay
                     }

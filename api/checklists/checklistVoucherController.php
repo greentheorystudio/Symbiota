@@ -25,7 +25,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $tid = array_key_exists('tid', $_POST) ? (int)$_POST['tid'] : null;
         echo $checklistVouchers->createChecklistVoucherRecord($clid, $occid, $tid);
     }
-    elseif($action === 'getChecklistVouchers' && $clid){
-        echo json_encode($checklistVouchers->getChecklistVouchers($clid));
+    elseif($action === 'getChecklistVouchers' && array_key_exists('clidArr', $_POST)){
+        echo json_encode($checklistVouchers->getChecklistVouchers(json_decode($_POST['clidArr'], false)));
     }
 }

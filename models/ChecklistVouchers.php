@@ -94,14 +94,14 @@ class ChecklistVouchers{
         return $retArr;
     }
 
-    public function getChecklistVouchers($clid): array
+    public function getChecklistVouchers($clidArr): array
     {
         $retArr = array();
-        if($clid){
+        if($clidArr && count($clidArr) > 0){
             $sql = 'SELECT v.tid, o.occid, c.institutioncode, o.catalognumber, o.othercatalognumbers, o.recordedby, o.recordnumber, o.eventdate '.
                 'FROM fmvouchers AS v LEFT JOIN omoccurrences AS o ON v.occid = o.occid '.
                 'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-                'WHERE v.clid = ' . (int)$clid . ' ORDER BY o.collid ';
+                'WHERE v.clid IN(' . implode(',', $clidArr) . ') ORDER BY o.collid ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

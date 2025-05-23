@@ -39,7 +39,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     <q-card class="top-tool-container q-mb-md">
                         <q-card-section>
                             <div class="q-my-sm">
-                                <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Enter Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                                <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Enter Taxonomic Group" limit-to-options="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                             </div>
                             <div class="q-my-sm q-mt-md">
                                 <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
