@@ -106,7 +106,7 @@ class DataDownloadService {
                 $returnStr .= '</Data>';
             }
             $returnStr .= '</ExtendedData>';
-            $returnStr .= '<Point><coordinates>' . $data['decimallongitude'] . ',' . $data['decimallatitude'] . '</coordinates></Point>';
+            $returnStr .= '<Point><coordinates>' . (float)$data['decimallongitude'] . ',' . (float)$data['decimallatitude'] . '</coordinates></Point>';
             $returnStr .= '</Placemark>';
         }
         $returnStr .= '</Document></kml>';

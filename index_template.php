@@ -11,25 +11,32 @@ header('Content-Type: text/html; charset=UTF-8' );
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Home</title>
         <meta name="description" content="Welcome to the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <meta name='keywords' content='' />
     </head>
     <body>
         <?php
         include(__DIR__ . '/header.php');
         ?>
-        <div id="mainContainer" style="padding: 10px 15px 15px;">
-            <h1>Welcome to your portal!</h1>
+        <div id="mainContainer">
+            <div class="q-pa-md">
+                <h1>Welcome to your portal!</h1>
 
-            <p>
-                Here's where all the great stuff on your homepage goes.
-            </p>
+                <p>
+                    Here's where all the great stuff on your homepage goes.
+                </p>
+            </div>
         </div>
-
         <?php
-        include_once(__DIR__ . '/config/footer-includes.php');
         include(__DIR__ . '/footer.php');
+        include_once(__DIR__ . '/config/footer-includes.php');
         ?>
+        <script>
+            const homePageModule = Vue.createApp();
+            homePageModule.use(Quasar, { config: {} });
+            homePageModule.use(Pinia.createPinia());
+            homePageModule.mount('#mainContainer');
+        </script>
     </body>
 </html>

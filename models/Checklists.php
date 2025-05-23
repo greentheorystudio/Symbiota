@@ -260,6 +260,28 @@ class Checklists{
         return $retArr;
     }
 
+    public function saveTemporaryChecklist($clid, $searchTerms): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($clid){
+            $sqlPartArr[] = 'expiration = NULL';
+            $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';
+            if($searchTerms){
+                $sqlPartArr[] = 'searchterms = ' . SanitizerService::getSqlValueString($this->conn, json_encode($searchTerms), $this->fields['searchterms']['dataType']);
+            }
+            $sql = 'UPDATE fmchecklists SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE clid = ' . (int)$clid . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                (new Permissions)->addPermission($GLOBALS['SYMB_UID'], 'ClAdmin', $clid);
+                (new Permissions)->setUserPermissions();
+            }
+        }
+        return $retVal;
+    }
+
     public function updateChecklistRecord($clid, $editData): int
     {
         $retVal = 0;

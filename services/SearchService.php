@@ -1120,7 +1120,7 @@ class SearchService {
                     $geoArr = array();
                     $geoArr['type'] = 'Feature';
                     $geoArr['geometry']['type'] = 'Point';
-                    $geoArr['geometry']['coordinates'] = [$row['decimallongitude'], $row['decimallatitude']];
+                    $geoArr['geometry']['coordinates'] = [(float)$row['decimallongitude'], (float)$row['decimallatitude']];
                     $geoArr['properties'] = array();
                     $geoArr['properties']['id'] = $row['occid'];
                     foreach($fields as $val){

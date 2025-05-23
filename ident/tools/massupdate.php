@@ -120,7 +120,7 @@ include(__DIR__ . '/../../header.php');
 ?>
 <div id="breadcrumbs">
 	<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-	<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/checklist.php?cl=<?php echo $clid; ?>">
+	<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/checklists/checklist.php?clid=<?php echo $clid; ?>">
 		<b>Open Checklist</b>
 	</a> &gt;&gt;
 	<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/key.php?clid=<?php echo $clid; ?>">

@@ -85,6 +85,8 @@ const spatialVectorToolsTab = {
         </div>
     `,
     setup() {
+        const searchStore = useSearchStore();
+
         const bufferWidthValue = Vue.ref(null);
         const downloadTypeOptions = [
             {value: 'kml', label: 'KML'},
@@ -144,7 +146,7 @@ const spatialVectorToolsTab = {
                                 ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                                 ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                             );
-                            groundRadius = groundRadius / 1000;
+                            groundRadius /= 1000;
                             turfFeature = getWGS84CirclePoly(center,groundRadius);
                         }
                         const buffered = turf.buffer(turfFeature, bufferWidthValue.value, {units: 'kilometers'});
@@ -182,7 +184,7 @@ const spatialVectorToolsTab = {
                             ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                             ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                         );
-                        groundRadius = groundRadius / 1000;
+                        groundRadius /= 1000;
                         features.push(getWGS84CirclePoly(center,groundRadius));
                     }
                 }
@@ -236,7 +238,7 @@ const spatialVectorToolsTab = {
                                 ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                                 ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                             );
-                            groundRadius = groundRadius / 1000;
+                            groundRadius /= 1000;
                             if(pass === 1){
                                 featuresOne.push(getWGS84CirclePoly(center,groundRadius));
                             }
@@ -296,7 +298,7 @@ const spatialVectorToolsTab = {
                             ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                             ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                         );
-                        groundRadius = groundRadius / 1000;
+                        groundRadius /= 1000;
                         features.push(getWGS84CirclePoly(center, groundRadius));
                     }
                 }
@@ -354,7 +356,7 @@ const spatialVectorToolsTab = {
                     exportStr = exportStr.replaceAll(/<Polygon>/g,'<Polygon><altitudeMode>clampToGround</altitudeMode>');
                     exportStr = exportStr.replaceAll(/<\/kml>/g,'</Folder></Document></kml>');
                 }
-                const filename = 'shapes_' + getDateTimeString() + '.' + selectedDownloadType.value.value;
+                const filename = 'shapes_' + searchStore.getDateTimeString + '.' + selectedDownloadType.value.value;
                 const blob = new Blob([exportStr], {type: filetype});
                 const elem = window.document.createElement('a');
                 elem.href = window.URL.createObjectURL(blob);
@@ -395,7 +397,7 @@ const spatialVectorToolsTab = {
                         ol.proj.transform(center, 'EPSG:4326', 'EPSG:4326'),
                         ol.proj.transform(edgeCoordinate, 'EPSG:4326', 'EPSG:4326')
                     );
-                    groundRadius = groundRadius / 1000;
+                    groundRadius /= 1000;
                     const turfCircle = getWGS84CirclePoly(center, groundRadius);
                     const circpoly = geoJSONFormat.readFeature(turfCircle);
                     circpoly.getGeometry().transform(wgs84Projection, mapProjection);
