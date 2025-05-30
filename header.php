@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/services/SanitizerService.php');
 ?>
-<div id="mainContainer">
+<div id="appContainer">
     <div id="bannerContainer">
         <div style="float:right;margin-top:20px;">
             <img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/calIBIS-logo.png" />
