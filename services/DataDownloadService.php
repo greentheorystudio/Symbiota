@@ -33,6 +33,9 @@ class DataDownloadService {
         elseif($fileType === 'gpx'){
             $returnVal = 'application/gpx+xml';
         }
+        elseif($fileType === 'docx'){
+            $returnVal = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        }
         return $returnVal;
     }
 
@@ -54,7 +57,8 @@ class DataDownloadService {
                 }
                 $result->free();
                 FileSystemService::closeFileHandler($fileHandler);
-                $this->setDownloadHeaders('csv', 'text/csv; charset=UTF-8', basename($fullPath), $fullPath);
+                $outputType = $this->getContentTypeFromFileType('csv');
+                $this->setDownloadHeaders('csv', $outputType, basename($fullPath), $fullPath);
                 flush();
                 readfile($fullPath);
                 FileSystemService::deleteFile($fullPath, true);

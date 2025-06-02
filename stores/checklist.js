@@ -128,6 +128,17 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getDisplayVouchers(state) {
             return state.displayVouchers;
         },
+        getDownloadOptions(state) {
+            return {
+                authors: (state.displayAuthors ? '1' : '0'),
+                images: (state.displayImages ? '1' : '0'),
+                synonyms: (state.displaySynonyms ? '1' : '0'),
+                vernaculars: (state.displayVernaculars ? '1' : '0'),
+                notes: (state.displayVouchers ? '1' : '0'),
+                taxaSort: state.displaySortVal,
+                taxonFilter: state.displayTaxonFilterVal
+            };
+        },
         getTaxaFilterOptions(state) {
             return state.checklistTaxaStore.getTaxaFilterOptions;
         }
@@ -229,6 +240,31 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     this.displaySortVal = 'sciname';
                 }
             }
+        },
+        processDownloadRequest(name, type, clidArr, callback){
+            let filename;
+            const formData = new FormData();
+            formData.append('clidArr', JSON.stringify(clidArr));
+            formData.append('options', JSON.stringify(this.getDownloadOptions));
+            if(type === 'csv'){
+                filename = (name + '.csv');
+                formData.append('action', 'processCsvDownload');
+            }
+            else if(type === 'docx'){
+                filename = (name + '.docx');
+                formData.append('action', 'processDocxDownload');
+            }
+            formData.append('filename', filename);
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                callback(filename, blob);
+            });
         },
         saveTemporaryChecklist(searchTermsJson, callback) {
             const formData = new FormData();

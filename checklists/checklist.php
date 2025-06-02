@@ -69,14 +69,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <h1>{{ checklistName }}</h1>
                             </div>
                             <div class="row q-gutter-sm">
-                                <div v-if="keyModuleIsActive">
+                                <div v-if="keyModuleIsActive && taxaDataArr.length > 0">
                                     <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-key" dense unelevated :ripple="false">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Interactive Key
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
-                                <div>
+                                <div v-if="taxaDataArr.length > 0">
                                     <q-btn text-color="black" size="sm" :href="(clientRoot + '/games/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Flashcard Game
@@ -94,20 +94,22 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </div>
                         <div class="row justify-end q-gutter-sm items-center">
                             <template v-if="Number(clId) > 0">
-                                <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklistCsv();" icon="fas fa-download" dense>
-                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                            Download Checklist as CSV
-                                        </q-tooltip>
-                                    </q-btn>
-                                </div>
-                                <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklistWord();" icon="far fa-file-word" dense>
-                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                            Download Checklist as Word Document
-                                        </q-tooltip>
-                                    </q-btn>
-                                </div>
+                                <template v-if="taxaDataArr.length > 0">
+                                    <div>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklistCsv();" icon="fas fa-download" dense>
+                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                Download Checklist as CSV
+                                            </q-tooltip>
+                                        </q-btn>
+                                    </div>
+                                    <div>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklistWord();" icon="far fa-file-word" dense>
+                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                Download Checklist as Word Document
+                                            </q-tooltip>
+                                        </q-btn>
+                                    </div>
+                                </template>
                                 <template v-if="validUser">
                                     <template v-if="temporaryChecklist">
                                         <div>
@@ -519,7 +521,19 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function downloadChecklistCsv() {
-
+                        showWorking();
+                        checklistStore.processDownloadRequest(checklistName.value, 'csv', clidArr.value, (filename, dataBlob) => {
+                            hideWorking();
+                            if(dataBlob !== null){
+                                const objectUrl = window.URL.createObjectURL(dataBlob);
+                                const anchor = document.createElement('a');
+                                anchor.href = objectUrl;
+                                anchor.download = filename;
+                                document.body.appendChild(anchor);
+                                anchor.click();
+                                anchor.remove();
+                            }
+                        });
                     }
 
                     function downloadChecklistWord() {
@@ -583,7 +597,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function setChecklistData() {
                         setEditor();
                         checklistStore.setChecklist(clId.value, (clid) => {
-                            console.log(checklistData.value);
                             if(Number(clid) > 0){
                                 checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true);
                                 checklistStore.setChecklistImageData(clidArr.value, 1);
@@ -674,6 +687,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         sortByOptions,
                         spatialInputValues,
                         taxaCount,
+                        taxaDataArr,
                         taxaDisplayDataArr,
                         taxaEditingActive,
                         taxaFilterOptions,
