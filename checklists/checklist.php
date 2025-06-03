@@ -96,14 +96,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <template v-if="Number(clId) > 0">
                                 <template v-if="taxaDataArr.length > 0">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklistCsv();" icon="fas fa-download" dense>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('csv');" icon="fas fa-download" dense>
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Download Checklist as CSV
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklistWord();" icon="far fa-file-word" dense>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('docx');" icon="far fa-file-word" dense>
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Download Checklist as Word Document
                                             </q-tooltip>
@@ -520,9 +520,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         searchStore.clearSpatialInputValues();
                     }
 
-                    function downloadChecklistCsv() {
+                    function downloadChecklist(type) {
                         showWorking();
-                        checklistStore.processDownloadRequest(checklistName.value, 'csv', clidArr.value, (filename, dataBlob) => {
+                        checklistStore.processDownloadRequest(checklistName.value, type, clidArr.value, (filename, dataBlob) => {
                             hideWorking();
                             if(dataBlob !== null){
                                 const objectUrl = window.URL.createObjectURL(dataBlob);
@@ -534,10 +534,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 anchor.remove();
                             }
                         });
-                    }
-
-                    function downloadChecklistWord() {
-
                     }
 
                     function openSpatialPopup(type) {
@@ -696,8 +692,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         validUser,
                         buildChecklist,
                         closeSpatialPopup,
-                        downloadChecklistCsv,
-                        downloadChecklistWord,
+                        downloadChecklist,
                         openSpatialPopup,
                         processDisplayAuthorsChange,
                         processDisplayCommonNameChange,

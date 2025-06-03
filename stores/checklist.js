@@ -252,6 +252,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             }
             else if(type === 'docx'){
                 filename = (name + '.docx');
+                formData.append('clid', this.checklistId.toString());
                 formData.append('action', 'processDocxDownload');
             }
             formData.append('filename', filename);
