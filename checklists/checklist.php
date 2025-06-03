@@ -222,16 +222,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="col-4 column q-col-gutter-sm q-pl-lg">
                             <div class="q-mt-sm column">
                                 <div class="full-width row justify-end text-body1">
-                                    <span class="text-bold q-mr-sm">Families: </span>{{ countFamilies }}
+                                    <span class="text-bold q-mr-sm">Families: </span>{{ countData['families'] }}
                                 </div>
                                 <div class="full-width row justify-end text-body1">
-                                    <span class="text-bold q-mr-sm">Genera: </span>{{ countGenera }}
+                                    <span class="text-bold q-mr-sm">Genera: </span>{{ countData['genera'] }}
                                 </div>
                                 <div class="full-width row justify-end text-body1">
-                                    <span class="text-bold q-mr-sm">Species: </span>{{ countSpecies }}
+                                    <span class="text-bold q-mr-sm">Species: </span>{{ countData['species'] }}
                                 </div>
                                 <div class="full-width row justify-end text-body1">
-                                    <span class="text-bold q-mr-sm">Total Taxa: </span>{{ countTotalTaxa }}
+                                    <span class="text-bold q-mr-sm">Total Taxa: </span>{{ countData['total'] }}
                                 </div>
                             </div>
                         </div>
@@ -364,6 +364,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const projectStore = useProjectStore();
                     const searchStore = useSearchStore();
 
+                    const activeFamilyArr = Vue.ref([]);
+                    const activeTidArr = Vue.ref([]);
                     const checklistData = Vue.computed(() => checklistStore.getChecklistData);
                     const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
                     const checklistLocalityText = Vue.computed(() => {
@@ -400,10 +402,43 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return returnArr;
                     });
                     const clientRoot = baseStore.getClientRoot;
-                    const countFamilies = Vue.computed(() => checklistStore.getCountFamilies);
-                    const countGenera = Vue.computed(() => checklistStore.getCountGenera);
-                    const countSpecies = Vue.computed(() => checklistStore.getCountSpecies);
-                    const countTotalTaxa = Vue.computed(() => checklistStore.getCountTotalTaxa);
+                    const countData = Vue.computed(() => {
+                        const returnData = {};
+                        const totalArr = [];
+                        const speciesArr = [];
+                        const generaArr = [];
+                        const familyArr = [];
+                        taxaDataArr.value.forEach(taxon => {
+                            if(activeTidArr.value.includes(taxon['tid'])){
+                                if(!totalArr.includes(taxon['sciname'])){
+                                    totalArr.push(taxon['sciname']);
+                                }
+                                if(taxon['family'] && taxon['family'] !== '[Incertae Sedis]' && !familyArr.includes(taxon['family'])){
+                                    familyArr.push(taxon['family']);
+                                }
+                                if(Number(taxon['rankid']) === 180 && !generaArr.includes(taxon['sciname'])){
+                                    generaArr.push(taxon['sciname']);
+                                }
+                                else if(Number(taxon['rankid']) >= 220){
+                                    const unitNameArr = taxon['sciname'].split(' ');
+                                    if(!generaArr.includes(unitNameArr[0])){
+                                        generaArr.push(unitNameArr[0]);
+                                    }
+                                    if(Number(taxon['rankid']) === 220 && !speciesArr.includes(taxon['sciname'])){
+                                        speciesArr.push(taxon['sciname']);
+                                    }
+                                    else if(!speciesArr.includes((unitNameArr[0] + ' ' + unitNameArr[1]))){
+                                        speciesArr.push((unitNameArr[0] + ' ' + unitNameArr[1]));
+                                    }
+                                }
+                            }
+                        });
+                        returnData['families'] = familyArr.length;
+                        returnData['genera'] = generaArr.length;
+                        returnData['species'] = speciesArr.length;
+                        returnData['total'] = totalArr.length;
+                        return returnData;
+                    });
                     const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
                     const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
                     const displayImagesVal = Vue.computed(() => checklistStore.getDisplayImages);
@@ -427,9 +462,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const showSpatialPopup = Vue.ref(false);
                     const sortByOptions = Vue.computed(() => checklistStore.getDisplaySortByOptions);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
-                    const taxaCount = Vue.computed(() => {
-                        return 0;
-                    });
                     const taxaDataArr = Vue.computed(() => checklistStore.getChecklistTaxaArr);
                     const taxaDisplayDataArr = Vue.computed(() => {
                         const newDataArr = [];
@@ -576,6 +608,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processTaxonFilterValChange(taxon) {
                         checklistStore.setDisplayTaxonFilterVal(taxon);
+                        setActiveTaxa();
                     }
 
                     function saveTemporaryChecklist() {
@@ -590,11 +623,40 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         });
                     }
 
+                    function setActiveTaxa() {
+                        const newActiveFamilyArr = [];
+                        const newActiveTidArr = [];
+                        taxaDataArr.value.forEach(taxon => {
+                            let includeTaxon = false;
+                            if(taxonFilterVal.value){
+                                if(Number(taxonFilterVal.value['rankid']) === 140 && taxon['family'] === taxonFilterVal.value['sciname']){
+                                    includeTaxon = true;
+                                }
+                                else if(Number(taxonFilterVal.value['rankid']) > 140 && (taxon['sciname'] === taxonFilterVal.value['sciname'] || taxon['sciname'].startsWith((taxonFilterVal.value['sciname'] + ' ')))){
+                                    includeTaxon = true;
+                                }
+                            }
+                            else{
+                                includeTaxon = true;
+                            }
+                            if(includeTaxon){
+                                newActiveTidArr.push(taxon['tid']);
+                                if(!newActiveFamilyArr.includes(taxon['family'])){
+                                    newActiveFamilyArr.push(taxon['family']);
+                                }
+                            }
+                        });
+                        activeFamilyArr.value = newActiveFamilyArr.slice();
+                        activeTidArr.value = newActiveTidArr.slice();
+                    }
+
                     function setChecklistData() {
                         setEditor();
                         checklistStore.setChecklist(clId.value, (clid) => {
                             if(Number(clid) > 0){
-                                checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true);
+                                checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true, () => {
+                                    setActiveTaxa();
+                                });
                                 checklistStore.setChecklistImageData(clidArr.value, 1);
                                 checklistStore.setChecklistVoucherData(clidArr.value);
                             }
@@ -651,6 +713,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
 
                     return {
+                        activeFamilyArr,
+                        activeTidArr,
                         checklistData,
                         checklistImageData,
                         checklistLocalityText,
@@ -660,10 +724,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         checklistVoucherData,
                         clId,
                         clientRoot,
-                        countFamilies,
-                        countGenera,
-                        countSpecies,
-                        countTotalTaxa,
+                        countData,
                         displayAuthorsVal,
                         displayCommonNamesVal,
                         displayImagesVal,
@@ -682,7 +743,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         showSpatialPopup,
                         sortByOptions,
                         spatialInputValues,
-                        taxaCount,
                         taxaDataArr,
                         taxaDisplayDataArr,
                         taxaEditingActive,

@@ -89,18 +89,6 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getChecklistVoucherData(state) {
             return state.checklistVoucherData;
         },
-        getCountFamilies(state) {
-            return state.checklistTaxaStore.getCountFamilies;
-        },
-        getCountGenera(state) {
-            return state.checklistTaxaStore.getCountGenera;
-        },
-        getCountSpecies(state) {
-            return state.checklistTaxaStore.getCountSpecies;
-        },
-        getCountTotalTaxa(state) {
-            return state.checklistTaxaStore.getCountTotalTaxa;
-        },
         getDisplayAuthors(state) {
             return state.displayAuthors;
         },
