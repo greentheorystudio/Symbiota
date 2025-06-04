@@ -30,7 +30,7 @@ const taxaListDisplay = {
         }
     },
     template: `
-        <div class="q-pa-md column q-gutter-sm">
+        <div class="fit q-pa-md column q-gutter-sm">
             <template v-if="sortBy === 'family'">
                 <template v-for="family in taxaArr">
                     <div class="full-width column">
@@ -40,10 +40,14 @@ const taxaListDisplay = {
                         <template v-for="taxon in family['taxa']">
                             <div class="q-pl-sm q-mb-xs full-width column">
                                 <div class="text-body1">
-                                    <a class="text-bold text-italic text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
-                                    <template v-if="displayAuthors && taxon['author']">
-                                        <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
-                                    </template>
+                                    <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">
+                                        <span class="text-bold text-italic">
+                                            {{ taxon['sciname'] }}
+                                        </span>
+                                        <template v-if="displayAuthors && taxon['author']">
+                                            <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
+                                        </template>
+                                    </a>
                                     <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
                                         <span>{{ getVernacularStrFromArr(taxon['vernacularData']) }}</span>
                                     </template>
@@ -76,10 +80,14 @@ const taxaListDisplay = {
                 <template v-for="taxon in taxaArr">
                     <div class="q-pl-sm q-mb-xs full-width column">
                         <div class="text-body1">
-                            <a class="text-bold text-italic text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
-                            <template v-if="displayAuthors && taxon['author']">
-                                <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
-                            </template>
+                            <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">
+                                <span class="text-bold text-italic">
+                                    {{ taxon['sciname'] }}
+                                </span>
+                                <template v-if="displayAuthors && taxon['author']">
+                                    <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
+                                </template>
+                            </a>
                             <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
                                 <span>{{ getVernacularStrFromArr(taxon['vernacularData']) }}</span>
                             </template>

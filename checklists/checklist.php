@@ -248,7 +248,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </div>
                     </template>
                     <template v-if="displayImagesVal">
-
+                        <taxa-image-display
+                            :display-authors="displayAuthorsVal"
+                            :display-common-names="displayCommonNamesVal"
+                            :display-synonyms="displaySynonymsVal"
+                            :display-vouchers="displayVouchersVal"
+                            :image-data="checklistImageData"
+                            :sort-by="selectedSortByOption"
+                            :taxa-arr="taxaDisplayDataArr"
+                            :voucher-data="checklistVoucherData"
+                        ></taxa-image-display>
                     </template>
                     <template v-else>
                         <taxa-list-display
@@ -385,6 +394,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaListDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaImageDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script>
             const checklistModule = Vue.createApp({
                 components: {
@@ -393,6 +403,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     'selector-input-element': selectorInputElement,
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
                     'spatial-analysis-popup': spatialAnalysisPopup,
+                    'taxa-image-display': taxaImageDisplay,
                     'taxa-list-display': taxaListDisplay
                 },
                 setup() {

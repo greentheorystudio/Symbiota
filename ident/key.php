@@ -123,17 +123,26 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     Taxa Count: {{ taxaCount }}
                                 </div>
                             </div>
-                            <template v-if="displayImagesVal">
-
-                            </template>
-                            <template v-else>
-                                <taxa-list-display
-                                    :display-authors="displayAuthorsVal"
-                                    :display-common-names="displayCommonNamesVal"
-                                    :sort-by="selectedSortByOption"
-                                    :taxa-arr="taxaDisplayDataArr"
-                                ></taxa-list-display>
-                            </template>
+                            <div>
+                                <template v-if="displayImagesVal">
+                                    <taxa-image-display
+                                        :display-authors="displayAuthorsVal"
+                                        :display-common-names="displayCommonNamesVal"
+                                        :image-data="checklistImageData"
+                                        :sort-by="selectedSortByOption"
+                                        :taxa-arr="taxaDisplayDataArr"
+                                        :voucher-data="checklistVoucherData"
+                                    ></taxa-image-display>
+                                </template>
+                                <template v-else>
+                                    <taxa-list-display
+                                        :display-authors="displayAuthorsVal"
+                                        :display-common-names="displayCommonNamesVal"
+                                        :sort-by="selectedSortByOption"
+                                        :taxa-arr="taxaDisplayDataArr"
+                                    ></taxa-list-display>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -248,6 +257,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaListDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaImageDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script>
             const keyIdentificationModule = Vue.createApp({
                 components: {
@@ -255,6 +265,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     'search-criteria-popup': searchCriteriaPopup,
                     'selector-input-element': selectorInputElement,
                     'spatial-analysis-popup': spatialAnalysisPopup,
+                    'taxa-image-display': taxaImageDisplay,
                     'taxa-list-display': taxaListDisplay
                 },
                 setup() {
@@ -277,6 +288,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const activeTaxaArr = Vue.ref([]);
                     const characterDependencyDataArr = Vue.ref([]);
                     const checklistData = Vue.computed(() => checklistStore.getChecklistData);
+                    const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
                     const checklistName = Vue.computed(() => {
                         let returnVal = 'Dynamic Key';
                         if(!temporaryChecklist.value){
@@ -556,9 +568,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function setChecklistData() {
                         checklistStore.setChecklist(clId.value, (clid) => {
                             if(Number(clid) > 0){
-                                setTaxaData();
+                                setExtendedData();
                             }
                         });
+                    }
+
+                    function setExtendedData() {
+                        checklistStore.setChecklistTaxaArr(clidArr.value, true, true, true, () => {
+                            processTaxaData();
+                        });
+                        checklistStore.setChecklistImageData(clidArr.value, 1);
                     }
 
                     function setKeyData() {
@@ -581,7 +600,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
                             if(Number(clId.value) === 0 && Number(pid) > 0){
-                                setTaxaData();
+                                setExtendedData();
                             }
                             else{
                                 showNotification('negative', 'An error occurred while setting the project data.');
@@ -591,12 +610,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setQueryPopupDisplay(val) {
                         displayQueryPopup.value = val;
-                    }
-
-                    function setTaxaData() {
-                        checklistStore.setChecklistTaxaArr(clidArr.value, true, true, true, () => {
-                            processTaxaData();
-                        });
                     }
 
                     function sortActiveTaxa() {
@@ -631,6 +644,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         activeChidArr,
                         activeCidArr,
                         checklistData,
+                        checklistImageData,
                         checklistName,
                         clId,
                         clientRoot,
