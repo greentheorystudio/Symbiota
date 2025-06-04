@@ -30,10 +30,8 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         checklistData: {},
         checklistEditData: {},
         checklistId: 0,
-        checklistSynonymyData: {},
         checklistTaxaStore: useChecklistTaxaStore(),
         checklistUpdateData: {},
-        checklistVernacularData: {},
         checklistVoucherData: {},
         displayAuthors: false,
         displayDetails: false,
@@ -74,17 +72,11 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getChecklistImageData(state) {
             return state.imageStore.getChecklistImageData;
         },
-        getChecklistSynonymyData(state) {
-            return state.checklistSynonymyData;
-        },
         getChecklistTaxaArr(state) {
             return state.checklistTaxaStore.getChecklistTaxaArr;
         },
         getChecklistValid(state) {
             return !!state.checklistEditData['name'];
-        },
-        getChecklistVernacularData(state) {
-            return state.checklistVernacularData;
         },
         getChecklistVoucherData(state) {
             return state.checklistVoucherData;
@@ -136,9 +128,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             this.checklistData = Object.assign({}, this.blankChecklistRecord);
             this.checklistTaxaStore.clearChecklistTaxaArr();
             this.imageStore.clearChecklistImageData();
-            this.checklistVernacularData = Object.assign({}, {});
             this.checklistVoucherData = Object.assign({}, {});
-            this.checklistSynonymyData = Object.assign({}, {});
         },
         createChecklistRecord(callback) {
             const formData = new FormData();

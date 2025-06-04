@@ -236,6 +236,42 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             </div>
                         </div>
                     </div>
+                    <div class="q-mb-sm full-width">
+                        <q-separator ></q-separator>
+                    </div>
+                    <template v-if="activeTaxaArr.length > taxaPerPage">
+                        <div class="q-mb-sm q-px-md full-width row justify-end">
+                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary"></q-pagination>
+                        </div>
+                        <div class="q-mb-sm full-width">
+                            <q-separator ></q-separator>
+                        </div>
+                    </template>
+                    <template v-if="displayImagesVal">
+
+                    </template>
+                    <template v-else>
+                        <taxa-list-display
+                            :display-authors="displayAuthorsVal"
+                            :display-common-names="displayCommonNamesVal"
+                            :display-synonyms="displaySynonymsVal"
+                            :display-vouchers="displayVouchersVal"
+                            :sort-by="selectedSortByOption"
+                            :taxa-arr="taxaDisplayDataArr"
+                            :voucher-data="checklistVoucherData"
+                        ></taxa-list-display>
+                    </template>
+                    <template v-if="activeTaxaArr.length > taxaPerPage">
+                        <div class="q-mb-sm full-width">
+                            <q-separator ></q-separator>
+                        </div>
+                        <div class="q-mb-sm q-px-md full-width row justify-end">
+                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary"></q-pagination>
+                        </div>
+                        <div class="q-mb-sm full-width">
+                            <q-separator ></q-separator>
+                        </div>
+                    </template>
                 </template>
                 <template v-else>
                     <div class="column">
@@ -348,6 +384,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaListDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script>
             const checklistModule = Vue.createApp({
                 components: {
@@ -355,17 +392,17 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     'search-criteria-popup': searchCriteriaPopup,
                     'selector-input-element': selectorInputElement,
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-                    'spatial-analysis-popup': spatialAnalysisPopup
+                    'spatial-analysis-popup': spatialAnalysisPopup,
+                    'taxa-list-display': taxaListDisplay
                 },
                 setup() {
-                    const { hideWorking, processCsvDownload, showNotification, showWorking } = useCore();
+                    const { hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
                     const checklistStore = useChecklistStore();
                     const projectStore = useProjectStore();
                     const searchStore = useSearchStore();
 
-                    const activeFamilyArr = Vue.ref([]);
-                    const activeTidArr = Vue.ref([]);
+                    const activeTaxaArr = Vue.ref([]);
                     const checklistData = Vue.computed(() => checklistStore.getChecklistData);
                     const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
                     const checklistLocalityText = Vue.computed(() => {
@@ -387,8 +424,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         }
                         return returnVal;
                     });
-                    const checklistSynonymyData = Vue.computed(() => checklistStore.getChecklistSynonymyData);
-                    const checklistVernacularData = Vue.computed(() => checklistStore.getChecklistVernacularData);
                     const checklistVoucherData = Vue.computed(() => checklistStore.getChecklistVoucherData);
                     const clId = Vue.ref(CLID);
                     const clidArr = Vue.computed(() => {
@@ -408,28 +443,26 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         const speciesArr = [];
                         const generaArr = [];
                         const familyArr = [];
-                        taxaDataArr.value.forEach(taxon => {
-                            if(activeTidArr.value.includes(taxon['tid'])){
-                                if(!totalArr.includes(taxon['sciname'])){
-                                    totalArr.push(taxon['sciname']);
+                        activeTaxaArr.value.forEach(taxon => {
+                            if(!totalArr.includes(taxon['sciname'])){
+                                totalArr.push(taxon['sciname']);
+                            }
+                            if(taxon['family'] && taxon['family'] !== '[Incertae Sedis]' && !familyArr.includes(taxon['family'])){
+                                familyArr.push(taxon['family']);
+                            }
+                            if(Number(taxon['rankid']) === 180 && !generaArr.includes(taxon['sciname'])){
+                                generaArr.push(taxon['sciname']);
+                            }
+                            else if(Number(taxon['rankid']) >= 220){
+                                const unitNameArr = taxon['sciname'].split(' ');
+                                if(!generaArr.includes(unitNameArr[0])){
+                                    generaArr.push(unitNameArr[0]);
                                 }
-                                if(taxon['family'] && taxon['family'] !== '[Incertae Sedis]' && !familyArr.includes(taxon['family'])){
-                                    familyArr.push(taxon['family']);
+                                if(Number(taxon['rankid']) === 220 && !speciesArr.includes(taxon['sciname'])){
+                                    speciesArr.push(taxon['sciname']);
                                 }
-                                if(Number(taxon['rankid']) === 180 && !generaArr.includes(taxon['sciname'])){
-                                    generaArr.push(taxon['sciname']);
-                                }
-                                else if(Number(taxon['rankid']) >= 220){
-                                    const unitNameArr = taxon['sciname'].split(' ');
-                                    if(!generaArr.includes(unitNameArr[0])){
-                                        generaArr.push(unitNameArr[0]);
-                                    }
-                                    if(Number(taxon['rankid']) === 220 && !speciesArr.includes(taxon['sciname'])){
-                                        speciesArr.push(taxon['sciname']);
-                                    }
-                                    else if(!speciesArr.includes((unitNameArr[0] + ' ' + unitNameArr[1]))){
-                                        speciesArr.push((unitNameArr[0] + ' ' + unitNameArr[1]));
-                                    }
+                                else if(!speciesArr.includes((unitNameArr[0] + ' ' + unitNameArr[1]))){
+                                    speciesArr.push((unitNameArr[0] + ' ' + unitNameArr[1]));
                                 }
                             }
                         });
@@ -450,6 +483,32 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const mapViewUrl = Vue.computed(() => {
                         return (clientRoot + '/spatial/index.php?starr={"clid":"' + clId.value + '"}');
                     });
+                    const paginatedTaxaArr = Vue.computed(() => {
+                        let returnArr;
+                        if(activeTaxaArr.value.length > taxaPerPage){
+                            let endIndex = activeTaxaArr.value.length;
+                            const index = (paginationPage.value - 1) * taxaPerPage;
+                            if(activeTaxaArr.value.length > (index + taxaPerPage)){
+                                endIndex = index + taxaPerPage;
+                            }
+                            returnArr = activeTaxaArr.value.slice(index, endIndex);
+                        }
+                        else{
+                            returnArr = activeTaxaArr.value.slice();
+                        }
+                        return returnArr;
+                    });
+                    const paginationLastPageNumber = Vue.computed(() => {
+                        let lastPage = 1;
+                        if(activeTaxaArr.value.length > taxaPerPage){
+                            lastPage = Math.floor(activeTaxaArr.value.length / taxaPerPage);
+                        }
+                        if(activeTaxaArr.value.length % taxaPerPage){
+                            lastPage++;
+                        }
+                        return lastPage;
+                    });
+                    const paginationPage = Vue.ref(1);
                     const pId = Vue.ref(PID);
                     const popupWindowType = Vue.ref(null);
                     const projectData = Vue.computed(() => projectStore.getProjectData);
@@ -465,8 +524,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const taxaDataArr = Vue.computed(() => checklistStore.getChecklistTaxaArr);
                     const taxaDisplayDataArr = Vue.computed(() => {
                         const newDataArr = [];
-                        if(taxaDataArr.value.length > 0){
-                            taxaDataArr.value.forEach(taxon => {
+                        if(paginatedTaxaArr.value.length > 0){
+                            paginatedTaxaArr.value.forEach(taxon => {
                                 if(selectedSortByOption.value === 'family'){
                                     const familyObj = newDataArr.find(family => family['familyName'] === taxon['family']);
                                     if(familyObj){
@@ -504,6 +563,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const taxaEditingActive = Vue.ref(false);
                     const taxaFilterOptions = Vue.computed(() => checklistStore.getTaxaFilterOptions);
+                    const taxaPerPage = 500;
                     const taxonFilterVal = Vue.computed(() => checklistStore.getDisplayTaxonFilterVal);
                     const temporaryChecklist = Vue.computed(() => {
                         let returnVal = false;
@@ -600,6 +660,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processSortByChange(value) {
                         checklistStore.setDisplaySortVal(value);
+                        sortActiveTaxa();
+                        paginationPage.value = 1;
                     }
 
                     function processSpatialData(data) {
@@ -609,6 +671,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function processTaxonFilterValChange(taxon) {
                         checklistStore.setDisplayTaxonFilterVal(taxon);
                         setActiveTaxa();
+                        paginationPage.value = 1;
                     }
 
                     function saveTemporaryChecklist() {
@@ -624,8 +687,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setActiveTaxa() {
-                        const newActiveFamilyArr = [];
-                        const newActiveTidArr = [];
+                        const newActiveTaxaArr = [];
                         taxaDataArr.value.forEach(taxon => {
                             let includeTaxon = false;
                             if(taxonFilterVal.value){
@@ -640,14 +702,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 includeTaxon = true;
                             }
                             if(includeTaxon){
-                                newActiveTidArr.push(taxon['tid']);
-                                if(!newActiveFamilyArr.includes(taxon['family'])){
-                                    newActiveFamilyArr.push(taxon['family']);
-                                }
+                                newActiveTaxaArr.push(taxon);
                             }
                         });
-                        activeFamilyArr.value = newActiveFamilyArr.slice();
-                        activeTidArr.value = newActiveTidArr.slice();
+                        activeTaxaArr.value = newActiveTaxaArr.slice();
+                        sortActiveTaxa();
                     }
 
                     function setChecklistData() {
@@ -697,6 +756,19 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         displayQueryPopup.value = val;
                     }
 
+                    function sortActiveTaxa() {
+                        if(selectedSortByOption.value === 'family'){
+                            activeTaxaArr.value.sort((a, b) => {
+                                return a['family'].localeCompare(b['family']) || a['sciname'].localeCompare(b['sciname']);
+                            });
+                        }
+                        else{
+                            activeTaxaArr.value.sort((a, b) => {
+                                return a['sciname'].localeCompare(b['sciname']);
+                            });
+                        }
+                    }
+
                     Vue.onMounted(() => {
                         if(Number(clId.value) > 0 || Number(pId.value) > 0){
                             setChecklistData();
@@ -713,14 +785,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
 
                     return {
-                        activeFamilyArr,
-                        activeTidArr,
+                        activeTaxaArr,
                         checklistData,
                         checklistImageData,
                         checklistLocalityText,
                         checklistName,
-                        checklistSynonymyData,
-                        checklistVernacularData,
                         checklistVoucherData,
                         clId,
                         clientRoot,
@@ -734,6 +803,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         isEditor,
                         keyModuleIsActive,
                         mapViewUrl,
+                        paginationLastPageNumber,
+                        paginationPage,
                         pId,
                         popupWindowType,
                         projectData,
@@ -747,6 +818,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         taxaDisplayDataArr,
                         taxaEditingActive,
                         taxaFilterOptions,
+                        taxaPerPage,
                         taxonFilterVal,
                         temporaryChecklist,
                         validUser,
