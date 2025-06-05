@@ -708,9 +708,9 @@ const mediaFileUploadInputElement = {
                             }
                             else{
                                 let tid = null;
-                                let csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
+                                let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                                 if(!csvData){
-                                    csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
+                                    csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
                                 }
                                 if(!csvData || !csvData.hasOwnProperty('scientificname')){
                                     parseScinameFromFilename(file.name);
