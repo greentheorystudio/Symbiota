@@ -529,7 +529,6 @@ const mediaFileUploadInputElement = {
                 Object.keys(resObj).forEach((key) => {
                     taxaData.value[key] = Object.assign({}, resObj[key]);
                 });
-                uploaderRef.value.updateFileStatus(file, new Date().toTimeString());
                 setFileIdentifierData();
             });
         }
