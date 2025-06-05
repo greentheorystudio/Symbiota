@@ -113,7 +113,7 @@ const mediaFileUploadInputElement = {
                                                         {{ file.name.split('.').pop() + ' file' }}
                                                     </div>
                                                 </div>
-                                                <div class="col-8 column q-pl-sm">
+                                                <div class="col-8 column q-pl-md">
                                                     <div class="row full-width justify-between">
                                                         <div class="ellipsis">
                                                             {{ file.name }}
