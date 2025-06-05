@@ -148,7 +148,9 @@ function useCore() {
                             if(fieldName.indexOf('"') > -1){
                                 fieldName = fieldName.replaceAll('"', '');
                             }
-                            let fieldValue = values[index] ? values[index].replace('\r', '') : '';
+                            let fieldValue = values[index] ? values[index].replaceAll('\r', '') : '';
+                            fieldValue = fieldValue.replaceAll('\n', '');
+                            fieldValue = fieldValue.replaceAll('\b', '');
                             if(fieldValue.indexOf('"') > -1){
                                 fieldValue = fieldValue.replaceAll('"','');
                             }

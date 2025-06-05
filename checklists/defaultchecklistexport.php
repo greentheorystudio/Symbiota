@@ -115,7 +115,7 @@ $blankCellStyle = array('valign'=>'center','width'=>2475,'borderSize'=>15,'borde
 $section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>0,'footerHeight'=>0));
 $title = str_replace(array('&quot;', '&apos;'), array('"', "'"), $clManager->getClName());
 $textrun = $section->addTextRun('defaultPara');
-$textrun->addLink((((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http') . '://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/checklists/checklist.php?cl='.$clValue. '&proj=' .$pid. '&dynclid=' .$dynClid,htmlspecialchars($title),'titleFont');
+$textrun->addLink((((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https':'http') . '://'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/checklists/checklist.php?clid='.$clValue. '&proj=' .$pid. '&dynclid=' .$dynClid,htmlspecialchars($title),'titleFont');
 $textrun->addTextBreak();
 if($clArray){
 	if($clArray['type'] === 'rarespp'){

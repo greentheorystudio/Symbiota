@@ -3,9 +3,9 @@ include_once(__DIR__ . '/../config/symbbase.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
-$clid = array_key_exists('clid',$_REQUEST) ? (int)$_REQUEST['clid'] : 0;
+$clid = array_key_exists('clid', $_REQUEST) ? (int)$_REQUEST['clid'] : 0;
 $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
-$pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
+$pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -16,10 +16,10 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Interactive Key</title>
         <meta name="description" content="Interactive key for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
@@ -44,8 +44,14 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="Number(clId) > 0">
-                    <a :href="(clientRoot + '/checklists/checklist.php?cl=' + clId + '&proj=' + pId)">Checklist: {{ checklistName }}</a> &gt;&gt;
-                    <span class="text-bold">Key: {{ checklistName }}</span>
+                    <template v-if="temporaryChecklist">
+                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Dynamic Checklist</a> &gt;&gt;
+                        <span class="text-bold">Dynamic Key</span>
+                    </template>
+                    <template v-else>
+                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Checklist: {{ checklistName }}</a> &gt;&gt;
+                        <span class="text-bold">Key: {{ checklistName }}</span>
+                    </template>
                 </template>
                 <template v-else-if="Number(pId) > 0">
                     <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">Project Checklists</a> &gt;&gt;
@@ -70,6 +76,9 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                         </div>
                                         <div class="full-width">
                                             <checkbox-input-element label="Display Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
+                                        </div>
+                                        <div class="full-width">
+                                            <checkbox-input-element label="Display Taxon Authors" :value="displayAuthorsVal" @update:value="processDisplayAuthorsChange"></checkbox-input-element>
                                         </div>
                                     </q-card-section>
                                 </q-card>
@@ -108,49 +117,32 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="col-8 column q-col-gutter-sm q-pl-lg">
                             <div class="column">
                                 <div class="full-width row justify-end text-h5 text-bold">
-                                    <a :href="(clientRoot + '/checklists/checklist.php?cl=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
+                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
                                 </div>
                                 <div class="full-width row justify-end text-body1">
                                     Taxa Count: {{ taxaCount }}
                                 </div>
                             </div>
-                            <template v-if="selectedSortByOption === 'family'">
+                            <div>
                                 <template v-if="displayImagesVal">
-
+                                    <taxa-image-display
+                                        :display-authors="displayAuthorsVal"
+                                        :display-common-names="displayCommonNamesVal"
+                                        :image-data="checklistImageData"
+                                        :sort-by="selectedSortByOption"
+                                        :taxa-arr="taxaDisplayDataArr"
+                                        :voucher-data="checklistVoucherData"
+                                    ></taxa-image-display>
                                 </template>
                                 <template v-else>
-                                    <template v-for="family in taxaDisplayDataArr">
-                                        <template v-if="activeFamilyArr.includes(family['familyName'])">
-                                            <div class="full-width column q-gutter-xs">
-                                                <div class="text-body1 text-bold">
-                                                    {{ family['familyName'] }}
-                                                </div>
-                                                <template v-for="taxon in family['taxa']">
-                                                    <template v-if="activeTidArr.includes(taxon['tid'])">
-                                                        <div class="full-width">
-                                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
-                                                        </div>
-                                                    </template>
-                                                </template>
-                                            </div>
-                                        </template>
-                                    </template>
+                                    <taxa-list-display
+                                        :display-authors="displayAuthorsVal"
+                                        :display-common-names="displayCommonNamesVal"
+                                        :sort-by="selectedSortByOption"
+                                        :taxa-arr="taxaDisplayDataArr"
+                                    ></taxa-list-display>
                                 </template>
-                            </template>
-                            <template v-else>
-                                <template v-if="displayImagesVal">
-
-                                </template>
-                                <template v-else>
-                                    <template v-for="taxon in taxaDisplayDataArr">
-                                        <template v-if="activeTidArr.includes(taxon['tid'])">
-                                            <div class="full-width">
-                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">{{ taxon['sciname'] }}</a>
-                                            </div>
-                                        </template>
-                                    </template>
-                                </template>
-                            </template>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -203,6 +195,8 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -262,18 +256,23 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaListDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaImageDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script>
             const keyIdentificationModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
                     'search-criteria-popup': searchCriteriaPopup,
                     'selector-input-element': selectorInputElement,
-                    'spatial-analysis-popup': spatialAnalysisPopup
+                    'spatial-analysis-popup': spatialAnalysisPopup,
+                    'taxa-image-display': taxaImageDisplay,
+                    'taxa-list-display': taxaListDisplay
                 },
                 setup() {
                     const { hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
                     const checklistStore = useChecklistStore();
+                    const projectStore = useProjectStore();
                     const searchStore = useSearchStore();
 
                     const activeChidArr = Vue.computed(() => {
@@ -286,27 +285,45 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return valArr;
                     });
                     const activeCidArr = Vue.ref([]);
-                    const activeFamilyArr = Vue.ref([]);
-                    const activeTidArr = Vue.ref([]);
+                    const activeTaxaArr = Vue.ref([]);
                     const characterDependencyDataArr = Vue.ref([]);
-                    const checklistData = Vue.ref({});
+                    const checklistData = Vue.computed(() => checklistStore.getChecklistData);
+                    const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
                     const checklistName = Vue.computed(() => {
-                        return checklistData.value.hasOwnProperty('name') ? checklistData.value['name'] : '';
+                        let returnVal = 'Dynamic Key';
+                        if(!temporaryChecklist.value){
+                            if(checklistData.value.hasOwnProperty('name') && checklistData.value['name']){
+                                returnVal = checklistData.value['name'];
+                            }
+                            else if(projectData.value.hasOwnProperty('projname') && projectData.value['projname']){
+                                returnVal = projectData.value['projname'];
+                            }
+                        }
+                        return returnVal;
                     });
                     const clId = Vue.ref(CLID);
-                    const clidArr = Vue.ref([]);
+                    const clidArr = Vue.computed(() => {
+                        let returnArr = [];
+                        if(checklistData.value.hasOwnProperty('clidArr') && checklistData.value['clidArr'].length > 0){
+                            returnArr = checklistData.value['clidArr'].slice();
+                        }
+                        else if(projectData.value.hasOwnProperty('clidArr') && projectData.value['clidArr'].length > 0){
+                            returnArr = projectData.value['clidArr'].slice();
+                        }
+                        return returnArr;
+                    });
                     const clientRoot = baseStore.getClientRoot;
-                    const commonNameData = Vue.ref({});
                     const csidArr = Vue.ref([]);
-                    const displayCommonNamesVal = Vue.ref(false);
-                    const displayImagesVal = Vue.ref(false);
+                    const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
+                    const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
+                    const displayImagesVal = Vue.computed(() => checklistStore.getDisplayImages);
                     const displayQueryPopup = Vue.ref(false);
-                    const imageData = Vue.ref({});
+                    const displaySynonymsVal = Vue.computed(() => checklistStore.getDisplaySynonyms);
                     const keyDataArr = Vue.ref([]);
                     const languageArr = [];
                     const pId = Vue.ref(PID);
                     const popupWindowType = Vue.ref(null);
-                    const projectData = Vue.ref({});
+                    const projectData = Vue.computed(() => projectStore.getProjectData);
                     const projectName = Vue.computed(() => {
                         return projectData.value.hasOwnProperty('projname') ? projectData.value['projname'] : '';
                     });
@@ -319,20 +336,46 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         const valueArr = selectedStateArr.value.length > 0 ? selectedStateArr.value.map(state => Number(state['csid'])) : [];
                         return valueArr.length > 0 ? valueArr.filter((value, index, array) => array.indexOf(value) === index) : [];
                     });
-                    const selectedSortByOption = Vue.ref('family');
+                    const selectedSortByOption = Vue.computed(() => checklistStore.getDisplaySortVal);
                     const selectedStateArr = Vue.ref([]);
                     const showSpatialPopup = Vue.ref(false);
-                    const sortByOptions = Vue.ref([
-                        {value: 'family', label: 'Family/Scientific Name'},
-                        {value: 'sciname', label: 'Scientific Name'}
-                    ]);
+                    const sortByOptions = Vue.computed(() => checklistStore.getDisplaySortByOptions);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const taxaCount = Vue.computed(() => {
-                        return activeTidArr.value.length;
+                        return activeTaxaArr.value.length;
                     });
-                    const taxaDataArr = Vue.ref([]);
-                    const taxaDisplayDataArr = Vue.ref([]);
-                    const tidArr = Vue.ref([]);
+                    const taxaDataArr = Vue.computed(() => checklistStore.getChecklistTaxaArr);
+                    const taxaDisplayDataArr = Vue.computed(() => {
+                        const newDataArr = [];
+                        if(activeTaxaArr.value.length > 0){
+                            activeTaxaArr.value.forEach(taxon => {
+                                if(selectedSortByOption.value === 'family'){
+                                    const familyObj = newDataArr.find(family => family['familyName'] === taxon['family']);
+                                    if(familyObj){
+                                        familyObj['taxa'].push(taxon);
+                                    }
+                                    else{
+                                        const taxaArr = [taxon];
+                                        newDataArr.push({
+                                            familyName: taxon['family'],
+                                            taxa: taxaArr
+                                        });
+                                    }
+                                }
+                                else{
+                                    newDataArr.push(taxon);
+                                }
+                            });
+                        }
+                        return newDataArr.slice();
+                    });
+                    const temporaryChecklist = Vue.computed(() => {
+                        let returnVal = false;
+                        if(checklistData.value.hasOwnProperty('clid') && Number(checklistData.value['clid']) > 0 && checklistData.value['expiration']){
+                            returnVal = true;
+                        }
+                        return returnVal;
+                    });
 
                     function buildChecklist(){
                         if(searchStore.getSearchTermsValid){
@@ -390,12 +433,20 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         setActiveTaxa();
                     }
 
+                    function processDisplayAuthorsChange(value) {
+                        checklistStore.setDisplayAuthors(value);
+                    }
+
                     function processDisplayCommonNameChange(value) {
-                        displayCommonNamesVal.value = Number(value) === 1;
+                        checklistStore.setDisplayVernaculars(value);
                     }
 
                     function processDisplayImagesChange(value) {
-                        displayImagesVal.value = Number(value) === 1;
+                        checklistStore.setDisplayImages(value);
+                    }
+
+                    function processDisplaySynonymsChange(value) {
+                        checklistStore.setDisplaySynonyms(value);
                     }
 
                     function processKeyData(keyData) {
@@ -422,11 +473,12 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         });
                         keyDataArr.value.sort((a, b) => Number(a.sortsequence) - Number(b.sortsequence));
                         setActiveCidArr();
+                        setActiveTaxa();
                     }
 
                     function processSortByChange(value) {
-                        selectedSortByOption.value = value;
-                        setTaxaDisplayData();
+                        checklistStore.setDisplaySortVal(value);
+                        sortActiveTaxa();
                     }
 
                     function processSpatialData(data) {
@@ -435,13 +487,6 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processTaxaData() {
                         taxaDataArr.value.forEach(taxon => {
-                            if(!tidArr.value.includes(taxon['tid'])){
-                                tidArr.value.push(taxon['tid']);
-                                activeTidArr.value.push(taxon['tid']);
-                                if(!activeFamilyArr.value.includes(taxon['family'])){
-                                    activeFamilyArr.value.push(taxon['family']);
-                                }
-                            }
                             if(taxon['keyData'].length > 0){
                                 taxon['keyData'].forEach(keyData => {
                                     if(!csidArr.value.includes(keyData['csid'])){
@@ -450,7 +495,6 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 });
                             }
                         });
-                        setTaxaDisplayData();
                         setKeyData();
                     }
 
@@ -496,8 +540,7 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setActiveTaxa() {
-                        const newActiveFamilyArr = [];
-                        const newActiveTidArr = [];
+                        const newActiveTaxaArr = [];
                         taxaDataArr.value.forEach(taxon => {
                             const cidArr = [];
                             let includeTaxon = true;
@@ -515,32 +558,26 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 }
                             });
                             if(includeTaxon){
-                                newActiveTidArr.push(taxon['tid']);
-                                if(!newActiveFamilyArr.includes(taxon['family'])){
-                                    newActiveFamilyArr.push(taxon['family']);
-                                }
+                                newActiveTaxaArr.push(taxon);
                             }
                         });
-                        activeFamilyArr.value = newActiveFamilyArr.slice();
-                        activeTidArr.value = newActiveTidArr.slice();
+                        activeTaxaArr.value = newActiveTaxaArr.slice();
+                        sortActiveTaxa();
                     }
 
                     function setChecklistData() {
-                        const formData = new FormData();
-                        formData.append('clid', clId.value.toString());
-                        formData.append('action', 'getChecklistData');
-                        fetch(checklistApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                                return response.ok ? response.json() : null;
-                            })
-                        .then((data) => {
-                            checklistData.value = Object.assign({}, data);
-                            clidArr.value = checklistData.value['clidArr'].slice();
-                            setTaxaData();
+                        checklistStore.setChecklist(clId.value, (clid) => {
+                            if(Number(clid) > 0){
+                                setExtendedData();
+                            }
                         });
+                    }
+
+                    function setExtendedData() {
+                        checklistStore.setChecklistTaxaArr(clidArr.value, true, true, true, () => {
+                            processTaxaData();
+                        });
+                        checklistStore.setChecklistImageData(clidArr.value, 1);
                     }
 
                     function setKeyData() {
@@ -561,20 +598,13 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setProjectData() {
-                        const formData = new FormData();
-                        formData.append('pid', pId.value.toString());
-                        formData.append('action', 'getProjectData');
-                        fetch(projectApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            return response.ok ? response.json() : null;
-                        })
-                        .then((data) => {
-                            projectData.value = Object.assign({}, data);
-                            clidArr.value = Object.values(projectData.value['clidArr']).slice();
-                            setTaxaData();
+                        projectStore.setProject(pId.value, (pid) => {
+                            if(Number(clId.value) === 0 && Number(pid) > 0){
+                                setExtendedData();
+                            }
+                            else{
+                                showNotification('negative', 'An error occurred while setting the project data.');
+                            }
                         });
                     }
 
@@ -582,68 +612,25 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         displayQueryPopup.value = val;
                     }
 
-                    function setTaxaData() {
-                        const formData = new FormData();
-                        formData.append('clidArr', JSON.stringify(clidArr.value));
-                        formData.append('includeKeyData', '1');
-                        formData.append('action', 'getChecklistTaxa');
-                        fetch(checklistTaxaApiUrl, {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then((response) => {
-                            return response.ok ? response.json() : null;
-                        })
-                        .then((data) => {
-                            taxaDataArr.value = data;
-                            processTaxaData();
-                        });
-                    }
-
-                    function setTaxaDisplayData() {
-                        const newDataArr = [];
-                        taxaDataArr.value.forEach(taxon => {
-                            if(selectedSortByOption.value === 'family'){
-                                const familyObj = newDataArr.find(family => family['familyName'] === taxon['family']);
-                                if(familyObj){
-                                    familyObj['taxa'].push(taxon);
-                                }
-                                else{
-                                    const taxaArr = [taxon];
-                                    newDataArr.push({
-                                        familyName: taxon['family'],
-                                        taxa: taxaArr
-                                    });
-                                }
-                            }
-                            else{
-                                newDataArr.push(taxon);
-                            }
-                        });
+                    function sortActiveTaxa() {
                         if(selectedSortByOption.value === 'family'){
-                            newDataArr.sort((a, b) => {
-                                return a['familyName'].localeCompare(b['familyName']);
-                            });
-                            newDataArr.forEach(family => {
-                                family['taxa'].sort((a, b) => {
-                                    return a['sciname'].localeCompare(b['sciname']);
-                                });
+                            activeTaxaArr.value.sort((a, b) => {
+                                return a['family'].localeCompare(b['family']) || a['sciname'].localeCompare(b['sciname']);
                             });
                         }
                         else{
-                            newDataArr.sort((a, b) => {
+                            activeTaxaArr.value.sort((a, b) => {
                                 return a['sciname'].localeCompare(b['sciname']);
                             });
                         }
-                        taxaDisplayDataArr.value = newDataArr.slice();
                     }
 
                     Vue.onMounted(() => {
-                        if(Number(clId.value) > 0){
+                        if(Number(clId.value) > 0 || Number(pId.value) > 0){
                             setChecklistData();
-                        }
-                        else if(Number(pId.value) > 0){
-                            setProjectData();
+                            if(Number(pId.value) > 0){
+                                setProjectData();
+                            }
                         }
                         else{
                             if(Number(queryId) === 0){
@@ -656,15 +643,16 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     return {
                         activeChidArr,
                         activeCidArr,
-                        activeFamilyArr,
-                        activeTidArr,
                         checklistData,
+                        checklistImageData,
                         checklistName,
                         clId,
                         clientRoot,
+                        displayAuthorsVal,
                         displayCommonNamesVal,
                         displayImagesVal,
                         displayQueryPopup,
+                        displaySynonymsVal,
                         keyDataArr,
                         languageArr,
                         pId,
@@ -679,12 +667,15 @@ $pid = array_key_exists('pid',$_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         spatialInputValues,
                         taxaCount,
                         taxaDisplayDataArr,
+                        temporaryChecklist,
                         buildChecklist,
                         closeSpatialPopup,
                         openSpatialPopup,
                         processCharacterStateSelectionChange,
+                        processDisplayAuthorsChange,
                         processDisplayCommonNameChange,
                         processDisplayImagesChange,
+                        processDisplaySynonymsChange,
                         processSortByChange,
                         processSpatialData,
                         setQueryPopupDisplay

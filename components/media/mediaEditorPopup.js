@@ -41,7 +41,7 @@ const mediaEditorPopup = {
                             <template v-if="Number(mediaData.occid) === 0">
                                 <div class="row">
                                     <div class="col-grow">
-                                        <single-scientific-common-name-auto-complete :sciname="mediaData.sciname" label="Scientific Name" :clearable="false" :limit-to-thesaurus="true" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
+                                        <single-scientific-common-name-auto-complete :sciname="mediaData.sciname" label="Scientific Name" :clearable="false" :limit-to-options="true" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                                     </div>
                                 </div>
                             </template>

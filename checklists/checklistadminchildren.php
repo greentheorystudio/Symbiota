@@ -53,7 +53,7 @@ $clManager->setClid($clid);
 				foreach($childArr as $k => $cArr){
 					?>
 					<li>
-						<a href="checklist.php?cl=<?php echo $k; ?>"><?php echo $cArr['name']; ?></a>
+						<a href="checklist.php?clid=<?php echo $k; ?>"><?php echo $cArr['name']; ?></a>
 						<?php 
 						if((int)$cArr['pclid'] === $clid){
 							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel='.$k.'&clid='.$clid.'&pid='.$pid.'" onclick="return confirm(\'Are you sure you want to remove'.$cArr['name'].' as a child checklist?\')"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
@@ -79,7 +79,7 @@ $clManager->setClid($clid);
 				foreach($parentArr as $k => $name){
 					?>
 					<li>
-						<a href="checklist.php?cl=<?php echo $k; ?>"><?php echo $name; ?></a>
+						<a href="checklist.php?clid=<?php echo $k; ?>"><?php echo $name; ?></a>
 					</li>
 					<?php
 				}

@@ -20,7 +20,9 @@ const taxaProfileTaxonIdentifiers = {
                         strPartArr.push(idStr);
                     }
                 });
-                identifierStr = strPartArr.join('; ') + ';';
+                if(strPartArr.length > 0){
+                    identifierStr = strPartArr.join('; ') + ';';
+                }
             }
             return identifierStr;
         });

@@ -1854,7 +1854,11 @@ const occurrenceDataUploadModule = {
                                 sourceDataFieldsFlatFile.value[prop.toLowerCase()] = prop;
                             }
                             if(featureProps[prop]){
-                                featureData[prop.toLowerCase()] = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop];
+                                let value = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop].toString();
+                                value = value.replaceAll('\r', '');
+                                value = value.replaceAll('\n', '');
+                                value = value.replaceAll('\b', '');
+                                featureData[prop.toLowerCase()] = value;
                             }
                             else{
                                 featureData[prop.toLowerCase()] = null;

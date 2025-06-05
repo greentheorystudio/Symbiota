@@ -153,7 +153,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 include(__DIR__ . '/../header.php');
 echo '<div id="breadcrumbs">';
 echo '<a href="../index.php">Home</a> &gt;&gt; ';
-echo '<a href="../checklists/checklist.php?cl='.$clid.'">';
+echo '<a href="../checklists/checklist.php?clid='.$clid.'">';
 echo $fcManager->getClName();
 echo '</a> &gt;&gt; ';
 echo ' <b>Flash Card Game</b>';

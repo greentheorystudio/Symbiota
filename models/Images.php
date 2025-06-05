@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/ChecklistTaxa.php');
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
@@ -322,6 +323,99 @@ class Images{
             }
         }
         return $retVal;
+    }
+
+    public function getChecklistImageData($clidArr, $taxonLimit): array
+    {
+        $retArr = array();
+        $sqlWhereArr = array();
+        $tidAcceptedArr = (new ChecklistTaxa)->getChecklistAcceptedTidArr($clidArr);
+        $queryTidArr = array();
+        if(count($tidAcceptedArr) > 0){
+            foreach($clidArr as $clid){
+                $sqlWhereArr[] = 't.keyvalue LIKE "CLID-' . (int)$clid . '-%"';
+            }
+            $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, t.keyvalue '.
+                'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.
+                'WHERE ' . implode(' OR ', $sqlWhereArr) . ' ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $tid = 0;
+                    $tagArr = explode('-', $row['keyvalue']);
+                    if($tagArr){
+                        $tid = $tagArr[2];
+                    }
+                    if($tid){
+                        if(!array_key_exists($tid, $retArr)){
+                            $retArr[$tid] = array();
+                        }
+                        if(count($retArr[$tid]) < $taxonLimit){
+                            $nodeArr = array();
+                            $nodeArr['imgid'] = $row['imgid'];
+                            $nodeArr['url'] = $row['url'];
+                            $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
+                            $retArr[$tid][] = $nodeArr;
+                        }
+                    }
+                }
+                $result->free();
+            }
+            foreach($tidAcceptedArr as $tid){
+                if(!array_key_exists($tid, $retArr) || count($retArr[$tid]) < $taxonLimit){
+                    $queryTidArr[] = $tid;
+                }
+            }
+            if(count($queryTidArr) > 0){
+                $sql = 'SELECT t.tidaccepted, i.imgid, i.url, i.thumbnailurl '.
+                    'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
+                    'WHERE t.tidaccepted IN(' . implode(',', $queryTidArr) . ') AND i.sortsequence < 500 ORDER BY i.sortsequence ';
+                //echo '<div>'.$sql.'</div>';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        if(!array_key_exists($row['tidaccepted'], $retArr)){
+                            $retArr[$row['tidaccepted']] = array();
+                        }
+                        if(count($retArr[$row['tidaccepted']]) < $taxonLimit){
+                            $nodeArr = array();
+                            $nodeArr['imgid'] = $row['imgid'];
+                            $nodeArr['url'] = $row['url'];
+                            $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
+                            $retArr[$row['tidaccepted']][] = $nodeArr;
+                        }
+                    }
+                    $result->free();
+                }
+            }
+            $queryTidArr = array();
+            foreach($tidAcceptedArr as $tid){
+                if(!array_key_exists($tid, $retArr) || count($retArr[$tid]) < $taxonLimit){
+                    $queryTidArr[] = $tid;
+                }
+            }
+            if(count($queryTidArr) > 0){
+                $sql = 'SELECT t.parenttid, i.imgid, i.url, i.thumbnailurl '.
+                    'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
+                    'WHERE t.parenttid IN(' . implode(',', $queryTidArr) . ') AND i.sortsequence < 500 ORDER BY i.sortsequence ';
+                //echo '<div>'.$sql.'</div>';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        if(!array_key_exists($row['parenttid'], $retArr)){
+                            $retArr[$row['parenttid']] = array();
+                        }
+                        if(count($retArr[$row['parenttid']]) < $taxonLimit){
+                            $nodeArr = array();
+                            $nodeArr['imgid'] = $row['imgid'];
+                            $nodeArr['url'] = $row['url'];
+                            $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
+                            $retArr[$row['parenttid']][] = $nodeArr;
+                        }
+                    }
+                    $result->free();
+                }
+            }
+        }
+        return $retArr;
     }
 
     public function getImageArrByProperty($property, $value, $includeOccurrence = false, $limit = null): array

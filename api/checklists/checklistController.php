@@ -34,4 +34,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getChecklistArr'){
         echo json_encode($checklists->getChecklistArr());
     }
+    elseif($action === 'saveTemporaryChecklist' && $clid){
+        $searchTerms = array_key_exists('searchTermsJson', $_POST) ? json_decode($_POST['searchTermsJson'], true) : null;
+        echo $checklists->saveTemporaryChecklist($clid, $searchTerms);
+    }
 }

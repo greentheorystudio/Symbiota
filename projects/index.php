@@ -400,7 +400,7 @@ echo '</div>';
                             foreach($researchList as $key=>$value){
                                 ?>
                                 <li>
-                                    <a href='../checklists/checklist.php?cl=<?php echo $key. '&pid=' .$pid; ?>'>
+                                    <a href='../checklists/checklist.php?clid=<?php echo $key. '&pid=' .$pid; ?>'>
                                         <?php echo $value; ?>
                                     </a>
                                     <?php

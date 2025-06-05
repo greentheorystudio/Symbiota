@@ -32,12 +32,23 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         checklistId: 0,
         checklistTaxaStore: useChecklistTaxaStore(),
         checklistUpdateData: {},
-        checklistVoucherArr: []
+        checklistVoucherData: {},
+        displayAuthors: false,
+        displayDetails: false,
+        displayImages: false,
+        displaySortByOptions: [
+            {value: 'family', label: 'Family/Scientific Name'},
+            {value: 'sciname', label: 'Scientific Name'}
+        ],
+        displaySortVal: 'family',
+        displaySynonyms: false,
+        displayTaxonFilterVal: null,
+        displayVernaculars: false,
+        displayVouchers: false,
+        imageStore: useImageStore(),
+        taxaVernacularStore: useTaxaVernacularStore()
     }),
     getters: {
-        getChecklistTaxaArr(state) {
-            return state.checklistTaxaStore.getChecklistTaxaArr;
-        },
         getBlankChecklistRecord(state) {
             return state.blankChecklistRecord;
         },
@@ -58,18 +69,66 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getChecklistID(state) {
             return state.checklistId;
         },
+        getChecklistImageData(state) {
+            return state.imageStore.getChecklistImageData;
+        },
+        getChecklistTaxaArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaArr;
+        },
         getChecklistValid(state) {
             return !!state.checklistEditData['name'];
         },
-        getChecklistVoucherArr(state) {
-            return state.checklistVoucherArr;
+        getChecklistVoucherData(state) {
+            return state.checklistVoucherData;
+        },
+        getDisplayAuthors(state) {
+            return state.displayAuthors;
+        },
+        getDisplayDetails(state) {
+            return state.displayDetails;
+        },
+        getDisplayImages(state) {
+            return state.displayImages;
+        },
+        getDisplaySortByOptions(state) {
+            return state.displaySortByOptions;
+        },
+        getDisplaySortVal(state) {
+            return state.displaySortVal;
+        },
+        getDisplaySynonyms(state) {
+            return state.displaySynonyms;
+        },
+        getDisplayTaxonFilterVal(state) {
+            return state.displayTaxonFilterVal;
+        },
+        getDisplayVernaculars(state) {
+            return state.displayVernaculars;
+        },
+        getDisplayVouchers(state) {
+            return state.displayVouchers;
+        },
+        getDownloadOptions(state) {
+            return {
+                authors: (state.displayAuthors ? '1' : '0'),
+                images: (state.displayImages ? '1' : '0'),
+                synonyms: (state.displaySynonyms ? '1' : '0'),
+                vernaculars: (state.displayVernaculars ? '1' : '0'),
+                notes: (state.displayVouchers ? '1' : '0'),
+                taxaSort: state.displaySortVal,
+                taxonFilter: state.displayTaxonFilterVal
+            };
+        },
+        getTaxaFilterOptions(state) {
+            return state.checklistTaxaStore.getTaxaFilterOptions;
         }
     },
     actions: {
         clearChecklistData() {
             this.checklistData = Object.assign({}, this.blankChecklistRecord);
             this.checklistTaxaStore.clearChecklistTaxaArr();
-            this.checklistVoucherArr.length = 0;
+            this.imageStore.clearChecklistImageData();
+            this.checklistVoucherData = Object.assign({}, {});
         },
         createChecklistRecord(callback) {
             const formData = new FormData();
@@ -135,13 +194,82 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 callback(resObj);
             });
         },
+        processChecklistDefaultDisplaySettings() {
+            if(this.checklistData.hasOwnProperty('defaultsettings') && this.checklistData['defaultsettings']){
+                if(this.checklistData['defaultsettings'].hasOwnProperty('ddetails') && Number(this.checklistData['defaultsettings']['ddetails']) === 1){
+                    this.displayDetails = true;
+                }
+                if(this.checklistData['defaultsettings'].hasOwnProperty('showsynonyms') && Number(this.checklistData['defaultsettings']['showsynonyms']) === 1){
+                    this.displaySynonyms = true;
+                }
+                if(this.checklistData['defaultsettings'].hasOwnProperty('dcommon') && Number(this.checklistData['defaultsettings']['dcommon']) === 1){
+                    this.displayVernaculars = true;
+                }
+                if(this.checklistData['defaultsettings'].hasOwnProperty('dimages') && Number(this.checklistData['defaultsettings']['dimages']) === 1){
+                    this.displayImages = true;
+                }
+                if(this.checklistData['defaultsettings'].hasOwnProperty('dvouchers') && Number(this.checklistData['defaultsettings']['dvouchers']) === 1){
+                    this.displayVouchers = true;
+                }
+                if(this.checklistData['defaultsettings'].hasOwnProperty('dauthors') && Number(this.checklistData['defaultsettings']['dauthors']) === 1){
+                    this.displayAuthors = true;
+                }
+                if(this.checklistData['defaultsettings'].hasOwnProperty('dalpha') && Number(this.checklistData['defaultsettings']['dalpha']) === 1){
+                    this.displaySortVal = 'sciname';
+                }
+            }
+        },
+        processDownloadRequest(name, type, clidArr, callback){
+            let filename;
+            const formData = new FormData();
+            formData.append('clidArr', JSON.stringify(clidArr));
+            formData.append('options', JSON.stringify(this.getDownloadOptions));
+            if(type === 'csv'){
+                filename = (name + '.csv');
+                formData.append('action', 'processCsvDownload');
+            }
+            else if(type === 'docx'){
+                filename = (name + '.docx');
+                formData.append('clid', this.checklistId.toString());
+                formData.append('action', 'processDocxDownload');
+            }
+            formData.append('filename', filename);
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                callback(filename, blob);
+            });
+        },
+        saveTemporaryChecklist(searchTermsJson, callback) {
+            const formData = new FormData();
+            formData.append('clid', this.checklistId.toString());
+            formData.append('searchTermsJson', searchTermsJson);
+            formData.append('action', 'saveTemporaryChecklist');
+            fetch(checklistApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) === 1){
+                    this.setChecklist(this.checklistId);
+                }
+            });
+        },
         setChecklist(clid, callback = null) {
             this.clearChecklistData();
             if(Number(clid) > 0){
                 this.checklistEditData = Object.assign({}, {});
-                this.checklistId = Number(clid);
                 const formData = new FormData();
-                formData.append('clid', this.checklistId.toString());
+                formData.append('clid', clid.toString());
                 formData.append('action', 'getChecklistData');
                 fetch(checklistApiUrl, {
                     method: 'POST',
@@ -151,10 +279,14 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     return response.ok ? response.json() : null;
                 })
                 .then((resObj) => {
-                    this.checklistData = Object.assign({}, resObj);
-                    this.checklistEditData = Object.assign({}, this.checklistData);
+                    if(resObj.hasOwnProperty('clid') && Number(resObj['clid']) === Number(clid)){
+                        this.checklistId = Number(clid);
+                        this.checklistData = Object.assign({}, resObj);
+                        this.checklistEditData = Object.assign({}, this.checklistData);
+                        this.processChecklistDefaultDisplaySettings();
+                    }
                     if(callback){
-                        callback();
+                        callback(this.checklistId);
                     }
                 });
             }
@@ -164,6 +296,59 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     callback();
                 }
             }
+        },
+        setChecklistImageData(clid, numberPerTaxon) {
+            this.imageStore.setChecklistImageData(clid, numberPerTaxon);
+        },
+        setChecklistTaxaArr(clid, includeKeyData, includeSynonymyData, includeVernacularData, callback = null) {
+            this.checklistTaxaStore.setChecklistTaxaArr(clid, includeKeyData, includeSynonymyData, includeVernacularData, callback);
+        },
+        setChecklistVoucherData(clid) {
+            let clidArr;
+            if(Array.isArray(clid)){
+                clidArr = clid.slice();
+            }
+            else{
+                clidArr = [clid];
+            }
+            this.checklistVoucherData = Object.assign({}, {});
+            const formData = new FormData();
+            formData.append('clidArr', JSON.stringify(clidArr));
+            formData.append('action', 'getChecklistVouchers');
+            fetch(checklistVoucherApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.checklistVoucherData = Object.assign({}, data);
+            });
+        },
+        setDisplayAuthors(value) {
+            this.displayAuthors = value;
+        },
+        setDisplayDetails(value) {
+            this.displayDetails = value;
+        },
+        setDisplayImages(value) {
+            this.displayImages = value;
+        },
+        setDisplaySortVal(value) {
+            this.displaySortVal = value;
+        },
+        setDisplaySynonyms(value) {
+            this.displaySynonyms = value;
+        },
+        setDisplayTaxonFilterVal(value) {
+            this.displayTaxonFilterVal = value;
+        },
+        setDisplayVernaculars(value) {
+            this.displayVernaculars = value;
+        },
+        setDisplayVouchers(value) {
+            this.displayVouchers = value;
         },
         updateChecklistEditData(key, value) {
             this.checklistEditData[key] = value;

@@ -403,7 +403,7 @@ DROP TRIGGER `uploadspectemp_delete`;
 ALTER TABLE `fmchecklists`
     MODIFY COLUMN `searchterms` longtext NULL AFTER `politicalDivision`,
     MODIFY COLUMN `footprintWKT` longtext NULL AFTER `pointradiusmeters`,
-    MODIFY COLUMN `defaultSettings` text NULL AFTER `Access`;
+    MODIFY COLUMN `defaultSettings` longtext NULL AFTER `Access`;
 
 ALTER TABLE `fmprojects`
     MODIFY COLUMN `dynamicProperties` longtext NULL AFTER `ispublic`;
