@@ -88,8 +88,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             {
                 label: 'Interactive Tools',
                 subItems: [
-                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist', label: 'Dynamic Checklist'},
-                    {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=key', label: 'Dynamic Key'}
+                    {url: CLIENT_ROOT + '/checklists/checklist.php', label: 'Dynamic Checklist'},
+                    {url: CLIENT_ROOT + '/ident/key.php', label: 'Dynamic Key'}
                 ]
             }
         ];
