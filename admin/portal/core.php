@@ -108,12 +108,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             </span>
         </div>
         <div class="field-block">
-            <span class="field-label">Dynamic Checklist Radius:</span>
-            <span class="field-elem">
-                <input type="text" id="DYN_CHECKLIST_RADIUS" value="<?php echo (array_key_exists('DYN_CHECKLIST_RADIUS',$coreConfArr)?$coreConfArr['DYN_CHECKLIST_RADIUS']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('DYN_CHECKLIST_RADIUS','<?php echo (array_key_exists('DYN_CHECKLIST_RADIUS',$coreConfArr)?$coreConfArr['DYN_CHECKLIST_RADIUS']:''); ?>',true);" />
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Portal CSS Version:  <button type="button" onclick="processUpdateCss();">Update</button></span>
             <span class="field-elem">
                 <input type="text" id="CSS_VERSION_LOCAL" value="<?php echo (array_key_exists('CSS_VERSION_LOCAL',$coreConfArr)?$coreConfArr['CSS_VERSION_LOCAL']:''); ?>" style="width:600px;" disabled />

@@ -13,8 +13,8 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor', $GLOBALS['USER_RIGHTS']
 
 if($action && SanitizerService::validateInternalRequest()){
     $keyCharacterStates = new KeyCharacterStates();
-    if($action === 'getTaxaKeyCharacterStates' && array_key_exists('tidArr', $_POST)){
-        echo json_encode($keyCharacterStates->getTaxaKeyCharacterStates(json_decode($_POST['tidArr'], false)));
+    if($action === 'getCharacterStatesFromTidArr' && array_key_exists('tidArr', $_POST)){
+        echo json_encode($keyCharacterStates->getCharacterStatesFromTidArr(json_decode($_POST['tidArr'], false)));
     }
     elseif($action === 'getKeyCharacterStatesArr' && array_key_exists('csidArr', $_POST)){
         $includeFullKeyData = array_key_exists('includeFullKeyData',$_POST) && (int)$_POST['includeFullKeyData'] === 1;

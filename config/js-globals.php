@@ -54,6 +54,7 @@
     let abortController;
     const fieldDefinitionsUrl = CLIENT_ROOT + '/config/field-definitions.json?ver=<?php echo $GLOBALS['JS_VERSION']; ?>';
     const checklistApiUrl = CLIENT_ROOT + '/api/checklists/checklistController.php';
+    const checklistPackagingServiceApiUrl = CLIENT_ROOT + '/api/services/checklistPackagingServiceController.php';
     const checklistTaxaApiUrl = CLIENT_ROOT + '/api/checklists/checklistTaxaController.php';
     const checklistVoucherApiUrl = CLIENT_ROOT + '/api/checklists/checklistVoucherController.php';
     const collectionApiUrl = CLIENT_ROOT + '/api/collections/collectionController.php';
