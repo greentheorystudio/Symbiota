@@ -162,10 +162,7 @@ class ChecklistPackagingService {
                 FileSystemService::writeRowToCsv($fileHandler, $rowArr);
             }
             FileSystemService::closeFileHandler($fileHandler);
-            (new DataDownloadService)->setDownloadHeaders('csv', $contentType, basename($fullPath), $fullPath);
-            flush();
-            readfile($fullPath);
-            FileSystemService::deleteFile($fullPath, true);
+            (new DataDownloadService)->streamDownload($contentType, $fullPath);
         }
     }
 
@@ -337,10 +334,7 @@ class ChecklistPackagingService {
                 }
             }
             PhpWordService::saveDocument($phpWord, $fullPath);
-            (new DataDownloadService)->setDownloadHeaders('docx', $contentType, basename($fullPath), $fullPath);
-            flush();
-            readfile($fullPath);
-            FileSystemService::deleteFile($fullPath, true);
+            (new DataDownloadService)->streamDownload($contentType, $fullPath);
         }
     }
 }

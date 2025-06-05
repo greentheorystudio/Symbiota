@@ -1035,6 +1035,9 @@ class SearchService {
                 $numRows = array_key_exists('numRows', $options) ? (int)$options['numRows'] : 0;
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
+                if(!array_key_exists('occidArr', $searchTermsArr)){
+                    $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+                }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
                     $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
@@ -1042,7 +1045,7 @@ class SearchService {
                 $sql = $selectStr . $fromStr . $whereStr;
                 //echo '<div>Search sql: ' . $sql . '</div>';
                 if($options['output'] === 'geojson'){
-                    $returnArr = $this->serializeGeoJsonResultArr($sql, $numRows, ($mofDataArr ?: null));
+                    $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
                 }
                 else{
                     $returnArr = $this->serializeJsonResultArr($sql, $options['schema'], $spatial, ($mofDataArr ?: null));
@@ -1057,8 +1060,22 @@ class SearchService {
         if($searchTermsArr && $options){
             $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
             if($contentType){
+                $outputFile = '';
                 $targetPath = FileSystemService::getTempDownloadUploadPath();
-                if($options['type'] === 'zip'){
+                if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml'){
+                    $fileData = $this->processSearch($searchTermsArr, $options);
+                    $fileName = $options['filename'] . '.' . $options['type'];
+                    if($options['type'] === 'geojson'){
+                        $outputFile = (new DataDownloadService)->writeGeoJSONFromGeoJSONArr($fileName, $fileData);
+                    }
+                    elseif($options['type'] === 'gpx'){
+                        $outputFile = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileName, $fileData);
+                    }
+                    elseif($options['type'] === 'kml'){
+                        $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
+                    }
+                }
+                elseif($options['type'] === 'zip'){
                     $outputFile = (new DarwinCoreArchiverService)->createDwcArchive($targetPath, $searchTermsArr, $options);
                 }
                 else{
@@ -1071,45 +1088,20 @@ class SearchService {
                     $outputFile = $outputFileData['outputPath'];
                 }
                 if($outputFile){
-                    (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, basename($outputFile), $outputFile);
-                    flush();
-                    readfile($outputFile);
-                    FileSystemService::deleteFile($outputFile, true);
+                    (new DataDownloadService)->streamDownload($contentType, $outputFile);
                 }
             }
         }
     }
 
-    public function processSearchSpatialDownload($searchTermsArr, $options): string
-    {
-        $fileContent = '';
-        if($searchTermsArr && $options){
-            $contentType = (new DataDownloadService)->getContentTypeFromFileType($options['type']);
-            if($contentType){
-                $fileData = $this->processSearch($searchTermsArr, $options);
-                $fileName = $options['filename'] . '.' . $options['type'];
-                if($options['type'] === 'geojson'){
-                    $fileContent = json_encode($fileData);
-                }
-                elseif($options['type'] === 'gpx'){
-                    $fileContent = (new DataDownloadService)->writeGPXFromOccurrenceArr($fileData);
-                }
-                elseif($options['type'] === 'kml'){
-                    $fileContent = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileData);
-                }
-                (new DataDownloadService)->setDownloadHeaders($options['type'], $contentType, $fileName, $fileContent);
-            }
-        }
-        return $fileContent;
-    }
-
-    public function serializeGeoJsonResultArr($sql, $numRows, $mofData = null): array
+    public function serializeGeoJsonResultArr($sql, $mofData = null): array
     {
         $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
         $returnArr = array();
         $featuresArr = array();
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
+            $numRows = $result->num_rows;
             while($row = $result->fetch_assoc()){
                 $rareSpReader = false;
                 $localitySecurity = (int)$row['localitysecurity'] === 1;

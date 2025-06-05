@@ -222,7 +222,7 @@ const multipleScientificCommonNameAutoComplete = {
             const formData = new FormData();
             formData.append('action', action);
             formData.append('term', val);
-            formData.append('kingdomid', props.kingdomId.toString());
+            formData.append('kingdomid', (props.kingdomId ? props.kingdomId.toString() : ''));
             formData.append('hideauth', props.hideAuthor);
             formData.append('hideprotected', props.hideProtected);
             formData.append('acceptedonly', props.acceptedTaxaOnly);
