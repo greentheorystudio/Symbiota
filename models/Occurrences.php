@@ -772,8 +772,8 @@ class Occurrences{
     {
         $returnArr = array();
         if($collid){
-            $sql = 'SELECT o.occid FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) ';
+            $sql = 'SELECT occid FROM omoccurrences WHERE collid  = ' . (int)$collid . ' '.
+                'AND occid NOT IN(SELECT occid FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
