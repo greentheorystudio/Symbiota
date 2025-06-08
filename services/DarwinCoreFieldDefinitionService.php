@@ -357,7 +357,7 @@ class DarwinCoreFieldDefinitionService {
         $occurFieldArr['recordId'] = 'g.guid AS recordId';
         $occurTermArr['collId'] = 'collId';
         $occurFieldArr['collId'] = 'c.collid';
-        $occurTermArr['sourcePrimaryKey-dbpk'] = 'sourcePrimaryKey-dbpk';
+        $occurTermArr['sourcePrimaryKey-dbpk'] = 'dbpk';
         $occurFieldArr['sourcePrimaryKey-dbpk'] = 'o.dbpk';
         $occurTermArr['recordedByID'] = 'recordedByID';
         $occurFieldArr['recordedByID'] = 'o.recordedById';
