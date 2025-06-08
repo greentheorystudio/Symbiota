@@ -1322,7 +1322,7 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferRemoveUnmatchedOccurrences() {
-            if(Number(profileConfigurationData.value['removeUnmatchedRecords']) === 1 && Number(uploadSummaryData.value['exist']) > 0){
+            if(Number(profileConfigurationData.value['removeUnmatchedRecords']) === 1 && Number(uploadSummaryData.value['update']) > 0){
                 const text = 'Removing previous records not included in upload';
                 currentProcess.value = 'finalTransferRemoveUnmatchedOccurrences';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
