@@ -47,8 +47,7 @@ class Media{
     {
         $retVal = 0;
         $sql = 'DELETE m.* FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
-            'LEFT JOIN uploadmediatemp AS um ON m.occid = um.occid AND m.accessuri = um.accessuri '.
-            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(um.upmid) ';
+            'WHERE o.collid = ' . (int)$collid . ' AND m.accessuri NOT IN(SELECT DISTINCT accessuri FROM uploadmediatemp WHERE collid = ' . (int)$collid . ') ';
         if($this->conn->query($sql)){
             $retVal = 1;
         }
