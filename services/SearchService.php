@@ -1239,12 +1239,11 @@ class SearchService {
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                if($row['occid'] !== $previousOccid){
+                if(($row['occid'] !== $previousOccid) && $row['url']) {
+                    $returnData[$row['occid']]['hasimage'] = true;
+                    $returnData[$row['occid']]['img'] = $row['url'];
                     if($row['thumbnailurl']){
                         $returnData[$row['occid']]['img'] = $row['thumbnailurl'];
-                    }
-                    if($row['url']){
-                        $returnData[$row['occid']]['hasimage'] = true;
                     }
                 }
                 $previousOccid = $row['occid'];

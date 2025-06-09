@@ -122,7 +122,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                         <div class="col-1 row justify-center items-center">
                                                                             <div>
                                                                                 <template v-if="props.row.icon">
-                                                                                    <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" :fit="contain"></q-img>
+                                                                                    <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain"></q-img>
                                                                                 </template>
                                                                             </div>
                                                                         </div>
@@ -187,7 +187,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                     <div class="col-2">
                                                                         <div class="fit">
                                                                             <template v-if="props.row.img">
-                                                                                <img :src="props.row.img" class="occurrence-search-image-thumbnail"></img>
+                                                                                <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain"></q-img>
                                                                             </template>
                                                                         </div>
                                                                     </div>
