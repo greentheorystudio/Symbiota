@@ -1240,7 +1240,6 @@ class SearchService {
             $result->free();
             foreach($rows as $index => $row){
                 if(($row['occid'] !== $previousOccid) && $row['url']) {
-                    $returnData[$row['occid']]['hasimage'] = true;
                     $returnData[$row['occid']]['img'] = $row['url'];
                     if($row['thumbnailurl']){
                         $returnData[$row['occid']]['img'] = $row['thumbnailurl'];
