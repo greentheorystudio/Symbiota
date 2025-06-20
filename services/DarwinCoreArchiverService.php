@@ -710,7 +710,7 @@ class DarwinCoreArchiverService {
                             if(!array_key_exists($row['collid'], $returnArr['collectionData'])){
                                 $returnArr['collectionData'][$row['collid']] = (new Collections)->getCollectionInfoArr($row['collid']);
                             }
-                            if(!$localitySecurity && !$rareSpReader){
+                            if($localitySecurity && !$rareSpReader){
                                 $row = (new Occurrences)->clearSensitiveOccurrenceData($row);
                             }
                             if(is_array($row) && array_key_exists('occurrenceID', $row) && !$row['occurrenceID']){
