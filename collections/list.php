@@ -53,7 +53,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
                             <q-tab-panel class="q-pa-none" name="occurrence">
-                                <div class="column">
+                                <div class="fit column">
                                     <div class="q-pa-sm column q-col-gutter-xs">
                                         <div class="row justify-start">
                                             <div>
@@ -76,140 +76,138 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     </div>
                                     <q-separator ></q-separator>
                                     <template v-if="recordDataArr.length > 0">
-                                        <div class="fit">
-                                            <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="occid" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
-                                                <template v-slot:top="scope">
-                                                    <div class="full-width row justify-end">
-                                                        <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                                        <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="occid" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
+                                            <template v-slot:top="scope">
+                                                <div class="full-width row justify-end">
+                                                    <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                                                        <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
 
-                                                        <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
 
-                                                        <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
 
-                                                        <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
-                                                    </div>
-                                                </template>
-                                                <template v-slot:header="props"></template>
-                                                <template v-slot:body="props">
-                                                    <q-tr v-if="recordDataArr.length > 0" :props="props" no-hover>
-                                                        <q-td class="full-width">
-                                                            <div class="full-width row no-wrap">
-                                                                <div class="col-9 column">
-                                                                    <div class="full-width q-mb-xs q-pa-xs text-bold">
-                                                                        {{ props.row.collectionname + ' ' + ((props.row.institutioncode || props.row.collectioncode) ? '(' : '') + (props.row.institutioncode ? props.row.institutioncode : '') + ((props.row.collectionname && props.row.collectionname) ? ':' : '') + (props.row.collectioncode ? props.row.collectioncode : '') + ((props.row.collectionname || props.row.collectionname) ? ')' : '') }}
-                                                                    </div>
-                                                                    <div class="full-width row q-pa-xs">
-                                                                        <div class="col-1 row justify-center items-center">
-                                                                            <div>
-                                                                                <template v-if="props.row.icon">
-                                                                                    <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain"></q-img>
-                                                                                </template>
-                                                                            </div>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                                                </div>
+                                            </template>
+                                            <template v-slot:header="props"></template>
+                                            <template v-slot:body="props">
+                                                <q-tr v-if="recordDataArr.length > 0" :props="props" class="fit" no-hover>
+                                                    <q-td class="full-width">
+                                                        <div class="full-width row no-wrap">
+                                                            <div class="col-9 column">
+                                                                <div class="full-width q-mb-xs q-pa-xs text-bold">
+                                                                    {{ props.row.collectionname + ' ' + ((props.row.institutioncode || props.row.collectioncode) ? '(' : '') + (props.row.institutioncode ? props.row.institutioncode : '') + ((props.row.collectionname && props.row.collectionname) ? ':' : '') + (props.row.collectioncode ? props.row.collectioncode : '') + ((props.row.collectionname || props.row.collectionname) ? ')' : '') }}
+                                                                </div>
+                                                                <div class="full-width row q-pa-xs">
+                                                                    <div class="col-1 row justify-center items-center">
+                                                                        <div>
+                                                                            <template v-if="props.row.icon">
+                                                                                <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain"></q-img>
+                                                                            </template>
                                                                         </div>
-                                                                        <div class="col-11 column text-body1 wrap">
-                                                                            <div v-if="props.row.sciname">
-                                                                                <template v-if="Number(props.row.tid) > 0">
-                                                                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">
-                                                                                        <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
-                                                                                    </a>
-                                                                                </template>
-                                                                                <template v-else>
+                                                                    </div>
+                                                                    <div class="col-11 column text-body1 wrap">
+                                                                        <div v-if="props.row.sciname">
+                                                                            <template v-if="Number(props.row.tid) > 0">
+                                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">
                                                                                     <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
-                                                                                </template>
-                                                                            </div>
-                                                                            <div v-if="props.row.catalognumber || props.row.othercatalognumbers">
+                                                                                </a>
+                                                                            </template>
+                                                                            <template v-else>
+                                                                                <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
+                                                                            </template>
+                                                                        </div>
+                                                                        <div v-if="props.row.catalognumber || props.row.othercatalognumbers">
                                                                                 <span v-if="props.row.catalognumber">
                                                                                     {{ props.row.catalognumber + (props.row.othercatalognumbers ? '  ' : '') }}
                                                                                 </span>
-                                                                                <span v-if="props.row.othercatalognumbers">
+                                                                            <span v-if="props.row.othercatalognumbers">
                                                                                     {{ props.row.othercatalognumbers }}
                                                                                 </span>
-                                                                            </div>
-                                                                            <div v-if="props.row.recordedby || props.row.recordnumber || props.row.eventdate || props.row.verbatimeventdate" class="full-width">
+                                                                        </div>
+                                                                        <div v-if="props.row.recordedby || props.row.recordnumber || props.row.eventdate || props.row.verbatimeventdate" class="full-width">
                                                                                 <span v-if="props.row.recordedby || props.row.recordnumber">
                                                                                     {{ (props.row.recordedby ? props.row.recordedby : '') + ((props.row.recordedby && props.row.recordnumber) ? ' ' : '') + (props.row.recordnumber ? props.row.recordnumber : '') + ((props.row.eventdate || props.row.verbatimeventdate) ? '  ' : '') }}
                                                                                 </span>
-                                                                                <span v-if="props.row.eventdate">
+                                                                            <span v-if="props.row.eventdate">
                                                                                     {{ props.row.eventdate }}
                                                                                 </span>
-                                                                                <span v-else-if="props.row.verbatimeventdate">
+                                                                            <span v-else-if="props.row.verbatimeventdate">
                                                                                     {{ props.row.verbatimeventdate }}
                                                                                 </span>
-                                                                            </div>
-                                                                            <div v-if="props.row.country || props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation" class="full-width">
+                                                                        </div>
+                                                                        <div v-if="props.row.country || props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation" class="full-width">
                                                                                 <span v-if="props.row.country">
                                                                                     {{ props.row.country + ((props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
                                                                                 </span>
-                                                                                <span v-if="props.row.stateprovince">
+                                                                            <span v-if="props.row.stateprovince">
                                                                                     {{ props.row.stateprovince + ((props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
                                                                                 </span>
-                                                                                <span v-if="props.row.county">
+                                                                            <span v-if="props.row.county">
                                                                                     {{ props.row.county + ((props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
                                                                                 </span>
-                                                                                <span v-if="props.row.locality">
+                                                                            <span v-if="props.row.locality">
                                                                                     {{ props.row.locality + ((props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
                                                                                 </span>
-                                                                                <span v-if="props.row.minimumelevationinmeters || props.row.maximumelevationinmeters">
+                                                                            <span v-if="props.row.minimumelevationinmeters || props.row.maximumelevationinmeters">
                                                                                     {{ (props.row.minimumelevationinmeters ? props.row.minimumelevationinmeters : '') + ((props.row.minimumelevationinmeters && props.row.maximumelevationinmeters) ? '-' : '') + (props.row.maximumelevationinmeters ? props.row.maximumelevationinmeters : '') + 'm' }}
                                                                                 </span>
-                                                                                <span v-else-if="props.row.verbatimelevation">
+                                                                            <span v-else-if="props.row.verbatimelevation">
                                                                                     {{ props.row.verbatimelevation }}
                                                                                 </span>
-                                                                            </div>
-                                                                            <div v-if="props.row.informationwithheld" class="text-red">
-                                                                                {{ props.row.informationwithheld }}
-                                                                            </div>
-                                                                            <div>
-                                                                                <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);">Full Record Details</span>
-                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-3 row justify-end q-gutter-sm no-wrap">
-                                                                    <div class="fit q-pa-xs">
-                                                                        <template v-if="props.row.img">
-                                                                            <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain"></q-img>
-                                                                        </template>
-                                                                    </div>
-                                                                    <div v-if="isAdmin || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))" class="col-1">
-                                                                        <div class="row justify-end vertical-top">
-                                                                            <div>
-                                                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + props.row.occid + '&collid=' + props.row.collid)" target="_blank" icon="fas fa-edit" dense>
-                                                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                                                        Edit occurrence record
-                                                                                    </q-tooltip>
-                                                                                </q-btn>
-                                                                            </div>
+                                                                        <div v-if="props.row.informationwithheld" class="text-red">
+                                                                            {{ props.row.informationwithheld }}
+                                                                        </div>
+                                                                        <div>
+                                                                            <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);">Full Record Details</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </q-td>
-                                                    </q-tr>
-                                                </template>
-                                                <template v-slot:pagination="scope">
-                                                    <div class="full-width row justify-end">
-                                                        <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                                                            <div class="col-3 row justify-end q-gutter-sm no-wrap">
+                                                                <div class="fit q-pa-xs">
+                                                                    <template v-if="props.row.img">
+                                                                        <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain"></q-img>
+                                                                    </template>
+                                                                </div>
+                                                                <div v-if="isAdmin || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))" class="col-1">
+                                                                    <div class="row justify-end vertical-top">
+                                                                        <div>
+                                                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + props.row.occid + '&collid=' + props.row.collid)" target="_blank" icon="fas fa-edit" dense>
+                                                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                                    Edit occurrence record
+                                                                                </q-tooltip>
+                                                                            </q-btn>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </q-td>
+                                                </q-tr>
+                                            </template>
+                                            <template v-slot:pagination="scope">
+                                                <div class="full-width row justify-end">
+                                                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                                                        <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
 
-                                                        <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
 
-                                                        <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
 
-                                                        <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
-                                                    </div>
-                                                </template>
-                                                <template v-slot:no-data>
-                                                    <div class="text-bold">Loading...</div>
-                                                </template>
-                                                <template v-slot:loading>
-                                                    <q-inner-loading showing color="primary"></q-inner-loading>
-                                                </template>
-                                            </q-table>
-                                        </div>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                                                </div>
+                                            </template>
+                                            <template v-slot:no-data>
+                                                <div class="text-bold">Loading...</div>
+                                            </template>
+                                            <template v-slot:loading>
+                                                <q-inner-loading showing color="primary"></q-inner-loading>
+                                            </template>
+                                        </q-table>
                                     </template>
                                     <template v-else>
                                         <div class="q-pa-md row justify-center text-h6 text-bold">
