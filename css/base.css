@@ -1049,6 +1049,9 @@ body.processing .loadingModal {
 	left: 0;
 	height: 100%;
 }
+.spatial-record-table {
+	table-layout: fixed;
+}
 .spatial-record-table thead tr th {
 	font-weight: bold;
 	text-align: center;
