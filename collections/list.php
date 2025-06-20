@@ -101,13 +101,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                         {{ props.row.collectionname + ' ' + ((props.row.institutioncode || props.row.collectioncode) ? '(' : '') + (props.row.institutioncode ? props.row.institutioncode : '') + ((props.row.collectionname && props.row.collectionname) ? ':' : '') + (props.row.collectioncode ? props.row.collectioncode : '') + ((props.row.collectionname || props.row.collectionname) ? ')' : '') }}
                                                                     </div>
                                                                     <div class="full-width row q-pa-xs">
-                                                                        <div class="col-1">
-                                                                            <div class="fit row justify-center items-center">
-                                                                                <div class="">
-                                                                                    <template v-if="props.row.icon">
-                                                                                        <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain"></q-img>
-                                                                                    </template>
-                                                                                </div>
+                                                                        <div class="col-1 row justify-center items-center">
+                                                                            <div>
+                                                                                <template v-if="props.row.icon">
+                                                                                    <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain"></q-img>
+                                                                                </template>
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-11 column text-body1 wrap">
@@ -169,7 +167,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-3 row justify-end no-wrap">
+                                                                <div class="col-3 row justify-end q-gutter-xs no-wrap">
                                                                     <div class="fit q-pa-xs">
                                                                         <template v-if="props.row.img">
                                                                             <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain"></q-img>
