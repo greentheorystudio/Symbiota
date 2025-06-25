@@ -54,7 +54,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <span class="text-bold">{{ checklistName }}</span>
                     </template>
                     <template v-else>
-                        <span class="text-bold">Project Checklist</span>
+                        <span class="text-bold">Dynamic Checklist</span>
                     </template>
                 </template>
                 <template v-else>
