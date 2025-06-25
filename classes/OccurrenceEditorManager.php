@@ -523,7 +523,7 @@ class OccurrenceEditorManager {
             }
         }
         if(array_key_exists('woi',$this->qryArr)){
-            $sqlWhere .= 'AND ISNULL(i.imgid) ';
+            $sqlWhere .= 'AND o2.occid NOT IN(SELECT DISTINCT occid FROM images) ';
         }
         if(array_key_exists('exsid',$this->qryArr) && is_numeric($this->qryArr['exsid'])){
             $sqlWhere .= 'AND exn.ometid = '.$this->qryArr['exsid'].' ';
@@ -742,9 +742,6 @@ class OccurrenceEditorManager {
     {
         if(array_key_exists('io',$this->qryArr)){
             $sql .= 'INNER JOIN images AS i ON o2.occid = i.occid ';
-        }
-        elseif(array_key_exists('woi',$this->qryArr)){
-            $sql .= 'LEFT JOIN images AS i ON o2.occid = i.occid ';
         }
         if(strpos($this->sqlWhere,'ul.username')){
             $sql .= 'LEFT JOIN omoccuredits AS ome ON o2.occid = ome.occid LEFT JOIN users AS ul ON ome.uid = ul.uid ';

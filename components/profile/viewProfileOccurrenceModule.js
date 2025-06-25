@@ -1,10 +1,4 @@
 const viewProfileOccurrenceModule = {
-    props: {
-        accountInfo: {
-            type: Object,
-            default: null
-        }
-    },
     template: `
         <template v-if="collectionArr.length > 0">
             <q-list bordered class="rounded-borders q-mt-md">
@@ -35,22 +29,14 @@ const viewProfileOccurrenceModule = {
     },
     setup() {
         const baseStore = useBaseStore();
-        const collectionStore = useCollectionStore();
+        const userStore = useUserStore();
 
+        const accountInfo = Vue.computed(() => userStore.getUserData);
         const clientRoot = baseStore.getClientRoot;
-        const collectionArr = Vue.ref([]);
-
-        function setAccountCollections() {
-            collectionStore.getCollectionListByUserRights((collListData) => {
-                collectionArr.value = collListData;
-            });
-        }
-
-        Vue.onMounted(() => {
-            setAccountCollections();
-        });
+        const collectionArr = Vue.computed(() => userStore.getCollectionArr);
 
         return {
+            accountInfo,
             clientRoot,
             collectionArr
         }

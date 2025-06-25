@@ -8,21 +8,21 @@ class Projects{
 	private $conn;
 
     private $fields = array(
-        "pid" => array("dataType" => "number", "length" => 10),
-        "projname" => array("dataType" => "string", "length" => 45),
-        "displayname" => array("dataType" => "string", "length" => 150),
-        "managers" => array("dataType" => "string", "length" => 150),
-        "briefdescription" => array("dataType" => "string", "length" => 300),
-        "fulldescription" => array("dataType" => "string", "length" => 5000),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "iconurl" => array("dataType" => "string", "length" => 150),
-        "headerurl" => array("dataType" => "string", "length" => 150),
-        "occurrencesearch" => array("dataType" => "number", "length" => 10),
-        "ispublic" => array("dataType" => "number", "length" => 10),
-        "dynamicproperties" => array("dataType" => "json", "length" => 0),
-        "parentpid" => array("dataType" => "number", "length" => 10),
-        "sortsequence" => array("dataType" => "number", "length" => 10),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'pid' => array('dataType' => 'number', 'length' => 10),
+        'projname' => array('dataType' => 'string', 'length' => 45),
+        'displayname' => array('dataType' => 'string', 'length' => 150),
+        'managers' => array('dataType' => 'string', 'length' => 150),
+        'briefdescription' => array('dataType' => 'string', 'length' => 300),
+        'fulldescription' => array('dataType' => 'string', 'length' => 5000),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'iconurl' => array('dataType' => 'string', 'length' => 150),
+        'headerurl' => array('dataType' => 'string', 'length' => 150),
+        'occurrencesearch' => array('dataType' => 'number', 'length' => 10),
+        'ispublic' => array('dataType' => 'number', 'length' => 10),
+        'dynamicproperties' => array('dataType' => 'json', 'length' => 0),
+        'parentpid' => array('dataType' => 'number', 'length' => 10),
+        'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -82,6 +82,31 @@ class Projects{
         return $retVal;
     }
 
+    public function getProjectArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM fmprojects ';
+        $sql .= 'ORDER BY projname ';
+        //echo $sql;
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getProjectChecklists($pid): array
     {
         $retArr = array();
@@ -136,15 +161,14 @@ class Projects{
         return $retArr;
     }
 
-    public function getProjectListByUserRights(): array
+    public function getProjectListByUid($uid): array
     {
         $retArr = array();
-        $cArr = array();
-        if(array_key_exists('ProjAdmin',$GLOBALS['USER_RIGHTS'])) {
-            $cArr = $GLOBALS['USER_RIGHTS']['ProjAdmin'];
-        }
-        if($cArr){
-            $sql = 'SELECT pid, projname FROM fmprojects WHERE pid IN(' . implode(',', $cArr) . ') ORDER BY projname ';
+        if((int)$uid > 0){
+            $sql = 'SELECT DISTINCT p.pid, p.projname '.
+                'FROM userroles AS r LEFT JOIN fmprojects AS p ON r.tablepk = p.pid '.
+                'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ProjAdmin" '.
+                'ORDER BY p.projname ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -158,6 +182,21 @@ class Projects{
             }
         }
         return $retArr;
+    }
+
+    public function getProjectPermissionLabels($permissionArr): array
+    {
+        $idStr = implode(',', array_keys($permissionArr));
+        $sql = 'SELECT pid, projname FROM fmprojects WHERE pid IN(' . $idStr . ') ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $permissionArr[$row['pid']] = $row['projname'];
+                unset($rows[$index]);
+            }
+        }
+        return $permissionArr;
     }
 
     public function updateProjectRecord($pid, $editData): int

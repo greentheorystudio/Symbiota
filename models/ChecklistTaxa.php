@@ -1,6 +1,8 @@
 <?php
 include_once(__DIR__ . '/Checklists.php');
 include_once(__DIR__ . '/KeyCharacterStates.php');
+include_once(__DIR__ . '/Taxa.php');
+include_once(__DIR__ . '/TaxonVernaculars.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class ChecklistTaxa{
@@ -8,17 +10,17 @@ class ChecklistTaxa{
 	private $conn;
 
     private $fields = array(
-        "cltlid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "clid" => array("dataType" => "number", "length" => 10),
-        "habitat" => array("dataType" => "string", "length" => 250),
-        "abundance" => array("dataType" => "string", "length" => 50),
-        "notes" => array("dataType" => "string", "length" => 2000),
-        "source" => array("dataType" => "string", "length" => 250),
-        "nativity" => array("dataType" => "string", "length" => 50),
-        "endemic" => array("dataType" => "string", "length" => 45),
-        "invasive" => array("dataType" => "string", "length" => 45),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'cltlid' => array('dataType' => 'number', 'length' => 10),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'clid' => array('dataType' => 'number', 'length' => 10),
+        'habitat' => array('dataType' => 'string', 'length' => 250),
+        'abundance' => array('dataType' => 'string', 'length' => 50),
+        'notes' => array('dataType' => 'string', 'length' => 2000),
+        'source' => array('dataType' => 'string', 'length' => 250),
+        'nativity' => array('dataType' => 'string', 'length' => 50),
+        'endemic' => array('dataType' => 'string', 'length' => 45),
+        'invasive' => array('dataType' => 'string', 'length' => 45),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -84,18 +86,49 @@ class ChecklistTaxa{
         return $retVal;
     }
 
-    public function getChecklistTaxa($clidArr, $includeKeyData = false): array
+    public function getChecklistAcceptedTidArr($clidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT t.tidaccepted '.
+            'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
+            'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['tidaccepted'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort): array
     {
         $retArr = array();
         $tempArr = array();
+        $keyDataArr = array();
+        $synonymyDataArr = array();
+        $vernacularDataArr = array();
         if(count($clidArr) > 0){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
             $fieldNameArr[] = 't.sciname';
             $fieldNameArr[] = 't.author';
             $fieldNameArr[] = 't.family';
+            $fieldNameArr[] = 't.rankid';
+            $fieldNameArr[] = 't.tidaccepted';
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
                 'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
+            if($taxonSort){
+                if($taxonSort === 'family'){
+                    $sql .= 'ORDER BY t.family, t.sciname ';
+                }
+                else{
+                    $sql .= 'ORDER BY t.sciname ';
+                }
+            }
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
@@ -103,8 +136,8 @@ class ChecklistTaxa{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    if($includeKeyData && !in_array((int)$row['tid'], $tidArr, true)){
-                        $tidArr[] = (int)$row['tid'];
+                    if(!in_array($row['tidaccepted'], $tidArr, true)){
+                        $tidArr[] = $row['tidaccepted'];
                     }
                     $nodeArr = array();
                     foreach($fields as $val){
@@ -116,7 +149,7 @@ class ChecklistTaxa{
                             $nodeArr[$name] = $row[$name];
                         }
                     }
-                    if($includeKeyData){
+                    if($includeKeyData || $includeSynonymyData || $includeVernacularData){
                         $tempArr[] = $nodeArr;
                     }
                     else{
@@ -124,13 +157,37 @@ class ChecklistTaxa{
                     }
                     unset($rows[$index]);
                 }
-                if($includeKeyData && count($tidArr) > 0){
-                    $keyDataArr = (new KeyCharacterStates)->getTaxaKeyCharacterStates($tidArr);
-                    foreach($tempArr as $taxonArr){
-                        if(array_key_exists($taxonArr['tid'], $keyDataArr)){
-                            $taxonArr['keyData'] = array_key_exists((int)$taxonArr['tid'], $keyDataArr) ? $keyDataArr[$taxonArr['tid']] : array();
-                            $retArr[] = $taxonArr;
+                if(($includeKeyData || $includeSynonymyData || $includeVernacularData) && count($tidArr) > 0){
+                    if($includeKeyData){
+                        $keyDataArr = (new KeyCharacterStates)->getCharacterStatesFromTidArr($tidArr);
+                    }
+                    if($includeSynonymyData){
+                        $synonymyDataArr = (new Taxa)->getTaxaSynonymArrFromTidArr($tidArr);
+                    }
+                    if($includeVernacularData){
+                        $vernacularDataArr = (new TaxonVernaculars)->getVernacularArrFromTidArr($tidArr);
+                    }
+                    if($keyDataArr || $synonymyDataArr || $vernacularDataArr){
+                        foreach($tempArr as $taxonArr){
+                            if($includeSynonymyData){
+                                $taxonArr['synonymyData'] = $synonymyDataArr[$taxonArr['tidaccepted']] ?? null;
+                            }
+                            if($includeVernacularData){
+                                $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tidaccepted']] ?? null;
+                            }
+                            if($includeKeyData){
+                                if(array_key_exists($taxonArr['tidaccepted'], $keyDataArr)){
+                                    $taxonArr['keyData'] = $keyDataArr[$taxonArr['tidaccepted']];
+                                    $retArr[] = $taxonArr;
+                                }
+                            }
+                            else{
+                                $retArr[] = $taxonArr;
+                            }
                         }
+                    }
+                    else{
+                        $retArr[] = $tempArr;
                     }
                 }
             }

@@ -1,35 +1,24 @@
 const viewProfileAccountModule = {
-    props: {
-        accountInfo: {
-            type: Object,
-            default: null
-        },
-        checklistArr: {
-            type: Array,
-            default: []
-        },
-        projectArr: {
-            type: Array,
-            default: []
-        },
-        uid: {
-            type: Number,
-            default: null
-        }
-    },
     template: `
         <div class="row justify-center q-mt-md">
-            <template v-if="accountInfo.validated !== 1">
+            <template v-if="Number(accountInfo.validated) !== 1">
                 <q-card class="create-account-container">
                     <q-card-section>
                         <div class="row justify-between">
-                            <div class="row col-8 text-red text-bold">
-                                You have one more step to confirm your account. A confirmation email was sent to the email address for your account.
-                                Please follow the instructions in that email to confirm your account.
-                            </div>
-                            <div class="row col-3 self-center justify-end">
-                                <q-btn color="secondary" @click="resendConfirmationEmail();" label="Resend Confirmation Email" dense />
-                            </div>
+                            <template v-if="emailConfigured">
+                                <div class="row col-8 text-red text-bold">
+                                    You have one more step to confirm your account. A confirmation email was sent to the email address for your account.
+                                    Please follow the instructions in that email to confirm your account.
+                                </div>
+                                <div class="row col-3 self-center justify-end">
+                                    <q-btn color="secondary" @click="resendConfirmationEmail();" label="Resend Confirmation Email" dense />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div class="row col-8 text-red text-bold">
+                                    Your account needs to be confirmed to be fully active.{{ (adminEmail ? (' Please contact ' + adminEmail + ' for assistance in confirming your account.') : '') }}
+                                </div>
+                            </template>
                         </div>
                     </q-card-section>
                 </q-card>
@@ -40,9 +29,16 @@ const viewProfileAccountModule = {
                     <div class="row justify-start q-gutter-md">
                         <q-input outlined v-model="accountInfo.username" label="Username" bg-color="white" class="col-4" dense disable></q-input>
                     </div>
-                    <account-information-form ref="accountInformationFormRef" :user="accountInfo" @update:account-information="updateAccountObj"></account-information-form>
-                    <div class="row justify-end q-gutter-md q-mt-xs">
-                        <q-btn color="secondary" @click="editAccount();" label="Save Edits" dense />
+                    <account-information-form ref="accountInformationFormRef" @update:account-information="updateAccountData"></account-information-form>
+                    <div class="row justify-between q-mt-md">
+                        <div>
+                            <template v-if="editsExist">
+                                <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
+                            </template>
+                        </div>
+                        <div class="row justify-end">
+                            <q-btn color="secondary" @click="editAccount();" label="Save Edits" :disabled="!editsExist || !userValid" dense />
+                        </div>
                     </div>
                 </q-card-section>
             </q-card>
@@ -110,36 +106,36 @@ const viewProfileAccountModule = {
         'account-information-form': accountInformationForm,
         'password-input': passwordInput
     },
-    setup(props, context) {
+    setup() {
         const { showNotification } = useCore();
-        const store = useBaseStore();
-        const accessTokenCnt = Vue.ref(0);
+        const baseStore = useBaseStore();
+        const userStore = useUserStore();
+        
+        const accessTokenCnt = Vue.computed(() => userStore.getTokenCnt);
+        const accountInfo = Vue.computed(() => userStore.getUserData);
         const accountInformationFormRef = Vue.ref(null);
-        const clientRoot = store.getClientRoot;
+        const adminEmail = baseStore.getAdminEmail;
+        const checklistArr = Vue.computed(() => userStore.getChecklistArr);
+        const clientRoot = baseStore.getClientRoot;
         const deleteConfirmation = Vue.ref(false);
+        const editsExist = Vue.computed(() => userStore.getUserEditsExist);
+        const emailConfigured = baseStore.getEmailConfigured;
         const newPassword = Vue.ref(null);
         const passwordInputRef = Vue.ref(null);
+        const projectArr = Vue.computed(() => userStore.getProjectArr);
+        const uid = Vue.computed(() => userStore.getUserID);
+        const userValid = Vue.computed(() => userStore.getUserValid);
 
         function changePassword() {
             passwordInputRef.value.validateForm();
             if(!passwordInputRef.value.formHasErrors()) {
-                const formData = new FormData();
-                formData.append('uid', props.uid);
-                formData.append('pwd', newPassword.value);
-                formData.append('action', 'changePassword');
-                fetch(profileApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    response.text().then((res) => {
-                        if(Number(res) === 1){
-                            showNotification('positive','Your password has been changed.');
-                        }
-                        else{
-                            showNotification('negative','An error occurred changing your password.');
-                        }
-                    });
+                userStore.updateUserPassword(newPassword.value, (res) => {
+                    if(Number(res) === 1){
+                        showNotification('positive','Your password has been changed.');
+                    }
+                    else{
+                        showNotification('negative','An error occurred changing your password.');
+                    }
                 });
             }
             else{
@@ -148,64 +144,36 @@ const viewProfileAccountModule = {
         }
 
         function clearAccessTokens() {
-            const formData = new FormData();
-            formData.append('uid', props.uid);
-            formData.append('action', 'clearAccessTokens');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(Number(res) === 1){
-                        showNotification('positive','Your access tokens have been cleared and you have been logged out of all devices.');
-                    }
-                    else{
-                        showNotification('negative','An error occurred clearing your access tokens.');
-                    }
-                });
+            userStore.clearUserAccessTokens((res) => {
+                if(Number(res) === 1){
+                    showNotification('positive','Your access tokens have been cleared and you have been logged out of all devices.');
+                }
+                else{
+                    showNotification('negative','An error occurred clearing your access tokens.');
+                }
             });
         }
 
         function deleteAccount() {
-            const formData = new FormData();
-            formData.append('uid', props.uid.toString());
-            formData.append('action', 'deleteAccount');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(Number(res) === 1){
-                        window.location.href = clientRoot + '/index.php';
-                    }
-                    else{
-                        showNotification('negative','An error occurred deleting your account.');
-                    }
-                });
+            userStore.deleteUserRecord(uid.value, (res) => {
+                if(Number(res) === 1){
+                    window.location.href = clientRoot + '/index.php';
+                }
+                else{
+                    showNotification('negative','An error occurred deleting your account.');
+                }
             });
         }
 
         function editAccount() {
             if(!accountInformationFormRef.value.formHasErrors()) {
-                const formData = new FormData();
-                formData.append('uid', props.uid.toString());
-                formData.append('user', JSON.stringify(props.accountInfo));
-                formData.append('action', 'editAccount');
-                fetch(profileApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    response.text().then((res) => {
-                        if(Number(res) === 1){
-                            showNotification('positive','The edits to your account have been saved.');
-                        }
-                        else{
-                            showNotification('negative','An error occurred saving the edits to your account.');
-                        }
-                    });
+                userStore.updateUserRecord((res) => {
+                    if(Number(res) === 1){
+                        showNotification('positive','The edits to your account have been saved.');
+                    }
+                    else{
+                        showNotification('negative','An error occurred saving the edits to your account.');
+                    }
                 });
             }
             else{
@@ -214,67 +182,45 @@ const viewProfileAccountModule = {
         }
 
         function resendConfirmationEmail() {
-            const formData = new FormData();
-            formData.append('uid', props.uid);
-            formData.append('action', 'sendConfirmationEmail');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    if(Number(res) === 1){
-                        showNotification('positive','Your confirmation email has been sent.');
-                    }
-                    else{
-                        showNotification('negative','There was an error sending your confirmation email.');
-                    }
-                });
+            userStore.resendConfirmationEmail((res) => {
+                if(Number(res) === 1){
+                    showNotification('positive','Your confirmation email has been sent.');
+                }
+                else{
+                    showNotification('negative','There was an error sending your confirmation email.');
+                }
             });
         }
 
-        function setAccessTokenCnt() {
-            const formData = new FormData();
-            formData.append('uid', props.uid);
-            formData.append('action', 'getAccessTokenCnt');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.text().then((res) => {
-                    accessTokenCnt.value = Number(res);
-                });
-            });
+        function updateAccountData(data) {
+            userStore.updateUserEditData(data.key, data.value);
         }
 
         function updatePassword(val) {
             newPassword.value = val;
         }
 
-        function updateAccountObj(obj) {
-            context.emit('update:account-information', obj);
-        }
-
-        Vue.onMounted(() => {
-            if(Number(props.uid) > 0){
-                setAccessTokenCnt();
-            }
-        });
-        
         return {
             accessTokenCnt,
+            accountInfo,
             accountInformationFormRef,
+            adminEmail,
+            checklistArr,
             deleteConfirmation,
+            editsExist,
+            emailConfigured,
             newPassword,
             passwordInputRef,
+            projectArr,
+            uid,
+            userValid,
             changePassword,
             clearAccessTokens,
             deleteAccount,
             editAccount,
             resendConfirmationEmail,
-            updatePassword,
-            updateAccountObj
+            updateAccountData,
+            updatePassword
         }
     }
 };

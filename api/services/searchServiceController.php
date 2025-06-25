@@ -20,10 +20,8 @@ if($action && $options && $stArr && SanitizerService::validateInternalRequest())
     }
     elseif($action === 'processSearchDownload'){
         if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml'){
-            echo $searchService->processSearchSpatialDownload($stArr, $options);
+            $options['spatial'] = 1;
         }
-        else{
-            $searchService->processSearchDownload($stArr, $options);
-        }
+        $searchService->processSearchDownload($stArr, $options);
     }
 }

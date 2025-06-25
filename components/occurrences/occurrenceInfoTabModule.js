@@ -270,7 +270,7 @@ const occurrenceInfoTabModule = {
                                                 <q-item-section>
                                                     <div class="row justify-start q-gutter-md items-center">
                                                         <div class="text-body1">
-                                                            <a :href="(clientRoot + '/checklists/checklist.php?cl=' + checklist.clid)" target="_blank">
+                                                            <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)" target="_blank">
                                                                 {{ checklist.name }}
                                                             </a>
                                                         </div>

@@ -31,6 +31,7 @@ const useBaseStore = Pinia.defineStore('base', {
             worms: 'WoRMS Aphia ID'
         },
         userDisplayName: USER_DISPLAY_NAME,
+        userRights: {},
         validUser: VALID_USER
     }),
     getters: {
@@ -94,6 +95,9 @@ const useBaseStore = Pinia.defineStore('base', {
         getUserDisplayName(state) {
             return state.userDisplayName;
         },
+        getUserRights(state) {
+            return state.userRights
+        },
         getValidUser(state) {
             return state.validUser;
         }
@@ -107,12 +111,28 @@ const useBaseStore = Pinia.defineStore('base', {
                 method: 'POST',
                 body: formData
             })
-            .then((response) => response.text())
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
             .then((resStr) => {
                 callback(resStr);
             });
         },
-        async logout() {
+        setUserRights() {
+            const formData = new FormData();
+            formData.append('action', 'getCurrentUserRights');
+            fetch(permissionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                this.userRights = Object.assign({}, resObj);
+            });
+        },
+        logout() {
             const url = profileApiUrl + '?action=logout';
             fetch(url)
             .then(() => {

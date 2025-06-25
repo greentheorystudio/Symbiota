@@ -148,6 +148,18 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Images)->clearExistingImagesNotInUpload($collid, $clearDerivatives);
+            if($retVal){
+                $retVal = (new Media)->clearExistingMediaNotInUpload($collid);
+            }
+        }
+        return $retVal;
+    }
+
     public function finalTransferClearPreviousDeterminations($collid): int
     {
         $retVal = 1;
@@ -178,11 +190,29 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearPreviousMofRecordsForUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecordsForUpload($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferPopulateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
     {
         $retVal = 1;
         if($collid){
             $retVal = (new UploadMofTemp)->populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveDuplicateDbpkRecordsFromUpload($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->removeDuplicateDbpkRecordsFromUpload($collid);
         }
         return $retVal;
     }
@@ -219,9 +249,11 @@ class DataUploadService {
         $retVal = 1;
         if($collid){
             $occidArr = (new Occurrences)->getOccidArrNotIncludedInUpload($collid);
-            (new Images)->deleteAssociatedImageRecords('occidArr', $occidArr);
-            (new Media)->deleteAssociatedMediaRecords('occidArr', $occidArr);
-            $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
+            if($occidArr){
+                (new Images)->deleteAssociatedImageRecords('occidArr', $occidArr);
+                (new Media)->deleteAssociatedMediaRecords('occidArr', $occidArr);
+                $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
+            }
         }
         return $retVal;
     }
@@ -328,7 +360,7 @@ class DataUploadService {
         while($dataArr = fgetcsv($fh,0, ',', '"', '')){
             if($recordIndex === 5000){
                 if($configArr['dataType'] === 'occurrence'){
-                    $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['processingStatus'], $configArr['fieldMap']);
+                    $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['processingStatus'], $configArr['fieldMap'], $configArr['secondaryFieldMap']);
                 }
                 elseif($configArr['dataType'] === 'determination'){
                     $recordsCreated += (new UploadDeterminationTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
@@ -348,7 +380,7 @@ class DataUploadService {
         fclose($fh);
         if(count($dataUploadArr) > 0){
             if($configArr['dataType'] === 'occurrence'){
-                $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['processingStatus'], $configArr['fieldMap']);
+                $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['processingStatus'], $configArr['fieldMap'], $configArr['secondaryFieldMap']);
             }
             elseif($configArr['dataType'] === 'determination'){
                 $recordsCreated += (new UploadDeterminationTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);

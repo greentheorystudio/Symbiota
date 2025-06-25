@@ -6,16 +6,16 @@ class TaxonRanks{
 	private $conn;
 
     private $fields = array(
-        "taxonunitid" => array("dataType" => "number", "length" => 11),
-        "kingdomid" => array("dataType" => "number", "length" => 11),
-        "rankid" => array("dataType" => "number", "length" => 5),
-        "rankname" => array("dataType" => "string", "length" => 15),
-        "suffix" => array("dataType" => "string", "length" => 45),
-        "dirparentrankid" => array("dataType" => "number", "length" => 6),
-        "reqparentrankid" => array("dataType" => "number", "length" => 6),
-        "modifiedby" => array("dataType" => "string", "length" => 45),
-        "modifiedtimestamp" => array("dataType" => "date", "length" => 0),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'taxonunitid' => array('dataType' => 'number', 'length' => 11),
+        'kingdomid' => array('dataType' => 'number', 'length' => 11),
+        'rankid' => array('dataType' => 'number', 'length' => 5),
+        'rankname' => array('dataType' => 'string', 'length' => 15),
+        'suffix' => array('dataType' => 'string', 'length' => 45),
+        'dirparentrankid' => array('dataType' => 'number', 'length' => 6),
+        'reqparentrankid' => array('dataType' => 'number', 'length' => 6),
+        'modifiedby' => array('dataType' => 'string', 'length' => 45),
+        'modifiedtimestamp' => array('dataType' => 'date', 'length' => 0),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){

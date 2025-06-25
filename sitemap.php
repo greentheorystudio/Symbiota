@@ -9,16 +9,17 @@ header('Content-Type: text/html; charset=UTF-8' );
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Site Map</title>
+        <meta name="description" content="Site map for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <?php
         include(__DIR__ . '/header.php');
         ?>
-        <div id="app-container">
-            <div id="innertext">
+        <div id="mainContainer">
+            <div class="q-pa-md">
                 <div class="text-h5 text-bold">Site Map</div>
                 <div class="q-pa-md column">
                     <div class="text-h6 text-bold">Collections</div>
@@ -49,7 +50,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                     <ul>
                         <li><a :href="(clientRoot + '/projects/index.php')">Biotic Inventory Projects</a></li>
                         <li><a :href="(clientRoot + '/checklists/index.php')">Checklists</a></li>
-                        <li><a :href="(clientRoot + '/checklists/dynamicmap.php?interface=checklist')">Dynamic Checklist</a></li>
+                        <li><a :href="(clientRoot + '/checklists/checklist.php')">Dynamic Checklist</a></li>
                         <template v-if="keyModuleIsActive">
                             <li><a :href="(clientRoot + '/ident/key.php')">Dynamic Key</a></li>
                         </template>
@@ -99,10 +100,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                                 <div class="q-mt-md text-body1 text-bold">Glossary</div>
                                 <ul>
                                     <li><a :href="(clientRoot + '/glossary/index.php')">Manage Glossary</a></li>
-                                </ul>
-                                <div class="q-mt-md text-body1 text-bold">References</div>
-                                <ul>
-                                    <li><a :href="(clientRoot + '/references/index.php')">Manage References</a></li>
                                 </ul>
                                 <div class="q-mt-md text-body1 text-bold">Datasets</div>
                                 <ul>
@@ -178,7 +175,7 @@ header('Content-Type: text/html; charset=UTF-8' );
             });
             siteMapModule.use(Quasar, { config: {} });
             siteMapModule.use(Pinia.createPinia());
-            siteMapModule.mount('#app-container');
+            siteMapModule.mount('#mainContainer');
         </script>
     </body>
 </html>

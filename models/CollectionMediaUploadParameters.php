@@ -7,13 +7,13 @@ class CollectionMediaUploadParameters {
     private $conn;
 
     private $fields = array(
-        "spprid" => array("dataType" => "number", "length" => 10),
-        "collid" => array("dataType" => "number", "length" => 10),
-        "title" => array("dataType" => "string", "length" => 100),
-        "filenamepatternmatch" => array("dataType" => "string", "length" => 500),
-        "patternmatchfield" => array("dataType" => "string", "length" => 255),
-        "configjson" => array("dataType" => "json", "length" => 0),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'spprid' => array('dataType' => 'number', 'length' => 10),
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'title' => array('dataType' => 'string', 'length' => 100),
+        'filenamepatternmatch' => array('dataType' => 'string', 'length' => 500),
+        'patternmatchfield' => array('dataType' => 'string', 'length' => 255),
+        'configjson' => array('dataType' => 'json', 'length' => 0),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
 	public function __construct(){

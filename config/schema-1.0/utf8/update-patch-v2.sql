@@ -1,10 +1,13 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
+ALTER TABLE `configurations`
+    MODIFY COLUMN `configurationValue` longtext NOT NULL AFTER `configurationDataType`;
+
 ALTER TABLE `omcollections`
     ADD COLUMN `ccpk` int(10) UNSIGNED NULL AFTER `CollID`,
     ADD COLUMN `isPublic` smallint(1) NOT NULL DEFAULT 1 AFTER `SortSeq`,
     ADD COLUMN `defaultRepCount` int(10) NULL AFTER `DataRecordingMethod`,
-    CHANGE COLUMN `dynamicProperties` `configJson` text NULL AFTER `accessrights`,
+    CHANGE COLUMN `dynamicProperties` `configJson` longtext NULL AFTER `accessrights`,
     ADD INDEX `isPublic`(`isPublic`),
     ADD CONSTRAINT `FK_collid_ccpk` FOREIGN KEY (`ccpk`) REFERENCES `omcollcategories` (`ccpk`) ON DELETE RESTRICT ON UPDATE NO ACTION;
 
@@ -22,6 +25,10 @@ CREATE TABLE `omcolldatauploadparameters` (
     KEY `FK_omcolldatauploadparameters_coll` (`CollID`),
     CONSTRAINT `omcolldatauploadparameters_ibfk_1` FOREIGN KEY (`CollID`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+INSERT INTO omcolldatauploadparameters(uspid,CollID,UploadType,title,dwcpath)
+SELECT uspid,CollID,UploadType,title,Path
+FROM uploadspecparameters;
 
 CREATE TABLE `omcollmediauploadparameters` (
     `spprid` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -186,6 +193,9 @@ ALTER TABLE `media`
 ALTER TABLE `images`
     ADD INDEX `sourceurl`(`sourceurl`);
 
+ALTER TABLE `imagetag`
+    DROP FOREIGN KEY `FK_imagetag_tagkey`;
+
 ALTER TABLE `fmchecklists`
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`;
@@ -323,10 +333,10 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_uploadimg_occid` (`occid`),
     KEY `Index_uploadimg_collid` (`collid`),
     KEY `Index_uploadimg_dbpk` (`dbpk`),
-    KEY `Index_ url` (`url`),
-    KEY `Index_ originalurl` (`originalurl`),
-    KEY `Index_ accessuri` (`accessuri`),
-    KEY `Index_ format` (`format`),
+    KEY `Index_url` (`url`),
+    KEY `Index_originalurl` (`originalurl`),
+    KEY `Index_accessuri` (`accessuri`),
+    KEY `Index_format` (`format`),
     KEY `Index_uploadimg_ts` (`initialtimestamp`)
 );
 
@@ -351,10 +361,10 @@ CREATE TABLE `uploadmoftemp` (
     KEY `Index_datavalue` (`datavalue`)
 );
 
+ALTER TABLE `uploadspecmap` DROP FOREIGN KEY `FK_uploadspecmap_usp`;
+
 ALTER TABLE `uploadspecmap`
     ADD CONSTRAINT `Fk_uploadspecmap_uspid` FOREIGN KEY (`uspid`) REFERENCES `omcolldatauploadparameters` (`uspid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uploadspecmap` DROP FOREIGN KEY `FK_uploadspecmap_usp`;
 
 ALTER TABLE `uploadspectemp`
     DROP COLUMN `recordNumberPrefix`,
@@ -392,5 +402,21 @@ ALTER TABLE `uploadspectemp`
     ADD INDEX `Index_eventdbpk`(`eventdbpk`);
 
 DROP TRIGGER `uploadspectemp_delete`;
+
+ALTER TABLE `fmchecklists`
+    MODIFY COLUMN `searchterms` longtext NULL AFTER `politicalDivision`,
+    MODIFY COLUMN `footprintWKT` longtext NULL AFTER `pointradiusmeters`,
+    MODIFY COLUMN `defaultSettings` longtext NULL AFTER `Access`;
+
+ALTER TABLE `fmprojects`
+    MODIFY COLUMN `dynamicProperties` longtext NULL AFTER `ispublic`;
+
+ALTER TABLE `omcolldatauploadparameters`
+    MODIFY COLUMN `queryparamjson` longtext NULL AFTER `dwcpath`,
+    MODIFY COLUMN `cleansql` longtext NULL AFTER `queryparamjson`,
+    MODIFY COLUMN `configjson` longtext NULL AFTER `cleansql`;
+
+ALTER TABLE `omcollmediauploadparameters`
+    MODIFY COLUMN `configjson` longtext NULL AFTER `patternmatchfield`;
 
 SET FOREIGN_KEY_CHECKS = 1;

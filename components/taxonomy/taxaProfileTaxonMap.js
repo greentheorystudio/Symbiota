@@ -1,7 +1,7 @@
 const taxaProfileTaxonMap = {
     template: `
         <div class="map-thumb-frame">
-            <q-card class="taxon-profile-taxon-map-card">
+            <q-card class="taxon-profile-taxon-map-card cursor-pointer" @click="openMapPopup(true);">
                 <div class="map-thumb-container">
                     <template v-if="taxonMap">
                         <div class="map-thumb-image">
@@ -11,7 +11,7 @@ const taxaProfileTaxonMap = {
                         </div>
                     </template>
                     <div class="map-thumb-spatial-link">
-                        <span class="cursor-pointer" @click="openMapPopup(true);">Open Interactive Map</span>
+                        Open Interactive Map
                     </div>
                 </div>
             </q-card>
@@ -22,9 +22,9 @@ const taxaProfileTaxonMap = {
         const taxaStore = useTaxaStore();
 
         const clientRoot = baseStore.getClientRoot;
-        const taxaMapData = Vue.computed(() => taxaStore.getAcceptedTaxonTid);
+        const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
         const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
-        const taxonId = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+        const taxonId = Vue.computed(() => taxaStore.getAcceptedTaxonTid);
         const taxonMap = Vue.computed(() => {
             return taxaMapData.value.hasOwnProperty(taxonId.value) ? taxaMapData.value[taxonId.value] : null;
         });

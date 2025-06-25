@@ -79,37 +79,8 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         getTaxaDescriptionBlockArr(state) {
             return state.taxaDescriptionBlockStore.getTaxaDescriptionBlockArr;
         },
-        getTaxaDescriptionDisplayArr(state) {
-            const displayArr = [];
-            if(state.taxaDescriptionBlockStore.getTaxaDescriptionBlockArr.length > 0 && Object.keys(state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData).length > 0){
-                state.taxaDescriptionBlockStore.getTaxaDescriptionBlockArr.forEach((desc) => {
-                    if(state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData.hasOwnProperty(desc['tdbid']) && state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData[desc['tdbid']].length > 0){
-                        const description = Object.assign({}, desc);
-                        if((!description['source'] || description['source'] === '') && description['sourceurl'] && description['sourceurl'] !== ''){
-                            description['source'] = description['sourceurl'];
-                        }
-                        description['stmts'] = [];
-                        state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData[desc['tdbid']].forEach((stmt) => {
-                            if(stmt['statement'] && stmt['statement'] !== ''){
-                                const statement = Object.assign({}, stmt);
-                                if(statement['statement'].startsWith('<p>')){
-                                    statement['statement'] = statement['statement'].slice(3);
-                                }
-                                if(statement['statement'].endsWith('</p>')){
-                                    statement['statement'] = statement['statement'].substring(0, statement['statement'].length - 4);
-                                }
-                                if(Number(statement['displayheader']) === 1 && statement['heading'] && statement['heading'] !== ''){
-                                    const headingText = '<span class="desc-statement-heading">' + statement['heading'] + '</span>: ';
-                                    statement['statement'] = headingText + statement['statement'];
-                                }
-                                description['stmts'].push(statement);
-                            }
-                        });
-                        displayArr.push(description);
-                    }
-                });
-            }
-            return displayArr;
+        getTaxaDescriptionStatementArr(state) {
+            return state.taxaDescriptionStatementStore.getTaxaDescriptionStatementArr;
         },
         getTaxaDescriptionStatementData(state) {
             return state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData;

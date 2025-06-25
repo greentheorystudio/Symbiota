@@ -121,6 +121,9 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'finalTransferClearPreviousMofRecords'){
         echo $dataUploadService->finalTransferClearPreviousMofRecords($collid);
     }
+    elseif($action === 'finalTransferClearPreviousMofRecordsForUpload'){
+        echo $dataUploadService->finalTransferClearPreviousMofRecordsForUpload($collid);
+    }
     elseif($action === 'finalTransferAddNewMof'){
         echo $dataUploadService->finalTransferAddNewMof($collid);
     }
@@ -132,5 +135,12 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'removePrimaryIdentifiersFromUploadedOccurrences'){
         echo $dataUploadService->removePrimaryIdentifiersFromUploadedOccurrences($collid);
+    }
+    elseif($action === 'finalTransferRemoveDuplicateDbpkRecordsFromUpload'){
+        echo $dataUploadService->finalTransferRemoveDuplicateDbpkRecordsFromUpload($collid);
+    }
+    elseif($action === 'finalTransferClearExistingMediaNotInUpload'){
+        $clearDerivatives = array_key_exists('clearImageDerivatives',$_POST) && (int)$_POST['clearImageDerivatives'] === 1;
+        echo $dataUploadService->finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives);
     }
 }

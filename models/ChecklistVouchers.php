@@ -6,14 +6,14 @@ class ChecklistVouchers{
 	private $conn;
 
     private $fields = array(
-        "vid" => array("dataType" => "number", "length" => 10),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "clid" => array("dataType" => "number", "length" => 10),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "editornotes" => array("dataType" => "string", "length" => 50),
-        "preferredimage" => array("dataType" => "number", "length" => 11),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'vid' => array('dataType' => 'number', 'length' => 10),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'clid' => array('dataType' => 'number', 'length' => 10),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'editornotes' => array('dataType' => 'string', 'length' => 50),
+        'preferredimage' => array('dataType' => 'number', 'length' => 11),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -94,14 +94,14 @@ class ChecklistVouchers{
         return $retArr;
     }
 
-    public function getChecklistVouchers($clid): array
+    public function getChecklistVouchers($clidArr): array
     {
         $retArr = array();
-        if($clid){
+        if($clidArr && count($clidArr) > 0){
             $sql = 'SELECT v.tid, o.occid, c.institutioncode, o.catalognumber, o.othercatalognumbers, o.recordedby, o.recordnumber, o.eventdate '.
                 'FROM fmvouchers AS v LEFT JOIN omoccurrences AS o ON v.occid = o.occid '.
                 'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
-                'WHERE v.clid = ' . (int)$clid . ' ORDER BY o.collid ';
+                'WHERE v.clid IN(' . implode(',', $clidArr) . ') ORDER BY o.collid ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

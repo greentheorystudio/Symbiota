@@ -1,5 +1,13 @@
 const dateInputElement = {
     props: {
+        allowFutureDates: {
+            type: Boolean,
+            default: false
+        },
+        allowPastDates: {
+            type: Boolean,
+            default: true
+        },
         definition: {
             type: Object,
             default: null
@@ -18,21 +26,21 @@ const dateInputElement = {
         }
     },
     template: `
-        <q-input outlined v-model="value" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" dense>
+        <q-input outlined v-model="displayValue" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" dense>
             <template v-if="!disabled" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                <q-icon v-if="displayValue" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>
                 </q-icon>
                 <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
-                        <q-date v-model="value" mask="YYYY-MM-DD" @update:model-value="processValueChange" minimal>
+                        <q-date v-model="displayValue" mask="YYYY-MM-DD" @update:model-value="processValueChange" minimal>
                             <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="Close" color="primary" flat></q-btn>
                             </div>
@@ -90,6 +98,22 @@ const dateInputElement = {
 
         const dateData = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
+        const displayValue = Vue.computed(() => {
+            let returnStr = null;
+            if(props.value){
+                returnStr = props.value;
+                if(props.value.toString() !== '' && !props.value.toString().includes('-') && Number(props.value) > 0){
+                    const date = new Date(props.value);
+                    const day = date.toLocaleString('en-US', { day: '2-digit' });
+                    const month = date.toLocaleString('en-US', { month: '2-digit' });
+                    const year = date.getFullYear();
+                    if(Number(year) > 0 && Number(month) > 0 && Number(day) > 0){
+                        returnStr = year.toString() + '-' + month.toString() + '-' + day.toString();
+                    }
+                }
+            }
+            return returnStr;
+        });
         const popupText = Vue.ref(null);
         const showPopup = Vue.ref(false);
 
@@ -103,8 +127,8 @@ const dateInputElement = {
         }
 
         function processValueChange(value) {
-            dateData.value = Object.assign({}, parseDate(value));
             if(value){
+                dateData.value = Object.assign({}, parseDate(value));
                 if(!dateData.value['year']){
                     showNotification('negative', 'Unable to interpret the date entered. Please use one of the following formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy.');
                 }
@@ -112,8 +136,11 @@ const dateInputElement = {
                     const testDate = new Date(dateData.value['year'], (dateData.value['month'] - 1), dateData.value['day']);
                     const today = new Date();
                     const diffYears = Math.abs(Math.round((((today.getTime() - testDate.getTime()) / 1000) / (60 * 60 * 24)) / 365.25));
-                    if(testDate > today){
+                    if(!props.allowFutureDates && testDate > today){
                         showNotification('negative', 'Date cannot be in the future.');
+                    }
+                    else if(!props.allowPastDates && testDate < today){
+                        showNotification('negative', 'Date cannot be in the past.');
                     }
                     else if(diffYears > 99){
                         popupText.value = 'That date is ' + diffYears.toString() + ' years ago, are you sure it\'s correct?';
@@ -124,10 +151,15 @@ const dateInputElement = {
                     }
                 }
             }
+            else{
+                dateData.value = null;
+                emitValue();
+            }
         }
 
         return {
             displayDefinitionPopup,
+            displayValue,
             popupText,
             showPopup,
             emitValue,

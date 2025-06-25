@@ -8,7 +8,7 @@ $pid = array_key_exists('pid',$_REQUEST)?htmlspecialchars($_REQUEST['pid']): '';
 $clManager = new ChecklistAdmin();
 $clManager->setClid($clid);
 ?>
-<div id="innertext" style="background-color:white;">
+<div id="mainContainer" style="padding: 10px 15px 15px;background-color:white;">
 	<div style="float:right;">
 		<a href="#" onclick="toggle('addchilddiv')"><i style="height:15px;width:15px;color:green;" class="fas fa-plus"></i></a>
 	</div>
@@ -53,7 +53,7 @@ $clManager->setClid($clid);
 				foreach($childArr as $k => $cArr){
 					?>
 					<li>
-						<a href="checklist.php?cl=<?php echo $k; ?>"><?php echo $cArr['name']; ?></a>
+						<a href="checklist.php?clid=<?php echo $k; ?>"><?php echo $cArr['name']; ?></a>
 						<?php 
 						if((int)$cArr['pclid'] === $clid){
 							echo '<a href="checklistadmin.php?submitaction=delchild&tabindex=2&cliddel='.$k.'&clid='.$clid.'&pid='.$pid.'" onclick="return confirm(\'Are you sure you want to remove'.$cArr['name'].' as a child checklist?\')"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a>';
@@ -79,7 +79,7 @@ $clManager->setClid($clid);
 				foreach($parentArr as $k => $name){
 					?>
 					<li>
-						<a href="checklist.php?cl=<?php echo $k; ?>"><?php echo $name; ?></a>
+						<a href="checklist.php?clid=<?php echo $k; ?>"><?php echo $name; ?></a>
 					</li>
 					<?php
 				}

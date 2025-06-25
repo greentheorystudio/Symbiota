@@ -8,13 +8,13 @@ class OccurrenceMeasurementsOrFacts{
 	private $conn;
 
     private $fields = array(
-        "mofid" => array("dataType" => "number", "length" => 10),
-        "eventid" => array("dataType" => "number", "length" => 10),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "field" => array("dataType" => "string", "length" => 250),
-        "datavalue" => array("dataType" => "string", "length" => 1000),
-        "enteredby" => array("dataType" => "string", "length" => 250),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'mofid' => array('dataType' => 'number', 'length' => 10),
+        'eventid' => array('dataType' => 'number', 'length' => 10),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'field' => array('dataType' => 'string', 'length' => 250),
+        'datavalue' => array('dataType' => 'string', 'length' => 1000),
+        'enteredby' => array('dataType' => 'string', 'length' => 250),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -67,6 +67,22 @@ class OccurrenceMeasurementsOrFacts{
             $sql = 'DELETE FROM ommofextension WHERE ' . $whereStr . ' ';
             if($this->conn->query($sql)){
                 $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function deleteOccurrenceMofRecordsForUpload($collid): int
+    {
+        $retVal = 0;
+        $sql = 'DELETE FROM ommofextension WHERE occid IN(SELECT DISTINCT occid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND occid IS NOT NULL) ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE FROM ommofextension WHERE eventid IN(SELECT DISTINCT eventid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND eventid IS NOT NULL) ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
             }
         }
         return $retVal;

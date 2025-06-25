@@ -60,7 +60,7 @@ const spatialAnalysisModule = {
         'spatial-side-button-tray': spatialSideButtonTray
     },
     setup(props, context) {
-        const { convertMysqlWKT, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, showNotification, showWorking, writeMySQLWktString } = useCore();
+        const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, writeMySQLWktString } = useCore();
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
@@ -256,7 +256,7 @@ const spatialAnalysisModule = {
                         }
                     }
                     else{
-                        evt.feature.set('geoType',mapSettings.selectedDrawTool);
+                        evt.feature.set('geoType', mapSettings.selectedDrawTool);
                     }
                     updateMapSettings('selectedDrawTool', 'None');
                     map.removeInteraction(mapSettings.draw);
@@ -934,6 +934,25 @@ const spatialAnalysisModule = {
             }
         }
 
+        function mapPostLoadInitialize() {
+            spatialModuleInitialising.value = false;
+            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
+                showWorking('Loading...');
+            }
+            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
+                if(props.stArrJson){
+                    searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
+                }
+                if(searchStore.getSearchTermsValid){
+                    updateMapSettings('loadPointsEvent', true);
+                    createShapesFromSearchTermsArr();
+                    loadRecords();
+                }
+            }
+            window.addEventListener('resize', handleWindowResize);
+            handleWindowResize();
+        }
+
         function openRecordInfoWindow(id){
             updateMapSettings('recordInfoWindowId', id);
             updateMapSettings('showRecordInfoWindow', true);
@@ -1519,8 +1538,65 @@ const spatialAnalysisModule = {
                     layersObj['pointv'].getSource().changed();
                 }
             });
-            map.getViewport().addEventListener('drop', () => {
-                showWorking('Loading...');
+            map.getViewport().addEventListener('drop', (event) => {
+                let filename = event.dataTransfer.files[0].name.split('.');
+                const fileType = filename.pop();
+                if(fileType === 'csv'){
+                    if(setDragDropTarget()){
+                        const pointArr = [];
+                        showWorking('Loading...');
+                        parseFile(event.dataTransfer.files[0], (fileContents) => {
+                            csvToArray(fileContents).then((csvData) => {
+                                csvData.forEach((dataObj) => {
+                                    if(dataObj){
+                                        let latitudeField, longitudeField;
+                                        latitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'decimallatitude');
+                                        if(!latitudeField){
+                                            latitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'latitude');
+                                        }
+                                        longitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'decimallongitude');
+                                        if(!longitudeField){
+                                            longitudeField = Object.keys(dataObj).find(field => field.toLowerCase() === 'longitude');
+                                        }
+                                        if(latitudeField && dataObj[latitudeField] && !isNaN(dataObj[latitudeField]) && longitudeField && dataObj[longitudeField] && !isNaN(dataObj[longitudeField])){
+                                            const newPointGeometry = new ol.geom.Point(ol.proj.fromLonLat([Number(dataObj[longitudeField]), Number(dataObj[latitudeField])]));
+                                            const pointFeature = new ol.Feature(newPointGeometry);
+                                            Object.keys(dataObj).forEach((field) => {
+                                                if(field !== latitudeField && field !== longitudeField){
+                                                    pointFeature.set(field, dataObj[field]);
+                                                }
+                                            });
+                                            pointArr.push(pointFeature);
+                                        }
+                                    }
+                                });
+                                if(pointArr.length > 0){
+                                    const infoArr = [];
+                                    infoArr['id'] = mapSettings.dragDropTarget;
+                                    infoArr['type'] = 'userLayer';
+                                    infoArr['fileType'] = fileType;
+                                    infoArr['layerName'] = filename[0];
+                                    infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
+                                    infoArr['fillColor'] = mapSettings.dragDropFillColor;
+                                    infoArr['borderColor'] = mapSettings.dragDropBorderColor;
+                                    infoArr['borderWidth'] = mapSettings.dragDropBorderWidth;
+                                    infoArr['pointRadius'] = mapSettings.dragDropPointRadius;
+                                    infoArr['opacity'] = mapSettings.dragDropOpacity;
+                                    const sourceIndex = mapSettings.dragDropTarget + 'Source';
+                                    layersObj[sourceIndex] = new ol.source.Vector({
+                                        features: pointArr
+                                    });
+                                    layersObj[mapSettings.dragDropTarget].setSource(layersObj[sourceIndex]);
+                                    processAddedLayer(infoArr,true);
+                                    map.getView().fit(layersObj[sourceIndex].getExtent());
+                                }
+                                else{
+                                    hideWorking();
+                                }
+                            });
+                        });
+                    }
+                }
             });
             map.on('singleclick', (evt) => {
                 let infoHTML;
@@ -1570,8 +1646,9 @@ const spatialAnalysisModule = {
                         if(feature){
                             const properties = feature.getKeys();
                             properties.forEach((prop) => {
-                                if(String(prop) !== 'geometry'){
-                                    infoHTML += '<b>' + prop + ':</b> ' + (feature.get(prop) ? feature.get(prop) : '') + '<br />';
+                                const propValue = feature.get(prop);
+                                if(String(prop) !== 'geometry' && propValue){
+                                    infoHTML += '<b>' + prop + ':</b> ' + propValue + '<br />';
                                 }
                             });
                             if(infoHTML){
@@ -1656,6 +1733,11 @@ const spatialAnalysisModule = {
                             map.getTargetElement().style.cursor = '';
                         }
                     }
+                }
+            });
+            map.on('loadend', () => {
+                if(spatialModuleInitialising.value){
+                    mapPostLoadInitialize();
                 }
             });
         }
@@ -1804,7 +1886,6 @@ const spatialAnalysisModule = {
             dragAndDropInteraction.on('addfeatures', (event) => {
                 let filename = event.file.name.split('.');
                 const fileType = filename.pop();
-                filename = filename.join("");
                 if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif' || fileType === 'tiff'){
                     if(fileType === 'geojson' || fileType === 'kml'){
                         if(setDragDropTarget()){
@@ -1812,7 +1893,7 @@ const spatialAnalysisModule = {
                             infoArr['id'] = mapSettings.dragDropTarget;
                             infoArr['type'] = 'userLayer';
                             infoArr['fileType'] = fileType;
-                            infoArr['layerName'] = filename;
+                            infoArr['layerName'] = filename[0];
                             infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                             infoArr['fillColor'] = mapSettings.dragDropFillColor;
                             infoArr['borderColor'] = mapSettings.dragDropBorderColor;
@@ -1841,7 +1922,7 @@ const spatialAnalysisModule = {
                                     infoArr['id'] = mapSettings.dragDropTarget;
                                     infoArr['type'] = 'userLayer';
                                     infoArr['fileType'] = 'zip';
-                                    infoArr['layerName'] = filename;
+                                    infoArr['layerName'] = filename[0];
                                     infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                                     infoArr['fillColor'] = mapSettings.dragDropFillColor;
                                     infoArr['borderColor'] = mapSettings.dragDropBorderColor;
@@ -1877,7 +1958,7 @@ const spatialAnalysisModule = {
                                         infoArr['id'] = mapSettings.dragDropTarget;
                                         infoArr['type'] = 'userLayer';
                                         infoArr['fileType'] = 'tif';
-                                        infoArr['layerName'] = filename;
+                                        infoArr['layerName'] = filename[0];
                                         infoArr['layerDescription'] = 'This layer is from a file that was added to the map.';
                                         infoArr['colorScale'] = mapSettings.dragDropRasterColorScale;
                                         const sourceIndex = mapSettings.dragDropTarget + 'Source';
@@ -1931,7 +2012,7 @@ const spatialAnalysisModule = {
                                         layersObj[mapSettings.dragDropTarget].setSource(layersObj[sourceIndex]);
                                         map.addLayer(layersObj[mapSettings.dragDropTarget]);
                                         processAddedLayer(infoArr,true);
-                                        rasterLayersArr.value.push({value: mapSettings.dragDropTarget, label: filename});
+                                        rasterLayersArr.value.push({value: mapSettings.dragDropTarget, label: filename[0]});
                                         const topRight = new ol.geom.Point(ol.proj.fromLonLat([box[2], box[3]]));
                                         const topLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[3]]));
                                         const bottomLeft = new ol.geom.Point(ol.proj.fromLonLat([box[0], box[1]]));
@@ -2575,9 +2656,6 @@ const spatialAnalysisModule = {
         Vue.provide('zoomToSelections', zoomToSelections);
 
         Vue.onMounted(() => {
-            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
-                showWorking('Loading...');
-            }
             spatialModuleInitialising.value = true;
             setMapLayersInteractions();
             setMapOverlays();
@@ -2592,20 +2670,9 @@ const spatialAnalysisModule = {
             if(!props.clusterPoints){
                 updateMapSettings('clusterPoints', false);
             }
-            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
-                if(props.stArrJson){
-                    searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
-                }
-                if(searchStore.getSearchTermsValid){
-                    updateMapSettings('loadPointsEvent', true);
-                    createShapesFromSearchTermsArr();
-                    loadRecords();
-                }
-            }
             updateMapSettings('drawToolFreehandMode', getPlatformProperty('has.touch'));
             changeDraw();
             controlPanelRef.value.changeBaseMap();
-            spatialModuleInitialising.value = false;
             window.addEventListener('resize', handleWindowResize);
             handleWindowResize();
         });

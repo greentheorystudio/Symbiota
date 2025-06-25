@@ -21,7 +21,7 @@ $clManager->setClid($clid);
 
 if($action === 'SubmitAdd' && $GLOBALS['VALID_USER']){
 	$newClid = $clManager->createChecklist($_POST);
-	header('Location: checklist.php?cl=' .$newClid. '&emode=1');
+	header('Location: checklist.php?clid=' .$newClid. '&emode=1');
 }
 
 $statusStr = '';
@@ -34,7 +34,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 		if(array_key_exists('footprintwkt',$_POST) && $_POST['footprintwkt'] !== ''){
             $clManager->savePolygon($_POST['footprintwkt']);
         }
-		header('Location: checklist.php?cl='.$clid.'&pid='.$pid);
+		header('Location: checklist.php?clid='.$clid.'&pid='.$pid);
 	}
 	elseif($action === 'DeleteCheck'){
 		$statusStr = $clManager->deleteChecklist($_POST['delclid']);
@@ -68,32 +68,34 @@ include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
-	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
-    <script type="text/javascript" src="../js/external/jquery.js"></script>
-	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="../js/external/tiny_mce/tiny_mce.js"></script>
+    <meta name="description" content="Manage checklist content and configurations">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/tiny_mce/tiny_mce.js" type="text/javascript"></script>
 	<script type="text/javascript">
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
     </script>
-	<script type="text/javascript" src="../js/checklists.checklistadmin.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.checklistadmin.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 
 <body>
 <?php
 include(__DIR__ . '/../header.php');
 ?>
-<div class="navpath">
+<div id="breadcrumbs">
 	<a href="../index.php">Home</a> &gt;&gt;
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
+	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
 	<b> Checklist Administration</b>
 </div>
 
-<div id='innertext'>
+<div id="mainContainer" style="padding: 10px 15px 15px;">
 <div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
+	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
 </div>

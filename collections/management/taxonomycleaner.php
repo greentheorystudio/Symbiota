@@ -16,9 +16,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Management Module</title>
+        <meta name="description" content="Taxonomy management module for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <script type="text/javascript">
             const COLLID = <?php echo $collid; ?>;
         </script>
@@ -27,273 +28,275 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div class='navpath'>
-            <a href="../../index.php">Home</a> &gt;&gt;
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
-            <b>Taxonomy Management Module</b>
-        </div>
-        <div id="innertext">
-            <template v-if="isEditor">
-                <div class="row justify-between q-px-md q-mb-sm">
-                    <div class="text-h6 text-weight-bold">
-                        <template v-if="collInfo && collInfo.collectionname">{{ collInfo.collectionname }}</template>
-                        <template v-if="collInfo && (collInfo.institutioncode || collInfo.collectioncode)"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
-                    </div>
-                    <div onclick="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" title="Open Tutorial Window">
-                        <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
-                    </div>
-                </div>
-                <div class="row justify-between q-px-lg q-mb-sm">
-                    <div class="text-weight-bold col-grow">
-                        <div class="row q-mt-xs">
-                            <taxa-kingdom-selector :disable="uppercontrolsdisabled" :selected-kingdom="selectedKingdom" label="Target Kingdom" class="col-4" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId + '&emode=1')">Collection Control Panel</a> &gt;&gt;
+                <span class="text-bold">Taxonomy Management Module</span>
+            </div>
+            <div class="q-pa-md">
+                <template v-if="isEditor">
+                    <div class="row justify-between q-px-md q-mb-sm">
+                        <div class="text-h6 text-weight-bold">
+                            <template v-if="collInfo && collInfo.collectionname">{{ collInfo.collectionname }}</template>
+                            <template v-if="collInfo && (collInfo.institutioncode || collInfo.collectioncode)"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
                         </div>
-                        <div class="row q-mt-xs">
-                            <q-input outlined v-model="processingStartIndex" label="Processing Start Index" class="col-4" :readonly="uppercontrolsdisabled" dense></q-input>
-                        </div>
-                        <div class="row q-mt-xs">
-                            <q-input type="number" outlined v-model="processingLimit" label="Processing Batch Limit" class="col-4" @update:model-value="processingBatchLimitChange" :readonly="uppercontrolsdisabled" dense></q-input>
+                        <div onclick="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" title="Open Tutorial Window">
+                            <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                         </div>
                     </div>
-                    <div class="row text-weight-bold justify-end col-4">
-                        Occurrences not linked to taxonomic thesaurus: {{ unlinkedOccCnt }}<q-spinner v-if="unlinkedLoading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner><br/>
-                        Unique scientific names: {{ unlinkedTaxaCnt }}<q-spinner v-if="unlinkedLoading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner><br/>
+                    <div class="row justify-between q-px-lg q-mb-sm">
+                        <div class="text-weight-bold col-grow">
+                            <div class="row q-mt-xs">
+                                <taxa-kingdom-selector :disable="uppercontrolsdisabled" :selected-kingdom="selectedKingdom" label="Target Kingdom" class="col-4" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+                            </div>
+                            <div class="row q-mt-xs">
+                                <q-input outlined v-model="processingStartIndex" label="Processing Start Index" class="col-4" :readonly="uppercontrolsdisabled" dense></q-input>
+                            </div>
+                            <div class="row q-mt-xs">
+                                <q-input type="number" outlined v-model="processingLimit" label="Processing Batch Limit" class="col-4" @update:model-value="processingBatchLimitChange" :readonly="uppercontrolsdisabled" dense></q-input>
+                            </div>
+                        </div>
+                        <div class="row text-weight-bold justify-end col-4">
+                            Occurrences not linked to taxonomic thesaurus: {{ unlinkedOccCnt }}<q-spinner v-if="unlinkedLoading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner><br/>
+                            Unique scientific names: {{ unlinkedTaxaCnt }}<q-spinner v-if="unlinkedLoading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner><br/>
+                        </div>
                     </div>
-                </div>
-                <div class="processor-container">
-                    <div class="processor-control-container">
-                        <q-card class="processor-control-card">
-                            <q-list class="processor-control-accordion">
-                                <q-expansion-item class="overflow-hidden" group="controlgroup" label="Maintenance Utilities" header-class="bg-grey-3 text-bold" default-opened>
-                                    <q-card class="accordion-panel">
-                                        <q-card-section>
-                                            <div class="process-header">
-                                                General Cleaning
-                                            </div>
-                                            Run cleaning processes to remove unnecessary endings, identification qualifiers and question marks, and normalize
-                                            infraspecific rank references in occurrence record scientific names that are not linked to
-                                            the Taxonomic Thesaurus.
-                                            <div class="processor-tool-control-container">
-                                                <div class="processor-cancel-message-container text-negative text-bold">
-                                                    <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
-                                                        Cancelling, please wait
-                                                    </template>
+                    <div class="processor-container">
+                        <div class="processor-control-container">
+                            <q-card class="processor-control-card">
+                                <q-list class="processor-control-accordion">
+                                    <q-expansion-item class="overflow-hidden" group="controlgroup" label="Maintenance Utilities" header-class="bg-grey-3 text-bold" default-opened>
+                                        <q-card class="accordion-panel">
+                                            <q-card-section>
+                                                <div class="process-header">
+                                                    General Cleaning
                                                 </div>
-                                                <div class="processor-tool-button-container">
-                                                    <div>
-                                                        <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
-                                                    </div>
-                                                    <div>
-                                                        <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                                            <div class="process-header">
-                                                Scientific Name Authorship Cleaning
-                                            </div>
-                                            Run a cleaning process to remove the scientific name authors from occurrence record scientific
-                                            names that are not linked to the Taxonomic Thesaurus.
-                                            <div class="processor-tool-control-container">
-                                                <div class="processor-cancel-message-container text-negative text-bold">
-                                                    <template v-if="processCancelling && currentProcess === 'cleanScinameAuthor'">
-                                                        Cancelling, please wait
-                                                    </template>
-                                                </div>
-                                                <div class="processor-tool-button-container">
-                                                    <div>
-                                                        <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense />
-                                                    </div>
-                                                    <div>
-                                                        <q-btn v-if="currentProcess === 'cleanScinameAuthor'" :disabled="processCancelling && currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                                            <div class="process-header">
-                                                Set Taxonomic Thesaurus Linkages
-                                            </div>
-                                            Set occurrence record linkages to the Taxonomic Thesaurus.
-                                            <div class="q-mt-xs">
-                                                <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="uppercontrolsdisabled" />
-                                            </div>
-                                            <div class="processor-tool-control-container">
-                                                <div class="processor-cancel-message-container text-negative text-bold">
-                                                    <template v-if="processCancelling && currentProcess === 'updateWithTaxThesaurus'">
-                                                        Cancelling, please wait
-                                                    </template>
-                                                </div>
-                                                <div class="processor-tool-button-container">
-                                                    <div>
-                                                        <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense />
-                                                    </div>
-                                                    <div>
-                                                        <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" :disabled="processCancelling && currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                                            <div class="process-header">
-                                                Update Locality Security Settings
-                                            </div>
-                                            Update locality security settings for occurrence records of protected species.
-                                            <div class="processor-tool-control-container">
-                                                <div class="processor-cancel-message-container text-negative text-bold">
-                                                    <template v-if="processCancelling && currentProcess === 'updateOccLocalitySecurity'">
-                                                        Cancelling, please wait
-                                                    </template>
-                                                </div>
-                                                <div class="processor-tool-button-container">
-                                                    <div>
-                                                        <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense />
-                                                    </div>
-                                                    <div>
-                                                        <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" :disabled="processCancelling && currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                                        </q-card-section>
-                                    </q-card>
-                                </q-expansion-item>
-                                <q-separator></q-separator>
-                                <q-expansion-item class="overflow-hidden" group="controlgroup" label="Search Utilities" header-class="bg-grey-3 text-bold">
-                                    <q-card class="accordion-panel">
-                                        <q-card-section>
-                                            <div class="process-header">
-                                                Search Taxonomic Data Sources
-                                            </div>
-                                            <div class="q-mb-sm">
-                                                Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
-                                                from an external Taxonomic Data Source.
-                                            </div>
-                                            <div class="q-mb-sm">
-                                                <taxonomy-data-source-bullet-selector :disable="uppercontrolsdisabled" :selected-data-source="dataSource" @update:selected-data-source="updateSelectedDataSource"></taxonomy-data-source-bullet-selector>
-                                            </div>
-                                            <div class="processor-tool-control-container">
-                                                <div class="processor-cancel-message-container text-negative text-bold">
-                                                    <template v-if="processCancelling && currentProcess === 'resolveFromTaxaDataSource'">
-                                                        Cancelling, please wait
-                                                    </template>
-                                                </div>
-                                                <div class="processor-tool-button-container">
-                                                    <div>
-                                                        <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense />
-                                                    </div>
-                                                    <div>
-                                                        <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" :disabled="processCancelling && currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                                            <div class="process-header">
-                                                Taxonomic Thesaurus Fuzzy Search
-                                            </div>
-                                            Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
-                                            with taxa currently in the Taxonomic Thesaurus.
-                                            <div class="row q-mt-xs">
-                                                <q-input type="number" outlined v-model="levValue" class="col-5" label="Character difference tolerance" :readonly="uppercontrolsdisabled" dense></q-input>
-                                            </div>
-                                            <div class="processor-tool-control-container">
-                                                <div class="processor-cancel-message-container text-negative text-bold">
-                                                    <template v-if="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'">
-                                                        Cancelling, please wait
-                                                    </template>
-                                                </div>
-                                                <div class="processor-tool-button-container">
-                                                    <div>
-                                                        <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense />
-                                                    </div>
-                                                    <div>
-                                                        <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                                        </q-card-section>
-                                    </q-card>
-                                </q-expansion-item>
-                            </q-list>
-                        </q-card>
-                    </div>
-
-                    <div class="processor-display-container">
-                        <q-card class="bg-grey-3 q-pa-sm">
-                            <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
-                                <q-list dense>
-                                    <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
-                                        <q-item>
-                                            <q-item-section>
-                                                <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
-                                            </q-item-section>
-                                        </q-item>
-                                    </template>
-                                    <q-item v-for="proc in processorDisplayArr">
-                                        <q-item-section>
-                                            <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
-                                            <template v-if="!proc.loading && proc.resultText">
-                                                <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
-                                                    {{proc.resultText}}
-                                                </div>
-                                                <div v-if="proc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
-                                                    {{proc.resultText}}
-                                                </div>
-                                            </template>
-                                            <template v-if="proc.type === 'multi' && proc.subs.length">
-                                                <div class="q-ml-sm">
-                                                    <div v-for="subproc in proc.subs">
-                                                        <template v-if="subproc.type === 'text' || subproc.type === 'undo'">
-                                                            <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
-                                                            <template v-if="!subproc.loading && subproc.resultText">
-                                                                <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="q-ml-sm text-weight-bold text-green-9">
-                                                                    {{subproc.resultText}}
-                                                                </div>
-                                                                <div v-if="subproc.result === 'success' && subproc.type === 'undo'" class="q-ml-sm text-weight-bold text-green-9">
-                                                                    {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense />
-                                                                </div>
-                                                                <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
-                                                                    {{subproc.resultText}}
-                                                                </div>
-                                                            </template>
-                                                        </template>
-                                                        <template v-if="subproc.type === 'fuzzy'">
-                                                            <template v-if="subproc.procText === 'skip'">
-                                                                <div class="q-mx-xl q-my-sm fuzzy-match-row">
-                                                                    <div></div>
-                                                                    <div>
-                                                                        <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense />
-                                                                    </div>
-                                                                </div>
-                                                            </template>
-                                                            <template v-else>
-                                                                <div class="q-mx-xl q-my-sm fuzzy-match-row">
-                                                                    <div class="text-weight-bold">
-                                                                        {{ subproc.procText }}
-                                                                    </div>
-                                                                    <div>
-                                                                        <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense />
-                                                                    </div>
-                                                                </div>
-                                                            </template>
+                                                Run cleaning processes to remove unnecessary endings, identification qualifiers and question marks, and normalize
+                                                infraspecific rank references in occurrence record scientific names that are not linked to
+                                                the Taxonomic Thesaurus.
+                                                <div class="processor-tool-control-container">
+                                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                                        <template v-if="processCancelling && currentProcess === 'cleanProcesses'">
+                                                            Cancelling, please wait
                                                         </template>
                                                     </div>
+                                                    <div class="processor-tool-button-container">
+                                                        <div>
+                                                            <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                                        </div>
+                                                        <div>
+                                                            <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </template>
-                                        </q-item-section>
-                                    </q-item>
-                                    <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
-                                        <q-item>
-                                            <q-item-section>
-                                                <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
-                                            </q-item-section>
-                                        </q-item>
-                                    </template>
+                                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                                <div class="process-header">
+                                                    Scientific Name Authorship Cleaning
+                                                </div>
+                                                Run a cleaning process to remove the scientific name authors from occurrence record scientific
+                                                names that are not linked to the Taxonomic Thesaurus.
+                                                <div class="processor-tool-control-container">
+                                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                                        <template v-if="processCancelling && currentProcess === 'cleanScinameAuthor'">
+                                                            Cancelling, please wait
+                                                        </template>
+                                                    </div>
+                                                    <div class="processor-tool-button-container">
+                                                        <div>
+                                                            <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense />
+                                                        </div>
+                                                        <div>
+                                                            <q-btn v-if="currentProcess === 'cleanScinameAuthor'" :disabled="processCancelling && currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                                <div class="process-header">
+                                                    Set Taxonomic Thesaurus Linkages
+                                                </div>
+                                                Set occurrence record linkages to the Taxonomic Thesaurus.
+                                                <div class="q-mt-xs">
+                                                    <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="uppercontrolsdisabled" />
+                                                </div>
+                                                <div class="processor-tool-control-container">
+                                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                                        <template v-if="processCancelling && currentProcess === 'updateWithTaxThesaurus'">
+                                                            Cancelling, please wait
+                                                        </template>
+                                                    </div>
+                                                    <div class="processor-tool-button-container">
+                                                        <div>
+                                                            <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense />
+                                                        </div>
+                                                        <div>
+                                                            <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" :disabled="processCancelling && currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                                <div class="process-header">
+                                                    Update Locality Security Settings
+                                                </div>
+                                                Update locality security settings for occurrence records of protected species.
+                                                <div class="processor-tool-control-container">
+                                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                                        <template v-if="processCancelling && currentProcess === 'updateOccLocalitySecurity'">
+                                                            Cancelling, please wait
+                                                        </template>
+                                                    </div>
+                                                    <div class="processor-tool-button-container">
+                                                        <div>
+                                                            <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense />
+                                                        </div>
+                                                        <div>
+                                                            <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" :disabled="processCancelling && currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                            </q-card-section>
+                                        </q-card>
+                                    </q-expansion-item>
+                                    <q-separator></q-separator>
+                                    <q-expansion-item class="overflow-hidden" group="controlgroup" label="Search Utilities" header-class="bg-grey-3 text-bold">
+                                        <q-card class="accordion-panel">
+                                            <q-card-section>
+                                                <div class="process-header">
+                                                    Search Taxonomic Data Sources
+                                                </div>
+                                                <div class="q-mb-sm">
+                                                    Search for occurrence record scientific names that are not currently linked to the Taxonomic Thesaurus
+                                                    from an external Taxonomic Data Source.
+                                                </div>
+                                                <div class="q-mb-sm">
+                                                    <taxonomy-data-source-bullet-selector :disable="uppercontrolsdisabled" :selected-data-source="dataSource" @update:selected-data-source="updateSelectedDataSource"></taxonomy-data-source-bullet-selector>
+                                                </div>
+                                                <div class="processor-tool-control-container">
+                                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                                        <template v-if="processCancelling && currentProcess === 'resolveFromTaxaDataSource'">
+                                                            Cancelling, please wait
+                                                        </template>
+                                                    </div>
+                                                    <div class="processor-tool-button-container">
+                                                        <div>
+                                                            <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense />
+                                                        </div>
+                                                        <div>
+                                                            <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" :disabled="processCancelling && currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                                <div class="process-header">
+                                                    Taxonomic Thesaurus Fuzzy Search
+                                                </div>
+                                                Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
+                                                with taxa currently in the Taxonomic Thesaurus.
+                                                <div class="row q-mt-xs">
+                                                    <q-input type="number" outlined v-model="levValue" class="col-5" label="Character difference tolerance" :readonly="uppercontrolsdisabled" dense></q-input>
+                                                </div>
+                                                <div class="processor-tool-control-container">
+                                                    <div class="processor-cancel-message-container text-negative text-bold">
+                                                        <template v-if="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'">
+                                                            Cancelling, please wait
+                                                        </template>
+                                                    </div>
+                                                    <div class="processor-tool-button-container">
+                                                        <div>
+                                                            <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense />
+                                                        </div>
+                                                        <div>
+                                                            <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                            </q-card-section>
+                                        </q-card>
+                                    </q-expansion-item>
                                 </q-list>
-                            </q-scroll-area>
-                        </q-card>
+                            </q-card>
+                        </div>
+
+                        <div class="processor-display-container">
+                            <q-card class="bg-grey-3 q-pa-sm">
+                                <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
+                                    <q-list dense>
+                                        <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
+                                            <q-item>
+                                                <q-item-section>
+                                                    <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                                </q-item-section>
+                                            </q-item>
+                                        </template>
+                                        <q-item v-for="proc in processorDisplayArr">
+                                            <q-item-section>
+                                                <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                                <template v-if="!proc.loading && proc.resultText">
+                                                    <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
+                                                        {{proc.resultText}}
+                                                    </div>
+                                                    <div v-if="proc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
+                                                        {{proc.resultText}}
+                                                    </div>
+                                                </template>
+                                                <template v-if="proc.type === 'multi' && proc.subs.length">
+                                                    <div class="q-ml-sm">
+                                                        <div v-for="subproc in proc.subs">
+                                                            <template v-if="subproc.type === 'text' || subproc.type === 'undo'">
+                                                                <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                                                <template v-if="!subproc.loading && subproc.resultText">
+                                                                    <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="q-ml-sm text-weight-bold text-green-9">
+                                                                        {{subproc.resultText}}
+                                                                    </div>
+                                                                    <div v-if="subproc.result === 'success' && subproc.type === 'undo'" class="q-ml-sm text-weight-bold text-green-9">
+                                                                        {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense />
+                                                                    </div>
+                                                                    <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
+                                                                        {{subproc.resultText}}
+                                                                    </div>
+                                                                </template>
+                                                            </template>
+                                                            <template v-if="subproc.type === 'fuzzy'">
+                                                                <template v-if="subproc.procText === 'skip'">
+                                                                    <div class="q-mx-xl q-my-sm fuzzy-match-row">
+                                                                        <div></div>
+                                                                        <div>
+                                                                            <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense />
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                                <template v-else>
+                                                                    <div class="q-mx-xl q-my-sm fuzzy-match-row">
+                                                                        <div class="text-weight-bold">
+                                                                            {{ subproc.procText }}
+                                                                        </div>
+                                                                        <div>
+                                                                            <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense />
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </q-item-section>
+                                        </q-item>
+                                        <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
+                                            <q-item>
+                                                <q-item-section>
+                                                    <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                                </q-item-section>
+                                            </q-item>
+                                        </template>
+                                    </q-list>
+                                </q-scroll-area>
+                            </q-card>
+                        </div>
                     </div>
-                </div>
-            </template>
+                </template>
+            </div>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -316,6 +319,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     let abortController = null;
                     const changedCurrentSciname = Vue.ref('');
                     const changedParsedSciname = Vue.ref('');
+                    const clientRoot = baseStore.getClientRoot;
                     const colInitialSearchResults = [];
                     const collId = COLLID;
                     const collInfo = Vue.computed(() => collectionStore.getCollectionData);
@@ -1094,7 +1098,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             newTaxonObj['kingdomid'] = selectedKingdomId.value;
                             newTaxonObj['rankid'] = taxonToAdd['rankid'];
                             newTaxonObj['acceptstatus'] = taxonToAdd['accepted'] ? 1 : 0;
-                            newTaxonObj['tidaccepted'] = !taxonToAdd['accepted'] ? nameTidIndex[taxonToAdd['accepted_sciname']] : '';
+                            newTaxonObj['tidaccepted'] = taxonToAdd['accepted'] ? '' : nameTidIndex[taxonToAdd['accepted_sciname']];
                             newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
                             newTaxonObj['family'] = taxonToAdd['family'];
                             newTaxonObj['source'] = getDataSourceName();
@@ -2065,6 +2069,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     });
                     
                     return {
+                        clientRoot,
                         collId,
                         collInfo,
                         currentProcess,
@@ -2107,7 +2112,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             });
             occurrenceTaxonomyManagementModule.use(Quasar, { config: {} });
             occurrenceTaxonomyManagementModule.use(Pinia.createPinia());
-            occurrenceTaxonomyManagementModule.mount('#innertext');
+            occurrenceTaxonomyManagementModule.mount('#mainContainer');
         </script>
     </body>
 </html>

@@ -310,4 +310,9 @@ class FileSystemService {
     {
         fputcsv($fileHandler, $row);
     }
+
+    public static function writeTextToFile($fileHandler, $text): void
+    {
+        fwrite($fileHandler, $text);
+    }
 }

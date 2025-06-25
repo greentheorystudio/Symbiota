@@ -9,33 +9,33 @@ class Checklists{
 	private $conn;
 
     private $fields = array(
-        "clid" => array("dataType" => "number", "length" => 10),
-        "name" => array("dataType" => "string", "length" => 100),
-        "title" => array("dataType" => "string", "length" => 150),
-        "locality" => array("dataType" => "string", "length" => 500),
-        "publication" => array("dataType" => "string", "length" => 500),
-        "abstract" => array("dataType" => "text", "length" => 0),
-        "authors" => array("dataType" => "string", "length" => 250),
-        "type" => array("dataType" => "string", "length" => 50),
-        "politicaldivision" => array("dataType" => "string", "length" => 45),
-        "searchterms" => array("dataType" => "json", "length" => 0),
-        "parent" => array("dataType" => "string", "length" => 50),
-        "parentclid" => array("dataType" => "number", "length" => 10),
-        "notes" => array("dataType" => "string", "length" => 500),
-        "latcentroid" => array("dataType" => "number", "length" => 9),
-        "longcentroid" => array("dataType" => "number", "length" => 9),
-        "pointradiusmeters" => array("dataType" => "number", "length" => 10),
-        "footprintwkt" => array("dataType" => "text", "length" => 0),
-        "percenteffort" => array("dataType" => "number", "length" => 11),
-        "access" => array("dataType" => "string", "length" => 45),
-        "defaultsettings" => array("dataType" => "json", "length" => 250),
-        "iconurl" => array("dataType" => "string", "length" => 150),
-        "headerurl" => array("dataType" => "string", "length" => 150),
-        "uid" => array("dataType" => "number", "length" => 10),
-        "sortsequence" => array("dataType" => "number", "length" => 10),
-        "expiration" => array("dataType" => "timestamp", "length" => 0),
-        "datelastmodified" => array("dataType" => "date", "length" => 0),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'clid' => array('dataType' => 'number', 'length' => 10),
+        'name' => array('dataType' => 'string', 'length' => 100),
+        'title' => array('dataType' => 'string', 'length' => 150),
+        'locality' => array('dataType' => 'string', 'length' => 500),
+        'publication' => array('dataType' => 'string', 'length' => 500),
+        'abstract' => array('dataType' => 'text', 'length' => 0),
+        'authors' => array('dataType' => 'string', 'length' => 250),
+        'type' => array('dataType' => 'string', 'length' => 50),
+        'politicaldivision' => array('dataType' => 'string', 'length' => 45),
+        'searchterms' => array('dataType' => 'json', 'length' => 0),
+        'parent' => array('dataType' => 'string', 'length' => 50),
+        'parentclid' => array('dataType' => 'number', 'length' => 10),
+        'notes' => array('dataType' => 'string', 'length' => 500),
+        'latcentroid' => array('dataType' => 'number', 'length' => 9),
+        'longcentroid' => array('dataType' => 'number', 'length' => 9),
+        'pointradiusmeters' => array('dataType' => 'number', 'length' => 10),
+        'footprintwkt' => array('dataType' => 'text', 'length' => 0),
+        'percenteffort' => array('dataType' => 'number', 'length' => 11),
+        'access' => array('dataType' => 'string', 'length' => 45),
+        'defaultsettings' => array('dataType' => 'json', 'length' => 250),
+        'iconurl' => array('dataType' => 'string', 'length' => 150),
+        'headerurl' => array('dataType' => 'string', 'length' => 150),
+        'uid' => array('dataType' => 'number', 'length' => 10),
+        'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'expiration' => array('dataType' => 'timestamp', 'length' => 0),
+        'datelastmodified' => array('dataType' => 'date', 'length' => 0),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -148,6 +148,31 @@ class Checklists{
         return $retVal;
     }
 
+    public function getChecklistArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM fmchecklists ';
+        $sql .= 'ORDER BY `name` ';
+        //echo $sql;
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getChecklistChildClidArr($clidArr): array
     {
         $retArr = array();
@@ -212,15 +237,14 @@ class Checklists{
         return $retArr;
     }
 
-    public function getChecklistListByUserRights(): array
+    public function getChecklistListByUid($uid): array
     {
         $retArr = array();
-        $cArr = array();
-        if(array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS'])) {
-            $cArr = $GLOBALS['USER_RIGHTS']['ClAdmin'];
-        }
-        if($cArr){
-            $sql = 'SELECT clid, name FROM fmchecklists WHERE clid IN('.implode(',', $cArr).') ORDER BY name ';
+        if((int)$uid > 0){
+            $sql = 'SELECT DISTINCT c.clid, c.name '.
+                'FROM userroles AS r LEFT JOIN fmchecklists AS c ON r.tablepk = c.clid '.
+                'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" '.
+                'ORDER BY c.name ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -234,6 +258,28 @@ class Checklists{
             }
         }
         return $retArr;
+    }
+
+    public function saveTemporaryChecklist($clid, $searchTerms): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($clid){
+            $sqlPartArr[] = 'expiration = NULL';
+            $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';
+            if($searchTerms){
+                $sqlPartArr[] = 'searchterms = ' . SanitizerService::getSqlValueString($this->conn, json_encode($searchTerms), $this->fields['searchterms']['dataType']);
+            }
+            $sql = 'UPDATE fmchecklists SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE clid = ' . (int)$clid . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                (new Permissions)->addPermission($GLOBALS['SYMB_UID'], 'ClAdmin', $clid);
+                (new Permissions)->setUserPermissions();
+            }
+        }
+        return $retVal;
     }
 
     public function updateChecklistRecord($clid, $editData): int
@@ -266,5 +312,20 @@ class Checklists{
             }
         }
         return $retVal;
+    }
+
+    public function getChecklistPermissionLabels($permissionArr): array
+    {
+        $idStr = implode(',', array_keys($permissionArr));
+        $sql = 'SELECT clid, `name` FROM fmchecklists WHERE clid IN(' . $idStr . ') ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $permissionArr[$row['clid']] = $row['name'];
+                unset($rows[$index]);
+            }
+        }
+        return $permissionArr;
     }
 }

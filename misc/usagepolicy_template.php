@@ -11,15 +11,15 @@ header('X-Frame-Options: SAMEORIGIN');
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Usage Guidelines</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="app-container">
-            <div id="innertext">
+        <div id="mainContainer">
+            <div class="q-pa-md">
                 <div class="text-h5 text-bold">Guidelines for Acceptable Use of Data</div>
                 <div class="q-mt-md text-h6 text-bold">Recommended Citation Formats</div>
                 <div class="q-pl-md q-mt-md q-mb-md">
@@ -134,7 +134,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             usagePolicyModule.use(Quasar, { config: {} });
             usagePolicyModule.use(Pinia.createPinia());
-            usagePolicyModule.mount('#app-container');
+            usagePolicyModule.mount('#mainContainer');
         </script>
     </body>
 </html>

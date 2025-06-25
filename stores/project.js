@@ -81,13 +81,28 @@ const useProjectStore = Pinia.defineStore('project', {
                 callback(Number(res));
             });
         },
+        getProjectListByUid(uid, callback) {
+            const formData = new FormData();
+            formData.append('uid', uid.toString());
+            formData.append('action', 'getProjectListByUid');
+            fetch(projectApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                callback(resObj);
+            });
+        },
         setProject(pid, callback = null) {
             this.clearProjectData();
             if(Number(pid) > 0){
                 this.projectEditData = Object.assign({}, {});
                 this.projectId = Number(pid);
                 const formData = new FormData();
-                formData.append('pid', this.projectId.toString());
+                formData.append('pid', pid.toString());
                 formData.append('action', 'getProjectData');
                 fetch(projectApiUrl, {
                     method: 'POST',
@@ -97,10 +112,13 @@ const useProjectStore = Pinia.defineStore('project', {
                     return response.ok ? response.json() : null;
                 })
                 .then((resObj) => {
-                    this.projectData = Object.assign({}, resObj);
-                    this.projectEditData = Object.assign({}, this.projectData);
+                    if(resObj.hasOwnProperty('pid') && Number(resObj['pid']) === Number(pid)){
+                        this.projectId = Number(pid);
+                        this.projectData = Object.assign({}, resObj);
+                        this.projectEditData = Object.assign({}, this.projectData);
+                    }
                     if(callback){
-                        callback();
+                        callback(this.projectId);
                     }
                 });
             }

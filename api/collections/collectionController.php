@@ -45,7 +45,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getTaxonomicDistributionData' && $collid){
         echo json_encode($collections->getTaxonomicDistributionData($collid));
     }
-    elseif($action === 'getCollectionListByUserRights'){
-        echo json_encode($collections->getCollectionListByUserRights());
+    elseif($action === 'getCollectionListByUid' && array_key_exists('uid', $_POST)){
+        echo json_encode($collections->getCollectionListByUid($_POST['uid']));
     }
 }

@@ -1,14 +1,4 @@
 const accountChecklistProjectList = {
-    props: {
-        checklistArr: {
-            type: Array,
-            default: []
-        },
-        projectArr: {
-            type: Array,
-            default: []
-        }
-    },
     template: `
         <template v-if="checklistArr.length > 0">
             <q-list bordered class="rounded-borders q-mt-md">
@@ -17,18 +7,20 @@ const accountChecklistProjectList = {
                         <q-card-section>
                             <q-list bordered separator>
                                 <template v-for="checklist in checklistArr">
-                                    <q-item :href="(clientRoot + '/checklists/checklist.php?cl=' + checklist.clid)">
-                                        <q-item-section>
-                                            <div class="row justify-start q-gutter-md items-center">
-                                                <div class="text-h6">
-                                                    {{ checklist.name }}
+                                    <template v-if="checklist.name">
+                                        <q-item :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)">
+                                            <q-item-section>
+                                                <div class="row justify-start q-gutter-md items-center">
+                                                    <div class="text-h6">
+                                                        {{ checklist.name }}
+                                                    </div>
+                                                    <div>
+                                                        <q-btn round color="primary" size=".6rem" :href="(clientRoot + '/checklists/checklistadmin.php?clid=' + checklist.clid + '&emode=1')" icon="far fa-edit"></q-btn>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <q-btn round color="primary" size=".6rem" :href="(clientRoot + '/checklists/checklistadmin.php?clid=' + checklist.clid + '&emode=1')" icon="far fa-edit"></q-btn>
-                                                </div>
-                                            </div>
-                                        </q-item-section>
-                                    </q-item>
+                                            </q-item-section>
+                                        </q-item>
+                                    </template>
                                 </template>
                             </q-list>
                         </q-card-section>
@@ -78,11 +70,17 @@ const accountChecklistProjectList = {
         </template>
     `,
     setup() {
-        const store = useBaseStore();
-        const clientRoot = store.getClientRoot;
+        const baseStore = useBaseStore();
+        const userStore = useUserStore();
+
+        const checklistArr = Vue.computed(() => userStore.getChecklistArr);
+        const clientRoot = baseStore.getClientRoot;
+        const projectArr = Vue.computed(() => userStore.getProjectArr);
 
         return {
-            clientRoot
+            checklistArr,
+            clientRoot,
+            projectArr
         }
     }
 };

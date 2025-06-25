@@ -10,7 +10,11 @@ const imageCarousel = {
             <q-card-section class="fit">
                 <q-carousel ref="carousel" swipeable animated v-model="currentImage" :arrows="(imageArr.length > 1)" control-color="black" infinite class="fit">
                     <template v-for="image in imageArr" :key="image">
-                        <q-carousel-slide :name="image.imgid" :img-src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" class="fit"></q-carousel-slide>
+                        <q-carousel-slide v-if="image.url" :name="image.imgid" class="column no-wrap">
+                            <div class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap">
+                                <q-img class="rounded-borders fit" :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" fit="fill"></q-img>
+                            </div>
+                        </q-carousel-slide>
                     </template>
                 </q-carousel>
             </q-card-section>

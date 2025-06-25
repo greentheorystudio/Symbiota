@@ -1,5 +1,9 @@
 const taxaQuickSearch = {
     props: {
+        defaultTaxonType: {
+            type: String,
+            default: 'common'
+        },
         quicksearchLabel: {
             type: String,
             default: null
@@ -11,7 +15,7 @@ const taxaQuickSearch = {
                 <div v-if="quicksearchLabel">
                     <span class="text-h6 text-bold">{{ quicksearchLabel }}</span>
                 </div>
-                <div class="q-mb-xs row justify-between">
+                <div class="q-mb-md row justify-between q-gutter-md">
                     <div>
                         <q-btn-toggle v-model="selectedTaxonType" :options="taxonTypeOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" @update:model-value="processTaxonTypeChange"></q-btn-toggle>
                     </div>
@@ -47,7 +51,7 @@ const taxaQuickSearch = {
         const autoCompleteOptions = Vue.ref([]);
         const clientRoot = baseStore.getClientRoot;
         const selectedTaxon = Vue.ref({});
-        const selectedTaxonType = Vue.ref('common');
+        const selectedTaxonType = Vue.ref(null);
         const taxonTypeOptions = [
             {label: 'Common Name', value: 'common'},
             {label: 'Scientific Name', value: 'scientific'}
@@ -157,6 +161,7 @@ const taxaQuickSearch = {
 
         function processTaxonTypeChange(value) {
             selectedTaxon.value = Object.assign({}, {});
+            selectedTaxonType.value = value;
             if(value === 'common'){
                 autoCompleteLabel.value = 'Common Name';
             }
@@ -167,6 +172,7 @@ const taxaQuickSearch = {
 
         Vue.onMounted(() => {
             selectedTaxon.value = Object.assign({}, {});
+            processTaxonTypeChange(props.defaultTaxonType);
         });
 
         return {

@@ -107,7 +107,7 @@ const spatialLayerQuerySelectorPopup = {
                     });
                 });
                 if(fieldArr.value.length > 0){
-                    fieldArr.value.sort(function (a, b) {
+                    fieldArr.value.sort((a, b) => {
                         return a.toLowerCase().localeCompare(b.toLowerCase());
                     });
                     fieldArr.value.forEach((field) => {

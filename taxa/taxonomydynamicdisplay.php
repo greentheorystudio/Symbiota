@@ -10,9 +10,10 @@ header('X-Frame-Options: SAMEORIGIN');
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Explorer</title>
+        <meta name="description" content="Taxonomy explorer for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .target-taxon-card {
                 width: 50%;
@@ -41,39 +42,41 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div class="navpath">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <a href="taxonomydynamicdisplay.php"><b>Taxonomy Explorer</b></a>
-        </div>
-        <div id="innertext">
-            <q-card class="target-taxon-card">
-                <q-card-section>
-                    <div class="q-my-sm">
-                        <single-scientific-common-name-auto-complete :sciname="(targetTaxon ? targetTaxon.sciname : null)" :disabled="loading" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
-                    </div>
-                    <div class="button-div">
-                        <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />
-                    </div>
-                    <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                    <div class="q-my-sm">
-                        <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" />
-                    </div>
-                </q-card-section>
-            </q-card>
-            <q-card class="q-my-md">
-                <q-card-section>
-                    <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
-                        <template v-slot:default-header="prop">
-                            <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-if="prop.node.nodetype === 'child'">
-                                <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span>
-                            </div>
-                            <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-else-if="prop.node.nodetype === 'synonym'">
-                                <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span>
-                            </div>
-                        </template>
-                    </q-tree>
-                </q-card-section>
-            </q-card>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <span class="text-bold">Taxonomy Explorer</span>
+            </div>
+            <div class="q-pa-md">
+                <q-card class="target-taxon-card">
+                    <q-card-section>
+                        <div class="q-my-sm">
+                            <single-scientific-common-name-auto-complete :sciname="(targetTaxon ? targetTaxon.sciname : null)" :disabled="loading" label="Find a taxon" limit-to-options="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
+                        </div>
+                        <div class="button-div">
+                            <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />
+                        </div>
+                        <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                        <div class="q-my-sm">
+                            <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" />
+                        </div>
+                    </q-card-section>
+                </q-card>
+                <q-card class="q-my-md">
+                    <q-card-section>
+                        <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
+                            <template v-slot:default-header="prop">
+                                <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-if="prop.node.nodetype === 'child'">
+                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span>
+                                </div>
+                                <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-else-if="prop.node.nodetype === 'synonym'">
+                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span>
+                                </div>
+                            </template>
+                        </q-tree>
+                    </q-card-section>
+                </q-card>
+            </div>
         </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
@@ -228,6 +231,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     });
 
                     return {
+                        clientRoot,
                         displayAuthors,
                         loading,
                         selectedTid,
@@ -246,7 +250,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             taxonomyDynamicDisplayModule.use(Quasar, { config: {} });
             taxonomyDynamicDisplayModule.use(Pinia.createPinia());
-            taxonomyDynamicDisplayModule.mount('#innertext');
+            taxonomyDynamicDisplayModule.mount('#mainContainer');
         </script>
     </body>
 </html>

@@ -14,134 +14,137 @@ if(!$GLOBALS['SYMB_UID']) {
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Encyclopedia of Life Media Importer</title>
+        <meta name="description" content="Encyclopedia of Life media importer for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div class="navpath">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <b>Encyclopedia of Life Media Importer</b>
-        </div>
-        <div id="innertext">
-            <h1>Encyclopedia of Life Media Importer</h1>
-            <template v-if="isEditor">
-                <div class="processor-container">
-                    <div class="processor-control-container">
-                        <q-card class="processor-control-card">
-                            <q-card-section>
-                                <div class="q-my-sm">
-                                    <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
-                                </div>
-                                <q-card class="q-my-sm" flat bordered>
-                                    <q-card-section>
-                                        <div class="text-subtitle1 text-weight-bold">Select Media Type</div>
-                                        <q-option-group :options="mediaTypeOptions" type="radio" v-model="selectedMediaType" :disable="loading" @update:model-value="processMediaTypeChange" dense />
-                                    </q-card-section>
-                                </q-card>
-                                <q-card class="q-my-sm" flat bordered>
-                                    <q-card-section>
-                                        <template v-if="descriptionSelected">
-                                            <div class="q-my-sm">
-                                                <single-language-auto-complete :language="descriptionLanguage" :disable="loading" label="Description Language" @update:language="updateDescriptionLanguage"></single-language-auto-complete>
-                                            </div>
-                                            <div class="q-my-sm">
-                                                <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense />
-                                            </div>
-                                        </template>
-                                        <div class="row q-my-sm">
-                                            <q-input type="number" outlined v-model="maximumRecordsPerTaxon" class="col-6" label="Maximum records per taxon" hint="(Maximum 25)" min="1" max="25" :readonly="loading" @update:model-value="validateMaximumRecordsValue" dense />
-                                        </div>
-                                        <div class="q-my-sm">
-                                            <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
-                                        </div>
-                                        <div class="q-my-sm">
-                                            <q-checkbox v-model="importMissingOnly" label="Import only for taxa missing selected media type" :disable="loading" />
-                                        </div>
-                                    </q-card-section>
-                                </q-card>
-                                <div class="processor-tool-control-container">
-                                    <div class="processor-cancel-message-container text-negative text-bold">
-                                        <template v-if="processCancelling">
-                                            Cancelling, please wait
-                                        </template>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <span class="text-bold">Encyclopedia of Life Media Importer</span>
+            </div>
+            <div class="q-pa-md">
+                <h1>Encyclopedia of Life Media Importer</h1>
+                <template v-if="isEditor">
+                    <div class="processor-container">
+                        <div class="processor-control-container">
+                            <q-card class="processor-control-card">
+                                <q-card-section>
+                                    <div class="q-my-sm">
+                                        <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Taxonomic Group" limit-to-options="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                                     </div>
-                                    <div class="processor-tool-button-container">
-                                        <div>
-                                            <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start" dense />
-                                        </div>
-                                        <div>
-                                            <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
-                                        </div>
-                                    </div>
-                                </div>
-                            </q-card-section>
-                        </q-card>
-                    </div>
-
-                    <div class="processor-display-container">
-                        <q-card class="bg-grey-3 q-pa-sm">
-                            <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
-                                <q-list dense>
-                                    <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
-                                        <q-item>
-                                            <q-item-section>
-                                                <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
-                                            </q-item-section>
-                                        </q-item>
-                                    </template>
-                                    <q-item v-for="proc in processorDisplayArr">
-                                        <q-item-section>
-                                            <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
-                                            <template v-if="!proc.loading && proc.resultText">
-                                                <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
-                                                    {{proc.resultText}}
+                                    <q-card class="q-my-sm" flat bordered>
+                                        <q-card-section>
+                                            <div class="text-subtitle1 text-weight-bold">Select Media Type</div>
+                                            <q-option-group :options="mediaTypeOptions" type="radio" v-model="selectedMediaType" :disable="loading" @update:model-value="processMediaTypeChange" dense />
+                                        </q-card-section>
+                                    </q-card>
+                                    <q-card class="q-my-sm" flat bordered>
+                                        <q-card-section>
+                                            <template v-if="descriptionSelected">
+                                                <div class="q-my-sm">
+                                                    <single-language-auto-complete :language="descriptionLanguage" :disable="loading" label="Description Language" @update:language="updateDescriptionLanguage"></single-language-auto-complete>
                                                 </div>
-                                                <div v-if="proc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
-                                                    {{proc.resultText}}
+                                                <div class="q-my-sm">
+                                                    <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense />
                                                 </div>
                                             </template>
-                                            <template v-if="proc.type === 'multi' && proc.subs.length">
-                                                <div class="q-ml-sm">
-                                                    <div v-for="subproc in proc.subs">
-                                                        <template v-if="subproc.type === 'text' || subproc.type === 'undo'">
-                                                            <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
-                                                            <template v-if="!subproc.loading && subproc.resultText">
-                                                                <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="q-ml-sm text-weight-bold text-green-9">
-                                                                    <span class="q-ml-sm text-weight-bold text-green-9">{{subproc.resultText}}</span>
-                                                                    <span class="q-ml-sm">
+                                            <div class="row q-my-sm">
+                                                <q-input type="number" outlined v-model="maximumRecordsPerTaxon" class="col-6" label="Maximum records per taxon" hint="(Maximum 25)" min="1" max="25" :readonly="loading" @update:model-value="validateMaximumRecordsValue" dense />
+                                            </div>
+                                            <div class="q-my-sm">
+                                                <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
+                                            </div>
+                                            <div class="q-my-sm">
+                                                <q-checkbox v-model="importMissingOnly" label="Import only for taxa missing selected media type" :disable="loading" />
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
+                                    <div class="processor-tool-control-container">
+                                        <div class="processor-cancel-message-container text-negative text-bold">
+                                            <template v-if="processCancelling">
+                                                Cancelling, please wait
+                                            </template>
+                                        </div>
+                                        <div class="processor-tool-button-container">
+                                            <div>
+                                                <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start" dense />
+                                            </div>
+                                            <div>
+                                                <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </q-card-section>
+                            </q-card>
+                        </div>
+
+                        <div class="processor-display-container">
+                            <q-card class="bg-grey-3 q-pa-sm">
+                                <q-scroll-area ref="procDisplayScrollAreaRef" class="bg-grey-1 processor-display" @scroll="setScroller">
+                                    <q-list dense>
+                                        <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
+                                            <q-item>
+                                                <q-item-section>
+                                                    <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                                </q-item-section>
+                                            </q-item>
+                                        </template>
+                                        <q-item v-for="proc in processorDisplayArr">
+                                            <q-item-section>
+                                                <div>{{ proc.procText }} <q-spinner v-if="proc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                                <template v-if="!proc.loading && proc.resultText">
+                                                    <div v-if="proc.result === 'success'" class="q-ml-sm text-weight-bold text-green-9">
+                                                        {{proc.resultText}}
+                                                    </div>
+                                                    <div v-if="proc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
+                                                        {{proc.resultText}}
+                                                    </div>
+                                                </template>
+                                                <template v-if="proc.type === 'multi' && proc.subs.length">
+                                                    <div class="q-ml-sm">
+                                                        <div v-for="subproc in proc.subs">
+                                                            <template v-if="subproc.type === 'text' || subproc.type === 'undo'">
+                                                                <div>{{ subproc.procText }} <q-spinner v-if="subproc.loading" class="q-ml-sm" color="green" size="1.2em" :thickness="10"></q-spinner></div>
+                                                                <template v-if="!subproc.loading && subproc.resultText">
+                                                                    <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="q-ml-sm text-weight-bold text-green-9">
+                                                                        <span class="q-ml-sm text-weight-bold text-green-9">{{subproc.resultText}}</span>
+                                                                        <span class="q-ml-sm">
                                                                         <a :href="subproc.taxonPageHref" target="_blank">(Go to Taxon Profile Page)</a>
                                                                     </span>
-                                                                </div>
-                                                                <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
-                                                                    {{subproc.resultText}}
-                                                                </div>
+                                                                    </div>
+                                                                    <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
+                                                                        {{subproc.resultText}}
+                                                                    </div>
+                                                                </template>
                                                             </template>
-                                                        </template>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </template>
-                                        </q-item-section>
-                                    </q-item>
-                                    <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
-                                        <q-item>
-                                            <q-item-section>
-                                                <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                                </template>
                                             </q-item-section>
                                         </q-item>
-                                    </template>
-                                </q-list>
-                            </q-scroll-area>
-                        </q-card>
+                                        <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
+                                            <q-item>
+                                                <q-item-section>
+                                                    <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                                </q-item-section>
+                                            </q-item>
+                                        </template>
+                                    </q-list>
+                                </q-scroll-area>
+                            </q-card>
+                        </div>
                     </div>
-                </div>
-            </template>
-            <template v-else>
-                <div class="text-weight-bold">You do not have permissions to access this tool</div>
-            </template>
+                </template>
+                <template v-else>
+                    <div class="text-weight-bold">You do not have permissions to access this tool</div>
+                </template>
+            </div>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -159,9 +162,10 @@ if(!$GLOBALS['SYMB_UID']) {
                 },
                 setup() {
                     const { getErrorResponseText, showNotification } = useCore();
-                    const store = useBaseStore();
+                    const baseStore = useBaseStore();
+
                     let abortController = null;
-                    const clientRoot = store.getClientRoot;
+                    const clientRoot = baseStore.getClientRoot;
                     const currentTaxon = Vue.ref(null);
                     const descriptionLanguage = Vue.ref(null);
                     const descriptionSaveOptions = [
@@ -199,7 +203,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     const taxonMediaArr = Vue.ref([]);
                     const taxonomicGroup = Vue.ref(null);
                     const taxonomicGroupTid = Vue.ref(null);
-                    const taxonomicRanks = store.getTaxonomicRanks;
+                    const taxonomicRanks = baseStore.getTaxonomicRanks;
                     const taxonUploadCount = Vue.ref(0);
 
                     function addProcessToProcessorDisplay(processObj) {
@@ -945,6 +949,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     });
 
                     return {
+                        clientRoot,
                         descriptionLanguage,
                         descriptionSaveOptions,
                         descriptionSelected,
@@ -978,7 +983,7 @@ if(!$GLOBALS['SYMB_UID']) {
             });
             eolMediaImporterModule.use(Quasar, { config: {} });
             eolMediaImporterModule.use(Pinia.createPinia());
-            eolMediaImporterModule.mount('#innertext');
+            eolMediaImporterModule.mount('#mainContainer');
         </script>
     </body>
 </html>

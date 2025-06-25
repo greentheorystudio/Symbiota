@@ -7,15 +7,15 @@ class KeyCharacterStates{
 	private $conn;
 
     private $fields = array(
-        "csid" => array("dataType" => "number", "length" => 10),
-        "cid" => array("dataType" => "number", "length" => 10),
-        "characterstatename" => array("dataType" => "string", "length" => 255),
-        "description" => array("dataType" => "string", "length" => 255),
-        "infourl" => array("dataType" => "string", "length" => 255),
-        "language" => array("dataType" => "string", "length" => 45),
-        "langid" => array("dataType" => "number", "length" => 11),
-        "sortsequence" => array("dataType" => "number", "length" => 11),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'csid' => array('dataType' => 'number', 'length' => 10),
+        'cid' => array('dataType' => 'number', 'length' => 10),
+        'characterstatename' => array('dataType' => 'string', 'length' => 255),
+        'description' => array('dataType' => 'string', 'length' => 255),
+        'infourl' => array('dataType' => 'string', 'length' => 255),
+        'language' => array('dataType' => 'string', 'length' => 45),
+        'langid' => array('dataType' => 'number', 'length' => 11),
+        'sortsequence' => array('dataType' => 'number', 'length' => 11),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -59,28 +59,7 @@ class KeyCharacterStates{
         return $retVal;
     }
 
-    public function getKeyCharacterStateData($csid): array
-    {
-        $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM keycharacterstates WHERE csid = ' . (int)$csid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($result = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($result);
-            $row = $result->fetch_array(MYSQLI_ASSOC);
-            $result->free();
-            if($row){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $row[$name];
-                }
-            }
-        }
-        return $retArr;
-    }
-
-    public function getTaxaKeyCharacterStates($tidArr): array
+    public function getCharacterStatesFromTidArr($tidArr): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
@@ -103,6 +82,27 @@ class KeyCharacterStates{
                 }
                 $retArr[$row['tid']][] = $nodeArr;
                 unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getKeyCharacterStateData($csid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM keycharacterstates WHERE csid = ' . (int)$csid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $row[$name];
+                }
             }
         }
         return $retArr;

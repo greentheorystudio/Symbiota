@@ -13,8 +13,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ProjAdmin', $GLOBALS['USER_RIGHTS'
 
 if($action && SanitizerService::validateInternalRequest()){
     $projects = new Projects();
-    if($action === 'getProjectListByUserRights'){
-        echo json_encode($projects->getProjectListByUserRights());
+    if($action === 'getProjectListByUid' && array_key_exists('uid', $_POST)){
+        echo json_encode($projects->getProjectListByUid($_POST['uid']));
     }
     elseif($action === 'getProjectChecklists' && $pid){
         echo json_encode($projects->getProjectChecklists($pid));
@@ -30,5 +30,8 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'deleteProjectRecord' && $pid && $isEditor){
         echo $projects->deleteProjectRecord($pid);
+    }
+    elseif($action === 'getProjectArr'){
+        echo json_encode($projects->getProjectArr());
     }
 }

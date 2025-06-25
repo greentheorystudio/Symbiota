@@ -7,17 +7,17 @@ class TaxonVernaculars{
     private $conn;
 
     private $fields = array(
-        "vid" => array("dataType" => "number", "length" => 11),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "vernacularname" => array("dataType" => "string", "length" => 80),
-        "language" => array("dataType" => "string", "length" => 15),
-        "langid" => array("dataType" => "number", "length" => 11),
-        "source" => array("dataType" => "string", "length" => 50),
-        "notes" => array("dataType" => "string", "length" => 250),
-        "username" => array("dataType" => "string", "length" => 45),
-        "isupperterm" => array("dataType" => "number", "length" => 11),
-        "sortsequence" => array("dataType" => "number", "length" => 11),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'vid' => array('dataType' => 'number', 'length' => 11),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'vernacularname' => array('dataType' => 'string', 'length' => 80),
+        'language' => array('dataType' => 'string', 'length' => 15),
+        'langid' => array('dataType' => 'number', 'length' => 11),
+        'source' => array('dataType' => 'string', 'length' => 50),
+        'notes' => array('dataType' => 'string', 'length' => 250),
+        'username' => array('dataType' => 'string', 'length' => 45),
+        'isupperterm' => array('dataType' => 'number', 'length' => 11),
+        'sortsequence' => array('dataType' => 'number', 'length' => 11),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -85,8 +85,8 @@ class TaxonVernaculars{
                 foreach($rows as $index => $row){
                     $scinameArr = array();
                     $scinameArr['tid'] = '';
-                    $scinameArr['label'] = $row['VernacularName'];
-                    $scinameArr['name'] = $row['VernacularName'];
+                    $scinameArr['label'] = $row['vernacularname'];
+                    $scinameArr['name'] = $row['vernacularname'];
                     $retArr[] = $scinameArr;
                     unset($rows[$index]);
                 }
@@ -139,6 +139,29 @@ class TaxonVernaculars{
                     $nodeArr[$name] = $row[$name];
                 }
                 $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getVernacularArrFromTidArr($tidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT t.tidaccepted, v.vernacularname '.
+            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid '.
+            'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ORDER BY t.tidaccepted, v.vernacularname ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['tidaccepted'], $retArr)){
+                    $retArr[$row['tidaccepted']] = array();
+                }
+                $nodeArr = array();
+                $nodeArr['vernacularname'] = $row['vernacularname'];
+                $retArr[$row['tidaccepted']][] = $nodeArr;
                 unset($rows[$index]);
             }
         }

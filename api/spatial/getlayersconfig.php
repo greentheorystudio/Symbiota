@@ -1,6 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
-$spatialManager = new SpatialModuleManager();
-echo $spatialManager->getLayersConfigJSON();
+if(SanitizerService::validateInternalRequest()){
+    $spatialManager = new SpatialModuleManager();
+    echo $spatialManager->getLayersConfigJSON();
+}
