@@ -118,7 +118,7 @@
                         label: 'Data Explorer',
                         subItems: [
                             {url: CLIENT_ROOT + '/checklists/index.php', label: 'Checklists'},
-                            {url: CLIENT_ROOT + '/checklists/dynamicmap.php?interface=checklist', label: 'Dynamic Checklist'},
+                            {url: CLIENT_ROOT + '/checklists/checklist.php', label: 'Dynamic Checklist'},
                             {url: CLIENT_ROOT + '/spatial/index.php', label: 'Map Occurrence Search', newTab: true},
                             {url: CLIENT_ROOT + '/collections/list.php', label: 'Text Occurrence Search'},
                             {url: CLIENT_ROOT + '/taxa/dynamictreeviewer.php', label: 'Interactive Taxonomic Tree'}
