@@ -104,7 +104,7 @@ class ChecklistTaxa{
         return $retArr;
     }
 
-    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData): array
+    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort): array
     {
         $retArr = array();
         $tempArr = array();
@@ -120,8 +120,15 @@ class ChecklistTaxa{
             $fieldNameArr[] = 't.tidaccepted';
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
-                'WHERE c.clid IN(' . implode(',', $clidArr) . ') '.
-                'ORDER BY t.family, t.sciname ';
+                'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
+            if($taxonSort){
+                if($taxonSort === 'family'){
+                    $sql .= 'ORDER BY t.family, t.sciname ';
+                }
+                else{
+                    $sql .= 'ORDER BY t.sciname ';
+                }
+            }
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);

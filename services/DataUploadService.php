@@ -249,9 +249,11 @@ class DataUploadService {
         $retVal = 1;
         if($collid){
             $occidArr = (new Occurrences)->getOccidArrNotIncludedInUpload($collid);
-            (new Images)->deleteAssociatedImageRecords('occidArr', $occidArr);
-            (new Media)->deleteAssociatedMediaRecords('occidArr', $occidArr);
-            $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
+            if($occidArr){
+                (new Images)->deleteAssociatedImageRecords('occidArr', $occidArr);
+                (new Media)->deleteAssociatedMediaRecords('occidArr', $occidArr);
+                $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
+            }
         }
         return $retVal;
     }

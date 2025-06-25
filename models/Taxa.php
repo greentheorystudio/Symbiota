@@ -485,7 +485,7 @@ class Taxa{
     public function getTaxaSynonymArrFromTidArr($tidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT tid, tidaccepted, sciname FROM taxa WHERE tidaccepted IN(' . implode(',', $tidArr) . ') ';
+        $sql = 'SELECT DISTINCT tid, tidaccepted, sciname FROM taxa WHERE tidaccepted IN(' . implode(',', $tidArr) . ') AND tid <> tidaccepted ORDER BY tidaccepted, sciname ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);

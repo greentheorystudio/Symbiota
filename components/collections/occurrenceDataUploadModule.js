@@ -47,7 +47,7 @@ const occurrenceDataUploadModule = {
                                 <q-card-section>
                                     <div class="column">
                                         <template v-if="flatFileMode">
-                                            <template v-if="profileConfigurationData['saveSourcePrimaryIdentifier']">
+                                            <template v-if="Number(profileConfigurationData['saveSourcePrimaryIdentifier']) === 1">
                                                 <div class="q-mb-sm row q-gutter-sm">
                                                     <div class="text-body1 text-bold self-center">Source Primary ID</div> 
                                                     <selector-input-element :disabled="currentTab !== 'mapping' || !!currentProcess" :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('occurrence', value)"></selector-input-element>
@@ -902,14 +902,14 @@ const occurrenceDataUploadModule = {
 
         function finalTransferClearExistingMediaNotInUpload() {
             let text = 'Syncing existing media with records included in upload';
-            if(profileData.value['cleanImageDerivatives']){
+            if(Number(profileData.value['cleanImageDerivatives']) === 1){
                 text += ' and clearing old image derivatives (this could take several minutes)';
             }
             currentProcess.value = 'finalTransferClearExistingMediaNotInUpload';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            formData.append('clearImageDerivatives', (profileData.value['cleanImageDerivatives'] ? '1' : '0'));
+            formData.append('clearImageDerivatives', (Number(profileData.value['cleanImageDerivatives']) === 1 ? '1' : '0'));
             formData.append('action', 'finalTransferClearExistingMediaNotInUpload');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -1322,7 +1322,7 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferRemoveUnmatchedOccurrences() {
-            if(profileConfigurationData.value['removeUnmatchedRecords'] && Number(uploadSummaryData.value['exist']) > 0){
+            if(Number(profileConfigurationData.value['removeUnmatchedRecords']) === 1 && Number(uploadSummaryData.value['update']) > 0){
                 const text = 'Removing previous records not included in upload';
                 currentProcess.value = 'finalTransferRemoveUnmatchedOccurrences';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
@@ -1370,7 +1370,7 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
-                    if(profileConfigurationData.value['saveSourcePrimaryIdentifier']){
+                    if(Number(profileConfigurationData.value['saveSourcePrimaryIdentifier']) === 1){
                         finalTransferProcessDeterminations();
                     }
                     else{
@@ -1854,7 +1854,11 @@ const occurrenceDataUploadModule = {
                                 sourceDataFieldsFlatFile.value[prop.toLowerCase()] = prop;
                             }
                             if(featureProps[prop]){
-                                featureData[prop.toLowerCase()] = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop];
+                                let value = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop].toString();
+                                value = value.replaceAll('\r', '');
+                                value = value.replaceAll('\n', '');
+                                value = value.replaceAll('\b', '');
+                                featureData[prop.toLowerCase()] = value;
                             }
                             else{
                                 featureData[prop.toLowerCase()] = null;
@@ -1868,7 +1872,7 @@ const occurrenceDataUploadModule = {
                         const wktFormat = new ol.format.WKT();
                         featureData['footprintwkt'] = wktFormat.writeGeometry(featureGeometry);
                         sourceDataFieldsFlatFile.value['footprintwkt'] = 'footprintwkt';
-                        if(profileConfigurationData.value['createPolygonCentroidCoordinates']){
+                        if(Number(profileConfigurationData.value['createPolygonCentroidCoordinates']) === 1){
                             let centroid;
                             const geoJSONFormat = new ol.format.GeoJSON();
                             const geojsonStr = geoJSONFormat.writeGeometry(featureGeometry);
@@ -2179,7 +2183,7 @@ const occurrenceDataUploadModule = {
                 text = 'Associating upload data with existing occurrence records';
                 currentProcess.value = 'linkExistingOccurrences';
                 formData.append('action', 'linkExistingOccurrencesToUpload');
-                if(profileConfigurationData.value['matchOnCatalogNumber']){
+                if(Number(profileConfigurationData.value['matchOnCatalogNumber']) === 1){
                     formData.append('matchByCatalogNumber', '1');
                     formData.append('linkField', profileConfigurationData.value['catalogNumberMatchField']);
                 }

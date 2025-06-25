@@ -123,7 +123,7 @@ const spatialRecordsTab = {
         const paginationFirstRecordNumber = Vue.computed(() => {
             let recordNumber = 1;
             if(Number(pageNumber.value) > 1){
-                recordNumber = recordNumber + ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
+                recordNumber += ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
             }
             return recordNumber;
         });

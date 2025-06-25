@@ -114,6 +114,7 @@ function useCore() {
         str = str.replaceAll('\r\r\n', '');
         const PROCESS_SIZE = 1000;
         let lineTermination;
+        const cleanedHeaders = [];
         let resultArr = [];
         if(str.endsWith('\r\n')){
             lineTermination = '\r\n';
@@ -122,6 +123,12 @@ function useCore() {
             lineTermination = '\n';
         }
         const headers = str.slice(0, str.indexOf(lineTermination)).split(',');
+        headers.forEach(header => {
+            header = header.replaceAll('\r', '');
+            header = header.replaceAll('\n', '');
+            header = header.replaceAll('\b', '');
+            cleanedHeaders.push(header);
+        });
         if(str.endsWith(lineTermination)){
             str = str.substring(0, str.length - 2);
         }
@@ -142,13 +149,15 @@ function useCore() {
                         }
                         values.push(dataValue);
                     }
-                    if(values.length === headers.length){
-                        return headers.reduce((object, header, index) => {
+                    if(values.length >= cleanedHeaders.length){
+                        return cleanedHeaders.reduce((object, header, index) => {
                             let fieldName = header.trim();
                             if(fieldName.indexOf('"') > -1){
                                 fieldName = fieldName.replaceAll('"', '');
                             }
-                            let fieldValue = values[index] ? values[index].replace('\r', '') : '';
+                            let fieldValue = values[index] ? values[index].replaceAll('\r', '') : '';
+                            fieldValue = fieldValue.replaceAll('\n', '');
+                            fieldValue = fieldValue.replaceAll('\b', '');
                             if(fieldValue.indexOf('"') > -1){
                                 fieldValue = fieldValue.replaceAll('"','');
                             }

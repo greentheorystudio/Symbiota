@@ -150,7 +150,7 @@ class TaxonVernaculars{
         $retArr = array();
         $sql = 'SELECT DISTINCT t.tidaccepted, v.vernacularname '.
             'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid '.
-            'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
+            'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ORDER BY t.tidaccepted, v.vernacularname ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);

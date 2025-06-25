@@ -31,8 +31,7 @@ class Configurations{
         'spatial',
         'stores',
         'taxa',
-        'tutorial',
-        'webservices'
+        'tutorial'
     );
 
     public $coreConfigurations = array(
@@ -44,7 +43,6 @@ class Configurations{
         'DEFAULT_LANG',
         'DEFAULT_TITLE',
         'DEFAULTCATID',
-        'DYN_CHECKLIST_RADIUS',
         'EMAIL_CONFIGURED',
         'GBIF_ORG_KEY',
         'GBIF_PASSWORD',
@@ -478,8 +476,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '202501131';
-        $GLOBALS['JS_VERSION'] = '2025010811111111111111111111111';
+        $GLOBALS['CSS_VERSION'] = '20250115';
+        $GLOBALS['JS_VERSION'] = '2025011011';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -649,9 +647,6 @@ class Configurations{
         }
         if(!isset($GLOBALS['DEFAULT_LANG']) || $GLOBALS['DEFAULT_LANG'] !== 'en'){
             $GLOBALS['DEFAULT_LANG'] = 'en';
-        }
-        if(!isset($GLOBALS['DYN_CHECKLIST_RADIUS']) || !$GLOBALS['DYN_CHECKLIST_RADIUS']){
-            $GLOBALS['DYN_CHECKLIST_RADIUS'] = '100';
         }
         if(!isset($GLOBALS['IMAGE_ROOT_PATH']) || $GLOBALS['IMAGE_ROOT_PATH'] === ''){
             $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();

@@ -30,10 +30,8 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         checklistData: {},
         checklistEditData: {},
         checklistId: 0,
-        checklistSynonymyData: {},
         checklistTaxaStore: useChecklistTaxaStore(),
         checklistUpdateData: {},
-        checklistVernacularData: {},
         checklistVoucherData: {},
         displayAuthors: false,
         displayDetails: false,
@@ -74,32 +72,14 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getChecklistImageData(state) {
             return state.imageStore.getChecklistImageData;
         },
-        getChecklistSynonymyData(state) {
-            return state.checklistSynonymyData;
-        },
         getChecklistTaxaArr(state) {
             return state.checklistTaxaStore.getChecklistTaxaArr;
         },
         getChecklistValid(state) {
             return !!state.checklistEditData['name'];
         },
-        getChecklistVernacularData(state) {
-            return state.checklistVernacularData;
-        },
         getChecklistVoucherData(state) {
             return state.checklistVoucherData;
-        },
-        getCountFamilies(state) {
-            return state.checklistTaxaStore.getCountFamilies;
-        },
-        getCountGenera(state) {
-            return state.checklistTaxaStore.getCountGenera;
-        },
-        getCountSpecies(state) {
-            return state.checklistTaxaStore.getCountSpecies;
-        },
-        getCountTotalTaxa(state) {
-            return state.checklistTaxaStore.getCountTotalTaxa;
         },
         getDisplayAuthors(state) {
             return state.displayAuthors;
@@ -128,6 +108,17 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getDisplayVouchers(state) {
             return state.displayVouchers;
         },
+        getDownloadOptions(state) {
+            return {
+                authors: (state.displayAuthors ? '1' : '0'),
+                images: (state.displayImages ? '1' : '0'),
+                synonyms: (state.displaySynonyms ? '1' : '0'),
+                vernaculars: (state.displayVernaculars ? '1' : '0'),
+                notes: (state.displayVouchers ? '1' : '0'),
+                taxaSort: state.displaySortVal,
+                taxonFilter: state.displayTaxonFilterVal
+            };
+        },
         getTaxaFilterOptions(state) {
             return state.checklistTaxaStore.getTaxaFilterOptions;
         }
@@ -137,9 +128,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             this.checklistData = Object.assign({}, this.blankChecklistRecord);
             this.checklistTaxaStore.clearChecklistTaxaArr();
             this.imageStore.clearChecklistImageData();
-            this.checklistVernacularData = Object.assign({}, {});
             this.checklistVoucherData = Object.assign({}, {});
-            this.checklistSynonymyData = Object.assign({}, {});
         },
         createChecklistRecord(callback) {
             const formData = new FormData();
@@ -229,6 +218,32 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     this.displaySortVal = 'sciname';
                 }
             }
+        },
+        processDownloadRequest(name, type, clidArr, callback){
+            let filename;
+            const formData = new FormData();
+            formData.append('clidArr', JSON.stringify(clidArr));
+            formData.append('options', JSON.stringify(this.getDownloadOptions));
+            if(type === 'csv'){
+                filename = (name + '.csv');
+                formData.append('action', 'processCsvDownload');
+            }
+            else if(type === 'docx'){
+                filename = (name + '.docx');
+                formData.append('clid', this.checklistId.toString());
+                formData.append('action', 'processDocxDownload');
+            }
+            formData.append('filename', filename);
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                callback(filename, blob);
+            });
         },
         saveTemporaryChecklist(searchTermsJson, callback) {
             const formData = new FormData();
