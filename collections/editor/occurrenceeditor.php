@@ -42,7 +42,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
             const OCCID = <?php echo $occId; ?>;
         </script>
     </head>
-    <body>
+    <body class="full-window-mode">
         <div id="mainContainer" class="q-mt-lg">
             <template v-if="displayMode !== 3">
                 <occurrence-editor-single-display></occurrence-editor-single-display>
