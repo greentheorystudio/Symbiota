@@ -193,6 +193,9 @@ ALTER TABLE `media`
 ALTER TABLE `images`
     ADD INDEX `sourceurl`(`sourceurl`);
 
+ALTER TABLE `imagetag`
+    DROP FOREIGN KEY `FK_imagetag_tagkey`;
+
 ALTER TABLE `fmchecklists`
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`;
