@@ -4,6 +4,10 @@ body{
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
 }
+body.full-window-mode{
+    background-color: #FFFFFF;
+    padding: 15px;
+}
 @media print {
 	body, #appContainer{
 		background-color: #ffffff !important;
@@ -1048,6 +1052,9 @@ body.processing .loadingModal {
 	top: 0;
 	left: 0;
 	height: 100%;
+}
+.spatial-record-table {
+	table-layout: fixed;
 }
 .spatial-record-table thead tr th {
 	font-weight: bold;

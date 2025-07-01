@@ -100,7 +100,7 @@ class Images{
         $imgIdArr = array();
         $sql = 'SELECT DISTINCT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
             'LEFT JOIN uploadmediatemp AS um ON i.occid = um.occid AND i.url = um.url '.
-            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(um.upmid) ';
+            'WHERE o.collid = ' . (int)$collid . ' AND i.url NOT IN(SELECT DISTINCT url FROM uploadmediatemp WHERE collid = ' . (int)$collid . ') ';
         if($result = $this->conn->query($sql)){
             while(($row = $result->fetch_assoc()) && $retVal){
                 $imgIdArr[] = $row['imgid'];

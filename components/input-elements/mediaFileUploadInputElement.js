@@ -113,7 +113,7 @@ const mediaFileUploadInputElement = {
                                                         {{ file.name.split('.').pop() + ' file' }}
                                                     </div>
                                                 </div>
-                                                <div class="col-8 column q-pl-sm">
+                                                <div class="col-8 column q-pl-md">
                                                     <div class="row full-width justify-between">
                                                         <div class="ellipsis">
                                                             {{ file.name }}
@@ -529,7 +529,6 @@ const mediaFileUploadInputElement = {
                 Object.keys(resObj).forEach((key) => {
                     taxaData.value[key] = Object.assign({}, resObj[key]);
                 });
-                uploaderRef.value.updateFileStatus(file, new Date().toTimeString());
                 setFileIdentifierData();
             });
         }
@@ -708,9 +707,9 @@ const mediaFileUploadInputElement = {
                             }
                             else{
                                 let tid = null;
-                                let csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
+                                let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                                 if(!csvData){
-                                    csvData = csvFileData.value.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
+                                    csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
                                 }
                                 if(!csvData || !csvData.hasOwnProperty('scientificname')){
                                     parseScinameFromFilename(file.name);
