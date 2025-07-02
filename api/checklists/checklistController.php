@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/Checklists.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Access-Control-Allow-Origin: *');
 
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $clid = array_key_exists('clid', $_REQUEST) ? (int)$_REQUEST['clid'] : 0;
