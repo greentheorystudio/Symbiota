@@ -2,7 +2,6 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/Checklists.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
-header('Access-Control-Allow-Origin: *');
 
 $action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
 $clid = array_key_exists('clid', $_REQUEST) ? (int)$_REQUEST['clid'] : 0;
@@ -15,6 +14,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin', $GLOBALS['USER_RIGHTS'])
 if($action){
     $checklists = new Checklists();
     if($action === 'getChecklistArr'){
+        header('Access-Control-Allow-Origin: *');
         echo json_encode($checklists->getChecklistArr());
     }
     elseif(SanitizerService::validateInternalRequest()){
