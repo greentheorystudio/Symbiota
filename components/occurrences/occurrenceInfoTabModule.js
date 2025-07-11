@@ -1,5 +1,9 @@
 const occurrenceInfoTabModule = {
     props: {
+        fullWindowMode: {
+            type: Boolean,
+            default: false
+        },
         occurrenceId: {
             type: Number,
             default: null
@@ -7,7 +11,7 @@ const occurrenceInfoTabModule = {
     },
     template: `
         <div ref="contentContainerRef" class="fit">
-            <q-card flat bordered :style="tabCardStyle">
+            <q-card flat bordered :style="fullWindowMode ? '' : tabCardStyle">
                 <q-tabs v-model="selectedTab" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
                     <q-tab class="bg-grey-3" label="Details" name="details" no-caps />
                     <template v-if="occurrenceData['decimallatitude'] && occurrenceData['decimallongitude']">
@@ -225,7 +229,7 @@ const occurrenceInfoTabModule = {
                         </div>
                     </q-tab-panel>
                     <template v-if="occurrenceData['decimallatitude'] && occurrenceData['decimallongitude']">
-                        <q-tab-panel name="map" class="q-pa-none" :style="tabPanelStyle">
+                        <q-tab-panel name="map" class="q-pa-none" :style="fullWindowMode ? tabMapPanelStyle : tabPanelStyle">
                             <spatial-viewer-element :coordinate-set="coordinateArr" :footprint-wkt="occurrenceData['footprintwkt'] ? occurrenceData['footprintwkt'] : null"></spatial-viewer-element>
                         </q-tab-panel>
                     </template>
@@ -333,7 +337,7 @@ const occurrenceInfoTabModule = {
         'mof-data-field-row-group': mofDataFieldRowGroup,
         'spatial-viewer-element': spatialViewerElement
     },
-    setup(props, context) {
+    setup(props) {
         const baseStore = useBaseStore();
 
         const checklistArr = Vue.ref([]);
@@ -489,6 +493,7 @@ const occurrenceInfoTabModule = {
         const occurrenceMofLayoutData = Vue.ref({});
         const selectedTab = Vue.ref('details');
         const tabCardStyle = Vue.ref('');
+        const tabMapPanelStyle = Vue.ref('');
         const tabPanelStyle = Vue.ref('');
 
         Vue.watch(contentContainerRef, () => {
@@ -705,7 +710,13 @@ const occurrenceInfoTabModule = {
             if(contentContainerRef.value){
                 const clientHeight = contentContainerRef.value.clientHeight;
                 tabCardStyle.value = 'height: ' + clientHeight + 'px;';
-                tabPanelStyle.value = 'height: ' + (clientHeight - 82) + 'px;';
+                if(props.fullWindowMode){
+                    tabPanelStyle.value = 'min-height: 800px;';
+                    tabMapPanelStyle.value = 'height: 800px;';
+                }
+                else{
+                    tabPanelStyle.value = 'height: ' + (clientHeight - 82) + 'px;';
+                }
             }
         }
 
@@ -745,6 +756,7 @@ const occurrenceInfoTabModule = {
             occurrenceMofLayoutData,
             selectedTab,
             tabCardStyle,
+            tabMapPanelStyle,
             tabPanelStyle
         }
     }
