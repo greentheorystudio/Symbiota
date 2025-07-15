@@ -107,28 +107,6 @@ CREATE TABLE `fmchklsttaxalink` (
     KEY `FK_chklsttaxalink_tid` (`TID`)
 );
 
-CREATE TABLE `fmdynamicchecklists` (
-    `dynclid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `name` varchar(50) DEFAULT NULL,
-    `details` varchar(250) DEFAULT NULL,
-    `uid` varchar(45) DEFAULT NULL,
-    `type` varchar(45) NOT NULL DEFAULT 'DynamicList',
-    `notes` varchar(250) DEFAULT NULL,
-    `expiration` datetime NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`dynclid`)
-);
-
-CREATE TABLE `fmdyncltaxalink` (
-    `dynclid` int(10) unsigned NOT NULL,
-    `tid` int(10) unsigned NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`dynclid`,`tid`),
-    KEY `FK_dyncltaxalink_taxa` (`tid`),
-    CONSTRAINT `FK_dyncltaxalink_dynclid` FOREIGN KEY (`dynclid`) REFERENCES `fmdynamicchecklists` (`dynclid`) ON DELETE CASCADE,
-    CONSTRAINT `FK_dyncltaxalink_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE
-);
-
 CREATE TABLE `fmprojectcategories` (
     `projcatid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `pid` int(10) unsigned NOT NULL,
@@ -330,18 +308,7 @@ CREATE TABLE `imagetag` (
     UNIQUE KEY `imgid` (`imgid`,`keyvalue`),
     KEY `keyvalue` (`keyvalue`),
     KEY `FK_imagetag_imgid_idx` (`imgid`),
-    CONSTRAINT `FK_imagetag_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_imagetag_tagkey` FOREIGN KEY (`keyvalue`) REFERENCES `imagetagkey` (`tagkey`) ON DELETE NO ACTION ON UPDATE CASCADE
-);
-
-CREATE TABLE `imagetagkey` (
-    `tagkey` varchar(30) NOT NULL,
-    `shortlabel` varchar(30) NOT NULL,
-    `description_en` varchar(255) NOT NULL,
-    `sortorder` int(11) NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`tagkey`),
-    KEY `sortorder` (`sortorder`)
+    CONSTRAINT `FK_imagetag_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `institutions` (
@@ -524,52 +491,6 @@ CREATE TABLE `omcollectionstats` (
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`collid`),
     CONSTRAINT `FK_collectionstats_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`)
-);
-
-CREATE TABLE `omcollectors` (
-    `recordedById` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `familyname` varchar(45) NOT NULL,
-    `firstname` varchar(45) DEFAULT NULL,
-    `middlename` varchar(45) DEFAULT NULL,
-    `startyearactive` int(11) DEFAULT NULL,
-    `endyearactive` int(11) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `rating` int(11) DEFAULT '10',
-    `guid` varchar(45) DEFAULT NULL,
-    `preferredrecbyid` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`recordedById`),
-    KEY `fullname` (`familyname`,`firstname`),
-    KEY `FK_preferred_recby_idx` (`preferredrecbyid`)
-);
-
-CREATE TABLE `omcollpublications` (
-    `pubid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `collid` int(10) unsigned NOT NULL,
-    `targeturl` varchar(250) NOT NULL,
-    `securityguid` varchar(45) NOT NULL,
-    `criteriajson` varchar(250) DEFAULT NULL,
-    `includedeterminations` int(11) DEFAULT '1',
-    `includeimages` int(11) DEFAULT '1',
-    `autoupdate` int(11) DEFAULT '0',
-    `lastdateupdate` datetime DEFAULT NULL,
-    `updateinterval` int(11) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`pubid`),
-    KEY `FK_adminpub_collid_idx` (`collid`),
-    CONSTRAINT `FK_adminpub_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `omcollpuboccurlink` (
-    `pubid` int(10) unsigned NOT NULL,
-    `occid` int(10) unsigned NOT NULL,
-    `verification` int(11) NOT NULL DEFAULT '0',
-    `refreshtimestamp` datetime NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`pubid`,`occid`),
-    KEY `FK_ompuboccid_idx` (`occid`),
-    CONSTRAINT `FK_ompuboccid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_ompubpubid` FOREIGN KEY (`pubid`) REFERENCES `omcollpublications` (`pubid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `omcrowdsourcecentral` (
@@ -2215,17 +2136,6 @@ INSERT INTO `adminlanguages` (`langid`, `langname`, `iso639_1`, `iso639_2`) VALU
 INSERT INTO `adminlanguages` (`langid`, `langname`, `iso639_1`, `iso639_2`) VALUES (203, "Zhuang, Chuang", "za", "zha");
 INSERT INTO `adminlanguages` (`langid`, `langname`, `iso639_1`, `iso639_2`) VALUES (204, "Zulu", "zu", "zul");
 
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasOrganism','Image shows an organism.','Organism',0);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasLabel','Image shows label data.','Label',10);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasIDLabel','Image shows an annotation/identification label.','Annotation',20);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('TypedText','Image has typed or printed text.','Typed/Printed',30);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('Handwriting','Image has handwritten label text.','Handwritten',40);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('ShowsHabitat','Field image of habitat.','Habitat',50);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasProblem','There is a problem with this image.','QC Problem',60);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('ImageOfAdult','Image contains the adult organism.','Adult',80);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('Diagnostic','Image contains a diagnostic character.','Diagnostic',70);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('ImageOfImmature','Image contains the immature organism.','Immature',90);
-
 INSERT INTO `paleochronostratigraphy` VALUES ('1', 'Hadean', null, null, null, null);
 INSERT INTO `paleochronostratigraphy` VALUES ('2', 'Archean', null, null, null, null);
 INSERT INTO `paleochronostratigraphy` VALUES ('3', 'Archean', 'Eoarchean', null, null, null);
@@ -2567,28 +2477,7 @@ VALUES (1, 10, 'Kingdom', 10, 10),
        (7, 180, 'Genus', 170, 140),
        (7, 190, 'Subgenus', 180, 180),
        (7, 220, 'Species', 190, 180),
-       (7, 230, 'Subspecies', 220, 180),
-       (100, 10, 'Kingdom', 10, 10),
-       (100, 20, 'Subkingdom', 10, 10),
-       (100, 30, 'Phylum', 20, 10),
-       (100, 40, 'Subphylum', 30, 30),
-       (100, 50, 'Superclass', 40, 30),
-       (100, 60, 'Class', 50, 30),
-       (100, 70, 'Subclass', 60, 60),
-       (100, 80, 'Infraclass', 70, 60),
-       (100, 90, 'Superorder', 80, 60),
-       (100, 100, 'Order', 90, 60),
-       (100, 110, 'Suborder', 100, 100),
-       (100, 120, 'Infraorder', 110, 100),
-       (100, 130, 'Superfamily', 120, 100),
-       (100, 140, 'Family', 130, 100),
-       (100, 150, 'Subfamily', 140, 140),
-       (100, 160, 'Tribe', 150, 140),
-       (100, 170, 'Subtribe', 160, 140),
-       (100, 180, 'Genus', 170, 140),
-       (100, 190, 'Subgenus', 180, 180),
-       (100, 220, 'Species', 190, 180),
-       (100, 230, 'Subspecies', 220, 180);
+       (7, 230, 'Subspecies', 220, 180);
 
 INSERT INTO `taxonkingdoms` VALUES (1, 'Bacteria');
 INSERT INTO `taxonkingdoms` VALUES (2, 'Protozoa');

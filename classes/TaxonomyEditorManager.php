@@ -506,9 +506,11 @@ class TaxonomyEditorManager{
         $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("'.SanitizerService::cleanInStr($this->conn,$name).'")';
         if($this->conn->query($sql)){
             $retVal = $this->conn->insert_id;
-            $sql = 'INSERT INTO taxonunits(kingdomid,rankid,rankname,dirparentrankid,reqparentrankid) '.
-                'SELECT '.$retVal.',rankid,rankname,dirparentrankid,reqparentrankid '.
-                'FROM taxonunits WHERE kingdomid = 100 ';
+            $unitValueArr = array();
+            foreach($GLOBALS['TAXON_UNITS'] as $unitArr){
+                $unitValueArr[] = '(' . $retVal . ', ' . (int)$unitArr['rankid'] . ', "' . $unitArr['rankname'] . '", ' . (int)$unitArr['dirparentrankid'] . ', ' . (int)$unitArr['reqparentrankid'] . ')';
+            }
+            $sql = 'INSERT INTO taxonunits(kingdomid, rankid, rankname, dirparentrankid, reqparentrankid) VALUES ' . implode(', ', $unitValueArr);
             $this->conn->query($sql);
         }
         return $retVal;
