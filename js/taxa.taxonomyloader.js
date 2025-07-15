@@ -73,7 +73,7 @@ function validateLoadForm(f){
 	}
 
 	if(f.unitname1.value === ""){
-		alert("Unit Name 1 (genus or uninomial) field required.");
+		alert("Unit Name 1 (genus or uninomial) required.");
 	}
 	else{
 		unitName1Valid = true;
@@ -81,7 +81,7 @@ function validateLoadForm(f){
 
 	const rankId = Number(f.rankid.value);
 	if(rankId === 0){
-		alert("Taxon rank field required.");
+		alert("Taxon rank required.");
 	}
 	else{
 		rankIdValid = true;
