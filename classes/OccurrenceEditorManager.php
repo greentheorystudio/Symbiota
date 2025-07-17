@@ -1283,12 +1283,6 @@ class OccurrenceEditorManager {
                 $status = false;
             }
 
-            $sql = 'UPDATE omoccuridentifiers SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-            if(!$this->conn->query($sql)){
-                $this->errorArr[] .= '; ERROR remapping occurrence identifiers.';
-                $status = false;
-            }
-
             $sql = 'UPDATE omexsiccatiocclink SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
             if(!$this->conn->query($sql)){
                 if(strpos($this->conn->error,'Duplicate') !== false){

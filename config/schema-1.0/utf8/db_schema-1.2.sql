@@ -726,7 +726,6 @@ CREATE TABLE `omoccurdeterminations` (
     KEY `FK_omoccurdets_tid` (`tid`),
     KEY `FK_omoccurdets_idby_idx` (`idbyid`),
     KEY `Index_dateIdentInterpreted` (`dateIdentifiedInterpreted`),
-    CONSTRAINT `FK_omoccurdets_idby` FOREIGN KEY (`idbyid`) REFERENCES `omcollectors` (`recordedById`) ON DELETE SET NULL ON UPDATE SET NULL,
     CONSTRAINT `FK_omoccurdets_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FK_omoccurdets_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
 );
@@ -801,21 +800,6 @@ CREATE TABLE `omoccurgenetic` (
     KEY `FK_omoccurgenetic` (`occid`),
     KEY `INDEX_omoccurgenetic_name` (`resourcename`),
     CONSTRAINT `FK_omoccurgenetic` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `omoccuridentifiers` (
-    `idomoccuridentifiers` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `identifiervalue` varchar(45) NOT NULL,
-    `identifiername` varchar(45) DEFAULT NULL COMMENT 'barcode, accession number, old catalog number, NPS, etc',
-    `notes` varchar(250) DEFAULT NULL,
-    `modifiedUid` int(10) unsigned NOT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`idomoccuridentifiers`),
-    KEY `FK_omoccuridentifiers_occid_idx` (`occid`),
-    KEY `Index_value` (`identifiervalue`),
-    CONSTRAINT `FK_omoccuridentifiers_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `omoccurlithostratigraphy` (
@@ -1144,30 +1128,6 @@ CREATE TABLE `omoccurrences` (
     CONSTRAINT `FK_omoccurrences_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`),
     CONSTRAINT `FK_eventID` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`) ON DELETE RESTRICT ON UPDATE NO ACTION
-);
-
-CREATE TABLE `omoccurrencetypes` (
-    `occurtypeid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned DEFAULT NULL,
-    `typestatus` varchar(45) DEFAULT NULL,
-    `typeDesignationType` varchar(45) DEFAULT NULL,
-    `typeDesignatedBy` varchar(45) DEFAULT NULL,
-    `scientificName` varchar(250) DEFAULT NULL,
-    `scientificNameAuthorship` varchar(45) DEFAULT NULL,
-    `tid` int(10) unsigned DEFAULT NULL,
-    `basionym` varchar(250) DEFAULT NULL,
-    `refid` int(11) DEFAULT NULL,
-    `bibliographicCitation` varchar(250) DEFAULT NULL,
-    `dynamicProperties` varchar(250) DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`occurtypeid`),
-    KEY `FK_occurtype_occid_idx` (`occid`),
-    KEY `FK_occurtype_refid_idx` (`refid`),
-    KEY `FK_occurtype_tid_idx` (`tid`),
-    CONSTRAINT `FK_occurtype_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_occurtype_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_occurtype_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE TABLE `paleochronostratigraphy` (

@@ -650,42 +650,6 @@ class ImageShared{
 		return true;
 	}
 
-	public function insertImageTags($reqArr): bool
-	{
-		$status = true;
-		if($this->activeImgId){
-			$kArr = $this->getImageTagValues();
-			foreach($kArr as $key => $description) {
-				if(array_key_exists("ch_$key",$reqArr)) {
-					$sql = 'INSERT INTO imagetag (imgid,keyvalue) VALUES (?,?) ';
-					$stmt = $this->conn->stmt_init();
-					$stmt->prepare($sql);
-					if($stmt){
-						$stmt->bind_param('is',$this->activeImgId,$key);
-						if(!$stmt->execute()){
-							$status = false;
-							$this->errArr[] = "Warning: Failed to add image tag [$key] for $this->activeImgId.  " . $stmt->error;
-						}
-						$stmt->close();
-					}
-				}
-			}
-		}
-		return $status;
-	}
-
-    public function getImageTagValues(): array
-    {
-        $returnArr = array();
-        $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $returnArr[$row->tagkey] = $row->description_en;
-        }
-        $result->close();
-        return $returnArr;
-    }
-
 	public function getActiveImgId(): int
 	{
 		return $this->activeImgId;
