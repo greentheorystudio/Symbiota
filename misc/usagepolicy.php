@@ -9,7 +9,7 @@ header('X-Frame-Options: SAMEORIGIN');
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Data Usage Guidelines</title>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Terms of Use</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
@@ -20,7 +20,7 @@ include(__DIR__ . '/../header.php');
 ?>
 <div id="mainContainer">
     <div class="q-pa-md">
-        <div class="text-h5 text-bold">Guidelines for Acceptable Use of Data</div>
+        <div class="text-h5 text-bold">Terms of Use</div>
         <div class="q-mt-md text-h6 text-bold">Recommended Citation Formats</div>
         <div class="q-pl-md q-mt-md q-mb-md">
             Use one of the following formats to cite data retrieved from the {{ defaultTitle }} network:
