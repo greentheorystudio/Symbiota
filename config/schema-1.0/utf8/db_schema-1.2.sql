@@ -802,21 +802,6 @@ CREATE TABLE `omoccurgenetic` (
     CONSTRAINT `FK_omoccurgenetic` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE `omoccuridentifiers` (
-    `idomoccuridentifiers` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `identifiervalue` varchar(45) NOT NULL,
-    `identifiername` varchar(45) DEFAULT NULL COMMENT 'barcode, accession number, old catalog number, NPS, etc',
-    `notes` varchar(250) DEFAULT NULL,
-    `modifiedUid` int(10) unsigned NOT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`idomoccuridentifiers`),
-    KEY `FK_omoccuridentifiers_occid_idx` (`occid`),
-    KEY `Index_value` (`identifiervalue`),
-    CONSTRAINT `FK_omoccuridentifiers_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `omoccurlithostratigraphy` (
     `occid` int(10) unsigned NOT NULL,
     `chronoId` int(10) unsigned NOT NULL,
