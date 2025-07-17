@@ -26,7 +26,6 @@ class Configurations{
         'models',
         'profile',
         'projects',
-        'references',
         'services',
         'spatial',
         'stores',
@@ -478,7 +477,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '202501181';
-        $GLOBALS['JS_VERSION'] = '2025050111';
+        $GLOBALS['JS_VERSION'] = '20250501111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();

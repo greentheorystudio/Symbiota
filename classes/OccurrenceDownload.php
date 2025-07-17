@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
-include_once(__DIR__ . '/OccurrenceAccessStats.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceDownload{
@@ -111,7 +110,6 @@ class OccurrenceDownload{
 			$sql = $this->getSql();
 			$result = $this->conn->query($sql,MYSQLI_USE_RESULT);
 			if($result){
-				$statsManager = new OccurrenceAccessStats();
 				$outputHeader = true;
 				while($row = $result->fetch_assoc()){
 					if($outputHeader){
@@ -119,9 +117,6 @@ class OccurrenceDownload{
 						$outputHeader = false;
 					}
                     fputcsv($outstream, $row);
-					if($this->isPublicDownload && $this->schemaType !== 'checklist' && array_key_exists('occid', $row)) {
-						$statsManager->recordAccessEvent($row['occid'], 'download');
-					}
 					$recCnt++;
 				}
 			}
@@ -411,9 +406,6 @@ class OccurrenceDownload{
 		if(strpos($sqlWhere,'v.clid')) {
 			$sqlJoin .= 'INNER JOIN fmvouchers v ON o.occid = v.occid ';
 		}
-		if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-			$sqlJoin .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-		}
 		return $sqlJoin;
 	}
 
@@ -511,25 +503,6 @@ class OccurrenceDownload{
 		$rs->free();
 		$templateArr = array('unprocessed','unprocessed-nlp','pending duplicate','stage 1','stage 2','stage 3','pending review','reviewed');
 		return array_merge(array_intersect($templateArr,$psArr),array_diff($psArr,$templateArr));
-	}
-
-	public function getAttributeTraits($collid = null): array
-	{
-		$retArr = array();
-		$sql = 'SELECT DISTINCT t.traitid, t.traitname, s.stateid, s.statename '.
-			'FROM tmtraits t INNER JOIN tmstates s ON t.traitid = s.traitid '.
-			'INNER JOIN tmattributes a ON s.stateid = a.stateid '.
-			'INNER JOIN omoccurrences o ON a.occid = o.occid ';
-		if($collid) {
-			$sql .= 'WHERE o.collid = ' . $collid;
-		}
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->traitid]['name'] = $r->traitname;
-			$retArr[$r->traitid]['state'][$r->stateid] = $r->statename;
-		}
-		$rs->free();
-		return $retArr;
 	}
 
 	public function setSchemaType($t): void

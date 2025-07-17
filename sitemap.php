@@ -94,7 +94,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                 <template v-if="keyModuleIsActive && (isAdmin || keyAdmin)">
                                     <div class="q-mt-md text-body1 text-bold">Identification Keys</div>
                                     <ul>
-                                        <li><a :href="(clientRoot + '/ident/admin/index.php')">Characters and Character States Editor</a></li>
+                                        <li><a :href="">Characters and Character States Editor</a></li>
                                     </ul>
                                 </template>
                                 <div class="q-mt-md text-body1 text-bold">Glossary</div>

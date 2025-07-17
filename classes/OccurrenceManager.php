@@ -528,24 +528,14 @@ class OccurrenceManager{
                     $tempInnerArr = array();
                     $collValueArr = explode(' ',trim($collectorArr[0]));
                     foreach($collValueArr as $collV){
-                        if(strlen($collV) < 4 || strtolower($collV) === 'best'){
-                            $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collV).'%")';
-                        }
-                        else{
-                            $tempInnerArr[] = '(MATCH(f.recordedby) AGAINST("'.SanitizerService::cleanInStr($this->conn,$collV).'")) ';
-                        }
+                        $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collV).'%")';
                     }
                     $tempArr[] = implode(' AND ', $tempInnerArr);
                 }
             }
             elseif(count($collectorArr) > 1){
                 $collStr = current($collectorArr);
-                if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
-                    $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collStr).'%")';
-                }
-                else{
-                    $tempArr[] = '(MATCH(f.recordedby) AGAINST("'.SanitizerService::cleanInStr($this->conn,$collStr).'")) ';
-                }
+                $tempArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collStr).'%")';
             }
             $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
             $this->localSearchArr[] = implode(', ',$collectorArr);
@@ -1148,9 +1138,6 @@ class OccurrenceManager{
         }
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-            $sqlJoin .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
         }
         if(array_key_exists('phuid',$this->searchTermsArr) || array_key_exists('imagetag',$this->searchTermsArr) || array_key_exists('imagekeyword',$this->searchTermsArr) || array_key_exists('uploaddate1',$this->searchTermsArr) || array_key_exists('imagetype',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
