@@ -42,11 +42,7 @@ if($zip){
 	$dwcaHandler->setIncludeDets($includeIdent);
 	$includeImages = (array_key_exists('images',$_POST)?1:0);
 	$dwcaHandler->setIncludeImgs($includeImages);
-	$includeAttributes = (array_key_exists('attributes',$_POST)?1:0);
-	$dwcaHandler->setIncludeAttributes($includeAttributes);
-
 	$outputFile = $dwcaHandler->createDwcArchive('specVouchers');
-
 }
 else{
 	$outputFile = $dwcaHandler->getOccurrenceFile();

@@ -172,14 +172,6 @@ ALTER TABLE `omoccurrences`
     ADD INDEX `Index_latlng`(`decimalLatitude`, `decimalLongitude`),
     ADD INDEX `Index_ labelProject`(`labelProject`);
 
-REPLACE
-omoccurrencesfulltext(occid,locality,recordedby)
-SELECT occid, CONCAT_WS("; ", municipality, locality), recordedby
-FROM omoccurrences;
-
-ALTER TABLE `referenceobject`
-    CHANGE COLUMN `numbervolumnes` `numbervolumes` varchar (45) NULL DEFAULT NULL AFTER `volume`;
-
 CREATE TABLE `taxonkingdoms`
 (
     `kingdom_id`   int(11) NOT NULL,
@@ -433,28 +425,7 @@ VALUES (1, 10, 'Kingdom', 10, 10),
        (7, 180, 'Genus', 170, 140),
        (7, 190, 'Subgenus', 180, 180),
        (7, 220, 'Species', 190, 180),
-       (7, 230, 'Subspecies', 220, 180),
-       (100, 10, 'Kingdom', 10, 10),
-       (100, 20, 'Subkingdom', 10, 10),
-       (100, 30, 'Phylum', 20, 10),
-       (100, 40, 'Subphylum', 30, 30),
-       (100, 50, 'Superclass', 40, 30),
-       (100, 60, 'Class', 50, 30),
-       (100, 70, 'Subclass', 60, 60),
-       (100, 80, 'Infraclass', 70, 60),
-       (100, 90, 'Superorder', 80, 60),
-       (100, 100, 'Order', 90, 60),
-       (100, 110, 'Suborder', 100, 100),
-       (100, 120, 'Infraorder', 110, 100),
-       (100, 130, 'Superfamily', 120, 100),
-       (100, 140, 'Family', 130, 100),
-       (100, 150, 'Subfamily', 140, 140),
-       (100, 160, 'Tribe', 150, 140),
-       (100, 170, 'Subtribe', 160, 140),
-       (100, 180, 'Genus', 170, 140),
-       (100, 190, 'Subgenus', 180, 180),
-       (100, 220, 'Species', 190, 180),
-       (100, 230, 'Subspecies', 220, 180);
+       (7, 230, 'Subspecies', 220, 180);
 
 SET
 FOREIGN_KEY_CHECKS = 1;
@@ -507,10 +478,6 @@ CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH
 		INSERT INTO uploadspectemppoints (`collid`,`upspid`,`point`)
 		VALUES (NEW.`collid`,NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
     END IF;
-END;
-
-CREATE TRIGGER `uploadspectemp_delete` BEFORE DELETE ON `uploadspectemp` FOR EACH ROW BEGIN
-    DELETE FROM uploadspectemppoints WHERE `upspid` = OLD.`upspid`;
 END;
 
 ALTER TABLE `uploadtaxa`

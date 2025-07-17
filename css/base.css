@@ -1129,9 +1129,6 @@ body.processing .loadingModal {
 .sticky-header-table tbody {
 	scroll-margin-top: 48px;
 }
-.occurrence-individual-page-info-panel {
-	height: 800px;
-}
 .login-container {
 	width: 30%;
 }
@@ -1142,4 +1139,7 @@ body.processing .loadingModal {
 }
 .create-account-container {
 	width: 90%;
+}
+.error-border {
+    border: 3px solid #C10015;
 }

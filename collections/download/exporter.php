@@ -168,48 +168,6 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
                             ?>
                         </td>
                     </tr>
-                    <?php
-                    if($traitArr = $dlManager->getAttributeTraits($collid)){
-                        ?>
-                        <tr>
-                            <td style="vertical-align: top;">
-                                <div style="margin:10px;">
-                                    <b>Occurrence Trait<br/>Filter:</b>
-                                </div>
-                            </td>
-                            <td>
-                                <div style="margin:10px;">
-                                    <select name="traitid[]" multiple>
-                                        <?php
-                                        foreach($traitArr as $traitID => $tArr){
-                                            echo '<option value="'.$traitID.'">'.$tArr['name'].' [ID:'.$traitID.']</option>';
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div style="margin:10px;">
-                                    -- OR select a specific Attribute State --
-                                </div>
-                                <div style="margin:10px;">
-                                    <select name="stateid[]" multiple>
-                                        <?php
-                                        foreach($traitArr as $traitID => $tArr){
-                                            $stateArr = $tArr['state'];
-                                            foreach($stateArr as $stateID => $stateName){
-                                                echo '<option value="'.$stateID.'">'.$tArr['name'].': '.$stateName.'</option>';
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div style="">
-                                    * Hold down the control (ctrl) or command button to select multiple options
-                                </div>
-                            </td>
-                        </tr>
-                        <?php
-                    }
-                    ?>
                     <tr>
                         <td style="vertical-align: top;">
                             <div style="margin:10px;">

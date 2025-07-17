@@ -32,11 +32,6 @@ const collectionControlPanelMenus = {
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/reports/accessreport.php?collid=' + collectionId)">
-                                            View Access Statistics
-                                        </a>
-                                    </div>
-                                    <div>
                                         <a :href="(clientRoot + '/collections/misc/collpermissions.php?collid=' + collectionId)">
                                             Manage Permissions
                                         </a>

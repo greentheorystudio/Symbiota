@@ -172,17 +172,13 @@ class Taxa{
                 'OR TID IN(SELECT tid FROM glossarysources WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM glossarytaxalink WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM images WHERE tid = ' . (int)$tid . ') '.
-                'OR TID IN(SELECT tid FROM kmchartaxalink WHERE tid = ' . (int)$tid . ') '.
-                'OR TID IN(SELECT tid FROM kmdescr WHERE tid = ' . (int)$tid . ') '.
+                'OR TID IN(SELECT tid FROM keycharacterstatetaxalink WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM media WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM omoccurassociations WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM omoccurdeterminations WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM omoccurrences WHERE tid = ' . (int)$tid . ') '.
-                'OR TID IN(SELECT tid FROM referencetaxalink WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM taxadescrblock WHERE tid = ' . (int)$tid . ') '.
-                'OR TID IN(SELECT tid FROM taxamaps WHERE tid = ' . (int)$tid . ') '.
-                'OR TID IN(SELECT tid FROM tmtraittaxalink WHERE tid = ' . (int)$tid . ') '.
-                'OR TID IN(SELECT tid FROM usertaxonomy WHERE tid = ' . (int)$tid . ') ';
+                'OR TID IN(SELECT tid FROM taxamaps WHERE tid = ' . (int)$tid . ') ';
             //echo $sql;
             $rs = $this->conn->query($sql);
             $retVal = $rs->num_rows;

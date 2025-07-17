@@ -528,24 +528,14 @@ class OccurrenceManager{
                     $tempInnerArr = array();
                     $collValueArr = explode(' ',trim($collectorArr[0]));
                     foreach($collValueArr as $collV){
-                        if(strlen($collV) < 4 || strtolower($collV) === 'best'){
-                            $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collV).'%")';
-                        }
-                        else{
-                            $tempInnerArr[] = '(MATCH(f.recordedby) AGAINST("'.SanitizerService::cleanInStr($this->conn,$collV).'")) ';
-                        }
+                        $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collV).'%")';
                     }
                     $tempArr[] = implode(' AND ', $tempInnerArr);
                 }
             }
             elseif(count($collectorArr) > 1){
                 $collStr = current($collectorArr);
-                if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
-                    $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collStr).'%")';
-                }
-                else{
-                    $tempArr[] = '(MATCH(f.recordedby) AGAINST("'.SanitizerService::cleanInStr($this->conn,$collStr).'")) ';
-                }
+                $tempArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collStr).'%")';
             }
             $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
             $this->localSearchArr[] = implode(', ',$collectorArr);
@@ -732,14 +722,6 @@ class OccurrenceManager{
         }
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
             $sqlWhere .= 'AND (it.keyvalue = "'.SanitizerService::cleanInStr($this->conn,$this->searchTermsArr['imagetag']).'") ';
-        }
-        if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
-            $keywordArr = explode(';',$this->searchTermsArr['imagekeyword']);
-            $tempArr = array();
-            foreach($keywordArr as $value){
-                $tempArr[] = "(ik.keyword LIKE '%".trim(SanitizerService::cleanInStr($this->conn,$value))."%')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
         }
         if(array_key_exists('uploaddate1',$this->searchTermsArr) && $this->searchTermsArr['uploaddate1']){
             $dateArr = array();
@@ -1149,14 +1131,10 @@ class OccurrenceManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-            $sqlJoin .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
         if(array_key_exists('phuid',$this->searchTermsArr) || array_key_exists('imagetag',$this->searchTermsArr) || array_key_exists('imagekeyword',$this->searchTermsArr) || array_key_exists('uploaddate1',$this->searchTermsArr) || array_key_exists('imagetype',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
             $sqlJoin .= array_key_exists('phuid',$this->searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' :'';
             $sqlJoin .= array_key_exists('imagetag',$this->searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' :'';
-            $sqlJoin .= array_key_exists('imagekeyword',$this->searchTermsArr) ? 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ' :'';
         }
         return $sqlJoin;
     }

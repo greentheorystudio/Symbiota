@@ -444,18 +444,12 @@ class ExsiccatiManager {
 			elseif($collId && is_numeric($collId) && ($identifier || ($pArr['recordedby'] && $pArr['recordnumber']))){
 				$sql1 = 'SELECT o.occid '.
 					'FROM omoccurrences o LEFT JOIN omexsiccatiocclink l ON o.occid = l.occid '.
-					'LEFT JOIN omoccurrencesfulltext f ON o.occid = f.occid '.
 					'WHERE o.collid = '.$collId.' AND l.occid IS NULL ';
 				if($identifier){
 					$sql1 .= 'AND (o.catalogNumber = '.(is_numeric($identifier)?$identifier:'"'.$identifier.'"').') ';
 				}
 				else{
-					if(strlen($pArr['recordedby']) < 4 || strtolower($pArr['recordedby']) === 'best'){
-						$sql1 .= 'AND (o.recordedby LIKE "%'.$pArr['recordedby'].'%")';
-					}
-					else{
-						$sql1 .= 'AND (MATCH(f.recordedby) AGAINST("'.$pArr['recordedby'].'")) ';
-					}
+                    $sql1 .= 'AND (o.recordedby LIKE "%'.$pArr['recordedby'].'%")';
 					$sql1 .= 'AND (o.recordnumber = '.(is_numeric($pArr['recordnumber'])?$pArr['recordnumber']:'"'.$pArr['recordnumber'].'"').') ';
 				}
 				$sql1 .= 'LIMIT 5';

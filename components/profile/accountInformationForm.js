@@ -24,24 +24,6 @@ const accountInformationForm = {
             <q-input outlined v-model="user.title" label="Title" bg-color="white" class="col-3" dense @update:model-value="(value) => processChange('title', value)"></q-input>
             <q-input outlined v-model="user.institution" label="Institution" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('institution', value)"></q-input>
         </div>
-        <div class="row justify-start q-gutter-md q-mt-md">
-            <q-input outlined v-model="user.department" label="Department" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('department', value)"></q-input>
-            <q-input outlined v-model="user.address" label="Street Address" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('address', value)"></q-input>
-        </div>
-        <div class="row justify-start q-gutter-md q-mt-md">
-            <q-input outlined v-model="user.city" label="City" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('city', value)"></q-input>
-            <q-input outlined v-model="user.state" label="State" bg-color="white" class="col-4" dense @update:model-value="(value) => processChange('state', value)"></q-input>
-        </div>
-        <div class="row justify-start q-gutter-md q-mt-md">
-            <q-input outlined v-model="user.zip" label="Zip Code" bg-color="white" class="col-3" dense @update:model-value="(value) => processChange('zip', value)"></q-input>
-            <q-input outlined v-model="user.country" label="Country" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('country', value)"></q-input>
-        </div>
-        <div class="row justify-start q-gutter-md q-mt-md">
-            <q-input outlined v-model="user.url" label="URL" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('url', value)"></q-input>
-        </div>
-        <div class="row justify-start q-gutter-md q-mt-md">
-            <q-input outlined v-model="user.biography" label="Biography" bg-color="white" class="col-grow" dense autogrow @update:model-value="(value) => processChange('biography', value)"></q-input>
-        </div>
     `,
     setup(_, context) {
         const userStore = useUserStore();

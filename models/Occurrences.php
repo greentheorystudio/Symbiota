@@ -609,12 +609,6 @@ class Occurrences{
                 }
             }
             if($retVal){
-                $sql = 'DELETE FROM omoccuraccessstats WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-            }
-            if($retVal){
                 $sql = 'DELETE FROM omoccurdatasetlink WHERE ' . $whereStr . ' ';
                 if(!$this->conn->query($sql)){
                     $retVal = 0;
@@ -640,12 +634,6 @@ class Occurrences{
             }
             if($retVal){
                 $sql = 'DELETE FROM omoccurpoints WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-            }
-            if($retVal){
-                $sql = 'DELETE FROM omoccurrencesfulltext WHERE ' . $whereStr . ' ';
                 if(!$this->conn->query($sql)){
                     $retVal = 0;
                 }

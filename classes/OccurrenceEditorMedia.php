@@ -227,44 +227,4 @@ class OccurrenceEditorMedia extends OccurrenceEditorManager {
 		}
 		return $this->photographerArr;
 	}
-
-    public function getImageTagValues(): array
-    {
-        $returnArr = array();
-        $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $returnArr[$row->tagkey] = $row->description_en;
-        }
-        $result->close();
-       return $returnArr;
-    } 
-
-    public function getImageTagUsage($imgid): array
-    {
-        $resultArr = array();
-        $imageTagArr = array();
-        $sql = 'SELECT k.tagkey '.
-            'FROM imagetagkey AS k LEFT JOIN imagetag AS i ON k.tagkey = i.keyvalue '.
-            'WHERE i.imgid = '.$imgid.' ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $imageTagArr[] = $row->tagkey;
-        }
-
-        $sql = 'SELECT tagkey, description_en, shortlabel, sortorder '.
-            'FROM imagetagkey ORDER BY sortorder ';
-        $result = $this->conn->query($sql);
-        $i = 0;
-        while($row = $result->fetch_object()){
-            $resultArr[$i]['tagkey'] = $row->tagkey;
-            $resultArr[$i]['shortlabel'] = $row->shortlabel;
-            $resultArr[$i]['description'] = $row->description_en;
-            $resultArr[$i]['sortorder'] = $row->sortorder;
-            $resultArr[$i]['value'] = (in_array($row->tagkey, $imageTagArr, true)?1:0);
-            $i++;
-        }
-        $result->close();
-        return $resultArr;
-    }
 }

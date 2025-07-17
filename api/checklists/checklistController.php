@@ -11,31 +11,34 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin', $GLOBALS['USER_RIGHTS'])
     $isEditor = true;
 }
 
-if($action && SanitizerService::validateInternalRequest()){
+if($action){
     $checklists = new Checklists();
-    if($action === 'getChecklistListByUid' && array_key_exists('uid', $_POST)){
-        echo json_encode($checklists->getChecklistListByUid($_POST['uid']));
-    }
-    elseif($action === 'createChecklistRecord' && $GLOBALS['VALID_USER'] && array_key_exists('checklist', $_POST)){
-        echo $checklists->createChecklistRecord(json_decode($_POST['checklist'], true));
-    }
-    elseif($action === 'updateChecklistRecord' && $clid && $isEditor && array_key_exists('checklistData', $_POST)){
-        echo $checklists->updateChecklistRecord($clid, json_decode($_POST['checklistData'], true));
-    }
-    elseif($action === 'getChecklistData' && $clid){
-        echo json_encode($checklists->getChecklistData($clid));
-    }
-    elseif($action === 'deleteChecklistRecord' && $clid && $isEditor){
-        echo $checklists->deleteChecklistRecord($clid);
-    }
-    elseif($action === 'createTemporaryChecklistFromTidArr' && array_key_exists('tidArr', $_POST)){
-        echo $checklists->createTemporaryChecklistFromTidArr(json_decode($_POST['tidArr'], true));
-    }
-    elseif($action === 'getChecklistArr'){
+    if($action === 'getChecklistArr'){
+        header('Access-Control-Allow-Origin: *');
         echo json_encode($checklists->getChecklistArr());
     }
-    elseif($action === 'saveTemporaryChecklist' && $clid){
-        $searchTerms = array_key_exists('searchTermsJson', $_POST) ? json_decode($_POST['searchTermsJson'], true) : null;
-        echo $checklists->saveTemporaryChecklist($clid, $searchTerms);
+    elseif(SanitizerService::validateInternalRequest()){
+        if($action === 'getChecklistListByUid' && array_key_exists('uid', $_POST)){
+            echo json_encode($checklists->getChecklistListByUid($_POST['uid']));
+        }
+        elseif($action === 'createChecklistRecord' && $GLOBALS['VALID_USER'] && array_key_exists('checklist', $_POST)){
+            echo $checklists->createChecklistRecord(json_decode($_POST['checklist'], true));
+        }
+        elseif($action === 'updateChecklistRecord' && $clid && $isEditor && array_key_exists('checklistData', $_POST)){
+            echo $checklists->updateChecklistRecord($clid, json_decode($_POST['checklistData'], true));
+        }
+        elseif($action === 'getChecklistData' && $clid){
+            echo json_encode($checklists->getChecklistData($clid));
+        }
+        elseif($action === 'deleteChecklistRecord' && $clid && $isEditor){
+            echo $checklists->deleteChecklistRecord($clid);
+        }
+        elseif($action === 'createTemporaryChecklistFromTidArr' && array_key_exists('tidArr', $_POST)){
+            echo $checklists->createTemporaryChecklistFromTidArr(json_decode($_POST['tidArr'], true));
+        }
+        elseif($action === 'saveTemporaryChecklist' && $clid){
+            $searchTerms = array_key_exists('searchTermsJson', $_POST) ? json_decode($_POST['searchTermsJson'], true) : null;
+            echo $checklists->saveTemporaryChecklist($clid, $searchTerms);
+        }
     }
 }
