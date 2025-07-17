@@ -30,6 +30,7 @@ const useBaseStore = Pinia.defineStore('base', {
             usfrs: 'US Federal Regulatory Status',
             worms: 'WoRMS Aphia ID'
         },
+        usagePolicyUrl: USAGE_POLICY_URL,
         userDisplayName: USER_DISPLAY_NAME,
         userRights: {},
         validUser: VALID_USER
@@ -91,6 +92,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getTaxonomicTags(state) {
             return state.taxonomicTags;
+        },
+        getUsagePolicyUrl(state) {
+            return state.usagePolicyUrl;
         },
         getUserDisplayName(state) {
             return state.userDisplayName;
