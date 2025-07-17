@@ -107,6 +107,7 @@ class Configurations{
         'TAXON_UNITS',
         'TAXONOMIC_RANKS',
         'TEMP_DIR_ROOT',
+        'USAGE_POLICY_URL',
         'USER_DISPLAY_NAME',
         'USER_RIGHTS',
         'USERNAME'
@@ -477,7 +478,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '202501181';
-        $GLOBALS['JS_VERSION'] = '20250501111';
+        $GLOBALS['JS_VERSION'] = '202505011111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -638,6 +639,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
+        }
+        if(!isset($GLOBALS['USAGE_POLICY_URL'])){
+            $GLOBALS['USAGE_POLICY_URL'] = '';
         }
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();

@@ -51,7 +51,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                 <q-checkbox v-model="agreeCheck" dense @update:model-value="processTermsAgreeChange"></q-checkbox>
                             </div>
                             <div>
-                                I have read and agree to the terms and policies described in the <a :href="(clientRoot + '/misc/usagepolicy.php')" class="text-bold" target="_blank">Terms of Use, Policies, and Guidelines page</a>
+                                I have read and agree to the <a :href="usagePolicyUrl" class="text-bold" target="_blank">Terms of Use</a>
                             </div>
                         </div>
                         <div v-if="termsAgreeError" class="text-negative text-bold">
@@ -98,10 +98,19 @@ header('X-Frame-Options: SAMEORIGIN');
                     const adminEmail = baseStore.getAdminEmail;
                     const agreeCheck = Vue.ref(false);
                     const clientRoot = baseStore.getClientRoot;
+                    const confUsagePolicyUrl = baseStore.getUsagePolicyUrl;
                     const humanValidationInputRef = Vue.ref(null);
                     const newAccount = Vue.computed(() => userStore.getUserData);
                     const passwordInputRef = Vue.ref(null);
                     const termsAgreeError = Vue.ref(null);
+                    const usagePolicyUrl = Vue.computed(() => {
+                        if(confUsagePolicyUrl && confUsagePolicyUrl.length > 0){
+                            return confUsagePolicyUrl;
+                        }
+                        else{
+                            return (clientRoot + '/misc/usagepolicy.php');
+                        }
+                    });
                     const usernameExists = (val) => {
                         return new Promise((resolve) => {
                             const formData = new FormData();
@@ -178,6 +187,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         newAccount,
                         passwordInputRef,
                         termsAgreeError,
+                        usagePolicyUrl,
                         usernameRef,
                         usernameRules: [
                             val => (val !== null && val !== '') || 'Required',
