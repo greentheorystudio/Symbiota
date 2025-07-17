@@ -92,6 +92,16 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         Login
                     </a>
                 </div>
+                <div v-else>
+                    <a class="text-white login-link text-h6" href="https://www.si.edu/termsofuse">
+                        Terms of Use
+                    </a>
+                </div>
+                <div v-else>
+                    <a class="text-white login-link text-h6" href="https://www.si.edu/privacy">
+                        Privacy Statement
+                    </a>
+                </div>
             </div>
             <div class="col-2">
                 <div>
