@@ -723,14 +723,6 @@ class OccurrenceManager{
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
             $sqlWhere .= 'AND (it.keyvalue = "'.SanitizerService::cleanInStr($this->conn,$this->searchTermsArr['imagetag']).'") ';
         }
-        if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
-            $keywordArr = explode(';',$this->searchTermsArr['imagekeyword']);
-            $tempArr = array();
-            foreach($keywordArr as $value){
-                $tempArr[] = "(ik.keyword LIKE '%".trim(SanitizerService::cleanInStr($this->conn,$value))."%')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
-        }
         if(array_key_exists('uploaddate1',$this->searchTermsArr) && $this->searchTermsArr['uploaddate1']){
             $dateArr = array();
             if(strpos($this->searchTermsArr['uploaddate1'],' to ')){
@@ -1143,7 +1135,6 @@ class OccurrenceManager{
             $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
             $sqlJoin .= array_key_exists('phuid',$this->searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' :'';
             $sqlJoin .= array_key_exists('imagetag',$this->searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' :'';
-            $sqlJoin .= array_key_exists('imagekeyword',$this->searchTermsArr) ? 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ' :'';
         }
         return $sqlJoin;
     }

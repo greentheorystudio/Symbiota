@@ -95,9 +95,6 @@ class ImageLibraryManager{
         if(array_key_exists('tags',$this->searchTermsArr) && $this->searchTermsArr['tags']){
             $sql .= 'INNER JOIN imagetag AS it ON i.imgid = it.imgid ';
         }
-        if(array_key_exists('keywords',$this->searchTermsArr) && $this->searchTermsArr['keywords']){
-            $sql .= 'INNER JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
-        }
         if($this->sqlWhere){
             $sql .= $this->sqlWhere.' AND ';
         }
@@ -252,9 +249,6 @@ class ImageLibraryManager{
         $sql .= 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
             $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
-        }
-        if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
-            $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';

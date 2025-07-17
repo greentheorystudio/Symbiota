@@ -29,109 +29,6 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		return $status;
 	}
 
-	public function editImage(): string
-    {
-		$this->setRootpaths();
-		$status = 'Image editted successfully!';
-		$imgId = $_REQUEST['imgid'];
-	 	$url = $_REQUEST['url'];
-	 	$tnUrl = $_REQUEST['tnurl'];
-	 	$origUrl = $_REQUEST['origurl'];
-        $oldTnUrl = '';
-	 	if(array_key_exists('renameweburl',$_REQUEST)){
-	 		$oldUrl = $_REQUEST['oldurl'];
-	 		$oldName = str_replace($this->imageRootUrl,$this->imageRootPath,$oldUrl);
-	 		$newWebName = str_replace($this->imageRootUrl,$this->imageRootPath,$url);
-	 		if($url !== $oldUrl){
-	 			if(file_exists($newWebName)){
- 					$status = 'ERROR: unable to modify image URL because a file already exists with that name; ';
-		 			$url = $oldUrl;
-	 			}
-	 			else if(!rename($oldName,$newWebName)){
-                     $url = $oldUrl;
-                     $status .= 'Web URL rename FAILED (possible write permissions issue); ';
-                 }
-	 		}
-		}
-		if(array_key_exists('renametnurl',$_REQUEST)){
-	 		$oldTnUrl = $_REQUEST['oldtnurl'];
-	 		$oldName = str_replace($this->imageRootUrl,$this->imageRootPath,$oldTnUrl);
-	 		$newName = str_replace($this->imageRootUrl,$this->imageRootPath,$tnUrl);
-	 		if($tnUrl !== $oldTnUrl){
-	 			if(file_exists($newName)){
- 					$status = 'ERROR: unable to modify image URL because a file already exists with that name; ';
-		 			$tnUrl = $oldTnUrl;
-	 			}
-	 			else if(!rename($oldName,$newName)){
-                     $tnUrl = $oldTnUrl;
-                     $status = 'Thumbnail URL rename FAILED (possible write permissions issue); ';
-                 }
-	 		}
-		}
-		if(array_key_exists('renameorigurl',$_REQUEST)){
-	 		$oldOrigUrl = $_REQUEST['oldorigurl'];
-	 		$oldName = str_replace($this->imageRootUrl,$this->imageRootPath,$oldOrigUrl);
-	 		$newName = str_replace($this->imageRootUrl,$this->imageRootPath,$origUrl);
-	 		if($origUrl !== $oldOrigUrl){
-	 			if(file_exists($newName)){
- 					$status = 'ERROR: unable to modify image URL because a file already exists with that name; ';
-		 			$tnUrl = $oldTnUrl;
-	 			}
-	 			else if(!rename($oldName,$newName)){
-                     $origUrl = $oldOrigUrl;
-                     $status .= 'ERROR: Thumbnail URL rename FAILED (possible write permissions issue); ';
-                 }
-	 		}
-		}
-		$occId = $_REQUEST['occid'];
-		$caption = SanitizerService::cleanInStr($this->conn,$_REQUEST['caption']);
-		$photographer = SanitizerService::cleanInStr($this->conn,$_REQUEST['photographer']);
-		$photographerUid = (array_key_exists('photographeruid',$_REQUEST)?$_REQUEST['photographeruid']:'');
-		$notes = SanitizerService::cleanInStr($this->conn,$_REQUEST['notes']);
-		$copyRight = SanitizerService::cleanInStr($this->conn,$_REQUEST['copyright']);
-		$sortSeq = (is_numeric($_REQUEST['sortsequence'])?$_REQUEST['sortsequence']:'');
-		$sourceUrl = SanitizerService::cleanInStr($this->conn,$_REQUEST['sourceurl']);
-
-		$sql = 'UPDATE images '.
-			'SET url = "'.$url.'", thumbnailurl = '.($tnUrl?'"'.$tnUrl.'"':'NULL').
-			',originalurl = '.($origUrl?'"'.$origUrl.'"':'NULL').',occid = '.$occId.',caption = '.
-			($caption?'"'.$caption.'"':'NULL').
-			',photographer = '.($photographer?'"'.$photographer.'"': 'NULL').
-			',photographeruid = '.($photographerUid?: 'NULL').
-			',notes = '.($notes?'"'.$notes.'"':'NULL').
-			($sortSeq?',sortsequence = '.$sortSeq:'').
-			',copyright = '.($copyRight?'"'.$copyRight.'"':'NULL').',imagetype = "specimen",sourceurl = '.
-			($sourceUrl?'"'.$sourceUrl.'"':'NULL').
-			' WHERE (imgid = '.$imgId.')';
-		//echo $sql;
-		if($this->conn->query($sql)){
-            $kArr = $this->getImageTagValues();
-            foreach($kArr as $key => $description) {
-                   $sql = null;
-                   if (array_key_exists("ch_$key",$_REQUEST)) {
-                      $sql = 'INSERT IGNORE into imagetag (imgid,keyvalue) values (?,?) ';
-                   }
-                   else if (array_key_exists('hidden_' .$key,$_REQUEST) && $_REQUEST['hidden_' .$key] === 1) {
-                      $sql = 'DELETE from imagetag where imgid = ? and keyvalue = ? ';
-                   }
-                   if ($sql !== null) {
-                      $stmt = $this->conn->stmt_init();
-                      $stmt->prepare($sql);
-                      if ($stmt) {
-                         $stmt->bind_param('is',$imgId,$key);
-                         if (!$stmt->execute()) {
-                            $status .= " (Warning: Failed to update image tag [$key] for $imgId.  " . $stmt->error ;
-                         }
-                         $stmt->close();
-                      }
-                   }
-            }
-        } else { 
-			$status .= 'ERROR: image not changed.';
-		}
-		return $status;
-	}
-
 	public function deleteImage($imgIdDel, $removeImg): bool
     {
 		$status = true; 
@@ -249,10 +146,8 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 			$this->activeImgId = $imgManager->getActiveImgId();
 		}
 		
-		$status = $imgManager->insertImageTags($postArr);
-		
 		$this->errorStr = $imgManager->getErrStr();
-		return $status;
+		return true;
 	}
 	
 	private function setRootPaths(): void
@@ -280,44 +175,4 @@ class OccurrenceEditorImages extends OccurrenceEditorManager {
 		}
 		return $this->photographerArr;
 	}
-
-    public function getImageTagValues(): array
-    {
-        $returnArr = array();
-        $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $returnArr[$row->tagkey] = $row->description_en;
-        }
-        $result->close();
-       return $returnArr;
-    } 
-
-    public function getImageTagUsage($imgid): array
-    {
-        $resultArr = array();
-        $imageTagArr = array();
-        $sql = 'SELECT k.tagkey '.
-            'FROM imagetagkey AS k LEFT JOIN imagetag AS i ON k.tagkey = i.keyvalue '.
-            'WHERE i.imgid = '.$imgid.' ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $imageTagArr[] = $row->tagkey;
-        }
-
-        $sql = 'SELECT tagkey, description_en, shortlabel, sortorder '.
-            'FROM imagetagkey ORDER BY sortorder ';
-        $result = $this->conn->query($sql);
-        $i = 0;
-        while($row = $result->fetch_object()){
-            $resultArr[$i]['tagkey'] = $row->tagkey;
-            $resultArr[$i]['shortlabel'] = $row->shortlabel;
-            $resultArr[$i]['description'] = $row->description_en;
-            $resultArr[$i]['sortorder'] = $row->sortorder;
-            $resultArr[$i]['value'] = (in_array($row->tagkey, $imageTagArr, true)?1:0);
-            $i++;
-        }
-        $result->close();
-        return $resultArr;
-    }
 }

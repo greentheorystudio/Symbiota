@@ -273,13 +273,10 @@ class DwcArchiverCore extends Manager{
             if(strpos($this->conditionSql,'p.point') !== false){
                 $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
-            if(strpos($this->conditionSql,'(i.') !== false || strpos($this->conditionSql,'(it.') !== false || strpos($this->conditionSql,'(ik.') !== false){
+            if(strpos($this->conditionSql,'(i.') !== false || strpos($this->conditionSql,'(it.') !== false){
                 $sql .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
                 if(strpos($this->conditionSql,'(it.') !== false){
                     $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
-                }
-                if(strpos($this->conditionSql,'(ik.') !== false){
-                    $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
                 }
             }
         }
