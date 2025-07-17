@@ -262,9 +262,6 @@ class ImageLibraryManager{
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')){
-            $sql .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
         return $sql;
     }
 

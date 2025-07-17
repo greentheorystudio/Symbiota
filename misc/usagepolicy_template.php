@@ -20,7 +20,7 @@ header('X-Frame-Options: SAMEORIGIN');
         ?>
         <div id="mainContainer">
             <div class="q-pa-md">
-                <div class="text-h5 text-bold">Guidelines for Acceptable Use of Data</div>
+                <div class="text-h5 text-bold">Terms of Use, Policies, and Guidelines</div>
                 <div class="q-mt-md text-h6 text-bold">Recommended Citation Formats</div>
                 <div class="q-pl-md q-mt-md q-mb-md">
                     Use one of the following formats to cite data retrieved from the {{ defaultTitle }} network:

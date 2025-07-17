@@ -1,6 +1,5 @@
 <?php
 include_once(__DIR__ . '/OccurrenceManager.php');
-include_once(__DIR__ . '/OccurrenceAccessStats.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceListManager extends OccurrenceManager{
@@ -135,10 +134,6 @@ class OccurrenceListManager extends OccurrenceManager{
                 $previousOccid = $r->occid;
             }
             $rs->free();
-        }
-        if($returnArr){
-            $statsManager = new OccurrenceAccessStats();
-            $statsManager->recordAccessEventByArr(array_keys($returnArr),'list');
         }
         return $returnArr;
     }

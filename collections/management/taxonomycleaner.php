@@ -1267,12 +1267,12 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 nameSearchResults = itisInitialSearchResults;
                                 getITISNameSearchResultsRecord();
                             }
-                            else if(itisInitialSearchResults.length === 0){
-                                processErrorResponse(false, 'Not found');
-                                runScinameDataSourceSearch();
-                            }
                             else if(itisInitialSearchResults.length > 1){
                                 validateITISInitialNameSearchResults();
+                            }
+                            else{
+                                processErrorResponse(false, 'Not found');
+                                runScinameDataSourceSearch();
                             }
                         }
                         else{
@@ -1969,7 +1969,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 body: formData
                             })
                             .then((response) => {
-                                if(response.status === 200){
+                                if(response.ok && response.status === 200){
                                     response.json().then((resObj) => {
                                         const coreMetadata = resObj['coreMetadata'];
                                         if(coreMetadata){

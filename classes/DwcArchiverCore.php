@@ -3,9 +3,7 @@ include_once(__DIR__ . '/Manager.php');
 include_once(__DIR__ . '/DwcArchiverOccurrence.php');
 include_once(__DIR__ . '/DwcArchiverDetermination.php');
 include_once(__DIR__ . '/DwcArchiverImage.php');
-include_once(__DIR__ . '/DwcArchiverAttribute.php');
 include_once(__DIR__ . '/../services/UuidService.php');
-include_once(__DIR__ . '/OccurrenceAccessStats.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class DwcArchiverCore extends Manager{
@@ -33,7 +31,6 @@ class DwcArchiverCore extends Manager{
     private $securityArr;
     private $includeDets = 1;
     private $includeImgs = 1;
-    private $includeAttributes = 0;
     private $redactLocalities = 1;
     private $rareReaderArr = array();
 
@@ -206,13 +203,7 @@ class DwcArchiverCore extends Manager{
         $sqlFrag = '';
         if($this->conditionArr){
             foreach($this->conditionArr as $field => $condArr){
-                if($field === 'stateid'){
-                    $sqlFrag .= 'AND (a.stateid IN('.implode(',',$condArr['EQUALS']).')) ';
-                }
-                elseif($field === 'traitid'){
-                    $sqlFrag .= 'AND (s.traitid IN('.implode(',',$condArr['EQUALS']).')) ';
-                }
-                elseif($field === 'clid'){
+                if($field === 'clid'){
                     $sqlFrag .= 'AND (v.clid IN('.implode(',',$condArr['EQUALS']).')) ';
                 }
                 else{
@@ -282,9 +273,6 @@ class DwcArchiverCore extends Manager{
             if(strpos($this->conditionSql,'p.point') !== false){
                 $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
-            if(strpos($this->conditionSql,'MATCH(f.recordedby)') || strpos($this->conditionSql,'MATCH(f.locality)')){
-                $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-            }
             if(strpos($this->conditionSql,'(i.') !== false || strpos($this->conditionSql,'(it.') !== false || strpos($this->conditionSql,'(ik.') !== false){
                 $sql .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
                 if(strpos($this->conditionSql,'(it.') !== false){
@@ -293,13 +281,6 @@ class DwcArchiverCore extends Manager{
                 if(strpos($this->conditionSql,'(ik.') !== false){
                     $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
                 }
-            }
-            if(strpos($this->conditionSql,'a.stateid') !== false){
-                $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid ';
-            }
-            elseif(strpos($this->conditionSql,'s.traitid') !== false){
-                $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid '.
-                    'INNER JOIN tmstates AS s ON a.stateid = s.stateid ';
             }
         }
         return $sql;
@@ -526,11 +507,6 @@ class DwcArchiverCore extends Manager{
                 $zipArchive->addFile($this->targetPath.time().'-images'.$this->fileExt);
                 $zipArchive->renameName($this->targetPath.time().'-images'.$this->fileExt,'images'.$this->fileExt);
             }
-            if($this->includeAttributes){
-                $this->writeAttributeFile();
-                $zipArchive->addFile($this->targetPath.time().'-attr'.$this->fileExt);
-                $zipArchive->renameName($this->targetPath.time().'-attr'.$this->fileExt,'measurementOrFact'.$this->fileExt);
-            }
             $this->writeMetaFile();
             $zipArchive->addFile($this->targetPath.time().'-meta.xml');
             $zipArchive->renameName($this->targetPath.time().'-meta.xml','meta.xml');
@@ -545,9 +521,6 @@ class DwcArchiverCore extends Manager{
             }
             if($this->includeImgs) {
                 unlink($this->targetPath . time() . '-images' . $this->fileExt);
-            }
-            if($this->includeAttributes) {
-                unlink($this->targetPath . time() . '-attr' . $this->fileExt);
             }
             unlink($this->targetPath.time().'-meta.xml');
             if($this->schemaType === 'dwc'){
@@ -667,35 +640,6 @@ class DwcArchiverCore extends Manager{
                 $imgCnt++;
             }
             $rootElem->appendChild($extElem2);
-        }
-
-        if($this->includeAttributes){
-            $extElem3 = $newDoc->createElement('extension');
-            $extElem3->setAttribute('encoding', 'UTF-8');
-            $extElem3->setAttribute('fieldsTerminatedBy',',');
-            $extElem3->setAttribute('linesTerminatedBy','\n');
-            $extElem3->setAttribute('fieldsEnclosedBy','"');
-            $extElem3->setAttribute('ignoreHeaderLines','1');
-            $extElem3->setAttribute('rowType','http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact');
-
-            $filesElem3 = $newDoc->createElement('files');
-            $filesElem3->appendChild($newDoc->createElement('location','measurementOrFact'.$this->fileExt));
-            $extElem3->appendChild($filesElem3);
-
-            $coreIdElem3 = $newDoc->createElement('coreid');
-            $coreIdElem3->setAttribute('index','0');
-            $extElem3->appendChild($coreIdElem3);
-
-            $mofCnt = 1;
-            $termArr = $this->attributeFieldArr['terms'];
-            foreach($termArr as $v){
-                $fieldElem = $newDoc->createElement('field');
-                $fieldElem->setAttribute('index', $mofCnt);
-                $fieldElem->setAttribute('term', ($v ?: ''));
-                $extElem3->appendChild($fieldElem);
-                $mofCnt++;
-            }
-            $rootElem->appendChild($extElem3);
         }
 
         $newDoc->save($this->targetPath.time().'-meta.xml');
@@ -1205,7 +1149,6 @@ class DwcArchiverCore extends Manager{
                 if($this->schemaType === 'pensoft'){
                     $typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
                 }
-                $statsManager = new OccurrenceAccessStats();
                 while($r = $rs->fetch_assoc()){
                     if(!$r['occurrenceID']){
                         $guidTarget = $this->collArr[$r['collid']]['guidtarget'];
@@ -1459,34 +1402,6 @@ class DwcArchiverCore extends Manager{
         return true;
     }
 
-    private function writeAttributeFile(): ?bool
-    {
-        $filePath = $this->targetPath.time().'-attr'.$this->fileExt;
-        $fh = fopen($filePath, 'wb');
-        if(!$fh){
-            return false;
-        }
-
-        if(!$this->attributeFieldArr) {
-            $this->attributeFieldArr = DwcArchiverAttribute::getFieldArr();
-        }
-
-        fputcsv($fh, array_keys($this->attributeFieldArr['fields']));
-
-        $sql = DwcArchiverAttribute::getSql($this->attributeFieldArr['fields'],$this->conditionSql);
-        //echo $sql; exit;
-        if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-            while($r = $rs->fetch_assoc()){
-                $this->addcslashesArr($r);
-                fputcsv($fh, $r);
-            }
-            $rs->free();
-        }
-
-        fclose($fh);
-        return true;
-    }
-
     public function deleteArchive($collID): bool
     {
         $status = false;
@@ -1598,11 +1513,6 @@ class DwcArchiverCore extends Manager{
     public function setIncludeImgs($includeImgs): void
     {
         $this->includeImgs = $includeImgs;
-    }
-
-    public function setIncludeAttributes($include): void
-    {
-        $this->includeAttributes = $include;
     }
 
     public function setRedactLocalities($redact): void
