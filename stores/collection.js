@@ -1,14 +1,54 @@
 const useCollectionStore = Pinia.defineStore('collection', {
     state: () => ({
+        blankCollectionRecord: {
+            collid: 0,
+            ccpk: null,
+            institutioncode: null,
+            collectioncode: null,
+            collectionname: null,
+            collectionid: null,
+            datasetid: null,
+            datasetname: null,
+            iid: null,
+            fulldescription: null,
+            homepage: null,
+            individualurl: null,
+            contact: null,
+            email: null,
+            latitudedecimal: null,
+            longitudedecimal: null,
+            icon: null,
+            colltype: null,
+            managementtype: null,
+            datarecordingmethod: null,
+            defaultrepcount: null,
+            collectionguid: null,
+            securitykey: null,
+            guidtarget: null,
+            rightsholder: null,
+            rights: null,
+            usageterm: null,
+            publishtogbif: null,
+            publishtoidigbio: null,
+            aggkeysstr: null,
+            dwcaurl: null,
+            bibliographiccitation: null,
+            accessrights: null,
+            configjson: null,
+            ispublic: null
+        },
         collectionArr: [],
         collectionData: {},
+        collectionEditData: {},
         collectionId: 0,
         collectionPermissions: [],
+        collectionUpdateData: {},
         configuredDataDownloads: [],
         eventMofData: {},
         eventMofDataFields: {},
         eventMofDataFieldsLayoutData: {},
         eventMofDataLabel: 'Measurement or Fact Data',
+        occurrenceFieldControlledVocabularies: {},
         occurrenceMofData: {},
         occurrenceMofDataFields: {},
         occurrenceMofDataFieldsLayoutData: {},
@@ -23,13 +63,27 @@ const useCollectionStore = Pinia.defineStore('collection', {
             return state.collectionArr;
         },
         getCollectionData(state) {
-            return state.collectionData;
+            return state.collectionEditData;
+        },
+        getCollectionEditsExist(state) {
+            let exist = false;
+            state.collectionUpdateData = Object.assign({}, {});
+            for(let key in state.collectionEditData) {
+                if(state.collectionEditData.hasOwnProperty(key) && state.collectionEditData[key] !== state.collectionData[key]) {
+                    exist = true;
+                    state.collectionUpdateData[key] = state.collectionEditData[key];
+                }
+            }
+            return exist;
         },
         getCollectionId(state) {
             return state.collectionId;
         },
         getCollectionPermissions(state) {
             return state.collectionPermissions;
+        },
+        getCollectionValid(state) {
+            return !!state.collectionEditData['collectionname'];
         },
         getConfiguredDataDownloads(state) {
             return state.configuredDataDownloads;
@@ -73,6 +127,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getInstallationKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('installationKey')) ? state.collectionData['aggkeysstr']['installationKey'] : null);
+        },
+        getOccurrenceFieldControlledVocabularies(state) {
+            return state.occurrenceFieldControlledVocabularies;
         },
         getOccurrenceMofData(state) {
             return state.occurrenceMofData;
@@ -177,21 +234,56 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         clearCollectionData() {
             this.collectionId = 0;
-            this.collectionData = Object.assign({}, {});
+            this.collectionData = Object.assign({}, this.blankCollectionRecord);
             this.collectionPermissions.length = 0;
             this.configuredDataDownloads.length = 0;
             this.eventMofData = Object.assign({}, {});
             this.eventMofDataFields = Object.assign({}, {});
             this.eventMofDataFieldsLayoutData = Object.assign({}, {});
             this.eventMofDataLabel = 'Measurement or Fact Data';
+            this.occurrenceFieldControlledVocabularies = Object.assign({}, {});
             this.occurrenceMofData = Object.assign({}, {});
             this.occurrenceMofDataFields = Object.assign({}, {});
             this.occurrenceMofDataFieldsLayoutData = Object.assign({}, {});
             this.occurrenceMofDataLabel = 'Measurement or Fact Data';
         },
-        getCollectionListByUserRights(callback) {
+        createCollectionRecord(callback) {
             const formData = new FormData();
-            formData.append('action', 'getCollectionListByUserRights');
+            formData.append('collection', JSON.stringify(this.collectionEditData));
+            formData.append('action', 'createCollectionRecord');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) > 0){
+                    this.setCollection(Number(res));
+                }
+            });
+        },
+        deleteCollectionRecord(collid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('action', 'deleteCollectionRecord');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((val) => {
+                    this.setCollection(0);
+                    callback(Number(val));
+                });
+            });
+        },
+        getCollectionListByUid(uid, callback) {
+            const formData = new FormData();
+            formData.append('uid', uid.toString());
+            formData.append('action', 'getCollectionListByUid');
             fetch(collectionApiUrl, {
                 method: 'POST',
                 body: formData
@@ -208,7 +300,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             if(Number(collid) > 0){
                 this.collectionId = Number(collid);
                 const formData = new FormData();
-                formData.append('permissionJson', JSON.stringify(["CollAdmin", "CollEditor"]));
+                formData.append('permissionJson', JSON.stringify(['CollAdmin', 'CollEditor']));
                 formData.append('key', collid.toString());
                 formData.append('action', 'validatePermission');
                 fetch(permissionApiUrl, {
@@ -252,6 +344,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             .then((resObj) => {
                 if(Number(resObj['ispublic']) === 1 || (this.collectionPermissions.includes('CollAdmin') || this.collectionPermissions.includes('CollEditor'))){
                     this.collectionData = Object.assign({}, resObj);
+                    this.collectionEditData = Object.assign({}, this.collectionData);
                     if(this.collectionData['configuredData']){
                         if(this.collectionData['configuredData'].hasOwnProperty('eventMofExtension')){
                             this.eventMofData = Object.assign({}, this.collectionData['configuredData']['eventMofExtension']);
@@ -280,6 +373,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
                         if(this.collectionData['configuredData'].hasOwnProperty('dataDownloads') && this.collectionData['configuredData']['dataDownloads']){
                             this.configuredDataDownloads = this.collectionData['configuredData']['dataDownloads'];
                         }
+                        if(this.collectionData['configuredData'].hasOwnProperty('occurrenceFieldControlledVocabularies') && this.collectionData['configuredData']['occurrenceFieldControlledVocabularies']){
+                            this.occurrenceFieldControlledVocabularies = Object.assign({}, this.collectionData['configuredData']['occurrenceFieldControlledVocabularies']);
+                        }
                     }
                     if(callback){
                         callback();
@@ -287,6 +383,25 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 }
                 else{
                     window.location.href = this.getClientRoot + '/index.php';
+                }
+            });
+        },
+        updateCollectionRecord(callback) {
+            const formData = new FormData();
+            formData.append('collid', this.collectionId.toString());
+            formData.append('collectionData', JSON.stringify(this.collectionUpdateData));
+            formData.append('action', 'updateCollectionRecord');
+            fetch(collectionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) === 1){
+                    this.collectionData = Object.assign({}, this.collectionEditData);
                 }
             });
         },

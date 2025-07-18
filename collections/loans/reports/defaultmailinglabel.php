@@ -119,9 +119,11 @@ if($export){
 else{
 	?>
 	<!DOCTYPE html>
-<html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
+    <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 		<head>
-			<title>Mailing Label</title>
+			<title><?php echo $identifier; ?> Mailing Label</title>
+            <meta name="description" content="Mailing label for loan id: <?php echo $identifier; ?>">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
 			<style>
 				<?php 
 					include_once(__DIR__ . '/../../../css/main.css');

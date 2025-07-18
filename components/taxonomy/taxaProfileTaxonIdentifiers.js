@@ -1,48 +1,37 @@
 const taxaProfileTaxonIdentifiers = {
-    props: {
-        identifiers: {
-            type: Array,
-            default: []
-        }
-    },
     template: `
-        <template v-if="identifiers.length">
+        <template v-if="taxaIdentifiers.length > 0">
             <div>
                 {{ identifierStr }}
             </div>
         </template>
     `,
-    setup(props) {
+    setup() {
         const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
 
-        const identifierStr = Vue.ref(null);
-        const propsRefs = Vue.toRefs(props);
-        const taxonomicTags = baseStore.getTaxonomicTags;
-
-        Vue.watch(propsRefs.identifiers, () => {
-            processIdentifiers();
-        });
-
-        function processIdentifiers() {
+        const identifierStr = Vue.computed(() => {
+            let identifierStr = '';
             const strPartArr = [];
-            identifierStr.value = '';
-            if(props.identifiers.length > 0){
-                props.identifiers.forEach((identifier) => {
+            if(taxaIdentifiers.value.length > 0){
+                taxaIdentifiers.value.forEach((identifier) => {
                     if(taxonomicTags.hasOwnProperty(identifier.name)){
                         const idStr = taxonomicTags[identifier.name] + ': ' + identifier.identifier;
                         strPartArr.push(idStr);
                     }
                 });
-                identifierStr.value = strPartArr.join('; ') + ';';
+                if(strPartArr.length > 0){
+                    identifierStr = strPartArr.join('; ') + ';';
+                }
             }
-        }
-
-        Vue.onMounted(() => {
-            processIdentifiers();
+            return identifierStr;
         });
+        const taxaIdentifiers = Vue.computed(() => taxaStore.getTaxaIdentifiers);
+        const taxonomicTags = baseStore.getTaxonomicTags;
 
         return {
-            identifierStr
+            identifierStr,
+            taxaIdentifiers
         }
     }
 };

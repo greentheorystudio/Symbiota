@@ -4,40 +4,65 @@ body{
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
 }
+body.full-window-mode{
+    background-color: #FFFFFF;
+    padding: 15px;
+}
+@media print {
+	body, #appContainer{
+		background-color: #ffffff !important;
+		border: 0 solid black !important;
+	}
+	#appContainer{
+		display: flex !important;
+		flex-direction: column !important;
+		justify-content: flex-start !important;
+	}
+	#mainContainer{
+		background-color: #ffffff !important;
+	}
+	#bannerContainer, #topNavigation, #breadcrumbs, #footer{
+		display: none !important;
+	}
+}
 h1 {
 	font-size: 2em;
 	font-weight: bold;
 	line-height: normal;
+	margin: 0;
 }
 h2 {
 	font-size: 1.5em;
 	font-weight: bold;
 	line-height: normal;
+	margin: 0;
 }
 h3 {
 	font-size: 1.17em;
 	font-weight: bold;
 	line-height: normal;
+	margin: 0;
 }
 h4 {
 	font-weight: bold;
 	line-height: normal;
+	margin: 0;
 }
 h5 {
 	font-size: .83em;
 	font-weight: bold;
 	line-height: normal;
+	margin: 0;
 }
 h6 {
 	font-size: .67em;
 	font-weight: bold;
 	line-height: normal;
+	margin: 0;
 }
-#innertext{
-	margin:	10px;
+#mainContainer{
 	background-color: #FFFFFF;
 	min-height:400px;
-	padding-top: 15px;
 }
 a{
 	color: 		#424242;
@@ -98,13 +123,13 @@ table.styledtable tr.alt td {
 	color:				#000000;
 	background-color: #dfdfdf;
 }
-div.navpath {
+#breadcrumbs {
 	color: #000000;
 }
-div.navpath a {
+#breadcrumbs a {
 	color: #000000;
 }
-div.navpath a:hover {
+#breadcrumbs a:hover {
 	color: #C0C0C0;
 }
 button:hover{
@@ -338,14 +363,6 @@ ol.mp_list li.mp_highlighted {
 	box-shadow: 0 0 .3em 1px red,
 	0 1px 1px hsla(0,0%,100%,.8);
 }
-.pmargin{
-	margin: 10px;
-}
-.sitemapDataManagementContainer{
-	margin: 30px 0 10px 10px;
-	padding-left: 25px;
-	padding-right: 15px;
-}
 .loadingModal {
 	display:    none;
 	position:   fixed;
@@ -512,23 +529,9 @@ body.processing .loadingModal {
 }
 
 /* Taxon Profile page styles */
-#inner-table{
+.taxon-profile{
 	width: 90%;
 	margin: 15px auto;
-}
-.profile-split-row{
-	display: flex;
-	justify-content: space-between;
-	margin-top: 10px;
-}
-.profile-center-row{
-	display: flex;
-	justify-content: center;
-	margin-top: 15px;
-}
-.profile-column{
-	display: flex;
-	flex-direction: column;
 }
 .expansion-container{
 	width: 100%;
@@ -804,36 +807,30 @@ body.processing .loadingModal {
 	width: 60%;
 	height: 60%;
 	border: 1px solid black;
-	min-width: 500px;
-	min-height: 500px;
 }
 .md-popup {
 	max-width: 75% !important;
 	width: 75% !important;
 	height: 70% !important;
 	border: 1px solid black;
-	min-width: 500px;
 }
 .lg-popup {
 	max-width: 90% !important;
 	width: 90% !important;
 	height: 85% !important;
 	border: 1px solid black;
-	min-width: 700px;
 }
 .xl-popup {
 	max-width: 98% !important;
 	width: 98% !important;
 	height: 95% !important;
 	border: 1px solid black;
-	min-width: 700px;
 }
 .search-criteria-popup {
 	max-width: 90% !important;
 	width: 90% !important;
 	height: 85% !important;
 	border: 1px solid black;
-	min-width: 300px;
 }
 .layer-controller-element {
 	width: 95%;
@@ -1056,6 +1053,9 @@ body.processing .loadingModal {
 	left: 0;
 	height: 100%;
 }
+.spatial-record-table {
+	table-layout: fixed;
+}
 .spatial-record-table thead tr th {
 	font-weight: bold;
 	text-align: center;
@@ -1080,7 +1080,7 @@ body.processing .loadingModal {
 .editor-inner-container {
 	width: 80%;
 }
-.occurrence-entry-format-selector {
+.selector-input-spacer {
 	min-width: 125px;
 }
 .black-border {
@@ -1128,4 +1128,18 @@ body.processing .loadingModal {
 }
 .sticky-header-table tbody {
 	scroll-margin-top: 48px;
+}
+.login-container {
+	width: 30%;
+}
+.human-validator-canvas {
+	border: 1px solid #000;
+	height: 50px;
+	width: 400px;
+}
+.create-account-container {
+	width: 90%;
+}
+.error-border {
+    border: 3px solid #C10015;
 }

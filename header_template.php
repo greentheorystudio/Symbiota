@@ -1,14 +1,14 @@
 <?php
 include_once(__DIR__ . '/services/SanitizerService.php');
 ?>
-<div id="mainContainer">
+<div id="appContainer">
     <div id="bannerContainer">
         <h1 class="title">Your New Portal</h1>
     </div>
     <div id="topNavigation">
         <q-toolbar class="q-pa-md horizontalDropDown">
             <template v-if="windowWidth < 1440">
-                <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu">
+                <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Menu">
                     <q-menu>
                         <q-list dense>
                             <template v-for="item in navBarData">
@@ -84,26 +84,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         {url: clientRoot + '/collections/list.php', label: 'Search Collections'},
                         {url: clientRoot + '/spatial/index.php', label: 'Spatial Module', newTab: true},
                         {url: clientRoot + '/imagelib/search.php', label: 'Image Search'},
-                        {url: clientRoot + '/imagelib/index.php', label: 'Browse Images'},
-                        {
-                            url: clientRoot + '/projects/index.php',
-                            label: 'Inventories',
-                            subItems: [
-                                {url: clientRoot + '/projects/index.php?pid=1', label: 'Project 1'},
-                                {url: clientRoot + '/projects/index.php?pid=2', label: 'Project 2'},
-                                {url: clientRoot + '/projects/index.php?pid=3', label: 'Project 3'},
-                                {url: clientRoot + '/projects/index.php?pid=4', label: 'Project 4'}
-                            ]
-                        },
-                        {
-                            label: 'Interactive Tools',
-                            subItems: [
-                                {url: clientRoot + '/checklists/dynamicmap.php?interface=checklist&tid=1', label: 'Dynamic Checklist 1'},
-                                {url: clientRoot + '/checklists/dynamicmap.php?interface=checklist&tid=2', label: 'Dynamic Checklist 2'},
-                                {url: clientRoot + '/checklists/dynamicmap.php?interface=checklist&tid=3', label: 'Dynamic Checklist 3'},
-                                {url: clientRoot + '/checklists/dynamicmap.php?interface=checklist&tid=4', label: 'Dynamic Checklist 4'}
-                            ]
-                        }
+                        {url: clientRoot + '/imagelib/index.php', label: 'Browse Images'}
                     ]);
                     let navBarTimeout = null;
                     const navBarToggle = Vue.ref({});

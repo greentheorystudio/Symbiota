@@ -19,13 +19,16 @@ elseif($collid){
         $isEditor = true;
     }
 }
+elseif($action === 'updateLocalitySecurity' && array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS'])){
+    $isEditor = true;
+}
 
 if($action && SanitizerService::validateInternalRequest()){
     $occurrences = new Occurrences();
     if($action === 'getOccurrenceDataLock' && $isEditor && $occid){
         echo json_encode($occurrences->getLock($occid));
     }
-    elseif($action === 'createOccurrenceRecord' && $isEditor){
+    elseif($action === 'createOccurrenceRecord' && $isEditor && array_key_exists('occurrence', $_POST)){
         echo $occurrences->createOccurrenceRecord(json_decode($_POST['occurrence'], true));
     }
     elseif($action === 'updateOccurrenceRecord' && $occid && $isEditor && array_key_exists('occurrenceData', $_POST)){
@@ -111,5 +114,15 @@ if($action && SanitizerService::validateInternalRequest()){
         $returnArr['taxaCnt'] = $occurrences->getBadTaxaCount($collid);
         $returnArr['occCnt'] = $occurrences->getBadSpecimenCount($collid);
         echo json_encode($returnArr);
+    }
+    elseif($action === 'updateOccurrenceLocation' && $isEditor && $occid && array_key_exists('locationid', $_POST)){
+        $locationid = (int)$_POST['locationid'];
+        $updateData = array_key_exists('updateData', $_POST) && (int)$_POST['updateData'] === 1;
+        echo $occurrences->updateOccurrenceLocationId($occid, $locationid, $updateData);
+    }
+    elseif($action === 'updateOccurrenceEvent' && $isEditor && $occid && array_key_exists('eventid', $_POST)){
+        $eventid = (int)$_POST['eventid'];
+        $updateData = array_key_exists('updateData', $_POST) && (int)$_POST['updateData'] === 1;
+        echo $occurrences->updateOccurrenceEventId($occid, $eventid, $updateData);
     }
 }

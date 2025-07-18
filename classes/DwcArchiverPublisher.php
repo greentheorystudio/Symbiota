@@ -162,7 +162,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			}
 		}
 
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'webservices/dwc/rss.xml';
+		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
 		if(file_exists($rssFile)){
 			$oldDoc = new DOMDocument();
 			$oldDoc->load($rssFile);
@@ -188,7 +188,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	public function getDwcaItems($collid = null): array
 	{
 		$retArr = array();
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'webservices/dwc/rss.xml';
+		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
 		if(file_exists($rssFile)){
 			$xmlDoc = new DOMDocument();
 			$xmlDoc->load($rssFile);

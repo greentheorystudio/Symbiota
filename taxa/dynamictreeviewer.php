@@ -10,9 +10,10 @@ header('X-Frame-Options: SAMEORIGIN');
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Interactive Taxonomic Tree</title>
+        <meta name="description" content="Interactive taxonomic tree for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .tree-container {
                 min-height: 600px;
@@ -25,39 +26,40 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div class="navpath">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <a href="dynamictreeviewer.php"><b>Interactive Taxonomic Tree</b></a>
-        </div>
-        <div id="app" class="fit">
-            <div class="fit row justify-between q-ma-none q-pa-none q-col-gutter-sm">
-                <div class="col-3 q-pa-sm">
-                    <q-card flat bordered>
-                        <q-card-section class="column q-gutter-sm q-pa-sm">
-                            <div>
-                                <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Select Kingdom" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
-                            </div>
-                            <div>
-                                <selector-input-element label="Layout Type" :options="layoutTypeOptions" :value="selectedLayoutType" @update:value="setLayoutType"></selector-input-element>
-                            </div>
-                            <div>
-                                <selector-input-element label="Node Layout" :options="linkLayoutOptions" :value="selectedLinkLayout" @update:value="setLinkLayout"></selector-input-element>
-                            </div>
-                            <div>
-                                <q-btn color="primary" @click="centerTree();" label="Center Tree" dense />
-                            </div>
-                        </q-card-section>
-                    </q-card>
-                </div>
-                <div class="col-9 q-pa-sm">
-                    <q-card flat bordered>
-                        <q-card-section class="q-pa-sm">
-                            <div ref="treeDisplayRef" class="tree-container"></div>
-                        </q-card-section>
-                    </q-card>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <span class="text-bold">Interactive Taxonomic Tree</span>
+            </div>
+            <div class="q-pa-md fit">
+                <div class="fit row justify-between q-ma-none q-pa-none q-col-gutter-sm">
+                    <div class="col-3 q-pa-sm">
+                        <q-card flat bordered>
+                            <q-card-section class="column q-gutter-sm q-pa-sm">
+                                <div>
+                                    <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Select Kingdom" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+                                </div>
+                                <div>
+                                    <selector-input-element label="Layout Type" :options="layoutTypeOptions" :value="selectedLayoutType" @update:value="setLayoutType"></selector-input-element>
+                                </div>
+                                <div>
+                                    <selector-input-element label="Node Layout" :options="linkLayoutOptions" :value="selectedLinkLayout" @update:value="setLinkLayout"></selector-input-element>
+                                </div>
+                                <div>
+                                    <q-btn color="primary" @click="centerTree();" label="Center Tree" dense />
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
+                    <div class="col-9 q-pa-sm">
+                        <q-card flat bordered>
+                            <q-card-section class="q-pa-sm">
+                                <div ref="treeDisplayRef" class="tree-container"></div>
+                            </q-card-section>
+                        </q-card>
+                    </div>
                 </div>
             </div>
-        </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
@@ -463,6 +465,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     });
 
                     return {
+                        clientRoot,
                         layoutTypeOptions,
                         linkLayoutOptions,
                         marginXValue,
@@ -480,7 +483,7 @@ header('X-Frame-Options: SAMEORIGIN');
             });
             dynamicTaxonomicTreeViewer.use(Quasar, { config: {} });
             dynamicTaxonomicTreeViewer.use(Pinia.createPinia());
-            dynamicTaxonomicTreeViewer.mount('#app');
+            dynamicTaxonomicTreeViewer.mount('#mainContainer');
         </script>
     </body>
 </html>

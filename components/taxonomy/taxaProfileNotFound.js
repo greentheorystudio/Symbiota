@@ -1,17 +1,7 @@
 const taxaProfileNotFound = {
-    props: {
-        fuzzyMatches: {
-            type: Array,
-            default: []
-        },
-        taxonValue: {
-            type: String,
-            default: ''
-        }
-    },
     template: `
         <div class="q-mt-xl q-ml-lg">
-            <h2><span class="text-italic">{{ taxonValue }}</span> not found</h2>
+            <h2><span class="text-italic">{{ taxaStr }}</span> not found</h2>
             <div class="q-ml-md text-subtitle1 text-weight-bold">
                 <template v-if="fuzzyMatches.length">
                     Did you mean?
@@ -28,11 +18,17 @@ const taxaProfileNotFound = {
         </div>
     `,
     setup() {
-        const store = useBaseStore();
-        const clientRoot = store.getClientRoot;
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const clientRoot = baseStore.getClientRoot;
+        const fuzzyMatches = Vue.computed(() => taxaStore.getTaxaFuzzyMatches);
+        const taxaStr = Vue.computed(() => taxaStore.getTaxaStr);
 
         return {
-            clientRoot
+            clientRoot,
+            fuzzyMatches,
+            taxaStr
         }
     }
 };

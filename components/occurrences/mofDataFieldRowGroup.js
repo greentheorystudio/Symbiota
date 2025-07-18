@@ -1,5 +1,17 @@
 const mofDataFieldRowGroup = {
     props: {
+        configuredData: {
+            type: Object,
+            default: {}
+        },
+        configuredDataFields: {
+            type: Object,
+            default: {}
+        },
+        editor: {
+            type: Boolean,
+            default: true
+        },
         expansion: {
             type: Boolean,
             default: false
@@ -18,7 +30,7 @@ const mofDataFieldRowGroup = {
             <q-expansion-item class="shadow-1 overflow-hidden expansion-element" :label="label" header-class="bg-grey-3 text-grey-8 text-h6 text-weight-bolder q-pl-md" expand-icon-class="text-bold">
                 <div class="q-pa-sm column q-col-gutter-sm">
                     <template v-for="row in rows">
-                        <mof-data-field-row :fields="row.fields"></mof-data-field-row>
+                        <mof-data-field-row :editor="editor" :configured-data="configuredData" :configured-data-fields="configuredDataFields" :fields="row.fields" @update:configured-edit-data="updateConfiguredEditData"></mof-data-field-row>
                     </template>
                 </div>
             </q-expansion-item>
@@ -30,7 +42,7 @@ const mofDataFieldRowGroup = {
                         {{ label }}
                     </div>
                     <template v-for="row in rows">
-                        <mof-data-field-row :fields="row.fields"></mof-data-field-row>
+                        <mof-data-field-row :editor="editor" :configured-data="configuredData" :configured-data-fields="configuredDataFields" :fields="row.fields" @update:configured-edit-data="updateConfiguredEditData"></mof-data-field-row>
                     </template>
                 </q-card-section>
             </q-card>
@@ -38,5 +50,14 @@ const mofDataFieldRowGroup = {
     `,
     components: {
         'mof-data-field-row': mofDataFieldRow
+    },
+    setup(_, context) {
+        function updateConfiguredEditData(data) {
+            context.emit('update:configured-edit-data', data);
+        }
+
+        return {
+            updateConfiguredEditData
+        }
     }
 };

@@ -18,7 +18,12 @@ const occurrenceEditorFormCurationElement = {
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-5">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['preparations']" label="Preparations" :maxlength="occurrenceFields['preparations'] ? occurrenceFields['preparations']['length'] : 0" :value="occurrenceData.preparations" @update:value="(value) => updateOccurrenceData('preparations', value)"></text-field-input-element>
+                        <template v-if="controlledVocabularies.hasOwnProperty('preparations') && controlledVocabularies['preparations'] && controlledVocabularies['preparations'].length > 0 && (!occurrenceData.preparations || controlledVocabularies['preparations'].includes(occurrenceData.preparations))">
+                            <selector-input-element :definition="occurrenceFieldDefinitions['preparations']" label="Preparations" :options="controlledVocabularies['preparations']" :value="occurrenceData.preparations" @update:value="(value) => updateOccurrenceData('preparations', value)" :clearable="true"></selector-input-element>
+                        </template>
+                        <template v-else>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['preparations']" label="Preparations" :maxlength="occurrenceFields['preparations'] ? occurrenceFields['preparations']['length'] : 0" :value="occurrenceData.preparations" @update:value="(value) => updateOccurrenceData('preparations', value)"></text-field-input-element>
+                        </template>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['disposition']" label="Disposition" :maxlength="occurrenceFields['disposition'] ? occurrenceFields['disposition']['length'] : 0" :value="occurrenceData.disposition" @update:value="(value) => updateOccurrenceData('disposition', value)"></text-field-input-element>
@@ -54,6 +59,7 @@ const occurrenceEditorFormCurationElement = {
         const baseStore = useBaseStore();
         const occurrenceStore = useOccurrenceStore();
 
+        const controlledVocabularies = Vue.computed(() => occurrenceStore.getOccurrenceFieldControlledVocabularies);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
@@ -64,6 +70,7 @@ const occurrenceEditorFormCurationElement = {
         }
 
         return {
+            controlledVocabularies,
             occurrenceData,
             occurrenceFields,
             occurrenceFieldDefinitions,

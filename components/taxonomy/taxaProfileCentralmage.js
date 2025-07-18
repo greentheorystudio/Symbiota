@@ -1,27 +1,23 @@
 const taxaProfileCentralImage = {
     props: {
-        centralImage: {
+        image: {
             type: Object,
-            default: {}
+            default: null
         },
         isEditor: {
             type: Boolean,
             default: false
-        },
-        taxon: {
-            type: Object,
-            default: {}
         }
     },
     template: `
-        <q-card class="overflow-hidden">
+        <q-card class="overflow-hidden full-width">
             <template v-if="centralImage">
                 <div class="taxon-profile-central-image">
                     <a @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer">
                         <q-img :src="centralImage.url" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
-                                <template v-if="taxon.sciName !== centralImage.sciname">
+                                <template v-if="taxon.sciname !== centralImage.sciname">
                                     <a :href="(clientRoot + '/taxa/index.php?taxon=' + centralImage.tid)"><span class="text-italic">{{ centralImage.sciname }}</span>. </a>
                                 </template>
                                 <span v-if="centralImage.photographer">Photo by: {{ centralImage.photographer }}. </span><span v-html="centralImage.caption"></span>
@@ -43,15 +39,31 @@ const taxaProfileCentralImage = {
         </q-card>
     `,
     setup(props, context) {
-        const store = useBaseStore();
-        const clientRoot = store.getClientRoot;
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const centralImage = Vue.computed(() => {
+            let centralImage;
+            if(props.image){
+                centralImage = props.image;
+            }
+            else{
+                centralImage = (taxaImageArr.value && taxaImageArr.value.length > 0) ? taxaImageArr.value[0] : null;
+            }
+            return centralImage;
+        });
+        const clientRoot = baseStore.getClientRoot;
+        const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+        const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
 
         function toggleImageCarousel(index) {
             context.emit('update:set-image-carousel', index);
         }
 
         return {
+            centralImage,
             clientRoot,
+            taxon,
             toggleImageCarousel
         }
     }

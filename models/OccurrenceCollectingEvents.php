@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/OccurrenceLocations.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
@@ -7,47 +8,47 @@ class OccurrenceCollectingEvents{
 	private $conn;
 
     private $fields = array(
-        "eventid" => array("dataType" => "number", "length" => 11),
-        "collid" => array("dataType" => "number", "length" => 10),
-        "locationid" => array("dataType" => "number", "length" => 11),
-        "eventtype" => array("dataType" => "string", "length" => 255),
-        "fieldnotes" => array("dataType" => "text", "length" => 0),
-        "fieldnumber" => array("dataType" => "string", "length" => 45),
-        "recordedby" => array("dataType" => "string", "length" => 255),
-        "recordnumber" => array("dataType" => "string", "length" => 45),
-        "recordedbyid" => array("dataType" => "number", "length" => 20),
-        "associatedcollectors" => array("dataType" => "string", "length" => 255),
-        "eventdate" => array("dataType" => "date", "length" => 0),
-        "latestdatecollected" => array("dataType" => "date", "length" => 0),
-        "eventtime" => array("dataType" => "time", "length" => 0),
-        "year" => array("dataType" => "number", "length" => 10),
-        "month" => array("dataType" => "number", "length" => 10),
-        "day" => array("dataType" => "number", "length" => 10),
-        "startdayofyear" => array("dataType" => "number", "length" => 10),
-        "enddayofyear" => array("dataType" => "number", "length" => 10),
-        "verbatimeventdate" => array("dataType" => "string", "length" => 255),
-        "habitat" => array("dataType" => "text", "length" => 0),
-        "substrate" => array("dataType" => "string", "length" => 500),
-        "localitysecurity" => array("dataType" => "number", "length" => 10),
-        "localitysecurityreason" => array("dataType" => "string", "length" => 100),
-        "decimallatitude" => array("dataType" => "number", "length" => 0),
-        "decimallongitude" => array("dataType" => "number", "length" => 0),
-        "geodeticdatum" => array("dataType" => "string", "length" => 255),
-        "coordinateuncertaintyinmeters" => array("dataType" => "number", "length" => 10),
-        "footprintwkt" => array("dataType" => "text", "length" => 0),
-        "eventremarks" => array("dataType" => "text", "length" => 0),
-        "georeferencedby" => array("dataType" => "string", "length" => 255),
-        "georeferenceprotocol" => array("dataType" => "string", "length" => 255),
-        "georeferencesources" => array("dataType" => "string", "length" => 255),
-        "georeferenceverificationstatus" => array("dataType" => "string", "length" => 32),
-        "georeferenceremarks" => array("dataType" => "string", "length" => 500),
-        "minimumdepthinmeters" => array("dataType" => "number", "length" => 0),
-        "maximumdepthinmeters" => array("dataType" => "number", "length" => 0),
-        "verbatimdepth" => array("dataType" => "string", "length" => 50),
-        "samplingprotocol" => array("dataType" => "string", "length" => 100),
-        "samplingeffort" => array("dataType" => "string", "length" => 200),
-        "repcount" => array("dataType" => "number", "length" => 10),
-        "labelproject" => array("dataType" => "string", "length" => 250)
+        'eventid' => array('dataType' => 'number', 'length' => 11),
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'locationid' => array('dataType' => 'number', 'length' => 11),
+        'eventtype' => array('dataType' => 'string', 'length' => 255),
+        'fieldnotes' => array('dataType' => 'text', 'length' => 0),
+        'fieldnumber' => array('dataType' => 'string', 'length' => 45),
+        'recordedby' => array('dataType' => 'string', 'length' => 255),
+        'recordnumber' => array('dataType' => 'string', 'length' => 45),
+        'recordedbyid' => array('dataType' => 'number', 'length' => 20),
+        'associatedcollectors' => array('dataType' => 'string', 'length' => 255),
+        'eventdate' => array('dataType' => 'date', 'length' => 0),
+        'latestdatecollected' => array('dataType' => 'date', 'length' => 0),
+        'eventtime' => array('dataType' => 'time', 'length' => 0),
+        'year' => array('dataType' => 'number', 'length' => 10),
+        'month' => array('dataType' => 'number', 'length' => 10),
+        'day' => array('dataType' => 'number', 'length' => 10),
+        'startdayofyear' => array('dataType' => 'number', 'length' => 10),
+        'enddayofyear' => array('dataType' => 'number', 'length' => 10),
+        'verbatimeventdate' => array('dataType' => 'string', 'length' => 255),
+        'habitat' => array('dataType' => 'text', 'length' => 0),
+        'substrate' => array('dataType' => 'string', 'length' => 500),
+        'localitysecurity' => array('dataType' => 'number', 'length' => 10),
+        'localitysecurityreason' => array('dataType' => 'string', 'length' => 100),
+        'decimallatitude' => array('dataType' => 'number', 'length' => 0),
+        'decimallongitude' => array('dataType' => 'number', 'length' => 0),
+        'geodeticdatum' => array('dataType' => 'string', 'length' => 255),
+        'coordinateuncertaintyinmeters' => array('dataType' => 'number', 'length' => 10),
+        'footprintwkt' => array('dataType' => 'text', 'length' => 0),
+        'eventremarks' => array('dataType' => 'text', 'length' => 0),
+        'georeferencedby' => array('dataType' => 'string', 'length' => 255),
+        'georeferenceprotocol' => array('dataType' => 'string', 'length' => 255),
+        'georeferencesources' => array('dataType' => 'string', 'length' => 255),
+        'georeferenceverificationstatus' => array('dataType' => 'string', 'length' => 32),
+        'georeferenceremarks' => array('dataType' => 'string', 'length' => 500),
+        'minimumdepthinmeters' => array('dataType' => 'number', 'length' => 0),
+        'maximumdepthinmeters' => array('dataType' => 'number', 'length' => 0),
+        'verbatimdepth' => array('dataType' => 'string', 'length' => 50),
+        'samplingprotocol' => array('dataType' => 'string', 'length' => 100),
+        'samplingeffort' => array('dataType' => 'string', 'length' => 200),
+        'repcount' => array('dataType' => 'number', 'length' => 10),
+        'labelproject' => array('dataType' => 'string', 'length' => 250)
     );
 
     public function __construct(){
@@ -283,6 +284,29 @@ class OccurrenceCollectingEvents{
         return $retArr;
     }
 
+    public function updateCollectingEventLocation($eventId, $locationId): int
+    {
+        $retVal = 0;
+        if($eventId && $locationId){
+            $sql = 'UPDATE omoccurcollectingevents SET locationid = ' . (int)$locationId . ' '.
+                'WHERE eventid = ' . (int)$eventId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                $sql = 'UPDATE omoccurrences SET locationid = ' . (int)$locationId . ' '.
+                    'WHERE eventid = ' . (int)$eventId . ' ';
+                //echo "<div>".$sql."</div>";
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                if($retVal){
+                    $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($locationId);
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function updateCollectingEventRecord($eventId, $editData): int
     {
         $retVal = 0;
@@ -321,6 +345,26 @@ class OccurrenceCollectingEvents{
                         }
                     }
                 }
+            }
+        }
+        return $retVal;
+    }
+
+    public function updateOccurrencesFromCollectingEventData($eventId): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($eventId){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'eventtype' && $field !== 'repcount'){
+                    $sqlPartArr[] = 'o.' . $field . ' = e.' . $field . ' ';
+                }
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
+                'SET ' . implode(', ', $sqlPartArr) . ' WHERE e.eventid = ' . (int)$eventId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
             }
         }
         return $retVal;

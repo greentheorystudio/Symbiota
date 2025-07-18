@@ -1,17 +1,20 @@
 const useBaseStore = Pinia.defineStore('base', {
     state: () => ({
+        activateExsiccati: ACTIVATE_EXSICCATI,
         adminEmail: ADMIN_EMAIL,
         clientRoot: CLIENT_ROOT,
         defaultCollectionCategoryId: DEFAULT_COLLECTION_CATEGORY_ID,
         defaultLanguage: DEFAULT_LANG,
         defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
+        glossaryModuleIsActive: GLOSSARY_MOD_IS_ACTIVE,
         imageTagOptions: IMAGE_TAG_OPTIONS,
-        isAdmin: IS_ADMIN,
         keyModuleIsActive: KEY_MOD_IS_ACTIVE,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
+        rssActive: RSS_ACTIVE,
+        showPasswordReset: SHOW_PASSWORD_RESET,
         solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
         taxonomicRanks: TAXONOMIC_RANKS,
@@ -27,10 +30,15 @@ const useBaseStore = Pinia.defineStore('base', {
             usfrs: 'US Federal Regulatory Status',
             worms: 'WoRMS Aphia ID'
         },
+        usagePolicyUrl: USAGE_POLICY_URL,
         userDisplayName: USER_DISPLAY_NAME,
+        userRights: {},
         validUser: VALID_USER
     }),
     getters: {
+        getActivateExsiccati(state) {
+            return state.activateExsiccati;
+        },
         getAdminEmail(state) {
             return state.adminEmail;
         },
@@ -49,11 +57,11 @@ const useBaseStore = Pinia.defineStore('base', {
         getEmailConfigured(state) {
             return state.emailConfigured;
         },
+        getGlossaryModuleIsActive(state) {
+            return state.glossaryModuleIsActive;
+        },
         getImageTagOptions(state) {
             return state.imageTagOptions;
-        },
-        getIsAdmin(state) {
-            return state.isAdmin;
         },
         getKeyModuleIsActive(state) {
             return state.keyModuleIsActive;
@@ -64,11 +72,17 @@ const useBaseStore = Pinia.defineStore('base', {
         getOccurrenceProcessingStatusOptions(state) {
             return state.occurrenceProcessingStatusOptions;
         },
-        getSolrMode(state) {
-            return state.solrMode;
-        },
         getRightsTerms(state) {
             return state.rightsTerms;
+        },
+        getRssActive(state) {
+            return state.rssActive;
+        },
+        getShowPasswordReset(state) {
+            return state.showPasswordReset;
+        },
+        getSolrMode(state) {
+            return state.solrMode;
         },
         getSymbUid(state) {
             return state.symbUid;
@@ -79,8 +93,14 @@ const useBaseStore = Pinia.defineStore('base', {
         getTaxonomicTags(state) {
             return state.taxonomicTags;
         },
+        getUsagePolicyUrl(state) {
+            return state.usagePolicyUrl;
+        },
         getUserDisplayName(state) {
             return state.userDisplayName;
+        },
+        getUserRights(state) {
+            return state.userRights
         },
         getValidUser(state) {
             return state.validUser;
@@ -95,12 +115,28 @@ const useBaseStore = Pinia.defineStore('base', {
                 method: 'POST',
                 body: formData
             })
-            .then((response) => response.text())
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
             .then((resStr) => {
                 callback(resStr);
             });
         },
-        async logout() {
+        setUserRights() {
+            const formData = new FormData();
+            formData.append('action', 'getCurrentUserRights');
+            fetch(permissionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                this.userRights = Object.assign({}, resObj);
+            });
+        },
+        logout() {
             const url = profileApiUrl + '?action=logout';
             fetch(url)
             .then(() => {

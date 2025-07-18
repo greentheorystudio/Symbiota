@@ -1,6 +1,6 @@
 <?php
+include_once(__DIR__ . '/../models/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
-include_once(__DIR__ . '/OccurrenceManager.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageLibraryManager{
@@ -62,7 +62,14 @@ class ImageLibraryManager{
         if($inTaxon){
             $taxon = SanitizerService::cleanInStr($this->conn,$inTaxon);
             if(strpos($taxon, ' ')) {
-                $tidArr = array_keys(OccurrenceManager::getSynonyms($taxon));
+                $taxonData = (new Taxa)->getTaxonFromSciname($taxon);
+                if(array_key_exists('synonyms', $taxonData) && count($taxonData['synonyms']) > 0){
+                    foreach($taxonData['synonyms'] as $synonym){
+                        if($synonym && array_key_exists('tid', $synonym) && (int)$synonym['tid'] > 0){
+                            $tidArr[] = $synonym['tid'];
+                        }
+                    }
+                }
             }
         }
         $sql = 'SELECT DISTINCT t.tid, t.SciName ';
@@ -87,9 +94,6 @@ class ImageLibraryManager{
         $sql = 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid ';
         if(array_key_exists('tags',$this->searchTermsArr) && $this->searchTermsArr['tags']){
             $sql .= 'INNER JOIN imagetag AS it ON i.imgid = it.imgid ';
-        }
-        if(array_key_exists('keywords',$this->searchTermsArr) && $this->searchTermsArr['keywords']){
-            $sql .= 'INNER JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
         }
         if($this->sqlWhere){
             $sql .= $this->sqlWhere.' AND ';
@@ -242,24 +246,15 @@ class ImageLibraryManager{
         $sql .= 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid ';
         $sql .= 'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
         $sql .= 'LEFT JOIN users AS u ON i.photographeruid = u.uid ';
-        $sql .= 'INNER JOIN taxa AS t ON i.tid = t.tid ';
-        if(array_key_exists('taxontype',$this->searchTermsArr) && (int)$this->searchTermsArr['taxontype'] === 4) {
-            $sql .= 'INNER JOIN taxaenumtree AS te ON i.tid = te.tid ';
-        }
+        $sql .= 'LEFT JOIN taxa AS t ON i.tid = t.tid ';
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
             $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
-        }
-        if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
-            $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
         }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')){
-            $sql .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
         }
         return $sql;
     }

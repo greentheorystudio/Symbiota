@@ -12,12 +12,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Search Collections</title>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Search List Display</title>
+        <meta name="description" content="Collection search list display for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" type="text/css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" type="text/css" rel="stylesheet" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
@@ -37,12 +38,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="app-container">
-            <div class="navpath">
+        <div id="mainContainer">
+            <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
-                <b>Search Collections</b>
+                <span class="text-bold">Search Collections</span>
             </div>
-            <div id="innertext">
+            <div class="q-pa-md">
                 <div class="fit">
                     <q-card flat bordered>
                         <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
@@ -52,7 +53,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
                             <q-tab-panel class="q-pa-none" name="occurrence">
-                                <div class="column">
+                                <div class="fit column">
                                     <div class="q-pa-sm column q-col-gutter-xs">
                                         <div class="row justify-start">
                                             <div>
@@ -75,147 +76,138 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     </div>
                                     <q-separator ></q-separator>
                                     <template v-if="recordDataArr.length > 0">
-                                        <div class="fit">
-                                            <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="occid" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
-                                                <template v-slot:top="scope">
-                                                    <div class="full-width row justify-end">
-                                                        <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                                        <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="occid" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
+                                            <template v-slot:top="scope">
+                                                <div class="full-width row justify-end">
+                                                    <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                                                        <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
 
-                                                        <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
 
-                                                        <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
 
-                                                        <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
-                                                    </div>
-                                                </template>
-                                                <template v-slot:header="props"></template>
-                                                <template v-slot:body="props">
-                                                    <q-tr v-if="recordDataArr.length > 0" :props="props" no-hover>
-                                                        <q-td class="full-width">
-                                                            <div class="full-width column">
-                                                                <div class="q-mb-xs row justify-between">
-                                                                    <div class="text-bold">
-                                                                        {{ props.row.collectionname + ' ' + ((props.row.institutioncode || props.row.collectioncode) ? '(' : '') + (props.row.institutioncode ? props.row.institutioncode : '') + ((props.row.collectionname && props.row.collectionname) ? ':' : '') + (props.row.collectioncode ? props.row.collectioncode : '') + ((props.row.collectionname || props.row.collectionname) ? ')' : '') }}
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                                                </div>
+                                            </template>
+                                            <template v-slot:header="props"></template>
+                                            <template v-slot:body="props">
+                                                <q-tr v-if="recordDataArr.length > 0" :props="props" class="fit" no-hover>
+                                                    <q-td class="full-width">
+                                                        <div class="full-width row no-wrap">
+                                                            <div class="col-9 column">
+                                                                <div class="full-width q-mb-xs q-pa-xs text-bold">
+                                                                    {{ props.row.collectionname + ' ' + ((props.row.institutioncode || props.row.collectioncode) ? '(' : '') + (props.row.institutioncode ? props.row.institutioncode : '') + ((props.row.collectionname && props.row.collectionname) ? ':' : '') + (props.row.collectioncode ? props.row.collectioncode : '') + ((props.row.collectionname || props.row.collectionname) ? ')' : '') }}
+                                                                </div>
+                                                                <div class="full-width row q-pa-xs">
+                                                                    <div class="col-1 row justify-center items-center">
+                                                                        <div>
+                                                                            <template v-if="props.row.icon">
+                                                                                <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain"></q-img>
+                                                                            </template>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="row q-gutter-xs">
-                                                                        <template v-if="props.row.hasimage">
-                                                                            <q-btn color="grey-4" text-color="black" class="black-border cursor-inherit" size="sm" icon="fas fa-camera" dense>
-                                                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                                                    Record includes images
-                                                                                </q-tooltip>
-                                                                            </q-btn>
-                                                                        </template>
-                                                                        <template v-if="isAdmin || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))">
+                                                                    <div class="col-11 column text-body1 wrap">
+                                                                        <div v-if="props.row.sciname">
+                                                                            <template v-if="Number(props.row.tid) > 0">
+                                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">
+                                                                                    <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
+                                                                                </a>
+                                                                            </template>
+                                                                            <template v-else>
+                                                                                <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
+                                                                            </template>
+                                                                        </div>
+                                                                        <div v-if="props.row.catalognumber || props.row.othercatalognumbers">
+                                                                                <span v-if="props.row.catalognumber">
+                                                                                    {{ props.row.catalognumber + (props.row.othercatalognumbers ? '  ' : '') }}
+                                                                                </span>
+                                                                            <span v-if="props.row.othercatalognumbers">
+                                                                                    {{ props.row.othercatalognumbers }}
+                                                                                </span>
+                                                                        </div>
+                                                                        <div v-if="props.row.recordedby || props.row.recordnumber || props.row.eventdate || props.row.verbatimeventdate" class="full-width">
+                                                                                <span v-if="props.row.recordedby || props.row.recordnumber">
+                                                                                    {{ (props.row.recordedby ? props.row.recordedby : '') + ((props.row.recordedby && props.row.recordnumber) ? ' ' : '') + (props.row.recordnumber ? props.row.recordnumber : '') + ((props.row.eventdate || props.row.verbatimeventdate) ? '  ' : '') }}
+                                                                                </span>
+                                                                            <span v-if="props.row.eventdate">
+                                                                                    {{ props.row.eventdate }}
+                                                                                </span>
+                                                                            <span v-else-if="props.row.verbatimeventdate">
+                                                                                    {{ props.row.verbatimeventdate }}
+                                                                                </span>
+                                                                        </div>
+                                                                        <div v-if="props.row.country || props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation" class="full-width">
+                                                                                <span v-if="props.row.country">
+                                                                                    {{ props.row.country + ((props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                                </span>
+                                                                            <span v-if="props.row.stateprovince">
+                                                                                    {{ props.row.stateprovince + ((props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                                </span>
+                                                                            <span v-if="props.row.county">
+                                                                                    {{ props.row.county + ((props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                                </span>
+                                                                            <span v-if="props.row.locality">
+                                                                                    {{ props.row.locality + ((props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
+                                                                                </span>
+                                                                            <span v-if="props.row.minimumelevationinmeters || props.row.maximumelevationinmeters">
+                                                                                    {{ (props.row.minimumelevationinmeters ? props.row.minimumelevationinmeters : '') + ((props.row.minimumelevationinmeters && props.row.maximumelevationinmeters) ? '-' : '') + (props.row.maximumelevationinmeters ? props.row.maximumelevationinmeters : '') + 'm' }}
+                                                                                </span>
+                                                                            <span v-else-if="props.row.verbatimelevation">
+                                                                                    {{ props.row.verbatimelevation }}
+                                                                                </span>
+                                                                        </div>
+                                                                        <div v-if="props.row.informationwithheld" class="text-red">
+                                                                            {{ props.row.informationwithheld }}
+                                                                        </div>
+                                                                        <div>
+                                                                            <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);">Full Record Details</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3 row justify-end q-gutter-sm no-wrap">
+                                                                <div class="fit q-pa-xs">
+                                                                    <template v-if="props.row.img">
+                                                                        <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain"></q-img>
+                                                                    </template>
+                                                                </div>
+                                                                <div v-if="isAdmin || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))" class="col-1">
+                                                                    <div class="row justify-end vertical-top">
+                                                                        <div>
                                                                             <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + props.row.occid + '&collid=' + props.row.collid)" target="_blank" icon="fas fa-edit" dense>
                                                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                                                     Edit occurrence record
                                                                                 </q-tooltip>
                                                                             </q-btn>
-                                                                        </template>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="full-width row justify-between">
-                                                                    <div class="col-10 row q-col-gutter-md">
-                                                                        <div class="col-1 row justify-center items-center">
-                                                                            <div>
-                                                                                <template v-if="props.row.icon">
-                                                                                    <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" :fit="contain"></q-img>
-                                                                                </template>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-10 column text-body1 wrap">
-                                                                            <div v-if="props.row.sciname">
-                                                                                <template v-if="Number(props.row.tid) > 0">
-                                                                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">
-                                                                                        <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
-                                                                                    </a>
-                                                                                </template>
-                                                                                <template v-else>
-                                                                                    <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
-                                                                                </template>
-                                                                            </div>
-                                                                            <div v-if="props.row.catalognumber || props.row.othercatalognumbers">
-                                                                                <span v-if="props.row.catalognumber">
-                                                                                    {{ props.row.catalognumber + (props.row.othercatalognumbers ? '  ' : '') }}
-                                                                                </span>
-                                                                                    <span v-if="props.row.othercatalognumbers">
-                                                                                    {{ props.row.othercatalognumbers }}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div v-if="props.row.recordedby || props.row.recordnumber || props.row.eventdate || props.row.verbatimeventdate" class="full-width">
-                                                                                <span v-if="props.row.recordedby || props.row.recordnumber">
-                                                                                    {{ (props.row.recordedby ? props.row.recordedby : '') + ((props.row.recordedby && props.row.recordnumber) ? ' ' : '') + (props.row.recordnumber ? props.row.recordnumber : '') + ((props.row.eventdate || props.row.verbatimeventdate) ? '  ' : '') }}
-                                                                                </span>
-                                                                                <span v-if="props.row.eventdate">
-                                                                                    {{ props.row.eventdate }}
-                                                                                </span>
-                                                                                <span v-else-if="props.row.verbatimeventdate">
-                                                                                    {{ props.row.verbatimeventdate }}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div v-if="props.row.country || props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation" class="full-width">
-                                                                                <span v-if="props.row.country">
-                                                                                    {{ props.row.country + ((props.row.stateprovince || props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
-                                                                                </span>
-                                                                                <span v-if="props.row.stateprovince">
-                                                                                    {{ props.row.stateprovince + ((props.row.county || props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
-                                                                                </span>
-                                                                                <span v-if="props.row.county">
-                                                                                    {{ props.row.county + ((props.row.locality || props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
-                                                                                </span>
-                                                                                <span v-if="props.row.locality">
-                                                                                    {{ props.row.locality + ((props.row.minimumelevationinmeters || props.row.maximumelevationinmeters || props.row.verbatimelevation) ? ', ' : '') }}
-                                                                                </span>
-                                                                                <span v-if="props.row.minimumelevationinmeters || props.row.maximumelevationinmeters">
-                                                                                    {{ (props.row.minimumelevationinmeters ? props.row.minimumelevationinmeters : '') + ((props.row.minimumelevationinmeters && props.row.maximumelevationinmeters) ? '-' : '') + (props.row.maximumelevationinmeters ? props.row.maximumelevationinmeters : '') + 'm' }}
-                                                                                </span>
-                                                                                <span v-else-if="props.row.verbatimelevation">
-                                                                                    {{ props.row.verbatimelevation }}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div v-if="props.row.informationwithheld" class="text-red">
-                                                                                {{ props.row.informationwithheld }}
-                                                                            </div>
-                                                                            <div>
-                                                                                <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);">Full Record Details</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-2">
-                                                                        <div class="fit">
-                                                                            <template v-if="props.row.img">
-                                                                                <img :src="props.row.img" class="occurrence-search-image-thumbnail"></img>
-                                                                            </template>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </q-td>
-                                                    </q-tr>
-                                                </template>
-                                                <template v-slot:pagination="scope">
-                                                    <div class="full-width row justify-end">
-                                                        <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                                                        </div>
+                                                    </q-td>
+                                                </q-tr>
+                                            </template>
+                                            <template v-slot:pagination="scope">
+                                                <div class="full-width row justify-end">
+                                                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                                                        <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
 
-                                                        <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
 
-                                                        <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
 
-                                                        <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
-                                                    </div>
-                                                </template>
-                                                <template v-slot:no-data>
-                                                    <div class="text-bold">Loading...</div>
-                                                </template>
-                                                <template v-slot:loading>
-                                                    <q-inner-loading showing color="primary"></q-inner-loading>
-                                                </template>
-                                            </q-table>
-                                        </div>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                                                </div>
+                                            </template>
+                                            <template v-slot:no-data>
+                                                <div class="text-bold">Loading...</div>
+                                            </template>
+                                            <template v-slot:loading>
+                                                <q-inner-loading showing color="primary"></q-inner-loading>
+                                            </template>
+                                        </q-table>
                                     </template>
                                     <template v-else>
                                         <div class="q-pa-md row justify-center text-h6 text-bold">
@@ -282,23 +274,30 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <occurrence-info-window-popup :occurrence-id="recordInfoWindowId" :show-popup="showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
                 </template>
                 <template v-if="displayQueryPopup">
-                    <search-criteria-popup :show-popup="(displayQueryPopup && !showSpatialPopup)" :show-spatial="true" @open:spatial-popup="openSpatialPopup" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+                    <search-criteria-popup
+                        :show-popup="(displayQueryPopup && !showSpatialPopup)"
+                        :show-spatial="true"
+                        @open:spatial-popup="openSpatialPopup"
+                        @process:search-load-records="loadRecords"
+                        @close:popup="setQueryPopupDisplay(false)"
+                    ></search-criteria-popup>
                 </template>
                 <template v-if="showSpatialPopup">
                     <spatial-analysis-popup
-                            :bottom-lat="bottomLatitude"
-                            :circle-arr="circleArr"
-                            :left-long="leftLongitude"
-                            :point-lat="pointLatitude"
-                            :point-long="pointLongitude"
-                            :poly-arr="polyArr"
-                            :radius="radius"
-                            :right-long="rightLongitude"
-                            :upper-lat="upperLatitude"
-                            :show-popup="showSpatialPopup"
-                            :window-type="popupWindowType"
-                            @update:spatial-data="processSpatialData"
-                            @close:popup="closeSpatialPopup();"
+                        :bottom-lat="spatialInputValues['bottomLatitude']"
+                        :circle-arr="spatialInputValues['circleArr']"
+                        :left-long="spatialInputValues['leftLongitude']"
+                        :point-lat="spatialInputValues['pointLatitude']"
+                        :point-long="spatialInputValues['pointLongitude']"
+                        :poly-arr="spatialInputValues['polyArr']"
+                        :radius="spatialInputValues['radius']"
+                        :radius-units="spatialInputValues['radiusUnit']"
+                        :right-long="spatialInputValues['rightLongitude']"
+                        :upper-lat="spatialInputValues['upperLatitude']"
+                        :show-popup="showSpatialPopup"
+                        :window-type="popupWindowType"
+                        @update:spatial-data="processSpatialData"
+                        @close:popup="closeSpatialPopup();"
                     ></spatial-analysis-popup>
                 </template>
             </div>
@@ -331,6 +330,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/advancedQueryBuilder.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCollectionsBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopupTabControls.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRecordsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSelectionsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -357,6 +357,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerQuerySelectorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRow.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRowGroup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoTabModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -379,15 +382,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const baseStore = useBaseStore();
                     const searchStore = useSearchStore();
 
-                    const bottomLatitude = Vue.ref(null);
-                    const circleArr = Vue.ref(null);
                     const clientRoot = baseStore.getClientRoot;
                     const currentUserPermissions = Vue.ref(null);
                     const displayQueryPopup = Vue.ref(false);
-                    const isAdmin = baseStore.getIsAdmin;
+                    const isAdmin = Vue.computed(() => {
+                        return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
+                    });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const lazyLoadCnt = 100;
-                    const leftLongitude = Vue.ref(null);
                     const pageNumber = Vue.ref(1);
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecCnt);
                     const paginationFirstRecordNumber = Vue.computed(() => {
@@ -429,40 +431,22 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             rowsNumber: Number(searchRecordCount.value)
                         };
                     });
-                    const pointLatitude = Vue.ref(null);
-                    const pointLongitude = Vue.ref(null);
-                    const polyArr = Vue.ref(null);
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
-                    const radius = Vue.ref(null);
                     const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
                     const recordInfoWindowId = Vue.ref(null);
-                    const rightLongitude = Vue.ref(null);
-                    const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
                     const searchTermsPageNumber = Vue.computed(() => searchStore.getSearchTermsPageNumber);
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
+                    const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const stArrJson = STARRJSON;
                     const tab = Vue.ref('occurrence');
                     const taxaCnt = Vue.ref(0);
                     const taxaDataArr = Vue.reactive([]);
-                    const upperLatitude = Vue.ref(null);
 
                     function changeRecordPage(props) {
                         setTableRecordData(props.pagination.page);
-                    }
-
-                    function clearSpatialInputValues() {
-                        bottomLatitude.value = null;
-                        circleArr.value = null;
-                        leftLongitude.value = null;
-                        pointLatitude.value = null;
-                        pointLongitude.value = null;
-                        polyArr.value = null;
-                        radius.value = null;
-                        rightLongitude.value = null;
-                        upperLatitude.value = null;
                     }
 
                     function closeRecordInfoWindow(){
@@ -473,7 +457,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     function closeSpatialPopup() {
                         popupWindowType.value = null;
                         showSpatialPopup.value = false;
-                        clearSpatialInputValues();
+                        searchStore.clearSpatialInputValues();
                     }
 
                     function getTaxaData() {
@@ -519,7 +503,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function openSpatialPopup(type) {
-                        setSpatialInputValues();
+                        searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
                     }
@@ -571,26 +555,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             if(data && Object.keys(data).length > 0){
                                 currentUserPermissions.value = data;
                             }
-                            if(Number(queryId) === 0 && !stArrJson){
-                                displayQueryPopup.value = true;
-                            }
                         });
                     }
 
                     function setQueryPopupDisplay(val) {
                         displayQueryPopup.value = val;
-                    }
-
-                    function setSpatialInputValues() {
-                        bottomLatitude.value = searchTerms.value.hasOwnProperty('bottomlat') ? searchTerms.value['bottomlat'] : null;
-                        circleArr.value = searchTerms.value.hasOwnProperty('circleArr') ? searchTerms.value['circleArr'] : null;
-                        leftLongitude.value = searchTerms.value.hasOwnProperty('leftlong') ? searchTerms.value['leftlong'] : null;
-                        pointLatitude.value = searchTerms.value.hasOwnProperty('pointlat') ? searchTerms.value['pointlat'] : null;
-                        pointLongitude.value = searchTerms.value.hasOwnProperty('pointlong') ? searchTerms.value['pointlong'] : null;
-                        polyArr.value = searchTerms.value.hasOwnProperty('polyArr') ? searchTerms.value['polyArr'] : null;
-                        radius.value = searchTerms.value.hasOwnProperty('radius') ? searchTerms.value['radius'] : null;
-                        rightLongitude.value = searchTerms.value.hasOwnProperty('rightlong') ? searchTerms.value['rightlong'] : null;
-                        upperLatitude.value = searchTerms.value.hasOwnProperty('upperlat') ? searchTerms.value['upperlat'] : null;
                     }
 
                     function setTableRecordData(index) {
@@ -610,11 +579,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         pageNumber.value = Number(index);
                     }
 
-                    Vue.provide('loadRecords', loadRecords);
-                    Vue.provide('setQueryPopupDisplay', setQueryPopupDisplay);
-
                     Vue.onMounted(() => {
                         setCurrentUserPermissions();
+                        if(Number(queryId) === 0 && !stArrJson){
+                            displayQueryPopup.value = true;
+                        }
                         if(queryId || stArrJson){
                             showWorking('Loading...');
                         }
@@ -633,33 +602,26 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
 
                     return {
-                        bottomLatitude,
-                        circleArr,
                         clientRoot,
                         currentUserPermissions,
                         displayQueryPopup,
                         isAdmin,
                         keyModuleIsActive,
-                        leftLongitude,
                         pagination,
-                        pointLatitude,
-                        pointLongitude,
-                        polyArr,
                         popupWindowType,
-                        radius,
                         recordDataArr,
                         recordInfoWindowId,
-                        rightLongitude,
                         searchTermsJson,
                         showRecordInfoWindow,
                         showSpatialPopup,
+                        spatialInputValues,
                         tab,
                         taxaCnt,
                         taxaDataArr,
-                        upperLatitude,
                         changeRecordPage,
                         closeRecordInfoWindow,
                         closeSpatialPopup,
+                        loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
                         processSpatialData,
@@ -669,7 +631,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             });
             searchListDisplayModule.use(Quasar, { config: {} });
             searchListDisplayModule.use(Pinia.createPinia());
-            searchListDisplayModule.mount('#app-container');
+            searchListDisplayModule.mount('#mainContainer');
         </script>
     </body>
 </html>

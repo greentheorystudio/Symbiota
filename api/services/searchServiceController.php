@@ -12,15 +12,16 @@ if($action && $options && $stArr && SanitizerService::validateInternalRequest())
     if($action === 'getSearchOccidArr'){
         echo json_encode($searchService->getSearchOccidArr($stArr, $options));
     }
+    elseif($action === 'getSearchTidArr'){
+        echo json_encode($searchService->getSearchTidArr($stArr, $options));
+    }
     elseif($action === 'processSearch'){
         echo json_encode($searchService->processSearch($stArr, $options));
     }
     elseif($action === 'processSearchDownload'){
         if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml'){
-            echo $searchService->processSearchSpatialDownload($stArr, $options);
+            $options['spatial'] = 1;
         }
-        else{
-            $searchService->processSearchDownload($stArr, $options);
-        }
+        $searchService->processSearchDownload($stArr, $options);
     }
 }

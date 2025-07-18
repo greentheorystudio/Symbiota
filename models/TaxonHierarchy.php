@@ -37,6 +37,37 @@ class TaxonHierarchy{
         return $status;
     }
 
+    public function getParentTidArr($tid): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT parenttid FROM taxaenumtree WHERE tid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[] = $row['parenttid'];
+                unset($rows[$index]);
+            }
+        }
+        return $returnArr;
+    }
+
+    public function getSubtaxaTidArrFromTid($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT t.tid FROM taxa AS t LEFT JOIN taxaenumtree AS te ON t.tid = te.tid '.
+            'WHERE te.parenttid = ' . (int)$tid . ' AND t.tid = t.tidaccepted ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['tid'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getTaxonomicTreeTaxonPath($tId): array
     {
         $retArr = array();

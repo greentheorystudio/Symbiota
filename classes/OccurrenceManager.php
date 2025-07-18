@@ -356,10 +356,10 @@ class OccurrenceManager{
                 }
                 if($this->taxaSearchType === 4 || $this->taxaSearchType === 5){
                     if($image){
-                        $sqlWhereTaxa = 'OR (te.parenttid = '.$tid.' OR te.tid = '.$tid.') ';
+                        $sqlWhereTaxa = 'OR t.tidaccepted IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$tid.') ';
                     }
                     else{
-                        $sqlWhereTaxa = 'OR (te.parenttid = '.$tid.' OR te.tid = '.$tid.') OR (ISNULL(o.tid) AND o.sciname = "'.SanitizerService::cleanInStr($this->conn,$name).'") ';
+                        $sqlWhereTaxa = 'OR t.tidaccepted IN(SELECT tid FROM taxaenumtree WHERE parenttid = '.$tid.') OR (ISNULL(o.tid) AND o.sciname = "'.SanitizerService::cleanInStr($this->conn,$name).'") ';
                     }
                 }
                 elseif($this->taxaSearchType === 2 || ($this->taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
@@ -376,10 +376,10 @@ class OccurrenceManager{
             }
             if($this->searchTidArr){
                 if($image){
-                    $sqlWhereTaxa .= 'OR (i.tid IN('.implode(',',$this->searchTidArr).')) ';
+                    $sqlWhereTaxa .= 'OR (t.tidaccepted IN('.implode(',',$this->searchTidArr).')) ';
                 }
                 else{
-                    $sqlWhereTaxa .= 'OR (o.tid IN('.implode(',',$this->searchTidArr).')) ';
+                    $sqlWhereTaxa .= 'OR (t.tidaccepted IN('.implode(',',$this->searchTidArr).')) ';
                 }
             }
             if($sqlWhereTaxa){
@@ -528,24 +528,14 @@ class OccurrenceManager{
                     $tempInnerArr = array();
                     $collValueArr = explode(' ',trim($collectorArr[0]));
                     foreach($collValueArr as $collV){
-                        if(strlen($collV) < 4 || strtolower($collV) === 'best'){
-                            $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collV).'%")';
-                        }
-                        else{
-                            $tempInnerArr[] = '(MATCH(f.recordedby) AGAINST("'.SanitizerService::cleanInStr($this->conn,$collV).'")) ';
-                        }
+                        $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collV).'%")';
                     }
                     $tempArr[] = implode(' AND ', $tempInnerArr);
                 }
             }
             elseif(count($collectorArr) > 1){
                 $collStr = current($collectorArr);
-                if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
-                    $tempInnerArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collStr).'%")';
-                }
-                else{
-                    $tempArr[] = '(MATCH(f.recordedby) AGAINST("'.SanitizerService::cleanInStr($this->conn,$collStr).'")) ';
-                }
+                $tempArr[] = '(o.recordedBy LIKE "%'.SanitizerService::cleanInStr($this->conn,$collStr).'%")';
             }
             $sqlWhere .= 'AND ('.implode(' OR ',$tempArr).') ';
             $this->localSearchArr[] = implode(', ',$collectorArr);
@@ -732,14 +722,6 @@ class OccurrenceManager{
         }
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
             $sqlWhere .= 'AND (it.keyvalue = "'.SanitizerService::cleanInStr($this->conn,$this->searchTermsArr['imagetag']).'") ';
-        }
-        if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
-            $keywordArr = explode(';',$this->searchTermsArr['imagekeyword']);
-            $tempArr = array();
-            foreach($keywordArr as $value){
-                $tempArr[] = "(ik.keyword LIKE '%".trim(SanitizerService::cleanInStr($this->conn,$value))."%')";
-            }
-            $sqlWhere .= 'AND (' .implode(' OR ',$tempArr). ') ';
         }
         if(array_key_exists('uploaddate1',$this->searchTermsArr) && $this->searchTermsArr['uploaddate1']){
             $dateArr = array();
@@ -1143,23 +1125,16 @@ class OccurrenceManager{
     protected function setTableJoins($sqlWhere): string
     {
         $sqlJoin = '';
-        if(array_key_exists('taxontype',$this->searchTermsArr) && ((int)$this->searchTermsArr['taxontype'] === 4 || (int)$this->searchTermsArr['taxontype'] === 5)) {
-            $sqlJoin .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
-        }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
-        if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-            $sqlJoin .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-        }
         if(array_key_exists('phuid',$this->searchTermsArr) || array_key_exists('imagetag',$this->searchTermsArr) || array_key_exists('imagekeyword',$this->searchTermsArr) || array_key_exists('uploaddate1',$this->searchTermsArr) || array_key_exists('imagetype',$this->searchTermsArr)) {
             $sqlJoin .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
             $sqlJoin .= array_key_exists('phuid',$this->searchTermsArr) ? 'LEFT JOIN users AS u ON i.photographeruid = u.uid ' :'';
             $sqlJoin .= array_key_exists('imagetag',$this->searchTermsArr) ? 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ' :'';
-            $sqlJoin .= array_key_exists('imagekeyword',$this->searchTermsArr) ? 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ' :'';
         }
         return $sqlJoin;
     }
@@ -1176,40 +1151,42 @@ class OccurrenceManager{
     public function validateSearchTermsArr($stArr): bool
     {
         $valid = false;
-        if(
-            array_key_exists('db',$stArr) ||
-            array_key_exists('clid',$stArr) ||
-            array_key_exists('taxa',$stArr) ||
-            array_key_exists('country',$stArr) ||
-            array_key_exists('state',$stArr) ||
-            array_key_exists('county',$stArr) ||
-            array_key_exists('local',$stArr) ||
-            array_key_exists('elevlow',$stArr) ||
-            array_key_exists('elevhigh',$stArr) ||
-            array_key_exists('collector',$stArr) ||
-            array_key_exists('collnum',$stArr) ||
-            array_key_exists('eventdate1',$stArr) ||
-            array_key_exists('eventdate2',$stArr) ||
-            array_key_exists('occurrenceRemarks',$stArr) ||
-            array_key_exists('catnum',$stArr) ||
-            array_key_exists('othercatnum',$stArr) ||
-            array_key_exists('typestatus',$stArr) ||
-            array_key_exists('hasaudio',$stArr) ||
-            array_key_exists('hasimages',$stArr) ||
-            array_key_exists('hasvideo',$stArr) ||
-            array_key_exists('hasmedia',$stArr) ||
-            array_key_exists('hasgenetic',$stArr) ||
-            array_key_exists('upperlat',$stArr) ||
-            array_key_exists('pointlat',$stArr) ||
-            array_key_exists('circleArr',$stArr) ||
-            array_key_exists('phuid',$stArr) ||
-            array_key_exists('imagetag',$stArr) ||
-            array_key_exists('imagekeyword',$stArr) ||
-            array_key_exists('uploaddate1',$stArr) ||
-            array_key_exists('uploaddate2',$stArr) ||
-            array_key_exists('polyArr',$stArr)
-        ){
-            $valid = true;
+        if($stArr && is_array($stArr)){
+            if(
+                array_key_exists('db',$stArr) ||
+                array_key_exists('clid',$stArr) ||
+                array_key_exists('taxa',$stArr) ||
+                array_key_exists('country',$stArr) ||
+                array_key_exists('state',$stArr) ||
+                array_key_exists('county',$stArr) ||
+                array_key_exists('local',$stArr) ||
+                array_key_exists('elevlow',$stArr) ||
+                array_key_exists('elevhigh',$stArr) ||
+                array_key_exists('collector',$stArr) ||
+                array_key_exists('collnum',$stArr) ||
+                array_key_exists('eventdate1',$stArr) ||
+                array_key_exists('eventdate2',$stArr) ||
+                array_key_exists('occurrenceRemarks',$stArr) ||
+                array_key_exists('catnum',$stArr) ||
+                array_key_exists('othercatnum',$stArr) ||
+                array_key_exists('typestatus',$stArr) ||
+                array_key_exists('hasaudio',$stArr) ||
+                array_key_exists('hasimages',$stArr) ||
+                array_key_exists('hasvideo',$stArr) ||
+                array_key_exists('hasmedia',$stArr) ||
+                array_key_exists('hasgenetic',$stArr) ||
+                array_key_exists('upperlat',$stArr) ||
+                array_key_exists('pointlat',$stArr) ||
+                array_key_exists('circleArr',$stArr) ||
+                array_key_exists('phuid',$stArr) ||
+                array_key_exists('imagetag',$stArr) ||
+                array_key_exists('imagekeyword',$stArr) ||
+                array_key_exists('uploaddate1',$stArr) ||
+                array_key_exists('uploaddate2',$stArr) ||
+                array_key_exists('polyArr',$stArr)
+            ){
+                $valid = true;
+            }
         }
         return $valid;
     }

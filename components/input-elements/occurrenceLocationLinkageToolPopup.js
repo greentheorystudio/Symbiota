@@ -137,7 +137,7 @@ const occurrenceLocationLinkageToolPopup = {
                                         </template>
                                     </div>
                                     <div class="q-mt-md q-pl-md row justify-start q-gutter-md">
-                                        <q-btn color="primary" @click="processLocationSelection(location.locationid);" label="Select Location" dense />
+                                        <q-btn color="primary" @click="processLocationSelection(location);" label="Select Location" dense />
                                     </div>
                                 </q-card-section>
                             </q-card>
@@ -187,8 +187,8 @@ const occurrenceLocationLinkageToolPopup = {
             });
         }
 
-        function processLocationSelection(locationid) {
-            occurrenceStore.setCurrentLocationRecord(locationid);
+        function processLocationSelection(location) {
+            context.emit('update:location', location);
             context.emit('close:popup');
         }
 

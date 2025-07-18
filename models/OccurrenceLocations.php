@@ -7,53 +7,53 @@ class OccurrenceLocations{
 	private $conn;
 
     private $collectingEventOverlapFields = array(
-        "localitysecurity",
-        "localitysecurityreason",
-        "decimallatitude",
-        "decimallongitude",
-        "geodeticdatum",
-        "coordinateuncertaintyinmeters",
-        "footprintwkt",
-        "georeferencedby",
-        "georeferenceprotocol",
-        "georeferencesources",
-        "georeferenceverificationstatus",
-        "georeferenceremarks"
+        'localitysecurity',
+        'localitysecurityreason',
+        'decimallatitude',
+        'decimallongitude',
+        'geodeticdatum',
+        'coordinateuncertaintyinmeters',
+        'footprintwkt',
+        'georeferencedby',
+        'georeferenceprotocol',
+        'georeferencesources',
+        'georeferenceverificationstatus',
+        'georeferenceremarks'
     );
 
     private $fields = array(
-        "locationid" => array("dataType" => "number", "length" => 11),
-        "collid" => array("dataType" => "number", "length" => 10),
-        "locationname" => array("dataType" => "string", "length" => 255),
-        "locationcode" => array("dataType" => "string", "length" => 50),
-        "island" => array("dataType" => "string", "length" => 75),
-        "islandgroup" => array("dataType" => "string", "length" => 75),
-        "waterbody" => array("dataType" => "string", "length" => 255),
-        "continent" => array("dataType" => "string", "length" => 45),
-        "country" => array("dataType" => "string", "length" => 64),
-        "stateprovince" => array("dataType" => "string", "length" => 255),
-        "county" => array("dataType" => "string", "length" => 255),
-        "municipality" => array("dataType" => "string", "length" => 255),
-        "locality" => array("dataType" => "text", "length" => 0),
-        "localitysecurity" => array("dataType" => "number", "length" => 10),
-        "localitysecurityreason" => array("dataType" => "string", "length" => 100),
-        "decimallatitude" => array("dataType" => "number", "length" => 0),
-        "decimallongitude" => array("dataType" => "number", "length" => 0),
-        "geodeticdatum" => array("dataType" => "string", "length" => 255),
-        "coordinateuncertaintyinmeters" => array("dataType" => "number", "length" => 10),
-        "footprintwkt" => array("dataType" => "text", "length" => 0),
-        "coordinateprecision" => array("dataType" => "number", "length" => 9),
-        "locationremarks" => array("dataType" => "text", "length" => 0),
-        "verbatimcoordinates" => array("dataType" => "string", "length" => 255),
-        "verbatimcoordinatesystem" => array("dataType" => "string", "length" => 255),
-        "georeferencedby" => array("dataType" => "string", "length" => 255),
-        "georeferenceprotocol" => array("dataType" => "string", "length" => 255),
-        "georeferencesources" => array("dataType" => "string", "length" => 255),
-        "georeferenceverificationstatus" => array("dataType" => "string", "length" => 32),
-        "georeferenceremarks" => array("dataType" => "string", "length" => 500),
-        "minimumelevationinmeters" => array("dataType" => "number", "length" => 6),
-        "maximumelevationinmeters" => array("dataType" => "number", "length" => 6),
-        "verbatimelevation" => array("dataType" => "string", "length" => 255)
+        'locationid' => array('dataType' => 'number', 'length' => 11),
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'locationname' => array('dataType' => 'string', 'length' => 255),
+        'locationcode' => array('dataType' => 'string', 'length' => 50),
+        'island' => array('dataType' => 'string', 'length' => 75),
+        'islandgroup' => array('dataType' => 'string', 'length' => 75),
+        'waterbody' => array('dataType' => 'string', 'length' => 255),
+        'continent' => array('dataType' => 'string', 'length' => 45),
+        'country' => array('dataType' => 'string', 'length' => 64),
+        'stateprovince' => array('dataType' => 'string', 'length' => 255),
+        'county' => array('dataType' => 'string', 'length' => 255),
+        'municipality' => array('dataType' => 'string', 'length' => 255),
+        'locality' => array('dataType' => 'text', 'length' => 0),
+        'localitysecurity' => array('dataType' => 'number', 'length' => 10),
+        'localitysecurityreason' => array('dataType' => 'string', 'length' => 100),
+        'decimallatitude' => array('dataType' => 'number', 'length' => 0),
+        'decimallongitude' => array('dataType' => 'number', 'length' => 0),
+        'geodeticdatum' => array('dataType' => 'string', 'length' => 255),
+        'coordinateuncertaintyinmeters' => array('dataType' => 'number', 'length' => 10),
+        'footprintwkt' => array('dataType' => 'text', 'length' => 0),
+        'coordinateprecision' => array('dataType' => 'number', 'length' => 9),
+        'locationremarks' => array('dataType' => 'text', 'length' => 0),
+        'verbatimcoordinates' => array('dataType' => 'string', 'length' => 255),
+        'verbatimcoordinatesystem' => array('dataType' => 'string', 'length' => 255),
+        'georeferencedby' => array('dataType' => 'string', 'length' => 255),
+        'georeferenceprotocol' => array('dataType' => 'string', 'length' => 255),
+        'georeferencesources' => array('dataType' => 'string', 'length' => 255),
+        'georeferenceverificationstatus' => array('dataType' => 'string', 'length' => 32),
+        'georeferenceremarks' => array('dataType' => 'string', 'length' => 500),
+        'minimumelevationinmeters' => array('dataType' => 'number', 'length' => 6),
+        'maximumelevationinmeters' => array('dataType' => 'number', 'length' => 6),
+        'verbatimelevation' => array('dataType' => 'string', 'length' => 255)
     );
 
     public function __construct(){
@@ -91,7 +91,8 @@ class OccurrenceLocations{
     public function getAutocompleteLocationList($collid, $key, $queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT locationid, locationname, locationcode, country, stateprovince, county, decimallatitude, decimallongitude '.
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurlocations WHERE collid = ' . (int)$collid . ' ';
         if($key === 'code'){
             $sql .= 'AND locationcode LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
@@ -101,6 +102,7 @@ class OccurrenceLocations{
         }
         $sql .= 'ORDER BY locationcode, locationname, country, stateprovince, county LIMIT 10 ';
         if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
@@ -134,13 +136,10 @@ class OccurrenceLocations{
                 $dataArr = array();
                 $dataArr['id'] = $row['locationid'];
                 $dataArr['label'] = $label;
-                $dataArr['locationname'] = $row['locationname'];
-                $dataArr['locationcode'] = $row['locationcode'];
-                $dataArr['country'] = $row['country'];
-                $dataArr['stateprovince'] = $row['stateprovince'];
-                $dataArr['county'] = $row['county'];
-                $dataArr['decimallatitude'] = $row['decimallatitude'];
-                $dataArr['decimallongitude'] = $row['decimallongitude'];
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $dataArr[$name] = $row[$name];
+                }
                 $retArr[] = $dataArr;
                 unset($rows[$index]);
             }
@@ -264,7 +263,7 @@ class OccurrenceLocations{
             if($this->conn->query($sql)){
                 $retVal = 1;
                 foreach($this->fields as $field => $fieldArr){
-                    if($field !== 'locationname' && $field !== 'locationcode' && array_key_exists($field, $editData)){
+                    if($retVal && $field !== 'locationname' && $field !== 'locationcode' && array_key_exists($field, $editData)){
                         if(in_array($field, $this->collectingEventOverlapFields)){
                             $sqlOcc = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
                                 'SET o.' . $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
@@ -274,6 +273,37 @@ class OccurrenceLocations{
                             $sqlOcc = 'UPDATE omoccurrences SET ' . $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
                                 'WHERE locationid = ' . (int)$locationId . ' ';
                         }
+                        if(!$this->conn->query($sqlOcc)){
+                            $retVal = 0;
+                        }
+                    }
+                }
+            }
+        }
+        return $retVal;
+    }
+
+    public function updateOccurrencesFromLocationData($locationId): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($locationId){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'locationname' && $field !== 'locationcode' && !in_array($field, $this->collectingEventOverlapFields)){
+                    $sqlPartArr[] = 'o.' . $field . ' = l.' . $field . ' ';
+                }
+            }
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationid = l.locationid '.
+                'SET ' . implode(', ', $sqlPartArr) . ' WHERE l.locationid = ' . (int)$locationId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                foreach($this->collectingEventOverlapFields as $field){
+                    if($retVal){
+                        $sqlOcc = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
+                            'LEFT JOIN omoccurlocations AS l ON o.locationid = l.locationid '.
+                            'SET o.' . $field . ' = l.' . $field . ' '.
+                            'WHERE o.locationid = ' . (int)$locationId . ' AND (ISNULL(o.eventid) OR ISNULL(e.' . $field . ')) ';
                         if(!$this->conn->query($sqlOcc)){
                             $retVal = 0;
                         }

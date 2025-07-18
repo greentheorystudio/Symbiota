@@ -33,6 +33,9 @@ class DataDownloadService {
         elseif($fileType === 'gpx'){
             $returnVal = 'application/gpx+xml';
         }
+        elseif($fileType === 'docx'){
+            $returnVal = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        }
         return $returnVal;
     }
 
@@ -54,7 +57,8 @@ class DataDownloadService {
                 }
                 $result->free();
                 FileSystemService::closeFileHandler($fileHandler);
-                $this->setDownloadHeaders('csv', 'text/csv; charset=UTF-8', basename($fullPath), $fullPath);
+                $outputType = $this->getContentTypeFromFileType('csv');
+                $this->setDownloadHeaders($outputType, basename($fullPath), $fullPath);
                 flush();
                 readfile($fullPath);
                 FileSystemService::deleteFile($fullPath, true);
@@ -62,7 +66,7 @@ class DataDownloadService {
         }
     }
 
-    public function setDownloadHeaders($downloadType, $outputType, $filename, $content): void
+    public function setDownloadHeaders($outputType, $filename, $content): void
     {
         header('Content-Type: ' . $outputType);
         header('Content-Disposition: attachment; filename=' . $filename);
@@ -70,46 +74,88 @@ class DataDownloadService {
         header('Expires: 0');
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Pragma: public');
-        if($downloadType === 'geojson' || $downloadType === 'gpx' || $downloadType === 'kml'){
-            header('Content-Length: ' . strlen($content));
-        }
-        else{
-            header('Content-Length: ' . filesize($content));
-        }
+        header('Content-Length: ' . filesize($content));
     }
 
-    public function writeGPXFromOccurrenceArr($occArr): string
+    public function streamDownload($contentType, $outputFilePath): void
     {
-        $returnStr = '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '.
-            'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="springsdata.org">';
-        foreach($occArr as $data){
-            $returnStr .= '<wpt lat="' . $data['decimallatitude'] . '" lon="' . $data['decimallongitude'] . '">';
-            $returnStr .= '<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>';
-            $returnStr .= '<desc>' . ($data['sciname'] ? htmlspecialchars($data['sciname']) : '') . '</desc>';
-            $returnStr .= '</wpt>';
+        if(ob_get_level()){
+            ob_end_clean();
         }
-        $returnStr .= '</gpx>';
-        return $returnStr;
+        $this->setDownloadHeaders($contentType, basename($outputFilePath), $outputFilePath);
+        readfile($outputFilePath);
+        flush();
+        FileSystemService::deleteFile($outputFilePath, true);
     }
 
-    public function writeKMLFromOccurrenceArr($occArr): string
+    public function writeGeoJSONFromGeoJSONArr($fileName, $dataArr): string
     {
-        $returnStr = '<kml xmlns="http://www.opengis.net/kml/2.2">';
-        $returnStr .= '<Document>';
-        foreach($occArr as $data){
-            $returnStr .= '<Placemark>';
-            $returnStr .= '<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>';
-            $returnStr .= '<ExtendedData>';
-            foreach($data as $field => $value) {
-                $returnStr .= '<Data name="' . $field . '">';
-                $returnStr .= '<value>' . ($value ? htmlspecialchars($value) : '') . '</value>';
-                $returnStr .= '</Data>';
+        $fullPath = '';
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
+        if($fileName && $targetPath){
+            $fullPath = $targetPath . '/' . $fileName;
+            $fileHandler = FileSystemService::openFileHandler($fullPath);
+            FileSystemService::writeTextToFile($fileHandler, ('{"type":"FeatureCollection","numFound":' . ((int)$dataArr['numFound'] > 0 ? $dataArr['numFound'] : '0') . ',"start":0,"features":['));
+            $index = 0;
+            foreach($dataArr['features'] as $feature){
+                FileSystemService::writeTextToFile($fileHandler, json_encode($feature));
+                $index++;
+                if($index < (int)$dataArr['numFound']){
+                    FileSystemService::writeTextToFile($fileHandler, ',');
+                }
             }
-            $returnStr .= '</ExtendedData>';
-            $returnStr .= '<Point><coordinates>' . $data['decimallongitude'] . ',' . $data['decimallatitude'] . '</coordinates></Point>';
-            $returnStr .= '</Placemark>';
+            FileSystemService::writeTextToFile($fileHandler, ']}');
+            FileSystemService::closeFileHandler($fileHandler);
         }
-        $returnStr .= '</Document></kml>';
-        return $returnStr;
+        return $fullPath;
+    }
+
+    public function writeGPXFromOccurrenceArr($fileName, $occArr): string
+    {
+        $fullPath = '';
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
+        if($fileName && $targetPath){
+            $fullPath = $targetPath . '/' . $fileName;
+            $fileHandler = FileSystemService::openFileHandler($fullPath);
+            FileSystemService::writeTextToFile($fileHandler, '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ');
+            FileSystemService::writeTextToFile($fileHandler, 'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="springsdata.org">');
+            foreach($occArr as $data){
+                FileSystemService::writeTextToFile($fileHandler, ('<wpt lat="' . $data['decimallatitude'] . '" lon="' . $data['decimallongitude'] . '">'));
+                FileSystemService::writeTextToFile($fileHandler, ('<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>'));
+                FileSystemService::writeTextToFile($fileHandler, ('<desc>' . ($data['sciname'] ? htmlspecialchars($data['sciname']) : '') . '</desc>'));
+                FileSystemService::writeTextToFile($fileHandler, '</wpt>');
+            }
+            FileSystemService::writeTextToFile($fileHandler, '</gpx>');
+            FileSystemService::closeFileHandler($fileHandler);
+        }
+        return $fullPath;
+    }
+
+    public function writeKMLFromOccurrenceArr($fileName, $occArr): string
+    {
+        $fullPath = '';
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
+        if($fileName && $targetPath){
+            $fullPath = $targetPath . '/' . $fileName;
+            $fileHandler = FileSystemService::openFileHandler($fullPath);
+            FileSystemService::writeTextToFile($fileHandler, '<kml xmlns="http://www.opengis.net/kml/2.2">');
+            FileSystemService::writeTextToFile($fileHandler, '<Document>');
+            foreach($occArr as $data){
+                FileSystemService::writeTextToFile($fileHandler, '<Placemark>');
+                FileSystemService::writeTextToFile($fileHandler, ('<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>'));
+                FileSystemService::writeTextToFile($fileHandler, '<ExtendedData>');
+                foreach($data as $field => $value) {
+                    FileSystemService::writeTextToFile($fileHandler, ('<Data name="' . $field . '">'));
+                    FileSystemService::writeTextToFile($fileHandler, ('<value>' . ($value ? htmlspecialchars($value) : '') . '</value>'));
+                    FileSystemService::writeTextToFile($fileHandler, '</Data>');
+                }
+                FileSystemService::writeTextToFile($fileHandler, '</ExtendedData>');
+                FileSystemService::writeTextToFile($fileHandler, ('<Point><coordinates>' . (float)$data['decimallongitude'] . ',' . (float)$data['decimallatitude'] . '</coordinates></Point>'));
+                FileSystemService::writeTextToFile($fileHandler, '</Placemark>');
+            }
+            FileSystemService::writeTextToFile($fileHandler, '</Document></kml>');
+            FileSystemService::closeFileHandler($fileHandler);
+        }
+        return $fullPath;
     }
 }

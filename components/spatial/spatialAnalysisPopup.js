@@ -36,16 +36,16 @@ const spatialAnalysisPopup = {
             type: Number,
             default: null
         },
-        pointRadiusMeters: {
-            type: Number,
-            default: null
-        },
         polyArr: {
             type: Array,
             default: null
         },
         radius: {
             type: Number,
+            default: null
+        },
+        radiusUnits: {
+            type: String,
             default: null
         },
         rightLong: {
@@ -116,15 +116,15 @@ const spatialAnalysisPopup = {
             loadInputParentParams();
         });
 
-        Vue.watch(propsRefs.pointRadiusMeters, () => {
-            loadInputParentParams();
-        });
-
         Vue.watch(propsRefs.polyArr, () => {
             loadInputParentParams();
         });
 
         Vue.watch(propsRefs.radius, () => {
+            loadInputParentParams();
+        });
+
+        Vue.watch(propsRefs.radiusUnits, () => {
             loadInputParentParams();
         });
 
@@ -154,7 +154,7 @@ const spatialAnalysisPopup = {
             if(props.upperLat && inputWindowToolsArr.includes('box')){
                 processInputParentBoxParams();
             }
-            if(props.pointLat && inputWindowToolsArr.includes('circle')){
+            if((props.pointLat || props.radiusUnits) && inputWindowToolsArr.includes('circle')){
                 processInputParentPointRadiusParams();
             }
             if(props.polyArr && inputWindowToolsArr.length === 0){
@@ -195,9 +195,6 @@ const spatialAnalysisPopup = {
                 if(props.coordinateUncertaintyInMeters && inputWindowToolsArr.includes('uncertainty')){
                     openerRadius = props.coordinateUncertaintyInMeters;
                 }
-                if(props.pointRadiusMeters && inputWindowToolsArr.includes('radius')){
-                    openerRadius = props.pointRadiusMeters;
-                }
                 if(openerRadius > 0){
                     spatialModuleRef.value.updateMapSettings('uncertaintyRadiusValue', openerRadius);
                     const pointRadius = {};
@@ -215,7 +212,12 @@ const spatialAnalysisPopup = {
             pointRadius.pointlat = props.pointLat;
             pointRadius.pointlong = props.pointLong;
             pointRadius.radius = props.radius;
+            pointRadius.radiusunits = props.radiusUnits;
+            if(pointRadius.radiusunits){
+                spatialModuleRef.value.updateMapSettings('radiusUnits', pointRadius.radiusunits);
+            }
             if(pointRadius.pointlat && pointRadius.pointlong && pointRadius.radius){
+                spatialModuleRef.value.updateMapSettings('uncertaintyRadiusValue', pointRadius.radius);
                 spatialModuleRef.value.createCircleFromPointRadius(pointRadius, true);
             }
         }
@@ -252,13 +254,9 @@ const spatialAnalysisPopup = {
                 spatialModuleRef.value.updateMapSettings('uncertaintyRadiusText', 'Coordinate uncertainty (m)');
             }
             else if(inputWindowToolsArr.includes('radius')){
-                spatialModuleRef.value.updateMapSettings('uncertaintyRadiusText', 'Radius (m)');
+                spatialModuleRef.value.updateMapSettings('uncertaintyRadiusText', 'Radius');
             }
         }
-
-        Vue.onMounted(() => {
-
-        });
 
         return {
             inputWindowToolsArr,

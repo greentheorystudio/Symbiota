@@ -22,6 +22,9 @@ const occurrenceEditorOccurrenceDataControls = {
                     <q-btn color="secondary" @click="createOccurrenceRecord();" label="Create Occurrence Record" :disabled="!occurrenceValid" />
                 </template>
                 <template v-else>
+                    <template v-if="occurrenceEntryFormat === 'lot' || occurrenceEntryFormat === 'benthic'">
+                        <q-btn color="secondary" @click="showEventLocationTransferPopup = true" label="Change Event/Location" />
+                    </template>
                     <q-btn color="secondary" @click="saveOccurrenceEdits();" label="Save Occurrence Edits" :disabled="!editsExist || !occurrenceValid" />
                 </template>
             </div>
@@ -34,9 +37,16 @@ const occurrenceEditorOccurrenceDataControls = {
                 @close:popup="showConfiguredDataEditorPopup = false"
             ></mof-data-editor-popup>
         </template>
+        <template v-if="showEventLocationTransferPopup">
+            <occurrence-editor-event-location-transfer-popup
+                :show-popup="showEventLocationTransferPopup"
+                @close:popup="showEventLocationTransferPopup = false"
+            ></occurrence-editor-event-location-transfer-popup>
+        </template>
     `,
     components: {
         'mof-data-editor-popup': mofDataEditorPopup,
+        'occurrence-editor-event-location-transfer-popup': occurrenceEditorEventLocationTransferPopup,
         'occurrence-entry-follow-up-action-selector': occurrenceEntryFollowUpActionSelector
     },
     setup(_, context) {
@@ -54,6 +64,7 @@ const occurrenceEditorOccurrenceDataControls = {
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceValid = Vue.computed(() => occurrenceStore.getOccurrenceValid);
         const showConfiguredDataEditorPopup = Vue.ref(false);
+        const showEventLocationTransferPopup = Vue.ref(false);
 
         function changeEntryFollowUpAction(value) {
             occurrenceStore.setEntryFollowUpAction(value);
@@ -113,6 +124,7 @@ const occurrenceEditorOccurrenceDataControls = {
             occurrenceEntryFormat,
             occurrenceValid,
             showConfiguredDataEditorPopup,
+            showEventLocationTransferPopup,
             changeEntryFollowUpAction,
             createOccurrenceRecord,
             saveOccurrenceEdits,

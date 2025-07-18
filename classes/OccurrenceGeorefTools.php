@@ -251,13 +251,6 @@ class OccurrenceGeorefTools {
 		if((int)$searchType === 2){
 			$sqlWhere .= 'AND (o.locality LIKE "%'.$locality.'%") ';
 		}
-		elseif((int)$searchType === 3){
-			$sql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-			$localArr = explode(' ', $locality);
-			foreach($localArr as $str){
-				$sqlWhere .= 'AND (MATCH(f.locality) AGAINST("'.$str.'")) ';
-			}
-		}
 		else{
 			$sqlWhere .= 'AND o.locality = "'.trim(SanitizerService::cleanInStr($this->conn,$locality), ' .').'" ';
 		}

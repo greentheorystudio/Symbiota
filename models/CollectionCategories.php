@@ -7,10 +7,10 @@ class CollectionCategories {
     private $conn;
 
     private $fields = array(
-        "ccpk" => array("dataType" => "number", "length" => 10),
-        "category" => array("dataType" => "string", "length" => 75),
-        "sortsequence" => array("dataType" => "number", "length" => 11),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'ccpk' => array('dataType' => 'number', 'length' => 10),
+        'category' => array('dataType' => 'string', 'length' => 75),
+        'sortsequence' => array('dataType' => 'number', 'length' => 11),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
 	public function __construct(){

@@ -1,15 +1,15 @@
 const occurrenceEditorRecordFooterElement = {
     template: `
         <div class="q-mt-sm q-px-sm row justify-between">
-            <div v-if="Number(occurrenceData.occid) > 0" class="row q-gutter-xs">
-                <div>
-                    <span class="text-bold">Record Id:</span> {{ occurrenceData.occid }}
+            <div v-if="Number(occurrenceData.occid) > 0" class="row q-col-gutter-sm">
+                <div class="row q-col-gutter-xs">
+                    <div class="text-bold">Record Id:</div><div>{{ occurrenceData.occid }}</div>
                 </div>
-                <div v-if="Number(eventId) > 0">
-                    <span class="text-bold">Event Id:</span> {{ eventId }}
+                <div v-if="Number(eventId) > 0" class="row q-col-gutter-xs">
+                    <div class="text-bold">Event Id:</div><div>{{ eventId }}</div>
                 </div>
-                <div v-if="Number(locationId) > 0">
-                    <span class="text-bold">Location Id:</span> {{ locationId }}
+                <div v-if="Number(locationId) > 0" class="row q-col-gutter-xs">
+                    <div class="text-bold">Location Id:</div><div>{{ locationId }}</div>
                 </div>
             </div>
             <div>

@@ -73,7 +73,7 @@ const collectionDataUploadParametersEditorPopup = {
         });
 
         function addCollectionDataUploadParameters() {
-            collectionDataUploadParametersStore.createCollectionDataUploadParametersRecord(collId, (newProfileId) => {
+            collectionDataUploadParametersStore.createCollectionDataUploadParametersRecord(collId.value, (newProfileId) => {
                 if(newProfileId > 0){
                     showNotification('positive','Data upload profile added successfully.');
                     context.emit('close:popup');
@@ -92,7 +92,7 @@ const collectionDataUploadParametersEditorPopup = {
             const confirmText = 'Are you sure you want to delete this upload profile? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    collectionDataUploadParametersStore.deleteCollectionDataUploadParametersRecord(collId, (res) => {
+                    collectionDataUploadParametersStore.deleteCollectionDataUploadParametersRecord(collId.value, (res) => {
                         if(res === 1){
                             showNotification('positive','Upload profile has been deleted.');
                             context.emit('close:popup');
@@ -107,7 +107,7 @@ const collectionDataUploadParametersEditorPopup = {
 
         function saveCollectionDataUploadParametersEdits() {
             showWorking('Saving edits...');
-            collectionDataUploadParametersStore.updateCollectionDataUploadParametersRecord(collId, (res) => {
+            collectionDataUploadParametersStore.updateCollectionDataUploadParametersRecord(collId.value, (res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');

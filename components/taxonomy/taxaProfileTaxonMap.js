@@ -1,45 +1,49 @@
 const taxaProfileTaxonMap = {
-    props: {
-        taxon: {
-            type: Object,
-            default: {}
-        }
-    },
     template: `
         <div class="map-thumb-frame">
-            <q-card class="taxon-profile-taxon-map-card">
+            <q-card class="taxon-profile-taxon-map-card cursor-pointer" @click="openMapPopup(true);">
                 <div class="map-thumb-container">
-                    <template v-if="taxon.map">
+                    <template v-if="taxonMap">
                         <div class="map-thumb-image">
                             <a @click="openMapPopup(true);" class="cursor-pointer">
-                                <q-img :src="taxon.map" :fit="contain" :title="taxon.sciName" :alt="taxon.sciName"></q-img>
+                                <q-img :src="taxonMap['url']" :fit="contain" :title="taxon.sciname" :alt="taxon.sciname"></q-img>
                             </a>
                         </div>
                     </template>
                     <div class="map-thumb-spatial-link">
-                        <span class="cursor-pointer" @click="openMapPopup(true);">Open Interactive Map</span>
+                        Open Interactive Map
                     </div>
                 </div>
             </q-card>
         </div>
     `,
-    setup(props) {
-        const store = useBaseStore();
-        const clientRoot = store.getClientRoot;
+    setup() {
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const clientRoot = baseStore.getClientRoot;
+        const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
+        const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+        const taxonId = Vue.computed(() => taxaStore.getAcceptedTaxonTid);
+        const taxonMap = Vue.computed(() => {
+            return taxaMapData.value.hasOwnProperty(taxonId.value) ? taxaMapData.value[taxonId.value] : null;
+        });
 
         function openMapPopup(clustering) {
             let taxonType;
-            if(Number(props.taxon['rankId']) < 140){
+            if(Number(taxon.value['rankid']) < 140){
                 taxonType = 4;
             }
             else{
                 taxonType = 1;
             }
-            const url = clientRoot + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + props.taxon['sciName'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
+            const url = clientRoot + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
             window.open(url, '_blank');
         }
 
         return {
+            taxon,
+            taxonMap,
             openMapPopup
         }
     }

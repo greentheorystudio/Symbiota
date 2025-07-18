@@ -218,16 +218,22 @@ const taxonomyDataSourceImportUpdateModule = {
             }
         }
 
-        function addTaxonCommonName(tid, name, langid) {
-            const formData = new FormData();
-            formData.append('action', 'addTaxonCommonName');
-            formData.append('tid', tid);
-            formData.append('name', name);
-            formData.append('langid', langid);
-            fetch(taxonVernacularApiUrl, {
-                method: 'POST',
-                body: formData
-            });
+        function addTaxonCommonName(tid, commonname) {
+            if(Number(data['tid'] > 0 && data['name'] && data['language'])){
+                const vernacularData = {
+                    tid: tid.toString(),
+                    vernacularname: commonname['name'],
+                    language: commonname['language'],
+                    langid: commonname['langid']
+                };
+                const formData = new FormData();
+                formData.append('vernacular', JSON.stringify(vernacularData));
+                formData.append('action', 'createTaxonCommonNameRecord');
+                fetch(taxonVernacularApiUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+            }
         }
 
         function addTaxonIdentifier(tid, identifier) {
@@ -405,7 +411,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 currentTaxonExternal.value['commonnames'].forEach((commonname) => {
                     const existingName = currentTaxonLocal.value['commonnames'].length > 0 ? currentTaxonLocal.value['commonnames'].find(name => (name['commonname'].toLowerCase() === commonname['name'].toLowerCase() && Number(name['langid']) === Number(commonname['langid']))) : null;
                     if(!existingName){
-                        addTaxonCommonName(currentTaxonExternal.value['tid'],commonname['name'],commonname['langid']);
+                        addTaxonCommonName(currentTaxonExternal.value['tid'], commonname);
                     }
                 });
                 processSubprocessSuccessResponse(false);
@@ -769,8 +775,6 @@ const taxonomyDataSourceImportUpdateModule = {
             formData.append('action', 'getTaxonFromSciname');
             formData.append('sciname', sciname);
             formData.append('kingdomid', props.kingdomId);
-            formData.append('includeCommonNames', (importCommonNames.value ? '1' : '0'));
-            formData.append('includeChildren', '1');
             fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
@@ -778,7 +782,12 @@ const taxonomyDataSourceImportUpdateModule = {
             .then((response) => {
                 if(response.status === 200){
                     response.json().then((resObj) => {
-                        callback(resObj);
+                        if(importCommonNames.value){
+                            setTaxonCommonNames(resObj, callback);
+                        }
+                        else{
+                            callback(resObj);
+                        }
                     });
                 }
                 else{
@@ -792,8 +801,6 @@ const taxonomyDataSourceImportUpdateModule = {
             const formData = new FormData();
             formData.append('action', 'getTaxonFromTid');
             formData.append('tid', tid);
-            formData.append('includeCommonNames', (importCommonNames.value ? '1' : '0'));
-            formData.append('includeChildren', '1');
             fetch(taxaApiUrl, {
                 method: 'POST',
                 body: formData
@@ -801,7 +808,12 @@ const taxonomyDataSourceImportUpdateModule = {
             .then((response) => {
                 if(response.status === 200){
                     response.json().then((resObj) => {
-                        callback(resObj);
+                        if(importCommonNames.value){
+                            setTaxonCommonNames(resObj, callback);
+                        }
+                        else{
+                            callback(resObj);
+                        }
                     });
                 }
                 else{
@@ -913,7 +925,8 @@ const taxonomyDataSourceImportUpdateModule = {
                                 if(commonNameLanguageIdArr.value.length === 0 || (langObj && commonNameLanguageIdArr.value.includes(Number(langObj['langid'])))){
                                     const cNameObj = {};
                                     cNameObj['name'] = processCommonName(cName['name']);
-                                    cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
+                                    cNameObj['language'] = langObj ? langObj['name'] : null;
+                                    cNameObj['langid'] = langObj ? Number(langObj['langid']) : null;
                                     currentTaxonExternal.value['commonnames'].push(cNameObj);
                                 }
                             });
@@ -1011,7 +1024,8 @@ const taxonomyDataSourceImportUpdateModule = {
                                     if(commonNameLanguageIdArr.value.length === 0 || (langObj && commonNameLanguageIdArr.value.includes(Number(langObj['langid'])))){
                                         const cNameObj = {};
                                         cNameObj['name'] = processCommonName(cName['commonName']);
-                                        cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
+                                        cNameObj['language'] = langObj ? langObj['name'] : null;
+                                        cNameObj['langid'] = langObj ? Number(langObj['langid']) : null;
                                         currentTaxonExternal.value['commonnames'].push(cNameObj);
                                     }
                                 }
@@ -1128,7 +1142,8 @@ const taxonomyDataSourceImportUpdateModule = {
                                     if(commonNameLanguageIdArr.value.length === 0 || (langObj && commonNameLanguageIdArr.value.includes(Number(langObj['langid'])))){
                                         const cNameObj = {};
                                         cNameObj['name'] = processCommonName(cName['commonName']);
-                                        cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
+                                        cNameObj['language'] = langObj ? langObj['name'] : null;
+                                        cNameObj['langid'] = langObj ? Number(langObj['langid']) : null;
                                         taxonSearchResults.value[0]['commonnames'].push(cNameObj);
                                     }
                                 }
@@ -1274,7 +1289,8 @@ const taxonomyDataSourceImportUpdateModule = {
                                 if(commonNameLanguageIdArr.value.length === 0 || (langObj && commonNameLanguageIdArr.value.includes(Number(langObj['langid'])))){
                                     const cNameObj = {};
                                     cNameObj['name'] = processCommonName(cName['vernacular']);
-                                    cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
+                                    cNameObj['language'] = langObj ? langObj['name'] : null;
+                                    cNameObj['langid'] = langObj ? Number(langObj['langid']) : null;
                                     currentTaxonExternal.value['commonnames'].push(cNameObj);
                                 }
                             });
@@ -2083,23 +2099,23 @@ const taxonomyDataSourceImportUpdateModule = {
         function setTaxaToAdd(callback) {
             if(setAddTaxaArr.value.length > 0){
                 const sciname = setAddTaxaArr.value[0]['sciname'];
-                const url = clientRoot + '/api/taxa/gettid.php';
                 const formData = new FormData();
                 formData.append('sciname', sciname);
                 formData.append('kingdomid', props.kingdomId);
-                fetch(url, {
+                formData.append('action', 'getTid');
+                fetch(taxaApiUrl, {
                     method: 'POST',
                     body: formData
                 })
                 .then((response) => {
                     if(response.status === 200){
                         response.text().then((res) => {
-                            if(dataSource.value === 'worms' && !res){
-                                getWoRMSAddTaxonAuthor(res,callback);
+                            if(dataSource.value === 'worms' && !Number(res) > 0){
+                                getWoRMSAddTaxonAuthor(res, callback);
                             }
                             else{
                                 const currentTaxon = Object.assign({}, setAddTaxaArr.value[0]);
-                                if(res){
+                                if(Number(res) > 0){
                                     nameTidIndex.value[currentTaxon['sciname']] = Number(res);
                                 }
                                 else{
@@ -2115,6 +2131,23 @@ const taxonomyDataSourceImportUpdateModule = {
             else{
                 processAddTaxaArr(callback);
             }
+        }
+
+        function setTaxonCommonNames(taxonData, callback) {
+            const formData = new FormData();
+            formData.append('tid', taxonData['tid'].toString());
+            formData.append('action', 'getCommonNamesByTid');
+            fetch(taxonVernacularApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                taxonData['commonnames'] = resObj;
+                callback(taxonData);
+            });
         }
 
         function updateCommonNameLanguageArr(langObj) {
@@ -2248,7 +2281,7 @@ const taxonomyDataSourceImportUpdateModule = {
                                     kingdomName = kingdomObj['name'];
                                 }
                             }
-                            if(kingdomName.toLowerCase() === targetKingdomName.value.toLowerCase()){
+                            if(taxon['sciname'] === props.taxonomicGroup && kingdomName.toLowerCase() === targetKingdomName.value.toLowerCase()){
                                 let hierarchyArr = [];
                                 if(taxon.hasOwnProperty('hierarchy')){
                                     hierarchyArr = taxon['hierarchy'];
@@ -2413,7 +2446,8 @@ const taxonomyDataSourceImportUpdateModule = {
                                     if(commonNameLanguageIdArr.value.length === 0 || (langObj && commonNameLanguageIdArr.value.includes(Number(langObj['langid'])))){
                                         const cNameObj = {};
                                         cNameObj['name'] = processCommonName(cName['commonName']);
-                                        cNameObj['langid'] = langObj ? Number(langObj['langid']) : '';
+                                        cNameObj['language'] = langObj ? langObj['name'] : null;
+                                        cNameObj['langid'] = langObj ? Number(langObj['langid']) : null;
                                         taxon['commonnames'].push(cNameObj);
                                     }
                                 });

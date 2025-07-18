@@ -108,12 +108,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             </span>
         </div>
         <div class="field-block">
-            <span class="field-label">Dynamic Checklist Radius:</span>
-            <span class="field-elem">
-                <input type="text" id="DYN_CHECKLIST_RADIUS" value="<?php echo (array_key_exists('DYN_CHECKLIST_RADIUS',$coreConfArr)?$coreConfArr['DYN_CHECKLIST_RADIUS']:''); ?>" style="width:600px;" onchange="processIntConfigurationChange('DYN_CHECKLIST_RADIUS','<?php echo (array_key_exists('DYN_CHECKLIST_RADIUS',$coreConfArr)?$coreConfArr['DYN_CHECKLIST_RADIUS']:''); ?>',true);" />
-            </span>
-        </div>
-        <div class="field-block">
             <span class="field-label">Portal CSS Version:  <button type="button" onclick="processUpdateCss();">Update</button></span>
             <span class="field-elem">
                 <input type="text" id="CSS_VERSION_LOCAL" value="<?php echo (array_key_exists('CSS_VERSION_LOCAL',$coreConfArr)?$coreConfArr['CSS_VERSION_LOCAL']:''); ?>" style="width:600px;" disabled />
@@ -164,7 +158,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
         <div class="field-block">
             <span class="field-label">Password:  <button type="button" onclick="showPassword('SMTP_PASSWORD');">Show</button></span>
             <span class="field-elem">
-                <input type="password" id="SMTP_PASSWORD" value="<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('SMTP_PASSWORD','<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>',false);" autocomplete="new-password" />
+                <input type="password" autocomplete="new-password" id="SMTP_PASSWORD" value="<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('SMTP_PASSWORD','<?php echo (array_key_exists('SMTP_PASSWORD',$coreConfArr)?$coreConfArr['SMTP_PASSWORD']:''); ?>',false);" />
             </span>
         </div>
     </fieldset>
@@ -215,7 +209,7 @@ $databaseProperties = $confManager->getDatabasePropArr();
         <div class="field-block">
             <span class="field-label">Password:  <button type="button" onclick="showPassword('GBIF_PASSWORD');">Show</button></span>
             <span class="field-elem">
-                <input type="password" id="GBIF_PASSWORD" value="<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GBIF_PASSWORD','<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>',false);" autocomplete="new-password" />
+                <input type="password" autocomplete="new-password" id="GBIF_PASSWORD" value="<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>" style="width:600px;" onchange="processTextConfigurationChange('GBIF_PASSWORD','<?php echo (array_key_exists('GBIF_PASSWORD',$coreConfArr)?$coreConfArr['GBIF_PASSWORD']:''); ?>',false);" />
             </span>
         </div>
     </fieldset>
@@ -231,12 +225,6 @@ $databaseProperties = $confManager->getDatabasePropArr();
             <span class="field-label">Activate Exsiccati Module:</span>
             <span class="field-elem">
                 <input type="checkbox" id="ACTIVATE_EXSICCATI" value="1" onchange="processCheckConfigurationChange('ACTIVATE_EXSICCATI');" <?php echo (array_key_exists('ACTIVATE_EXSICCATI',$coreConfArr) && $coreConfArr['ACTIVATE_EXSICCATI']?'CHECKED':''); ?> />
-            </span>
-        </div>
-        <div class="field-block">
-            <span class="field-label">Activate Checklist FieldGuide Export:</span>
-            <span class="field-elem">
-                <input type="checkbox" id="ACTIVATE_CHECKLIST_FG_EXPORT" value="1" onchange="processCheckConfigurationChange('ACTIVATE_CHECKLIST_FG_EXPORT');" <?php echo (array_key_exists('ACTIVATE_CHECKLIST_FG_EXPORT',$coreConfArr) && $coreConfArr['ACTIVATE_CHECKLIST_FG_EXPORT']?'CHECKED':''); ?> />
             </span>
         </div>
     </fieldset>

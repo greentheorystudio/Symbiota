@@ -16,6 +16,15 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getCollectionArr'){
         echo json_encode($collections->getCollectionArr());
     }
+    elseif($action === 'createCollectionRecord' && $isEditor && array_key_exists('collection', $_POST)){
+        echo $collections->createCollectionRecord(json_decode($_POST['collection'], true));
+    }
+    elseif($action === 'deleteCollectionRecord' && $collid && $isEditor){
+        echo $collections->deleteCollectionRecord($collid);
+    }
+    elseif($action === 'updateCollectionRecord' && $collid && $isEditor && array_key_exists('collectionData', $_POST)){
+        echo $collections->updateCollectionRecord($collid, json_decode($_POST['collectionData'], true));
+    }
     elseif($action === 'getCollectionInfoArr' && $collid){
         echo json_encode($collections->getCollectionInfoArr($collid));
     }
@@ -36,7 +45,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getTaxonomicDistributionData' && $collid){
         echo json_encode($collections->getTaxonomicDistributionData($collid));
     }
-    elseif($action === 'getCollectionListByUserRights'){
-        echo json_encode($collections->getCollectionListByUserRights());
+    elseif($action === 'getCollectionListByUid' && array_key_exists('uid', $_POST)){
+        echo json_encode($collections->getCollectionListByUid($_POST['uid']));
     }
 }

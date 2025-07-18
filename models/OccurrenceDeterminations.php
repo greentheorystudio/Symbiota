@@ -10,21 +10,21 @@ class OccurrenceDeterminations{
 	private $conn;
 
     private $fields = array(
-        "detid" => array("dataType" => "number", "length" => 10),
-        "occid" => array("dataType" => "number", "length" => 10),
-        "identifiedby" => array("dataType" => "string", "length" => 60),
-        "dateidentified" => array("dataType" => "string", "length" => 45),
-        "sciname" => array("dataType" => "string", "length" => 100),
-        "verbatimscientificname" => array("dataType" => "string", "length" => 255),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "scientificnameauthorship" => array("dataType" => "string", "length" => 100),
-        "identificationqualifier" => array("dataType" => "string", "length" => 45),
-        "iscurrent" => array("dataType" => "number", "length" => 11),
-        "printqueue" => array("dataType" => "number", "length" => 11),
-        "identificationreferences" => array("dataType" => "string", "length" => 255),
-        "identificationremarks" => array("dataType" => "string", "length" => 500),
-        "sortsequence" => array("dataType" => "number", "length" => 10),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'detid' => array('dataType' => 'number', 'length' => 10),
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'identifiedby' => array('dataType' => 'string', 'length' => 60),
+        'dateidentified' => array('dataType' => 'string', 'length' => 45),
+        'sciname' => array('dataType' => 'string', 'length' => 100),
+        'verbatimscientificname' => array('dataType' => 'string', 'length' => 255),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'scientificnameauthorship' => array('dataType' => 'string', 'length' => 100),
+        'identificationqualifier' => array('dataType' => 'string', 'length' => 45),
+        'iscurrent' => array('dataType' => 'number', 'length' => 11),
+        'printqueue' => array('dataType' => 'number', 'length' => 11),
+        'identificationreferences' => array('dataType' => 'string', 'length' => 255),
+        'identificationremarks' => array('dataType' => 'string', 'length' => 500),
+        'sortsequence' => array('dataType' => 'number', 'length' => 10),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -138,7 +138,7 @@ class OccurrenceDeterminations{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $sql = 'INSERT INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
+                $sql = 'INSERT IGNORE INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
                     'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploaddetermtemp '.
                     'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL ';
                 //echo "<div>".$sql."</div>";

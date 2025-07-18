@@ -1,49 +1,52 @@
 <?php
+include_once(__DIR__ . '/Occurrences.php');
+include_once(__DIR__ . '/../services/DataUploadService.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/SOLRService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
 
 class Collections {
 
     private $conn;
 
     private $fields = array(
-        "collid" => array("dataType" => "number", "length" => 10),
-        "ccpk" => array("dataType" => "number", "length" => 10),
-        "institutioncode" => array("dataType" => "string", "length" => 45),
-        "collectioncode" => array("dataType" => "string", "length" => 45),
-        "collectionname" => array("dataType" => "string", "length" => 150),
-        "collectionid" => array("dataType" => "string", "length" => 100),
-        "datasetid" => array("dataType" => "string", "length" => 250),
-        "datasetname" => array("dataType" => "string", "length" => 100),
-        "iid" => array("dataType" => "number", "length" => 10),
-        "fulldescription" => array("dataType" => "string", "length" => 2000),
-        "homepage" => array("dataType" => "string", "length" => 250),
-        "individualurl" => array("dataType" => "string", "length" => 500),
-        "contact" => array("dataType" => "string", "length" => 250),
-        "email" => array("dataType" => "string", "length" => 45),
-        "latitudedecimal" => array("dataType" => "number", "length" => 8),
-        "longitudedecimal" => array("dataType" => "number", "length" => 9),
-        "icon" => array("dataType" => "string", "length" => 250),
-        "colltype" => array("dataType" => "string", "length" => 45),
-        "managementtype" => array("dataType" => "string", "length" => 45),
-        "datarecordingmethod" => array("dataType" => "string", "length" => 45),
-        "defaultrepcount" => array("dataType" => "number", "length" => 11),
-        "collectionguid" => array("dataType" => "string", "length" => 45),
-        "securitykey" => array("dataType" => "string", "length" => 45),
-        "guidtarget" => array("dataType" => "string", "length" => 45),
-        "rightsholder" => array("dataType" => "string", "length" => 250),
-        "rights" => array("dataType" => "string", "length" => 250),
-        "usageterm" => array("dataType" => "string", "length" => 250),
-        "publishtogbif" => array("dataType" => "number", "length" => 11),
-        "publishtoidigbio" => array("dataType" => "number", "length" => 11),
-        "aggkeysstr" => array("dataType" => "string", "length" => 1000),
-        "dwcaurl" => array("dataType" => "string", "length" => 250),
-        "bibliographiccitation" => array("dataType" => "string", "length" => 1000),
-        "accessrights" => array("dataType" => "string", "length" => 1000),
-        "configjson" => array("dataType" => "text", "length" => 0),
-        "ispublic" => array("dataType" => "number", "length" => 6),
-        "initialtimestamp" => array("dataType" => "timestamp", "length" => 0)
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'ccpk' => array('dataType' => 'number', 'length' => 10),
+        'institutioncode' => array('dataType' => 'string', 'length' => 45),
+        'collectioncode' => array('dataType' => 'string', 'length' => 45),
+        'collectionname' => array('dataType' => 'string', 'length' => 150),
+        'collectionid' => array('dataType' => 'string', 'length' => 100),
+        'datasetid' => array('dataType' => 'string', 'length' => 250),
+        'datasetname' => array('dataType' => 'string', 'length' => 100),
+        'iid' => array('dataType' => 'number', 'length' => 10),
+        'fulldescription' => array('dataType' => 'string', 'length' => 2000),
+        'homepage' => array('dataType' => 'string', 'length' => 250),
+        'individualurl' => array('dataType' => 'string', 'length' => 500),
+        'contact' => array('dataType' => 'string', 'length' => 250),
+        'email' => array('dataType' => 'string', 'length' => 45),
+        'latitudedecimal' => array('dataType' => 'number', 'length' => 8),
+        'longitudedecimal' => array('dataType' => 'number', 'length' => 9),
+        'icon' => array('dataType' => 'string', 'length' => 250),
+        'colltype' => array('dataType' => 'string', 'length' => 45),
+        'managementtype' => array('dataType' => 'string', 'length' => 45),
+        'datarecordingmethod' => array('dataType' => 'string', 'length' => 45),
+        'defaultrepcount' => array('dataType' => 'number', 'length' => 11),
+        'collectionguid' => array('dataType' => 'string', 'length' => 45),
+        'securitykey' => array('dataType' => 'string', 'length' => 45),
+        'guidtarget' => array('dataType' => 'string', 'length' => 45),
+        'rightsholder' => array('dataType' => 'string', 'length' => 250),
+        'rights' => array('dataType' => 'string', 'length' => 250),
+        'usageterm' => array('dataType' => 'string', 'length' => 250),
+        'publishtogbif' => array('dataType' => 'number', 'length' => 11),
+        'publishtoidigbio' => array('dataType' => 'number', 'length' => 11),
+        'aggkeysstr' => array('dataType' => 'string', 'length' => 1000),
+        'dwcaurl' => array('dataType' => 'string', 'length' => 250),
+        'bibliographiccitation' => array('dataType' => 'string', 'length' => 1000),
+        'accessrights' => array('dataType' => 'string', 'length' => 1000),
+        'configjson' => array('dataType' => 'json', 'length' => 0),
+        'ispublic' => array('dataType' => 'number', 'length' => 6),
+        'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
 	public function __construct(){
@@ -86,6 +89,79 @@ class Collections {
             (new SOLRService)->deleteSOLRDocument($delOccArr);
         }
         return 1;
+    }
+
+    public function createCollectionRecord($data): int
+    {
+        $newID = 0;
+        $fieldNameArr = array();
+        $fieldValueArr = array();
+        $collId = array_key_exists('collid', $data) ? (int)$data['collid'] : 0;
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $data)){
+                    $fieldNameArr[] = $field;
+                    if($field === 'configjson'){
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    }
+                }
+            }
+            $fieldNameArr[] = 'collectionguid';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
+            $fieldNameArr[] = 'securitykey';
+            $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
+            $sql = 'INSERT INTO omcollections(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+                $sql = 'INSERT INTO omcollectionstats(collid, recordcnt, uploadedby) '.
+                    'VALUES(' . $newID . ', 0, "' . $GLOBALS['USERNAME'] . '")';
+                $this->conn->query($sql);
+            }
+        }
+        return $newID;
+    }
+
+    public function deleteCollectionRecord($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new Occurrences)->deleteOccurrenceRecord('collid', $collid);
+            if($retVal){
+                $retVal = (new DataUploadService)->clearOccurrenceUploadTables($collid, true);
+                $sql = 'DELETE FROM userroles WHERE (role = "CollAdmin" OR role = "CollEditor" OR role = "RareSppReader") AND tablepk = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE m.* FROM omcolldatauploadparameters AS u LEFT JOIN uploadspecmap AS m ON u.uspid = m.uspid '.
+                    'WHERE u.collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE FROM omcolldatauploadparameters WHERE collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE FROM omcollmediauploadparameters WHERE collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE FROM omcollectionstats WHERE collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                $sql = 'DELETE FROM omcrowdsourcecentral WHERE collid = ' . (int)$collid . ' ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+                return $retVal;
+            }
+        }
+        return $retVal;
     }
 
     public function getCollectionArr(): array
@@ -166,19 +242,14 @@ class Collections {
         return $retArr;
     }
 
-    public function getCollectionListByUserRights(): array
+    public function getCollectionListByUid($uid): array
     {
         $retArr = array();
-        $cArr = array();
-        if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])) {
-            $cArr = $GLOBALS['USER_RIGHTS']['CollAdmin'];
-        }
-        if(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS'])) {
-            $cArr = array_merge($cArr, $GLOBALS['USER_RIGHTS']['CollEditor']);
-        }
-        if($cArr){
-            $sql = 'SELECT collid, institutioncode, collectioncode, collectionname, colltype FROM omcollections '.
-                'WHERE collid IN(' . implode(',', $cArr) . ') ORDER BY collectionname ';
+        if((int)$uid > 0){
+            $sql = 'SELECT DISTINCT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.colltype '.
+                'FROM userroles AS r LEFT JOIN omcollections AS c ON r.tablepk = c.collid '.
+                'WHERE r.uid = ' . (int)$uid . ' AND (r.role = "CollAdmin" OR r.role = "CollEditor") '.
+                'ORDER BY c.collectionname ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -208,6 +279,21 @@ class Collections {
             }
         }
         return $retArr;
+    }
+
+    public function getCollectionPermissionLabels($permissionArr): array
+    {
+        $idStr = implode(',', array_keys($permissionArr));
+        $sql = 'SELECT collid, collectionname FROM omcollections WHERE collid IN(' . $idStr . ') ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $permissionArr[$row['collid']] = $row['collectionname'];
+                unset($rows[$index]);
+            }
+        }
+        return $permissionArr;
     }
 
     public function getGeographicDistributionData($collId, $country = null, $state = null): array
@@ -364,6 +450,32 @@ class Collections {
             'SET i.tid = o.tid '.
             'WHERE o.collid IN(' . $collidStr . ') AND i.tid <> o.tid ';
         $this->conn->query($sql);
+    }
+
+    public function updateCollectionRecord($collid, $editData): int
+    {
+        $retVal = 0;
+        $sqlPartArr = array();
+        if($collid && $editData){
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'collid' && $field !== 'collectionguid' && $field !== 'securitykey' && array_key_exists($field, $editData)){
+                    $fieldNameArr[] = $field;
+                    if($field === 'configjson'){
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
+                    }
+                    else{
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
+                    }
+                }
+            }
+            $sql = 'UPDATE omcollections SET ' . implode(', ', $sqlPartArr) . ' '.
+                'WHERE collid = ' . (int)$collid . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function updateCollectionStatistics($collidStr): int

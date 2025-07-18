@@ -152,12 +152,7 @@ class ChecklistVoucherAdmin {
                 $locStr = '';
                 foreach($locArr as $str){
                     $str = SanitizerService::cleanInStr($this->conn,$str);
-                    if(strlen($str) > 4){
-                        $locStr .= 'OR (MATCH(f.locality) AGAINST("'.$str.'")) ';
-                    }
-                    else{
-                        $locStr .= 'OR (o.locality LIKE "%'.$str.'%") ';
-                    }
+                    $locStr .= 'OR (o.locality LIKE "%'.$str.'%") ';
                 }
                 $sqlFrag .= 'AND ('.substr($locStr, 2).') ';
             }
@@ -196,12 +191,7 @@ class ChecklistVoucherAdmin {
                 $collArr = explode(';',$collStr);
                 $tempArr = array();
                 foreach($collArr as $str => $postArr){
-                    if(strlen($str) < 4 || strtolower($str) === 'best'){
-                        $tempArr[] = '(o.recordedby LIKE "%'.SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['recordedby']).'%")';
-                    }
-                    else{
-                        $tempArr[] = '(MATCH(f.recordedby) AGAINST("'.SanitizerService::cleanInStr($this->conn,$str).'"))';
-                    }
+                    $tempArr[] = '(o.recordedby LIKE "%'.SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['recordedby']).'%")';
                 }
                 $sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
             }
@@ -275,9 +265,6 @@ class ChecklistVoucherAdmin {
                     'LEFT JOIN taxa AS t ON o.tid = t.TID '.
                     'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
 					'INNER JOIN fmchklsttaxalink AS cl ON t.tidaccepted = cl.tid ';
-				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
-					$sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND cl.clid = '.$this->clid.' ';
 				$sql .= $includeAll === 1 ? 'AND cl.tid NOT IN(SELECT tid FROM fmvouchers WHERE clid IN('.$clidStr.')) ' : 'AND o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
                 $sql .= 'ORDER BY t.family, o.sciname LIMIT '.$startLimit.', 500';
@@ -304,9 +291,6 @@ class ChecklistVoucherAdmin {
 					'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
 					'FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
 					'LEFT JOIN taxa AS t ON o.tid = t.TID ';
-				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
-					$sql .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND ((t.RankId < 220)) '.
 					'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE CLID IN('.$clidStr.'))) ';
 				$sql .= 'ORDER BY o.family, o.sciname LIMIT '.$startLimit.', 500';
@@ -488,9 +472,6 @@ class ChecklistVoucherAdmin {
 			'INNER JOIN taxa AS t ON o.tid = t.tid '.
             'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
 			'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid ';
-		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
-			$retSql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-		}
 		$retSql .= 'WHERE ('.$sqlFrag.') '.
 			'AND (t.rankid IN(220,230,240,260,230)) '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) '.
@@ -547,9 +528,6 @@ class ChecklistVoucherAdmin {
             'LEFT JOIN taxa AS t ON o.tid = t.TID '.
             'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
 			'LEFT JOIN guidoccurrences g ON o.occid = g.occid ';
-		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
-			$retSql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-		}
 		$retSql .= 'WHERE ('.$sqlFrag.') AND ISNULL(o.tid) AND o.sciname IS NOT NULL '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) ';
 		return $retSql;

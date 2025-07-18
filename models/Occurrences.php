@@ -2,8 +2,10 @@
 include_once(__DIR__ . '/ChecklistVouchers.php');
 include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/Media.php');
+include_once(__DIR__ . '/OccurrenceCollectingEvents.php');
 include_once(__DIR__ . '/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/OccurrenceGeneticLinks.php');
+include_once(__DIR__ . '/OccurrenceLocations.php');
 include_once(__DIR__ . '/OccurrenceMeasurementsOrFacts.php');
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
@@ -16,113 +18,113 @@ class Occurrences{
 	private $conn;
 
     private $fields = array(
-        "occid" => array("dataType" => "number", "length" => 10),
-        "collid" => array("dataType" => "number", "length" => 10),
-        "dbpk" => array("dataType" => "string", "length" => 150),
-        "basisofrecord" => array("dataType" => "string", "length" => 32),
-        "occurrenceid" => array("dataType" => "string", "length" => 255),
-        "catalognumber" => array("dataType" => "string", "length" => 32),
-        "othercatalognumbers" => array("dataType" => "string", "length" => 255),
-        "ownerinstitutioncode" => array("dataType" => "string", "length" => 32),
-        "institutionid" => array("dataType" => "string", "length" => 255),
-        "collectionid" => array("dataType" => "string", "length" => 255),
-        "datasetid" => array("dataType" => "string", "length" => 255),
-        "institutioncode" => array("dataType" => "string", "length" => 64),
-        "collectioncode" => array("dataType" => "string", "length" => 64),
-        "family" => array("dataType" => "string", "length" => 255),
-        "verbatimscientificname" => array("dataType" => "string", "length" => 255),
-        "sciname" => array("dataType" => "string", "length" => 255),
-        "tid" => array("dataType" => "number", "length" => 10),
-        "genus" => array("dataType" => "string", "length" => 255),
-        "specificepithet" => array("dataType" => "string", "length" => 255),
-        "taxonrank" => array("dataType" => "string", "length" => 32),
-        "infraspecificepithet" => array("dataType" => "string", "length" => 255),
-        "scientificnameauthorship" => array("dataType" => "string", "length" => 255),
-        "taxonremarks" => array("dataType" => "text", "length" => 0),
-        "identifiedby" => array("dataType" => "string", "length" => 255),
-        "dateidentified" => array("dataType" => "string", "length" => 45),
-        "identificationreferences" => array("dataType" => "text", "length" => 0),
-        "identificationremarks" => array("dataType" => "text", "length" => 0),
-        "identificationqualifier" => array("dataType" => "string", "length" => 255),
-        "typestatus" => array("dataType" => "string", "length" => 255),
-        "recordedby" => array("dataType" => "string", "length" => 255),
-        "recordnumber" => array("dataType" => "string", "length" => 45),
-        "recordedbyid" => array("dataType" => "number", "length" => 20),
-        "associatedcollectors" => array("dataType" => "string", "length" => 255),
-        "eventdate" => array("dataType" => "date", "length" => 0),
-        "latestdatecollected" => array("dataType" => "date", "length" => 0),
-        "eventtime" => array("dataType" => "time", "length" => 0),
-        "year" => array("dataType" => "number", "length" => 10),
-        "month" => array("dataType" => "number", "length" => 10),
-        "day" => array("dataType" => "number", "length" => 10),
-        "startdayofyear" => array("dataType" => "number", "length" => 10),
-        "enddayofyear" => array("dataType" => "number", "length" => 10),
-        "verbatimeventdate" => array("dataType" => "string", "length" => 255),
-        "habitat" => array("dataType" => "text", "length" => 0),
-        "substrate" => array("dataType" => "string", "length" => 500),
-        "fieldnotes" => array("dataType" => "text", "length" => 0),
-        "fieldnumber" => array("dataType" => "string", "length" => 45),
-        "eventid" => array("dataType" => "number", "length" => 11),
-        "eventremarks" => array("dataType" => "text", "length" => 0),
-        "occurrenceremarks" => array("dataType" => "text", "length" => 0),
-        "informationwithheld" => array("dataType" => "string", "length" => 250),
-        "datageneralizations" => array("dataType" => "string", "length" => 250),
-        "associatedoccurrences" => array("dataType" => "text", "length" => 0),
-        "associatedtaxa" => array("dataType" => "text", "length" => 0),
-        "dynamicproperties" => array("dataType" => "text", "length" => 0),
-        "verbatimattributes" => array("dataType" => "text", "length" => 0),
-        "behavior" => array("dataType" => "string", "length" => 500),
-        "reproductivecondition" => array("dataType" => "string", "length" => 255),
-        "cultivationstatus" => array("dataType" => "number", "length" => 10),
-        "establishmentmeans" => array("dataType" => "string", "length" => 150),
-        "lifestage" => array("dataType" => "string", "length" => 45),
-        "sex" => array("dataType" => "string", "length" => 45),
-        "individualcount" => array("dataType" => "string", "length" => 45),
-        "samplingprotocol" => array("dataType" => "string", "length" => 100),
-        "samplingeffort" => array("dataType" => "string", "length" => 200),
-        "rep" => array("dataType" => "number", "length" => 10),
-        "preparations" => array("dataType" => "string", "length" => 100),
-        "locationid" => array("dataType" => "number", "length" => 11),
-        "island" => array("dataType" => "string", "length" => 75),
-        "islandgroup" => array("dataType" => "string", "length" => 75),
-        "waterbody" => array("dataType" => "string", "length" => 255),
-        "continent" => array("dataType" => "string", "length" => 45),
-        "country" => array("dataType" => "string", "length" => 64),
-        "stateprovince" => array("dataType" => "string", "length" => 255),
-        "county" => array("dataType" => "string", "length" => 255),
-        "municipality" => array("dataType" => "string", "length" => 255),
-        "locality" => array("dataType" => "text", "length" => 0),
-        "localitysecurity" => array("dataType" => "number", "length" => 10),
-        "localitysecurityreason" => array("dataType" => "string", "length" => 100),
-        "decimallatitude" => array("dataType" => "number", "length" => 0),
-        "decimallongitude" => array("dataType" => "number", "length" => 0),
-        "geodeticdatum" => array("dataType" => "string", "length" => 255),
-        "coordinateuncertaintyinmeters" => array("dataType" => "number", "length" => 10),
-        "footprintwkt" => array("dataType" => "text", "length" => 0),
-        "coordinateprecision" => array("dataType" => "number", "length" => 0),
-        "locationremarks" => array("dataType" => "text", "length" => 0),
-        "verbatimcoordinates" => array("dataType" => "string", "length" => 255),
-        "verbatimcoordinatesystem" => array("dataType" => "string", "length" => 255),
-        "georeferencedby" => array("dataType" => "string", "length" => 255),
-        "georeferenceprotocol" => array("dataType" => "string", "length" => 255),
-        "georeferencesources" => array("dataType" => "string", "length" => 255),
-        "georeferenceverificationstatus" => array("dataType" => "string", "length" => 32),
-        "georeferenceremarks" => array("dataType" => "string", "length" => 500),
-        "minimumelevationinmeters" => array("dataType" => "number", "length" => 6),
-        "maximumelevationinmeters" => array("dataType" => "number", "length" => 6),
-        "verbatimelevation" => array("dataType" => "string", "length" => 255),
-        "minimumdepthinmeters" => array("dataType" => "number", "length" => 0),
-        "maximumdepthinmeters" => array("dataType" => "number", "length" => 0),
-        "verbatimdepth" => array("dataType" => "string", "length" => 50),
-        "disposition" => array("dataType" => "string", "length" => 250),
-        "storagelocation" => array("dataType" => "string", "length" => 100),
-        "language" => array("dataType" => "string", "length" => 20),
-        "processingstatus" => array("dataType" => "string", "length" => 45),
-        "duplicatequantity" => array("dataType" => "number", "length" => 10),
-        "labelproject" => array("dataType" => "string", "length" => 250),
-        "recordenteredby" => array("dataType" => "string", "length" => 250),
-        "dateentered" => array("dataType" => "date", "length" => 0),
-        "datelastmodified" => array("dataType" => "timestamp", "length" => 0)
+        'occid' => array('dataType' => 'number', 'length' => 10),
+        'collid' => array('dataType' => 'number', 'length' => 10),
+        'dbpk' => array('dataType' => 'string', 'length' => 150),
+        'basisofrecord' => array('dataType' => 'string', 'length' => 32),
+        'occurrenceid' => array('dataType' => 'string', 'length' => 255),
+        'catalognumber' => array('dataType' => 'string', 'length' => 32),
+        'othercatalognumbers' => array('dataType' => 'string', 'length' => 255),
+        'ownerinstitutioncode' => array('dataType' => 'string', 'length' => 32),
+        'institutionid' => array('dataType' => 'string', 'length' => 255),
+        'collectionid' => array('dataType' => 'string', 'length' => 255),
+        'datasetid' => array('dataType' => 'string', 'length' => 255),
+        'institutioncode' => array('dataType' => 'string', 'length' => 64),
+        'collectioncode' => array('dataType' => 'string', 'length' => 64),
+        'family' => array('dataType' => 'string', 'length' => 255),
+        'verbatimscientificname' => array('dataType' => 'string', 'length' => 255),
+        'sciname' => array('dataType' => 'string', 'length' => 255),
+        'tid' => array('dataType' => 'number', 'length' => 10),
+        'genus' => array('dataType' => 'string', 'length' => 255),
+        'specificepithet' => array('dataType' => 'string', 'length' => 255),
+        'taxonrank' => array('dataType' => 'string', 'length' => 32),
+        'infraspecificepithet' => array('dataType' => 'string', 'length' => 255),
+        'scientificnameauthorship' => array('dataType' => 'string', 'length' => 255),
+        'taxonremarks' => array('dataType' => 'text', 'length' => 0),
+        'identifiedby' => array('dataType' => 'string', 'length' => 255),
+        'dateidentified' => array('dataType' => 'string', 'length' => 45),
+        'identificationreferences' => array('dataType' => 'text', 'length' => 0),
+        'identificationremarks' => array('dataType' => 'text', 'length' => 0),
+        'identificationqualifier' => array('dataType' => 'string', 'length' => 255),
+        'typestatus' => array('dataType' => 'string', 'length' => 255),
+        'recordedby' => array('dataType' => 'string', 'length' => 255),
+        'recordnumber' => array('dataType' => 'string', 'length' => 45),
+        'recordedbyid' => array('dataType' => 'number', 'length' => 20),
+        'associatedcollectors' => array('dataType' => 'string', 'length' => 255),
+        'eventdate' => array('dataType' => 'date', 'length' => 0),
+        'latestdatecollected' => array('dataType' => 'date', 'length' => 0),
+        'eventtime' => array('dataType' => 'time', 'length' => 0),
+        'year' => array('dataType' => 'number', 'length' => 10),
+        'month' => array('dataType' => 'number', 'length' => 10),
+        'day' => array('dataType' => 'number', 'length' => 10),
+        'startdayofyear' => array('dataType' => 'number', 'length' => 10),
+        'enddayofyear' => array('dataType' => 'number', 'length' => 10),
+        'verbatimeventdate' => array('dataType' => 'string', 'length' => 255),
+        'habitat' => array('dataType' => 'text', 'length' => 0),
+        'substrate' => array('dataType' => 'string', 'length' => 500),
+        'fieldnotes' => array('dataType' => 'text', 'length' => 0),
+        'fieldnumber' => array('dataType' => 'string', 'length' => 45),
+        'eventid' => array('dataType' => 'number', 'length' => 11),
+        'eventremarks' => array('dataType' => 'text', 'length' => 0),
+        'occurrenceremarks' => array('dataType' => 'text', 'length' => 0),
+        'informationwithheld' => array('dataType' => 'string', 'length' => 250),
+        'datageneralizations' => array('dataType' => 'string', 'length' => 250),
+        'associatedoccurrences' => array('dataType' => 'text', 'length' => 0),
+        'associatedtaxa' => array('dataType' => 'text', 'length' => 0),
+        'dynamicproperties' => array('dataType' => 'text', 'length' => 0),
+        'verbatimattributes' => array('dataType' => 'text', 'length' => 0),
+        'behavior' => array('dataType' => 'string', 'length' => 500),
+        'reproductivecondition' => array('dataType' => 'string', 'length' => 255),
+        'cultivationstatus' => array('dataType' => 'number', 'length' => 10),
+        'establishmentmeans' => array('dataType' => 'string', 'length' => 150),
+        'lifestage' => array('dataType' => 'string', 'length' => 45),
+        'sex' => array('dataType' => 'string', 'length' => 45),
+        'individualcount' => array('dataType' => 'string', 'length' => 45),
+        'samplingprotocol' => array('dataType' => 'string', 'length' => 100),
+        'samplingeffort' => array('dataType' => 'string', 'length' => 200),
+        'rep' => array('dataType' => 'number', 'length' => 10),
+        'preparations' => array('dataType' => 'string', 'length' => 100),
+        'locationid' => array('dataType' => 'number', 'length' => 11),
+        'island' => array('dataType' => 'string', 'length' => 75),
+        'islandgroup' => array('dataType' => 'string', 'length' => 75),
+        'waterbody' => array('dataType' => 'string', 'length' => 255),
+        'continent' => array('dataType' => 'string', 'length' => 45),
+        'country' => array('dataType' => 'string', 'length' => 64),
+        'stateprovince' => array('dataType' => 'string', 'length' => 255),
+        'county' => array('dataType' => 'string', 'length' => 255),
+        'municipality' => array('dataType' => 'string', 'length' => 255),
+        'locality' => array('dataType' => 'text', 'length' => 0),
+        'localitysecurity' => array('dataType' => 'number', 'length' => 10),
+        'localitysecurityreason' => array('dataType' => 'string', 'length' => 100),
+        'decimallatitude' => array('dataType' => 'number', 'length' => 0),
+        'decimallongitude' => array('dataType' => 'number', 'length' => 0),
+        'geodeticdatum' => array('dataType' => 'string', 'length' => 255),
+        'coordinateuncertaintyinmeters' => array('dataType' => 'number', 'length' => 10),
+        'footprintwkt' => array('dataType' => 'text', 'length' => 0),
+        'coordinateprecision' => array('dataType' => 'number', 'length' => 0),
+        'locationremarks' => array('dataType' => 'text', 'length' => 0),
+        'verbatimcoordinates' => array('dataType' => 'string', 'length' => 255),
+        'verbatimcoordinatesystem' => array('dataType' => 'string', 'length' => 255),
+        'georeferencedby' => array('dataType' => 'string', 'length' => 255),
+        'georeferenceprotocol' => array('dataType' => 'string', 'length' => 255),
+        'georeferencesources' => array('dataType' => 'string', 'length' => 255),
+        'georeferenceverificationstatus' => array('dataType' => 'string', 'length' => 32),
+        'georeferenceremarks' => array('dataType' => 'string', 'length' => 500),
+        'minimumelevationinmeters' => array('dataType' => 'number', 'length' => 6),
+        'maximumelevationinmeters' => array('dataType' => 'number', 'length' => 6),
+        'verbatimelevation' => array('dataType' => 'string', 'length' => 255),
+        'minimumdepthinmeters' => array('dataType' => 'number', 'length' => 0),
+        'maximumdepthinmeters' => array('dataType' => 'number', 'length' => 0),
+        'verbatimdepth' => array('dataType' => 'string', 'length' => 50),
+        'disposition' => array('dataType' => 'string', 'length' => 250),
+        'storagelocation' => array('dataType' => 'string', 'length' => 100),
+        'language' => array('dataType' => 'string', 'length' => 20),
+        'processingstatus' => array('dataType' => 'string', 'length' => 45),
+        'duplicatequantity' => array('dataType' => 'number', 'length' => 10),
+        'labelproject' => array('dataType' => 'string', 'length' => 250),
+        'recordenteredby' => array('dataType' => 'string', 'length' => 250),
+        'dateentered' => array('dataType' => 'date', 'length' => 0),
+        'datelastmodified' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
     public function __construct(){
@@ -580,10 +582,10 @@ class Occurrences{
                 $retVal = (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
             }
             if($retVal){
-                $retVal = (new Images)->deleteOccurrenceImageRecords($idType, $id);
+                $retVal = (new Images)->deleteAssociatedImageRecords($idType, $id);
             }
             if($retVal){
-                $retVal = (new Media)->deleteOccurrenceMediaRecords($idType, $id);
+                $retVal = (new Media)->deleteAssociatedMediaRecords($idType, $id);
             }
             if($retVal){
                 $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);
@@ -602,12 +604,6 @@ class Occurrences{
             }
             if($retVal){
                 $sql = 'DELETE FROM omexsiccatiocclink WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-            }
-            if($retVal){
-                $sql = 'DELETE FROM omoccuraccessstats WHERE ' . $whereStr . ' ';
                 if(!$this->conn->query($sql)){
                     $retVal = 0;
                 }
@@ -638,12 +634,6 @@ class Occurrences{
             }
             if($retVal){
                 $sql = 'DELETE FROM omoccurpoints WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-            }
-            if($retVal){
-                $sql = 'DELETE FROM omoccurrencesfulltext WHERE ' . $whereStr . ' ';
                 if(!$this->conn->query($sql)){
                     $retVal = 0;
                 }
@@ -770,8 +760,8 @@ class Occurrences{
     {
         $returnArr = array();
         if($collid){
-            $sql = 'SELECT o.occid FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) ';
+            $sql = 'SELECT occid FROM omoccurrences WHERE collid  = ' . (int)$collid . ' '.
+                'AND occid NOT IN(SELECT occid FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -1000,27 +990,42 @@ class Occurrences{
         return $retArr;
     }
 
-    public function protectGlobalSpecies($collid = null): int
+    public function protectGlobalSpecies($collid): int
     {
         $returnVal = 0;
         $sql = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
-            'SET o.localitySecurity = 1 WHERE t.securitystatus = 1 ';
-        if($collid) {
+            'SET o.localitysecurity = 1 WHERE t.securitystatus = 1 ';
+        if((int)$collid > 0) {
             $sql .= 'AND o.collid = ' . (int)$collid . ' ';
         }
         if($this->conn->query($sql)){
             $returnVal += $this->conn->affected_rows;
         }
         $sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
-            'SET o.localitySecurity = 0 '.
-            'WHERE t.TID IS NOT NULL AND t.securitystatus <> 1 ';
-        if($collid) {
+            'SET o.localitysecurity = 0 '.
+            'WHERE t.TID IS NOT NULL AND t.securitystatus <> 1 AND ISNULL(o.localitysecurityreason) ';
+        if((int)$collid > 0) {
             $sql2 .= 'AND o.collid = ' . (int)$collid . ' ';
         }
         if($this->conn->query($sql2)){
             $returnVal += $this->conn->affected_rows;
         }
         return $returnVal;
+    }
+
+    public function removePrimaryIdentifiersFromUploadedOccurrences($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $sql = 'UPDATE omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
+                'SET o.dbpk = NULL '.
+                'WHERE o.collid  = ' . (int)$collid . ' AND u.occid IS NOT NULL ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function transferOccurrenceRecord($occid, $transferToCollid): int
@@ -1149,6 +1154,49 @@ class Occurrences{
             }
         }
         return $retCnt;
+    }
+
+    public function updateOccurrenceEventId($occId, $eventId, $updateData = false): int
+    {
+        $retVal = 0;
+        if($occId && $eventId){
+            $sql = 'UPDATE omoccurrences SET eventid = ' . (int)$eventId . ' WHERE occid = ' . (int)$occId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                if($updateData){
+                    $sql = 'SELECT locationid FROM omoccurrences WHERE occid = ' . (int)$occId . ' ';
+                    //echo '<div>'.$sql.'</div>';
+                    if($result = $this->conn->query($sql)){
+                        $row = $result->fetch_array(MYSQLI_ASSOC);
+                        $result->free();
+                        if((int)$row['locationid'] > 0){
+                            $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($row['locationid']);
+                        }
+                    }
+                    if($retVal){
+                        $retVal = (new OccurrenceCollectingEvents)->updateOccurrencesFromCollectingEventData($eventId);
+                    }
+                }
+            }
+        }
+        return $retVal;
+    }
+
+    public function updateOccurrenceLocationId($occId, $locationId, $updateData = false): int
+    {
+        $retVal = 0;
+        if($occId && $locationId){
+            $sql = 'UPDATE omoccurrences SET locationid = ' . (int)$locationId . ' WHERE occid = ' . (int)$occId . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+                if($updateData){
+                    $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($locationId);
+                }
+            }
+        }
+        return $retVal;
     }
 
     public function updateOccurrenceRecord($occId, $editData, $determinationUpdate = false): int

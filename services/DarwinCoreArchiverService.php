@@ -710,10 +710,10 @@ class DarwinCoreArchiverService {
                             if(!array_key_exists($row['collid'], $returnArr['collectionData'])){
                                 $returnArr['collectionData'][$row['collid']] = (new Collections)->getCollectionInfoArr($row['collid']);
                             }
-                            if(!$localitySecurity && !$rareSpReader){
+                            if($localitySecurity && !$rareSpReader){
                                 $row = (new Occurrences)->clearSensitiveOccurrenceData($row);
                             }
-                            if(!$row['occurrenceID']){
+                            if(is_array($row) && array_key_exists('occurrenceID', $row) && !$row['occurrenceID']){
                                 $guidTarget = $returnArr['collectionData'][$row['collid']]['guidtarget'];
                                 if($guidTarget === 'catalogNumber'){
                                     $row['occurrenceID'] = $row['catalogNumber'];
@@ -771,6 +771,7 @@ class DarwinCoreArchiverService {
                                     $row['t_kingdom'] = $upperTaxonomyData[$phyStr]['k'];
                                 }
                             }
+
                             FileSystemService::writeRowToCsv($fileHandler, $row);
                             $dataIncluded = true;
                         }

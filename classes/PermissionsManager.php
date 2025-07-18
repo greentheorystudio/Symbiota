@@ -157,56 +157,6 @@ class PermissionsManager{
 		return $statusStr;
 	}
 
-	public function getTaxonEditorArr($collid, $limitByColl = null): array
-	{
-		$pArr = array();
-		$sql2 = 'SELECT uid, role, tablepk, secondaryvariable '.
-			'FROM userroles WHERE role = ("CollTaxon") AND (tablepk = '.$collid.') ';
-		$rs2 = $this->conn->query($sql2);
-		while($r2 = $rs2->fetch_object()){
-			if(($r2->role === 'CollTaxon') && ($r2->tablepk = $collid) && ($r2->secondaryvariable = 'all')){
-				$pArr[$r2->uid]['all'] = 1;
-			}
-			else{
-				$pArr[$r2->uid]['utid'][] = $r2->secondaryvariable;
-			}
-		}
-		$rs2->free();
-		$retArr = array();
-		$sql = 'SELECT ut.idusertaxonomy, u.uid, CONCAT_WS(", ", lastname, firstname) as fullname, t.sciname, u.username '.
-			'FROM usertaxonomy AS ut INNER JOIN users AS u ON ut.uid = u.uid '.
-			'INNER JOIN taxa AS t ON ut.tid = t.tid '.
-			'WHERE ut.editorstatus = "OccurrenceEditor" ';
-		if($limitByColl && $pArr){
-			$sql .= 'AND ut.uid IN('.implode(',',array_keys($pArr)).') ';
-		}
-		$sql .= 'ORDER BY u.lastname, u.firstname, t.sciname';
-		//echo '<div>'.$sql.'</div>';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			if($limitByColl){
-				if(isset($pArr[$r->uid])){
-					if(isset($pArr[$r->uid]['all']) || in_array($r->idusertaxonomy, $pArr[$r->uid]['utid'], true)){
-						$retArr[$r->uid]['username'] = $r->fullname.' ('.$r->username.')';
-						$retArr[$r->uid][$r->idusertaxonomy] = $r->sciname;
-					}
-				}
-			}
-			else if(!isset($pArr[$r->uid]['utid']) || !in_array($r->idusertaxonomy, $pArr[$r->uid]['utid'], true)){
-				$retArr[$r->uid]['username'] = $r->fullname.' ('.$r->username.')';
-				$retArr[$r->uid][$r->idusertaxonomy] = $r->sciname;
-			}
-		}
-		$rs->free();
-		foreach($pArr as $uid => $upArr){
-			if(array_key_exists('all',$upArr)) {
-				$retArr[$uid]['all'] = 1;
-			}
-		}
-
-		return $retArr;
-	}
-
 	public function getCollectionMetadata($targetCollid = null, $collTypeLimit = null): array
 	{
 		$retArr = array();

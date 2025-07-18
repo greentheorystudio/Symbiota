@@ -121,6 +121,7 @@ const occurrenceEditorAdminTab = {
         });
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const profileCollectionOptions = Vue.ref([]);
+        const symbUid = baseStore.getSymbUid;
         const transferToCollid = Vue.ref(null);
 
         function getReviewStatusText(statusCode) {
@@ -151,7 +152,7 @@ const occurrenceEditorAdminTab = {
         }
 
         function setProfileCollectionsOptions() {
-            collectionStore.getCollectionListByUserRights((collListData) => {
+            collectionStore.getCollectionListByUid(symbUid, (collListData) => {
                 if(collListData.length > 0){
                     collListData.forEach(coll => {
                         if(Number(coll.collid) !== Number(collId.value)){
