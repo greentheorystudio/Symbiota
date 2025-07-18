@@ -2281,7 +2281,7 @@ const taxonomyDataSourceImportUpdateModule = {
                                     kingdomName = kingdomObj['name'];
                                 }
                             }
-                            if(kingdomName.toLowerCase() === targetKingdomName.value.toLowerCase()){
+                            if(taxon['sciname'] === props.taxonomicGroup && kingdomName.toLowerCase() === targetKingdomName.value.toLowerCase()){
                                 let hierarchyArr = [];
                                 if(taxon.hasOwnProperty('hierarchy')){
                                     hierarchyArr = taxon['hierarchy'];
