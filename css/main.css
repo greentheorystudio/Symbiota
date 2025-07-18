@@ -1,224 +1,88 @@
-html{
-	font-size: 100%;
+body {
+    background-color: #A8A38E;
+    font-size: 16px;
+    line-height: 18px;
+    font-family: arial, helvetica, sans-serif;
 }
-
-body{
-	width: 80%;
-	min-width:1050px;
-	margin-top:0px;
-	font-family: Verdana, Geneva, sans-serif;
-	background-color:#A8A38E;
-}
-
 .title {
-	font-weight: bold;
+    font-weight: bold;
 }
 
-#mainContainer{
-	display: block;
-	width: 100%;
-	border:1px solid #333333;
-    background-color:white;
+#appContainer{
+    display: block;
+    width: 80%;
+    min-width: 950px;
+    margin-left: auto;
+    margin-right: auto;
+    border:1px solid #333333;
 }
 
 #bannerContainer{
-	clear: both;
-	height: 150px;
-	color:#FFFFFF;
-	background-color: #F5F8E8;
-	text-align:left;
-	padding: 0;
-	border-bottom:1px solid #333333;
+    background-color: #000000;
+    height: 150px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-#innertext{
-	min-height:400px;
-	margin: 0 auto;
-	padding: 10px 15px 15px;
+.banner-image-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 15px;
+    padding-right: 15px;
 }
 
-div.navpath {
-	padding-top: 8px;
-	padding-bottom: 0;
-	padding-left: 10px;
-	margin-bottom: 0;
+.banner-image-box {
+    margin: 23px 8px 23px 8px;
+    border: 2px solid white;
+}
+
+.banner-image {
+    width: 100px;
+}
+
+#breadcrumbs {
+    padding-top: 8px;
+    padding-bottom: 0;
+    padding-left: 10px;
+    margin-bottom: 0;
+}
+
+#mainContainer{
+    font-size: 18px;
+    z-index: 1;
 }
 
 #topNavigation {
-	clear:both;
-	background-color:#c2c2c2;
-	padding: 0;
-	display: flex;
-	justify-content: space-between;
+    clear: both;
+    background-color:#c2c2c2;
 }
-#rightNavigationLinks{
-	display: flex;
-	align-items: center;
+.horizontalDropDown{
+    width:auto;
+    background-color: #5E7630;
+    color: white;
+    margin: 0;
+    padding: 0;
+    clear:both;
 }
-
-#rightNavigationLinks span{
-	margin-right: 15px;
+.horizontalDropDown a{
+    color: white;
+    text-decoration: none;
 }
-#horizontalDropDown{
-	list-style:none;
-	width:auto;
-	background-color:#c2c2c2;
-	margin: 0;
-	padding: 0;
+.horizontalDropDownButton, .horizontalDropDownIconButton{
+    background-color: #5E7630!important;
+    text-decoration: none;
+    font-size: 100%;
 }
-#horizontalDropDown li{
-	float:left;
-	position:relative;
-	padding:0;
-	margin:0;
+.horizontalDropDownButton:hover, .horizontalDropDownIconButton:hover{
+    background-color: #B9661A!important;
+    color: #000000;
+    text-decoration: none;
 }
-#horizontalDropDown a{
-	display:block;
-	color:#000000;
-	text-decoration: none;
-	padding: 20px 15px;
+.horizontalDropDownButton i {
+    display: none;
 }
-#horizontalDropDown a:hover{
-	background-color:#999999;
-}
-/* Submenu */
-#horizontalDropDown ul {
-	list-style:none;
-	position:absolute;
-	left:0;
-	top: 53px;
-	padding:0;
-	z-index:1000;
-	background-color:#dcdcdc;
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-}
-#horizontalDropDown ul li{
-	float:none;
-}
-#horizontalDropDown ul a{
-	white-space:nowrap;
-	padding: 10px 15px;
-	text-decoration:none;
-	text-indent:8px;
-}
-#horizontalDropDown li:hover ul {
-	visibility: visible;
-	opacity: 1;
-}
-#horizontalDropDown li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 10px 15px;
-	background-color:#dcdcdc;
-	z-index:1000;
-}
-#horizontalDropDown li:hover ul li a:hover {
-	background:#999999;
-}
-/* Submenu to right */
-#horizontalDropDown li ul li ul {
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-moz-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-	-webkit-transition: opacity .75s ease-in-out, visibility .75s ease-in-out;
-}
-#horizontalDropDown li ul li:hover ul {
-	left:100%;
-	top: 0;
-	visibility: visible;
-	opacity: 1;
-	padding:0;
-	z-index:1000;
-}
-#horizontalDropDown li ul li:hover ul a {
-	text-decoration:none;
-	text-indent:8px;
-	padding: 10px 15px;
-	background-color:#dcdcdc;
-	z-index:1000;
-}
-#horizontalDropDown li ul li:hover ul li a:hover {
-	background:#999999;
-}
-
-/* Quick Search Plugin */
-#quicksearchtext{
-	margin-top:0;
-	padding-bottom:0;
-	float: left;
-}
-
-#quicksearchbutton{
-	margin-left:10px;
-	margin-top:0;
-	margin-bottom:0;
-	padding-bottom:0;
-	float: left;
-}
-
-#quicksearchtaxon{
-	width: 250px;
-	float: left;
-	margin-bottom:0;
-	padding-bottom:0;
-	font-family: Arial, Helvetica, sans-serif;
-}
-
-.quicksearchselectorcontainer {
-	height: 20px;
-	width: 300px;
-	display: flex;
-	justify-content: space-evenly;
-}
-
-.quicksearchselectorcontainer input[type="checkbox"]:not(:checked),
-.quicksearchselectorcontainer input[type="checkbox"]:checked {
-	position: absolute;
-	opacity: 0;
-}
-
-.quicksearchselectorcontainer input[type="checkbox"].switch + div {
-	width: 1.8em;	height: 1em;
-	border: 1px solid rgba(0,0,0,.3);
-	border-radius: 999px;
-	margin: 0 auto .8em;
-	background: #888 linear-gradient(rgba(0, 0, 0, .4), transparent);
-	background-origin: border-box;
-	background-clip: border-box;
-	box-shadow: 0 1px 1px hsla(0,0%,100%,.8);
-	overflow: hidden;
-	transition-duration: .4s;
-	transition-property: padding, width;
-}
-
-.quicksearchselectorcontainer input[type="checkbox"].switch:checked + div {
-	padding-left: .8em;
-	width: 1em;
-}
-
-.quicksearchselectorcontainer input[type="checkbox"].switch + div:before {
-	content: '';
-	display: block;
-	width: 1em; height: 1em;
-	margin: -1px;
-	border: 1px solid rgba(0,0,0,.7);
-	border-radius: inherit;
-	background: #c4c4c4 linear-gradient(hsla(0, 0%, 100%, .3), hsla(0, 0%, 100%, 0));
-	box-shadow: 0 0 .5em rgba(0,0,0,.5),
-	0 .2em hsla(0,0%,100%,.3) inset,
-	0 -.1em .3em hsla(0,0%,0%,.2) inset;
-}
-
-.quicksearchselectorcontainer input[type="checkbox"].switch:active + div:before {
-	background-color: #aaa;
-}
-
-.quicksearchselectorcontainer input[type="checkbox"].switch:focus + div {
-	box-shadow: 0 0 .3em 1px red,
-	0 1px 1px hsla(0,0%,100%,.8);
+.header-username-text {
+    margin-right: 15px;
 }
