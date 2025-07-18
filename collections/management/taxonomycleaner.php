@@ -1905,7 +1905,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                     kingdomName = kingdomObj['name'];
                                                 }
                                             }
-                                            if(kingdomName.toLowerCase() === selectedKingdomName.value.toLowerCase()){
+                                            if(taxon['sciname'] === currentSciname.value && kingdomName.toLowerCase() === selectedKingdomName.value.toLowerCase()){
                                                 let hierarchyArr = [];
                                                 if(taxon.hasOwnProperty('hierarchy')){
                                                     hierarchyArr = taxon['hierarchy'];
