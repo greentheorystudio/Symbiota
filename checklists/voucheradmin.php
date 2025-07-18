@@ -410,17 +410,15 @@ if($clid && $isEditor){
 			<div id="reportDiv">
 				<div style="margin:25px;height:400px;">
 					<ul>
-						<li><a href="reports/voucherreporthandler.php?rtype=fullcsv&clid=<?php echo $clid; ?>">Full species list (CSV)</a></li>
+						<li><a href="">Full species list (CSV)</a></li>
 						<li><a href="checklist.php?printmode=1&showvouchers=0&defaultoverride=1&clid=<?php echo $clid; ?>" target="_blank">Full species list (Print Friendly)</a></li>
-						<li><a href="reports/voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo $clid; ?>">Full species list with vouchers (CSV)</a></li>
+						<li><a href="">Full species list with vouchers (CSV)</a></li>
 						<li><a href="checklist.php?printmode=1&showvouchers=1&defaultoverride=1&clid=<?php echo $clid; ?>" target="_blank">Full species list with vouchers (Print Friendly)</a></li>
-						<li><a href="reports/voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo $clid; ?>" target="_blank">Pensoft Excel Export</a></li>
-						<li><a href="#" onclick="openPopup('reports/download.php?clid=<?php echo $clid; ?>');return false;">Occurrence vouchers only (DwC-A, CSV, Tab-delimited)</a></li>
 						<li>Possible species additions based on occurrence vouchers</li>
 					</ul>
 					<ul style="margin:-10px 0 0 25px;list-style-type:circle">
-						<li><a href="reports/voucherreporthandler.php?rtype=missingoccurcsv&clid=<?php echo $clid; ?>">Occurrences of taxa missing from checklist (CSV)</a></li>
-						<li><a href="reports/voucherreporthandler.php?rtype=problemtaxacsv&clid=<?php echo $clid; ?>">Occurrences with misspelled, illegal, and problematic scientific names (CSV)</a></li>
+						<li><a href="">Occurrences of taxa missing from checklist (CSV)</a></li>
+						<li><a href="">Occurrences with misspelled, illegal, and problematic scientific names (CSV)</a></li>
 					</ul>
 				</div>
 			</div>

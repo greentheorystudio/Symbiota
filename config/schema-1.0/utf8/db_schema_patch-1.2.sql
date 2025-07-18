@@ -172,14 +172,6 @@ ALTER TABLE `omoccurrences`
     ADD INDEX `Index_latlng`(`decimalLatitude`, `decimalLongitude`),
     ADD INDEX `Index_ labelProject`(`labelProject`);
 
-REPLACE
-omoccurrencesfulltext(occid,locality,recordedby)
-SELECT occid, CONCAT_WS("; ", municipality, locality), recordedby
-FROM omoccurrences;
-
-ALTER TABLE `referenceobject`
-    CHANGE COLUMN `numbervolumnes` `numbervolumes` varchar (45) NULL DEFAULT NULL AFTER `volume`;
-
 CREATE TABLE `taxonkingdoms`
 (
     `kingdom_id`   int(11) NOT NULL,
@@ -486,10 +478,6 @@ CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH
 		INSERT INTO uploadspectemppoints (`collid`,`upspid`,`point`)
 		VALUES (NEW.`collid`,NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
     END IF;
-END;
-
-CREATE TRIGGER `uploadspectemp_delete` BEFORE DELETE ON `uploadspectemp` FOR EACH ROW BEGIN
-    DELETE FROM uploadspectemppoints WHERE `upspid` = OLD.`upspid`;
 END;
 
 ALTER TABLE `uploadtaxa`

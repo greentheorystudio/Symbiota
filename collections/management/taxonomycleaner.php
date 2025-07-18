@@ -2101,6 +2101,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         processingBatchLimitChange,
                         processorDisplayScrollDown,
                         processorDisplayScrollUp,
+                        runTaxThesaurusFuzzyMatchProcess,
                         selectFuzzyMatch,
                         setScroller,
                         undoChangedSciname,

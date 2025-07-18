@@ -90,16 +90,6 @@ class DwcArchiverDetermination{
             if(strpos($conditionSql,'p.point')){
                 $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
-            if(strpos($conditionSql,'MATCH(f.recordedby)') || strpos($conditionSql,'MATCH(f.locality)')){
-                $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-            }
-            if(stripos($conditionSql,'a.stateid')){
-                $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid ';
-            }
-            elseif(stripos($conditionSql,'s.traitid')){
-                $sql .= 'INNER JOIN tmattributes AS a ON o.occid = a.occid '.
-                    'INNER JOIN tmstates AS s ON a.stateid = s.stateid ';
-            }
             $sql .= $conditionSql.'ORDER BY o.collid';
             //echo '<div>'.$sql.'</div>'; exit;
         }

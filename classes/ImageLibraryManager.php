@@ -95,9 +95,6 @@ class ImageLibraryManager{
         if(array_key_exists('tags',$this->searchTermsArr) && $this->searchTermsArr['tags']){
             $sql .= 'INNER JOIN imagetag AS it ON i.imgid = it.imgid ';
         }
-        if(array_key_exists('keywords',$this->searchTermsArr) && $this->searchTermsArr['keywords']){
-            $sql .= 'INNER JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
-        }
         if($this->sqlWhere){
             $sql .= $this->sqlWhere.' AND ';
         }
@@ -253,17 +250,11 @@ class ImageLibraryManager{
         if(array_key_exists('imagetag',$this->searchTermsArr) && $this->searchTermsArr['imagetag']){
             $sql .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
         }
-        if(array_key_exists('imagekeyword',$this->searchTermsArr) && $this->searchTermsArr['imagekeyword']){
-            $sql .= 'LEFT JOIN imagekeywords AS ik ON i.imgid = ik.imgid ';
-        }
         if(array_key_exists('clid',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
         }
         if(array_key_exists('polyArr',$this->searchTermsArr)) {
             $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')){
-            $sql .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
         }
         return $sql;
     }

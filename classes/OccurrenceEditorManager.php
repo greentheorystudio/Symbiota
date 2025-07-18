@@ -439,12 +439,7 @@ class OccurrenceEditorManager {
             }
             elseif(strncmp($this->qryArr['rb'], '%', 1) === 0){
                 $collStr = SanitizerService::cleanInStr($this->conn,substr($this->qryArr['rb'],1));
-                if(strlen($collStr) < 4 || strtolower($collStr) === 'best'){
-                    $sqlWhere .= 'AND o2.recordedby LIKE "%'.$collStr.'%" ';
-                }
-                else{
-                    $sqlWhere .= 'AND MATCH(f.recordedby) AGAINST("'.$collStr.'") ';
-                }
+                $sqlWhere .= 'AND o2.recordedby LIKE "%'.$collStr.'%" ';
             }
             else{
                 $sqlWhere .= 'AND o2.recordedby LIKE "'.SanitizerService::cleanInStr($this->conn,$this->qryArr['rb']).'%" ';
@@ -751,9 +746,6 @@ class OccurrenceEditorManager {
         }
         if(strpos($this->sqlWhere,'exn.ometid')){
             $sql .= 'INNER JOIN omexsiccatiocclink AS exocc ON o2.occid = exocc.occid INNER JOIN omexsiccatinumbers AS exn ON exocc.omenid = exn.omenid ';
-        }
-        if(strpos($this->sqlWhere,'MATCH(f.recordedby)') || strpos($this->sqlWhere,'MATCH(f.locality)')){
-            $sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o2.occid = f.occid ';
         }
         if($this->crowdSourceMode){
             $sql .= 'INNER JOIN omcrowdsourcequeue AS q ON q.occid = o2.occid ';
@@ -1291,12 +1283,6 @@ class OccurrenceEditorManager {
                 $status = false;
             }
 
-            $sql = 'UPDATE omoccuridentifiers SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
-            if(!$this->conn->query($sql)){
-                $this->errorArr[] .= '; ERROR remapping occurrence identifiers.';
-                $status = false;
-            }
-
             $sql = 'UPDATE omexsiccatiocclink SET occid = '.$targetOccid.' WHERE occid = '.$sourceOccid;
             if(!$this->conn->query($sql)){
                 if(strpos($this->conn->error,'Duplicate') !== false){
@@ -1798,101 +1784,6 @@ class OccurrenceEditorManager {
             $isLocked = true;
         }
         return $isLocked;
-    }
-
-    public function isTaxonomicEditor(): int
-    {
-        $isEditor = 0;
-
-        $udIdArr = array();
-        if(array_key_exists('CollTaxon',$GLOBALS['USER_RIGHTS'])){
-            foreach($GLOBALS['USER_RIGHTS']['CollTaxon'] as $vStr){
-                $tok = explode(':',$vStr);
-                if($tok && (int)$tok[0] === $this->collId){
-                    $udIdArr[] = $tok[1];
-                }
-            }
-        }
-        $editTidArr = array();
-        $sqlut = 'SELECT idusertaxonomy, tid, geographicscope '.
-            'FROM usertaxonomy '.
-            'WHERE editorstatus = "OccurrenceEditor" AND uid = '.$GLOBALS['SYMB_UID'];
-        //echo $sqlut;
-        $rsut = $this->conn->query($sqlut);
-        while($rut = $rsut->fetch_object()){
-            if(in_array('all', $udIdArr, true) || in_array($rut->idusertaxonomy, $udIdArr, true)){
-                $editTidArr[2][$rut->tid] = $rut->geographicscope;
-            }
-            else{
-                $editTidArr[3][$rut->tid] = $rut->geographicscope;
-            }
-        }
-        $rsut->free();
-        if($editTidArr){
-            $occTidArr = array();
-            $tid = 0;
-            $sciname = '';
-            $family = '';
-            if($this->occurrenceMap && $this->occurrenceMap['tid']){
-                $tid = $this->occurrenceMap['tid'];
-                $sciname = $this->occurrenceMap['sciname'];
-                $family = $this->occurrenceMap['family'];
-            }
-            if(!$tid && !$sciname && !$family){
-                $sql = 'SELECT tid, sciname, family '.
-                    'FROM omoccurrences '.
-                    'WHERE occid = '.$this->occid;
-                $rs = $this->conn->query($sql);
-                while($r = $rs->fetch_object()){
-                    $tid = $r->tid;
-                    $sciname = $r->sciname;
-                    $family = $r->family;
-                }
-                $rs->free();
-            }
-            if($tid){
-                $occTidArr[] = $tid;
-                $rs2 = $this->conn->query('SELECT parenttid FROM taxaenumtree WHERE (tid = '.$tid.')');
-                while($r2 = $rs2->fetch_object()){
-                    $occTidArr[] = $r2->parenttid;
-                }
-                $rs2->free();
-            }
-            elseif($sciname || $family){
-                $sqlWhere = '';
-                if($sciname){
-                    $taxon = $sciname;
-                    $tok = explode(' ',$sciname);
-                    if($tok && (count($tok) > 1) && strlen($tok[0]) > 2) {
-                        $taxon = $tok[0];
-                    }
-                    $sqlWhere .= 't.sciname = "'.SanitizerService::cleanInStr($this->conn,$taxon).'" ';
-                }
-                elseif($family){
-                    $sqlWhere .= 't.sciname = "'.SanitizerService::cleanInStr($this->conn,$family).'" ';
-                }
-                if($sqlWhere){
-                    $sql2 = 'SELECT e.parenttid '.
-                        'FROM taxaenumtree AS e INNER JOIN taxa AS t ON e.tid = t.tid '.
-                        'WHERE '.$sqlWhere.' ';
-                    //echo $sql2;
-                    $rs2 = $this->conn->query($sql2);
-                    while($r2 = $rs2->fetch_object()){
-                        $occTidArr[] = $r2->parenttid;
-                    }
-                    $rs2->free();
-                }
-            }
-            if($occTidArr){
-                if(array_key_exists(2,$editTidArr) && array_intersect(array_keys($editTidArr[2]),$occTidArr)){
-                    $isEditor = 2;
-                }
-                if(!$isEditor && array_key_exists(3, $editTidArr) && array_intersect(array_keys($editTidArr[3]), $occTidArr)) {
-                    $isEditor = 3;
-                }
-            }
-        }
-        return $isEditor;
     }
 
     public function getErrorStr(): ?string
