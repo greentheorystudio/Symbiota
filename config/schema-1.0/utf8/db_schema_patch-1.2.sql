@@ -513,7 +513,7 @@ WHERE t2.RankId = 10 AND e.taxauthid = 1 AND (t.kingdomid = 100);
 ALTER TABLE `users`
     ADD COLUMN `username` varchar(45) NOT NULL AFTER `lastname`,
   ADD COLUMN `password` varchar(255) NOT NULL AFTER `username`,
-  ADD COLUMN `lastlogindate` datetime AFTER `usergroups`;
+  ADD COLUMN `lastlogindate` datetime AFTER `validated`;
 
 UPDATE users AS u LEFT JOIN userlogin AS ul
 ON u.uid = ul.uid
