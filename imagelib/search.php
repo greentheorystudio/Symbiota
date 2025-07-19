@@ -394,14 +394,16 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <body>
 	<?php
 	include(__DIR__ . '/../header.php');
-    echo '<div id="breadcrumbs">';
-    echo '<a href="../index.php">Home</a> &gt;&gt; ';
-    echo '<a href="contributors.php">Image Contributors</a> &gt;&gt; ';
-    echo '<b>Image Search</b>';
-    echo '</div>';
-	?> 
+    ?>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
-		<div id="tabs" style="margin:0;">
+        <?php
+        echo '<div id="breadcrumbs">';
+        echo '<a href="../index.php">Home</a> &gt;&gt; ';
+        echo '<a href="contributors.php">Image Contributors</a> &gt;&gt; ';
+        echo '<b>Image Search</b>';
+        echo '</div>';
+        ?>
+        <div id="tabs" style="margin:0;">
 			<ul>
 				<li><a href="#criteriadiv">Search Criteria</a></li>
 				<li><a href="#collectiondiv">Collections</a></li>

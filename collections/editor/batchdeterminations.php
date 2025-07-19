@@ -327,14 +327,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div id="breadcrumbs">
-    <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
-    <?php
-    echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-    ?>
-    <b>Batch Determinations/Nomenclatural Adjustments</b>
-</div>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
+    <div id="breadcrumbs">
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+        <?php
+        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+        ?>
+        <b>Batch Determinations/Nomenclatural Adjustments</b>
+    </div>
     <?php
     if($isEditor){
         echo '<h2>'.$occManager->getCollName().'</h2>';
