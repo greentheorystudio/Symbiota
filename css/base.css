@@ -887,7 +887,7 @@ body.processing .loadingModal {
 	color: white;
 }
 #mapscale_us {
-	height: 20px;
+	height: 25px;
 	width: 100%;
 	position: relative;
 	float: left;
@@ -895,7 +895,7 @@ body.processing .loadingModal {
 }
 
 #mapscale_metric {
-	height: 20px;
+	height: 25px;
 	width: 100%;
 	position: relative;
 	float: left;
@@ -917,7 +917,7 @@ body.processing .loadingModal {
 	padding: 10px;
 	position: absolute;
 	width: 210px;
-	height:80px;
+	height: 90px;
 	z-index: 3;
 	background-color: #3c668d;
 	opacity: 0.85;
