@@ -87,13 +87,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <?php
 include(__DIR__ . '/../header.php');
 ?>
-<div id="breadcrumbs">
-	<a href="../index.php">Home</a> &gt;&gt;
-	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
-	<b> Checklist Administration</b>
-</div>
-
 <div id="mainContainer" style="padding: 10px 15px 15px;">
+    <div id="breadcrumbs">
+        <a href="../index.php">Home</a> &gt;&gt;
+        <a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
+        <b> Checklist Administration</b>
+    </div>
 <div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">
 	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>

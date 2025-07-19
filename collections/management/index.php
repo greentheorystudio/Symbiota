@@ -84,13 +84,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <body>
     <?php
     include(__DIR__ . '/../../header.php');
-    echo '<div id="breadcrumbs">';
-    echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-    echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-    echo '<b>Data Management Toolbox</b>';
-    echo '</div>';
     ?>
     <div id="mainContainer" style="padding: 10px 15px 15px;">
+        <?php
+        echo '<div id="breadcrumbs">';
+        echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+        echo '<b>Data Management Toolbox</b>';
+        echo '</div>';
+        ?>
         <h2><?php echo $specManager->getCollectionName(); ?></h2>
         <?php
         if($statusStr){
