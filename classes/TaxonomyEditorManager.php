@@ -646,6 +646,11 @@ class TaxonomyEditorManager{
             $statusStr .= 'ERROR setting tid to NULL in deleteTaxon method<br/>';
         }
 
+        $sql = 'UPDATE omoccurdeterminations SET tid = NULL WHERE tid = '.$this->tid;
+        if(!$this->conn->query($sql)){
+            $statusStr .= 'ERROR setting tid to NULL in deleteTaxon method<br/>';
+        }
+
         $sql ='DELETE FROM fmvouchers WHERE tid = '.$this->tid;
         if(!$this->conn->query($sql)){
             $statusStr .= 'ERROR deleting voucher links in deleteTaxon method<br/>';
