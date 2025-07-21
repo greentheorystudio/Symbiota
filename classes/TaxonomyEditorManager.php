@@ -550,7 +550,7 @@ class TaxonomyEditorManager{
         }
         $rs->free();
 
-        $sql ='SELECT COUNT(*) AS cnt FROM kmdescr WHERE ISNULL(inherited) AND tid = '.$this->tid;
+        $sql ='SELECT COUNT(cstlid) AS cnt FROM keycharacterstatetaxalink WHERE tid = '.$this->tid;
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $retArr['kmdesc'] = $r->cnt;
@@ -606,7 +606,7 @@ class TaxonomyEditorManager{
                 $statusStr .= 'ERROR deleting leftover checklist links<br/>';
             }
 
-            $sql ='UPDATE IGNORE kmdescr SET tid = '.$targetTid.' WHERE inherited IS NULL AND tid = '.$this->tid;
+            $sql ='UPDATE IGNORE keycharacterstatetaxalink SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
             if(!$this->conn->query($sql)){
                 $statusStr .= 'ERROR transferring morphology for ID key<br/>';
             }
@@ -656,7 +656,7 @@ class TaxonomyEditorManager{
             $statusStr .= 'ERROR deleting checklist links in deleteTaxon method<br/>';
         }
 
-        $sql ='DELETE FROM kmdescr WHERE tid = '.$this->tid;
+        $sql ='DELETE FROM keycharacterstatetaxalink WHERE tid = '.$this->tid;
         if(!$this->conn->query($sql)){
             $statusStr .= 'ERROR deleting morphology for ID Key in deleteTaxon method<br/>';
         }
