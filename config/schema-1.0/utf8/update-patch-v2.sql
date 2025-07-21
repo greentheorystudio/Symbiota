@@ -193,6 +193,9 @@ ALTER TABLE `media`
 ALTER TABLE `images`
     ADD INDEX `sourceurl`(`sourceurl`);
 
+ALTER TABLE `imagetag`
+    DROP FOREIGN KEY `FK_imagetag_tagkey`;
+
 ALTER TABLE `fmchecklists`
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`;
@@ -398,8 +401,6 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `repCount` int(10) UNSIGNED NULL AFTER `duplicateQuantity`,
     ADD INDEX `Index_eventdbpk`(`eventdbpk`);
 
-DROP TRIGGER `uploadspectemp_delete`;
-
 ALTER TABLE `fmchecklists`
     MODIFY COLUMN `searchterms` longtext NULL AFTER `politicalDivision`,
     MODIFY COLUMN `footprintWKT` longtext NULL AFTER `pointradiusmeters`,
@@ -415,5 +416,24 @@ ALTER TABLE `omcolldatauploadparameters`
 
 ALTER TABLE `omcollmediauploadparameters`
     MODIFY COLUMN `configjson` longtext NULL AFTER `patternmatchfield`;
+
+ALTER TABLE `users`
+    DROP COLUMN `department`,
+    DROP COLUMN `address`,
+    DROP COLUMN `city`,
+    DROP COLUMN `state`,
+    DROP COLUMN `zip`,
+    DROP COLUMN `country`,
+    DROP COLUMN `phone`,
+    DROP COLUMN `RegionOfInterest`,
+    DROP COLUMN `url`,
+    DROP COLUMN `Biography`,
+    DROP COLUMN `notes`,
+    DROP COLUMN `ispublic`,
+    DROP COLUMN `defaultrights`,
+    DROP COLUMN `rightsholder`,
+    DROP COLUMN `rights`,
+    DROP COLUMN `accessrights`,
+    DROP COLUMN `usergroups`;
 
 SET FOREIGN_KEY_CHECKS = 1;

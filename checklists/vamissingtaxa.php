@@ -42,9 +42,9 @@ else{
             echo $vManager->getMissingTaxaCount();
             ?>
             <a href="voucheradmin.php?clid=<?php echo $clid.'&pid='.$pid.'&displaymode='.$displayMode; ?>&tabindex=1"><i style='width:15px;height:15px;' title="Refresh List" class="fas fa-redo-alt"></i></a>
-            <a href="reports/voucherreporthandler.php?rtype=<?php echo ($displayMode === 2?'problemtaxacsv':'missingoccurcsv').'&clid='.$clid; ?>" target="_blank" title="Download Occurrence Records">
+            <!-- <a href="" target="_blank" title="Download Occurrence Records">
                 <i style='width:15px;height:15px;' class="fas fa-download"></i>
-            </a>
+            </a> -->
         </div>
         <div>
             <form name="displaymodeform" method="post" action="voucheradmin.php">

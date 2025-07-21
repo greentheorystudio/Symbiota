@@ -234,21 +234,21 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <body>
 	<?php
 	include(__DIR__ . '/../../header.php');
-	echo '<div id="breadcrumbs">';
-    echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-    if($collid){
-        echo '<a href="collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-        echo '<b>Edit Collection Metadata</b>';
-    }
-    else{
-        echo '<b>Create New Collection Profile</b>';
-    }
-	echo '</div>';
 	?>
 
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
-		<?php
-		if($statusStr){ 
+        <?php
+        echo '<div id="breadcrumbs">';
+        echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+        if($collid){
+            echo '<a href="collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+            echo '<b>Edit Collection Metadata</b>';
+        }
+        else{
+            echo '<b>Create New Collection Profile</b>';
+        }
+        echo '</div>';
+        if($statusStr){
 			?>
 			<hr />
 			<div style="margin:20px;font-weight:bold;color:red;">

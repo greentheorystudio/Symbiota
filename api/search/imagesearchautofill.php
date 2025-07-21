@@ -74,18 +74,6 @@ if(SanitizerService::validateInternalRequest()){
                 $i++;
             }
         }
-        if($type === 'keywords'){
-            $sql = 'SELECT DISTINCT keyword ' .
-                'FROM imagekeywords ' .
-                "WHERE keyword LIKE '".$queryString."%' ".
-                'LIMIT 10 ';
-            $result = $con->query($sql);
-            $i = 0;
-            while ($row = $result->fetch_object()) {
-                $returnArr[$i]['name'] = htmlentities($row->keyword);
-                $i++;
-            }
-        }
     }
     $con->close();
     echo json_encode($returnArr);

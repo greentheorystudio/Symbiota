@@ -117,23 +117,23 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div id="breadcrumbs">
-	<a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
-	<?php 
-	if(!$targetCollid && count($collList) === 1){
-		$targetCollid = key($collList);
-	}
-	if($targetCollid){
-		echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'&emode=1">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
-	}
-	else{
-		echo '<a href="institutioneditor.php">Full Address List</a> &gt;&gt;';
-	}
-	?>
-	<b>Institution Editor</b> 
-</div>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
-	<?php
+    <div id="breadcrumbs">
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+        <?php
+        if(!$targetCollid && count($collList) === 1){
+            $targetCollid = key($collList);
+        }
+        if($targetCollid){
+            echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'&emode=1">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
+        }
+        else{
+            echo '<a href="institutioneditor.php">Full Address List</a> &gt;&gt;';
+        }
+        ?>
+        <b>Institution Editor</b>
+    </div>
+    <?php
 	if($statusStr){
 		?>
 		<hr />

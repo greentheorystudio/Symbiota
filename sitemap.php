@@ -44,7 +44,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <li><a :href="(clientRoot + '/imagelib/index.php')">Image Library</a></li>
                         <li><a :href="(clientRoot + '/imagelib/search.php')">Image Search</a></li>
                         <li><a :href="(clientRoot + '/imagelib/contributors.php')">Image Contributors</a></li>
-                        <li><a :href="(clientRoot + '/misc/usagepolicy.php')">Usage Policy</a></li>
+                        <li><a :href="usagePolicyUrl">Terms of Use</a></li>
                     </ul>
                     <div class="q-mt-md text-h6 text-bold">Additional Resources</div>
                     <ul>
@@ -94,7 +94,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                 <template v-if="keyModuleIsActive && (isAdmin || keyAdmin)">
                                     <div class="q-mt-md text-body1 text-bold">Identification Keys</div>
                                     <ul>
-                                        <li><a :href="(clientRoot + '/ident/admin/index.php')">Characters and Character States Editor</a></li>
+                                        <li><a :href="">Characters and Character States Editor</a></li>
                                     </ul>
                                 </template>
                                 <div class="q-mt-md text-body1 text-bold">Glossary</div>
@@ -128,6 +128,7 @@ header('Content-Type: text/html; charset=UTF-8' );
 
                     const activateExsiccati = baseStore.getActivateExsiccati;
                     const clientRoot = baseStore.getClientRoot;
+                    const confUsagePolicyUrl = baseStore.getUsagePolicyUrl;
                     const currentUserPermissions = Vue.ref(null);
                     const glossaryModuleIsActive = baseStore.getGlossaryModuleIsActive;
                     const isAdmin = Vue.computed(() => {
@@ -144,6 +145,14 @@ header('Content-Type: text/html; charset=UTF-8' );
                     });
                     const taxonProfile = Vue.computed(() => {
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('TaxonProfile');
+                    });
+                    const usagePolicyUrl = Vue.computed(() => {
+                        if(confUsagePolicyUrl && confUsagePolicyUrl.length > 0){
+                            return confUsagePolicyUrl;
+                        }
+                        else{
+                            return (clientRoot + '/misc/usagepolicy.php');
+                        }
                     });
 
                     function setCurrentUserPermissions() {
@@ -169,7 +178,8 @@ header('Content-Type: text/html; charset=UTF-8' );
                         rssActive,
                         symbUid,
                         taxonomy,
-                        taxonProfile
+                        taxonProfile,
+                        usagePolicyUrl
                     }
                 }
             });

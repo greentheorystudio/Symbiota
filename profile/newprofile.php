@@ -44,6 +44,21 @@ header('X-Frame-Options: SAMEORIGIN');
                         <account-information-form ref="accountInformationFormRef" @update:account-information="updateAccountData"></account-information-form>
                     </q-card-section>
                 </q-card>
+                <q-card class="create-account-container q-mt-md" :class="(termsAgreeError === true ? 'error-border' : '')">
+                    <q-card-section class="q-pa-lg column q-gutter-sm">
+                        <div class="row justify-center q-gutter-md no-wrap">
+                            <div>
+                                <q-checkbox v-model="agreeCheck" dense @update:model-value="processTermsAgreeChange"></q-checkbox>
+                            </div>
+                            <div>
+                                I have read and agree to the <a :href="usagePolicyUrl" class="text-bold" target="_blank">Terms of Use</a>
+                            </div>
+                        </div>
+                        <div v-if="termsAgreeError" class="row justify-center text-negative text-bold">
+                            Required
+                        </div>
+                    </q-card-section>
+                </q-card>
                 <q-card class="create-account-container q-mt-md">
                     <q-card-section>
                         <human-validator ref="humanValidationInputRef"></human-validator>
@@ -81,10 +96,21 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     const accountInformationFormRef = Vue.ref(null);
                     const adminEmail = baseStore.getAdminEmail;
+                    const agreeCheck = Vue.ref(false);
                     const clientRoot = baseStore.getClientRoot;
+                    const confUsagePolicyUrl = baseStore.getUsagePolicyUrl;
                     const humanValidationInputRef = Vue.ref(null);
                     const newAccount = Vue.computed(() => userStore.getUserData);
                     const passwordInputRef = Vue.ref(null);
+                    const termsAgreeError = Vue.ref(null);
+                    const usagePolicyUrl = Vue.computed(() => {
+                        if(confUsagePolicyUrl && confUsagePolicyUrl.length > 0){
+                            return confUsagePolicyUrl;
+                        }
+                        else{
+                            return (clientRoot + '/misc/usagepolicy.php');
+                        }
+                    });
                     const usernameExists = (val) => {
                         return new Promise((resolve) => {
                             const formData = new FormData();
@@ -107,11 +133,13 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function createAccount() {
                         usernameRef.value.validate();
+                        validateTermsAgree();
                         passwordInputRef.value.validateForm();
                         accountInformationFormRef.value.validateForm();
                         humanValidationInputRef.value.validateForm();
                         if(
                             !usernameRef.value.hasError &&
+                            !termsAgreeError.value &&
                             !passwordInputRef.value.formHasErrors() &&
                             !accountInformationFormRef.value.formHasErrors() &&
                             !humanValidationInputRef.value.formHasErrors()
@@ -134,8 +162,17 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
+                    function processTermsAgreeChange(val) {
+                        agreeCheck.value = val;
+                        validateTermsAgree();
+                    }
+
                     function updateAccountData(data) {
                         userStore.updateUserEditData(data.key, data.value);
+                    }
+
+                    function validateTermsAgree() {
+                        termsAgreeError.value = agreeCheck.value === false;
                     }
 
                     Vue.onMounted(() => {
@@ -144,9 +181,13 @@ header('X-Frame-Options: SAMEORIGIN');
                     
                     return {
                         accountInformationFormRef,
+                        agreeCheck,
+                        clientRoot,
                         humanValidationInputRef,
                         newAccount,
                         passwordInputRef,
+                        termsAgreeError,
+                        usagePolicyUrl,
                         usernameRef,
                         usernameRules: [
                             val => (val !== null && val !== '') || 'Required',
@@ -154,6 +195,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             val => usernameExists(val)
                         ],
                         createAccount,
+                        processTermsAgreeChange,
                         updateAccountData
                     }
                 }

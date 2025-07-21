@@ -54,7 +54,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <span class="text-bold">{{ checklistName }}</span>
                     </template>
                     <template v-else>
-                        <span class="text-bold">Project Checklist</span>
+                        <span class="text-bold">Dynamic Checklist</span>
                     </template>
                 </template>
                 <template v-else>
@@ -193,7 +193,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     <selector-input-element label="Sort Taxa" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
                                 </div>
                                 <div class="col-8">
-                                    <single-scientific-common-name-auto-complete :sciname="(taxonFilterVal ? taxonFilterVal.sciname : null)" label="Taxon Filter" limit-to-options="true" @update:sciname="processTaxonFilterValChange"></single-scientific-common-name-auto-complete>
+                                    <single-scientific-common-name-auto-complete :sciname="(taxonFilterVal ? taxonFilterVal.sciname : null)" :options="taxaFilterOptions" label="Taxon Filter" limit-to-options="true" @update:sciname="processTaxonFilterValChange"></single-scientific-common-name-auto-complete>
                                 </div>
                             </div>
                             <div class="row q-col-gutter-sm">

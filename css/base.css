@@ -4,6 +4,10 @@ body{
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
 }
+body.full-window-mode{
+    background-color: #FFFFFF;
+    padding: 15px;
+}
 @media print {
 	body, #appContainer{
 		background-color: #ffffff !important;
@@ -883,7 +887,7 @@ body.processing .loadingModal {
 	color: white;
 }
 #mapscale_us {
-	height: 20px;
+	height: 25px;
 	width: 100%;
 	position: relative;
 	float: left;
@@ -891,7 +895,7 @@ body.processing .loadingModal {
 }
 
 #mapscale_metric {
-	height: 20px;
+	height: 25px;
 	width: 100%;
 	position: relative;
 	float: left;
@@ -913,7 +917,7 @@ body.processing .loadingModal {
 	padding: 10px;
 	position: absolute;
 	width: 210px;
-	height:80px;
+	height: 90px;
 	z-index: 3;
 	background-color: #3c668d;
 	opacity: 0.85;
@@ -1125,9 +1129,6 @@ body.processing .loadingModal {
 .sticky-header-table tbody {
 	scroll-margin-top: 48px;
 }
-.occurrence-individual-page-info-panel {
-	height: 800px;
-}
 .login-container {
 	width: 30%;
 }
@@ -1138,4 +1139,7 @@ body.processing .loadingModal {
 }
 .create-account-container {
 	width: 90%;
+}
+.error-border {
+    border: 3px solid #C10015;
 }

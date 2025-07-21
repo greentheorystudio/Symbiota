@@ -36,8 +36,10 @@ $occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div id="mainContainer" class="occurrence-individual-page-info-panel">
-            <occurrence-info-tab-module :occurrence-id="occid"></occurrence-info-tab-module>
+        <div id="mainContainer">
+            <div class="overflow-visible">
+                <occurrence-info-tab-module :occurrence-id="occid" :full-window-mode="true"></occurrence-info-tab-module>
+            </div>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');

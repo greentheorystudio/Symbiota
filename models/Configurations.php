@@ -26,7 +26,6 @@ class Configurations{
         'models',
         'profile',
         'projects',
-        'references',
         'services',
         'spatial',
         'stores',
@@ -105,8 +104,10 @@ class Configurations{
         'SPATIAL_SHAPES_SELECTIONS_FILL_COLOR',
         'SPATIAL_SHAPES_SELECTIONS_OPACITY',
         'SYMB_UID',
+        'TAXON_UNITS',
         'TAXONOMIC_RANKS',
         'TEMP_DIR_ROOT',
+        'USAGE_POLICY_URL',
         'USER_DISPLAY_NAME',
         'USER_RIGHTS',
         'USERNAME'
@@ -476,8 +477,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '20250115';
-        $GLOBALS['JS_VERSION'] = '2025011011';
+        $GLOBALS['CSS_VERSION'] = '20250119';
+        $GLOBALS['JS_VERSION'] = '20250502';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -638,6 +639,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['DEFAULT_TITLE'])){
             $GLOBALS['DEFAULT_TITLE'] = '';
+        }
+        if(!isset($GLOBALS['USAGE_POLICY_URL'])){
+            $GLOBALS['USAGE_POLICY_URL'] = '';
         }
         if(!isset($GLOBALS['CSS_VERSION_LOCAL']) || $GLOBALS['CSS_VERSION_LOCAL'] === ''){
             $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
@@ -825,6 +829,29 @@ class Configurations{
         }
         $GLOBALS['SHOW_PASSWORD_RESET'] = isset($GLOBALS['PW_RESET']) && (int)$GLOBALS['PW_RESET'] === 1;
         $GLOBALS['RSS_ACTIVE'] = file_exists(__DIR__ . '/../rss.xml');
+        $GLOBALS['TAXON_UNITS'] = array(
+            array('rankid' => 10, 'rankname' => 'Kingdom', 'dirparentrankid' => 10, 'reqparentrankid' => 10),
+            array('rankid' => 20, 'rankname' => 'Subkingdom', 'dirparentrankid' => 10, 'reqparentrankid' => 10),
+            array('rankid' => 30, 'rankname' => 'Phylum', 'dirparentrankid' => 20, 'reqparentrankid' => 10),
+            array('rankid' => 40, 'rankname' => 'Subphylum', 'dirparentrankid' => 30, 'reqparentrankid' => 30),
+            array('rankid' => 50, 'rankname' => 'Superclass', 'dirparentrankid' => 40, 'reqparentrankid' => 30),
+            array('rankid' => 60, 'rankname' => 'Class', 'dirparentrankid' => 50, 'reqparentrankid' => 30),
+            array('rankid' => 70, 'rankname' => 'Subclass', 'dirparentrankid' => 60, 'reqparentrankid' => 60),
+            array('rankid' => 80, 'rankname' => 'Infraclass', 'dirparentrankid' => 70, 'reqparentrankid' => 60),
+            array('rankid' => 90, 'rankname' => 'Superorder', 'dirparentrankid' => 80, 'reqparentrankid' => 60),
+            array('rankid' => 100, 'rankname' => 'Order', 'dirparentrankid' => 90, 'reqparentrankid' => 60),
+            array('rankid' => 110, 'rankname' => 'Suborder', 'dirparentrankid' => 100, 'reqparentrankid' => 100),
+            array('rankid' => 120, 'rankname' => 'Infraorder', 'dirparentrankid' => 110, 'reqparentrankid' => 100),
+            array('rankid' => 130, 'rankname' => 'Superfamily', 'dirparentrankid' => 120, 'reqparentrankid' => 100),
+            array('rankid' => 140, 'rankname' => 'Family', 'dirparentrankid' => 130, 'reqparentrankid' => 100),
+            array('rankid' => 150, 'rankname' => 'Subfamily', 'dirparentrankid' => 140, 'reqparentrankid' => 140),
+            array('rankid' => 160, 'rankname' => 'Tribe', 'dirparentrankid' => 150, 'reqparentrankid' => 140),
+            array('rankid' => 170, 'rankname' => 'Subtribe', 'dirparentrankid' => 160, 'reqparentrankid' => 140),
+            array('rankid' => 180, 'rankname' => 'Genus', 'dirparentrankid' => 170, 'reqparentrankid' => 140),
+            array('rankid' => 190, 'rankname' => 'Subgenus', 'dirparentrankid' => 180, 'reqparentrankid' => 180),
+            array('rankid' => 220, 'rankname' => 'Species', 'dirparentrankid' => 190, 'reqparentrankid' => 180),
+            array('rankid' => 230, 'rankname' => 'Subspecies', 'dirparentrankid' => 220, 'reqparentrankid' => 180)
+        );
     }
 
     public function validateNewConfNameCore($name): bool

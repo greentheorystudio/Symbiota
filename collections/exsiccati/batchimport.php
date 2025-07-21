@@ -126,13 +126,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<?php 
 	include(__DIR__ . '/../../header.php');
 	?>
-	<div id="breadcrumbs">
-		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-		<a href="index.php">Exsiccati Index</a> &gt;&gt; 
-		<a href="batchimport.php">Batch Import Module</a>
-	</div>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
-		<?php
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+            <a href="index.php">Exsiccati Index</a> &gt;&gt;
+            <a href="batchimport.php">Batch Import Module</a>
+        </div>
+        <?php
 		if($statusStr){
 			echo '<hr/>';
 			echo '<div style="margin:10px;color:'.(strpos($statusStr,'SUCCESS') === false?'red':'green').';">'.$statusStr.'</div>';

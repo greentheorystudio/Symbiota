@@ -175,12 +175,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	</script>
 </head>
 <body>
-	<div id="breadcrumbs">
-        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
-        <a href='index.php?language=<?php echo $glosManager->getTermLanguage(); ?>'> <b>Glossary Management</b></a>
-    </div>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
-		<?php 
+        <div id="breadcrumbs">
+            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+            <a href='index.php?language=<?php echo $glosManager->getTermLanguage(); ?>'> <b>Glossary Management</b></a>
+        </div>
+        <?php
 		if($glossId && $isEditor){
 			if($statusStr){
 				?>

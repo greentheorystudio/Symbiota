@@ -59,7 +59,7 @@ function clearValidations(){
 
 function checkValidations(){
 	if(sciNameValid && unitName1Valid && rankIdValid && parentNameValid && parentIdValid && acceptedNameValid && acceptedIdValid && taxonExistsValid){
-		document.getElementById("submitButton").disabled = false;
+        document.getElementById("submitButton").disabled = false;
 	}
 }
 
@@ -73,15 +73,15 @@ function validateLoadForm(f){
 	}
 
 	if(f.unitname1.value === ""){
-		alert("Unit Name 1 (genus or uninomial) field required.");
+		alert("Unit Name 1 (genus or uninomial) required.");
 	}
 	else{
 		unitName1Valid = true;
 	}
 
 	const rankId = Number(f.rankid.value);
-	if(rankId === ""){
-		alert("Taxon rank field required.");
+	if(rankId === 0){
+		alert("Taxon rank required.");
 	}
 	else{
 		rankIdValid = true;
@@ -94,7 +94,7 @@ function validateLoadForm(f){
 		parentNameValid = true;
 	}
 
-	if(f.parenttid.value !== "" || rankId > 10){
+	if(f.parenttid.value !== "" || rankId === 10){
 		parentIdValid = true;
 	}
 

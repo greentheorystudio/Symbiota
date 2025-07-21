@@ -1098,7 +1098,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             newTaxonObj['kingdomid'] = selectedKingdomId.value;
                             newTaxonObj['rankid'] = taxonToAdd['rankid'];
                             newTaxonObj['acceptstatus'] = taxonToAdd['accepted'] ? 1 : 0;
-                            newTaxonObj['tidaccepted'] = !taxonToAdd['accepted'] ? nameTidIndex[taxonToAdd['accepted_sciname']] : '';
+                            newTaxonObj['tidaccepted'] = taxonToAdd['accepted'] ? '' : nameTidIndex[taxonToAdd['accepted_sciname']];
                             newTaxonObj['parenttid'] = nameTidIndex[taxonToAdd['parentName']];
                             newTaxonObj['family'] = taxonToAdd['family'];
                             newTaxonObj['source'] = getDataSourceName();
@@ -1267,12 +1267,12 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 nameSearchResults = itisInitialSearchResults;
                                 getITISNameSearchResultsRecord();
                             }
-                            else if(itisInitialSearchResults.length === 0){
-                                processErrorResponse(false, 'Not found');
-                                runScinameDataSourceSearch();
-                            }
                             else if(itisInitialSearchResults.length > 1){
                                 validateITISInitialNameSearchResults();
+                            }
+                            else{
+                                processErrorResponse(false, 'Not found');
+                                runScinameDataSourceSearch();
                             }
                         }
                         else{
@@ -1905,7 +1905,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                     kingdomName = kingdomObj['name'];
                                                 }
                                             }
-                                            if(kingdomName.toLowerCase() === selectedKingdomName.value.toLowerCase()){
+                                            if(taxon['sciname'] === currentSciname.value && kingdomName.toLowerCase() === selectedKingdomName.value.toLowerCase()){
                                                 let hierarchyArr = [];
                                                 if(taxon.hasOwnProperty('hierarchy')){
                                                     hierarchyArr = taxon['hierarchy'];
@@ -1969,7 +1969,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 body: formData
                             })
                             .then((response) => {
-                                if(response.status === 200){
+                                if(response.ok && response.status === 200){
                                     response.json().then((resObj) => {
                                         const coreMetadata = resObj['coreMetadata'];
                                         if(coreMetadata){
@@ -2101,6 +2101,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         processingBatchLimitChange,
                         processorDisplayScrollDown,
                         processorDisplayScrollUp,
+                        runTaxThesaurusFuzzyMatchProcess,
                         selectFuzzyMatch,
                         setScroller,
                         undoChangedSciname,

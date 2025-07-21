@@ -354,11 +354,6 @@ class TaxonomyEditorManager{
     private function updateDependentData($tid, $tidNew): void
     {
         if(is_numeric($tid) && is_numeric($tidNew)){
-            $this->conn->query('DELETE FROM kmdescr WHERE inherited IS NOT NULL AND tid = '.$tid.' ');
-            $this->conn->query('UPDATE IGNORE kmdescr SET tid = '.$tidNew.' WHERE tid = '.$tid.' ');
-            $this->conn->query('DELETE FROM kmdescr WHERE tid = '.$tid.' ');
-            $this->resetCharStateInheritance($tidNew);
-
             $sqlVerns = 'DELETE v2.* '.
                 'FROM taxavernaculars AS v1 LEFT JOIN taxavernaculars AS v2 ON v1.VernacularName = v2.VernacularName AND v1.langid = v2.langid '.
                 'WHERE v1.TID = '.$tidNew.' AND v2.TID = '.$tid.' AND v2.VID IS NOT NULL ';
@@ -366,53 +361,6 @@ class TaxonomyEditorManager{
 
             $sqlVerns = 'UPDATE taxavernaculars SET tid = '.$tidNew.' WHERE tid = '.$tid.' ';
             $this->conn->query($sqlVerns);
-        }
-    }
-
-    private function resetCharStateInheritance($tid): void
-    {
-        $sqlAdd1 = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-            'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-            'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-            'FROM ((taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID) '.
-            'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid) '.
-            'LEFT JOIN kmdescr AS d2 ON d1.CID = d2.CID AND t2.TID = d2.TID '.
-            'WHERE t2.tid = t2.tidaccepted AND t2.tid = '.$tid.' AND ISNULL(d2.CID) ';
-        $this->conn->query($sqlAdd1);
-
-        if($this->rankid === 140){
-            $sqlAdd2a = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-                'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-                'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-                'FROM ((taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID) '.
-                'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid) '.
-                'LEFT JOIN kmdescr AS d2 ON d1.CID = d2.CID AND t2.TID = d2.TID '.
-                'WHERE t2.tid = t2.tidaccepted '.
-                'AND t2.RankId = 180 AND t1.tid = '.$tid.' AND ISNULL(d2.CID) ';
-            //echo $sqlAdd2a;
-            $this->conn->query($sqlAdd2a);
-            $sqlAdd2b = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-                'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-                'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-                'FROM ((taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID) '.
-                'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid) '.
-                'LEFT JOIN kmdescr AS d2 ON d1.CID = d2.CID AND t2.TID = d2.TID '.
-                "WHERE t2.family = '".$this->sciName."' AND t2.tid = t2.tidaccepted ".
-                'AND t2.RankId = 220 AND ISNULL(d2.CID) ';
-            $this->conn->query($sqlAdd2b);
-        }
-
-        if($this->rankid > 140 && $this->rankid < 220){
-            $sqlAdd3 = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-                'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-                'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-                'FROM ((taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID) '.
-                'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid) '.
-                'LEFT JOIN kmdescr AS d2 ON d1.CID = d2.CID AND t2.TID = d2.TID '.
-                'WHERE t2.tid = t2.tidaccepted '.
-                'AND t2.RankId = 220 AND t1.tid = '.$tid.' AND ISNULL(d2.CID) ';
-            //echo $sqlAdd2b;
-            $this->conn->query($sqlAdd3);
         }
     }
 
@@ -506,9 +454,11 @@ class TaxonomyEditorManager{
         $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("'.SanitizerService::cleanInStr($this->conn,$name).'")';
         if($this->conn->query($sql)){
             $retVal = $this->conn->insert_id;
-            $sql = 'INSERT INTO taxonunits(kingdomid,rankid,rankname,dirparentrankid,reqparentrankid) '.
-                'SELECT '.$retVal.',rankid,rankname,dirparentrankid,reqparentrankid '.
-                'FROM taxonunits WHERE kingdomid = 100 ';
+            $unitValueArr = array();
+            foreach($GLOBALS['TAXON_UNITS'] as $unitArr){
+                $unitValueArr[] = '(' . $retVal . ', ' . (int)$unitArr['rankid'] . ', "' . $unitArr['rankname'] . '", ' . (int)$unitArr['dirparentrankid'] . ', ' . (int)$unitArr['reqparentrankid'] . ')';
+            }
+            $sql = 'INSERT INTO taxonunits(kingdomid, rankid, rankname, dirparentrankid, reqparentrankid) VALUES ' . implode(', ', $unitValueArr);
             $this->conn->query($sql);
         }
         return $retVal;
@@ -600,7 +550,7 @@ class TaxonomyEditorManager{
         }
         $rs->free();
 
-        $sql ='SELECT COUNT(*) AS cnt FROM kmdescr WHERE ISNULL(inherited) AND tid = '.$this->tid;
+        $sql ='SELECT COUNT(cstlid) AS cnt FROM keycharacterstatetaxalink WHERE tid = '.$this->tid;
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $retArr['kmdesc'] = $r->cnt;
@@ -656,7 +606,7 @@ class TaxonomyEditorManager{
                 $statusStr .= 'ERROR deleting leftover checklist links<br/>';
             }
 
-            $sql ='UPDATE IGNORE kmdescr SET tid = '.$targetTid.' WHERE inherited IS NULL AND tid = '.$this->tid;
+            $sql ='UPDATE IGNORE keycharacterstatetaxalink SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
             if(!$this->conn->query($sql)){
                 $statusStr .= 'ERROR transferring morphology for ID key<br/>';
             }
@@ -706,7 +656,7 @@ class TaxonomyEditorManager{
             $statusStr .= 'ERROR deleting checklist links in deleteTaxon method<br/>';
         }
 
-        $sql ='DELETE FROM kmdescr WHERE tid = '.$this->tid;
+        $sql ='DELETE FROM keycharacterstatetaxalink WHERE tid = '.$this->tid;
         if(!$this->conn->query($sql)){
             $statusStr .= 'ERROR deleting morphology for ID Key in deleteTaxon method<br/>';
         }
