@@ -281,6 +281,16 @@ class Images{
         return $retVal;
     }
 
+    public function deleteChecklistTaxonImageTags($clid, $tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM imagetag WHERE keyvalue = "CLID-' . (int)$clid . '-' . (int)$tid . '" ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function deleteImageRecord($imgid): int
     {
         $retVal = 1;

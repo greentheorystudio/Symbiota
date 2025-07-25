@@ -17,7 +17,6 @@ $displayMode = (array_key_exists('displaymode',$_REQUEST)?(int)$_REQUEST['displa
 
 $clManager = new ChecklistVoucherAdmin();
 $clManager->setClid($clid);
-$clManager->setCollectionVariables();
 
 $statusStr = '';
 $isEditor = 0;
