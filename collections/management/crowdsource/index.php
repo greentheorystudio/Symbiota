@@ -34,13 +34,15 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
 <body>
 	<?php
 	include(__DIR__ . '/../../../header.php');
-    echo '<div id="breadcrumbs">';
-    echo "<a href='../../../index.php'>Home</a> &gt;&gt; ";
-    echo '<b>Crowdsourcing Score Board</b>';
-    echo '</div>';
-	?>
+    ?>
     <div id="mainContainer" style="padding: 10px 15px 15px;">
-		<h1>Crowdsourcing Score Board</h1>
+        <?php
+        echo '<div id="breadcrumbs">';
+        echo "<a href='../../../index.php'>Home</a> &gt;&gt; ";
+        echo '<b>Crowdsourcing Score Board</b>';
+        echo '</div>';
+        ?>
+        <h1>Crowdsourcing Score Board</h1>
         <div style="margin-left:20px;float:left;">
 			<h2>Top Scores</h2>
 			<table class="styledtable" style="font-family:Arial,serif;width:300px;">

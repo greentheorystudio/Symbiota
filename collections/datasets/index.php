@@ -83,16 +83,16 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div id="breadcrumbs">
-    <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
-    <?php
-    echo '<a href="../../profile/viewprofile.php?tabindex=1">My Profile</a> &gt;&gt; ';
-    ?>
-    <a href="index.php">
-        <b>Dataset Listing</b>
-    </a>
-</div>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
+    <div id="breadcrumbs">
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+        <?php
+        echo '<a href="../../profile/viewprofile.php?tabindex=1">My Profile</a> &gt;&gt; ';
+        ?>
+        <a href="index.php">
+            <b>Dataset Listing</b>
+        </a>
+    </div>
     <?php
     if($statusStr){
         $color = 'green';

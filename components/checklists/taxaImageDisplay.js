@@ -16,6 +16,10 @@ const taxaImageDisplay = {
             type: Boolean,
             default: false
         },
+        editing: {
+            type: Boolean,
+            default: false
+        },
         imageData: {
             type: Object,
             default: {}
@@ -44,7 +48,7 @@ const taxaImageDisplay = {
                             </div>
                             <div class="full-width row q-gutter-sm">
                                 <template v-for="taxon in family['taxa']">
-                                    <q-card flat bordered class="col-12 col-md-4 col-lg-2 col-xl-1">
+                                    <q-card flat bordered class="col-12 col-md-4 col-lg-2 col-xl-1 cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);">
                                         <template v-if="imageData.hasOwnProperty(taxon['tidaccepted']) && imageData[taxon['tidaccepted']].length > 0">
                                             <q-img class="rounded-borders" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="fill"></q-img>
                                         </template>
@@ -53,14 +57,21 @@ const taxaImageDisplay = {
                                         </template>
                                         <q-card-section class="q-pa-sm">
                                             <div class="text-body1">
-                                                <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">
-                                                    <span class="text-bold text-italic">
-                                                        {{ taxon['sciname'] }}
+                                                <span class="text-bold text-italic">
+                                                    {{ taxon['sciname'] }}
+                                                </span>
+                                                <template v-if="displayAuthors && taxon['author']">
+                                                    <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
+                                                </template>
+                                                <template v-if="editing">
+                                                    <span class="q-ml-sm">
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense>
+                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                                Edit this taxon
+                                                            </q-tooltip>
+                                                        </q-btn>
                                                     </span>
-                                                    <template v-if="displayAuthors && taxon['author']">
-                                                        <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
-                                                    </template>
-                                                </a>
+                                                </template>
                                             </div>
                                             <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
                                                 <div class="text-body1">{{ getVernacularStrFromArr(taxon['vernacularData']) }}</div>
@@ -95,7 +106,7 @@ const taxaImageDisplay = {
             <template v-else>
                 <div class="full-width row q-gutter-sm">
                     <template v-for="taxon in taxaArr">
-                        <q-card flat bordered class="col-12 col-md-4 col-lg-2 col-xl-1">
+                        <q-card flat bordered class="col-12 col-md-4 col-lg-2 col-xl-1 cursor-pointer" @click="openTaxaProfileTab(taxon['tid'])">
                             <template v-if="imageData.hasOwnProperty(taxon['tidaccepted']) && imageData[taxon['tidaccepted']].length > 0">
                                 <q-img class="rounded-borders" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="fill"></q-img>
                             </template>
@@ -103,15 +114,22 @@ const taxaImageDisplay = {
                                 <div class="q-pa-md text-body1 text-bold text-center">Image not available</div>
                             </template>
                             <q-card-section class="q-pa-sm">
-                                <div class="text-body1">
-                                    <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank">
-                                        <span class="text-bold text-italic">
-                                            {{ taxon['sciname'] }}
+                                <div class="text-body1 text-black">
+                                    <span class="text-bold text-italic">
+                                        {{ taxon['sciname'] }}
+                                    </span>
+                                    <template v-if="displayAuthors && taxon['author']">
+                                        <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
+                                    </template>
+                                    <template v-if="editing">
+                                        <span class="q-ml-sm">
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" icon="far fa-edit" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Edit this taxon
+                                                </q-tooltip>
+                                            </q-btn>
                                         </span>
-                                        <template v-if="displayAuthors && taxon['author']">
-                                            <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
-                                        </template>
-                                    </a>
+                                    </template>
                                 </div>
                                 <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
                                     <div class="text-body1">{{ getVernacularStrFromArr(taxon['vernacularData']) }}</div>
@@ -148,11 +166,12 @@ const taxaImageDisplay = {
     components: {
         'occurrence-info-window-popup': occurrenceInfoWindowPopup
     },
-    setup() {
+    setup(_, context) {
         const baseStore = useBaseStore();
 
         const clientRoot = baseStore.getClientRoot;
         const containerRef = Vue.ref(null);
+        const editorOpening = Vue.ref(false);
         const expandedVouchers = Vue.ref([]);
         const recordInfoWindowId = Vue.ref(null);
         const showRecordInfoWindow = Vue.ref(false);
@@ -200,9 +219,23 @@ const taxaImageDisplay = {
             return nameArr.length > 0 ? nameArr.join(', ') : '';
         }
 
+        function openEditorPopup(id) {
+            editorOpening.value = true;
+            context.emit('open:checklist-taxa-editor', id);
+        }
+
         function openRecordInfoWindow(id) {
             recordInfoWindowId.value = id;
             showRecordInfoWindow.value = true;
+        }
+
+        function openTaxaProfileTab(tid) {
+            if(!editorOpening.value){
+                window.open((clientRoot + '/taxa/index.php?taxon=' + tid), '_blank');
+            }
+            else{
+                editorOpening.value = false;
+            }
         }
 
         function removeExpandedVoucher(tid){
@@ -233,7 +266,9 @@ const taxaImageDisplay = {
             getAdjustedVoucherArr,
             getSynonymStrFromArr,
             getVernacularStrFromArr,
+            openEditorPopup,
             openRecordInfoWindow,
+            openTaxaProfileTab,
             removeExpandedVoucher
         }
     }

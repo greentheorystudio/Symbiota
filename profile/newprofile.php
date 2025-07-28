@@ -46,7 +46,7 @@ header('X-Frame-Options: SAMEORIGIN');
                 </q-card>
                 <q-card class="create-account-container q-mt-md" :class="(termsAgreeError === true ? 'error-border' : '')">
                     <q-card-section class="q-pa-lg column q-gutter-sm">
-                        <div class="row justify-start q-gutter-md no-wrap">
+                        <div class="row justify-center q-gutter-md no-wrap">
                             <div>
                                 <q-checkbox v-model="agreeCheck" dense @update:model-value="processTermsAgreeChange"></q-checkbox>
                             </div>
@@ -54,7 +54,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                 I have read and agree to the <a :href="usagePolicyUrl" class="text-bold" target="_blank">Terms of Use</a>
                             </div>
                         </div>
-                        <div v-if="termsAgreeError" class="text-negative text-bold">
+                        <div v-if="termsAgreeError" class="row justify-center text-negative text-bold">
                             Required
                         </div>
                     </q-card-section>

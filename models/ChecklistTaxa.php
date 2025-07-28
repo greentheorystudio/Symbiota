@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Checklists.php');
+include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/KeyCharacterStates.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/TaxonVernaculars.php');
@@ -17,9 +18,6 @@ class ChecklistTaxa{
         'abundance' => array('dataType' => 'string', 'length' => 50),
         'notes' => array('dataType' => 'string', 'length' => 2000),
         'source' => array('dataType' => 'string', 'length' => 250),
-        'nativity' => array('dataType' => 'string', 'length' => 50),
-        'endemic' => array('dataType' => 'string', 'length' => 45),
-        'invasive' => array('dataType' => 'string', 'length' => 45),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -78,10 +76,23 @@ class ChecklistTaxa{
 
     public function deleteChecklistTaxonRecord($cltlid): int
     {
-        $retVal = 1;
-        $sql = 'DELETE FROM fmchklsttaxalink WHERE cltlid = ' . (int)$cltlid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        $retVal = 0;
+        $tidSql = 'SELECT clid, tid FROM fmchklsttaxalink WHERE cltlid = ' . (int)$cltlid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($tidSql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $clid = $row['clid'];
+                $tid = $row['tid'];
+                if((int)$clid > 0 && (int)$tid > 0){
+                    (new Images)->deleteChecklistTaxonImageTags($clid, $tid);
+                    $sql = 'DELETE FROM fmchklsttaxalink WHERE cltlid = ' . (int)$cltlid . ' ';
+                    if($this->conn->query($sql)){
+                        $retVal = 1;
+                    }
+                }
+            }
         }
         return $retVal;
     }

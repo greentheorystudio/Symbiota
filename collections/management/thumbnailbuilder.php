@@ -50,20 +50,20 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<?php
 	include(__DIR__ . '/../../header.php');
 	?>
-	<div id="breadcrumbs">
-		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-		<?php
-		if($collid){
-			echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt;';
-		}
-		else{
-			echo '<a href="../../sitemap.php">Sitemap</a> &gt;&gt;';
-		}
-		?>
-		<b>Thumbnail Builder</b>
-	</div>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
-		<?php
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+            <?php
+            if($collid){
+                echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt;';
+            }
+            else{
+                echo '<a href="../../sitemap.php">Sitemap</a> &gt;&gt;';
+            }
+            ?>
+            <b>Thumbnail Builder</b>
+        </div>
+        <?php
 		if($isEditor){
 			if($action){
 				echo '<fieldset style="margin:10px;padding:15px">';

@@ -1660,28 +1660,11 @@ CREATE TABLE `users` (
     `password` varchar(255) NOT NULL,
     `title` varchar(150) DEFAULT NULL,
     `institution` varchar(200) DEFAULT NULL,
-    `department` varchar(200) DEFAULT NULL,
-    `address` varchar(255) DEFAULT NULL,
-    `city` varchar(100) DEFAULT NULL,
-    `state` varchar(50) DEFAULT NULL,
-    `zip` varchar(15) DEFAULT NULL,
-    `country` varchar(50) DEFAULT NULL,
-    `phone` varchar(45) DEFAULT NULL,
     `email` varchar(100) NOT NULL,
-    `RegionOfInterest` varchar(45) DEFAULT NULL,
-    `url` varchar(400) DEFAULT NULL,
-    `Biography` varchar(1500) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `ispublic` int(10) unsigned NOT NULL DEFAULT '0',
-    `defaultrights` varchar(250) DEFAULT NULL,
-    `rightsholder` varchar(250) DEFAULT NULL,
-    `rights` varchar(250) DEFAULT NULL,
-    `accessrights` varchar(250) DEFAULT NULL,
     `guid` varchar(45) DEFAULT NULL,
     `validated` varchar(45) NOT NULL DEFAULT '0',
-    `usergroups` varchar(100) DEFAULT NULL,
     `lastlogindate` datetime,
-    `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`uid`),
     UNIQUE KEY `Index_email` (`email`,`lastname`)
 );
@@ -2120,7 +2103,7 @@ INSERT INTO `paleochronostratigraphy` VALUES ('154', 'Phanerozoic', 'Cenozoic', 
 INSERT INTO `paleochronostratigraphy` VALUES ('155', 'Phanerozoic', 'Cenozoic', 'Quaternary', 'Pleistocene', 'Upper Pleistocene');
 INSERT INTO `paleochronostratigraphy` VALUES ('156', 'Phanerozoic', 'Cenozoic', 'Quaternary', 'Holocene', null);
 
-INSERT INTO users(uid,firstname,lastname,username,password,state,country,email,validated) VALUES (1,'General','Administrator','admin',SHA2('admin', 256),'NA','NA','NA',1);
+INSERT INTO users(uid,firstname,lastname,username,password,email,validated) VALUES (1,'General','Administrator','admin',SHA2('admin', 256),'NA',1);
 INSERT INTO userroles(uid,role) VALUES (1,'SuperAdmin');
 
 INSERT INTO `taxonunits`(`kingdomid`, `rankid`, `rankname`, `dirparentrankid`, `reqparentrankid`)

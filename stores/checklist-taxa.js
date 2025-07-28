@@ -3,14 +3,12 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         blankChecklistTaxaRecord: {
             cltlid: 0,
             tid: null,
+            sciname: null,
             clid: null,
             habitat: null,
             abundance: null,
             notes: null,
-            source: null,
-            nativity: null,
-            endemic: null,
-            invasive: null
+            source: null
         },
         checklistTaxaArr: [],
         checklistTaxaData: {},
@@ -42,7 +40,7 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         },
         getChecklistTaxaValid(state) {
             return (
-                state.checklistTaxaEditData['tid'] && state.checklistTaxaEditData['clid']
+                !!state.checklistTaxaEditData['tid']
             );
         },
         getTaxaFilterOptions(state) {
@@ -70,7 +68,7 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                 callback(Number(res));
             });
         },
-        deleteChecklistTaxaRecord(clid, callback) {
+        deleteChecklistTaxonRecord(clid, callback) {
             const formData = new FormData();
             formData.append('clid', clid.toString());
             formData.append('cltlid', this.checklistTaxaId.toString());
@@ -157,7 +155,7 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         updateChecklistTaxaEditData(key, value) {
             this.checklistTaxaEditData[key] = value;
         },
-        updateChecklistTaxaRecord(clid, callback) {
+        updateChecklistTaxonRecord(clid, callback) {
             const formData = new FormData();
             formData.append('clid', clid.toString());
             formData.append('cltlid', this.checklistTaxaId.toString());

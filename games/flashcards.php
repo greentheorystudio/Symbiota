@@ -151,15 +151,17 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <body onload="init();">
 <?php
 include(__DIR__ . '/../header.php');
-echo '<div id="breadcrumbs">';
-echo '<a href="../index.php">Home</a> &gt;&gt; ';
-echo '<a href="../checklists/checklist.php?clid='.$clid.'">';
-echo $fcManager->getClName();
-echo '</a> &gt;&gt; ';
-echo ' <b>Flash Card Game</b>';
-echo '</div>';
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
+    <?php
+    echo '<div id="breadcrumbs">';
+    echo '<a href="../index.php">Home</a> &gt;&gt; ';
+    echo '<a href="../checklists/checklist.php?clid='.$clid.'">';
+    echo $fcManager->getClName();
+    echo '</a> &gt;&gt; ';
+    echo ' <b>Flash Card Game</b>';
+    echo '</div>';
+    ?>
     <div style="width:420px;margin-left:auto;margin-right:auto;">
         <div style="width:420px;height:420px;text-align:center;">
             <div>

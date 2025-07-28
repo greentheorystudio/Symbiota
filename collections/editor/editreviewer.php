@@ -191,19 +191,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <body>
     <?php
     include(__DIR__ . '/../../header.php');
-    echo '<div id="breadcrumbs">';
-    echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-    if($reviewManager->getObsUid()){
-        echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
-    }
-    else{
-        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-    }
-    echo '<b>Review/Verify Occurrence Edits</b>';
-    echo '</div>';
     ?>
     <div id="mainContainer" style="padding: 10px 15px 15px;min-width:1100px">
         <?php
+        echo '<div id="breadcrumbs">';
+        echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+        if($reviewManager->getObsUid()){
+            echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
+        }
+        else{
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+        }
+        echo '<b>Review/Verify Occurrence Edits</b>';
+        echo '</div>';
         if($collid && $isEditor){
             ?>
             <div style="font-weight:bold;"><?php echo $collName; ?></div>

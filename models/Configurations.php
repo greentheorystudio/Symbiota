@@ -477,8 +477,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '202501181';
-        $GLOBALS['JS_VERSION'] = '2025050111111';
+        $GLOBALS['CSS_VERSION'] = '20250119';
+        $GLOBALS['JS_VERSION'] = '202505021111111111111111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
