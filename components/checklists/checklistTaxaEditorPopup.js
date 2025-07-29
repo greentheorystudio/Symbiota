@@ -26,12 +26,12 @@ const checklistTaxaEditorPopup = {
                                 <q-tab v-if="checklistData['searchterms']" name="vouchers" label="Vouchers" no-caps></q-tab>
                             </q-tabs>
                             <q-separator></q-separator>
-                            <q-tab-panels v-model="tab">
+                            <q-tab-panels v-model="tab" :style="tabStyle">
                                 <q-tab-panel class="q-pa-none" name="edit">
-                                    <checklist-taxa-add-edit-module :checklist-taxa-id="checklistTaxaId" @close:popup="closePopup();"></checklist-taxa-add-edit-module>
+                                    <checklist-taxa-add-edit-module @close:popup="closePopup();"></checklist-taxa-add-edit-module>
                                 </q-tab-panel>
                                 <q-tab-panel class="q-pa-none" name="images">
-                                    
+                                    <checklist-taxa-image-selector-module></checklist-taxa-image-selector-module>
                                 </q-tab-panel>
                                 <q-tab-panel v-if="checklistData['searchterms']" class="q-pa-none" name="vouchers">
                                     
@@ -39,7 +39,7 @@ const checklistTaxaEditorPopup = {
                             </q-tab-panels>
                         </template>
                         <template v-else>
-                            <checklist-taxa-add-edit-module :checklist-taxa-id="checklistTaxaId" @close:popup="closePopup();"></checklist-taxa-add-edit-module>
+                            <checklist-taxa-add-edit-module @close:popup="closePopup();"></checklist-taxa-add-edit-module>
                         </template>
                     </div>
                 </div>
@@ -47,7 +47,8 @@ const checklistTaxaEditorPopup = {
         </q-dialog>
     `,
     components: {
-        'checklist-taxa-add-edit-module': checklistTaxaAddEditModule
+        'checklist-taxa-add-edit-module': checklistTaxaAddEditModule,
+        'checklist-taxa-image-selector-module': checklistTaxaImageSelectorModule
     },
     setup(props, context) {
         const checklistStore = useChecklistStore();
@@ -56,6 +57,7 @@ const checklistTaxaEditorPopup = {
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const tab = Vue.ref('edit');
+        const tabStyle = Vue.ref(null);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -67,14 +69,17 @@ const checklistTaxaEditorPopup = {
 
         function setContentStyle() {
             contentStyle.value = null;
+            tabStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+                tabStyle.value = 'height: ' + (contentRef.value.clientHeight - 100) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
         }
 
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
+            checklistStore.setCurrentChecklistTaxonRecord(props.checklistTaxaId);
         });
 
         return {
@@ -82,6 +87,7 @@ const checklistTaxaEditorPopup = {
             contentRef,
             contentStyle,
             tab,
+            tabStyle,
             closePopup
         }
     }

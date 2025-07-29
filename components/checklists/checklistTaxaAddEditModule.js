@@ -1,10 +1,4 @@
 const checklistTaxaAddEditModule = {
-    props: {
-        checklistTaxaId: {
-            type: Number,
-            default: 0
-        }
-    },
     template: `
         <div class="q-pa-md column q-col-gutter-sm">
             <div class="row justify-between">
@@ -65,15 +59,10 @@ const checklistTaxaAddEditModule = {
         const checklistStore = useChecklistStore();
 
         const checklistTaxaData = Vue.computed(() => checklistStore.getChecklistTaxaData);
+        const checklistTaxaId = Vue.computed(() => checklistStore.getChecklistTaxaID);
         const checklistTaxaValid = Vue.computed(() => checklistStore.getChecklistTaxaValid);
         const editsExist = Vue.computed(() => checklistStore.getChecklistTaxaEditsExist);
         const confirmationPopupRef = Vue.ref(null);
-        const contentRef = Vue.ref(null);
-        const contentStyle = Vue.ref(null);
-
-        Vue.watch(contentRef, () => {
-            setContentStyle();
-        });
 
         function addChecklistTaxon() {
             checklistStore.createChecklistTaxaRecord((newChecklistTaxaId) => {
@@ -123,29 +112,15 @@ const checklistTaxaAddEditModule = {
             });
         }
 
-        function setContentStyle() {
-            contentStyle.value = null;
-            if(contentRef.value){
-                contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
-            }
-        }
-
         function updateChecklistTaxonData(key, value) {
             checklistStore.updateChecklistTaxonEditData(key, value);
         }
 
-        Vue.onMounted(() => {
-            setContentStyle();
-            window.addEventListener('resize', setContentStyle);
-            checklistStore.setCurrentChecklistTaxonRecord(props.checklistTaxaId);
-        });
-
         return {
             checklistTaxaData,
+            checklistTaxaId,
             checklistTaxaValid,
             confirmationPopupRef,
-            contentRef,
-            contentStyle,
             editsExist,
             addChecklistTaxon,
             deleteChecklistTaxon,

@@ -14,8 +14,10 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         checklistTaxaData: {},
         checklistTaxaEditData: {},
         checklistTaxaId: 0,
+        checklistTaxaImageOptionArr: [],
+        checklistTaxaTaggedImageArr: [],
         checklistTaxaUpdateData: {},
-        taxaFilterOptions: [],
+        taxaFilterOptions: []
     }),
     getters: {
         getChecklistTaxaArr(state) {
@@ -38,6 +40,12 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         getChecklistTaxaID(state) {
             return state.checklistTaxaId;
         },
+        getChecklistTaxaImageOptionArr(state) {
+            return state.checklistTaxaImageOptionArr;
+        },
+        getChecklistTaxaTaggedImageArr(state) {
+            return state.checklistTaxaTaggedImageArr;
+        },
         getChecklistTaxaValid(state) {
             return (
                 !!state.checklistTaxaEditData['tid']
@@ -48,9 +56,33 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         }
     },
     actions: {
+        addCurrentChecklistTaxonImageTag(imgid, callback) {
+            const tagValue = 'CLID-' + this.checklistTaxaData['clid'].toString() + '-' + this.checklistTaxaData['tid'].toString();
+            const formData = new FormData();
+            formData.append('imgid', imgid.toString());
+            formData.append('tag', tagValue);
+            formData.append('action', 'addImageTag');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    this.setCurrentChecklistTaxonTaggedImageArr();
+                }
+                callback(Number(res));
+            });
+        },
         clearChecklistTaxaArr() {
             this.checklistTaxaArr.length = 0;
             this.taxaFilterOptions.length = 0;
+        },
+        clearCurrentChecklistTaxon() {
+            this.checklistTaxaImageOptionArr.length = 0;
+            this.checklistTaxaTaggedImageArr.length = 0;
         },
         createChecklistTaxaRecord(clid, callback) {
             const formData = new FormData();
@@ -84,18 +116,28 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                 callback(Number(res));
             });
         },
+        deleteCurrentChecklistTaxonImageTag(imgid, callback) {
+            const tagValue = 'CLID-' + this.checklistTaxaData['clid'].toString() + '-' + this.checklistTaxaData['tid'].toString();
+            const formData = new FormData();
+            formData.append('imgid', imgid.toString());
+            formData.append('tag', tagValue);
+            formData.append('action', 'deleteImageTag');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    this.setCurrentChecklistTaxonTaggedImageArr();
+                }
+                callback(Number(res));
+            });
+        },
         getCurrentChecklistTaxaData() {
             return this.checklistTaxaArr.find(taxon => Number(taxon.cltlid) === this.checklistTaxaId);
-        },
-        setCurrentChecklistTaxaRecord(cltlid) {
-            this.checklistTaxaId = Number(cltlid);
-            if(this.checklistTaxaId > 0){
-                this.checklistTaxaData = Object.assign({}, this.getCurrentChecklistTaxaData());
-            }
-            else{
-                this.checklistTaxaData = Object.assign({}, this.blankChecklistTaxaRecord);
-            }
-            this.checklistTaxaEditData = Object.assign({}, this.checklistTaxaData);
         },
         setChecklistTaxaArr(clid, includeKeyData, includeSynonymyData, includeVernacularData, callback) {
             let clidArr;
@@ -127,6 +169,52 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                     callback();
                 }
             });
+        },
+        setCurrentChecklistTaxonImageOptionArr() {
+            const formData = new FormData();
+            formData.append('property', 'tid');
+            formData.append('limit', '500');
+            formData.append('value', this.checklistTaxaData['tidaccepted'].toString());
+            formData.append('action', 'getImageArrByProperty');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.checklistTaxaImageOptionArr = data;
+            });
+        },
+        setCurrentChecklistTaxonTaggedImageArr() {
+            const tagValue = 'CLID-' + this.checklistTaxaData['clid'].toString() + '-' + this.checklistTaxaData['tid'].toString();
+            const formData = new FormData();
+            formData.append('value', tagValue);
+            formData.append('action', 'getImageArrByTagValue');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.checklistTaxaTaggedImageArr = data;
+            });
+        },
+        setCurrentChecklistTaxonRecord(cltlid) {
+            this.clearCurrentChecklistTaxon();
+            this.checklistTaxaId = Number(cltlid);
+            if(this.checklistTaxaId > 0){
+                this.checklistTaxaData = Object.assign({}, this.getCurrentChecklistTaxaData());
+                this.setCurrentChecklistTaxonTaggedImageArr();
+                this.setCurrentChecklistTaxonImageOptionArr();
+            }
+            else{
+                this.checklistTaxaData = Object.assign({}, this.blankChecklistTaxaRecord);
+            }
+            this.checklistTaxaEditData = Object.assign({}, this.checklistTaxaData);
         },
         setTaxaFilterOptions() {
             this.checklistTaxaArr.forEach(taxon => {
