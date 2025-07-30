@@ -14,7 +14,9 @@ const checklistTaxaImageSelectorModule = {
                 </q-scroll-area>
             </template>
             <template v-else>
-            
+                <div class="fit column justify-center">
+                    <div class="text-body1 text-bold text-center">No images available for this taxon</div>
+                </div>
             </template>
         </div>
     `,
