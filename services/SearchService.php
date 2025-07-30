@@ -1032,7 +1032,6 @@ class SearchService {
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
-                $numRows = array_key_exists('numRows', $options) ? (int)$options['numRows'] : 0;
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
                 if(!array_key_exists('occidArr', $searchTermsArr)){

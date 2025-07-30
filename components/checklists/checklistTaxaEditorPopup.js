@@ -21,7 +21,7 @@ const checklistTaxaEditorPopup = {
                     <div :style="contentStyle" class="overflow-auto">
                         <template v-if="Number(checklistTaxaId) > 0">
                             <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
-                                <q-tab name="edit" label="Edit" no-caps></q-tab>
+                                <q-tab name="edit" label="Info" no-caps></q-tab>
                                 <q-tab name="images" label="Images" no-caps></q-tab>
                                 <q-tab v-if="checklistData['searchterms']" name="vouchers" label="Vouchers" no-caps></q-tab>
                             </q-tabs>
@@ -34,7 +34,7 @@ const checklistTaxaEditorPopup = {
                                     <checklist-taxa-image-selector-module></checklist-taxa-image-selector-module>
                                 </q-tab-panel>
                                 <q-tab-panel v-if="checklistData['searchterms']" class="q-pa-none" name="vouchers">
-                                    
+                                    <checklist-taxa-voucher-module></checklist-taxa-voucher-module>
                                 </q-tab-panel>
                             </q-tab-panels>
                         </template>
@@ -48,7 +48,8 @@ const checklistTaxaEditorPopup = {
     `,
     components: {
         'checklist-taxa-add-edit-module': checklistTaxaAddEditModule,
-        'checklist-taxa-image-selector-module': checklistTaxaImageSelectorModule
+        'checklist-taxa-image-selector-module': checklistTaxaImageSelectorModule,
+        'checklist-taxa-voucher-module': checklistTaxaVoucherModule
     },
     setup(props, context) {
         const checklistStore = useChecklistStore();

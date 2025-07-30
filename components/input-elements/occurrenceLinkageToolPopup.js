@@ -41,7 +41,7 @@ const occurrenceLinkageToolPopup = {
                                 </div>
                             </div>
                             <div class="full-width row">
-                                <div class="col-6 row">
+                                <div class="col-6 row q-col-gutter-sm">
                                     <div class="col-6">
                                         <text-field-input-element label="Catalog Number" :value="catalogNumberVal" @update:value="(value) => catalogNumberVal = value"></text-field-input-element>
                                     </div>
@@ -155,11 +155,13 @@ const occurrenceLinkageToolPopup = {
                 output: 'json'
             };
             const starr = {
-                db: selectedCollection.value.toString(),
                 catnum: catalogNumberVal.value,
                 collector: recordedByVal.value,
                 collnum: recordNumberVal.value
             };
+            if(selectedCollection.value){
+                starr.db = selectedCollection.value.toString();
+            }
             if(includeOtherCatalogNumberVal.value){
                 starr['othercatnum'] = 1;
             }

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/Occurrences.php');
+include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/../services/DataUploadService.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
@@ -246,35 +247,53 @@ class Collections {
     {
         $retArr = array();
         if((int)$uid > 0){
-            $sql = 'SELECT DISTINCT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.colltype '.
-                'FROM userroles AS r LEFT JOIN omcollections AS c ON r.tablepk = c.collid '.
-                'WHERE r.uid = ' . (int)$uid . ' AND (r.role = "CollAdmin" OR r.role = "CollEditor") '.
-                'ORDER BY c.collectionname ';
-            if($result = $this->conn->query($sql)){
-                $rows = $result->fetch_all(MYSQLI_ASSOC);
-                $result->free();
-                foreach($rows as $index => $row){
-                    $collCode = '';
-                    if($row['institutioncode']){
-                        $collCode .= $row['institutioncode'];
+            $superAdmin = false;
+            $collIdArr = array();
+            $permissions = (new Permissions)->getPermissionsByUid($uid, true);
+            if(array_key_exists('SuperAdmin', $permissions)){
+                $superAdmin = true;
+            }
+            else{
+                if(array_key_exists('CollAdmin', $permissions)){
+                    $collIdArr = array_merge($collIdArr, array_keys($permissions['CollAdmin']));
+                }
+                if(array_key_exists('CollEditor', $permissions)){
+                    $collIdArr = array_merge($collIdArr, array_keys($permissions['CollEditor']));
+                }
+            }
+            if($superAdmin || count($collIdArr) > 0){
+                $sql = 'SELECT DISTINCT c.collid, c.institutioncode, c.collectioncode, c.collectionname, c.colltype '.
+                    'FROM omcollections AS c ';
+                if(!$superAdmin){
+                    $sql .= 'WHERE c.collid IN(' . implode(',', $collIdArr) . ') ';
+                }
+                $sql .= 'ORDER BY c.collectionname ';
+                if($result = $this->conn->query($sql)){
+                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+                    $result->free();
+                    foreach($rows as $index => $row){
+                        $collCode = '';
+                        if($row['institutioncode']){
+                            $collCode .= $row['institutioncode'];
+                        }
+                        if($row['collectioncode']){
+                            $collCode .= ($collCode ? '-' : '') . $row['collectioncode'];
+                        }
+                        $collid = (int)$row['collid'];
+                        $nodeArr = array();
+                        $nodeArr['collectionpermissions'] = array();
+                        if($superAdmin || (array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
+                            $nodeArr['collectionpermissions'][] = 'CollAdmin';
+                        }
+                        if($superAdmin || (array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true))){
+                            $nodeArr['collectionpermissions'][] = 'CollEditor';
+                        }
+                        $nodeArr['collid'] = $collid;
+                        $nodeArr['label'] = $row['collectionname'] . ($collCode ? (' (' . $collCode . ')') : '');
+                        $nodeArr['colltype'] = $row['colltype'];
+                        $retArr[] = $nodeArr;
+                        unset($rows[$index]);
                     }
-                    if($row['collectioncode']){
-                        $collCode .= ($collCode ? '-' : '') . $row['collectioncode'];
-                    }
-                    $collid = (int)$row['collid'];
-                    $nodeArr = array();
-                    $nodeArr['collectionpermissions'] = array();
-                    if(array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
-                        $nodeArr['collectionpermissions'][] = 'CollAdmin';
-                    }
-                    if(array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
-                        $nodeArr['collectionpermissions'][] = 'CollEditor';
-                    }
-                    $nodeArr['collid'] = $collid;
-                    $nodeArr['label'] = $row['collectionname'] . ($collCode ? (' (' . $collCode . ')') : '');
-                    $nodeArr['colltype'] = $row['colltype'];
-                    $retArr[] = $nodeArr;
-                    unset($rows[$index]);
                 }
             }
         }
