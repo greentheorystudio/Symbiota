@@ -94,6 +94,45 @@ class ChecklistVouchers{
         return $retArr;
     }
 
+    public function getChecklistTaxaVouchers($clid, $tid): array
+    {
+        $retArr = array();
+        if($clid && $tid){
+            $sql = 'SELECT o.occid, c.collectionname, c.institutioncode, c.collectioncode, o.sciname, o.catalognumber, '.
+                'o.othercatalognumbers, o.recordedby, o.recordnumber, o.eventdate, o.country, o.stateprovince, o.county, '.
+                'o.locality, o.decimallatitude, o.decimallongitude '.
+                'FROM fmvouchers AS v LEFT JOIN omoccurrences AS o ON v.occid = o.occid '.
+                'LEFT JOIN omcollections AS c ON o.collid = c.collid '.
+                'WHERE v.clid = ' . (int)$clid . ' AND v.tid = ' . (int)$tid . ' ';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $nodeArr = array();
+                    $nodeArr['occid'] = $row['occid'];
+                    $nodeArr['collectionname'] = $row['collectionname'];
+                    $nodeArr['institutioncode'] = $row['institutioncode'];
+                    $nodeArr['collectioncode'] = $row['collectioncode'];
+                    $nodeArr['sciname'] = $row['sciname'];
+                    $nodeArr['catalognumber'] = $row['catalognumber'];
+                    $nodeArr['othercatalognumbers'] = $row['othercatalognumbers'];
+                    $nodeArr['recordedby'] = $row['recordedby'];
+                    $nodeArr['recordnumber'] = $row['recordnumber'];
+                    $nodeArr['eventdate'] = $row['eventdate'];
+                    $nodeArr['country'] = $row['country'];
+                    $nodeArr['stateprovince'] = $row['stateprovince'];
+                    $nodeArr['county'] = $row['county'];
+                    $nodeArr['locality'] = $row['locality'];
+                    $nodeArr['decimallatitude'] = $row['decimallatitude'];
+                    $nodeArr['decimallongitude'] = $row['decimallongitude'];
+                    $retArr[] = $nodeArr;
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
     public function getChecklistVouchers($clidArr): array
     {
         $retArr = array();

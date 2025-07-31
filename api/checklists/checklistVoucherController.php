@@ -28,4 +28,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getChecklistVouchers' && array_key_exists('clidArr', $_POST)){
         echo json_encode($checklistVouchers->getChecklistVouchers(json_decode($_POST['clidArr'], false)));
     }
+    elseif($action === 'getChecklistTaxonVouchers' && $clid && array_key_exists('tid', $_POST)){
+        echo json_encode($checklistVouchers->getChecklistTaxaVouchers($clid, $_POST['tid']));
+    }
 }

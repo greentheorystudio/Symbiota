@@ -64,7 +64,7 @@ const occurrenceLinkageToolPopup = {
                             <q-card v-for="record in recordData">
                                 <q-card-section class="row justify-between q-col-gutter-sm">
                                     <div class="col-10 text-body1">
-                                        <span class="text-bold">occid: {{ record.occid }}</span>; {{ record['sciname'] }}; {{ record['recordedby'] }}, {{ record['recordnumber'] }}; {{ record['date'] }}; {{ record['locality'] }}
+                                        <occurrence-selector-info-block :occurrence-data="record"></occurrence-selector-info-block>
                                     </div>
                                     <div class="col-2 row justify-end self-center">
                                         <q-btn color="primary" @click="linkOccurrence(record.occid);" label="Link Occurrence" dense />
@@ -79,6 +79,7 @@ const occurrenceLinkageToolPopup = {
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
+        'occurrence-selector-info-block': occurrenceSelectorInfoBlock,
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
@@ -93,6 +94,13 @@ const occurrenceLinkageToolPopup = {
         const collectionOptions = Vue.ref([]);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const fullCollectionStr = Vue.computed(() => {
+            const idArr = [];
+            collectionOptions.value.forEach((collection) => {
+                idArr.push(collection['collid'].toString());
+            });
+            return idArr.length > 0 ? idArr.join() : null;
+        });
         const includeOtherCatalogNumberVal = Vue.ref(false);
         const recordData = Vue.ref([]);
         const recordedByVal = Vue.ref(null);
@@ -149,38 +157,38 @@ const occurrenceLinkageToolPopup = {
         }
 
         function processSearch() {
-            showWorking();
-            const options = {
-                schema: 'occurrence',
-                output: 'json'
-            };
-            const starr = {
-                catnum: catalogNumberVal.value,
-                collector: recordedByVal.value,
-                collnum: recordNumberVal.value
-            };
-            if(selectedCollection.value){
-                starr.db = selectedCollection.value.toString();
-            }
-            if(includeOtherCatalogNumberVal.value){
-                starr['othercatnum'] = 1;
-            }
-            searchStore.processSimpleSearch(starr, options, (data) => {
-                hideWorking();
-                if(props.currentOccid){
-                    const currentObj = data.find(record => Number(record.occid) === Number(props.currentOccid));
-                    if(currentObj){
-                        const index = data.indexOf(currentObj);
-                        data.splice(index, 1);
+            if(selectedCollection.value || fullCollectionStr.value){
+                showWorking();
+                const options = {
+                    schema: 'occurrence',
+                    output: 'json'
+                };
+                const starr = {
+                    db: (selectedCollection.value ? selectedCollection.value.toString() : fullCollectionStr.value),
+                    catnum: catalogNumberVal.value,
+                    collector: recordedByVal.value,
+                    collnum: recordNumberVal.value
+                };
+                if(includeOtherCatalogNumberVal.value){
+                    starr['othercatnum'] = 1;
+                }
+                searchStore.processSimpleSearch(starr, options, (data) => {
+                    hideWorking();
+                    if(props.currentOccid){
+                        const currentObj = data.find(record => Number(record.occid) === Number(props.currentOccid));
+                        if(currentObj){
+                            const index = data.indexOf(currentObj);
+                            data.splice(index, 1);
+                        }
                     }
-                }
-                if(data.length > 0){
-                    recordData.value = data.slice();
-                }
-                else{
-                    showNotification('negative', ('There were no occurrences found matching that criteria in the selected collection.'));
-                }
-            });
+                    if(data.length > 0){
+                        recordData.value = data.slice();
+                    }
+                    else{
+                        showNotification('negative', ('There were no occurrences found matching that criteria in the selected collection.'));
+                    }
+                });
+            }
         }
 
         function setCollectionList() {

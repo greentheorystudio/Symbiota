@@ -1,101 +1,56 @@
 const checklistTaxaVoucherModule = {
     template: `
-        <div ref="contentRef" class="fit">
-            <template v-if="displayArr.length > 0">
-                <q-scroll-area class="q-px-md" :style="scrollerStyle">
-                    <div class="row no-wrap q-gutter-md q-pt-md">
-                        <q-card v-for="image in displayArr" :key="image" class="q-ma-md" :style="cardStyle">
-                            <q-img :src="image.url" :height="imageHeight" fit="scale-down" :title="image.caption" :alt="image.imgid"></q-img>
-                            <div class="q-pa-sm">
-                                <checkbox-input-element :value="taggedImageIdArr.includes(Number(image.imgid))" @update:value="(value) => processImageSelectionChange(image.imgid, value)"></checkbox-input-element>
-                            </div>
-                        </q-card>
-                    </div>
-                </q-scroll-area>
+        <div class="q-pa-md column q-gutter-sm">
+            <div class="row justify-end">
+                <q-btn color="primary" @click="openOccurrenceLinkagePopup();" label="Add Vouchers" dense>
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Link occurrence voucher records for this taxon
+                    </q-tooltip>
+                </q-btn>
+            </div>
+            <template v-if="checklistTaxaVoucherArr.length > 0">
+                <q-card v-for="voucher in checklistTaxaVoucherArr">
+                    <q-card-section class="row justify-between q-col-gutter-sm no-wrap">
+                        <occurrence-selector-info-block :occurrence-data="voucher"></occurrence-selector-info-block>
+                        <div>
+                            <q-btn color="negative" @click="deleteChecklistVoucherRecord(voucher['occid']);" label="Remove" dense />
+                        </div>
+                    </q-card-section>
+                </q-card>
             </template>
             <template v-else>
-                <div class="fit column justify-center">
-                    <div class="text-body1 text-bold text-center">No images available for this taxon</div>
-                </div>
+            
             </template>
         </div>
     `,
     components: {
-        'checkbox-input-element': checkboxInputElement,
-        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'text-field-input-element': textFieldInputElement
+        'occurrence-selector-info-block': occurrenceSelectorInfoBlock
     },
-    setup() {
+    setup(_, context) {
         const { showNotification } = useCore();
         const checklistStore = useChecklistStore();
 
-        const cardStyle = Vue.ref(null);
-        const checklistTaxaImageOptionArr = Vue.computed(() => checklistStore.getChecklistTaxaImageOptionArr);
-        const checklistTaxaTaggedImageArr = Vue.computed(() => checklistStore.getChecklistTaxaTaggedImageArr);
-        const contentRef = Vue.ref(null);
-        const displayArr = Vue.computed(() => {
-            const returnArr = [];
-            taggedImageIdArr.value.length = 0;
-            checklistTaxaTaggedImageArr.value.forEach((image) => {
-                taggedImageIdArr.value.push(Number(image['imgid']));
-                returnArr.push(image);
-            });
-            checklistTaxaImageOptionArr.value.forEach((image) => {
-                if(!taggedImageIdArr.value.includes(Number(image['imgid']))){
-                    returnArr.push(image);
+        const checklistTaxaVoucherArr = Vue.computed(() => checklistStore.getChecklistTaxaVoucherArr);
+
+        function deleteChecklistVoucherRecord(occid) {
+            checklistStore.deleteChecklistVoucherRecord(occid, (res) => {
+                if(res === 1){
+                    checklistStore.setCurrentChecklistTaxonVoucherArr();
+                }
+                else{
+                    showNotification('negative', 'There was an error removing the voucher');
                 }
             });
-            return returnArr;
-        });
-        const imageHeight = Vue.ref(null);
-        const scrollerStyle = Vue.ref(null);
-        const taggedImageIdArr = Vue.ref([]);
-
-        Vue.watch(contentRef, () => {
-            setContentStyle();
-        });
-
-        function processImageSelectionChange(imgid, value) {
-            if(Number(value) === 1){
-                checklistStore.addCurrentChecklistTaxonImageTag(imgid, (res) => {
-                    if(res !== 1){
-                        showNotification('negative', 'There was an error selecting the image');
-                    }
-                });
-            }
-            else{
-                checklistStore.deleteCurrentChecklistTaxonImageTag(imgid, (res) => {
-                    if(res !== 1){
-                        showNotification('negative', 'There was an error deselecting the image');
-                    }
-                });
-            }
         }
 
-        function setContentStyle() {
-            scrollerStyle.value = null;
-            cardStyle.value = null;
-            imageHeight.value = null;
-            if(contentRef.value){
-                scrollerStyle.value = 'height: ' + contentRef.value.clientHeight + 'px;';
-                cardStyle.value = 'height: ' + (contentRef.value.clientHeight - 60) + 'px;width: ' + (contentRef.value.clientHeight - 60) + 'px;';
-                imageHeight.value = (contentRef.value.clientHeight - 100) + 'px';
-            }
+        function openOccurrenceLinkagePopup() {
+            context.emit('open:occurrence-linkage-popup');
         }
-
-        Vue.onMounted(() => {
-            setContentStyle();
-            window.addEventListener('resize', setContentStyle);
-        });
 
         return {
-            cardStyle,
-            contentRef,
-            displayArr,
-            imageHeight,
-            scrollerStyle,
-            taggedImageIdArr,
-            processImageSelectionChange
+            checklistTaxaVoucherArr,
+            deleteChecklistVoucherRecord,
+            openOccurrenceLinkagePopup
         }
     }
 };

@@ -142,14 +142,7 @@ const useImageStore = Pinia.defineStore('image', {
                 });
             });
         },
-        setChecklistImageData(clid, numberPerTaxon) {
-            let clidArr;
-            if(Array.isArray(clid)){
-                clidArr = clid.slice();
-            }
-            else{
-                clidArr = [clid];
-            }
+        setChecklistImageData(clidArr, numberPerTaxon) {
             this.clearChecklistImageData();
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr));
