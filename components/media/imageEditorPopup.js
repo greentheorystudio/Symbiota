@@ -150,7 +150,7 @@ const imageEditorPopup = {
         <template v-if="showOccurrenceLinkageToolPopup">
             <occurrence-linkage-tool-popup
                 :show-popup="showOccurrenceLinkageToolPopup"
-                :current-occid="imageData.occid"
+                :avoid-arr="[Number(imageData.occid)]"
                 @update:occid="updateOccurrenceLinkage"
                 @close:popup="showOccurrenceLinkageToolPopup = false"
             ></occurrence-linkage-tool-popup>

@@ -1,8 +1,8 @@
 const occurrenceLinkageToolPopup = {
     props: {
-        currentOccid: {
-            type: Number,
-            default: null
+        avoidArr: {
+            type: Array,
+            default: []
         },
         showPopup: {
             type: Boolean,
@@ -174,17 +174,19 @@ const occurrenceLinkageToolPopup = {
                 }
                 searchStore.processSimpleSearch(starr, options, (data) => {
                     hideWorking();
-                    if(props.currentOccid){
-                        const currentObj = data.find(record => Number(record.occid) === Number(props.currentOccid));
-                        if(currentObj){
-                            const index = data.indexOf(currentObj);
-                            data.splice(index, 1);
-                        }
-                    }
-                    if(data.length > 0){
-                        recordData.value = data.slice();
+                    if(props.avoidArr.length > 0){
+                        const returnData = [];
+                        data.forEach(record => {
+                            if(!props.avoidArr.includes(Number(record.occid))){
+                                returnData.push(record);
+                            }
+                        });
+                        recordData.value = returnData.slice();
                     }
                     else{
+                        recordData.value = data.slice();
+                    }
+                    if(recordData.value.length === 0){
                         showNotification('negative', ('There were no occurrences found matching that criteria in the selected collection.'));
                     }
                 });

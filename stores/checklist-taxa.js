@@ -55,6 +55,13 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         getChecklistTaxaVoucherArr(state) {
             return state.checklistTaxaVoucherArr;
         },
+        getChecklistTaxaVoucherOccidArr(state) {
+            const returnArr = [];
+            state.checklistTaxaVoucherArr.forEach(voucher => {
+                returnArr.push(Number(voucher.occid));
+            });
+            return returnArr;
+        },
         getTaxaFilterOptions(state) {
             return state.taxaFilterOptions;
         }

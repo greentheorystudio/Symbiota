@@ -101,6 +101,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getChecklistTaxaVoucherArr(state) {
             return state.checklistTaxaStore.getChecklistTaxaVoucherArr;
         },
+        getChecklistTaxaVoucherOccidArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaVoucherOccidArr;
+        },
         getChecklistValid(state) {
             return !!state.checklistEditData['name'];
         },

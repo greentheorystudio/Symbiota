@@ -48,6 +48,7 @@ const checklistTaxaEditorPopup = {
         <template v-if="showOccurrenceLinkageToolPopup">
             <occurrence-linkage-tool-popup
                 :show-popup="showOccurrenceLinkageToolPopup"
+                :avoid-arr="checklistTaxaVoucherOccidArr"
                 @update:occid="updateOccurrenceLinkage"
                 @close:popup="showOccurrenceLinkageToolPopup = false"
             ></occurrence-linkage-tool-popup>
@@ -62,6 +63,7 @@ const checklistTaxaEditorPopup = {
     setup(props, context) {
         const checklistStore = useChecklistStore();
 
+        const checklistTaxaVoucherOccidArr = Vue.computed(() => checklistStore.getChecklistTaxaVoucherOccidArr);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const showOccurrenceLinkageToolPopup = Vue.ref(false);
@@ -92,6 +94,7 @@ const checklistTaxaEditorPopup = {
         });
 
         return {
+            checklistTaxaVoucherOccidArr,
             contentRef,
             contentStyle,
             showOccurrenceLinkageToolPopup,
