@@ -375,35 +375,6 @@ class SearchService {
         return count($tempArr) > 0 ? '(' . implode(' AND ', $tempArr) . ')' : '';
     }
 
-    public function prepareOccurrenceCollectionWhereSql($searchTermsArr): string
-    {
-        $collSqlWhereStr = '';
-        if(array_key_exists('db', $searchTermsArr) && is_array($searchTermsArr['db']) && count($searchTermsArr['db']) > 0) {
-            if(!$GLOBALS['IS_ADMIN']){
-                $searchCollections = array();
-                $publicCollections = (new Collections)->getPublicCollections();
-                foreach($searchTermsArr['db'] as $id){
-                    if(in_array((int)$id, $publicCollections, true) || in_array((int)$id, $GLOBALS['PERMITTED_COLLECTIONS'], true)){
-                        $searchCollections[] = (int)$id;
-                    }
-                }
-                $collIdStr = implode(',', $searchCollections);
-            }
-            else{
-                $collIdStr = implode(',', $searchTermsArr['db']);
-            }
-            $collSqlWhereStr .= '(o.collid IN(' . $collIdStr . '))';
-        }
-        elseif(!$GLOBALS['IS_ADMIN']){
-            $collSqlWhereStr .= '(ISNULL(c.collid) OR c.isPublic = 1';
-            if($GLOBALS['PERMITTED_COLLECTIONS']){
-                $collSqlWhereStr .= ' OR o.collid IN(' . implode(',', $GLOBALS['PERMITTED_COLLECTIONS']) . ')';
-            }
-            $collSqlWhereStr .= ')';
-        }
-        return $collSqlWhereStr;
-    }
-
     public function prepareOccurrenceCollectionNumberWhereSql($searchTermsArr): string
     {
         $tempArr = array();
@@ -430,6 +401,35 @@ class SearchService {
             }
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+    }
+
+    public function prepareOccurrenceCollectionWhereSql($searchTermsArr): string
+    {
+        $collSqlWhereStr = '';
+        if(array_key_exists('db', $searchTermsArr) && is_array($searchTermsArr['db']) && count($searchTermsArr['db']) > 0) {
+            if($GLOBALS['IS_ADMIN']) {
+                $collIdStr = implode(',', $searchTermsArr['db']);
+            }
+            else {
+                $searchCollections = array();
+                $publicCollections = (new Collections)->getPublicCollections();
+                foreach($searchTermsArr['db'] as $id){
+                    if(in_array((int)$id, $publicCollections, true) || in_array((int)$id, $GLOBALS['PERMITTED_COLLECTIONS'], true)){
+                        $searchCollections[] = (int)$id;
+                    }
+                }
+                $collIdStr = implode(',', $searchCollections);
+            }
+            $collSqlWhereStr .= '(o.collid IN(' . $collIdStr . '))';
+        }
+        elseif(!$GLOBALS['IS_ADMIN']){
+            $collSqlWhereStr .= '(ISNULL(c.collid) OR c.isPublic = 1';
+            if($GLOBALS['PERMITTED_COLLECTIONS']){
+                $collSqlWhereStr .= ' OR o.collid IN(' . implode(',', $GLOBALS['PERMITTED_COLLECTIONS']) . ')';
+            }
+            $collSqlWhereStr .= ')';
+        }
+        return $collSqlWhereStr;
     }
 
     public function prepareOccurrenceCollectorWhereSql($searchTermsArr): string

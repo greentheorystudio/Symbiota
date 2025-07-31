@@ -48,7 +48,9 @@ const checklistTaxaEditorPopup = {
         <template v-if="showOccurrenceLinkageToolPopup">
             <occurrence-linkage-tool-popup
                 :show-popup="showOccurrenceLinkageToolPopup"
+                :editor-limit="false"
                 :avoid-arr="checklistTaxaVoucherOccidArr"
+                :search-terms="linkageToolSearchTerms"
                 @update:occid="updateOccurrenceLinkage"
                 @close:popup="showOccurrenceLinkageToolPopup = false"
             ></occurrence-linkage-tool-popup>
@@ -63,9 +65,20 @@ const checklistTaxaEditorPopup = {
     setup(props, context) {
         const checklistStore = useChecklistStore();
 
+        const checklistData = Vue.computed(() => checklistStore.getChecklistData);
+        const checklistTaxaData = Vue.computed(() => checklistStore.getChecklistTaxaData);
         const checklistTaxaVoucherOccidArr = Vue.computed(() => checklistStore.getChecklistTaxaVoucherOccidArr);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const linkageToolSearchTerms = Vue.computed(() => {
+            let returnObj = {};
+            if(checklistData.value['searchterms']){
+                returnObj = Object.assign({}, checklistData.value['searchterms']);
+            }
+            returnObj['usethes'] = true;
+            returnObj['taxa'] = Number(checklistTaxaData.value['tid']);
+            return returnObj;
+        });
         const showOccurrenceLinkageToolPopup = Vue.ref(false);
         const tab = Vue.ref('edit');
         const tabStyle = Vue.ref(null);
@@ -97,6 +110,7 @@ const checklistTaxaEditorPopup = {
             checklistTaxaVoucherOccidArr,
             contentRef,
             contentStyle,
+            linkageToolSearchTerms,
             showOccurrenceLinkageToolPopup,
             tab,
             tabStyle,

@@ -4,6 +4,14 @@ const occurrenceLinkageToolPopup = {
             type: Array,
             default: []
         },
+        editorLimit: {
+            type: Boolean,
+            default: true
+        },
+        searchTerms: {
+            type: Object,
+            default: null
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -18,7 +26,7 @@ const occurrenceLinkageToolPopup = {
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
-                    <div :style="contentStyle" class="overflow-auto">
+                    <div :style="contentStyle" class="q-pa-sm overflow-auto">
                         <div class="q-px-sm q-pt-sm">
                             <div class="text-h6 text-bold">Occurrence Linkage Tool</div>
                             <div class="text-body1">
@@ -27,26 +35,26 @@ const occurrenceLinkageToolPopup = {
                             </div>
                         </div>
                         <div class="q-pa-sm column q-col-gutter-sm">
-                            <div class="row">
+                            <div v-if="!searchTerms.hasOwnProperty('db') || !searchTerms['db']" class="row">
                                 <div class="col-grow">
-                                    <selector-input-element :options="collectionOptions" label="Collection" :value="selectedCollection" option-value="collid" :clearable="true" @update:value="(value) => selectedCollection = value"></selector-input-element>
+                                    <selector-input-element :options="collectionOptions" label="Collection" :value="selectedCollection" option-value="collid" :clearable="true" @update:value="updateSelectedCollection"></selector-input-element>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-6">
-                                    <text-field-input-element label="Collector/Observer" :value="recordedByVal" @update:value="(value) => recordedByVal = value"></text-field-input-element>
+                                    <text-field-input-element label="Collector/Observer" :value="searchTermsArr['collector']" @update:value="(value) => updateSearchTerms('collector', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-6">
-                                    <text-field-input-element label="Number" :value="recordNumberVal" @update:value="(value) => recordNumberVal = value"></text-field-input-element>
+                                    <text-field-input-element label="Number" :value="searchTermsArr['collnum']" @update:value="(value) => updateSearchTerms('collnum', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="full-width row">
                                 <div class="col-6 row q-col-gutter-sm">
                                     <div class="col-6">
-                                        <text-field-input-element label="Catalog Number" :value="catalogNumberVal" @update:value="(value) => catalogNumberVal = value"></text-field-input-element>
+                                        <text-field-input-element label="Catalog Number" :value="searchTermsArr['catnum']" @update:value="(value) => updateSearchTerms('catnum', value)"></text-field-input-element>
                                     </div>
                                     <div class="col-6">
-                                        <checkbox-input-element label="Include other catalog numbers" :value="includeOtherCatalogNumberVal" @update:value="(value) => includeOtherCatalogNumberVal = value"></checkbox-input-element>
+                                        <checkbox-input-element label="Include other catalog numbers" :value="searchTermsArr['othercatnum']" @update:value="(value) => updateSearchTerms('othercatnum', value)"></checkbox-input-element>
                                     </div>
                                 </div>
                                 <div class="col-6 row justify-end q-gutter-sm">
@@ -54,7 +62,7 @@ const occurrenceLinkageToolPopup = {
                                         <q-btn color="secondary" @click="createOccurrence();" label="Create Occurrence" :disabled="!selectedCollection" />
                                     </div>
                                     <div>
-                                        <q-btn color="secondary" @click="processSearch();" label="Search Occurrences" :disabled="!searchCriteria" />
+                                        <q-btn color="secondary" @click="processSearch();" label="Search Occurrences" :disabled="!searchCriteriaValid" />
                                     </div>
                                 </div>
                             </div>
@@ -90,23 +98,30 @@ const occurrenceLinkageToolPopup = {
         const occurrenceStore = useOccurrenceStore();
         const searchStore = useSearchStore();
 
-        const catalogNumberVal = Vue.ref(null);
         const collectionOptions = Vue.ref([]);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const fullCollectionStr = Vue.computed(() => {
+        const editCollectionIdArr = Vue.computed(() => {
             const idArr = [];
             collectionOptions.value.forEach((collection) => {
-                idArr.push(collection['collid'].toString());
+                idArr.push(Number(collection['collid']));
             });
-            return idArr.length > 0 ? idArr.join() : null;
+            return idArr.length > 0 ? idArr : null;
         });
-        const includeOtherCatalogNumberVal = Vue.ref(false);
         const recordData = Vue.ref([]);
-        const recordedByVal = Vue.ref(null);
-        const recordNumberVal = Vue.ref(null);
-        const searchCriteria = Vue.computed(() => {
-            return !!(selectedCollection && (catalogNumberVal.value || recordedByVal.value || recordNumberVal.value));
+        const searchCriteriaValid = Vue.computed(() => {
+            return (!!props.searchTerms || !!(searchTermsArr['catnum'] || searchTermsArr['collector'] || searchTermsArr['collnum']));
+        });
+        const searchTermsArr = Vue.reactive({
+            country: null,
+            state: null,
+            county: null,
+            local: null,
+            collector: null,
+            collnum: null,
+            eventdate1: null,
+            catnum: null,
+            othercatnum: false
         });
         const selectedCollection = Vue.ref(null);
         const symbUid = baseStore.getSymbUid;
@@ -122,14 +137,14 @@ const occurrenceLinkageToolPopup = {
         function createOccurrence() {
             const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
             occurrenceData['collid'] = selectedCollection.value;
-            if(catalogNumberVal.value){
-                occurrenceData['catalognumber'] = catalogNumberVal.value;
+            if(searchTermsArr['catnum']){
+                occurrenceData['catalognumber'] = searchTermsArr['catnum'];
             }
-            if(recordedByVal.value){
-                occurrenceData['recordedby'] = recordedByVal.value;
+            if(searchTermsArr['collector']){
+                occurrenceData['recordedby'] = searchTermsArr['collector'];
             }
-            if(recordNumberVal.value){
-                occurrenceData['recordnumber'] = recordNumberVal.value;
+            if(searchTermsArr['collnum']){
+                occurrenceData['recordnumber'] = searchTermsArr['collnum'];
             }
             const formData = new FormData();
             formData.append('collid', selectedCollection.value.toString());
@@ -157,22 +172,16 @@ const occurrenceLinkageToolPopup = {
         }
 
         function processSearch() {
-            if(selectedCollection.value || fullCollectionStr.value){
+            if(selectedCollection.value || editCollectionIdArr.value){
                 showWorking();
                 const options = {
                     schema: 'occurrence',
                     output: 'json'
                 };
-                const starr = {
-                    db: (selectedCollection.value ? selectedCollection.value.toString() : fullCollectionStr.value),
-                    catnum: catalogNumberVal.value,
-                    collector: recordedByVal.value,
-                    collnum: recordNumberVal.value
-                };
-                if(includeOtherCatalogNumberVal.value){
-                    starr['othercatnum'] = 1;
+                if(props.editorLimit && !selectedCollection.value){
+                    updateSearchTerms('db', editCollectionIdArr.value);
                 }
-                searchStore.processSimpleSearch(starr, options, (data) => {
+                searchStore.processSimpleSearch(searchTermsArr, options, (data) => {
                     hideWorking();
                     if(props.avoidArr.length > 0){
                         const returnData = [];
@@ -206,27 +215,50 @@ const occurrenceLinkageToolPopup = {
             }
         }
 
+        function setSearchTerms() {
+            Object.keys(props.searchTerms).forEach((key) => {
+                if(props.searchTerms[key]){
+                    searchTermsArr[key] = props.searchTerms[key];
+                }
+            });
+        }
+
+        function updateSearchTerms(prop, value) {
+            searchTermsArr[prop] = value;
+        }
+
+        function updateSelectedCollection(value) {
+            if(value){
+                updateSearchTerms('db', [value]);
+            }
+            else{
+                updateSearchTerms('db', null);
+            }
+        }
+
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
+            if(props.searchTerms){
+                setSearchTerms();
+            }
             setCollectionList();
         });
 
         return {
-            catalogNumberVal,
             collectionOptions,
             contentRef,
             contentStyle,
-            includeOtherCatalogNumberVal,
             recordData,
-            recordedByVal,
-            recordNumberVal,
-            searchCriteria,
+            searchCriteriaValid,
+            searchTermsArr,
             selectedCollection,
             closePopup,
             createOccurrence,
             linkOccurrence,
-            processSearch
+            processSearch,
+            updateSearchTerms,
+            updateSelectedCollection
         }
     }
 };
