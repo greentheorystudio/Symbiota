@@ -202,6 +202,9 @@ const occurrenceLinkageToolPopup = {
             if(searchTermsArr.hasOwnProperty('sciname')){
                 occurrenceData['sciname'] = searchTermsArr['sciname'];
             }
+            if(searchTermsArr.hasOwnProperty('family')){
+                occurrenceData['family'] = searchTermsArr['family'];
+            }
             const formData = new FormData();
             formData.append('collid', selectedCollection.value.toString());
             formData.append('occurrence', JSON.stringify(occurrenceData));

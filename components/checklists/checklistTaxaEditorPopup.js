@@ -78,6 +78,7 @@ const checklistTaxaEditorPopup = {
             returnObj['usethes'] = true;
             returnObj['taxa'] = Number(checklistTaxaData.value['tid']);
             returnObj['sciname'] = checklistTaxaData.value['sciname'];
+            returnObj['family'] = checklistTaxaData.value['family'];
             return returnObj;
         });
         const showOccurrenceLinkageToolPopup = Vue.ref(false);
