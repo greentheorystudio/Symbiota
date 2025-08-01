@@ -48,11 +48,30 @@ const occurrenceLinkageToolPopup = {
                                         </div>
                                     </div>
                                     <div class="row justify-between q-col-gutter-sm">
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <text-field-input-element label="Collector/Observer" :value="searchTermsArr['collector']" @update:value="(value) => updateSearchTerms('collector', value)"></text-field-input-element>
                                         </div>
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <text-field-input-element label="Number" :value="searchTermsArr['collnum']" @update:value="(value) => updateSearchTerms('collnum', value)"></text-field-input-element>
+                                        </div>
+                                        <div class="col-4">
+                                            <date-input-element label="Date" :value="searchTermsArr['eventdate1']" @update:value="updateDateValue"></date-input-element>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-between q-col-gutter-sm">
+                                        <div class="col-4">
+                                            <text-field-input-element label="Country" :value="searchTermsArr['country']" @update:value="(value) => updateSearchTerms('country', value)"></text-field-input-element>
+                                        </div>
+                                        <div class="col-4">
+                                            <text-field-input-element label="State/Province" :value="searchTermsArr['state']" @update:value="(value) => updateSearchTerms('state', value)"></text-field-input-element>
+                                        </div>
+                                        <div class="col-4">
+                                            <text-field-input-element label="County" :value="searchTermsArr['county']" @update:value="(value) => updateSearchTerms('county', value)"></text-field-input-element>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-grow">
+                                            <text-field-input-element data-type="textarea" label="Locality" :value="searchTermsArr['local']" @update:value="(value) => updateSearchTerms('local', value)"></text-field-input-element>
                                         </div>
                                     </div>
                                     <div class="full-width row">
@@ -97,6 +116,7 @@ const occurrenceLinkageToolPopup = {
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
+        'date-input-element': dateInputElement,
         'occurrence-selector-info-block': occurrenceSelectorInfoBlock,
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
@@ -108,6 +128,7 @@ const occurrenceLinkageToolPopup = {
         const occurrenceStore = useOccurrenceStore();
         const searchStore = useSearchStore();
 
+        const collectionData = Vue.computed(() => collectionStore.getCollectionData);
         const collectionOptions = Vue.computed(() => {
             if(props.editorLimit){
                 return editorCollectionArr.value;
@@ -166,14 +187,20 @@ const occurrenceLinkageToolPopup = {
         function createOccurrence() {
             const occurrenceData = occurrenceStore.getBlankOccurrenceRecord;
             occurrenceData['collid'] = selectedCollection.value;
-            if(searchTermsArr['catnum']){
-                occurrenceData['catalognumber'] = searchTermsArr['catnum'];
+            occurrenceData['basisofrecord'] = collectionData.value['colltype'];
+            occurrenceData['catalognumber'] = searchTermsArr['catnum'];
+            occurrenceData['recordedby'] = searchTermsArr['collector'];
+            occurrenceData['recordnumber'] = searchTermsArr['collnum'];
+            occurrenceData['eventdate'] = searchTermsArr['eventdate1'];
+            occurrenceData['country'] = searchTermsArr['country'];
+            occurrenceData['stateprovince'] = searchTermsArr['state'];
+            occurrenceData['county'] = searchTermsArr['county'];
+            occurrenceData['locality'] = searchTermsArr['local'];
+            if(searchTermsArr.hasOwnProperty('taxa')){
+                occurrenceData['tid'] = searchTermsArr['taxa'];
             }
-            if(searchTermsArr['collector']){
-                occurrenceData['recordedby'] = searchTermsArr['collector'];
-            }
-            if(searchTermsArr['collnum']){
-                occurrenceData['recordnumber'] = searchTermsArr['collnum'];
+            if(searchTermsArr.hasOwnProperty('sciname')){
+                occurrenceData['sciname'] = searchTermsArr['sciname'];
             }
             const formData = new FormData();
             formData.append('collid', selectedCollection.value.toString());
@@ -260,12 +287,22 @@ const occurrenceLinkageToolPopup = {
             });
         }
 
+        function updateDateValue(value) {
+            if(value){
+                updateSearchTerms('eventdate1', value['date']);
+            }
+            else{
+                updateSearchTerms('eventdate1', null);
+            }
+        }
+
         function updateSearchTerms(prop, value) {
             searchTermsArr[prop] = value;
         }
 
         function updateSelectedCollection(value) {
             selectedCollection.value = value;
+            collectionStore.setCollection(selectedCollection.value);
             if(value){
                 updateSearchTerms('db', [value]);
             }
@@ -299,6 +336,7 @@ const occurrenceLinkageToolPopup = {
             createOccurrence,
             linkOccurrence,
             processSearch,
+            updateDateValue,
             updateSearchTerms,
             updateSelectedCollection
         }
