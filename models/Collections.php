@@ -198,6 +198,7 @@ class Collections {
                     $uDate = date('j F Y', mktime(0,0,0, $month, $day, $year));
                 }
                 $nodeArr['uploaddate'] = $uDate;
+                $nodeArr['label'] = $this->getCollectionLabelFromData($row);
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
             }
@@ -243,6 +244,18 @@ class Collections {
         return $retArr;
     }
 
+    public function getCollectionLabelFromData($data): string
+    {
+        $collCode = '';
+        if($data['institutioncode']){
+            $collCode .= $data['institutioncode'];
+        }
+        if($data['collectioncode']){
+            $collCode .= ($collCode ? '-' : '') . $data['collectioncode'];
+        }
+        return $data['collectionname'] . ($collCode ? (' (' . $collCode . ')') : '');
+    }
+
     public function getCollectionListByUid($uid): array
     {
         $retArr = array();
@@ -272,13 +285,6 @@ class Collections {
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
                     foreach($rows as $index => $row){
-                        $collCode = '';
-                        if($row['institutioncode']){
-                            $collCode .= $row['institutioncode'];
-                        }
-                        if($row['collectioncode']){
-                            $collCode .= ($collCode ? '-' : '') . $row['collectioncode'];
-                        }
                         $collid = (int)$row['collid'];
                         $nodeArr = array();
                         $nodeArr['collectionpermissions'] = array();
@@ -289,7 +295,7 @@ class Collections {
                             $nodeArr['collectionpermissions'][] = 'CollEditor';
                         }
                         $nodeArr['collid'] = $collid;
-                        $nodeArr['label'] = $row['collectionname'] . ($collCode ? (' (' . $collCode . ')') : '');
+                        $nodeArr['label'] = $this->getCollectionLabelFromData($row);
                         $nodeArr['colltype'] = $row['colltype'];
                         $retArr[] = $nodeArr;
                         unset($rows[$index]);

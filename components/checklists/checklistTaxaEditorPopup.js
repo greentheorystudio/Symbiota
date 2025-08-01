@@ -96,7 +96,7 @@ const checklistTaxaEditorPopup = {
             tabStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
-                tabStyle.value = 'height: ' + (contentRef.value.clientHeight - 100) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+                tabStyle.value = 'height: ' + (contentRef.value.clientHeight - 90) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
         }
 

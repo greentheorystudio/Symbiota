@@ -26,60 +26,70 @@ const occurrenceLinkageToolPopup = {
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
-                    <div :style="contentStyle" class="q-pa-sm overflow-auto">
-                        <div class="q-px-sm q-pt-sm">
-                            <div class="text-h6 text-bold">Occurrence Linkage Tool</div>
-                            <div class="text-body1">
-                                Select the collection and enter criteria to search for the occurrence record you would like to link, 
-                                or which to create a new occurrence record to link.
-                            </div>
-                        </div>
-                        <div class="q-pa-sm column q-col-gutter-sm">
-                            <div v-if="!searchTerms.hasOwnProperty('db') || !searchTerms['db']" class="row">
-                                <div class="col-grow">
-                                    <selector-input-element :options="collectionOptions" label="Collection" :value="selectedCollection" option-value="collid" :clearable="true" @update:value="updateSelectedCollection"></selector-input-element>
-                                </div>
-                            </div>
-                            <div class="row justify-between q-col-gutter-sm">
-                                <div class="col-6">
-                                    <text-field-input-element label="Collector/Observer" :value="searchTermsArr['collector']" @update:value="(value) => updateSearchTerms('collector', value)"></text-field-input-element>
-                                </div>
-                                <div class="col-6">
-                                    <text-field-input-element label="Number" :value="searchTermsArr['collnum']" @update:value="(value) => updateSearchTerms('collnum', value)"></text-field-input-element>
-                                </div>
-                            </div>
-                            <div class="full-width row">
-                                <div class="col-6 row q-col-gutter-sm">
-                                    <div class="col-6">
-                                        <text-field-input-element label="Catalog Number" :value="searchTermsArr['catnum']" @update:value="(value) => updateSearchTerms('catnum', value)"></text-field-input-element>
-                                    </div>
-                                    <div class="col-6">
-                                        <checkbox-input-element label="Include other catalog numbers" :value="searchTermsArr['othercatnum']" @update:value="(value) => updateSearchTerms('othercatnum', value)"></checkbox-input-element>
-                                    </div>
-                                </div>
-                                <div class="col-6 row justify-end q-gutter-sm">
-                                    <div>
-                                        <q-btn color="secondary" @click="createOccurrence();" label="Create Occurrence" :disabled="!selectedCollection" />
-                                    </div>
-                                    <div>
-                                        <q-btn color="secondary" @click="processSearch();" label="Search Occurrences" :disabled="!searchCriteriaValid" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div :style="contentStyle" class="overflow-auto">
+                        <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
+                            <q-tab name="criteria" label="Criteria" no-caps></q-tab>
+                            <q-tab name="records" label="Records" :disable="recordData.length === 0" no-caps></q-tab>
+                        </q-tabs>
                         <q-separator></q-separator>
-                        <div v-if="recordData.length" class="q-px-sm q-mt-sm column q-gutter-sm">
-                            <q-card v-for="record in recordData">
-                                <q-card-section class="row justify-between q-col-gutter-sm">
-                                    <div class="col-10 text-body1">
-                                        <occurrence-selector-info-block :occurrence-data="record"></occurrence-selector-info-block>
+                        <q-tab-panels v-model="tab" :style="tabStyle">
+                            <q-tab-panel class="q-pa-md" name="criteria">
+                                <div class="q-px-sm q-pt-sm">
+                                    <div class="text-h6 text-bold">Occurrence Linkage Tool</div>
+                                    <div class="text-body1">
+                                        Select the collection and enter criteria to search for the occurrence record you would like to link, 
+                                        or which to create a new occurrence record to link.
                                     </div>
-                                    <div class="col-2 row justify-end self-center">
-                                        <q-btn color="primary" @click="linkOccurrence(record.occid);" label="Link Occurrence" dense />
+                                </div>
+                                <div class="q-pa-sm column q-col-gutter-sm">
+                                    <div v-if="!searchTerms.hasOwnProperty('db') || !searchTerms['db']" class="row">
+                                        <div class="col-grow">
+                                            <selector-input-element :options="fullCollectionArr" label="Collection" :value="selectedCollection" option-value="collid" :clearable="true" @update:value="updateSelectedCollection"></selector-input-element>
+                                        </div>
                                     </div>
-                                </q-card-section>
-                            </q-card>
-                        </div>
+                                    <div class="row justify-between q-col-gutter-sm">
+                                        <div class="col-6">
+                                            <text-field-input-element label="Collector/Observer" :value="searchTermsArr['collector']" @update:value="(value) => updateSearchTerms('collector', value)"></text-field-input-element>
+                                        </div>
+                                        <div class="col-6">
+                                            <text-field-input-element label="Number" :value="searchTermsArr['collnum']" @update:value="(value) => updateSearchTerms('collnum', value)"></text-field-input-element>
+                                        </div>
+                                    </div>
+                                    <div class="full-width row">
+                                        <div class="col-6 row q-col-gutter-sm">
+                                            <div class="col-6">
+                                                <text-field-input-element label="Catalog Number" :value="searchTermsArr['catnum']" @update:value="(value) => updateSearchTerms('catnum', value)"></text-field-input-element>
+                                            </div>
+                                            <div class="col-6">
+                                                <checkbox-input-element label="Include other catalog numbers" :value="searchTermsArr['othercatnum']" @update:value="(value) => updateSearchTerms('othercatnum', value)"></checkbox-input-element>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 row justify-end q-gutter-sm">
+                                            <div>
+                                                <q-btn color="secondary" @click="createOccurrence();" label="Create Occurrence" :disabled="!isEditor" />
+                                            </div>
+                                            <div>
+                                                <q-btn color="secondary" @click="processSearch();" label="Search Occurrences" :disabled="!searchCriteriaValid" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </q-tab-panel>
+                            <q-tab-panel v-if="recordData.length > 0" class="q-pa-sm" name="records">
+                                <div class="q-pa-xs column q-gutter-sm">
+                                    <q-card v-for="record in recordData">
+                                        <q-card-section class="row justify-between q-col-gutter-sm">
+                                            <div class="col-10 text-body1">
+                                                <occurrence-selector-info-block :occurrence-data="record"></occurrence-selector-info-block>
+                                            </div>
+                                            <div class="col-2 row justify-end self-center">
+                                                <q-btn color="primary" @click="linkOccurrence(record.occid);" label="Link Record" dense />
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
+                            </q-tab-panel>
+                        </q-tab-panels>
                     </div>
                 </div>
             </q-card>
@@ -98,15 +108,32 @@ const occurrenceLinkageToolPopup = {
         const occurrenceStore = useOccurrenceStore();
         const searchStore = useSearchStore();
 
-        const collectionOptions = Vue.ref([]);
+        const collectionOptions = Vue.computed(() => {
+            if(props.editorLimit){
+                return editorCollectionArr.value;
+            }
+            else{
+                console.log(fullCollectionArr.value);
+                return fullCollectionArr.value;
+            }
+        });
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const editCollectionIdArr = Vue.computed(() => {
             const idArr = [];
-            collectionOptions.value.forEach((collection) => {
+            editorCollectionArr.value.forEach((collection) => {
                 idArr.push(Number(collection['collid']));
             });
             return idArr.length > 0 ? idArr : null;
+        });
+        const editorCollectionArr = Vue.ref([]);
+        const fullCollectionArr = Vue.computed(() => collectionStore.getCollectionArr);
+        const isEditor = Vue.computed(() => {
+            let returnVal = false;
+            if(selectedCollection.value && (props.editorLimit || editCollectionIdArr.value.includes(Number(selectedCollection.value)))){
+                returnVal = true;
+            }
+            return returnVal;
         });
         const recordData = Vue.ref([]);
         const searchCriteriaValid = Vue.computed(() => {
@@ -125,6 +152,8 @@ const occurrenceLinkageToolPopup = {
         });
         const selectedCollection = Vue.ref(null);
         const symbUid = baseStore.getSymbUid;
+        const tab = Vue.ref('criteria');
+        const tabStyle = Vue.ref(null);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -198,20 +227,28 @@ const occurrenceLinkageToolPopup = {
                     if(recordData.value.length === 0){
                         showNotification('negative', ('There were no occurrences found matching that criteria in the selected collection.'));
                     }
+                    else{
+                        tab.value = 'records';
+                    }
                 });
             }
         }
 
         function setCollectionList() {
             collectionStore.getCollectionListByUid(symbUid, (collListData) => {
-                collectionOptions.value = collListData;
+                editorCollectionArr.value = collListData;
             });
+            if(!props.editorLimit){
+                collectionStore.setCollectionArr();
+            }
         }
 
         function setContentStyle() {
             contentStyle.value = null;
+            tabStyle.value = null;
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+                tabStyle.value = 'height: ' + (contentRef.value.clientHeight - 90) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
         }
 
@@ -228,6 +265,7 @@ const occurrenceLinkageToolPopup = {
         }
 
         function updateSelectedCollection(value) {
+            selectedCollection.value = value;
             if(value){
                 updateSearchTerms('db', [value]);
             }
@@ -249,10 +287,14 @@ const occurrenceLinkageToolPopup = {
             collectionOptions,
             contentRef,
             contentStyle,
+            fullCollectionArr,
+            isEditor,
             recordData,
             searchCriteriaValid,
             searchTermsArr,
             selectedCollection,
+            tab,
+            tabStyle,
             closePopup,
             createOccurrence,
             linkOccurrence,
