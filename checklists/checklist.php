@@ -748,8 +748,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setChecklistData() {
+                        showWorking();
                         setEditor();
                         checklistStore.setChecklist(clId.value, (clid) => {
+                            hideWorking();
                             if(Number(clid) > 0){
                                 checklistStore.setChecklistTaxaArr(false, true, true, () => {
                                     setActiveTaxa();
@@ -781,6 +783,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
+                            console.log(pid);
                             if(Number(pid) > 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
                                 checklistStore.setChecklistTaxaArr(false, true, true);
