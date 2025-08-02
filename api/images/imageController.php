@@ -23,6 +23,9 @@ elseif($collid){
 elseif(array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS'])){
     $isEditor = true;
 }
+elseif(array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS'])){
+    $isEditor = true;
+}
 
 if($action && SanitizerService::validateInternalRequest()){
     $images = new Images();
@@ -35,7 +38,8 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($images->getImageArrByTaxonomicGroup((int)$_POST['parenttid'], $includeOccurrence, $limit));
     }
     elseif($action === 'getImageArrByProperty' && array_key_exists('property',$_POST) && array_key_exists('value',$_POST)){
-        echo json_encode($images->getImageArrByProperty($_POST['property'], $_POST['value']));
+        $limit = array_key_exists('limit',$_POST) ? (int)$_POST['limit'] : null;
+        echo json_encode($images->getImageArrByProperty($_POST['property'], $_POST['value'], $limit));
     }
     elseif(($action === 'addImageFromFile' || $action === 'addImageFromUrl') && $isEditor && array_key_exists('image',$_POST) && array_key_exists('uploadpath',$_POST)){
         $imageData = json_decode($_POST['image'], true);
@@ -71,5 +75,11 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getChecklistImageData' && array_key_exists('clidArr', $_POST) && array_key_exists('numberPerTaxon', $_POST)){
         echo json_encode($images->getChecklistImageData(json_decode($_POST['clidArr'], false), (int)$_POST['numberPerTaxon']));
+    }
+    elseif($action === 'getImageArrByTagValue' && array_key_exists('value', $_POST)){
+        echo json_encode($images->getImageArrByTagValue($_POST['value']));
+    }
+    elseif($action === 'addImageTag' && $imgid && $isEditor && array_key_exists('tag', $_POST)){
+        echo $images->addImageTag($imgid, $_POST['tag']);
     }
 }

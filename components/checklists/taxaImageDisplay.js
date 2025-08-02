@@ -48,12 +48,14 @@ const taxaImageDisplay = {
                             </div>
                             <div class="full-width row q-gutter-sm">
                                 <template v-for="taxon in family['taxa']">
-                                    <q-card flat bordered class="col-12 col-md-4 col-lg-2 col-xl-1 cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);">
+                                    <q-card flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);" :style="cardStyle">
                                         <template v-if="imageData.hasOwnProperty(taxon['tidaccepted']) && imageData[taxon['tidaccepted']].length > 0">
-                                            <q-img class="rounded-borders" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="fill"></q-img>
+                                            <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="scale-down"></q-img>
                                         </template>
                                         <template v-else>
-                                            <div class="q-pa-md text-body1 text-bold text-center">Image not available</div>
+                                            <div class="column justify-center" :style="('height: ' + imageHeight + ';')">
+                                                <div class="text-body1 text-bold text-center">Image not available</div>
+                                            </div>
                                         </template>
                                         <q-card-section class="q-pa-sm">
                                             <div class="text-body1">
@@ -106,12 +108,14 @@ const taxaImageDisplay = {
             <template v-else>
                 <div class="full-width row q-gutter-sm">
                     <template v-for="taxon in taxaArr">
-                        <q-card flat bordered class="col-12 col-md-4 col-lg-2 col-xl-1 cursor-pointer" @click="openTaxaProfileTab(taxon['tid'])">
+                        <q-card flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid'])" :style="cardStyle">
                             <template v-if="imageData.hasOwnProperty(taxon['tidaccepted']) && imageData[taxon['tidaccepted']].length > 0">
-                                <q-img class="rounded-borders" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="fill"></q-img>
+                                <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="scale-down"></q-img>
                             </template>
                             <template v-else>
-                                <div class="q-pa-md text-body1 text-bold text-center">Image not available</div>
+                                <div class="column justify-center" :style="('height: ' + imageHeight + ';')">
+                                    <div class="text-body1 text-bold text-center">Image not available</div>
+                                </div>
                             </template>
                             <q-card-section class="q-pa-sm">
                                 <div class="text-body1 text-black">
@@ -169,13 +173,14 @@ const taxaImageDisplay = {
     setup(_, context) {
         const baseStore = useBaseStore();
 
+        const cardStyle = Vue.ref(null);
         const clientRoot = baseStore.getClientRoot;
         const containerRef = Vue.ref(null);
         const editorOpening = Vue.ref(false);
         const expandedVouchers = Vue.ref([]);
+        const imageHeight = Vue.ref(null);
         const recordInfoWindowId = Vue.ref(null);
         const showRecordInfoWindow = Vue.ref(false);
-        const styleStr = Vue.ref(null);
 
         Vue.watch(containerRef, () => {
             setContentStyle();
@@ -244,9 +249,24 @@ const taxaImageDisplay = {
         }
 
         function setContentStyle() {
-            styleStr.value = null;
+            cardStyle.value = null;
+            imageHeight.value = null;
             if(containerRef.value){
-                styleStr.value = 'height: ' + (containerRef.value.clientHeight - 30) + 'px;width: ' + containerRef.value.clientWidth + 'px;';
+                let cardDim;
+                if(containerRef.value.clientWidth > 900){
+                    cardDim = (containerRef.value.clientWidth / 4) - 30;
+                }
+                else if(containerRef.value.clientWidth > 600){
+                    cardDim = (containerRef.value.clientWidth / 3) - 30;
+                }
+                else if(containerRef.value.clientWidth > 400){
+                    cardDim = (containerRef.value.clientWidth / 2) - 30;
+                }
+                else{
+                    cardDim = containerRef.value.clientWidth - 30;
+                }
+                cardStyle.value = 'width: ' + cardDim + 'px;';
+                imageHeight.value = cardDim + 'px';
             }
         }
 
@@ -256,9 +276,11 @@ const taxaImageDisplay = {
         });
 
         return {
+            cardStyle,
             clientRoot,
             containerRef,
             expandedVouchers,
+            imageHeight,
             recordInfoWindowId,
             showRecordInfoWindow,
             addExpandedVoucher,
