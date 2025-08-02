@@ -281,19 +281,29 @@ class Images{
         return $retVal;
     }
 
+    public function deleteChecklistTaxonImageTags($clid, $tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM imagetag WHERE keyvalue = "CLID-' . (int)$clid . '-' . (int)$tid . '" ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function deleteImageRecord($imgid): int
     {
         $retVal = 1;
         $data = $this->getImageData($imgid);
-        if($data['url'] && strpos($data['url'], '/') === 0){
+        if($data['url'] && strncmp($data['url'], '/', 1) === 0){
             $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['url']);
             FileSystemService::deleteFile($urlServerPath, true);
         }
-        if($data['thumbnailurl'] && strpos($data['thumbnailurl'], '/') === 0){
+        if($data['thumbnailurl'] && strncmp($data['thumbnailurl'], '/', 1) === 0){
             $tnServerPath = FileSystemService::getServerPathFromUrlPath($data['thumbnailurl']);
             FileSystemService::deleteFile($tnServerPath, true);
         }
-        if($data['originalurl'] && strpos($data['originalurl'], '/') === 0){
+        if($data['originalurl'] && strncmp($data['originalurl'], '/', 1) === 0){
             $origServerPath = FileSystemService::getServerPathFromUrlPath($data['originalurl']);
             FileSystemService::deleteFile($origServerPath, true);
         }
@@ -418,7 +428,7 @@ class Images{
         return $retArr;
     }
 
-    public function getImageArrByProperty($property, $value, $includeOccurrence = false, $limit = null): array
+    public function getImageArrByProperty($property, $value, $limit = null): array
     {
         $returnArr = array();
         if($property === 'occid' || $property === 'tid'){
@@ -426,9 +436,6 @@ class Images{
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', o.collid, o.localitysecurity '.
                 'FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                 'WHERE i.' . SanitizerService::cleanInStr($this->conn, $property) . ' = ' . (int)$value . ' ';
-            if($property === 'tid' && !$includeOccurrence){
-                $sql .= 'AND ISNULL(i.occid) ';
-            }
             $sql .= 'ORDER BY i.sortsequence ';
             if($limit){
                 $sql .= 'LIMIT ' . (int)$limit . ' ';
@@ -465,7 +472,33 @@ class Images{
         return $returnArr;
     }
 
-    public function getImageArrByTaxonomicGroup($parentTid, $includeOccurrence = false, $limit = null): array
+    public function getImageArrByTagValue($value): array
+    {
+        $returnArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'i');
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.
+            'WHERE t.keyvalue = "' . SanitizerService::cleanInStr($this->conn, $value) . '" ';
+        $sql .= 'ORDER BY i.sortsequence ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $returnArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $returnArr;
+    }
+
+    public function getImageArrByTaxonomicGroup($parentTid, $includeOccurrence, $limit = null): array
     {
         $returnArr = array();
         if($parentTid){
@@ -496,6 +529,45 @@ class Images{
             }
         }
         return $returnArr;
+    }
+
+    public function getImageData($imgid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM images WHERE imgid = ' . (int)$imgid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $row[$name];
+                }
+                $retArr['tagArr'] = $this->getImageTags($row['imgid']);
+                $retArr['taxonData'] = (int)$retArr['tid'] > 0 ? (new Taxa)->getTaxonFromTid($retArr['tid']) : null;
+            }
+        }
+        return $retArr;
+    }
+
+    public function getImageTags($imgid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT keyvalue FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['keyvalue'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 
     public function getTaxonArrDisplayImageData($tidArr, $includeOccurrence, $limitToOccurrence, $limitPerTaxon = null, $sortsequenceLimit = null): array
@@ -584,45 +656,6 @@ class Images{
             }
         }
         return $returnArr;
-    }
-
-    public function getImageData($imgid): array
-    {
-        $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM images WHERE imgid = ' . (int)$imgid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($result = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($result);
-            $row = $result->fetch_array(MYSQLI_ASSOC);
-            $result->free();
-            if($row){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $row[$name];
-                }
-                $retArr['tagArr'] = $this->getImageTags($row['imgid']);
-                $retArr['taxonData'] = (int)$retArr['tid'] > 0 ? (new Taxa)->getTaxonFromTid($retArr['tid']) : null;
-            }
-        }
-        return $retArr;
-    }
-
-    public function getImageTags($imgid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT keyvalue FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';
-        //echo '<div>'.$sql.'</div>';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $retArr[] = $row['keyvalue'];
-                unset($rows[$index]);
-            }
-        }
-        return $retArr;
     }
 
     public function updateImageRecord($imgId, $editData): int

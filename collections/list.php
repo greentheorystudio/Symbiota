@@ -167,7 +167,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                 </div>
                                                             </div>
                                                             <div class="col-3 row justify-end q-gutter-sm no-wrap">
-                                                                <div class="fit q-pa-xs">
+                                                                <div class="full-width q-pa-xs">
                                                                     <template v-if="props.row.img">
                                                                         <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain"></q-img>
                                                                     </template>

@@ -107,7 +107,7 @@ class Permissions{
         return $GLOBALS['USER_RIGHTS'];
     }
 
-    public function getPermissionsByUid($uid): array
+    public function getPermissionsByUid($uid, $skipLabels = null): array
     {
         $perArr = array();
         if((int)$uid > 0){
@@ -129,20 +129,22 @@ class Permissions{
                 }
             }
 
-            if(array_key_exists('CollAdmin', $perArr)){
-                $perArr['CollAdmin'] = (new Collections)->getCollectionPermissionLabels($perArr['CollAdmin']);
-            }
-            if(array_key_exists('CollEditor', $perArr)){
-                $perArr['CollEditor'] = (new Collections)->getCollectionPermissionLabels($perArr['CollEditor']);
-            }
-            if(array_key_exists('RareSppReader', $perArr)){
-                $perArr['RareSppReader'] = (new Collections)->getCollectionPermissionLabels($perArr['RareSppReader']);
-            }
-            if(array_key_exists('ClAdmin', $perArr)){
-                $perArr['ClAdmin'] = (new Checklists)->getChecklistPermissionLabels($perArr['ClAdmin']);
-            }
-            if(array_key_exists('ProjAdmin', $perArr)){
-                $perArr['ProjAdmin'] = (new Projects)->getProjectPermissionLabels($perArr['ProjAdmin']);
+            if(!$skipLabels){
+                if(array_key_exists('CollAdmin', $perArr)){
+                    $perArr['CollAdmin'] = (new Collections)->getCollectionPermissionLabels($perArr['CollAdmin']);
+                }
+                if(array_key_exists('CollEditor', $perArr)){
+                    $perArr['CollEditor'] = (new Collections)->getCollectionPermissionLabels($perArr['CollEditor']);
+                }
+                if(array_key_exists('RareSppReader', $perArr)){
+                    $perArr['RareSppReader'] = (new Collections)->getCollectionPermissionLabels($perArr['RareSppReader']);
+                }
+                if(array_key_exists('ClAdmin', $perArr)){
+                    $perArr['ClAdmin'] = (new Checklists)->getChecklistPermissionLabels($perArr['ClAdmin']);
+                }
+                if(array_key_exists('ProjAdmin', $perArr)){
+                    $perArr['ProjAdmin'] = (new Projects)->getProjectPermissionLabels($perArr['ProjAdmin']);
+                }
             }
         }
         return $perArr;

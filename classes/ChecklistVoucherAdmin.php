@@ -83,42 +83,42 @@ class ChecklistVoucherAdmin {
 	{
 		$retArr = array();
 		if($sqlFrag){
-			if(preg_match('/country = "([^"]+)"/',$sqlFrag,$m)){
-				$retArr['country'] = $m[1];
+			if(array_key_exists('country', $sqlFrag)){
+				$retArr['country'] = $sqlFrag['country'];
 			}
-			if(preg_match('/stateprovince = "([^"]+)"/',$sqlFrag,$m)){
-				$retArr['state'] = $m[1];
+			if(array_key_exists('state', $sqlFrag)){
+				$retArr['state'] = $sqlFrag['state'];
 			}
-			if(preg_match('/county LIKE "([^%"]+)%"/',$sqlFrag,$m)){
-				$retArr['county'] = trim($m[1],' %');
+			if(array_key_exists('county', $sqlFrag)){
+				$retArr['county'] = $sqlFrag['county'];
 			}
-			if(preg_match('/locality LIKE "%([^%"]+)%"/',$sqlFrag,$m)){
-				$retArr['locality'] = trim($m[1],' %');
+			if(array_key_exists('locality', $sqlFrag)){
+				$retArr['locality'] = $sqlFrag['locality'];
 			}
-			if(preg_match('/parenttid = (\d+)\)/',$sqlFrag,$m)){
-				$retArr['taxon'] = $this->getSciname($m[1]);
+			if(array_key_exists('parenttid', $sqlFrag)){
+				$retArr['taxon'] = $this->getSciname($sqlFrag['parenttid']);
 			}
-			if(preg_match_all('/AGAINST\("([^()"]+)"\)/',$sqlFrag,$m)){
-				$retArr['recordedby'] = implode(',',$m[1]);
+			if(array_key_exists('recordedby', $sqlFrag)){
+				$retArr['recordedby'] = $sqlFrag['recordedby'];
 			}
-			if(preg_match('/decimallatitude BETWEEN ([-.\d]+) AND ([-.\d]+)\D+/',$sqlFrag,$m)){
-				$retArr['latsouth'] = $m[1];
-				$retArr['latnorth'] = $m[2];
+			if(array_key_exists('decimallatitude', $sqlFrag)){
+				$retArr['latsouth'] = $sqlFrag['decimallatitude'];
+				$retArr['latnorth'] = $sqlFrag['decimallatitude'];
 			}
-			if(preg_match('/decimallongitude BETWEEN ([-.\d]+) AND ([-.\d]+)\D+/',$sqlFrag,$m)){
-				$retArr['lngwest'] = $m[1];
-				$retArr['lngeast'] = $m[2];
+			if(array_key_exists('decimallongitude', $sqlFrag)){
+				$retArr['lngwest'] = $sqlFrag['decimallongitude'];
+				$retArr['lngeast'] = $sqlFrag['decimallongitude'];
 			}
-			if(preg_match('/collid = (\d+)\D/',$sqlFrag,$m)){
-				$retArr['collid'] = $m[1];
+			if(array_key_exists('collid', $sqlFrag)){
+				$retArr['collid'] = $sqlFrag['collid'];
 			}
-			if(preg_match('/ OR \(\(o.decimallatitude/',$sqlFrag) || preg_match('/ OR \(\(o.decimallongitude/',$sqlFrag)){
+			if(array_key_exists('decimallatitude', $sqlFrag) && array_key_exists('decimallongitude', $sqlFrag)){
 				$retArr['latlngor'] = 1;
 			}
-			if(strpos($sqlFrag, 'cultivationStatus') !== false){
+			if(array_key_exists('cultivationStatus', $sqlFrag)){
 				$retArr['excludecult'] = 1;
 			}
-			if(strpos($sqlFrag, 'decimallatitude') !== false){
+			if(array_key_exists('decimallatitude', $sqlFrag)){
 				$retArr['onlycoord'] = 1;
 			}
 		}

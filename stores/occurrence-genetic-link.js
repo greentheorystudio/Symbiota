@@ -39,7 +39,7 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
         },
         getGeneticLinkValid(state) {
             return (
-                state.geneticLinkEditData['resourcename']
+                !!state.geneticLinkEditData['resourcename']
             );
         }
     },
