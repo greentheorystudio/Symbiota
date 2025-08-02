@@ -28,13 +28,32 @@ class ChecklistVouchers{
     public function createChecklistVoucherRecord($clid, $occid, $tid): int
     {
         $newID = 0;
-        $sql = 'INSERT INTO fmvouchers(clid, occid, tid) '.
-            'VALUES (' . (int)$clid . ', ' . (int)$occid . ', ' . ($tid ? (int)$tid : 'NULL') . ') ';
-        //echo "<div>".$sql."</div>";
-        if($this->conn->query($sql)){
-            $newID = $this->conn->insert_id;
+        if($clid && $occid && $tid){
+            $sql = 'INSERT INTO fmvouchers(clid, occid, tid) '.
+                'VALUES (' . (int)$clid . ', ' . (int)$occid . ', ' . (int)$tid . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+            }
         }
         return $newID;
+    }
+
+    public function createChecklistVoucherRecords($clid, $occidArr, $tid): int
+    {
+        $retVal = 0;
+        $sqlValueArr = array();
+        if($clid && $occidArr && $tid && count($occidArr) > 0){
+            foreach($occidArr as $occid){
+                $sqlValueArr[] = '(' . (int)$clid . ',' . (int)$occid . ',' . (int)$tid . ')';
+            }
+            $sql = 'INSERT INTO fmvouchers(clid, occid, tid) VALUES ' . implode(',', $sqlValueArr) . ' ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function deleteChecklistVoucherRecord($clid, $occid): int

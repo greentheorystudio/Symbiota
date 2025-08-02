@@ -49,9 +49,10 @@ const checklistTaxaEditorPopup = {
             <occurrence-linkage-tool-popup
                 :show-popup="showOccurrenceLinkageToolPopup"
                 :editor-limit="false"
+                :multi-select="true"
                 :avoid-arr="checklistTaxaVoucherOccidArr"
                 :search-terms="linkageToolSearchTerms"
-                @update:occid="updateOccurrenceLinkage"
+                @update:occid-arr="addChecklistVoucherRecords"
                 @close:popup="showOccurrenceLinkageToolPopup = false"
             ></occurrence-linkage-tool-popup>
         </template>
@@ -63,6 +64,7 @@ const checklistTaxaEditorPopup = {
         'occurrence-linkage-tool-popup': occurrenceLinkageToolPopup
     },
     setup(props, context) {
+        const { showNotification } = useCore();
         const checklistStore = useChecklistStore();
 
         const checklistData = Vue.computed(() => checklistStore.getChecklistData);
@@ -89,6 +91,17 @@ const checklistTaxaEditorPopup = {
             setContentStyle();
         });
 
+        function addChecklistVoucherRecords(occidArr) {
+            checklistStore.addChecklistVoucherRecords(occidArr, (res) => {
+                if(res === 1){
+                    checklistStore.setCurrentChecklistTaxonVoucherArr();
+                }
+                else{
+                    showNotification('negative', 'There was an error linking the voucher records');
+                }
+            });
+        }
+
         function closePopup() {
             context.emit('close:popup');
         }
@@ -109,6 +122,7 @@ const checklistTaxaEditorPopup = {
         });
 
         return {
+            addChecklistVoucherRecords,
             checklistTaxaVoucherOccidArr,
             contentRef,
             contentStyle,

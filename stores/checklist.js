@@ -153,6 +153,24 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         }
     },
     actions: {
+        addChecklistVoucherRecords(occidArr, callback) {
+            const formData = new FormData();
+            formData.append('clid', this.checklistId.toString());
+            formData.append('tid', this.getChecklistTaxaData['tid'].toString());
+            formData.append('occidArr', JSON.stringify(occidArr));
+            formData.append('action', 'createChecklistVoucherRecords');
+            fetch(checklistVoucherApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                this.setChecklistVoucherData();
+            });
+        },
         addCurrentChecklistTaxonImageTag(imgid, callback) {
             this.checklistTaxaStore.addCurrentChecklistTaxonImageTag(imgid, (res) => {
                 if(res === 1){

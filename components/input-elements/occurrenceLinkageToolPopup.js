@@ -8,6 +8,10 @@ const occurrenceLinkageToolPopup = {
             type: Boolean,
             default: true
         },
+        multiSelect: {
+            type: Boolean,
+            default: false
+        },
         searchTerms: {
             type: Object,
             default: null
@@ -32,13 +36,18 @@ const occurrenceLinkageToolPopup = {
                             <q-tab name="records" label="Records" :disable="recordData.length === 0" no-caps></q-tab>
                         </q-tabs>
                         <q-separator></q-separator>
-                        <q-tab-panels v-model="tab" :style="tabStyle">
-                            <q-tab-panel class="q-pa-md" name="criteria">
+                        <q-tab-panels v-model="tab">
+                            <q-tab-panel class="q-pa-md" name="criteria" :style="tabStyle">
                                 <div class="q-px-sm q-pt-sm">
                                     <div class="text-h6 text-bold">Occurrence Linkage Tool</div>
                                     <div class="text-body1">
-                                        Select the collection and enter criteria to search for the occurrence record you would like to link, 
-                                        or which to create a new occurrence record to link.
+                                        <template v-if="editorLimit">
+                                            Enter criteria to search for {{ occurrenceTerm }} you would like to link, 
+                                            or select a collection in which to create a new occurrence record to link.
+                                        </template>
+                                        <template v-else>
+                                            Enter criteria to search for {{ occurrenceTerm }} you would like to link.
+                                        </template>
                                     </div>
                                 </div>
                                 <div class="q-pa-sm column q-col-gutter-sm">
@@ -94,19 +103,45 @@ const occurrenceLinkageToolPopup = {
                                     </div>
                                 </div>
                             </q-tab-panel>
-                            <q-tab-panel v-if="recordData.length > 0" class="q-pa-sm" name="records">
-                                <div class="q-pa-xs column q-gutter-sm">
-                                    <q-card v-for="record in recordData">
-                                        <q-card-section class="row justify-between q-col-gutter-sm">
-                                            <div class="col-10 text-body1">
-                                                <occurrence-selector-info-block :occurrence-data="record"></occurrence-selector-info-block>
+                            <q-tab-panel v-if="recordData.length > 0" class="q-pa-sm" name="records" :style="tabStyle">
+                                <template v-if="multiSelect">
+                                    <div>
+                                        <div class="q-pa-sm q-mb-sm row justify-end q-gutter-sm" :style="recordTopRowStyle">
+                                            <div>
+                                                <q-btn color="secondary" @click="linkAllRecords();" label="Link All" />
                                             </div>
-                                            <div class="col-2 row justify-end self-center">
-                                                <q-btn color="primary" @click="linkOccurrence(record.occid);" label="Link Record" dense />
+                                            <div>
+                                                <q-btn color="secondary" @click="linkSelectedRecords();" label="Link Selected" :disabled="selectedOccidArr.length === 0" />
                                             </div>
-                                        </q-card-section>
-                                    </q-card>
-                                </div>
+                                        </div>
+                                        <div class="q-pa-xs column q-gutter-sm overflow-auto no-wrap" :style="recordBottomRowStyle">
+                                            <q-card v-for="record in recordData">
+                                                <q-card-section class="row justify-between q-col-gutter-sm">
+                                                    <div class="col-10 text-body1">
+                                                        <occurrence-selector-info-block :occurrence-data="record"></occurrence-selector-info-block>
+                                                    </div>
+                                                    <div class="col-2 row justify-end self-center">
+                                                        <checkbox-input-element :value="selectedOccidArr.includes(Number(record.occid))" @update:value="(value) => processOccidCheckboxSelection(record.occid, value)"></checkbox-input-element>
+                                                    </div>
+                                                </q-card-section>
+                                            </q-card>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <div class="q-pa-xs column q-gutter-sm">
+                                        <q-card v-for="record in recordData">
+                                            <q-card-section class="row justify-between q-col-gutter-sm">
+                                                <div class="col-10 text-body1">
+                                                    <occurrence-selector-info-block :occurrence-data="record"></occurrence-selector-info-block>
+                                                </div>
+                                                <div class="col-2 row justify-end self-center">
+                                                    <q-btn color="primary" @click="linkOccurrence(record.occid);" label="Link Record" dense />
+                                                </div>
+                                            </q-card-section>
+                                        </q-card>
+                                    </div>
+                                </template>
                             </q-tab-panel>
                         </q-tab-panels>
                     </div>
@@ -156,7 +191,24 @@ const occurrenceLinkageToolPopup = {
             }
             return returnVal;
         });
+        const occurrenceTerm = Vue.computed(() => {
+            if(props.multiSelect){
+                return 'occurrence records';
+            }
+            else{
+                return 'the occurrence record';
+            }
+        });
+        const recordBottomRowStyle = Vue.ref(null);
         const recordData = Vue.ref([]);
+        const recordDataOccidArr = Vue.computed(() => {
+            const occidArr = [];
+            recordData.value.forEach((record) => {
+                occidArr.push(Number(record['occid']));
+            });
+            return occidArr;
+        });
+        const recordTopRowStyle = Vue.ref(null);
         const searchCriteriaValid = Vue.computed(() => {
             return (!!props.searchTerms || !!(searchTermsArr['catnum'] || searchTermsArr['collector'] || searchTermsArr['collnum']));
         });
@@ -172,6 +224,7 @@ const occurrenceLinkageToolPopup = {
             othercatnum: false
         });
         const selectedCollection = Vue.ref(null);
+        const selectedOccidArr = Vue.ref([]);
         const symbUid = baseStore.getSymbUid;
         const tab = Vue.ref('criteria');
         const tabStyle = Vue.ref(null);
@@ -225,9 +278,34 @@ const occurrenceLinkageToolPopup = {
             });
         }
 
-        function linkOccurrence(occid) {
-            context.emit('update:occid', occid);
+        function linkAllRecords() {
+            context.emit('update:occid-arr', recordDataOccidArr.value);
             context.emit('close:popup');
+        }
+
+        function linkOccurrence(occid) {
+            if(props.multiSelect){
+                context.emit('update:occid-arr', [Number(occid)]);
+            }
+            else{
+                context.emit('update:occid', occid);
+            }
+            context.emit('close:popup');
+        }
+
+        function linkSelectedRecords() {
+            context.emit('update:occid-arr', selectedOccidArr.value);
+            context.emit('close:popup');
+        }
+
+        function processOccidCheckboxSelection(occid, value) {
+            if(value){
+                selectedOccidArr.value.push(Number(occid));
+            }
+            else{
+                const index = selectedOccidArr.value.indexOf(Number(occid));
+                selectedOccidArr.value.splice(index, 1);
+            }
         }
 
         function processSearch() {
@@ -279,6 +357,8 @@ const occurrenceLinkageToolPopup = {
             if(contentRef.value){
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
                 tabStyle.value = 'height: ' + (contentRef.value.clientHeight - 90) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+                recordTopRowStyle.value = 'height: 60px;';
+                recordBottomRowStyle.value = 'height: ' + ((contentRef.value.clientHeight - 90) - 60) + 'px;';
             }
         }
 
@@ -329,15 +409,22 @@ const occurrenceLinkageToolPopup = {
             contentStyle,
             fullCollectionArr,
             isEditor,
+            occurrenceTerm,
+            recordBottomRowStyle,
             recordData,
+            recordTopRowStyle,
             searchCriteriaValid,
             searchTermsArr,
             selectedCollection,
+            selectedOccidArr,
             tab,
             tabStyle,
             closePopup,
             createOccurrence,
+            linkAllRecords,
             linkOccurrence,
+            linkSelectedRecords,
+            processOccidCheckboxSelection,
             processSearch,
             updateDateValue,
             updateSearchTerms,
