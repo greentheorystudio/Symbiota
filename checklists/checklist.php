@@ -44,11 +44,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="!temporaryChecklist">
-                    <template v-if="Number(pId) > 0">
-                        <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
-                    </template>
-                    <template v-else-if="Number(clId) > 0">
+                    <template v-if="Number(clId) > 0">
                         <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
+                    </template>
+                    <template v-else-if="Number(pId) > 0">
+                        <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
                     </template>
                     <template v-if="Number(clId) > 0">
                         <span class="text-bold">{{ checklistName }}</span>
