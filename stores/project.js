@@ -112,7 +112,6 @@ const useProjectStore = Pinia.defineStore('project', {
                     return response.ok ? response.json() : null;
                 })
                 .then((resObj) => {
-                    console.log(resObj);
                     if(resObj.hasOwnProperty('pid') && Number(resObj['pid']) === Number(pid)){
                         this.projectId = Number(pid);
                         this.projectData = Object.assign({}, resObj);
