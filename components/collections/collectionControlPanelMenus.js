@@ -19,8 +19,8 @@ const collectionControlPanelMenus = {
     },
     template: `
         <div class="q-px-md q-py-sm row justify-between q-col-gutter-x-sm">
-            <template v-if="collectionPermissions.includes('CollEditor') || collectionPermissions.includes('CollAdmin')">
-                <template v-if="collectionPermissions.includes('CollAdmin')">
+            <template v-if="collectionPermissions.includes('SuperAdmin') || collectionPermissions.includes('CollEditor') || collectionPermissions.includes('CollAdmin')">
+                <template v-if="collectionPermissions.includes('SuperAdmin') || collectionPermissions.includes('CollAdmin')">
                     <div class="col-12 col-sm-6">
                         <q-card flat bordered>
                             <q-card-section>
@@ -154,7 +154,7 @@ const collectionControlPanelMenus = {
         'collection-catalog-number-quick-search': collectionCatalogNumberQuickSearch
     },
     setup(props) {
-        const { hideWorking, processCsvDownload, showNotification, showWorking } = useCore();
+        const { hideWorking, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const collectionStore = useCollectionStore();
 

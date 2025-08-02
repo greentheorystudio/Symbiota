@@ -302,16 +302,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return returnVal;
                     });
                     const clId = Vue.ref(CLID);
-                    const clidArr = Vue.computed(() => {
-                        let returnArr = [];
-                        if(checklistData.value.hasOwnProperty('clidArr') && checklistData.value['clidArr'].length > 0){
-                            returnArr = checklistData.value['clidArr'].slice();
-                        }
-                        else if(projectData.value.hasOwnProperty('clidArr') && projectData.value['clidArr'].length > 0){
-                            returnArr = projectData.value['clidArr'].slice();
-                        }
-                        return returnArr;
-                    });
                     const clientRoot = baseStore.getClientRoot;
                     const csidArr = Vue.ref([]);
                     const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
@@ -574,10 +564,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setExtendedData() {
-                        checklistStore.setChecklistTaxaArr(clidArr.value, true, true, true, () => {
+                        checklistStore.setChecklistTaxaArr(true, true, true, () => {
                             processTaxaData();
                         });
-                        checklistStore.setChecklistImageData(clidArr.value, 1);
+                        checklistStore.setChecklistImageData(1);
                     }
 
                     function setKeyData() {
@@ -599,7 +589,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
-                            if(Number(clId.value) === 0 && Number(pid) > 0){
+                            if(Number(pid) > 0){
+                                checklistStore.setClidArr(projectData.value['clidArr']);
                                 setExtendedData();
                             }
                             else{

@@ -136,8 +136,11 @@ const singleScientificCommonNameAutoComplete = {
                         author: null
                     });
                 }
+                else if(props.options.length > 0){
+                    showNotification('negative', 'That name was not found in the taxa list');
+                }
                 else{
-                    showNotification('negative', 'That name was not found in the Taxonomic Thesaurus.');
+                    showNotification('negative', 'That name was not found in the Taxonomic Thesaurus');
                 }
             }
         }
@@ -161,8 +164,11 @@ const singleScientificCommonNameAutoComplete = {
                         author: null
                     }, 'add');
                 }
+                else if(props.options.length > 0){
+                    showNotification('negative', 'That name was not found in the taxa list');
+                }
                 else{
-                    showNotification('negative', 'That name was not found in the Taxonomic Thesaurus.');
+                    showNotification('negative', 'That name was not found in the Taxonomic Thesaurus');
                 }
             }
         }

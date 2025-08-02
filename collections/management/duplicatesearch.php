@@ -107,15 +107,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	</script>
 </head>
 <body style="background-color:white;margin-left:0;margin-right:0;border: 0;">
-	<div id="breadcrumbs">
-		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>">Data Cleaning Tools</a> &gt;&gt;
-		<b>Duplicate Merging Module</b>
-	</div>
-
 	<div id="mainContainer" style="padding: 10px 15px 15px;background-color:white;">
-		<?php
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+            <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+            <a href="index.php?collid=<?php echo $collid; ?>">Data Cleaning Tools</a> &gt;&gt;
+            <b>Duplicate Merging Module</b>
+        </div>
+        <?php
         echo '<h2>'.$collMap['collectionname'].($collMap['code']?' ('.$collMap['code'].')':'').'</h2>';
 		if($isEditor){
 			if($action === 'listdupscatalog' || $action === 'listdupsothercatalog' || $action === 'listdupsrecordedby'){

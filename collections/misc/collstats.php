@@ -364,12 +364,12 @@ if($action !== 'Update Statistics'){
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div id="breadcrumbs">
-            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
-            <a href='collprofiles.php'>Collections</a> &gt;&gt;
-            <b>Collection Statistics</b>
-        </div>
         <div id="mainContainer" style="padding: 10px 15px 15px;">
+            <div id="breadcrumbs">
+                <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+                <a href='collprofiles.php'>Collections</a> &gt;&gt;
+                <b>Collection Statistics</b>
+            </div>
             <h3>Select Collections to be Analyzed</h3>
             <div id="tabs" style="margin:0;">
                 <ul>

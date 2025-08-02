@@ -16,6 +16,10 @@ const taxaListDisplay = {
             type: Boolean,
             default: false
         },
+        editing: {
+            type: Boolean,
+            default: false
+        },
         sortBy: {
             type: String,
             default: 'family'
@@ -48,6 +52,15 @@ const taxaListDisplay = {
                                             <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
                                         </template>
                                     </a>
+                                    <template v-if="editing">
+                                        <span class="q-ml-sm">
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Edit this taxon
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </span>
+                                    </template>
                                     <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
                                         <span>{{ getVernacularStrFromArr(taxon['vernacularData']) }}</span>
                                     </template>
@@ -88,6 +101,15 @@ const taxaListDisplay = {
                                     <span class="q-ml-sm text-bold">{{ taxon['author'] }}</span>
                                 </template>
                             </a>
+                            <template v-if="editing">
+                                <span class="q-ml-sm">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense>
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Edit this taxon
+                                        </q-tooltip>
+                                    </q-btn>
+                                </span>
+                            </template>
                             <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
                                 <span>{{ getVernacularStrFromArr(taxon['vernacularData']) }}</span>
                             </template>
@@ -122,7 +144,7 @@ const taxaListDisplay = {
     components: {
         'occurrence-info-window-popup': occurrenceInfoWindowPopup
     },
-    setup() {
+    setup(_, context) {
         const baseStore = useBaseStore();
 
         const clientRoot = baseStore.getClientRoot;
@@ -168,6 +190,10 @@ const taxaListDisplay = {
             return nameArr.length > 0 ? (' - ' + nameArr.join(', ')) : '';
         }
 
+        function openEditorPopup(id) {
+            context.emit('open:checklist-taxa-editor', id);
+        }
+
         function openRecordInfoWindow(id) {
             recordInfoWindowId.value = id;
             showRecordInfoWindow.value = true;
@@ -188,6 +214,7 @@ const taxaListDisplay = {
             getAdjustedVoucherArr,
             getSynonymStrFromArr,
             getVernacularStrFromArr,
+            openEditorPopup,
             openRecordInfoWindow,
             removeExpandedVoucher
         }

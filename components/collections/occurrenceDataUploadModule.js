@@ -1818,6 +1818,9 @@ const occurrenceDataUploadModule = {
                         if(generateCoreIds){
                             dataObj['id'] = (index + 1).toString();
                         }
+                        if(!dataObj.hasOwnProperty('basisofrecord') || !dataObj['basisofrecord']){
+                            dataObj['basisofrecord'] = collectionData.value['colltype'];
+                        }
                         sourceDataFlatFile.value.push(dataObj);
                     }
                 });
@@ -1907,6 +1910,9 @@ const occurrenceDataUploadModule = {
                         featureData['decimallongitude'] = featCoords[0];
                         sourceDataFieldsFlatFile.value['decimallatitude'] = 'decimallatitude';
                         sourceDataFieldsFlatFile.value['decimallongitude'] = 'decimallongitude';
+                    }
+                    if(!featureData.hasOwnProperty('basisofrecord') || !featureData['basisofrecord']){
+                        featureData['basisofrecord'] = collectionData.value['colltype'];
                     }
                     sourceDataFlatFile.value.push(featureData);
                 }

@@ -136,8 +136,15 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                             </q-btn>
                                         </div>
                                         <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openChecklistTaxaEditorPopup(0)" icon="add_circle" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Add Taxon
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                        <div>
                                             <template v-if="taxaEditingActive">
-                                                <q-btn color="grey-4" text-color="red" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-times-circle" dense>
+                                                <q-btn color="grey-4" text-color="red" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense>
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Toggle Taxa Editing Off
                                                     </q-tooltip>
@@ -193,7 +200,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     <selector-input-element label="Sort Taxa" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
                                 </div>
                                 <div class="col-8">
-                                    <single-scientific-common-name-auto-complete :sciname="(taxonFilterVal ? taxonFilterVal.sciname : null)" label="Taxon Filter" limit-to-options="true" @update:sciname="processTaxonFilterValChange"></single-scientific-common-name-auto-complete>
+                                    <single-scientific-common-name-auto-complete :sciname="(taxonFilterVal ? taxonFilterVal.sciname : null)" :options="taxaFilterOptions" label="Taxon Filter" limit-to-options="true" @update:sciname="processTaxonFilterValChange"></single-scientific-common-name-auto-complete>
                                 </div>
                             </div>
                             <div class="row q-col-gutter-sm">
@@ -253,10 +260,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             :display-common-names="displayCommonNamesVal"
                             :display-synonyms="displaySynonymsVal"
                             :display-vouchers="displayVouchersVal"
+                            :editing="taxaEditingActive"
                             :image-data="checklistImageData"
                             :sort-by="selectedSortByOption"
                             :taxa-arr="taxaDisplayDataArr"
                             :voucher-data="checklistVoucherData"
+                            @open:checklist-taxa-editor="openChecklistTaxaEditorPopup"
                         ></taxa-image-display>
                     </template>
                     <template v-else>
@@ -265,9 +274,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             :display-common-names="displayCommonNamesVal"
                             :display-synonyms="displaySynonymsVal"
                             :display-vouchers="displayVouchersVal"
+                            :editing="taxaEditingActive"
                             :sort-by="selectedSortByOption"
                             :taxa-arr="taxaDisplayDataArr"
                             :voucher-data="checklistVoucherData"
+                            @open:checklist-taxa-editor="openChecklistTaxaEditorPopup"
                         ></taxa-list-display>
                     </template>
                     <template v-if="activeTaxaArr.length > taxaPerPage">
@@ -298,6 +309,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     </div>
                 </template>
             </div>
+            <template v-if="showChecklistTaxaEditorPopup">
+                <checklist-taxa-editor-popup
+                    :checklist-taxa-id="editChecklistTaxaId"
+                    :show-popup="showChecklistTaxaEditorPopup"
+                    @close:popup="showChecklistTaxaEditorPopup = false"
+                ></checklist-taxa-editor-popup>
+            </template>
             <template v-if="displayQueryPopup">
                 <search-criteria-popup
                     :show-popup="(displayQueryPopup && !showSpatialPopup)"
@@ -342,6 +360,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/geneticLinkRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/colorPicker.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/copyURLButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/collectionCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -349,6 +368,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceSelectorInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceLinkageToolPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -395,10 +416,15 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaListDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/taxaImageDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistTaxaVoucherModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistTaxaImageSelectorModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistTaxaAddEditModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistTaxaEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script>
             const checklistModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
+                    'checklist-taxa-editor-popup': checklistTaxaEditorPopup,
                     'search-criteria-popup': searchCriteriaPopup,
                     'selector-input-element': selectorInputElement,
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
@@ -437,16 +463,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const checklistVoucherData = Vue.computed(() => checklistStore.getChecklistVoucherData);
                     const clId = Vue.ref(CLID);
-                    const clidArr = Vue.computed(() => {
-                        let returnArr = [];
-                        if(checklistData.value.hasOwnProperty('clidArr') && checklistData.value['clidArr'].length > 0){
-                            returnArr = checklistData.value['clidArr'].slice();
-                        }
-                        else if(projectData.value.hasOwnProperty('clidArr') && projectData.value['clidArr'].length > 0){
-                            returnArr = projectData.value['clidArr'].slice();
-                        }
-                        return returnArr;
-                    });
                     const clientRoot = baseStore.getClientRoot;
                     const countData = Vue.computed(() => {
                         const returnData = {};
@@ -489,6 +505,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const displayQueryPopup = Vue.ref(false);
                     const displaySynonymsVal = Vue.computed(() => checklistStore.getDisplaySynonyms);
                     const displayVouchersVal = Vue.computed(() => checklistStore.getDisplayVouchers);
+                    const editChecklistTaxaId = Vue.ref(0);
                     const isEditor = Vue.ref(false);
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const mapViewUrl = Vue.computed(() => {
@@ -528,6 +545,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const queryId = QUERYID;
                     const selectedSortByOption = Vue.computed(() => checklistStore.getDisplaySortVal);
+                    const showChecklistTaxaEditorPopup = Vue.ref(false);
                     const showMoreDescription = Vue.computed(() => checklistStore.getDisplayDetails);
                     const showSpatialPopup = Vue.ref(false);
                     const sortByOptions = Vue.computed(() => checklistStore.getDisplaySortByOptions);
@@ -585,6 +603,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const validUser = baseStore.getValidUser;
 
+                    Vue.watch(taxaDataArr, () => {
+                        setActiveTaxa();
+                    });
+
                     function buildChecklist(){
                         if(searchStore.getSearchTermsValid){
                             showWorking('Loading...');
@@ -625,7 +647,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function downloadChecklist(type) {
                         showWorking();
-                        checklistStore.processDownloadRequest(checklistName.value, type, clidArr.value, (filename, dataBlob) => {
+                        checklistStore.processDownloadRequest(checklistName.value, type, (filename, dataBlob) => {
                             hideWorking();
                             if(dataBlob !== null){
                                 const objectUrl = window.URL.createObjectURL(dataBlob);
@@ -637,6 +659,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 anchor.remove();
                             }
                         });
+                    }
+
+                    function openChecklistTaxaEditorPopup(id) {
+                        editChecklistTaxaId.value = id;
+                        showChecklistTaxaEditorPopup.value = true;
                     }
 
                     function openSpatialPopup(type) {
@@ -724,11 +751,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         setEditor();
                         checklistStore.setChecklist(clId.value, (clid) => {
                             if(Number(clid) > 0){
-                                checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true, () => {
+                                checklistStore.setChecklistTaxaArr(false, true, true, () => {
                                     setActiveTaxa();
                                 });
-                                checklistStore.setChecklistImageData(clidArr.value, 1);
-                                checklistStore.setChecklistVoucherData(clidArr.value);
+                                checklistStore.setChecklistImageData(1);
+                                checklistStore.setChecklistVoucherData();
                             }
                         });
                     }
@@ -754,8 +781,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
-                            if(Number(clId.value) === 0 && Number(pid) > 0){
-                                checklistStore.setChecklistTaxaArr(clidArr.value, false, true, true);
+                            if(Number(pid) > 0){
+                                checklistStore.setClidArr(projectData.value['clidArr']);
+                                checklistStore.setChecklistTaxaArr(false, true, true);
                             }
                             else{
                                 showNotification('negative', 'An error occurred while setting the project data.');
@@ -811,6 +839,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         displayQueryPopup,
                         displaySynonymsVal,
                         displayVouchersVal,
+                        editChecklistTaxaId,
                         isEditor,
                         keyModuleIsActive,
                         mapViewUrl,
@@ -821,6 +850,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         projectData,
                         projectName,
                         selectedSortByOption,
+                        showChecklistTaxaEditorPopup,
                         showMoreDescription,
                         showSpatialPopup,
                         sortByOptions,
@@ -836,6 +866,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         buildChecklist,
                         closeSpatialPopup,
                         downloadChecklist,
+                        openChecklistTaxaEditorPopup,
                         openSpatialPopup,
                         processDisplayAuthorsChange,
                         processDisplayCommonNameChange,

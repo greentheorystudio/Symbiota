@@ -33,6 +33,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         checklistTaxaStore: useChecklistTaxaStore(),
         checklistUpdateData: {},
         checklistVoucherData: {},
+        clidArr: null,
         displayAuthors: false,
         displayDetails: false,
         displayImages: false,
@@ -45,7 +46,11 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         displayTaxonFilterVal: null,
         displayVernaculars: false,
         displayVouchers: false,
+        imageCountPerTaxon: null,
         imageStore: useImageStore(),
+        loadKeyData: false,
+        loadSynonymyData: false,
+        loadVernacularData: false,
         taxaVernacularStore: useTaxaVernacularStore()
     }),
     getters: {
@@ -74,6 +79,30 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         getChecklistTaxaArr(state) {
             return state.checklistTaxaStore.getChecklistTaxaArr;
+        },
+        getChecklistTaxaData(state) {
+            return state.checklistTaxaStore.getChecklistTaxaData;
+        },
+        getChecklistTaxaEditsExist(state) {
+            return state.checklistTaxaStore.getChecklistTaxaEditsExist;
+        },
+        getChecklistTaxaID(state) {
+            return state.checklistTaxaStore.getChecklistTaxaID;
+        },
+        getChecklistTaxaImageOptionArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaImageOptionArr;
+        },
+        getChecklistTaxaTaggedImageArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaTaggedImageArr;
+        },
+        getChecklistTaxaValid(state) {
+            return state.checklistTaxaStore.getChecklistTaxaValid;
+        },
+        getChecklistTaxaVoucherArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaVoucherArr;
+        },
+        getChecklistTaxaVoucherOccidArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaVoucherOccidArr;
         },
         getChecklistValid(state) {
             return !!state.checklistEditData['name'];
@@ -124,6 +153,32 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         }
     },
     actions: {
+        addChecklistVoucherRecords(occidArr, callback) {
+            const formData = new FormData();
+            formData.append('clid', this.checklistId.toString());
+            formData.append('tid', this.getChecklistTaxaData['tid'].toString());
+            formData.append('occidArr', JSON.stringify(occidArr));
+            formData.append('action', 'createChecklistVoucherRecords');
+            fetch(checklistVoucherApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                this.setChecklistVoucherData();
+            });
+        },
+        addCurrentChecklistTaxonImageTag(imgid, callback) {
+            this.checklistTaxaStore.addCurrentChecklistTaxonImageTag(imgid, (res) => {
+                if(res === 1){
+                    this.setChecklistImageData(this.clidArr, this.imageCountPerTaxon);
+                }
+                callback(res);
+            });
+        },
         clearChecklistData() {
             this.checklistData = Object.assign({}, this.blankChecklistRecord);
             this.checklistTaxaStore.clearChecklistTaxaArr();
@@ -145,6 +200,14 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 callback(Number(res));
                 if(res && Number(res) > 0){
                     this.setChecklist(Number(res));
+                }
+            });
+        },
+        createChecklistTaxaRecord(callback) {
+            this.checklistTaxaStore.createChecklistTaxaRecord(this.checklistId, (newChecklistTaxaId) => {
+                callback(Number(newChecklistTaxaId));
+                if(newChecklistTaxaId && Number(newChecklistTaxaId) > 0){
+                    this.checklistTaxaStore.setChecklistTaxaArr(this.clidArr, this.loadKeyData, this.loadSynonymyData, this.loadVernacularData);
                 }
             });
         },
@@ -177,6 +240,41 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             .then((res) => {
                 this.setChecklist(0);
                 callback(Number(res));
+            });
+        },
+        deleteChecklistTaxonRecord(callback = null) {
+            this.checklistTaxaStore.deleteChecklistTaxonRecord(this.checklistId, (res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.checklistTaxaStore.setChecklistTaxaArr(this.clidArr, this.loadKeyData, this.loadSynonymyData, this.loadVernacularData);
+                }
+            });
+        },
+        deleteChecklistVoucherRecord(occid, callback) {
+            const formData = new FormData();
+            formData.append('clid', this.checklistId.toString());
+            formData.append('occid', occid.toString());
+            formData.append('action', 'deleteChecklistVoucherRecord');
+            fetch(checklistVoucherApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                this.setChecklistVoucherData();
+            });
+        },
+        deleteCurrentChecklistTaxonImageTag(imgid, callback) {
+            this.checklistTaxaStore.deleteCurrentChecklistTaxonImageTag(imgid, (res) => {
+                if(res === 1){
+                    this.setChecklistImageData(this.clidArr, this.imageCountPerTaxon);
+                }
+                callback(res);
             });
         },
         getChecklistListByUid(uid, callback) {
@@ -219,10 +317,10 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 }
             }
         },
-        processDownloadRequest(name, type, clidArr, callback){
+        processDownloadRequest(name, type, callback){
             let filename;
             const formData = new FormData();
-            formData.append('clidArr', JSON.stringify(clidArr));
+            formData.append('clidArr', JSON.stringify(this.clidArr));
             formData.append('options', JSON.stringify(this.getDownloadOptions));
             if(type === 'csv'){
                 filename = (name + '.csv');
@@ -283,6 +381,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                         this.checklistId = Number(clid);
                         this.checklistData = Object.assign({}, resObj);
                         this.checklistEditData = Object.assign({}, this.checklistData);
+                        this.clidArr = this.checklistData['clidArr'].slice();
                         this.processChecklistDefaultDisplaySettings();
                     }
                     if(callback){
@@ -297,23 +396,20 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 }
             }
         },
-        setChecklistImageData(clid, numberPerTaxon) {
-            this.imageStore.setChecklistImageData(clid, numberPerTaxon);
+        setChecklistImageData(numberPerTaxon) {
+            this.imageCountPerTaxon = numberPerTaxon;
+            this.imageStore.setChecklistImageData(this.clidArr, numberPerTaxon);
         },
-        setChecklistTaxaArr(clid, includeKeyData, includeSynonymyData, includeVernacularData, callback = null) {
-            this.checklistTaxaStore.setChecklistTaxaArr(clid, includeKeyData, includeSynonymyData, includeVernacularData, callback);
+        setChecklistTaxaArr(includeKeyData, includeSynonymyData, includeVernacularData, callback = null) {
+            this.loadKeyData = includeKeyData;
+            this.loadSynonymyData = includeSynonymyData;
+            this.loadVernacularData = includeVernacularData;
+            this.checklistTaxaStore.setChecklistTaxaArr(this.clidArr, includeKeyData, includeSynonymyData, includeVernacularData, callback);
         },
-        setChecklistVoucherData(clid) {
-            let clidArr;
-            if(Array.isArray(clid)){
-                clidArr = clid.slice();
-            }
-            else{
-                clidArr = [clid];
-            }
+        setChecklistVoucherData() {
             this.checklistVoucherData = Object.assign({}, {});
             const formData = new FormData();
-            formData.append('clidArr', JSON.stringify(clidArr));
+            formData.append('clidArr', JSON.stringify(this.clidArr));
             formData.append('action', 'getChecklistVouchers');
             fetch(checklistVoucherApiUrl, {
                 method: 'POST',
@@ -325,6 +421,15 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             .then((data) => {
                 this.checklistVoucherData = Object.assign({}, data);
             });
+        },
+        setClidArr(value) {
+            this.clidArr = value;
+        },
+        setCurrentChecklistTaxonRecord(cltid) {
+            this.checklistTaxaStore.setCurrentChecklistTaxonRecord(cltid);
+        },
+        setCurrentChecklistTaxonVoucherArr() {
+            this.checklistTaxaStore.setCurrentChecklistTaxonVoucherArr();
         },
         setDisplayAuthors(value) {
             this.displayAuthors = value;
@@ -371,6 +476,17 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     this.checklistData = Object.assign({}, this.checklistEditData);
                 }
             });
-        }
+        },
+        updateChecklistTaxonEditData(key, value) {
+            this.checklistTaxaStore.updateChecklistTaxaEditData(key, value);
+        },
+        updateChecklistTaxonRecord(callback) {
+            this.checklistTaxaStore.updateChecklistTaxonRecord(this.checklistId, (res) => {
+                callback(Number(res));
+                if(Number(res) === 1){
+                    this.checklistTaxaStore.setChecklistTaxaArr(this.clidArr, this.loadKeyData, this.loadSynonymyData, this.loadVernacularData);
+                }
+            });
+        },
     }
 });
