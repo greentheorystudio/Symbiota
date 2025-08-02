@@ -132,19 +132,18 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<?php 	
 	include(__DIR__ . '/../../header.php');
 	?>
-	<div id="breadcrumbs">
-		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
-		<b>Geography Cleaning Module</b>
-		<?php 
-		if($mode) {
-            echo '&gt;&gt; <a href="politicalunits.php?collid=' . $collid . '"><b>Political Geography Cleaning Menu</b></a>';
-        }
-		?>
-	</div>
-
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
-		<?php
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+            <b>Geography Cleaning Module</b>
+            <?php
+            if($mode) {
+                echo '&gt;&gt; <a href="politicalunits.php?collid=' . $collid . '"><b>Political Geography Cleaning Menu</b></a>';
+            }
+            ?>
+        </div>
+        <?php
 		if($statusStr){
 			?>
 			<hr/>

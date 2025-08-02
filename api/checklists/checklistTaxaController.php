@@ -30,6 +30,6 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($checklistTaxa->getChecklistTaxonData($clid, $_POST['tid']));
     }
     elseif($action === 'updateChecklistTaxonRecord' && $isEditor && array_key_exists('cltlid', $_POST) && array_key_exists('checklistTaxonData', $_POST)){
-        echo $checklistTaxa->updateChecklistTaxonRecord($clid, $_POST['tid'], json_decode($_POST['checklistTaxonData'], true));
+        echo $checklistTaxa->updateChecklistTaxonRecord($_POST['cltlid'], json_decode($_POST['checklistTaxonData'], true));
     }
 }

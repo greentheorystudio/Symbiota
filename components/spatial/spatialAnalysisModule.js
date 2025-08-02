@@ -254,6 +254,9 @@ const spatialAnalysisModule = {
                             }
                             updateMapSettings('uncertaintyRadiusValue', radius);
                         }
+                        else if(props.inputWindowToolsArr.includes('box') && geoType === 'Polygon'){
+                            evt.feature.set('geoType', 'Box');
+                        }
                     }
                     else{
                         evt.feature.set('geoType', mapSettings.selectedDrawTool);

@@ -66,12 +66,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 	include(__DIR__ . '/../../header.php');
 ?>
-<div id="breadcrumbs">
-    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-    <b>Taxonomy Editor</b>
-</div>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
-	<h1>Taxonomy Editor</h1>
+    <div id="breadcrumbs">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+        <b>Taxonomy Editor</b>
+    </div>
+    <h1>Taxonomy Editor</h1>
 	<?php
 	if($isEditor){
 		?>

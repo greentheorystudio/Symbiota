@@ -148,7 +148,7 @@ const mediaEditorPopup = {
         <template v-if="showOccurrenceLinkageToolPopup">
             <occurrence-linkage-tool-popup
                 :show-popup="showOccurrenceLinkageToolPopup"
-                :current-occid="mediaData.occid"
+                :avoid-arr="[Number(mediaData.occid)]"
                 @update:occid="updateOccurrenceLinkage"
                 @close:popup="showOccurrenceLinkageToolPopup = false"
             ></occurrence-linkage-tool-popup>

@@ -127,18 +127,15 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <body>
 <?php
 include(__DIR__ . '/../header.php');
-?>
-<div id="breadcrumbs">
-    <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-    <a href="index.php"><b>Glossary Management</b></a> &gt;&gt;
-    <b>Glossary Batch Loader</b>
-</div>
-<?php
-
 if($isEditor){
 	?>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
-		<h1>Glossary Term Batch Loader</h1>
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+            <a href="index.php"><b>Glossary Management</b></a> &gt;&gt;
+            <b>Glossary Batch Loader</b>
+        </div>
+        <h1>Glossary Term Batch Loader</h1>
 		<div style="margin:30px;">
 			<div style="margin-bottom:30px;">
 				This page allows a Taxonomic Administrator to batch upload glossary data files. 
