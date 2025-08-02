@@ -783,7 +783,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
-                            console.log(pid);
                             if(Number(pid) > 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
                                 checklistStore.setChecklistTaxaArr(false, true, true);
@@ -812,11 +811,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     Vue.onMounted(() => {
-                        if(Number(clId.value) > 0 || Number(pId.value) > 0){
+                        if(Number(clId.value) > 0){
                             setChecklistData();
-                            if(Number(pId.value) > 0){
-                                setProjectData();
-                            }
+                        }
+                        else if(Number(pId.value) > 0){
+                            setProjectData();
                         }
                         else{
                             if(Number(queryId) === 0){
