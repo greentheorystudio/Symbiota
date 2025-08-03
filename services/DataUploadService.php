@@ -316,7 +316,7 @@ class DataUploadService {
     {
         $retArr = array();
         foreach($tableArr as $table){
-            if(strpos($table, 'upload') === 0){
+            if(strncmp($table, 'upload', 6) === 0){
                 $retArr[$table] = array();
                 $sql = 'SHOW COLUMNS FROM ' . $table . ' ';
                 //echo '<div>'.$sql.'</div>';
@@ -510,7 +510,7 @@ class DataUploadService {
         return $returnArr;
     }
 
-    public function processExternalDwcaTransfer($collid, $uploadType, $dwcaPath): array
+    public function processExternalDwcaTransfer($uploadType, $dwcaPath): array
     {
         $returnArr = array();
         $transferSuccess = false;

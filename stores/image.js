@@ -28,6 +28,7 @@ const useImageStore = Pinia.defineStore('image', {
             tagArr: []
         },
         checklistImageData: {},
+        checklistTargetTidArr: [],
         imageArr: [],
         imageData: {},
         imageEditData: {},
@@ -126,6 +127,28 @@ const useImageStore = Pinia.defineStore('image', {
                 body: formData
             });
         },
+        lazyLoadChecklistImageData(numberPerTaxon) {
+            const targetArr = this.checklistTargetTidArr.splice(0, 200);
+            const formData = new FormData();
+            formData.append('tidArr', JSON.stringify(targetArr));
+            formData.append('numberPerTaxon', numberPerTaxon.toString());
+            formData.append('action', 'getChecklistImageData');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                Object.keys(data).forEach((key) => {
+                    this.checklistImageData[key] = data[key];
+                });
+                if(this.checklistTargetTidArr.length > 0){
+                    this.lazyLoadChecklistImageData(numberPerTaxon);
+                }
+            });
+        },
         resetOccurrenceLinkage(collid, occidVal, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
@@ -142,12 +165,15 @@ const useImageStore = Pinia.defineStore('image', {
                 });
             });
         },
-        setChecklistImageData(clidArr, numberPerTaxon) {
-            this.clearChecklistImageData();
+        setChecklistImageData(tidArr, numberPerTaxon) {
+            this.checklistTargetTidArr = tidArr.slice();
+            this.lazyLoadChecklistImageData(numberPerTaxon);
+        },
+        setChecklistTaggedImageData(clidArr, numberPerTaxon, callback) {
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr));
             formData.append('numberPerTaxon', numberPerTaxon.toString());
-            formData.append('action', 'getChecklistImageData');
+            formData.append('action', 'getChecklistTaggedImageData');
             fetch(imageApiUrl, {
                 method: 'POST',
                 body: formData
@@ -157,6 +183,7 @@ const useImageStore = Pinia.defineStore('image', {
             })
             .then((data) => {
                 this.checklistImageData = Object.assign({}, data);
+                callback();
             });
         },
         setCurrentImageRecord(imgid) {
