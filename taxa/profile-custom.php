@@ -100,7 +100,7 @@
                     </div>
                 </template>
                 <template v-if="Number(taxon.rankid) > 180 && specimenImageArr.length > 0">
-                    <div class="profile-center-row">
+                    <div class="q-mt-md profile-center-row">
                         <div class="expansion-container">
                             <q-card>
                                 <div class="q-pt-sm q-pl-md q-mb-md text-h6 text-weight-bold image-sideways-scroller-label">
