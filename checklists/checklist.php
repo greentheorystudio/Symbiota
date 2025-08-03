@@ -592,7 +592,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const taxaEditingActive = Vue.ref(false);
                     const taxaFilterOptions = Vue.computed(() => checklistStore.getTaxaFilterOptions);
-                    const taxaPerPage = 500;
+                    const taxaPerPage = 100;
                     const taxonFilterVal = Vue.computed(() => checklistStore.getDisplayTaxonFilterVal);
                     const temporaryChecklist = Vue.computed(() => {
                         let returnVal = false;
