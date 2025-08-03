@@ -566,8 +566,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function setExtendedData() {
                         checklistStore.setChecklistTaxaArr(true, true, true, () => {
                             processTaxaData();
+                            checklistStore.setChecklistImageData(1);
                         });
-                        checklistStore.setChecklistImageData(1);
                     }
 
                     function setKeyData() {
