@@ -755,9 +755,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             if(Number(clid) > 0){
                                 checklistStore.setChecklistTaxaArr(false, true, true, () => {
                                     setActiveTaxa();
+                                    checklistStore.setChecklistImageData(1);
+                                    checklistStore.setChecklistVoucherData();
                                 });
-                                checklistStore.setChecklistImageData(1);
-                                checklistStore.setChecklistVoucherData();
                             }
                         });
                     }
