@@ -11,24 +11,24 @@ const taxaProfileSubtaxaPanel = {
     },
     template: `
         <template v-if="subtaxaArr.length">
-            <div class="expansion-container">
+            <div class="q-mb-md expansion-container">
                 <template v-if="!collapsible || subtaxaArr.length < 5">
                     <q-card>
                         <div class="q-pt-sm q-pl-md text-h6 text-weight-bold taxon-profile-subtaxa-panel-label">
                             Subtaxa
                         </div>
                         <div class="row">
-                            <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
-                                <q-card class="q-ma-md overflow-hidden">
+                            <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon">
+                                <q-card class="q-ma-md spp-taxon">
                                     <div class="spp-taxon-label">
                                         <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
                                             {{ spptaxon.sciname }}
                                         </a>
                                     </div>
-                                    <div class="spp-image-container">
+                                    <div>
                                         <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
                                             <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
-                                                <q-img :src="subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] ? subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] : subtaxaImageData[spptaxon.tid][0]['url']" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
+                                                <q-img class="spp-image-container" :src="subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] ? subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] : subtaxaImageData[spptaxon.tid][0]['url']" fit="scale-down" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
@@ -45,7 +45,7 @@ const taxaProfileSubtaxaPanel = {
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
                                             <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
-                                                <q-img :src="taxaMapData[spptaxon.tid]['url']" :fit="contain" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
+                                                <q-img class="spp-map-container" :src="taxaMapData[spptaxon.tid]['url']" fit="scale-down" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">

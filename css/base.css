@@ -662,7 +662,7 @@ body.processing .loadingModal {
 }
 .no-spptaxon-image{
 	width: 125px;
-	height: 125px;
+    height: 150px;
 	margin: auto;
 	border: 1px dotted black;
 	font-weight: bold;
