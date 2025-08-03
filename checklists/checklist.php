@@ -175,7 +175,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <span class="text-bold">Locality: </span>{{ checklistLocalityText }}
                             </div>
                             <div v-if="checklistData.hasOwnProperty('abstract') && checklistData['abstract']" class="text-body1">
-                                <span class="text-bold">Abstract: </span>{{ checklistData['abstract'] }}
+                                <span class="text-bold">Abstract: </span><span v-html="checklistData['abstract']"></span>
                             </div>
                             <div v-if="checklistData.hasOwnProperty('notes') && checklistData['notes']" class="text-body1">
                                 <span class="text-bold">Notes: </span>{{ checklistData['notes'] }}

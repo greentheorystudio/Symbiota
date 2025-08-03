@@ -51,7 +51,8 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         loadKeyData: false,
         loadSynonymyData: false,
         loadVernacularData: false,
-        taxaVernacularStore: useTaxaVernacularStore()
+        taxaVernacularStore: useTaxaVernacularStore(),
+        voucherTargetTidArr: []
     }),
     getters: {
         getBlankChecklistRecord(state) {
@@ -298,6 +299,28 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 callback(resObj);
             });
         },
+        lazyLoadChecklistVoucherData() {
+            const targetArr = this.voucherTargetTidArr.splice(0, 200);
+            const formData = new FormData();
+            formData.append('clidArr', JSON.stringify(this.clidArr));
+            formData.append('tidArr', JSON.stringify(targetArr));
+            formData.append('action', 'getChecklistVouchers');
+            fetch(checklistVoucherApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                Object.keys(data).forEach((key) => {
+                    this.checklistVoucherData[key] = data[key];
+                });
+                if(this.voucherTargetTidArr.length > 0){
+                    this.lazyLoadChecklistVoucherData();
+                }
+            });
+        },
         processChecklistDefaultDisplaySettings() {
             if(this.checklistData.hasOwnProperty('defaultsettings') && this.checklistData['defaultsettings']){
                 if(this.checklistData['defaultsettings'].hasOwnProperty('ddetails') && Number(this.checklistData['defaultsettings']['ddetails']) === 1){
@@ -423,19 +446,8 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         setChecklistVoucherData() {
             this.checklistVoucherData = Object.assign({}, {});
-            const formData = new FormData();
-            formData.append('clidArr', JSON.stringify(this.clidArr));
-            formData.append('action', 'getChecklistVouchers');
-            fetch(checklistVoucherApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.checklistVoucherData = Object.assign({}, data);
-            });
+            this.voucherTargetTidArr = this.getChecklistTaxaTidArr.slice();
+            this.lazyLoadChecklistVoucherData();
         },
         setClidArr(value) {
             this.clidArr = value;

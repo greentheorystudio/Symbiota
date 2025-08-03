@@ -27,8 +27,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'createChecklistVoucherRecords' && $isEditor && $clid && array_key_exists('occidArr', $_POST) && array_key_exists('tid', $_POST)){
         echo $checklistVouchers->createChecklistVoucherRecords($clid, json_decode($_POST['occidArr'], false), (int)$_POST['tid']);
     }
-    elseif($action === 'getChecklistVouchers' && array_key_exists('clidArr', $_POST)){
-        echo json_encode($checklistVouchers->getChecklistVouchers(json_decode($_POST['clidArr'], false)));
+    elseif($action === 'getChecklistVouchers' && array_key_exists('clidArr', $_POST) && array_key_exists('tidArr', $_POST)){
+        echo json_encode($checklistVouchers->getChecklistVouchers(json_decode($_POST['clidArr'], false), json_decode($_POST['tidArr'], false)));
     }
     elseif($action === 'getChecklistTaxonVouchers' && $clid && array_key_exists('tid', $_POST)){
         echo json_encode($checklistVouchers->getChecklistTaxaVouchers($clid, $_POST['tid']));
