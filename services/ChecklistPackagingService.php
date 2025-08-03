@@ -51,11 +51,10 @@ class ChecklistPackagingService {
             $checklistDataArr['taxa'] = $this->filterTaxaArr($options['taxonFilter'], $checklistDataArr['taxa']);
         }
         if((int)$options['images'] === 1 && count($checklistDataArr['taxa']) > 0){
-            $taxonImageLimit = array_key_exists('taxonLimit', $options) ? (int)$options['taxonLimit'] : 1;
-            $checklistDataArr['images'] = (new Images)->getChecklistImageData($clidArr, $taxonImageLimit);
+            $checklistDataArr['images'] = $this->setChecklistImageDataArr($checklistDataArr['taxa'], $clidArr, $options);
         }
         if((int)$options['notes'] === 1 && count($checklistDataArr['taxa']) > 0){
-            $checklistDataArr['vouchers'] = (new ChecklistVouchers)->getChecklistVouchers($clidArr);
+            $checklistDataArr['vouchers'] = $this->setChecklistVoucherDataArr($checklistDataArr['taxa'], $clidArr);
         }
         return $checklistDataArr;
     }
@@ -108,6 +107,26 @@ class ChecklistPackagingService {
             $taxaArr = $this->filterTaxaArr($options['taxonFilter'], $taxaArr);
         }
         return $taxaArr;
+    }
+
+    public function getIdArrFromTaxaArr($taxaArr, $idField): array
+    {
+        $returnArr = array();
+        foreach($taxaArr as $taxon){
+            if(!in_array($taxon[$idField], $returnArr, true)){
+                $returnArr[] = $taxon[$idField];
+            }
+        }
+        return $returnArr;
+    }
+
+    public function mergeDataArr($returnArr, $newArr): array
+    {
+        $keys = array_keys($newArr);
+        foreach($keys as $key){
+            $returnArr[$key] = $newArr[$key];
+        }
+        return $returnArr;
     }
 
     public function processCsvDownload($clidArr, $options, $filename): void
@@ -170,8 +189,6 @@ class ChecklistPackagingService {
     {
         $targetPath = FileSystemService::getTempDownloadUploadPath();
         if($clidArr && $clid && $options && $filename && $targetPath){
-            $imageCnt = 0;
-            $previousFamily = '';
             $contentType = (new DataDownloadService)->getContentTypeFromFileType('docx');
             $fullPath = $targetPath . '/' . $filename;
             $dataArr = $this->getChecklistData($clidArr, $clid, $options);
@@ -204,18 +221,7 @@ class ChecklistPackagingService {
                 PhpWordService::addTextBreak($textrun);
             }
             if($dataArr['data']['locality'] || ($dataArr['data']['latcentroid'] && $dataArr['data']['longcentroid'])){
-                $localityStr = '';
-                if($dataArr['data']['locality']){
-                    $localityStr .= $dataArr['data']['locality'];
-                }
-                if($dataArr['data']['latcentroid'] && $dataArr['data']['longcentroid']){
-                    $localityStr .= ($localityStr ? ' ' : '') . '(' . $dataArr['data']['latcentroid'] . ', ' . $dataArr['data']['longcentroid'] . ')';
-                }
-                if($localityStr){
-                    PhpWordService::addText($textrun, 'Locality: ', 'topicFont');
-                    PhpWordService::addText($textrun, $localityStr, 'textFont');
-                    PhpWordService::addTextBreak($textrun);
-                }
+                $this->writeDocxLocalitySection($textrun, $dataArr);
             }
             if($dataArr['data']['abstract']){
                 PhpWordService::addText($textrun, 'Abstract: ', 'topicFont');
@@ -243,98 +249,160 @@ class ChecklistPackagingService {
             PhpWordService::addText($textrun, (string)$countArr['total'], 'textFont');
             PhpWordService::addTextBreak($textrun);
             if((int)$options['images'] === 1){
-                $table = PhpWordService::getTable($section, 'imageTable');
-                foreach($dataArr['taxa'] as $taxon){
-                    $imageSrc = '';
-                    $imageCnt++;
-                    if($imageCnt % 4 === 1) {
-                        PhpWordService::addTableRow($table);
-                    }
-                    if(array_key_exists($taxon['tidaccepted'], $dataArr['images']) && count($dataArr['images'][$taxon['tidaccepted']]) > 0){
-                        $imageSrc = $dataArr['images'][$taxon['tidaccepted']][0]['thumbnailurl'] ?: $dataArr['images'][$taxon['tidaccepted']][0]['url'];
-                    }
-                    if($imageSrc && $imageSrc[0] === '/'){
-                        $cell = PhpWordService::getTableCell($table, null, $this->imageCellStyle);
-                        $textrun = PhpWordService::getTextRun($cell, 'imagePara');
-                        PhpWordService::addImage($textrun, ($GLOBALS['SERVER_ROOT'] . $imageSrc), array('width' => 160, 'height' => 160));
-                        PhpWordService::addTextBreak($textrun);
-                        PhpWordService::addText($textrun, $taxon['sciname'], 'topicFont');
-                        PhpWordService::addTextBreak($textrun);
-                        if((int)$options['vernaculars'] === 1 && $taxon['vernacularData'] && count($taxon['vernacularData']) > 0){
-                            $vernacularArr = array();
-                            foreach($taxon['vernacularData'] as $vernacular){
-                                $vernacularArr[] = $vernacular['vernacularname'];
-                            }
-                            PhpWordService::addText($textrun, (count($vernacularArr) > 0 ? implode(', ', $vernacularArr) : ''), 'topicFont');
-                            PhpWordService::addTextBreak($textrun);
-                        }
-                        if($options['taxaSort'] === 'family' && $taxon['family'] !== $previousFamily){
-                            PhpWordService::addText($textrun, ('[' . $taxon['family'] . ']'), 'textFont');
-                            $previousFamily = $taxon['family'];
-                        }
-                    }
-                    else{
-                        $cell = PhpWordService::getTableCell($table, null, $this->blankCellStyle);
-                        $textrun = PhpWordService::getTextRun($cell, 'imagePara');
-                        PhpWordService::addText($textrun, 'Image', 'topicFont');
-                        PhpWordService::addTextBreak($textrun);
-                        PhpWordService::addText($textrun, 'not yet', 'topicFont');
-                        PhpWordService::addTextBreak($textrun);
-                        PhpWordService::addText($textrun, 'available', 'topicFont');
-                    }
-                }
+                $this->writeDocxImageSection($section, $dataArr, $options);
             }
             else{
-                foreach($dataArr['taxa'] as $taxon){
-                    if($options['taxaSort'] === 'family' && $taxon['family'] !== $previousFamily){
-                        $textrun = PhpWordService::getTextRun($section, 'familyPara');
-                        PhpWordService::addText($textrun, $taxon['family'], 'familyFont');
-                        $previousFamily = $taxon['family'];
-                    }
-                    $textrun = PhpWordService::getTextRun($section, 'scinamePara');
-                    PhpWordService::addText($textrun, $taxon['sciname'], 'scientificnameFont');
-                    if((int)$options['authors'] === 1 && $taxon['author']){
-                        PhpWordService::addText($textrun, (' ' . $taxon['author']), 'textFont');
-                        PhpWordService::addTextBreak($textrun);
-                    }
-                    if((int)$options['vernaculars'] === 1 && $taxon['vernacularData'] && count($taxon['vernacularData']) > 0){
-                        $vernacularArr = array();
-                        foreach($taxon['vernacularData'] as $vernacular){
-                            $vernacularArr[] = $vernacular['vernacularname'];
-                        }
-                        PhpWordService::addText($textrun, (count($vernacularArr) > 0 ? (' - ' . implode(', ', $vernacularArr)) : ''), 'topicFont');
-                    }
-                    if((int)$options['synonyms'] === 1 && $taxon['synonymyData'] && count($taxon['synonymyData']) > 0){
-                        $synonymArr = array();
-                        foreach($taxon['synonymyData'] as $synonym){
-                            $synonymArr[] = $synonym['sciname'];
-                        }
-                        if(count($synonymArr) > 0){
-                            $textrun = PhpWordService::getTextRun($section, 'synonymPara');
-                            PhpWordService::addText($textrun, '[', 'textFont');
-                            PhpWordService::addText($textrun, implode(', ', $synonymArr), 'synonymFont');
-                            PhpWordService::addText($textrun, ']', 'textFont');
-                        }
-                    }
-                    if((int)$options['notes'] === 1 && ($taxon['notes'] || (array_key_exists($taxon['tid'], $dataArr['vouchers']) && count($dataArr['vouchers'][$taxon['tid']]) > 0))){
-                        $textrun = PhpWordService::getTextRun($section, 'notesvouchersPara');
-                        if($taxon['notes']){
-                            PhpWordService::addText($textrun, $taxon['notes'], 'textFont');
-                        }
-                        if(array_key_exists($taxon['tid'], $dataArr['vouchers']) && count($dataArr['vouchers'][$taxon['tid']]) > 0){
-                            $voucherStrArr = array();
-                            foreach($dataArr['vouchers'][$taxon['tid']] as $voucher){
-                                $voucherStrArr[] = $voucher['label'];
-                            }
-                            if(count($voucherStrArr) > 0){
-                                PhpWordService::addText($textrun, implode(', ', $voucherStrArr), 'textFont');
-                            }
-                        }
-                    }
-                }
+                $this->writeDocxTaxaListSection($section, $dataArr, $options);
             }
             PhpWordService::saveDocument($phpWord, $fullPath);
             (new DataDownloadService)->streamDownload($contentType, $fullPath);
+        }
+    }
+
+    public function setChecklistImageDataArr($taxaArr, $clidArr, $options): array
+    {
+        $targetTidArr = array();
+        $tidArr = $this->getIdArrFromTaxaArr($taxaArr, 'tidaccepted');
+        $taxonImageLimit = array_key_exists('taxonLimit', $options) ? (int)$options['taxonLimit'] : 1;
+        $returnArr = (new Images)->getChecklistTaggedImageData($clidArr, $taxonImageLimit);
+        foreach($tidArr as $tid){
+            if(!array_key_exists($tid, $returnArr)){
+                $targetTidArr[] = $tid;
+            }
+        }
+        $batches = array_chunk($targetTidArr, 100);
+        foreach($batches as $batch){
+            if(count($batch) > 0){
+                $returnArr = $this->mergeDataArr($returnArr, (new Images)->getChecklistImageData($batch, $taxonImageLimit));
+            }
+        }
+        return $returnArr;
+    }
+
+    public function setChecklistVoucherDataArr($taxaArr, $clidArr): array
+    {
+        $returnArr = array();
+        $tidArr = $this->getIdArrFromTaxaArr($taxaArr, 'tid');
+        $batches = array_chunk($tidArr, 200);
+        foreach($batches as $batch){
+            if(count($batch) > 0){
+                $returnArr = $this->mergeDataArr($returnArr, (new ChecklistVouchers)->getChecklistVouchers($clidArr, $batch));
+            }
+        }
+        return $returnArr;
+    }
+
+    public function writeDocxImageSection($section, $dataArr, $options): void
+    {
+        $imageCnt = 0;
+        $previousFamily = '';
+        $table = PhpWordService::getTable($section, 'imageTable');
+        foreach($dataArr['taxa'] as $taxon){
+            $imageSrc = '';
+            $imageCnt++;
+            if($imageCnt % 4 === 1) {
+                PhpWordService::addTableRow($table);
+            }
+            if(array_key_exists($taxon['tidaccepted'], $dataArr['images']) && count($dataArr['images'][$taxon['tidaccepted']]) > 0){
+                $imageSrc = $dataArr['images'][$taxon['tidaccepted']][0]['thumbnailurl'] ?: $dataArr['images'][$taxon['tidaccepted']][0]['url'];
+            }
+            if($imageSrc && $imageSrc[0] === '/'){
+                $cell = PhpWordService::getTableCell($table, null, $this->imageCellStyle);
+                $textrun = PhpWordService::getTextRun($cell, 'imagePara');
+                PhpWordService::addImage($textrun, ($GLOBALS['SERVER_ROOT'] . $imageSrc), array('width' => 160, 'height' => 160));
+                PhpWordService::addTextBreak($textrun);
+                PhpWordService::addText($textrun, $taxon['sciname'], 'topicFont');
+                PhpWordService::addTextBreak($textrun);
+                if((int)$options['vernaculars'] === 1 && $taxon['vernacularData'] && count($taxon['vernacularData']) > 0){
+                    $vernacularArr = array();
+                    foreach($taxon['vernacularData'] as $vernacular){
+                        $vernacularArr[] = $vernacular['vernacularname'];
+                    }
+                    PhpWordService::addText($textrun, (count($vernacularArr) > 0 ? implode(', ', $vernacularArr) : ''), 'topicFont');
+                    PhpWordService::addTextBreak($textrun);
+                }
+                if($options['taxaSort'] === 'family' && $taxon['family'] !== $previousFamily){
+                    PhpWordService::addText($textrun, ('[' . $taxon['family'] . ']'), 'textFont');
+                    $previousFamily = $taxon['family'];
+                }
+            }
+            else{
+                $cell = PhpWordService::getTableCell($table, null, $this->blankCellStyle);
+                $textrun = PhpWordService::getTextRun($cell, 'imagePara');
+                PhpWordService::addText($textrun, 'Image', 'topicFont');
+                PhpWordService::addTextBreak($textrun);
+                PhpWordService::addText($textrun, 'not yet', 'topicFont');
+                PhpWordService::addTextBreak($textrun);
+                PhpWordService::addText($textrun, 'available', 'topicFont');
+            }
+        }
+    }
+
+    public function writeDocxLocalitySection($textrun, $dataArr): void
+    {
+        $localityStr = '';
+        if($dataArr['data']['locality']){
+            $localityStr .= $dataArr['data']['locality'];
+        }
+        if($dataArr['data']['latcentroid'] && $dataArr['data']['longcentroid']){
+            $localityStr .= ($localityStr ? ' ' : '') . '(' . $dataArr['data']['latcentroid'] . ', ' . $dataArr['data']['longcentroid'] . ')';
+        }
+        if($localityStr){
+            PhpWordService::addText($textrun, 'Locality: ', 'topicFont');
+            PhpWordService::addText($textrun, $localityStr, 'textFont');
+            PhpWordService::addTextBreak($textrun);
+        }
+    }
+
+    public function writeDocxTaxaListSection($section, $dataArr, $options): void
+    {
+        $previousFamily = '';
+        foreach($dataArr['taxa'] as $taxon){
+            if($options['taxaSort'] === 'family' && $taxon['family'] !== $previousFamily){
+                $textrun = PhpWordService::getTextRun($section, 'familyPara');
+                PhpWordService::addText($textrun, $taxon['family'], 'familyFont');
+                $previousFamily = $taxon['family'];
+            }
+            $textrun = PhpWordService::getTextRun($section, 'scinamePara');
+            PhpWordService::addText($textrun, $taxon['sciname'], 'scientificnameFont');
+            if((int)$options['authors'] === 1 && $taxon['author']){
+                PhpWordService::addText($textrun, (' ' . $taxon['author']), 'textFont');
+                PhpWordService::addTextBreak($textrun);
+            }
+            if((int)$options['vernaculars'] === 1 && $taxon['vernacularData'] && count($taxon['vernacularData']) > 0){
+                $vernacularArr = array();
+                foreach($taxon['vernacularData'] as $vernacular){
+                    $vernacularArr[] = $vernacular['vernacularname'];
+                }
+                PhpWordService::addText($textrun, (count($vernacularArr) > 0 ? (' - ' . implode(', ', $vernacularArr)) : ''), 'topicFont');
+            }
+            if((int)$options['synonyms'] === 1 && $taxon['synonymyData'] && count($taxon['synonymyData']) > 0){
+                $synonymArr = array();
+                foreach($taxon['synonymyData'] as $synonym){
+                    $synonymArr[] = $synonym['sciname'];
+                }
+                if(count($synonymArr) > 0){
+                    $textrun = PhpWordService::getTextRun($section, 'synonymPara');
+                    PhpWordService::addText($textrun, '[', 'textFont');
+                    PhpWordService::addText($textrun, implode(', ', $synonymArr), 'synonymFont');
+                    PhpWordService::addText($textrun, ']', 'textFont');
+                }
+            }
+            if((int)$options['notes'] === 1 && ($taxon['notes'] || (array_key_exists($taxon['tid'], $dataArr['vouchers']) && count($dataArr['vouchers'][$taxon['tid']]) > 0))){
+                $textrun = PhpWordService::getTextRun($section, 'notesvouchersPara');
+                if($taxon['notes']){
+                    PhpWordService::addText($textrun, $taxon['notes'], 'textFont');
+                }
+                if(array_key_exists($taxon['tid'], $dataArr['vouchers']) && count($dataArr['vouchers'][$taxon['tid']]) > 0){
+                    $voucherStrArr = array();
+                    foreach($dataArr['vouchers'][$taxon['tid']] as $voucher){
+                        $voucherStrArr[] = $voucher['label'];
+                    }
+                    if(count($voucherStrArr) > 0){
+                        PhpWordService::addText($textrun, implode(', ', $voucherStrArr), 'textFont');
+                    }
+                }
+            }
         }
     }
 }
