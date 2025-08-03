@@ -73,8 +73,11 @@ if($action && SanitizerService::validateInternalRequest()){
         $sortsequenceLimit = array_key_exists('sortsequenceLimit',$_POST) ? (int)$_POST['sortsequenceLimit'] : null;
         echo json_encode($images->getTaxonArrDisplayImageData(json_decode($_POST['tidArr'], true), $includeOccurrence, $limitToOccurrence, $limitPerTaxon, $sortsequenceLimit));
     }
-    elseif($action === 'getChecklistImageData' && array_key_exists('clidArr', $_POST) && array_key_exists('numberPerTaxon', $_POST)){
-        echo json_encode($images->getChecklistImageData(json_decode($_POST['clidArr'], false), (int)$_POST['numberPerTaxon']));
+    elseif($action === 'getChecklistTaggedImageData' && array_key_exists('clidArr', $_POST) && array_key_exists('numberPerTaxon', $_POST)){
+        echo json_encode($images->getChecklistTaggedImageData(json_decode($_POST['clidArr'], false), (int)$_POST['numberPerTaxon']));
+    }
+    elseif($action === 'getChecklistImageData' && array_key_exists('tidArr', $_POST) && array_key_exists('numberPerTaxon', $_POST)){
+        echo json_encode($images->getChecklistImageData(json_decode($_POST['tidArr'], false), (int)$_POST['numberPerTaxon']));
     }
     elseif($action === 'getImageArrByTagValue' && array_key_exists('value', $_POST)){
         echo json_encode($images->getImageArrByTagValue($_POST['value']));

@@ -44,11 +44,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="!temporaryChecklist">
-                    <template v-if="Number(pId) > 0">
-                        <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
-                    </template>
-                    <template v-else-if="Number(clId) > 0">
+                    <template v-if="Number(clId) > 0">
                         <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
+                    </template>
+                    <template v-else-if="Number(pId) > 0">
+                        <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
                     </template>
                     <template v-if="Number(clId) > 0">
                         <span class="text-bold">{{ checklistName }}</span>
@@ -175,7 +175,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <span class="text-bold">Locality: </span>{{ checklistLocalityText }}
                             </div>
                             <div v-if="checklistData.hasOwnProperty('abstract') && checklistData['abstract']" class="text-body1">
-                                <span class="text-bold">Abstract: </span>{{ checklistData['abstract'] }}
+                                <span class="text-bold">Abstract: </span><span v-html="checklistData['abstract']"></span>
                             </div>
                             <div v-if="checklistData.hasOwnProperty('notes') && checklistData['notes']" class="text-body1">
                                 <span class="text-bold">Notes: </span>{{ checklistData['notes'] }}
@@ -748,14 +748,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setChecklistData() {
+                        showWorking();
                         setEditor();
                         checklistStore.setChecklist(clId.value, (clid) => {
+                            hideWorking();
                             if(Number(clid) > 0){
                                 checklistStore.setChecklistTaxaArr(false, true, true, () => {
                                     setActiveTaxa();
+                                    checklistStore.setChecklistImageData(1);
+                                    checklistStore.setChecklistVoucherData();
                                 });
-                                checklistStore.setChecklistImageData(1);
-                                checklistStore.setChecklistVoucherData();
                             }
                         });
                     }
@@ -809,11 +811,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     Vue.onMounted(() => {
-                        if(Number(clId.value) > 0 || Number(pId.value) > 0){
+                        if(Number(clId.value) > 0){
                             setChecklistData();
-                            if(Number(pId.value) > 0){
-                                setProjectData();
-                            }
+                        }
+                        else if(Number(pId.value) > 0){
+                            setProjectData();
                         }
                         else{
                             if(Number(queryId) === 0){
