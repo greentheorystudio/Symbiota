@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/ChecklistTaxa.php');
 include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
@@ -335,12 +334,63 @@ class Images{
         return $retVal;
     }
 
-    public function getChecklistImageData($clidArr, $taxonLimit): array
+    public function getChecklistImageData($tidArr, $taxonLimit): array
+    {
+        $retArr = array();
+        if(count($tidArr) > 0){
+            $retArr = $this->getChecklistImageDataBatch($retArr, $tidArr, 'tidaccepted', $taxonLimit);
+            $queryTidArr = $this->getChecklistQueryTidArr($tidArr, $retArr, $taxonLimit);
+            if(count($queryTidArr) > 0){
+                $retArr = $this->getChecklistImageDataBatch($retArr, $queryTidArr, 'parenttid', $taxonLimit);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getChecklistImageDataBatch($retArr, $tidArr, $matchField, $taxonLimit): array
+    {
+        if(count($tidArr) > 0){
+            $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl '.
+                'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
+                'WHERE t.' . $matchField . ' IN(' . implode(',', $tidArr) . ') AND i.sortsequence < 500 ORDER BY i.sortsequence ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if(!array_key_exists($row[$matchField], $retArr)){
+                        $retArr[$row[$matchField]] = array();
+                    }
+                    if(count($retArr[$row[$matchField]]) < $taxonLimit){
+                        $nodeArr = array();
+                        $nodeArr['imgid'] = $row['imgid'];
+                        $nodeArr['url'] = $row['url'];
+                        $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
+                        $retArr[$row[$matchField]][] = $nodeArr;
+                    }
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getChecklistQueryTidArr($tidAcceptedArr, $retArr, $taxonLimit): array
+    {
+        $queryTidArr = array();
+        foreach($tidAcceptedArr as $tid){
+            if(!array_key_exists($tid, $retArr) || count($retArr[$tid]) < $taxonLimit){
+                $queryTidArr[] = $tid;
+            }
+        }
+        return $queryTidArr;
+    }
+
+    public function getChecklistTaggedImageData($clidArr, $taxonLimit): array
     {
         $retArr = array();
         $sqlWhereArr = array();
-        $tidAcceptedArr = (new ChecklistTaxa)->getChecklistAcceptedTidArr($clidArr);
-        if(count($tidAcceptedArr) > 0){
+        if(count($clidArr) > 0){
             foreach($clidArr as $clid){
                 $sqlWhereArr[] = 't.keyvalue LIKE "CLID-' . (int)$clid . '-%"';
             }
@@ -352,7 +402,7 @@ class Images{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    $tid = 0;
+                    $tid = '';
                     $tagArr = explode('-', $row['keyvalue']);
                     if($tagArr){
                         $tid = $tagArr[2];
@@ -372,58 +422,8 @@ class Images{
                     unset($rows[$index]);
                 }
             }
-            $queryTidArr = $this->getChecklistQueryTidArr($tidAcceptedArr, $retArr, $taxonLimit);
-            if(count($queryTidArr) > 0){
-                $retArr = $this->getChecklistImageDataBatches($retArr, $queryTidArr, 'tidaccepted', $taxonLimit);
-            }
-            $queryTidArr = $this->getChecklistQueryTidArr($tidAcceptedArr, $retArr, $taxonLimit);
-            if(count($queryTidArr) > 0){
-                $retArr = $this->getChecklistImageDataBatches($retArr, $queryTidArr, 'parenttid', $taxonLimit);
-            }
         }
         return $retArr;
-    }
-
-    public function getChecklistImageDataBatches($retArr, $tidArr, $matchField, $taxonLimit): array
-    {
-        $batches = array_chunk($tidArr, 100);
-        foreach($batches as $batch){
-            if(count($batch) > 0){
-                $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl '.
-                    'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
-                    'WHERE t.' . $matchField . ' IN(' . implode(',', $batch) . ') AND i.sortsequence < 500 ORDER BY i.sortsequence ';
-                //echo '<div>'.$sql.'</div>';
-                if($result = $this->conn->query($sql)){
-                    $rows = $result->fetch_all(MYSQLI_ASSOC);
-                    $result->free();
-                    foreach($rows as $index => $row){
-                        if(!array_key_exists($row[$matchField], $retArr)){
-                            $retArr[$row[$matchField]] = array();
-                        }
-                        if(count($retArr[$row[$matchField]]) < $taxonLimit){
-                            $nodeArr = array();
-                            $nodeArr['imgid'] = $row['imgid'];
-                            $nodeArr['url'] = $row['url'];
-                            $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
-                            $retArr[$row[$matchField]][] = $nodeArr;
-                        }
-                        unset($rows[$index]);
-                    }
-                }
-            }
-        }
-        return $retArr;
-    }
-
-    public function getChecklistQueryTidArr($tidAcceptedArr, $retArr, $taxonLimit): array
-    {
-        $queryTidArr = array();
-        foreach($tidAcceptedArr as $tid){
-            if(!array_key_exists($tid, $retArr) || count($retArr[$tid]) < $taxonLimit){
-                $queryTidArr[] = $tid;
-            }
-        }
-        return $queryTidArr;
     }
 
     public function getImageArrByProperty($property, $value, $limit = null): array

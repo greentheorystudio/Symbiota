@@ -95,6 +95,12 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getChecklistTaxaTaggedImageArr(state) {
             return state.checklistTaxaStore.getChecklistTaxaTaggedImageArr;
         },
+        getChecklistTaxaTidAcceptedArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaTidAcceptedArr;
+        },
+        getChecklistTaxaTidArr(state) {
+            return state.checklistTaxaStore.getChecklistTaxaTidArr;
+        },
         getChecklistTaxaValid(state) {
             return state.checklistTaxaStore.getChecklistTaxaValid;
         },
@@ -174,7 +180,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         addCurrentChecklistTaxonImageTag(imgid, callback) {
             this.checklistTaxaStore.addCurrentChecklistTaxonImageTag(imgid, (res) => {
                 if(res === 1){
-                    this.setChecklistImageData(this.clidArr, this.imageCountPerTaxon);
+                    this.setChecklistImageData(this.imageCountPerTaxon);
                 }
                 callback(res);
             });
@@ -272,7 +278,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         deleteCurrentChecklistTaxonImageTag(imgid, callback) {
             this.checklistTaxaStore.deleteCurrentChecklistTaxonImageTag(imgid, (res) => {
                 if(res === 1){
-                    this.setChecklistImageData(this.clidArr, this.imageCountPerTaxon);
+                    this.setChecklistImageData(this.imageCountPerTaxon);
                 }
                 callback(res);
             });
@@ -291,6 +297,15 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             .then((resObj) => {
                 callback(resObj);
             });
+        },
+        getImageTargetTidArr() {
+            const returnArr = [];
+            this.getChecklistTaxaTidAcceptedArr.forEach(tid => {
+                if(!this.getChecklistImageData.hasOwnProperty(tid)){
+                    returnArr.push(tid);
+                }
+            });
+            return returnArr;
         },
         processChecklistDefaultDisplaySettings() {
             if(this.checklistData.hasOwnProperty('defaultsettings') && this.checklistData['defaultsettings']){
@@ -398,7 +413,11 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         setChecklistImageData(numberPerTaxon) {
             this.imageCountPerTaxon = numberPerTaxon;
-            this.imageStore.setChecklistImageData(this.clidArr, numberPerTaxon);
+            this.imageStore.clearChecklistImageData();
+            this.imageStore.setChecklistTaggedImageData(this.clidArr, numberPerTaxon, () => {
+                const targetArr = this.getImageTargetTidArr();
+                this.imageStore.setChecklistImageData(targetArr, numberPerTaxon);
+            });
         },
         setChecklistTaxaArr(includeKeyData, includeSynonymyData, includeVernacularData, callback = null) {
             this.loadKeyData = includeKeyData;
