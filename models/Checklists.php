@@ -218,25 +218,6 @@ class Checklists{
         return $retArr;
     }
 
-    public function getChecklistFromClid($clid): array
-    {
-        $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
-        if($rs = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($rs);
-            if($r = $rs->fetch_object()){
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $retArr[$name] = $r->$name;
-                }
-            }
-            $rs->free();
-        }
-        return $retArr;
-    }
-
     public function getChecklistListByUid($uid): array
     {
         $retArr = array();

@@ -821,8 +821,14 @@ class Configurations{
             $GLOBALS['SMTP_HOST'] &&
             $GLOBALS['SMTP_PORT']
         );
+        if(!isset($GLOBALS['PERMITTED_CHECKLISTS'])){
+            $GLOBALS['PERMITTED_CHECKLISTS'] = array();
+        }
         if(!isset($GLOBALS['PERMITTED_COLLECTIONS'])){
             $GLOBALS['PERMITTED_COLLECTIONS'] = array();
+        }
+        if(!isset($GLOBALS['PERMITTED_PROJECTS'])){
+            $GLOBALS['PERMITTED_PROJECTS'] = array();
         }
         if(!isset($GLOBALS['RIGHTS_TERMS']) || count($GLOBALS['RIGHTS_TERMS']) === 0){
             $GLOBALS['RIGHTS_TERMS'] = $this->rightsTerms;
