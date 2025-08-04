@@ -787,9 +787,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 checklistStore.setClidArr(projectData.value['clidArr']);
                                 checklistStore.setChecklistTaxaArr(false, true, true);
                             }
-                            else{
-                                showNotification('negative', 'An error occurred while setting the project data.');
-                            }
                         });
                     }
 

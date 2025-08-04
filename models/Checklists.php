@@ -154,6 +154,12 @@ class Checklists{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmchecklists ';
+        if(!$GLOBALS['IS_ADMIN']){
+            $sql .= 'WHERE access = "public" ';
+            if($GLOBALS['PERMITTED_CHECKLISTS']){
+                $sql .= 'OR clid IN('.implode(',', $GLOBALS['PERMITTED_CHECKLISTS']).') ';
+            }
+        }
         $sql .= 'ORDER BY `name` ';
         //echo $sql;
         if($result = $this->conn->query($sql)){
@@ -200,7 +206,7 @@ class Checklists{
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
             $result->free();
-            if($row){
+            if($row && ($row['access'] === 'public' || $GLOBALS['IS_ADMIN'] || in_array((int)$row['clid'], $GLOBALS['PERMITTED_CHECKLISTS'], true))){
                 foreach($fields as $val){
                     $name = $val->name;
                     if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms')){

@@ -22,9 +22,6 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                 height: 30px;
                 width: 30px;
             }
-            .coll-institution-info {
-                width: 50%;
-            }
         </style>
         <script type="text/javascript">
             const COLLID = <?php echo $collid; ?>;

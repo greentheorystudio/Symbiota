@@ -88,6 +88,12 @@ class Projects{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmprojects ';
+        if(!$GLOBALS['IS_ADMIN']){
+            $sql .= 'WHERE ispublic = 1 ';
+            if($GLOBALS['PERMITTED_PROJECTS']){
+                $sql .= 'OR pid IN('.implode(',', $GLOBALS['PERMITTED_PROJECTS']).') ';
+            }
+        }
         $sql .= 'ORDER BY projname ';
         //echo $sql;
         if($result = $this->conn->query($sql)){
@@ -140,7 +146,7 @@ class Projects{
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
             $result->free();
-            if($row){
+            if($row && ((int)$row['ispublic'] === 1 || $GLOBALS['IS_ADMIN'] || in_array((int)$row['pid'], $GLOBALS['PERMITTED_PROJECTS'], true))){
                 foreach($fields as $val){
                     $name = $val->name;
                     if($row[$name] && ($name === 'dynamicproperties')){
@@ -150,13 +156,13 @@ class Projects{
                         $retArr[$name] = $row[$name];
                     }
                 }
+                $retArr['checklists'] = $this->getProjectChecklists($pid);
+                foreach($retArr['checklists'] as $checklistArr) {
+                    $clidArr[] = $checklistArr['clid'];
+                }
+                $childClidArr = (new Checklists)->getChecklistChildClidArr($clidArr);
+                $retArr['clidArr'] = array_unique(array_merge($childClidArr, $clidArr));
             }
-            $retArr['checklists'] = $this->getProjectChecklists($pid);
-            foreach($retArr['checklists'] as $checklistArr) {
-                $clidArr[] = $checklistArr['clid'];
-            }
-            $childClidArr = (new Checklists)->getChecklistChildClidArr($clidArr);
-            $retArr['clidArr'] = array_unique(array_merge($childClidArr, $clidArr));
         }
         return $retArr;
     }
