@@ -97,7 +97,7 @@ const spatialViewerElement = {
 
         function changeBaseMap(){
             let blsource;
-            const baseLayer = map.value.getLayers().getArray()[0];
+            const baseLayer = map.getLayers().getArray()[0];
             if(mapSettings.selectedBaseLayer === 'googleroadmap'){
                 blsource = new ol.source.XYZ({
                     url: 'https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
@@ -201,10 +201,10 @@ const spatialViewerElement = {
         function coordFormat() {
             return((coords) => {
                 if(coords[0] < -180){
-                    coords[0] = coords[0] + 360;
+                    coords[0] += 360;
                 }
                 if(coords[0] > 180){
-                    coords[0] = coords[0] - 360;
+                    coords[0] -= 360;
                 }
                 const template = 'Lat: {y} Lon: {x}';
                 return ol.coordinate.format(coords,template,5);
@@ -396,7 +396,7 @@ const spatialViewerElement = {
                             width: 1
                         }),
                         fill: new ol.style.Fill({
-                            color: 'rgba(255, 0, 0)'
+                            color: 'rgb(255,0,0)'
                         })
                     })
                 })
@@ -429,7 +429,6 @@ const spatialViewerElement = {
             dragAndDropInteraction.on('addfeatures', (event) => {
                 let filename = event.file.name.split('.');
                 const fileType = filename.pop();
-                filename = filename.join("");
                 if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif' || fileType === 'tiff'){
                     if(fileType === 'geojson' || fileType === 'kml'){
                         if(setDragDropTarget()){

@@ -154,7 +154,10 @@ class Checklists{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmchecklists ';
-        if(!$GLOBALS['IS_ADMIN']){
+        if($GLOBALS['IS_ADMIN']) {
+            $sql .= 'WHERE ISNULL(expiration) ';
+        }
+        else {
             $sql .= 'WHERE access = "public" ';
             if($GLOBALS['PERMITTED_CHECKLISTS']){
                 $sql .= 'OR clid IN('.implode(',', $GLOBALS['PERMITTED_CHECKLISTS']).') ';
@@ -170,7 +173,12 @@ class Checklists{
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
+                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings')){
+                        $nodeArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $nodeArr[$name] = $row[$name];
+                    }
                 }
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
@@ -189,13 +197,16 @@ class Checklists{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmchecklists AS c LEFT JOIN fmchklstprojlink AS cpl ON c.clid = cpl.clid '.
             'LEFT JOIN fmprojects AS p ON cpl.pid = p.pid ';
-        if(!$GLOBALS['IS_ADMIN']){
+        if($GLOBALS['IS_ADMIN']) {
+            $sql .= 'WHERE ISNULL(expiration) ';
+        }
+        else {
             $sql .= 'WHERE c.access = "public" ';
             if($GLOBALS['PERMITTED_CHECKLISTS']){
                 $sql .= 'OR c.clid IN('.implode(',', $GLOBALS['PERMITTED_CHECKLISTS']).') ';
             }
         }
-        $sql .= 'ORDER BY p.projname, c.`name` ';
+        $sql .= 'ORDER BY p.projname ';
         //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
@@ -215,7 +226,12 @@ class Checklists{
                 }
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
+                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings')){
+                        $nodeArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $nodeArr[$name] = $row[$name];
+                    }
                 }
                 if($row['latcentroid'] && $row['longcentroid']){
                     $coordArr[] = (float)$row['longcentroid'];

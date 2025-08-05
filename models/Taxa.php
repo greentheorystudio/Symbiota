@@ -483,6 +483,7 @@ class Taxa{
         $retArr = array();
         $sql = 'SELECT DISTINCT tid, tidaccepted, sciname FROM taxa WHERE tidaccepted IN(' . implode(',', $tidArr) . ') AND tid <> tidaccepted ORDER BY tidaccepted, sciname ';
         //echo '<div>'.$sql.'</div>';
+        error_log($sql);
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
