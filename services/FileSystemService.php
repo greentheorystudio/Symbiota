@@ -92,7 +92,7 @@ class FileSystemService {
 
     public static function getImageSize($imageUrl): array
     {
-        if(strpos($imageUrl, '/') === 0){
+        if(strncmp($imageUrl, '/', 1) === 0){
             $imageUrl = self::getServerPathFromUrlPath($imageUrl);
         }
         return getimagesize($imageUrl);
@@ -165,6 +165,11 @@ class FileSystemService {
     public static function initializeNewZipArchive(): ZipArchive
     {
         return new ZipArchive;
+    }
+
+    public static function isDirectory($targetPath): bool
+    {
+        return is_dir($targetPath);
     }
 
     public static function moveUploadedFileToServer($file, $targetPath, $targetFilename): bool
