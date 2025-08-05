@@ -594,23 +594,25 @@ class Configurations{
     public function uploadMapDataFile(): string
     {
         $returnStr = '';
-        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial';
-        if(file_exists($targetPath) || (mkdir($targetPath, 0775) && is_dir($targetPath))) {
-            $uploadFileName = basename($_FILES['addLayerFile']['name']);
-            $uploadFileName = str_replace(array(',','&',' '), array('','',''), urldecode($uploadFileName));
-            $fileExtension =  substr(strrchr($uploadFileName, '.'), 1);
-            $fileNameOnly =  substr($uploadFileName, 0, ((strlen($fileExtension) + 1) * -1));
-            $tempFileName = $fileNameOnly;
-            $cnt = 0;
-            while(file_exists($targetPath.'/'.$tempFileName.'.'.$fileExtension)){
-                $tempFileName = $fileNameOnly.'_'.$cnt;
-                $cnt++;
-            }
-            if($cnt) {
-                $fileNameOnly = $tempFileName;
-            }
-            if(move_uploaded_file($_FILES['addLayerFile']['tmp_name'], $targetPath.'/'.$fileNameOnly.'.'.$fileExtension)){
-                $returnStr = $fileNameOnly.'.'.$fileExtension;
+        if(strtolower(substr($_FILES['addLayerFile']['name'], -4)) === '.zip' || strtolower(substr($_FILES['addLayerFile']['name'], -8)) === '.geojson' || strtolower(substr($_FILES['addLayerFile']['name'], -4)) === '.kml' || strtolower(substr($_FILES['addLayerFile']['name'], -4)) === '.tif' || strtolower(substr($_FILES['addLayerFile']['name'], -5)) === '.tiff' || strtolower(substr($_FILES['addLayerFile']['name'], -5)) === '.json'){
+            $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial';
+            if(file_exists($targetPath) || (mkdir($targetPath, 0775) && is_dir($targetPath))) {
+                $uploadFileName = basename($_FILES['addLayerFile']['name']);
+                $uploadFileName = str_replace(array(',','&',' '), array('','',''), urldecode($uploadFileName));
+                $fileExtension =  substr(strrchr($uploadFileName, '.'), 1);
+                $fileNameOnly =  substr($uploadFileName, 0, ((strlen($fileExtension) + 1) * -1));
+                $tempFileName = $fileNameOnly;
+                $cnt = 0;
+                while(file_exists($targetPath.'/'.$tempFileName.'.'.$fileExtension)){
+                    $tempFileName = $fileNameOnly.'_'.$cnt;
+                    $cnt++;
+                }
+                if($cnt) {
+                    $fileNameOnly = $tempFileName;
+                }
+                if(move_uploaded_file($_FILES['addLayerFile']['tmp_name'], $targetPath.'/'.$fileNameOnly.'.'.$fileExtension)){
+                    $returnStr = $fileNameOnly.'.'.$fileExtension;
+                }
             }
         }
         return $returnStr;

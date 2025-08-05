@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../models/Checklists.php');
 include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Permissions.php');

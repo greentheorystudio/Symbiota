@@ -26,7 +26,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'processTransferredDwca' && array_key_exists('serverPath', $_POST) && array_key_exists('metaFile', $_POST)){
         echo json_encode($dataUploadService->processTransferredDwca($_POST['serverPath'], $_POST['metaFile']));
     }
-    elseif($action === 'uploadDwcaFile' && array_key_exists('dwcaFile', $_FILES)){
+    elseif($action === 'uploadDwcaFile' && array_key_exists('dwcaFile', $_FILES) && strtolower(substr($_FILES['dwcaFile']['name'], -4)) === '.zip'){
         echo json_encode($dataUploadService->uploadDwcaFile($_FILES['dwcaFile']));
     }
     elseif($action === 'clearOccurrenceUploadTables'){

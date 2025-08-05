@@ -110,7 +110,7 @@ class MediaShared{
         if(!$medFile){
             $medFile = 'medfile';
         }
-        if($this->targetPath){
+        if($this->targetPath && (strtolower(substr($_FILES[$medFile]['name'], -3)) === '.zc' || strtolower(substr($_FILES[$medFile]['name'], -4)) === '.mp4' || strtolower(substr($_FILES[$medFile]['name'], -5)) === '.webm' || strtolower(substr($_FILES[$medFile]['name'], -4)) === '.ogg' || strtolower(substr($_FILES[$medFile]['name'], -4)) === '.wav' || strtolower(substr($_FILES[$medFile]['name'], -4)) === '.mp3')){
 			if(file_exists($this->targetPath)){
 				$medFileName = basename($_FILES[$medFile]['name']);
 				$fileName = $this->cleanFileName($medFileName);
