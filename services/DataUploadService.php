@@ -696,7 +696,12 @@ class DataUploadService {
                 $returnVal = true;
             }
             elseif(strtolower(substr($filename, -4)) !== '.csv' && strtolower(substr($filename, -4)) !== '.txt' && strtolower(substr($filename, -4)) !== '.xml'){
-                FileSystemService::deleteFile(($dirPath . '/' . $filename));
+                if(FileSystemService::isDirectory($dirPath . '/' . $filename)){
+                    FileSystemService::deleteDirectory($dirPath . '/' . $filename);
+                }
+                else{
+                    FileSystemService::deleteFile($dirPath . '/' . $filename);
+                }
             }
         }
         return $returnVal;
