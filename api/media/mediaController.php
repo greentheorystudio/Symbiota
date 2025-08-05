@@ -37,7 +37,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $mediaData = json_decode($_POST['media'], true);
         $targetPath = FileSystemService::getServerMediaUploadPath($_POST['uploadpath']);
         $origFilename = $action === 'addMediaFromFile' ? $_FILES['medfile']['name'] : $mediaData['filename'];
-        if($targetPath && $origFilename){
+        if($targetPath && $origFilename && (strtolower(substr($origFilename, -3)) === '.zc' || strtolower(substr($origFilename, -4)) === '.mp4' || strtolower(substr($origFilename, -5)) === '.webm' || strtolower(substr($origFilename, -4)) === '.ogg' || strtolower(substr($origFilename, -4)) === '.wav' || strtolower(substr($origFilename, -4)) === '.mp3')){
             $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
             if($action === 'addMediaFromFile' && $targetFilename && FileSystemService::moveUploadedFileToServer($_FILES['medfile'], $targetPath, $targetFilename)){
                 $mediaData['accessuri'] = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);

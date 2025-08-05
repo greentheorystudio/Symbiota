@@ -10,56 +10,6 @@ class SpecUploadFile extends SpecUploadBase{
         $this->setUploadTargetPath();
     }
 
-    public function uploadFile(){
-        if(!$this->ulFileName){
-            $finalPath = '';
-            if(array_key_exists('uploadfile',$_FILES)){
-                $this->ulFileName = $_FILES['uploadfile']['name'];
-                if(is_writable($this->uploadTargetPath)){
-                    if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->ulFileName)){
-                        $finalPath = $this->uploadTargetPath.$this->ulFileName;
-                    }
-                    else{
-                        echo '<div style="margin:15px;font-weight:bold;">';
-                        echo 'ERROR uploading file (code '.$_FILES['uploadfile']['error'].'): ';
-                        echo 'Zip file may be too large for the upload limits set within the PHP configurations (upload_max_filesize = '.ini_get('upload_max_filesize').'; post_max_size = '.ini_get('post_max_size').')';
-                        echo '</div>';
-                    }
-                }
-                else{
-                    echo 'Target path ('.$this->uploadTargetPath.') is not writable ';
-                }
-            }
-            if($finalPath && substr($this->ulFileName,-4) === '.zip'){
-                $this->ulFileName = '';
-                $zipFilePath = $finalPath;
-                $zip = new ZipArchive;
-                $res = $zip->open($finalPath);
-                if($res === TRUE) {
-                    for($i = 0; $i < $zip->numFiles; $i++) {
-                        $fileName = $zip->getNameIndex($i);
-                        if(strncmp($fileName, '._', 2) !== 0){
-                            $ext = strtolower(substr(strrchr($fileName, '.'), 1));
-                            if($ext === 'csv' || $ext === 'txt'){
-                                if($this->uploadType !== $this->NFNUPLOAD || stripos($fileName,'.reconcile.')){
-                                    $this->ulFileName = $fileName;
-                                    $zip->extractTo($this->uploadTargetPath,$fileName);
-                                    $zip->close();
-                                    unlink($zipFilePath);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                else{
-                    echo 'failed, code:' . $res;
-                }
-            }
-        }
-        return $this->ulFileName;
-    }
-
     public function analyzeUpload(): bool
     {
         if(strncmp($this->ulFileName, 'http', 4) === 0){

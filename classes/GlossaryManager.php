@@ -820,12 +820,14 @@ class GlossaryManager{
 	
 	private function loadImage(): bool
 	{
-		$imgFile = basename($_FILES['imgfile']['name']);
-		$fileName = $this->cleanFileName($imgFile);
-		if(is_writable($this->targetPath) && move_uploaded_file($_FILES['imgfile']['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
-            $this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
-            $this->imgName = $fileName;
-            return true;
+		if(strtolower(substr($_FILES['imgfile']['name'], -4)) === '.jpg' || strtolower(substr($_FILES['imgfile']['name'], -5)) === '.jpeg' || strtolower(substr($_FILES['imgfile']['name'], -4)) === '.png'){
+            $imgFile = basename($_FILES['imgfile']['name']);
+            $fileName = $this->cleanFileName($imgFile);
+            if(is_writable($this->targetPath) && move_uploaded_file($_FILES['imgfile']['tmp_name'], $this->targetPath . $fileName . $this->imgExt)) {
+                $this->sourcePath = $this->targetPath.$fileName.$this->imgExt;
+                $this->imgName = $fileName;
+                return true;
+            }
         }
 		return false;
 	}

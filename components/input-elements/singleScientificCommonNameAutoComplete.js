@@ -249,7 +249,7 @@ const singleScientificCommonNameAutoComplete = {
         function setOptionsFromProps(val) {
             const newOptions = [];
             props.options.forEach(option => {
-                if(option['sciname'].startsWith(val)){
+                if(option['sciname'].toLowerCase().startsWith(val.toLowerCase())) {
                     newOptions.push(option);
                 }
             });
