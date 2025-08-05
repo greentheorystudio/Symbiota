@@ -2706,7 +2706,7 @@ const occurrenceDataUploadModule = {
                     processSourceDataProcessing(metaFile);
                 }
                 else{
-                    showNotification('negative', 'The Darwin Core Archive does not contain the necessary files for processing.');
+                    showNotification('negative', 'The Darwin Core Archive is not valid and cannot be used for processing.');
                 }
             });
         }
