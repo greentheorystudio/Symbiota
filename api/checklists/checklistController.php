@@ -40,5 +40,8 @@ if($action){
             $searchTerms = array_key_exists('searchTermsJson', $_POST) ? json_decode($_POST['searchTermsJson'], true) : null;
             echo $checklists->saveTemporaryChecklist($clid, $searchTerms);
         }
+        elseif($action === 'getChecklistIndexArr'){
+            echo json_encode($checklists->getChecklistIndexArr());
+        }
     }
 }
