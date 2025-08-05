@@ -541,7 +541,7 @@ class DataUploadService {
             $returnArr['baseFolderPath'] = $targetPath;
             $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
         }
-        if(!$this->validateDwcaFilenameArr($returnArr['files'])){
+        if(!$this->validateDwcaFilenameArr($returnArr['files'], $targetPath)){
             FileSystemService::deleteDirectory($targetPath);
             $returnArr['files'] = array();
         }
@@ -681,20 +681,24 @@ class DataUploadService {
             $returnArr['baseFolderPath'] = $targetPath;
             $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
         }
-        if(!$this->validateDwcaFilenameArr($returnArr['files'])){
+        if(!$this->validateDwcaFilenameArr($returnArr['files'], $targetPath)){
             FileSystemService::deleteDirectory($targetPath);
             $returnArr['files'] = array();
         }
         return $returnArr;
     }
 
-    public function validateDwcaFilenameArr($arr): bool
+    public function validateDwcaFilenameArr($arr, $dirPath): bool
     {
+        $returnVal = false;
         foreach($arr as $filename){
             if(strtolower($filename) === 'meta.xml'){
-                return true;
+                $returnVal = true;
+            }
+            elseif(strtolower(substr($filename, -4)) !== '.csv' && strtolower(substr($filename, -4)) !== '.txt' && strtolower(substr($filename, -4)) !== '.xml'){
+                FileSystemService::deleteFile(($dirPath . '/' . $filename));
             }
         }
-        return false;
+        return $returnVal;
     }
 }
