@@ -205,12 +205,14 @@ class FileSystemService {
     public static function processUploadImageFromFile($imageData, $uploadPath): array
     {
         $origFilename = $_FILES['imgfile']['name'];
-        $targetPath = self::getServerMediaUploadPath($uploadPath);
-        if($targetPath && $origFilename) {
-            $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
-            if($targetFilename && self::moveUploadedFileToServer($_FILES['imgfile'], $targetPath, $targetFilename)){
-                $imageData['originalurl'] = self::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
-                $imageData = self::processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename);
+        if(strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png'){
+            $targetPath = self::getServerMediaUploadPath($uploadPath);
+            if($targetPath && $origFilename) {
+                $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
+                if($targetFilename && self::moveUploadedFileToServer($_FILES['imgfile'], $targetPath, $targetFilename)){
+                    $imageData['originalurl'] = self::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+                    $imageData = self::processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename);
+                }
             }
         }
         return $imageData;

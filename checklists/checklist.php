@@ -592,7 +592,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const taxaEditingActive = Vue.ref(false);
                     const taxaFilterOptions = Vue.computed(() => checklistStore.getTaxaFilterOptions);
-                    const taxaPerPage = 500;
+                    const taxaPerPage = 100;
                     const taxonFilterVal = Vue.computed(() => checklistStore.getDisplayTaxonFilterVal);
                     const temporaryChecklist = Vue.computed(() => {
                         let returnVal = false;
@@ -787,9 +787,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 checklistStore.setClidArr(projectData.value['clidArr']);
                                 checklistStore.setChecklistTaxaArr(false, true, true);
                             }
-                            else{
-                                showNotification('negative', 'An error occurred while setting the project data.');
-                            }
                         });
                     }
 
@@ -822,6 +819,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 displayQueryPopup.value = true;
                             }
                             searchStore.initializeSearchStorage(queryId);
+                            if(Number(queryId) > 0 && searchStore.getSearchTermsValid){
+                                buildChecklist();
+                            }
                         }
                     });
 

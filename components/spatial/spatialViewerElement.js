@@ -35,8 +35,9 @@ const spatialViewerElement = {
         'spatial-base-layer-selector': spatialBaseLayerSelector
     },
     setup(props) {
-        const spatialStore = useSpatialStore();
         const { getArrayBuffer, getRgbaStrFromHexOpacity, hideWorking, showNotification, showWorking } = useCore();
+        const spatialStore = useSpatialStore();
+
         const dragAndDropInteraction = new ol.interaction.DragAndDrop({
             formatConstructors: [
                 ol.format.GPX,
@@ -55,6 +56,15 @@ const spatialViewerElement = {
         let popupContent = Vue.ref('');
         let popupOverlay = null;
         let popupTimeout = null;
+        const propsRefs = Vue.toRefs(props);
+
+        Vue.watch(propsRefs.coordinateSet, () => {
+            processCoordinateSet();
+        });
+
+        Vue.watch(propsRefs.footprintWkt, () => {
+            processFootprintWkt();
+        });
 
         updateMapSettings('blankDragDropSource', new ol.source.Vector({
             wrapX: true
@@ -87,7 +97,7 @@ const spatialViewerElement = {
 
         function changeBaseMap(){
             let blsource;
-            const baseLayer = map.getLayers().getArray()[0];
+            const baseLayer = map.value.getLayers().getArray()[0];
             if(mapSettings.selectedBaseLayer === 'googleroadmap'){
                 blsource = new ol.source.XYZ({
                     url: 'https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
@@ -169,6 +179,12 @@ const spatialViewerElement = {
             else if(mapSettings.selectedBaseLayer === 'esristreet'){
                 blsource = new ol.source.XYZ({
                     url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                    crossOrigin: 'anonymous'
+                });
+            }
+            else if(mapSettings.selectedBaseLayer === 'opentopo'){
+                blsource = new ol.source.XYZ({
+                    url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',
                     crossOrigin: 'anonymous'
                 });
             }
