@@ -179,6 +179,58 @@ class Checklists{
         return $retArr;
     }
 
+    public function getChecklistIndexArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
+        $fieldNameArr[] = 'p.pid';
+        $fieldNameArr[] = 'p.projname';
+        $fieldNameArr[] = 'p.ispublic';
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM fmchecklists AS c LEFT JOIN fmchklstprojlink AS cpl ON c.clid = cpl.clid '.
+            'LEFT JOIN fmprojects AS p ON cpl.pid = p.pid ';
+        if(!$GLOBALS['IS_ADMIN']){
+            $sql .= 'WHERE c.access = "public" ';
+            if($GLOBALS['PERMITTED_CHECKLISTS']){
+                $sql .= 'OR c.clid IN('.implode(',', $GLOBALS['PERMITTED_CHECKLISTS']).') ';
+            }
+        }
+        $sql .= 'ORDER BY p.projname, c.`name` ';
+        //echo $sql;
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $coordArr = array();
+                $pid = (int)$row['ispublic'] === 1 ? (int)$row['pid'] : 0;
+                $projectName = $pid > 0 ? $row['projname'] : null;
+                if(!array_key_exists($pid, $retArr)){
+                    $retArr[$pid] = array();
+                    $retArr[$pid]['pid'] = $pid;
+                    $retArr[$pid]['projname'] = $projectName;
+                    $retArr[$pid]['coordinates'] = array();
+                    $retArr[$pid]['checklists'] = array();
+                }
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                if($row['latcentroid'] && $row['longcentroid']){
+                    $coordArr[] = (float)$row['longcentroid'];
+                    $coordArr[] = (float)$row['latcentroid'];
+                }
+                $retArr[$pid]['checklists'][] = $nodeArr;
+                if($coordArr){
+                    $retArr[$pid]['coordinates'][] = $coordArr;
+                }
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getChecklistChildClidArr($clidArr): array
     {
         $retArr = array();
