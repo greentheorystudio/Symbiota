@@ -2706,7 +2706,7 @@ const occurrenceDataUploadModule = {
                     processSourceDataProcessing(metaFile);
                 }
                 else{
-                    showNotification('negative', 'The Darwin Core Archive does not contain a meta.xml file, which is necessary for upload processing.');
+                    showNotification('negative', 'The Darwin Core Archive does not contain the necessary files for processing.');
                 }
             });
         }
