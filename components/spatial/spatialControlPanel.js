@@ -343,12 +343,6 @@ const spatialControlPanel = {
                     crossOrigin: 'anonymous'
                 });
             }
-            else if(mapSettings.selectedBaseLayer === 'esristreet'){
-                blsource = new ol.source.XYZ({
-                    url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
-                    crossOrigin: 'anonymous'
-                });
-            }
             else if(mapSettings.selectedBaseLayer === 'opentopo'){
                 blsource = new ol.source.XYZ({
                     url: 'https://tile.opentopomap.org/{z}/{x}/{y}.png',

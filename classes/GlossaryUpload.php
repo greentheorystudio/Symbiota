@@ -42,7 +42,7 @@ class GlossaryUpload{
 				copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName);
 			}
 		}
-		elseif(array_key_exists('uploadfile',$_FILES)){
+		elseif(array_key_exists('uploadfile',$_FILES) && (strtolower(substr($_FILES['uploadfile']['name'], -4)) === '.jpg' || strtolower(substr($_FILES['uploadfile']['name'], -5)) === '.jpeg' || strtolower(substr($_FILES['uploadfile']['name'], -4)) === '.png')){
 			$this->uploadFileName = $_FILES['uploadfile']['name'];
 			if(is_writable($this->uploadTargetPath)){
                 move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);

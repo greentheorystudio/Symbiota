@@ -133,7 +133,7 @@ class ImageShared{
 		if(!$imgFile){
             $imgFile = 'imgfile';
         }
-	    if($this->targetPath){
+	    if($this->targetPath && (strtolower(substr($_FILES[$imgFile]['name'], -4)) === '.jpg' || strtolower(substr($_FILES[$imgFile]['name'], -5)) === '.jpeg' || strtolower(substr($_FILES[$imgFile]['name'], -4)) === '.png')){
 			if(file_exists($this->targetPath)){
 				$imgFileName = basename($_FILES[$imgFile]['name']);
 				$fileName = $this->cleanFileName($imgFileName);

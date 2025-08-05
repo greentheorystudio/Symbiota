@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../models/Checklists.php');
 include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Permissions.php');
@@ -301,78 +300,6 @@ class SearchService {
             }
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
-    }
-
-    public function prepareOccurrenceChecklistVoucherWhereSql($voucherSearchTermsArr): string
-    {
-        $tempArr = array();
-        $llStrArr = array();
-        if(isset($voucherSearchTermsArr['country']) && $voucherSearchTermsArr['country']){
-            $countryStr = str_replace(';',',', SanitizerService::cleanInStr($this->conn, $voucherSearchTermsArr['country']));
-            $tempArr[] = '(o.country IN("' . $countryStr . '"))';
-        }
-        if(isset($voucherSearchTermsArr['state']) && $voucherSearchTermsArr['state']){
-            $stateStr = str_replace(';',',', SanitizerService::cleanInStr($this->conn, $voucherSearchTermsArr['state']));
-            $tempArr[] = '(o.stateprovince = "' . $stateStr . '")';
-        }
-        if(isset($voucherSearchTermsArr['county']) && $voucherSearchTermsArr['county']){
-            $countyStr = str_replace(';',',', $voucherSearchTermsArr['county']);
-            $cArr = explode(',', $countyStr);
-            $cStArr = array();
-            foreach($cArr as $str){
-                $cStArr[] = '(o.county REGEXP "^' . SanitizerService::cleanInStr($this->conn, $str) . '")';
-            }
-            $tempArr[] = '(' . implode(' OR ', $cStArr) . ')';
-        }
-        if(isset($voucherSearchTermsArr['locality']) && $voucherSearchTermsArr['locality']){
-            $localityStr = str_replace(';',',', $voucherSearchTermsArr['locality']);
-            $locArr = explode(',', $localityStr);
-            $locStArr = array();
-            foreach($locArr as $str){
-                $str = SanitizerService::cleanInStr($this->conn, $str);
-                $locStArr[] = '(o.locality REGEXP "' . $str . '")';
-            }
-            $tempArr[] = '(' . implode(' OR ', $locStArr) . ')';
-        }
-        if(isset($voucherSearchTermsArr['taxon']) && $voucherSearchTermsArr['taxon']){
-            $tStr = SanitizerService::cleanInStr($this->conn, $voucherSearchTermsArr['taxon']);
-            $tidPar = (new Taxa)->getTid($tStr);
-            if($tidPar){
-                $tempArr[] = '(o.tid IN (SELECT tid FROM taxaenumtree WHERE parenttid = ' . $tidPar . '))';
-            }
-        }
-        if(isset($voucherSearchTermsArr['latnorth'], $voucherSearchTermsArr['latsouth']) && is_numeric($voucherSearchTermsArr['latnorth']) && is_numeric($voucherSearchTermsArr['latsouth'])){
-            $llStrArr[] = '(o.decimallatitude BETWEEN ' . $voucherSearchTermsArr['latsouth'] . ' AND ' . $voucherSearchTermsArr['latnorth'] . ')';
-        }
-        if(isset($voucherSearchTermsArr['lngwest'], $voucherSearchTermsArr['lngeast']) && is_numeric($voucherSearchTermsArr['lngwest']) && is_numeric($voucherSearchTermsArr['lngeast'])){
-            $llStrArr[] = '(o.decimallongitude BETWEEN ' . $voucherSearchTermsArr['lngwest'] . ' AND ' . $voucherSearchTermsArr['lngeast'] . ')';
-        }
-        if(count($llStrArr) > 0){
-            $llStr = '(' . implode(' AND ', $llStrArr) . ')';
-            if(array_key_exists('latlngor', $voucherSearchTermsArr)) {
-                $llStr = 'OR (' . $llStr . ') ';
-            }
-            $tempArr[] = $llStr;
-        }
-        elseif(isset($voucherSearchTermsArr['onlycoord']) && $voucherSearchTermsArr['onlycoord']){
-            $tempArr[] = '(o.decimallatitude IS NOT NULL)';
-        }
-        if(isset($voucherSearchTermsArr['excludecult']) && $voucherSearchTermsArr['excludecult']){
-            $tempArr[] = '(o.cultivationstatus = 0 OR ISNULL(o.cultivationstatus))';
-        }
-        if(isset($voucherSearchTermsArr['collid']) && is_numeric($voucherSearchTermsArr['collid'])){
-            $tempArr[] = '(o.collid = ' . (int)$voucherSearchTermsArr['collid'] . ')';
-        }
-        if(isset($voucherSearchTermsArr['recordedby']) && $voucherSearchTermsArr['recordedby']){
-            $collStr = str_replace(',', ';', $voucherSearchTermsArr['recordedby']);
-            $collArr = explode(';', $collStr);
-            $collectorStrArr = array();
-            foreach($collArr as $str => $postArr){
-                $collectorStrArr[] = '(o.recordedby REGEXP "' . SanitizerService::cleanInStr($this->conn, $voucherSearchTermsArr['recordedby']) . '")';
-            }
-            $tempArr[] = '(' . implode(' OR ', $collectorStrArr) . ')';
-        }
-        return count($tempArr) > 0 ? '(' . implode(' AND ', $tempArr) . ')' : '';
     }
 
     public function prepareOccurrenceCollectionNumberWhereSql($searchTermsArr): string
@@ -851,7 +778,12 @@ class SearchService {
             $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['occidArr']) . '))';
         }
         if(array_key_exists('clid', $searchTermsArr) && $searchTermsArr['clid']){
-            $sqlWherePartsArr[] = '(v.clid IN(' . $searchTermsArr['clid'] . '))';
+            $sqlStr = '(v.clid = ' . (int)$searchTermsArr['clid'];
+            if(!$GLOBALS['IS_ADMIN']) {
+                $sqlStr .= ' AND (' . (count($GLOBALS['PERMITTED_CHECKLISTS']) > 0 ? ('v.clid IN(' . implode(',', $GLOBALS['PERMITTED_CHECKLISTS']) . ') OR ') : '') . 'ch.access = "public")';
+            }
+            $sqlStr .= ')';
+            $sqlWherePartsArr[] = $sqlStr;
         }
         if(array_key_exists('dsid', $searchTermsArr) && $searchTermsArr['dsid']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM omoccurdatasetlink WHERE datasetid = ' . (int)$searchTermsArr['dsid'] . '))';
@@ -952,15 +884,6 @@ class SearchService {
         }
         if(array_key_exists('hasgenetic',$searchTermsArr) && $searchTermsArr['hasgenetic']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM omoccurgenetic))';
-        }
-        if(array_key_exists('targetclid',$searchTermsArr) && $searchTermsArr['targetclid'] && is_numeric($searchTermsArr['targetclid'])){
-            $checklist = (new Checklists)->getChecklistFromClid($searchTermsArr['targetclid']);
-            if($checklist && $checklist['searchterms']){
-                $checklistVoucherStr = $this->prepareOccurrenceChecklistVoucherWhereSql(json_decode($checklist['searchterms'], true));
-                if($checklistVoucherStr){
-                    $sqlWherePartsArr[] = '(' . $checklistVoucherStr . ') AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid = ' . (int)$searchTermsArr['targetclid'] . '))';
-                }
-            }
         }
         if(array_key_exists('phuid',$searchTermsArr) && $searchTermsArr['phuid']){
             $sqlWherePartsArr[] = '(i.photographeruid IN(' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['phuid']) . '))';
@@ -1301,6 +1224,7 @@ class SearchService {
         }
         if(array_key_exists('clid', $searchTermsArr)) {
             $returnStr .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
+            $returnStr .= 'LEFT JOIN fmchecklists AS ch ON v.clid = ch.clid ';
         }
         if(array_key_exists('polyArr', $searchTermsArr)) {
             $returnStr .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';

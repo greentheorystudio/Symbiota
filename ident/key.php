@@ -628,6 +628,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 displayQueryPopup.value = true;
                             }
                             searchStore.initializeSearchStorage(queryId);
+                            if(Number(queryId) > 0 && searchStore.getSearchTermsValid){
+                                buildChecklist();
+                            }
                         }
                     });
 
