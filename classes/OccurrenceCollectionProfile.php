@@ -150,7 +150,7 @@ class OccurrenceCollectionProfile {
 			$rightsHolder = SanitizerService::cleanInStr($this->conn,$postArr['rightsholder']);
 			$accessRights = SanitizerService::cleanInStr($this->conn,$postArr['accessrights']);
             $isPublic = ((array_key_exists('isPublic',$postArr) && (int)$postArr['isPublic'] === 1)?'1':'0');
-			if($_FILES['iconfile']['name']){
+			if($_FILES['iconfile']['name'] && (strtolower(substr($_FILES['iconfile']['name'], -4)) === '.jpg' || strtolower(substr($_FILES['iconfile']['name'], -5)) === '.jpeg' || strtolower(substr($_FILES['iconfile']['name'], -4)) === '.png')){
 				$icon = $this->addIconImageFile();
 			}
 			else{
@@ -229,7 +229,7 @@ class OccurrenceCollectionProfile {
 		$gbifPublish = (array_key_exists('publishToGbif',$postArr)?$postArr['publishToGbif']:0);
         $idigPublish = (array_key_exists('publishToIdigbio',$postArr)?$postArr['publishToIdigbio']:0);
         $guidTarget = (array_key_exists('guidtarget',$postArr)?$postArr['guidtarget']:'');
-		if($_FILES['iconfile']['name']){
+		if($_FILES['iconfile']['name'] && (strtolower(substr($_FILES['iconfile']['name'], -4)) === '.jpg' || strtolower(substr($_FILES['iconfile']['name'], -5)) === '.jpeg' || strtolower(substr($_FILES['iconfile']['name'], -4)) === '.png')){
 			$icon = $this->addIconImageFile();
 		}
 		else{
@@ -298,24 +298,25 @@ class OccurrenceCollectionProfile {
 
 	private function addIconImageFile(): string
 	{
-		$targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
-		$urlBase = '/content/collicon/';
-		$fileName = basename($_FILES['iconfile']['name']);
-		$imgExt = '';
-		if($p = strrpos($fileName, '.')) {
-			$imgExt = strtolower(substr($fileName, $p));
-		}
-		$fileName = str_replace(array('%20', '%23', ' ', '__'), '_',$fileName);
-		if(strlen($fileName) > 30) {
-			$fileName = substr($fileName, 0, 30);
-		}
-		$fileName .= $imgExt;
+        $fullUrl = '';
+        if(strtolower(substr($_FILES['iconfile']['name'], -4)) === '.jpg' || strtolower(substr($_FILES['iconfile']['name'], -5)) === '.jpeg' || strtolower(substr($_FILES['iconfile']['name'], -4)) === '.png'){
+            $targetPath = $GLOBALS['SERVER_ROOT'].'/content/collicon/';
+            $urlBase = '/content/collicon/';
+            $fileName = basename($_FILES['iconfile']['name']);
+            $imgExt = '';
+            if($p = strrpos($fileName, '.')) {
+                $imgExt = strtolower(substr($fileName, $p));
+            }
+            $fileName = str_replace(array('%20', '%23', ' ', '__'), '_',$fileName);
+            if(strlen($fileName) > 30) {
+                $fileName = substr($fileName, 0, 30);
+            }
+            $fileName .= $imgExt;
 
-		$fullUrl = '';
-		if(is_writable($targetPath) && move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath . $fileName)) {
-            $fullUrl = $urlBase . $fileName;
+            if(is_writable($targetPath) && move_uploaded_file($_FILES['iconfile']['tmp_name'], $targetPath . $fileName)) {
+                $fullUrl = $urlBase . $fileName;
+            }
         }
-
 		return $fullUrl;
 	}
 

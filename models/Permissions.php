@@ -183,6 +183,8 @@ class Permissions{
     {
         if(isset($_SESSION['PARAMS_ARR']['uid']) && (int)$_SESSION['PARAMS_ARR']['uid'] > 0){
             $permittedCollections = array();
+            $permittedChecklists = array();
+            $permittedProjects = array();
             $userrights = array();
             $sql = 'SELECT role, tablepk FROM userroles WHERE uid = ' . (int)$_SESSION['PARAMS_ARR']['uid'] . ' ';
             //echo $sql;
@@ -192,8 +194,14 @@ class Permissions{
                 foreach($rows as $index => $row){
                     if($row['tablepk']){
                         $userrights[$row['role']][] = (int)$row['tablepk'];
-                        if(($row['role'] === 'CollAdmin' || $row['role'] === 'CollEditor' || $row['role'] === 'CollTaxon') && !in_array((int)$row['tablepk'], $permittedCollections, true)){
+                        if(($row['role'] === 'CollAdmin' || $row['role'] === 'CollEditor') && !in_array((int)$row['tablepk'], $permittedCollections, true)){
                             $permittedCollections[] = (int)$row['tablepk'];
+                        }
+                        if($row['role'] === 'ClAdmin' && !in_array((int)$row['tablepk'], $permittedChecklists, true)){
+                            $permittedChecklists[] = (int)$row['tablepk'];
+                        }
+                        if($row['role'] === 'ProjAdmin' && !in_array((int)$row['tablepk'], $permittedProjects, true)){
+                            $permittedProjects[] = (int)$row['tablepk'];
                         }
                     }
                     else{
@@ -205,6 +213,8 @@ class Permissions{
             $_SESSION['USER_RIGHTS'] = $userrights;
             $GLOBALS['USER_RIGHTS'] = $userrights;
             $GLOBALS['PERMITTED_COLLECTIONS'] = $permittedCollections;
+            $GLOBALS['PERMITTED_CHECKLISTS'] = $permittedChecklists;
+            $GLOBALS['PERMITTED_PROJECTS'] = $permittedProjects;
         }
     }
 

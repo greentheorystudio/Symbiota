@@ -65,41 +65,6 @@ class ImageProcessor {
         }
     }
 
-    public function loadImageFile(): string
-    {
-        $retStr = '';
-        $inFileName = basename($_FILES['uploadfile']['name']);
-        $ext = substr(strrchr($inFileName, '.'), 1);
-        $fileName = 'imageMappingFile_'.time();
-        $fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/';
-        if(is_writable($fullPath) && move_uploaded_file($_FILES['uploadfile']['tmp_name'], $fullPath . $fileName . '.' . $ext)) {
-            if($ext === 'zip'){
-                $zipFilePath = $fullPath.$fileName.'.zip';
-                $ext = '';
-                $zip = new ZipArchive;
-                $res = $zip->open($zipFilePath);
-                if($res === TRUE) {
-                    for($i = 0; $i < $zip->numFiles; $i++){
-                        $fileExt = substr(strrchr($zip->getNameIndex($i), '.'), 1);
-                        if($fileExt === 'csv' || $fileExt === 'txt'){
-                            $ext = $fileExt;
-                            $zip->renameIndex($i, $fileName.'.'.$ext);
-                            $zip->extractTo($fullPath,$fileName.'.'.$ext);
-                            $zip->close();
-                            unlink($zipFilePath);
-                            break;
-                        }
-                    }
-                }
-                else{
-                    echo 'failed, code:' . $res;
-                }
-            }
-            $retStr = $fileName.'.'.$ext;
-        }
-        return $retStr;
-    }
-
     public function echoFileMapping($fileName): void
     {
         $fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/'.$fileName;
