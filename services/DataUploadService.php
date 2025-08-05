@@ -541,6 +541,10 @@ class DataUploadService {
             $returnArr['baseFolderPath'] = $targetPath;
             $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
         }
+        if(!$this->validateDwcaFilenameArr($returnArr['files'])){
+            FileSystemService::deleteDirectory($targetPath);
+            $returnArr['files'] = array();
+        }
         return $returnArr;
     }
 
@@ -677,6 +681,20 @@ class DataUploadService {
             $returnArr['baseFolderPath'] = $targetPath;
             $returnArr['files'] = FileSystemService::getDirectoryFilenameArr($targetPath);
         }
+        if(!$this->validateDwcaFilenameArr($returnArr['files'])){
+            FileSystemService::deleteDirectory($targetPath);
+            $returnArr['files'] = array();
+        }
         return $returnArr;
+    }
+
+    public function validateDwcaFilenameArr($arr): bool
+    {
+        foreach($arr as $filename){
+            if(strtolower($filename) === 'meta.xml'){
+                return true;
+            }
+        }
+        return false;
     }
 }
