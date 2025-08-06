@@ -37,6 +37,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         displayAuthors: false,
         displayDetails: false,
         displayImages: false,
+        displayKey: false,
         displaySortByOptions: [
             {value: 'family', label: 'Family/Scientific Name'},
             {value: 'sciname', label: 'Scientific Name'}
@@ -125,6 +126,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         getDisplayImages(state) {
             return state.displayImages;
+        },
+        getDisplayKey(state) {
+            return state.displayKey;
         },
         getDisplaySortByOptions(state) {
             return state.displaySortByOptions;
@@ -374,6 +378,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 if(this.checklistData['defaultsettings'].hasOwnProperty('dalpha') && Number(this.checklistData['defaultsettings']['dalpha']) === 1){
                     this.displaySortVal = 'sciname';
                 }
+                if(this.checklistData['defaultsettings'].hasOwnProperty('keyactive') && Number(this.checklistData['defaultsettings']['keyactive']) === 1){
+                    this.displayKey = true;
+                }
             }
         },
         processDownloadRequest(name, type, callback){
@@ -515,6 +522,12 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         updateChecklistEditData(key, value) {
             this.checklistEditData[key] = value;
+        },
+        updateChecklistEditDefaultSettingsData(key, value) {
+            if(!this.checklistEditData['defaultsettings']){
+                this.checklistEditData['defaultsettings'] = {};
+            }
+            this.checklistEditData['defaultsettings'][key] = value;
         },
         updateChecklistRecord(callback) {
             const formData = new FormData();

@@ -54,7 +54,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     </template>
                 </template>
                 <template v-else-if="Number(pId) > 0">
-                    <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">Project Checklists</a> &gt;&gt;
+                    <a :href="(clientRoot + '/projects/project.php?pid=' + pId)">Project Checklists</a> &gt;&gt;
                     <span class="text-bold">Key: {{ projectName }} Project</span>
                 </template>
                 <template v-else>

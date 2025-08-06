@@ -60,7 +60,7 @@ const spatialAnalysisModule = {
         'spatial-side-button-tray': spatialSideButtonTray
     },
     setup(props, context) {
-        const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, writeMySQLWktString } = useCore();
+        const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getCorrectedPolygonCoordArr, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, validatePolygonCoordArr, writeMySQLWktString } = useCore();
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
@@ -445,10 +445,8 @@ const spatialAnalysisModule = {
         }
 
         function createPolysFromFootprintWKT(footprintWKT) {
-            let wktFormat = new ol.format.WKT();
-            const footprintpoly = wktFormat.readFeature(footprintWKT, mapProjection);
+            const footprintpoly = getValidatedFootprintWkt(footprintWKT);
             if(footprintpoly){
-                footprintpoly.getGeometry().transform(wgs84Projection, mapProjection);
                 mapSettings.selectSource.addFeature(footprintpoly);
                 mapSettings.selectedFeatures.push(footprintpoly);
                 processInputSelections();
@@ -619,7 +617,6 @@ const spatialAnalysisModule = {
                 if(feature){
                     const selectedClone = feature.clone();
                     const geoType = selectedClone.getGeometry().getType();
-                    const wktFormat = new ol.format.WKT();
                     const geoJSONFormat = new ol.format.GeoJSON();
                     if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
                         const selectiongeometry = selectedClone.getGeometry();
@@ -630,7 +627,7 @@ const spatialAnalysisModule = {
                             areaFeat = turf.multiPolygon(polyCoords);
                             area = turf.area(areaFeat);
                             area_km = area / 1000 / 1000;
-                            totalArea = totalArea + area_km;
+                            totalArea += area_km;
                             polyCoords.forEach((poly, index) => {
                                 let singlePoly = turf.polygon(poly);
                                 //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
@@ -647,7 +644,7 @@ const spatialAnalysisModule = {
                             areaFeat = turf.polygon(polyCoords);
                             area = turf.area(areaFeat);
                             area_km = area / 1000 / 1000;
-                            totalArea = totalArea + area_km;
+                            totalArea += area_km;
                             //console.log('start multipolygon length: '+areaFeat.geometry.coordinates.length);
                             if(areaFeat.geometry.coordinates.length > 10){
                                 options = {tolerance: 0.001, highQuality: true};
@@ -672,7 +669,7 @@ const spatialAnalysisModule = {
                         const fixededgeCoordinate = ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326');
                         const groundRadius = turf.distance([fixedcenter[0], fixedcenter[1]], [fixededgeCoordinate[0], fixededgeCoordinate[1]]);
                         const circleArea = Math.PI * groundRadius * groundRadius;
-                        totalArea = totalArea + circleArea;
+                        totalArea += circleArea;
                         const circleObj = {
                             pointlat: fixedcenter[1],
                             pointlong: fixedcenter[0],
@@ -755,6 +752,35 @@ const spatialAnalysisModule = {
                 style = setSymbol(feature);
             }
             return style;
+        }
+
+        function getValidatedFootprintWkt(footprintWKT) {
+            const wktFormat = new ol.format.WKT();
+            const wgs84Projection = new ol.proj.Projection({
+                code: 'EPSG:4326',
+                units: 'degrees'
+            });
+            const mapProjection = new ol.proj.Projection({
+                code: 'EPSG:3857'
+            });
+            const footprintpoly = wktFormat.readFeature(footprintWKT, mapProjection);
+            if(footprintpoly){
+                const polyClone = footprintpoly.clone();
+                polyClone.getGeometry().transform(wgs84Projection, mapProjection);
+                if(validatePolygonCoordArr(polyClone.getGeometry().getCoordinates())){
+                    return polyClone;
+                }
+                else{
+                    const geoJSONFormat = new ol.format.GeoJSON();
+                    const geojsonStr = geoJSONFormat.writeGeometry(footprintpoly.getGeometry());
+                    const coordArr = JSON.parse(geojsonStr).coordinates;
+                    const fixedCoords = getCorrectedPolygonCoordArr(coordArr);
+                    const turfSimple = turf.polygon(fixedCoords);
+                    const polySimple = geoJSONFormat.readFeature(turfSimple, wgs84Projection);
+                    polySimple.getGeometry().transform(wgs84Projection, mapProjection);
+                    return polySimple;
+                }
+            }
         }
 
         function getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, opacity) {
@@ -853,7 +879,7 @@ const spatialAnalysisModule = {
                         loadPointsPostrender();
                     }
                 });
-                processed = processed + lazyLoadCnt;
+                processed += lazyLoadCnt;
                 index++;
             }
             while(processed < searchStore.getSearchRecCnt && !mapSettings.loadPointsError);
@@ -1116,7 +1142,7 @@ const spatialAnalysisModule = {
                                 areaFeat = turf.polygon(polyCoords);
                                 area = turf.area(areaFeat);
                                 area_km = area / 1000 / 1000;
-                                totalArea = totalArea + area_km;
+                                totalArea += area_km;
                                 //console.log('start multipolygon length: '+areaFeat.geometry.coordinates.length);
                                 if(areaFeat.geometry.coordinates.length > 10){
                                     options = {tolerance: 0.001, highQuality: true};

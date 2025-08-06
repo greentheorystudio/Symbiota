@@ -192,7 +192,7 @@ const locationFieldModule = {
                 </div>
             </div>
             <div class="row q-gutter-sm">
-                <occurrence-footprint-wkt-input-element :disabled="disabled" :definition="fieldDefinitions['footprintwkt']" label="Footprint WKT" :value="data.footprintwkt" @update:value="(value) => updateData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>
+                <occurrence-footprint-wkt-input-element :disabled="disabled" :definition="fieldDefinitions['footprintwkt']" label="Footprint WKT" :value="data.footprintwkt" @open:spatial-popup="openSpatialPopup" @update:value="(value) => updateData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>
             </div>
         </template>
         <template v-if="showSpatialPopup">
@@ -399,8 +399,6 @@ const locationFieldModule = {
                 updateData('localitysecurityreason', value);
             }
         }
-
-        Vue.provide('openSpatialPopup', openSpatialPopup);
 
         Vue.onMounted(() => {
             if((!props.disabled && !props.eventMode) || imageCount.value > 0){

@@ -70,7 +70,7 @@ class Checklists{
                 else{
                     $fieldNameArr[] = $field;
                 }
-                if($field === 'defaultsettings' || $field === 'searchterms'){
+                if(($field === 'defaultsettings' || $field === 'searchterms') && $data[$field]){
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
                 }
                 else{

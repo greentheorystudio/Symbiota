@@ -40,7 +40,7 @@ const useProjectStore = Pinia.defineStore('project', {
             return state.projectId;
         },
         getProjectValid(state) {
-            return state.projectEditData['projname'];
+            return !!state.projectEditData['projname'];
         }
     },
     actions: {

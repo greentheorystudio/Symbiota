@@ -42,7 +42,7 @@ const occurrenceFootprintWktInputElement = {
             </div>
         </template>
         <template v-else>
-            <div class="q-ml-md text-bold self-center">
+            <div class="text-bold self-center">
                 <div>
                     <template v-if="value">
                         <span class="text-green-9">Footprint WKT saved</span>
@@ -52,7 +52,7 @@ const occurrenceFootprintWktInputElement = {
                     </template>
                 </div>
             </div>
-            <div v-if="!disabled" class="row justify-start q-gutter-sm">
+            <div v-if="!disabled" class="row justify-start q-gutter-sm no-wrap">
                 <template v-if="definition">
                     <div class="self-center">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openDefinitionPopup();" icon="help" dense>
@@ -124,10 +124,12 @@ const occurrenceFootprintWktInputElement = {
         const displayDefinitionPopup = Vue.ref(false);
         const showFootprintWktText = Vue.ref(false);
 
-        const openSpatialPopup = Vue.inject('openSpatialPopup');
-
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
+        }
+
+        function openSpatialPopup(type) {
+            context.emit('open:spatial-popup', type);
         }
 
         function processValueChange(val) {
