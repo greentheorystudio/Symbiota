@@ -15,7 +15,7 @@ const checklistEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <template v-if="Number(checklistTaxaId) > 0">
+                        <template v-if="Number(checklistId) > 0">
                             <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                                 <q-tab name="details" label="Info" no-caps></q-tab>
                                 <q-tab name="admin" label="Admin" no-caps></q-tab>
@@ -57,6 +57,7 @@ const checklistEditorPopup = {
         const checklistStore = useChecklistStore();
 
         const checklistData = Vue.computed(() => checklistStore.getChecklistData);
+        const checklistId = Vue.computed(() => checklistStore.getChecklistID);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const decimalLatitudeValue = Vue.ref(null);
@@ -134,6 +135,7 @@ const checklistEditorPopup = {
         });
 
         return {
+            checklistId,
             contentRef,
             contentStyle,
             decimalLatitudeValue,

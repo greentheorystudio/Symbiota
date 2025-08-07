@@ -15,7 +15,7 @@ const projectEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <template v-if="Number(checklistTaxaId) > 0">
+                        <template v-if="Number(projectId) > 0">
                             <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                                 <q-tab name="details" label="Info" no-caps></q-tab>
                                 <q-tab name="checklists" label="Checklist Management" no-caps></q-tab>
@@ -46,8 +46,11 @@ const projectEditorPopup = {
         'project-field-module': projectFieldModule
     },
     setup(props, context) {
+        const projectStore = useProjectStore();
+
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const projectId = Vue.computed(() => projectStore.getProjectID);
         const tab = Vue.ref('details');
         const tabStyle = Vue.ref(null);
 
@@ -76,6 +79,7 @@ const projectEditorPopup = {
         return {
             contentRef,
             contentStyle,
+            projectId,
             tab,
             tabStyle,
             closePopup

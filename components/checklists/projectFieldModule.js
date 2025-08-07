@@ -83,7 +83,6 @@ const projectFieldModule = {
                 else{
                     showNotification('negative', 'There was an error saving the project edits.');
                 }
-                context.emit('close:popup');
             });
         }
 

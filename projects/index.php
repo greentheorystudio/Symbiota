@@ -14,6 +14,11 @@ header('X-Frame-Options: SAMEORIGIN');
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <style>
+            div.q-menu.q-position-engine {
+                z-index: 100000000000;
+            }
+        </style>
     </head>
     <body>
         <?php
