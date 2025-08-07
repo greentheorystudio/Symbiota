@@ -82,6 +82,7 @@ const spatialAnalysisModule = {
             ]
         });
         const geoBoundingBoxArr = Vue.ref({});
+        const geoCentroidArr = Vue.ref([]);
         const geoCircleArr = Vue.ref([]);
         const geoPointArr = Vue.ref([]);
         const geoPolyArr = Vue.ref([]);
@@ -1088,6 +1089,7 @@ const spatialAnalysisModule = {
             geoCircleArr.value = [];
             geoBoundingBoxArr.value = Object.assign({}, {});
             geoPointArr.value = [];
+            geoCentroidArr.value = [];
             let totalArea = 0;
             let submitReady = false;
             selectInteraction.value.getFeatures().forEach((feature) => {
@@ -1102,6 +1104,17 @@ const spatialAnalysisModule = {
                     const geoType = selectedClone.getGeometry().getType();
                     const wktFormat = new ol.format.WKT();
                     const geoJSONFormat = new ol.format.GeoJSON();
+                    if(geoType === 'Point'){
+                        const selectiongeometry = selectedClone.getGeometry();
+                        const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
+                        const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
+                        let pointCoords = JSON.parse(geojsonStr).coordinates;
+                        const pointObj = {
+                            decimalLatitude: pointCoords[1],
+                            decimalLongitude: pointCoords[0]
+                        };
+                        geoPointArr.value.push(pointObj);
+                    }
                     if(geoType === 'MultiPolygon' || geoType === 'Polygon') {
                         const boxType = (featureProps.hasOwnProperty('geoType') && featureProps['geoType'] === 'Box');
                         const selectiongeometry = selectedClone.getGeometry();
@@ -1112,7 +1125,7 @@ const spatialAnalysisModule = {
                             areaFeat = turf.polygon(polyCoords);
                             area = turf.area(areaFeat);
                             area_km = area / 1000 / 1000;
-                            totalArea = totalArea + area_km;
+                            totalArea += area_km;
                             geoBoundingBoxArr.value = {
                                 upperlat: polyCoords[0][2][1],
                                 bottomlat: polyCoords[0][0][1],
@@ -1125,7 +1138,7 @@ const spatialAnalysisModule = {
                                 areaFeat = turf.multiPolygon(polyCoords);
                                 area = turf.area(areaFeat);
                                 area_km = area / 1000 / 1000;
-                                totalArea = totalArea + area_km;
+                                totalArea += area_km;
                                 polyCoords.forEach((coords, index) => {
                                     let singlePoly = turf.polygon(coords);
                                     //console.log('start multipolygon length: '+singlePoly.geometry.coordinates.length);
@@ -1158,6 +1171,14 @@ const spatialAnalysisModule = {
                             if(props.inputWindowToolsArr.includes('wkt')) {
                                 const wmswktString = wktFormat.writeGeometry(fixedgeometry);
                                 geoPolyArr.value.push(wmswktString);
+                                const centroid = turf.centroid(turfSimple);
+                                if(centroid && centroid.hasOwnProperty('geometry')){
+                                    const pointObj = {
+                                        decimalLatitude: centroid['geometry']['coordinates'][1],
+                                        decimalLongitude: centroid['geometry']['coordinates'][0]
+                                    };
+                                    geoCentroidArr.value.push(pointObj);
+                                }
                             }
                             else{
                                 const geocoords = fixedgeometry.getCoordinates();
@@ -1174,7 +1195,7 @@ const spatialAnalysisModule = {
                         const fixededgeCoordinate = ol.proj.transform(edgeCoordinate, 'EPSG:3857', 'EPSG:4326');
                         const groundRadius = turf.distance([fixedcenter[0], fixedcenter[1]], [fixededgeCoordinate[0], fixededgeCoordinate[1]]);
                         const circleArea = Math.PI * groundRadius * groundRadius;
-                        totalArea = totalArea + circleArea;
+                        totalArea += circleArea;
                         const circleObj = {
                             pointlat: fixedcenter[1],
                             pointlong: fixedcenter[0],
@@ -1185,17 +1206,6 @@ const spatialAnalysisModule = {
                         };
                         geoCircleArr.value.push(circleObj);
                     }
-                    if(geoType === 'Point'){
-                        const selectiongeometry = selectedClone.getGeometry();
-                        const fixedselectgeometry = selectiongeometry.transform(mapProjection, wgs84Projection);
-                        const geojsonStr = geoJSONFormat.writeGeometry(fixedselectgeometry);
-                        let pointCoords = JSON.parse(geojsonStr).coordinates;
-                        const pointObj = {
-                            decimalLatitude: pointCoords[1],
-                            decimalLongitude: pointCoords[0]
-                        };
-                        geoPointArr.value.push(pointObj);
-                    }
                 }
             });
             updateMapSettings('polyArea', totalArea === 0 ? totalArea : totalArea.toFixed(2));
@@ -1204,6 +1214,7 @@ const spatialAnalysisModule = {
                     submitReady = true;
                     if(props.inputWindowToolsArr.includes('wkt')){
                         inputResponseData.value['footprintWKT'] = geoPolyArr.value[0];
+                        inputResponseData.value['centroid'] = geoCentroidArr.value[0];
                     }
                     else{
                         inputResponseData.value['polyArr'] = geoPolyArr.value;

@@ -355,6 +355,10 @@ const locationFieldModule = {
             }
             else if(popupWindowType.value.includes('wkt') && data.hasOwnProperty('footprintWKT')){
                 updateData('footprintwkt', data['footprintWKT']);
+                if(data.hasOwnProperty('centroid') && !data['decimallatitude'] && !data['decimallongitude']){
+                    updateData('decimallatitude', data['centroid']['decimalLatitude']);
+                    updateData('decimallongitude', data['centroid']['decimalLongitude']);
+                }
             }
         }
 

@@ -106,6 +106,10 @@ const checklistEditorPopup = {
             }
             else if(popupWindowType.value.includes('wkt') && data.hasOwnProperty('footprintWKT')){
                 checklistStore.updateChecklistEditData('footprintwkt', data['footprintWKT']);
+                if(data.hasOwnProperty('centroid')){
+                    checklistStore.updateChecklistEditData('latcentroid', data['centroid']['decimalLatitude']);
+                    checklistStore.updateChecklistEditData('longcentroid', data['centroid']['decimalLongitude']);
+                }
             }
         }
 
