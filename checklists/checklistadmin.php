@@ -175,7 +175,7 @@ if($clid && $isEditor){
                     if($projArr){
                         foreach($projArr as $pid => $pName){
                             echo '<li>';
-                            echo '<a href="../projects/index.php?pid='.$pid.'">'.$pName.'</a>';
+                            echo '<a href="../projects/project.php?pid='.$pid.'">'.$pName.'</a>';
                             echo '</li>';
                         }
                     }

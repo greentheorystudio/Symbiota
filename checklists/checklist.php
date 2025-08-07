@@ -48,7 +48,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
                     </template>
                     <template v-else-if="Number(pId) > 0">
-                        <a :href="(clientRoot + '/projects/index.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
+                        <a :href="(clientRoot + '/projects/project.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
                     </template>
                     <template v-if="Number(clId) > 0">
                         <span class="text-bold">{{ checklistName }}</span>
@@ -69,7 +69,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <h1>{{ checklistName }}</h1>
                             </div>
                             <div class="row q-gutter-sm">
-                                <div v-if="keyModuleIsActive && taxaDataArr.length > 0">
+                                <div v-if="keyActive && taxaDataArr.length > 0">
                                     <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-key" dense unelevated :ripple="false">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Interactive Key
@@ -502,11 +502,15 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
                     const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
                     const displayImagesVal = Vue.computed(() => checklistStore.getDisplayImages);
+                    const displayKeyVal = Vue.computed(() => checklistStore.getDisplayKey);
                     const displayQueryPopup = Vue.ref(false);
                     const displaySynonymsVal = Vue.computed(() => checklistStore.getDisplaySynonyms);
                     const displayVouchersVal = Vue.computed(() => checklistStore.getDisplayVouchers);
                     const editChecklistTaxaId = Vue.ref(0);
                     const isEditor = Vue.ref(false);
+                    const keyActive = Vue.computed(() => {
+                        return (!!displayKeyVal.value && !!keyModuleIsActive);
+                    });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const mapViewUrl = Vue.computed(() => {
                         return (clientRoot + '/spatial/index.php?starr={"clid":"' + clId.value + '"}');
@@ -843,7 +847,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         displayVouchersVal,
                         editChecklistTaxaId,
                         isEditor,
-                        keyModuleIsActive,
+                        keyActive,
                         mapViewUrl,
                         paginationLastPageNumber,
                         paginationPage,

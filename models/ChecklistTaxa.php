@@ -97,25 +97,7 @@ class ChecklistTaxa{
         return $retVal;
     }
 
-    public function getChecklistAcceptedTidArr($clidArr): array
-    {
-        $retArr = array();
-        $sql = 'SELECT DISTINCT t.tidaccepted '.
-            'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
-            'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
-        //echo '<div>'.$sql.'</div>';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $retArr[] = $row['tidaccepted'];
-                unset($rows[$index]);
-            }
-        }
-        return $retArr;
-    }
-
-    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort): array
+    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort = null): array
     {
         $retArr = array();
         $tempArr = array();
@@ -132,13 +114,11 @@ class ChecklistTaxa{
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
                 'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
-            if($taxonSort){
-                if($taxonSort === 'family'){
-                    $sql .= 'ORDER BY t.family, t.sciname ';
-                }
-                else{
-                    $sql .= 'ORDER BY t.sciname ';
-                }
+            if($taxonSort === 'family'){
+                $sql .= 'ORDER BY t.family, t.sciname ';
+            }
+            else{
+                $sql .= 'ORDER BY t.sciname ';
             }
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
@@ -147,24 +127,26 @@ class ChecklistTaxa{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    if(!in_array($row['tidaccepted'], $tidArr, true)){
-                        $tidArr[] = $row['tidaccepted'];
-                    }
-                    $nodeArr = array();
-                    foreach($fields as $val){
-                        $name = $val->name;
-                        if($name === 'family'){
-                            $nodeArr[$name] = $row['family'] ?: '[Incertae Sedis]';
+                    if((int)$row['tidaccepted'] > 0){
+                        if(!in_array($row['tidaccepted'], $tidArr, true)){
+                            $tidArr[] = $row['tidaccepted'];
+                        }
+                        $nodeArr = array();
+                        foreach($fields as $val){
+                            $name = $val->name;
+                            if($name === 'family'){
+                                $nodeArr[$name] = $row['family'] ?: '[Incertae Sedis]';
+                            }
+                            else{
+                                $nodeArr[$name] = $row[$name];
+                            }
+                        }
+                        if($includeKeyData || $includeSynonymyData || $includeVernacularData){
+                            $tempArr[] = $nodeArr;
                         }
                         else{
-                            $nodeArr[$name] = $row[$name];
+                            $retArr[] = $nodeArr;
                         }
-                    }
-                    if($includeKeyData || $includeSynonymyData || $includeVernacularData){
-                        $tempArr[] = $nodeArr;
-                    }
-                    else{
-                        $retArr[] = $nodeArr;
                     }
                     unset($rows[$index]);
                 }

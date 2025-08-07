@@ -37,6 +37,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         displayAuthors: false,
         displayDetails: false,
         displayImages: false,
+        displayKey: false,
         displaySortByOptions: [
             {value: 'family', label: 'Family/Scientific Name'},
             {value: 'sciname', label: 'Scientific Name'}
@@ -125,6 +126,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         getDisplayImages(state) {
             return state.displayImages;
+        },
+        getDisplayKey(state) {
+            return state.displayKey;
         },
         getDisplaySortByOptions(state) {
             return state.displaySortByOptions;
@@ -321,6 +325,36 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 }
             });
         },
+        normalizeSearchTerms() {
+            if(this.checklistData['searchterms']){
+                if(this.checklistData['searchterms'].hasOwnProperty('locality') && this.checklistData['searchterms']['locality']){
+                    this.checklistData['searchterms']['local'] = this.checklistData['searchterms']['locality'];
+                    delete this.checklistData['searchterms']['locality'];
+                }
+                if(this.checklistData['searchterms'].hasOwnProperty('recordedby') && this.checklistData['searchterms']['recordedby']){
+                    this.checklistData['searchterms']['collector'] = this.checklistData['searchterms']['recordedby'];
+                    delete this.checklistData['searchterms']['recordedby'];
+                }
+                if(this.checklistData['searchterms'].hasOwnProperty('collid') && Number(this.checklistData['searchterms']['collid']) > 0){
+                    this.checklistData['searchterms']['db'] = [Number(this.checklistData['searchterms']['collid'])];
+                    delete this.checklistData['searchterms']['collid'];
+                }
+                if(this.checklistData['searchterms'].hasOwnProperty('taxon') && this.checklistData['searchterms']['taxon']){
+                    this.checklistData['searchterms']['taxa'] = this.checklistData['searchterms']['taxon'];
+                    delete this.checklistData['searchterms']['taxon'];
+                }
+                if(this.checklistData['searchterms'].hasOwnProperty('latnorth') && this.checklistData['searchterms']['latnorth'] && this.checklistData['searchterms'].hasOwnProperty('latsouth') && this.checklistData['searchterms']['latsouth'] && this.checklistData['searchterms'].hasOwnProperty('lngeast') && this.checklistData['searchterms']['lngeast'] && this.checklistData['searchterms'].hasOwnProperty('lngwest') && this.checklistData['searchterms']['lngwest']){
+                    this.checklistData['searchterms']['upperlat'] = this.checklistData['searchterms']['latnorth'];
+                    this.checklistData['searchterms']['bottomlat'] = this.checklistData['searchterms']['latsouth'];
+                    this.checklistData['searchterms']['leftlong'] = this.checklistData['searchterms']['lngwest'];
+                    this.checklistData['searchterms']['rightlong'] = this.checklistData['searchterms']['lngeast'];
+                    delete this.checklistData['searchterms']['latnorth'];
+                    delete this.checklistData['searchterms']['latsouth'];
+                    delete this.checklistData['searchterms']['lngwest'];
+                    delete this.checklistData['searchterms']['lngeast'];
+                }
+            }
+        },
         processChecklistDefaultDisplaySettings() {
             if(this.checklistData.hasOwnProperty('defaultsettings') && this.checklistData['defaultsettings']){
                 if(this.checklistData['defaultsettings'].hasOwnProperty('ddetails') && Number(this.checklistData['defaultsettings']['ddetails']) === 1){
@@ -343,6 +377,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 }
                 if(this.checklistData['defaultsettings'].hasOwnProperty('dalpha') && Number(this.checklistData['defaultsettings']['dalpha']) === 1){
                     this.displaySortVal = 'sciname';
+                }
+                if(this.checklistData['defaultsettings'].hasOwnProperty('keyactive') && Number(this.checklistData['defaultsettings']['keyactive']) === 1){
+                    this.displayKey = true;
                 }
             }
         },
@@ -409,6 +446,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     if(resObj.hasOwnProperty('clid') && Number(resObj['clid']) === Number(clid)){
                         this.checklistId = Number(clid);
                         this.checklistData = Object.assign({}, resObj);
+                        this.normalizeSearchTerms();
                         this.checklistEditData = Object.assign({}, this.checklistData);
                         this.clidArr = this.checklistData['clidArr'].slice();
                         this.processChecklistDefaultDisplaySettings();
@@ -484,6 +522,12 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         updateChecklistEditData(key, value) {
             this.checklistEditData[key] = value;
+        },
+        updateChecklistEditDefaultSettingsData(key, value) {
+            if(!this.checklistEditData['defaultsettings']){
+                this.checklistEditData['defaultsettings'] = {};
+            }
+            this.checklistEditData['defaultsettings'][key] = value;
         },
         updateChecklistRecord(callback) {
             const formData = new FormData();
