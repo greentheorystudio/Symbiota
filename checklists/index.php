@@ -42,7 +42,7 @@ header('X-Frame-Options: SAMEORIGIN');
                 <span class="text-bold">Checklists</span>
             </div>
             <div class="q-pa-md">
-                <div class="column q-gutter-md">
+                <div class="column q-gutter-sm">
                     <div class="row justify-between">
                         <h1>
                             Checklists
@@ -53,12 +53,12 @@ header('X-Frame-Options: SAMEORIGIN');
                             </div>
                         </div>
                     </div>
-                    <template v-if="checklistArr.length > 0">
+                    <template v-if=" Object.keys(checklistArr).length > 0">
                         <template v-for="projectGroup in checklistArr">
                             <q-card v-if="projectGroup['checklists'].length > 0" flat>
-                                <q-card-section class="column q-gutter-md">
+                                <q-card-section class="column q-gutter-sm">
                                     <div v-if="projectGroup['projname']" class="row justify-start">
-                                        <div class="text-h4 text-bold">
+                                        <div class="text-h6 text-bold">
                                             <a :href="(clientRoot + '/projects/project.php?pid=' + projectGroup['pid'])">{{ projectGroup['projname'] }}</a>
                                         </div>
                                         <div v-if="projectGroup['coordinates'].length > 0" class="q-ml-sm self-center">
@@ -97,16 +97,16 @@ header('X-Frame-Options: SAMEORIGIN');
                 </div>
                 <template v-if="showChecklistEditorPopup">
                     <checklist-editor-popup
-                        :show-popup="showChecklistEditorPopup"
-                        @close:popup="showChecklistEditorPopup = false"
+                            :show-popup="showChecklistEditorPopup"
+                            @close:popup="showChecklistEditorPopup = false"
                     ></checklist-editor-popup>
                 </template>
                 <template v-if="showSpatialPopup">
                     <spatial-viewer-popup
-                        :coordinate-set="spatialPopupCoordinateSet"
-                        :footprint-wkt="spatialPopupFootprintWkt"
-                        :show-popup="showSpatialPopup"
-                        @close:popup="closeSpatialPopup();"
+                            :coordinate-set="spatialPopupCoordinateSet"
+                            :footprint-wkt="spatialPopupFootprintWkt"
+                            :show-popup="showSpatialPopup"
+                            @close:popup="closeSpatialPopup();"
                     ></spatial-viewer-popup>
                 </template>
             </div>
@@ -245,6 +245,20 @@ header('X-Frame-Options: SAMEORIGIN');
                                     checklistArr.value[pid]['checklists'].sort((a, b) => {
                                         return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
                                     });
+                                }
+                            });
+                            checklistArr.value.sort((a, b) => {
+                                if(a['projname'] === null && b['projname'] === null){
+                                    return 0;
+                                }
+                                else if(a['projname'] === null){
+                                    return 1;
+                                }
+                                else if(b['projname'] === null){
+                                    return -1;
+                                }
+                                else{
+                                    return a['projname'].toLowerCase().localeCompare(b['projname'].toLowerCase());
                                 }
                             });
                         });

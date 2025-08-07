@@ -190,6 +190,7 @@ class Checklists{
     public function getChecklistIndexArr(): array
     {
         $retArr = array();
+        $dataArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
         $fieldNameArr[] = 'p.pid';
         $fieldNameArr[] = 'p.projname';
@@ -217,12 +218,12 @@ class Checklists{
                 $coordArr = array();
                 $pid = (int)$row['ispublic'] === 1 ? (int)$row['pid'] : 0;
                 $projectName = $pid > 0 ? $row['projname'] : null;
-                if(!array_key_exists($pid, $retArr)){
-                    $retArr[$pid] = array();
-                    $retArr[$pid]['pid'] = $pid;
-                    $retArr[$pid]['projname'] = $projectName;
-                    $retArr[$pid]['coordinates'] = array();
-                    $retArr[$pid]['checklists'] = array();
+                if(!array_key_exists($pid, $dataArr)){
+                    $dataArr[$pid] = array();
+                    $dataArr[$pid]['pid'] = $pid;
+                    $dataArr[$pid]['projname'] = $projectName;
+                    $dataArr[$pid]['coordinates'] = array();
+                    $dataArr[$pid]['checklists'] = array();
                 }
                 foreach($fields as $val){
                     $name = $val->name;
@@ -237,11 +238,14 @@ class Checklists{
                     $coordArr[] = (float)$row['longcentroid'];
                     $coordArr[] = (float)$row['latcentroid'];
                 }
-                $retArr[$pid]['checklists'][] = $nodeArr;
+                $dataArr[$pid]['checklists'][] = $nodeArr;
                 if($coordArr){
-                    $retArr[$pid]['coordinates'][] = $coordArr;
+                    $dataArr[$pid]['coordinates'][] = $coordArr;
                 }
                 unset($rows[$index]);
+            }
+            foreach($dataArr as $data){
+                $retArr[] = $data;
             }
         }
         return $retArr;
