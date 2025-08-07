@@ -38,7 +38,7 @@ const projectFieldModule = {
             </div>
             <div v-if="canPublicPublish" class="row">
                 <div class="col-grow">
-                    <selector-input-element :options="accessOptions" label="Access" :value="projectData['ispublic'].toString()" @update:value="(value) => updateProjectData('ispublic', value)"></selector-input-element>
+                    <selector-input-element :options="accessOptions" label="Access" :value="Number(projectData['ispublic']).toString()" @update:value="(value) => updateProjectData('ispublic', value)"></selector-input-element>
                 </div>
             </div>
         </div>

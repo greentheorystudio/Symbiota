@@ -1,9 +1,5 @@
 const projectEditorPopup = {
     props: {
-        projectId: {
-            type: Number,
-            default: 0
-        },
         showPopup: {
             type: Boolean,
             default: false
@@ -50,8 +46,6 @@ const projectEditorPopup = {
         'project-field-module': projectFieldModule
     },
     setup(props, context) {
-        const projectStore = useProjectStore();
-
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const tab = Vue.ref('details');
@@ -77,7 +71,6 @@ const projectEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            projectStore.setProject(props.projectId);
         });
 
         return {

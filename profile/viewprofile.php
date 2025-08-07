@@ -49,9 +49,12 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-separator></q-separator>
                     <q-tab-panels v-model="tab">
                         <q-tab-panel v-if="validUser" name="checklists" class="column">
-                            <div class="row justify-end q-pr-md">
+                            <div class="row justify-end q-gutter-sm q-pr-md">
                                 <div>
                                     <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist"/>
+                                </div>
+                                <div>
+                                    <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project"/>
                                 </div>
                             </div>
                             <account-checklist-project-list></account-checklist-project-list>
@@ -70,6 +73,12 @@ header('X-Frame-Options: SAMEORIGIN');
                     :show-popup="showChecklistEditorPopup"
                     @close:popup="showChecklistEditorPopup = false"
                 ></checklist-editor-popup>
+            </template>
+            <template v-if="showProjectEditorPopup">
+                <project-editor-popup
+                    :show-popup="showProjectEditorPopup"
+                    @close:popup="showProjectEditorPopup = false"
+                ></project-editor-popup>
             </template>
         </div>
         <?php
@@ -149,22 +158,27 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/wysiwygInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/projectFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/projectEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const viewProfileModule = Vue.createApp({
                 components: {
                     'account-checklist-project-list': accountChecklistProjectList,
                     'checklist-editor-popup': checklistEditorPopup,
+                    'project-editor-popup': projectEditorPopup,
                     'view-profile-account-module': viewProfileAccountModule,
                     'view-profile-occurrence-module': viewProfileOccurrenceModule
                 },
                 setup() {
                     const baseStore = useBaseStore();
                     const checklistStore = useChecklistStore();
+                    const projectStore = useProjectStore();
                     const userStore = useUserStore();
 
                     const accountInfo = Vue.computed(() => userStore.getUserData);
                     const clientRoot = baseStore.getClientRoot;
                     const showChecklistEditorPopup = Vue.ref(false);
+                    const showProjectEditorPopup = Vue.ref(false);
                     const tab = Vue.ref('account');
                     const uid = baseStore.getSymbUid;
                     const validUser = baseStore.getValidUser;
@@ -172,6 +186,11 @@ header('X-Frame-Options: SAMEORIGIN');
                     function openChecklistEditorPopup() {
                         checklistStore.setChecklist(0);
                         showChecklistEditorPopup.value = true;
+                    }
+
+                    function openProjectEditorPopup() {
+                        projectStore.setProject(0);
+                        showProjectEditorPopup.value = true;
                     }
 
                     Vue.onMounted(() => {
@@ -189,10 +208,12 @@ header('X-Frame-Options: SAMEORIGIN');
                     return {
                         accountInfo,
                         showChecklistEditorPopup,
+                        showProjectEditorPopup,
                         tab,
                         uid,
                         validUser,
-                        openChecklistEditorPopup
+                        openChecklistEditorPopup,
+                        openProjectEditorPopup
                     }
                 }
             });
