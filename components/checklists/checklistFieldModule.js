@@ -12,7 +12,7 @@ const checklistFieldModule = {
                         <q-btn color="secondary" @click="saveChecklistEdits();" label="Save Edits" :disabled="!editsExist || !checklistValid" />
                     </template>
                     <template v-else>
-                        <q-btn color="secondary" @click="createChecklist();" label="Create Checklist" :disabled="!checklistValid" />
+                        <q-btn color="secondary" @click="createChecklist();" label="Create" :disabled="!checklistValid" />
                     </template>
                 </div>
             </div>

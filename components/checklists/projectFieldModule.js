@@ -12,7 +12,7 @@ const projectFieldModule = {
                         <q-btn color="secondary" @click="saveProjectEdits();" label="Save Edits" :disabled="!editsExist || !projectValid" />
                     </template>
                     <template v-else>
-                        <q-btn color="secondary" @click="createProject();" label="Create Project" :disabled="!projectValid" />
+                        <q-btn color="secondary" @click="createProject();" label="Create" :disabled="!projectValid" />
                     </template>
                 </div>
             </div>
@@ -28,7 +28,7 @@ const projectFieldModule = {
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element data-type="textarea" label="Description" :value="projectData['fulldescription']" maxlength="5000" @update:value="(value) => updateProjectData('fulldescription', value)"></text-field-input-element>
+                    <wysiwyg-input-element label="Description" :value="projectData['fulldescription']" @update:value="(value) => updateProjectData('fulldescription', value)"></wysiwyg-input-element>
                 </div>
             </div>
             <div class="row">
@@ -45,7 +45,8 @@ const projectFieldModule = {
     `,
     components: {
         'selector-input-element': selectorInputElement,
-        'text-field-input-element': textFieldInputElement
+        'text-field-input-element': textFieldInputElement,
+        'wysiwyg-input-element': wysiwygInputElement
     },
     setup(_, context) {
         const { hideWorking, showNotification, showWorking } = useCore();

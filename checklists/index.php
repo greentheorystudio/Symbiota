@@ -53,7 +53,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             </div>
                         </div>
                     </div>
-                    <template v-if=" Object.keys(checklistArr).length > 0">
+                    <template v-if="Object.keys(checklistArr).length > 0">
                         <template v-for="projectGroup in checklistArr">
                             <q-card v-if="projectGroup['checklists'].length > 0" flat>
                                 <q-card-section class="column q-gutter-sm">
@@ -97,16 +97,16 @@ header('X-Frame-Options: SAMEORIGIN');
                 </div>
                 <template v-if="showChecklistEditorPopup">
                     <checklist-editor-popup
-                            :show-popup="showChecklistEditorPopup"
-                            @close:popup="showChecklistEditorPopup = false"
+                        :show-popup="showChecklistEditorPopup"
+                        @close:popup="showChecklistEditorPopup = false"
                     ></checklist-editor-popup>
                 </template>
                 <template v-if="showSpatialPopup">
                     <spatial-viewer-popup
-                            :coordinate-set="spatialPopupCoordinateSet"
-                            :footprint-wkt="spatialPopupFootprintWkt"
-                            :show-popup="showSpatialPopup"
-                            @close:popup="closeSpatialPopup();"
+                        :coordinate-set="spatialPopupCoordinateSet"
+                        :footprint-wkt="spatialPopupFootprintWkt"
+                        :show-popup="showSpatialPopup"
+                        @close:popup="closeSpatialPopup();"
                     ></spatial-viewer-popup>
                 </template>
             </div>
