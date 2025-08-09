@@ -116,9 +116,9 @@ class Projects{
     public function getProjectChecklists($pid): array
     {
         $retArr = array();
-        $sql = 'SELECT c.clid, c.`name` '.
+        $sql = 'SELECT c.clid, c.`name`, c.latcentroid, c.longcentroid, c.defaultsettings '.
             'FROM fmchklstprojlink AS p LEFT JOIN fmchecklists AS c ON p.clid = c.clid '.
-            'WHERE p.pid = ' . (int)$pid . ' ';
+            'WHERE p.pid = ' . (int)$pid . ' ORDER BY c.`name` ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -127,6 +127,9 @@ class Projects{
                 $nodeArr = array();
                 $nodeArr['clid'] = $row['clid'];
                 $nodeArr['name'] = $row['name'];
+                $nodeArr['latcentroid'] = $row['latcentroid'];
+                $nodeArr['longcentroid'] = $row['longcentroid'];
+                $nodeArr['defaultsettings'] = $row['defaultsettings'] ? json_decode($row['defaultsettings'], true) : null;
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
             }

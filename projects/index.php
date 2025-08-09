@@ -31,7 +31,7 @@ header('X-Frame-Options: SAMEORIGIN');
             </div>
             <div class="q-pa-md">
                 <div class="column q-gutter-sm">
-                    <div class="row justify-between">
+                    <div class="q-mb-md row justify-between">
                         <h1>
                             Biotic Inventory Projects
                         </h1>
@@ -45,10 +45,10 @@ header('X-Frame-Options: SAMEORIGIN');
                         <template v-for="project in projectArr">
                             <q-card>
                                 <q-card-section>
-                                    <div class="text-h6 text-bold">
+                                    <div class="text-h5 text-bold">
                                         <a :href="(clientRoot + '/projects/project.php?pid=' + project['pid'])">{{ project['projname'] }}</a>
                                     </div>
-                                    <div class="text-subtitle2">{{ 'Managers: ' + project['managers'] }}</div>
+                                    <div class="text-body1 text-bold">{{ 'Managers: ' + project['managers'] }}</div>
                                 </q-card-section>
                                 <q-card-section class="q-pt-none" v-html="project['fulldescription']"></q-card-section>
                             </q-card>
@@ -60,11 +60,11 @@ header('X-Frame-Options: SAMEORIGIN');
                         </div>
                     </template>
                 </div>
-                <template v-if="showChecklistEditorPopup">
-                    <checklist-editor-popup
-                        :show-popup="showChecklistEditorPopup"
-                        @close:popup="showChecklistEditorPopup = false"
-                    ></checklist-editor-popup>
+                <template v-if="showProjectEditorPopup">
+                    <project-editor-popup
+                        :show-popup="showProjectEditorPopup"
+                        @close:popup="showProjectEditorPopup = false"
+                    ></project-editor-popup>
                 </template>
             </div>
         </div>

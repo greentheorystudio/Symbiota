@@ -32,7 +32,7 @@ header('Content-Type: text/html; charset=UTF-8' );
         include(__DIR__ . '/footer.php');
         include_once(__DIR__ . '/config/footer-includes.php');
         ?>
-        <script>
+        <script type="text/javascript">
             const homePageModule = Vue.createApp();
             homePageModule.use(Quasar, { config: {} });
             homePageModule.use(Pinia.createPinia());

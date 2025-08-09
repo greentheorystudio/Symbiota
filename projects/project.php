@@ -3,461 +3,204 @@ include_once(__DIR__ . '/../config/symbbase.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
-$pid = array_key_exists('pid',$_REQUEST)?(int)$_REQUEST['pid']:0;
-$editMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
-$newProj = array_key_exists('newproj',$_REQUEST)?1:0;
-$projSubmit = array_key_exists('projsubmit',$_REQUEST)?$_REQUEST['projsubmit']:'';
-$tabIndex = array_key_exists('tabindex',$_REQUEST)?(int)$_REQUEST['tabindex']:0;
-$statusStr = '';
-
-if(!$pid && array_key_exists('proj',$_GET) && is_numeric($_GET['proj'])) {
-    $pid = $_GET['proj'];
-}
-
-$projManager = new InventoryProjectManager();
-if($pid) {
-    $projManager->setPid($pid);
-}
-
-$isEditor = 0;
-if($GLOBALS['IS_ADMIN'] || (array_key_exists('ProjAdmin',$GLOBALS['USER_RIGHTS']) && in_array($pid, $GLOBALS['USER_RIGHTS']['ProjAdmin'], true))){
-    $isEditor = 1;
-}
-
-if($projSubmit){
-    if($projSubmit === 'addnewproj'){
-        $pid = $projManager->addNewProject($_POST);
-        if(!$pid) {
-            $statusStr = $projManager->getErrorStr();
-        }
-        if($GLOBALS['IS_ADMIN'] || (array_key_exists('ProjAdmin',$GLOBALS['USER_RIGHTS']) && in_array($pid, $GLOBALS['USER_RIGHTS']['ProjAdmin'], true))){
-            $isEditor = 1;
-        }
-    }
-    if($isEditor){
-        if($projSubmit === 'subedit'){
-            $projManager->submitProjEdits($_POST);
-        }
-        elseif($projSubmit === 'subdelete'){
-            if($projManager->deleteProject($_POST['pid'])){
-                $pid = 0;
-            }
-            else{
-                $statusStr = $projManager->getErrorStr();
-            }
-        }
-        elseif($projSubmit === 'deluid'){
-            if(!$projManager->deleteManager($_GET['uid'])){
-                $statusStr = $projManager->getErrorStr();
-            }
-        }
-        elseif($projSubmit === 'Add to Manager List'){
-            if(!$projManager->addManager($_POST['uid'])){
-                $statusStr = $projManager->getErrorStr();
-            }
-        }
-        elseif($projSubmit === 'Add Checklist'){
-            $projManager->addChecklist($_POST['clid']);
-        }
-        elseif($projSubmit === 'Delete Checklist'){
-            $projManager->deleteChecklist($_POST['clid']);
-        }
-    }
-}
-
-$projArr = $projManager->getProjectData();
-$researchList = $projManager->getResearchChecklists();
-$managerArr = $projManager->getManagers();
-if(!$researchList && !$editMode){
-    $editMode = 1;
-}
+$pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
-<?php
-include_once(__DIR__ . '/../config/header-includes.php');
-?>
-<head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Biotic Inventory Projects Index</title>
-    <meta name="description" content="Biotic inventory projects index for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css"/>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/shp.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/stream.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        let tabIndex = <?php echo $tabIndex; ?>;
-
-        document.addEventListener("DOMContentLoaded", function() {
-            $('#tabs').tabs(
-                { active: tabIndex }
-            );
-            $('#infobox').popup({
-                transition: 'all 0.3s',
-                scrolllock: true
-            });
-        });
-
-        function toggleById(target){
-            const obj = document.getElementById(target);
-            if(obj.style.display === "none"){
-                obj.style.display="block";
-            }
-            else {
-                obj.style.display="none";
-            }
-        }
-
-        function toggleResearchInfoBox(){
-            $('#infobox').popup('show');
-        }
-
-        function findPos(obj){
-            let curleft = 0;
-            let curtop = 0;
-            if(obj.offsetParent) {
-                do{
-                    curleft += obj.offsetLeft;
-                    curtop += obj.offsetTop;
-                }
-                while(obj === obj.offsetParent);
-            }
-            return [curleft,curtop];
-        }
-
-        function validateProjectForm(f){
-            if(f.projname.value === ""){
-                alert("Project name field cannot be empty.");
-                return false;
-            }
-            else if(isNaN(f.sortsequence.value)){
-                alert("Sort sequence can only be a numeric value.");
-                return false;
-            }
-            else if(f.fulldescription.value.length > 2000){
-                alert("Description can only have a maximum of 2000 characters. The description is currently " + f.fulldescription.value.length + " characters long.");
-                return false;
-            }
-            return true;
-        }
-
-        function validateChecklistForm(f){
-            if(f.clid.value === ""){
-                alert("Choose a checklist from the pull-down");
-                return false;
-            }
-            return true;
-        }
-
-        function validateManagerAddForm(f){
-            if(f.uid.value === ""){
-                alert("Choose a user from the pull-down");
-                return false;
-            }
-            return true;
-        }
-
-        function openSpatialViewerWindow(coordArrJson) {
-            let mapWindow = open("<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/viewerWindow.php?coordJson=" + coordArrJson,"Spatial Viewer","resizable=0,width=800,height=700,left=100,top=20");
-            if (mapWindow.opener == null) {
-                mapWindow.opener = self;
-            }
-            mapWindow.addEventListener('blur', function(){
-                mapWindow.close();
-                mapWindow = null;
-            });
-        }
-    </script>
-    <style>
-        fieldset.form-color{
-            background-color:#FFF380;
-            margin:15px;
-            padding:20px;
-        }
-    </style>
-</head>
-<body>
-<?php
-include(__DIR__ . '/../header.php');
-?>
-
-<div id="mainContainer" style="padding: 10px 15px 15px;">
     <?php
-    echo '<div id="breadcrumbs">';
-    echo "<a href='../index.php'>Home</a> &gt;&gt; ";
-    if($projArr){
-        echo "<a href='index.php'>Biotic Inventory Projects</a> &gt;&gt; ";
-        echo '<b>'.$projArr['projname'].'</b>';
-    }
-    else{
-        echo '<b>Biotic Inventory Projects</b>';
-    }
-    echo '</div>';
-    if($statusStr){
-        ?>
-        <hr/>
-        <div style="margin:20px;font-weight:bold;color:<?php echo (stripos($statusStr,'error')!==false?'red':'green');?>;">
-            <?php echo $statusStr; ?>
-        </div>
-        <hr/>
-        <?php
-    }
-    if($pid || $newProj){
-        if($isEditor && !$newProj){
-            ?>
-            <div style="float:right;" title="Toggle Editing Functions">
-                <a href="#" onclick="toggleById('tabs');return false;"><i style="width:20px;height:20px;" class="fas fa-cog"></i></a>
-            </div>
-            <?php
-        }
-        if($projArr){
-            ?>
-            <h1><?php echo $projArr['projname']; ?></h1>
-            <div style='margin: 10px;'>
-                <div>
-                    <b>Project Managers:</b>
-                    <?php echo $projArr['managers'];?>
-                </div>
-                <div style='margin-top:10px;'>
-                    <?php echo $projArr['fulldescription'];?>
-                </div>
-                <div style='margin-top:10px;'>
-                    <?php echo $projArr['notes']; ?>
-                </div>
-            </div>
-            <?php
-        }
-        if(($pid && $isEditor) || $newProj){
-            ?>
-            <div id="tabs" style="min-height:550px;margin:10px;display:<?php echo ($newProj||$editMode?'block':'none'); ?>;">
-                <ul>
-                    <li><a href="#mdtab"><span>Metadata</span></a></li>
-                    <?php
-                    if($pid){
-                        ?>
-                        <li><a href="managertab.php?pid=<?php echo $pid; ?>"><span>Inventory Managers</span></a></li>
-                        <li><a href="checklisttab.php?pid=<?php echo $pid; ?>"><span>Checklist Management</span></a></li>
-                        <?php
-                    }
-                    ?>
-                </ul>
-                <div id="mdtab">
-                    <fieldset class="form-color">
-                        <legend><b><?php echo ($newProj?'Add New':'Edit'); ?> Project</b></legend>
-                        <form name='projeditorform' action='index.php' method='post' onsubmit="return validateProjectForm(this)">
-                            <table style="width:100%;">
-                                <tr>
-                                    <td>
-                                        Project Name:
-                                    </td>
-                                    <td>
-                                        <input type="text" name="projname" value="<?php echo ($projArr?htmlentities($projArr['projname']):''); ?>" style="width:95%;"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Managers:
-                                    </td>
-                                    <td>
-                                        <input type="text" name="managers" value="<?php echo ($projArr?htmlentities($projArr['managers']):''); ?>" style="width:95%;"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Description:
-                                    </td>
-                                    <td>
-                                        <textarea rows="8" cols="45" name="fulldescription" maxlength="2000" style="width:95%"><?php echo ($projArr?htmlentities($projArr['fulldescription']):'');?></textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Notes:
-                                    </td>
-                                    <td>
-                                        <input type="text" name="notes" value="<?php echo ($projArr?htmlentities($projArr['notes']):'');?>" style="width:95%;"/>
-                                    </td>
-                                </tr>
-                                <?php
-                                if($GLOBALS['PUBLIC_CHECKLIST']){
-                                    ?>
-                                    <tr>
-                                        <td>
-                                            Access:
-                                        </td>
-                                        <td>
-                                            <select name="ispublic">
-                                                <option value="0">Private</option>
-                                                <option value="1" <?php echo ($projArr && $projArr['ispublic']?'SELECTED':''); ?>>Public</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                }
-                                ?>
-                                <tr>
-                                    <td colspan="2">
-                                        <div style="margin:15px;">
-                                            <?php
-                                            if($newProj){
-                                                ?>
-                                                <input type="submit" name="submit" value="Add New Project" />
-                                                <input type="hidden" name="projsubmit" value="addnewproj" />
-                                                <?php
-                                            }
-                                            else{
-                                                ?>
-                                                <input type="hidden" name="pid" value="<?php echo $pid;?>">
-                                                <input type="hidden" name="projsubmit" value="subedit" />
-                                                <input type="submit" name="submit" value="Submit Edits" />
-                                                <?php
-                                            }
-                                            ?>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </form>
-                    </fieldset>
-                    <?php
-                    if($pid){
-                        ?>
-                        <fieldset class="form-color">
-                            <legend><b>Delete Project</b></legend>
-                            <form action="index.php" method="post" onsubmit="return confirm('Warning: Action cannot be undone! Are you sure you want to delete this inventory Project?')">
-                                <input type="hidden" name="pid" value="<?php echo $pid;?>">
-                                <input type="hidden" name="projsubmit" value="subdelete" />
-                                <?php
-                                echo '<input type="submit" name="submit" value="Delete Project" '.((count($managerArr)>1 || $researchList)?'disabled':'').' />';
-                                echo '<div style="margin:10px;color:orange">';
-                                if(count($managerArr) > 1){
-                                    echo 'Inventory project cannot be deleted until all other managers are removed as project managers';
-                                }
-                                elseif($researchList){
-                                    echo 'Inventory project cannot be deleted until all checklists are removed from the project';
-                                }
-                                echo '</div>';
-                                ?>
-                            </form>
-                        </fieldset>
-                        <?php
-                    }
-                    ?>
-                </div>
-            </div>
-            <?php
-        }
-        if($pid){
-            ?>
-            <div style="margin:20px;">
-                <?php
-                if($researchList){
-                    $coordJson = $projManager->getResearchCoords();
-                    ?>
-                    <div style="font-weight:bold;">
-                        Research Checklists
-                        <span onclick="toggleResearchInfoBox();" title="What is a Research Species List?" style="cursor:pointer;">
-								<i style="height:15px;width:15px;" class="far fa-question-circle"></i>
-							</span>
-                        <?php
-                        if($coordJson){
-                            ?>
-                            <a href="#" onclick="openSpatialViewerWindow('<?php echo $coordJson; ?>');" title="Map Checklists">
-                                <i style='height:15px;width:15px;' class="fas fa-globe"></i>
-                            </a>
-                            <?php
-                        }
-                        ?>
-                    </div>
-                    <?php
-                    if($GLOBALS['KEY_MOD_IS_ACTIVE']){
-                        ?>
-                        <div style="margin-left:15px;">
-                            The <i style="width: 12px;" class="fas fa-key"></i>
-                            symbol opens the species list as an interactive key.
-                        </div>
-                        <?php
-                    }
-                    ?>
-                    <div>
-                        <ul>
-                            <?php
-                            foreach($researchList as $key=>$value){
-                                ?>
-                                <li>
-                                    <a href='../checklists/checklist.php?clid=<?php echo $key. '&pid=' .$pid; ?>'>
-                                        <?php echo $value; ?>
-                                    </a>
-                                    <?php
-                                    if($GLOBALS['KEY_MOD_IS_ACTIVE']){
-                                        ?>
-                                        <a href='../ident/key.php?clid=<?php echo $key; ?>&pid=<?php echo $pid; ?>'>
-                                            <i style='width:12px;border:0;' class="fas fa-key"></i>
-                                        </a>
-                                        <?php
-                                    }
-                                    ?>
-                                </li>
-                                <?php
-                            }
-                            ?>
-                        </ul>
-                    </div>
-                    <?php
-                }
-                ?>
-            </div>
-            <?php
-        }
-    }
-    else{
-        $projectArr = $projManager->getProjectList();
-        if($GLOBALS['VALID_USER']){
-            echo '<div><b><a href="index.php?newproj=1">Click here to create a new Biotic Inventory Project</a></b></div>';
-        }
-        if($projectArr){
-            echo '<h1>'.$GLOBALS['DEFAULT_TITLE'].' Biotic Inventory Projects</h1>';
-            foreach($projectArr as $pid => $projList){
-                ?>
-                <h2><a href="index.php?pid=<?php echo $pid; ?>"><?php echo $projList['projname']; ?></a></h2>
-                <div style="margin:0 0 30px 15px;">
-                    <div><b>Managers:</b> <?php echo ($projList['managers']?:'Not defined'); ?></div>
-                    <div style='margin-top:10px;'><?php echo $projList['descr']; ?></div>
-                </div>
-                <?php
-            }
-        }
-        else{
-            echo '<div><b>There are no biotic inventory projects available at this time.</b></div>';
-        }
-    }
+    include_once(__DIR__ . '/../config/header-includes.php');
     ?>
-</div>
-<?php
-include_once(__DIR__ . '/../config/footer-includes.php');
-include(__DIR__ . '/../footer.php');
-?>
+    <head>
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Biotic Inventory Project Details</title>
+        <meta name="description" content="Individual biotic inventory project details in the the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <style>
+            div.q-menu.q-position-engine {
+                z-index: 100000000000;
+            }
+        </style>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/shp.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/stream.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            const PID = <?php echo $pid; ?>;
+        </script>
+    </head>
+    <body>
+        <?php
+        include(__DIR__ . '/../header.php');
+        ?>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/projects/index.php')">Biotic Inventory Projects</a> &gt;&gt;
+                <span class="text-bold">{{ projectData['projname'] }}</span>
+            </div>
+            <div class="q-pa-md column">
+                <div class="q-mb-md full-width row justify-between q-gutter-sm items-center">
+                    <div class="row q-gutter-md">
+                        <div>
+                            <h1>{{ projectData['projname'] }}</h1>
+                        </div>
+                    </div>
+                    <div class="row justify-end q-gutter-sm items-center">
+                        <template v-if="Number(pId) > 0 && isEditor">
+                            <div>
+                                <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showProjectEditorPopup = true" icon="fas fa-cog" dense>
+                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                        Open Project Administration
+                                    </q-tooltip>
+                                </q-btn>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div v-if="projectData.hasOwnProperty('managers') && projectData['managers']" class="text-h6">
+                    <span class="text-bold">Project Managers: </span>{{ projectData['managers'] }}
+                </div>
+                <div v-if="projectData.hasOwnProperty('fulldescription') && projectData['fulldescription']" class="text-body1" v-html="projectData['fulldescription']"></div>
+                <template v-if="projectChecklistArr.length > 0">
+                    <div class="column">
+                        <div class="row justify-start q-gutter-md">
+                            <div class="text-h6 text-bold">Checklists</div>
+                            <div v-if="projectChecklistCoordArr.length > 0" class="self-center">
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showSpatialPopup = true" icon="fas fa-globe" dense>
+                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                        See checklists on map
+                                    </q-tooltip>
+                                </q-btn>
+                            </div>
+                        </div>
+                        <div class="q-mt-xs q-ml-md column">
+                            <template v-for="checklist in projectChecklistArr">
+                                <div class="row justify-start">
+                                    <div class="text-body1">
+                                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])">{{ checklist['name'] }}</a>
+                                    </div>
+                                    <div v-if="keyModuleIsActive && checklist['defaultsettings'] && checklist['defaultsettings'].hasOwnProperty('keyactive') && checklist['defaultsettings']['keyactive']" class="self-center">
+                                        <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + checklist['clid'] + '&pid=' + projectId)" icon="fas fa-key" dense unelevated :ripple="false">
+                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                Open Interactive Key
+                                            </q-tooltip>
+                                        </q-btn>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <template v-if="showSpatialPopup">
+                <spatial-viewer-popup
+                    :coordinate-set="projectChecklistCoordArr"
+                    :show-popup="showSpatialPopup"
+                    @close:popup="showSpatialPopup = false"
+                ></spatial-viewer-popup>
+            </template>
+            <template v-if="showProjectEditorPopup">
+                <project-editor-popup
+                    :show-popup="showProjectEditorPopup"
+                    @close:popup="showProjectEditorPopup = false"
+                ></project-editor-popup>
+            </template>
+        </div>
+        <?php
+        include_once(__DIR__ . '/../config/footer-includes.php');
+        include(__DIR__ . '/../footer.php');
+        ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/wysiwygInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialBaseLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/projectFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/projectEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script type="text/javascript">
+            const projectModule = Vue.createApp({
+                components: {
+                    'project-editor-popup': projectEditorPopup,
+                    'spatial-viewer-popup': spatialViewerPopup
+                },
+                setup() {
+                    const baseStore = useBaseStore();
+                    const projectStore = useProjectStore();
 
-<div id="infobox" data-role="popup" class="well" style="width:400px;height:300px;">
-    <a class="boxclose infobox_close" id="boxclose"></a>
-    <h2>What is a research checklist?</h2>
-    <div style="margin:15px;">
-        Research checklists are pre-compiled by biologists.
-        This is a very controlled method for building a species list, which allows for
-        specific occurrences to be linked to the species names within the checklist and thus serve as vouchers.
-        Occurrence vouchers are proof that the species actually occurs in the given area. If there is any doubt, one
-        can inspect these occurrences for verification or annotate the identification when necessary.
-    </div>
-</div>
-</body>
+                    const clientRoot = baseStore.getClientRoot;
+                    const isEditor = Vue.ref(false);
+                    const keyModuleIsActive = baseStore.getKeyModuleIsActive;
+                    const pId = Vue.ref(PID);
+                    const projectChecklistArr = Vue.computed(() => projectStore.getProjectChecklistArr);
+                    const projectChecklistCoordArr = Vue.computed(() => projectStore.getProjectChecklistCoordArr);
+                    const projectData = Vue.computed(() => projectStore.getProjectData);
+                    const projectId = Vue.computed(() => projectStore.getProjectID);
+                    const showProjectEditorPopup = Vue.ref(false);
+                    const showSpatialPopup = Vue.ref(false);
+
+                    function setEditor() {
+                        const formData = new FormData();
+                        formData.append('permission', 'ProjAdmin');
+                        formData.append('key', pId.value.toString());
+                        formData.append('action', 'validatePermission');
+                        fetch(permissionApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((resData) => {
+                            isEditor.value = resData.includes('ProjAdmin');
+                        });
+                    }
+
+                    function setProjectData() {
+                        projectStore.setProject(pId.value, (pid) => {
+                            if(!Number(pid) > 0){
+                                window.location.href = (clientRoot + '/projects/index.php');
+                            }
+                        });
+                    }
+
+                    Vue.onMounted(() => {
+                        if(Number(pId.value) > 0){
+                            setProjectData();
+                            setEditor();
+                        }
+                        else{
+                            window.location.href = (clientRoot + '/projects/index.php');
+                        }
+                    });
+
+                    return {
+                        clientRoot,
+                        isEditor,
+                        keyModuleIsActive,
+                        pId,
+                        projectChecklistArr,
+                        projectChecklistCoordArr,
+                        projectData,
+                        projectId,
+                        showProjectEditorPopup,
+                        showSpatialPopup
+                    }
+                }
+            });
+            projectModule.use(Quasar, { config: {} });
+            projectModule.use(Pinia.createPinia());
+            projectModule.mount('#mainContainer');
+        </script>
+    </body>
 </html>

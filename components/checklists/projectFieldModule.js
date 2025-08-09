@@ -50,6 +50,7 @@ const projectFieldModule = {
     },
     setup(_, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
+        const baseStore = useBaseStore();
         const projectStore = useProjectStore();
 
         const accessOptions = [
@@ -57,6 +58,7 @@ const projectFieldModule = {
             {value: '1', label: 'Public'}
         ];
         const canPublicPublish = Vue.ref(false);
+        const clientRoot = baseStore.getClientRoot;
         const projectData = Vue.computed(() => projectStore.getProjectData);
         const projectId = Vue.computed(() => projectStore.getProjectID);
         const projectValid = Vue.computed(() => projectStore.getProjectValid);
@@ -65,7 +67,7 @@ const projectFieldModule = {
         function createProject() {
             projectStore.createProjectRecord((newProjectId) => {
                 if(newProjectId > 0){
-                    context.emit('close:popup');
+                    window.location.href = (clientRoot + '/projects/project.php?pid=' + newProjectId);
                 }
                 else{
                     showNotification('negative', 'There was an error creating the project');
