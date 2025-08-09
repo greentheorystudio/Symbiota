@@ -18,6 +18,7 @@ const checklistEditorPopup = {
                         <template v-if="Number(checklistId) > 0">
                             <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                                 <q-tab name="details" label="Info" no-caps></q-tab>
+                                <q-tab v-if="appEnabled" name="app" label="Mobile Checklist" no-caps></q-tab>
                                 <q-tab name="admin" label="Admin" no-caps></q-tab>
                             </q-tabs>
                             <q-separator></q-separator>
@@ -25,8 +26,11 @@ const checklistEditorPopup = {
                                 <q-tab-panel class="q-pa-none" name="details">
                                     <checklist-field-module @open:spatial-popup="openSpatialPopup" @close:popup="closePopup();"></checklist-field-module>
                                 </q-tab-panel>
+                                <q-tab-panel v-if="appEnabled" class="q-pa-none" name="app">
+                                    <checklist-editor-app-config-tab></checklist-editor-app-config-tab>
+                                </q-tab-panel>
                                 <q-tab-panel class="q-pa-none" name="admin">
-                                    
+                                    <checklist-editor-admin-tab></checklist-editor-admin-tab>
                                 </q-tab-panel>
                             </q-tab-panels>
                         </template>
@@ -50,12 +54,16 @@ const checklistEditorPopup = {
         </template>
     `,
     components: {
+        'checklist-editor-admin-tab': checklistEditorAdminTab,
+        'checklist-editor-app-config-tab': checklistEditorAppConfigTab,
         'checklist-field-module': checklistFieldModule,
         'spatial-analysis-popup': spatialAnalysisPopup
     },
     setup(_, context) {
+        const baseStore = useBaseStore();
         const checklistStore = useChecklistStore();
 
+        const appEnabled = baseStore.getAppEnabled;
         const checklistData = Vue.computed(() => checklistStore.getChecklistData);
         const checklistId = Vue.computed(() => checklistStore.getChecklistID);
         const contentRef = Vue.ref(null);
@@ -135,6 +143,7 @@ const checklistEditorPopup = {
         });
 
         return {
+            appEnabled,
             checklistId,
             contentRef,
             contentStyle,

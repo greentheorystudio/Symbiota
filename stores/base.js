@@ -2,6 +2,7 @@ const useBaseStore = Pinia.defineStore('base', {
     state: () => ({
         activateExsiccati: ACTIVATE_EXSICCATI,
         adminEmail: ADMIN_EMAIL,
+        appEnabled: APP_ENABLED,
         clientRoot: CLIENT_ROOT,
         defaultCollectionCategoryId: DEFAULT_COLLECTION_CATEGORY_ID,
         defaultLanguage: DEFAULT_LANG,
@@ -41,6 +42,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getAdminEmail(state) {
             return state.adminEmail;
+        },
+        getAppEnabled(state) {
+            return state.appEnabled;
         },
         getClientRoot(state) {
             return state.clientRoot;

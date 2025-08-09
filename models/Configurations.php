@@ -36,6 +36,7 @@ class Configurations{
     public $coreConfigurations = array(
         'ACTIVATE_EXSICCATI',
         'ADMIN_EMAIL',
+        'APP_ENABLED',
         'CLIENT_ROOT',
         'CSS_VERSION',
         'CSS_VERSION_LOCAL',
@@ -672,6 +673,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['ACTIVATE_EXSICCATI'])){
             $GLOBALS['ACTIVATE_EXSICCATI'] = false;
+        }
+        if(!isset($GLOBALS['APP_ENABLED'])){
+            $GLOBALS['APP_ENABLED'] = false;
         }
         if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
             $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
