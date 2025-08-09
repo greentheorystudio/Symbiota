@@ -10,7 +10,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS'
 	$isEditor = 1;
 }
 ?>
-<script>
+<script type="text/javascript">
     function submitBuForm(f){
         f.action.disabled = true;
         document.getElementById("workingdiv").style.display = "block";

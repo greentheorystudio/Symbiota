@@ -16,12 +16,25 @@ const useProjectStore = Pinia.defineStore('project', {
             parentpid: null,
             sortsequence: null
         },
+        projectChecklistArr: [],
         projectData: {},
         projectEditData: {},
         projectId: 0,
         projectUpdateData: {}
     }),
     getters: {
+        getProjectChecklistArr(state) {
+            return state.projectChecklistArr;
+        },
+        getProjectChecklistCoordArr(state) {
+            const returnArr = [];
+            state.projectChecklistArr.forEach(checklist => {
+                if(checklist['latcentroid'] && checklist['longcentroid']){
+                    returnArr.push([Number(checklist['longcentroid']), Number(checklist['latcentroid'])]);
+                }
+            });
+            return returnArr;
+        },
         getProjectData(state) {
             return state.projectEditData;
         },
@@ -45,6 +58,7 @@ const useProjectStore = Pinia.defineStore('project', {
     },
     actions: {
         clearProjectData() {
+            this.projectId = 0;
             this.projectData = Object.assign({}, this.blankProjectRecord);
         },
         createProjectRecord(callback) {
@@ -100,7 +114,6 @@ const useProjectStore = Pinia.defineStore('project', {
             this.clearProjectData();
             if(Number(pid) > 0){
                 this.projectEditData = Object.assign({}, {});
-                this.projectId = Number(pid);
                 const formData = new FormData();
                 formData.append('pid', pid.toString());
                 formData.append('action', 'getProjectData');
@@ -116,6 +129,7 @@ const useProjectStore = Pinia.defineStore('project', {
                         this.projectId = Number(pid);
                         this.projectData = Object.assign({}, resObj);
                         this.projectEditData = Object.assign({}, this.projectData);
+                        this.setProjectChecklistArr();
                     }
                     if(callback){
                         callback(this.projectId);
@@ -128,6 +142,21 @@ const useProjectStore = Pinia.defineStore('project', {
                     callback();
                 }
             }
+        },
+        setProjectChecklistArr() {
+            const formData = new FormData();
+            formData.append('pid', this.projectId.toString());
+            formData.append('action', 'getProjectChecklists');
+            fetch(projectApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.projectChecklistArr = data;
+            });
         },
         updateProjectEditData(key, value) {
             this.projectEditData[key] = value;

@@ -191,6 +191,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             });
         },
         clearChecklistData() {
+            this.checklistId = 0;
             this.checklistData = Object.assign({}, this.blankChecklistRecord);
             this.checklistTaxaStore.clearChecklistTaxaArr();
             this.imageStore.clearChecklistImageData();

@@ -12,7 +12,7 @@ const checklistFieldModule = {
                         <q-btn color="secondary" @click="saveChecklistEdits();" label="Save Edits" :disabled="!editsExist || !checklistValid" />
                     </template>
                     <template v-else>
-                        <q-btn color="secondary" @click="createChecklist();" label="Create Checklist" :disabled="!checklistValid" />
+                        <q-btn color="secondary" @click="createChecklist();" label="Create" :disabled="!checklistValid" />
                     </template>
                 </div>
             </div>
@@ -170,7 +170,6 @@ const checklistFieldModule = {
                 else{
                     showNotification('negative', 'There was an error saving the checklist edits.');
                 }
-                context.emit('close:popup');
             });
         }
 

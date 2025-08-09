@@ -20,6 +20,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <style>
+            div.q-menu.q-position-engine {
+                z-index: 100000000000;
+            }
+        </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
@@ -122,7 +127,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     </template>
                                     <template v-else-if="isEditor">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/checklistadmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-cog" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showChecklistEditorPopup = true" icon="fas fa-cog" dense>
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Open Checklist Administration
                                                 </q-tooltip>
@@ -309,6 +314,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     </div>
                 </template>
             </div>
+            <template v-if="showChecklistEditorPopup">
+                <checklist-editor-popup
+                    :show-popup="showChecklistEditorPopup"
+                    @close:popup="showChecklistEditorPopup = false"
+                ></checklist-editor-popup>
+            </template>
             <template v-if="showChecklistTaxaEditorPopup">
                 <checklist-taxa-editor-popup
                     :checklist-taxa-id="editChecklistTaxaId"
@@ -420,10 +431,15 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistTaxaImageSelectorModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistTaxaAddEditModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistTaxaEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceFootprintWktInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/wysiwygInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script>
             const checklistModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
+                    'checklist-editor-popup': checklistEditorPopup,
                     'checklist-taxa-editor-popup': checklistTaxaEditorPopup,
                     'search-criteria-popup': searchCriteriaPopup,
                     'selector-input-element': selectorInputElement,
@@ -549,6 +565,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const queryId = QUERYID;
                     const selectedSortByOption = Vue.computed(() => checklistStore.getDisplaySortVal);
+                    const showChecklistEditorPopup = Vue.ref(false);
                     const showChecklistTaxaEditorPopup = Vue.ref(false);
                     const showMoreDescription = Vue.computed(() => checklistStore.getDisplayDetails);
                     const showSpatialPopup = Vue.ref(false);
@@ -856,6 +873,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         projectData,
                         projectName,
                         selectedSortByOption,
+                        showChecklistEditorPopup,
                         showChecklistTaxaEditorPopup,
                         showMoreDescription,
                         showSpatialPopup,
