@@ -57,6 +57,24 @@ const useProjectStore = Pinia.defineStore('project', {
         }
     },
     actions: {
+        addChecklist(clid) {
+            const formData = new FormData();
+            formData.append('pid', this.projectId.toString());
+            formData.append('clid', clid.toString());
+            formData.append('action', 'addChecklistLinkage');
+            fetch(projectApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res && Number(res) === 1){
+                    this.setProjectChecklistArr();
+                }
+            });
+        },
         clearProjectData() {
             this.projectId = 0;
             this.projectData = Object.assign({}, this.blankProjectRecord);
@@ -108,6 +126,24 @@ const useProjectStore = Pinia.defineStore('project', {
             })
             .then((resObj) => {
                 callback(resObj);
+            });
+        },
+        removeChecklist(clid) {
+            const formData = new FormData();
+            formData.append('pid', this.projectId.toString());
+            formData.append('clid', clid.toString());
+            formData.append('action', 'deleteChecklistLinkage');
+            fetch(projectApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(res && Number(res) === 1){
+                    this.setProjectChecklistArr();
+                }
             });
         },
         setProject(pid, callback = null) {

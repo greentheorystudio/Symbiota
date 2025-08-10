@@ -34,4 +34,10 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getProjectArr'){
         echo json_encode($projects->getProjectArr());
     }
+    elseif($action === 'addChecklistLinkage' && $pid && $isEditor && array_key_exists('clid', $_POST)){
+        echo $projects->addChecklistLinkage($pid, (int)$_POST['clid']);
+    }
+    elseif($action === 'deleteChecklistLinkage' && $pid && $isEditor && array_key_exists('clid', $_POST)){
+        echo $projects->deleteChecklistLinkage($pid, (int)$_POST['clid']);
+    }
 }

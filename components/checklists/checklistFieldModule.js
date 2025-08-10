@@ -135,7 +135,7 @@ const checklistFieldModule = {
         const checklistOptions = Vue.computed(() => {
             const returnArr = [];
             checklistArr.value.forEach((checklist) => {
-                if(Number(checklist['collid']) !== checklistId.value){
+                if(Number(checklist['clid']) !== checklistId.value){
                     returnArr.push(checklist);
                 }
             });
@@ -144,6 +144,7 @@ const checklistFieldModule = {
         const checklistValid = Vue.computed(() => checklistStore.getChecklistValid);
         const clientRoot = baseStore.getClientRoot;
         const editsExist = Vue.computed(() => checklistStore.getChecklistEditsExist);
+        const symbUid = baseStore.getSymbUid;
         
         function createChecklist() {
             checklistStore.createChecklistRecord((newChecklistId) => {
@@ -174,19 +175,8 @@ const checklistFieldModule = {
         }
 
         function setChecklistArr() {
-            const formData = new FormData();
-            formData.append('action', 'getChecklistArr');
-            fetch(checklistApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((resData) => {
-                if(resData && resData.length > 0){
-                    checklistArr.value = resData;
-                }
+            checklistStore.getChecklistListByUid(symbUid, (checklistData) => {
+                checklistArr.value = checklistData;
             });
         }
 

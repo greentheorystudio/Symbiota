@@ -300,10 +300,13 @@ class Checklists{
     {
         $retArr = array();
         if((int)$uid > 0){
-            $sql = 'SELECT DISTINCT c.clid, c.name '.
-                'FROM userroles AS r LEFT JOIN fmchecklists AS c ON r.tablepk = c.clid '.
-                'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" '.
-                'ORDER BY c.name ';
+            $sql = 'SELECT DISTINCT c.clid, c.`name` '.
+                'FROM fmchecklists AS c ';
+            if((int)$uid !== (int)$GLOBALS['SYMB_UID'] || !$GLOBALS['IS_ADMIN']){
+                $sql .= 'LEFT JOIN userroles AS r ON c.clid = r.tablepk ';
+                $sql .= 'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" ';
+            }
+            $sql .= 'ORDER BY c.`name` ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

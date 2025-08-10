@@ -128,7 +128,7 @@ const useImageStore = Pinia.defineStore('image', {
             });
         },
         lazyLoadChecklistImageData(numberPerTaxon) {
-            const targetArr = this.checklistTargetTidArr.splice(0, 200);
+            const targetArr = this.checklistTargetTidArr.splice(0, 100);
             const formData = new FormData();
             formData.append('tidArr', JSON.stringify(targetArr));
             formData.append('numberPerTaxon', numberPerTaxon.toString());

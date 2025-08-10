@@ -1,132 +1,98 @@
 const projectEditorChecklistManagementTab = {
     template: `
         <div class="q-pa-md column q-col-gutter-sm">
-            <div class="row justify-between">
-                <div>
-                    <template v-if="checklistTaxaId > 0 && editsExist">
-                        <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
-                    </template>
+            <template v-if="projectChecklistArr.length > 0">
+                <div class="column">
+                    <div class="row justify-start q-gutter-md">
+                        <div class="text-h6 text-bold">Checklists</div>
+                    </div>
+                    <div class="q-mt-xs q-ml-md column">
+                        <template v-for="checklist in projectChecklistArr">
+                            <div class="row justify-start">
+                                <div class="text-body1">
+                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])">{{ checklist['name'] }}</a>
+                                </div>
+                                <div class="self-center">
+                                    <q-btn color="white" text-color="black" size=".6rem" @click="removeChecklist(checklist['clid']);" icon="far fa-trash-alt" dense>
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Remove checklist
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
                 </div>
-                <div class="row justify-end">
-                    <template v-if="checklistTaxaId > 0">
-                        <q-btn color="secondary" @click="saveChecklistTaxaEdits();" label="Save Edits" :disabled="!editsExist || !checklistTaxaValid" />
-                    </template>
-                    <template v-else>
-                        <q-btn color="secondary" @click="addChecklistTaxon();" label="Add Taxon" :disabled="!checklistTaxaValid" />
-                    </template>
+            </template>
+            <template v-else>
+                <div class="text-h4 text-bold">
+                    There are no checklists linked to this project
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <single-scientific-common-name-auto-complete :sciname="checklistTaxaData['sciname']" :disabled="Number(checklistTaxaData['tid']) > 0" label="Taxon" limit-to-options="true" @update:sciname="processTaxonValChange"></single-scientific-common-name-auto-complete>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element label="Habitat" :value="checklistTaxaData['habitat']" maxlength="250" @update:value="(value) => updateChecklistTaxonData('habitat', value)"></text-field-input-element>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element label="Abundance" :value="checklistTaxaData['abundance']" maxlength="50" @update:value="(value) => updateChecklistTaxonData('abundance', value)"></text-field-input-element>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element data-type="textarea" label="Notes" :value="checklistTaxaData['notes']" maxlength="2000" @update:value="(value) => updateChecklistTaxonData('notes', value)"></text-field-input-element>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element label="Source" :value="checklistTaxaData['source']" maxlength="250" @update:value="(value) => updateChecklistTaxonData('source', value)"></text-field-input-element>
-                </div>
-            </div>
-            <div v-if="Number(checklistTaxaId) > 0" class="row justify-end q-gutter-md">
-                <div>
-                    <q-btn color="negative" @click="deleteChecklistTaxon();" label="Remove Taxon" />
-                </div>
-            </div>
+            </template>
+            <q-card flat bordered>
+                <q-card-section>
+                    <div class="text-h6 text-bold">Add a checklist</div>
+                    <div class="row justify-between q-gutter-sm no-wrap">
+                        <div class="col-grow">
+                            <selector-input-element :options="checklistOptions" label="Choose Checklist" :value="selectedChecklistId" option-value="clid" option-label="name" :clearable="true" @update:value="(value) => selectedChecklistId = value"></selector-input-element>
+                        </div>
+                        <div class="col-2 row justify-end">
+                            <div>
+                                <q-btn color="secondary" @click="addChecklist();" label="Add Checklist" :disabled="!selectedChecklistId" />
+                            </div>
+                        </div>
+                    </div>
+                </q-card-section>
+            </q-card>
         </div>
-        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
-        'confirmation-popup': confirmationPopup,
-        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'text-field-input-element': textFieldInputElement
+        'selector-input-element': selectorInputElement
     },
-    setup(props, context) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+    setup() {
+        const baseStore = useBaseStore();
         const checklistStore = useChecklistStore();
+        const projectStore = useProjectStore();
 
-        const checklistTaxaData = Vue.computed(() => checklistStore.getChecklistTaxaData);
-        const checklistTaxaId = Vue.computed(() => checklistStore.getChecklistTaxaID);
-        const checklistTaxaValid = Vue.computed(() => checklistStore.getChecklistTaxaValid);
-        const editsExist = Vue.computed(() => checklistStore.getChecklistTaxaEditsExist);
-        const confirmationPopupRef = Vue.ref(null);
+        const checklistArr = Vue.ref([]);
+        const checklistOptions = Vue.computed(() => {
+            const returnArr = [];
+            checklistArr.value.forEach((checklist) => {
+                const checklistObj = projectChecklistArr.value.length > 0 ? projectChecklistArr.value.find(prochlist => Number(prochlist['clid']) === Number(checklist['clid'])) : null;
+                if(!checklistObj){
+                    returnArr.push(checklist);
+                }
+            });
+            return returnArr;
+        });
+        const projectChecklistArr = Vue.computed(() => projectStore.getProjectChecklistArr);
+        const selectedChecklistId = Vue.ref(null);
+        const symbUid = baseStore.getSymbUid;
 
-        function addChecklistTaxon() {
-            checklistStore.createChecklistTaxaRecord((newChecklistTaxaId) => {
-                if(newChecklistTaxaId > 0){
-                    showNotification('positive','Taxon added successfully.');
-                    context.emit('close:popup');
-                }
-                else{
-                    showNotification('negative', 'There was an error adding the taxon to the checklist');
-                }
+        function addChecklist() {
+            projectStore.addChecklist(selectedChecklistId.value);
+        }
+
+        function removeChecklist(clid) {
+            projectStore.removeChecklist(clid);
+        }
+
+        function setChecklistArr() {
+            checklistStore.getChecklistListByUid(symbUid, (checklistData) => {
+                checklistArr.value = checklistData;
             });
         }
 
-        function deleteChecklistTaxon() {
-            const confirmText = 'Are you sure you want to remove this taxon from the checklist? This action cannot be undone';
-            confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
-                if(val){
-                    checklistStore.deleteChecklistTaxonRecord((res) => {
-                        if(res === 1){
-                            showNotification('positive','The taxon has been removed');
-                            context.emit('close:popup');
-                        }
-                        else{
-                            showNotification('negative', 'There was an error removing the taxon from the checklist');
-                        }
-                    });
-                }
-            }});
-        }
-
-        function processTaxonValChange(taxon) {
-            checklistStore.updateChecklistTaxonEditData('tid', (taxon ? taxon['tid'] : null));
-            checklistStore.updateChecklistTaxonEditData('sciname', (taxon ? taxon['sciname'] : null));
-        }
-
-        function saveChecklistTaxaEdits() {
-            showWorking('Saving edits...');
-            checklistStore.updateChecklistTaxonRecord((res) => {
-                hideWorking();
-                if(res === 1){
-                    showNotification('positive','Edits saved.');
-                }
-                else{
-                    showNotification('negative', 'There was an error saving the taxon edits.');
-                }
-                context.emit('close:popup');
-            });
-        }
-
-        function updateChecklistTaxonData(key, value) {
-            checklistStore.updateChecklistTaxonEditData(key, value);
-        }
+        Vue.onMounted(() => {
+            setChecklistArr();
+        });
 
         return {
-            checklistTaxaData,
-            checklistTaxaId,
-            checklistTaxaValid,
-            confirmationPopupRef,
-            editsExist,
-            addChecklistTaxon,
-            deleteChecklistTaxon,
-            processTaxonValChange,
-            saveChecklistTaxaEdits,
-            updateChecklistTaxonData
+            checklistOptions,
+            projectChecklistArr,
+            selectedChecklistId,
+            addChecklist,
+            removeChecklist
         }
     }
 };
