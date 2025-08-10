@@ -94,23 +94,23 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         {
                             label: 'Checklists',
                             subItems: [
-                                {url: clientRoot + '/projects/index.php?proj=7', label: 'County Floras'},
-                                {url: clientRoot + '/projects/index.php?proj=8', label: 'Wildflowers by Color'},
-                                {url: clientRoot + '/projects/index.php?proj=9', label: 'Wildflowers by Month'},
-                                {url: clientRoot + '/projects/index.php?proj=11', label: 'Largest Plant Families'},
-                                {url: clientRoot + '/projects/index.php?proj=20', label: 'BCW Botany Blitzes'},
-                                {url: clientRoot + '/projects/index.php?proj=25', label: 'WIS/BCW Botany Forays'}
+                                {url: clientRoot + '/projects/project.php?pid=7', label: 'County Floras'},
+                                {url: clientRoot + '/projects/project.php?pid=8', label: 'Wildflowers by Color'},
+                                {url: clientRoot + '/projects/project.php?pid=9', label: 'Wildflowers by Month'},
+                                {url: clientRoot + '/projects/project.php?pid=11', label: 'Largest Plant Families'},
+                                {url: clientRoot + '/projects/project.php?pid=20', label: 'BCW Botany Blitzes'},
+                                {url: clientRoot + '/projects/project.php?pid=25', label: 'WIS/BCW Botany Forays'}
                             ]
                         },
                         {
                             label: 'Floristic Projects',
                             subItems: [
-                                {url: clientRoot + '/projects/index.php?proj=14', label: 'Brule River State Forest'},
-                                {url: clientRoot + '/projects/index.php?proj=15', label: 'Ridgeway Pine Relict SNA'},
-                                {url: clientRoot + '/projects/index.php?proj=23', label: 'Amsterdam Sloughs State Wildlife Area'},
-                                {url: clientRoot + '/projects/index.php?proj=21', label: 'Crex Meadows State Wildlife Area'},
-                                {url: clientRoot + '/projects/index.php?proj=24', label: 'Fish Lake State Wildlife Area'},
-                                {url: clientRoot + '/projects/index.php?proj=19', label: 'Navarino Cedar Swamp State Natural Area'}
+                                {url: clientRoot + '/projects/project.php?pid=14', label: 'Brule River State Forest'},
+                                {url: clientRoot + '/projects/project.php?pid=15', label: 'Ridgeway Pine Relict SNA'},
+                                {url: clientRoot + '/projects/project.php?pid=23', label: 'Amsterdam Sloughs State Wildlife Area'},
+                                {url: clientRoot + '/projects/project.php?pid=21', label: 'Crex Meadows State Wildlife Area'},
+                                {url: clientRoot + '/projects/project.php?pid=24', label: 'Fish Lake State Wildlife Area'},
+                                {url: clientRoot + '/projects/project.php?pid=19', label: 'Navarino Cedar Swamp State Natural Area'}
                             ]
                         },
                         {
