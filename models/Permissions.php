@@ -43,16 +43,20 @@ class Permissions{
         $this->conn->close();
 	}
 
-    public function addPermission($uid, $role, $tablePk = null): void
+    public function addPermission($uid, $role, $tablePk = null): int
     {
+        $returnVal = 0;
         if((int)$uid > 0){
             $sql = 'INSERT IGNORE INTO userroles(uid, role, tablepk, uidassignedby) VALUES('.
                 (int)$uid . ','.
                 '"' . SanitizerService::cleanInStr($this->conn, $role) . '", '.
                 (($tablePk && (int)$tablePk > 0) ? (int)$tablePk : 'NULL') . ','.
                 $GLOBALS['SYMB_UID'] . ') ';
-            $this->conn->query($sql);
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
         }
+        return $returnVal;
     }
 
     public function addPermissions($permissionArr, $uid): int

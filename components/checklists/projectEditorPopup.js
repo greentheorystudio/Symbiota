@@ -27,10 +27,10 @@ const projectEditorPopup = {
                                     <project-field-module @close:popup="closePopup();"></project-field-module>
                                 </q-tab-panel>
                                 <q-tab-panel class="q-pa-none" name="checklists">
-                                    
+                                    <project-editor-checklist-management-tab></project-editor-checklist-management-tab>
                                 </q-tab-panel>
                                 <q-tab-panel class="q-pa-none" name="admin">
-                                    
+                                    <project-editor-admin-tab></project-editor-admin-tab>
                                 </q-tab-panel>
                             </q-tab-panels>
                         </template>
@@ -43,6 +43,8 @@ const projectEditorPopup = {
         </q-dialog>
     `,
     components: {
+        'project-editor-admin-tab': projectEditorAdminTab,
+        'project-editor-checklist-management-tab': projectEditorChecklistManagementTab,
         'project-field-module': projectFieldModule
     },
     setup(props, context) {

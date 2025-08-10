@@ -34,6 +34,18 @@ class Projects{
         $this->conn->close();
 	}
 
+    public function addChecklistLinkage($pid, $clid): int
+    {
+        $retVal = 0;
+        if($pid && $clid){
+            $sql = 'INSERT INTO fmchklstprojlink(pid, clid) VALUES(' . (int)$pid . ', ' . (int)$clid . ')';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function createProjectRecord($data): int
     {
         $newID = 0;
@@ -61,6 +73,18 @@ class Projects{
             (new Permissions)->setUserPermissions();
         }
         return $newID;
+    }
+
+    public function deleteChecklistLinkage($pid, $clid): int
+    {
+        $retVal = 0;
+        if($pid && $clid){
+            $sql = 'DELETE FROM fmchklstprojlink WHERE pid = ' . (int)$pid . ' AND clid = ' . (int)$clid . ' ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function deleteProjectRecord($pid): int

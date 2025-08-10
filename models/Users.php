@@ -290,6 +290,35 @@ class Users{
         return $cnt;
     }
 
+    public function getUserArrByPermission($permission, $tablePk = null): array
+    {
+        $retArr = array();
+        if($permission && $permission !== 'SuperAdmin'){
+            $sql = 'SELECT u.uid, u.firstname, u.lastname, u.username '.
+                'FROM users AS u LEFT JOIN userroles AS r ON u.uid = r.uid '.
+                'WHERE r.role = "' . SanitizerService::cleanInStr($this->conn, $permission) . '" ';
+            if((int)$tablePk > 0){
+                $sql .= 'AND r.tablepk = ' . (int)$tablePk . ' ';
+            }
+            $sql .= 'ORDER BY u.lastname, u.firstname, u.username ';
+            //echo "<div>".$sql."</div>";
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $nodeArr = array();
+                    $nodeArr['uid'] = $row['uid'];
+                    $nodeArr['firstname'] = $row['firstname'];
+                    $nodeArr['lastname'] = $row['lastname'];
+                    $nodeArr['username'] = $row['username'];
+                    $retArr[] = $nodeArr;
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
     public function getUserByEmail($email): array
     {
         $returnArr = array();
@@ -367,6 +396,9 @@ class Users{
         }
         elseif($userType === 'unconfirmed'){
             $whereArr[] = 'validated <> "1"';
+        }
+        elseif($userType === 'nonadmin'){
+            $whereArr[] = 'uid NOT IN(SELECT uid FROM userroles WHERE role = "SuperAdmin")';
         }
         if($keyword){
             $whereArr[] = '(lastname LIKE "'. SanitizerService::cleanInStr($this->conn, $keyword) . '%" OR username LIKE "' . SanitizerService::cleanInStr($this->conn, $keyword) . '%")';

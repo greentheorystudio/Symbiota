@@ -67,4 +67,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'validateAllUnconfirmedUsers'){
         echo $users->validateAllUnconfirmedUsers();
     }
+    elseif($action === 'getUserArrByPermission' && array_key_exists('permission', $_POST)){
+        $tablePk = (array_key_exists('tablepk', $_POST) && (int)$_POST['tablepk'] > 0) ? (int)$_POST['tablepk'] : null;
+        echo json_encode($users->getUserArrByPermission($_POST['permission'], $tablePk));
+    }
 }
