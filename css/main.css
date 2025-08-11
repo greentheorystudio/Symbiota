@@ -5,15 +5,18 @@ body{
 .title {
 	font-weight: bold;
 }
-#mainContainer{
+
+#appContainer{
 	background-color:#FFFFFF;
 	display: block;
 	width: 80%;
 	min-width: 980px;
-	min-height: 300px;
 	margin-left: auto;
 	margin-right: auto;
 	border: 1px solid black;
+}
+#mainContainer{
+    min-height: 300px;
 }
 #bannerContainer{
 	clear: both;
@@ -42,11 +45,11 @@ body{
 	margin: 0 auto;
 	padding: 10px 15px 15px;
 }
-div.navpath {
-	padding-top: 8px;
-	padding-bottom: 0;
-	padding-left: 10px;
-	margin-bottom: 0;
+#breadcrumbs {
+    padding-top: 8px;
+    padding-bottom: 0;
+    padding-left: 10px;
+    margin-bottom: 0;
 }
 #topNavigation {
 	clear:both;
