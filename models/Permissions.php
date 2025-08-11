@@ -46,7 +46,8 @@ class Permissions{
     public function addPermission($uid, $role, $tablePk = null): int
     {
         $returnVal = 0;
-        if((int)$uid > 0){
+        $validatedPermissionArr = $this->validatePermissionEditor(array(array('role' => $role, 'rolepk' => $tablePk)));
+        if((int)$uid > 0 && count($validatedPermissionArr) === 1){
             $sql = 'INSERT IGNORE INTO userroles(uid, role, tablepk, uidassignedby) VALUES('.
                 (int)$uid . ','.
                 '"' . SanitizerService::cleanInStr($this->conn, $role) . '", '.
@@ -62,9 +63,10 @@ class Permissions{
     public function addPermissions($permissionArr, $uid): int
     {
         $returnVal = 0;
-        if($permissionArr && count($permissionArr) > 0){
+        $validatedPermissionArr = $this->validatePermissionEditor($permissionArr);
+        if($validatedPermissionArr && count($validatedPermissionArr) > 0){
             $addArr = array();
-            foreach($permissionArr as $permission){
+            foreach($validatedPermissionArr as $permission){
                 if($permission['role']){
                     $addArr[] = '(' . (int)$uid . ', "' . SanitizerService::cleanInStr($this->conn, $permission['role']) . '", ' . ((int)$permission['rolepk'] > 0 ? (int)$permission['rolepk'] : 'NULL') . ', ' . $GLOBALS['SYMB_UID'] . ')';
                 }
@@ -81,7 +83,7 @@ class Permissions{
     public function deleteAllPermissions($uid): int
     {
         $returnVal = 0;
-        if((int)$uid > 0){
+        if($GLOBALS['IS_ADMIN'] && (int)$uid > 0){
             $sql = 'DELETE FROM userroles WHERE uid = ' . (int)$uid . ' ';
             if($this->conn->query($sql)){
                 $returnVal = 1;
@@ -93,7 +95,8 @@ class Permissions{
     public function deletePermission($uid, $role, $tablePk = null): int
     {
         $returnVal = 0;
-        if((int)$uid > 0){
+        $validatedPermissionArr = $this->validatePermissionEditor(array(array('role' => $role, 'rolepk' => $tablePk)));
+        if((int)$uid > 0 && count($validatedPermissionArr) === 1){
             $sql = 'DELETE FROM userroles '.
                 'WHERE uid = ' . (int)$uid . ' AND role = "' . SanitizerService::cleanInStr($this->conn, $role) . '" ';
             if($tablePk && (int)$tablePk > 0){
@@ -238,6 +241,34 @@ class Permissions{
         }
         elseif($GLOBALS['IS_ADMIN'] || (array_key_exists($permissions, $GLOBALS['USER_RIGHTS']) && (!$key || !is_array($GLOBALS['USER_RIGHTS'][$permissions]) || in_array((int)$key, $GLOBALS['USER_RIGHTS'][$permissions], true)))){
             $returnArr[] = $permissions;
+        }
+        return $returnArr;
+    }
+
+    public function validatePermissionEditor($permissionArr): array
+    {
+        $returnArr = array();
+        foreach($permissionArr as $permission){
+            if(in_array($permission['role'], array('SuperAdmin', 'PublicChecklist', 'RareSppAdmin', 'RareSppReadAll', 'KeyAdmin', 'KeyEditor', 'TaxonProfile', 'Taxonomy'))){
+                if($GLOBALS['IS_ADMIN']){
+                    $returnArr[] = $permission;
+                }
+            }
+            elseif(in_array($permission['role'], array('CollAdmin', 'CollEditor', 'RareSppReader'))){
+                if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array((int)$permission['rolepk'], $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
+                    $returnArr[] = $permission;
+                }
+            }
+            elseif($permission['role'] === 'ClAdmin'){
+                if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin', $GLOBALS['USER_RIGHTS']) && in_array((int)$permission['rolepk'], $GLOBALS['USER_RIGHTS']['ClAdmin'], true))){
+                    $returnArr[] = $permission;
+                }
+            }
+            elseif($permission['role'] === 'ProjAdmin'){
+                if($GLOBALS['IS_ADMIN'] || (array_key_exists('ProjAdmin', $GLOBALS['USER_RIGHTS']) && in_array((int)$permission['rolepk'], $GLOBALS['USER_RIGHTS']['ProjAdmin'], true))){
+                    $returnArr[] = $permission;
+                }
+            }
         }
         return $returnArr;
     }
