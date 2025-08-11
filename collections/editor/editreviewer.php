@@ -200,7 +200,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
         }
         else{
-            echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
         }
         echo '<b>Review/Verify Occurrence Edits</b>';
         echo '</div>';

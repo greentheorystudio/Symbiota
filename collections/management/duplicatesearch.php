@@ -110,7 +110,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<div id="mainContainer" style="padding: 10px 15px 15px;background-color:white;">
         <div id="breadcrumbs">
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
+            <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>">Collection Management</a> &gt;&gt;
             <a href="index.php?collid=<?php echo $collid; ?>">Data Cleaning Tools</a> &gt;&gt;
             <b>Duplicate Merging Module</b>
         </div>

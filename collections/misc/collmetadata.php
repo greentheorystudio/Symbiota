@@ -241,7 +241,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         echo '<div id="breadcrumbs">';
         echo '<a href="../../index.php">Home</a> &gt;&gt; ';
         if($collid){
-            echo '<a href="collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+            echo '<a href="collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
             echo '<b>Edit Collection Metadata</b>';
         }
         else{

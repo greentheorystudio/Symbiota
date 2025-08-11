@@ -55,7 +55,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collid; ?>">Collection Control Panel</a> &gt;&gt;
         <b>Data Exporter and Backup</b>
     </div>
     <h2>Data Exporter and Backup Module</h2>

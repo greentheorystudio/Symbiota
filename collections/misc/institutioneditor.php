@@ -125,7 +125,7 @@ include(__DIR__ . '/../../header.php');
             $targetCollid = key($collList);
         }
         if($targetCollid){
-            echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'&emode=1">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
+            echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
         }
         else{
             echo '<a href="institutioneditor.php">Full Address List</a> &gt;&gt;';

@@ -31,7 +31,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
         <div id="mainContainer">
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
-                <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId + '&emode=1')">Collection Control Panel</a> &gt;&gt;
+                <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)">Collection Control Panel</a> &gt;&gt;
                 <span class="text-bold">Taxonomy Management Module</span>
             </div>
             <div class="q-pa-md">

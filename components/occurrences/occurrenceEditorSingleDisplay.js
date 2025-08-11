@@ -9,7 +9,7 @@ const occurrenceEditorSingleDisplay = {
                             <a :href="clientRoot + '/collections/management/crowdsource/index.php'">Crowd Sourcing Central</a> &gt;&gt;
                         </template>
                         <template v-else-if="isEditor">
-                            <a :href="clientRoot + '/collections/misc/collprofiles.php?collid=' + collId + '&emode=1'">Collection Control Panel</a> &gt;&gt;
+                            <a :href="clientRoot + '/collections/misc/collprofiles.php?collid=' + collId">Collection Control Panel</a> &gt;&gt;
                         </template>
                         <template v-if="occId > 0">
                             <span class="text-bold">Occurrence Editor</span>
