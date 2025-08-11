@@ -1,14 +1,14 @@
 const projectEditorChecklistManagementTab = {
     template: `
-        <div class="q-pa-md column q-col-gutter-sm">
+        <div class="q-pa-md column q-gutter-sm">
             <template v-if="projectChecklistArr.length > 0">
                 <div class="column">
                     <div class="row justify-start q-gutter-md">
                         <div class="text-h6 text-bold">Checklists</div>
                     </div>
-                    <div class="q-mt-xs q-ml-md column">
+                    <div class="q-mt-xs q-ml-md column q-gutter-xs">
                         <template v-for="checklist in projectChecklistArr">
-                            <div class="row justify-start">
+                            <div class="row justify-start q-gutter-md">
                                 <div class="text-body1">
                                     <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])">{{ checklist['name'] }}</a>
                                 </div>
@@ -71,6 +71,7 @@ const projectEditorChecklistManagementTab = {
 
         function addChecklist() {
             projectStore.addChecklist(selectedChecklistId.value);
+            selectedChecklistId.value = null;
         }
 
         function removeChecklist(clid) {

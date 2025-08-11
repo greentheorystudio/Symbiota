@@ -312,7 +312,10 @@ class Checklists{
                 'FROM fmchecklists AS c ';
             if((int)$uid !== (int)$GLOBALS['SYMB_UID'] || !$GLOBALS['IS_ADMIN']){
                 $sql .= 'LEFT JOIN userroles AS r ON c.clid = r.tablepk ';
-                $sql .= 'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" ';
+                $sql .= 'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" AND ISNULL(c.expiration) ';
+            }
+            else{
+                $sql .= 'WHERE ISNULL(c.expiration) ';
             }
             $sql .= 'ORDER BY c.`name` ';
             if($result = $this->conn->query($sql)){
