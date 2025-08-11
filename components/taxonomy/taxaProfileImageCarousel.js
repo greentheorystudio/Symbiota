@@ -10,7 +10,7 @@ const taxaProfileImageCarousel = {
         }
     },
     template: `
-        <div>
+        <div v-if="!showOccurrenceInfoPopup && !showMediaInfoPopup">
             <q-carousel swipeable animated v-model="imageIndex" thumbnails arrows infinite class="taxon-profile-image-carousel" height="94vh" @update:model-value="updateCurrentImage">
                 <template v-for="image in imageArr" :key="image">
                     <q-carousel-slide :name="image.url" :img-src="image.url" class="image-carousel-image">
@@ -22,7 +22,7 @@ const taxaProfileImageCarousel = {
                                 <template v-if="image.owner">Image provided by: {{ image.owner }}. </template>
                                 <div class="row justify-between q-gutter-md">
                                     <div>
-                                        <a :href="image.anchorUrl" target="_blank">See image details</a>
+                                        <a class="cursor-pointer" @click="openPopup(image);">See image details</a>
                                     </div>
                                     <div>
                                         <a :href="image.url" target="_blank">View full size</a>
@@ -39,18 +39,62 @@ const taxaProfileImageCarousel = {
                 </template>
             </q-carousel>
         </div>
+        <template v-if="showOccurrenceInfoPopup">
+            <occurrence-info-window-popup :occurrence-id="occurrenceId" :show-popup="showOccurrenceInfoPopup" @close:popup="closePopup"></occurrence-info-window-popup>
+        </template>
+        <template v-if="showMediaInfoPopup">
+            <media-info-window-popup :image-data="imageData" :show-popup="showMediaInfoPopup" @close:popup="closePopup"></media-info-window-popup>
+        </template>
     `,
-    data() {
-        return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
-        }
+    components: {
+        'media-info-window-popup': mediaInfoWindowPopup,
+        'occurrence-info-window-popup': occurrenceInfoWindowPopup
     },
-    methods: {
-        hideImageCarousel(){
-            this.$emit('update:show-image-carousel', false);
-        },
-        updateCurrentImage(val){
-            this.$emit('update:current-image', val);
+    setup(props, context) {
+        const baseStore = useBaseStore();
+
+        const clientRoot = baseStore.getClientRoot;
+        const imageData = Vue.ref(null);
+        const occurrenceId = Vue.ref(null);
+        const showMediaInfoPopup = Vue.ref(false);
+        const showOccurrenceInfoPopup = Vue.ref(false);
+
+        function closePopup() {
+            showOccurrenceInfoPopup.value = false;
+            showMediaInfoPopup.value = false;
+            occurrenceId.value = null;
+            imageData.value = null;
+        }
+
+        function hideImageCarousel() {
+            context.emit('update:show-image-carousel', false);
+        }
+
+        function openPopup(image) {
+            if(Number(image['occid']) > 0){
+                occurrenceId.value = image['occid'];
+                showOccurrenceInfoPopup.value = true;
+            }
+            else{
+                imageData.value = Object.assign({}, image);
+                showMediaInfoPopup.value = true;
+            }
+        }
+
+        function updateCurrentImage(val) {
+            context.emit('update:current-image', val);
+        }
+
+        return {
+            clientRoot,
+            imageData,
+            occurrenceId,
+            showMediaInfoPopup,
+            showOccurrenceInfoPopup,
+            closePopup,
+            hideImageCarousel,
+            openPopup,
+            updateCurrentImage
         }
     }
 };

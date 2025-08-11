@@ -1,8 +1,8 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditorManager.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -15,7 +15,7 @@ $reset = (array_key_exists('reset', $_REQUEST) && $_REQUEST['reset']);
 $action = array_key_exists('submitaction',$_REQUEST)?htmlspecialchars($_REQUEST['submitaction']):'';
 
 $occManager = new OccurrenceEditorManager();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 
 if($crowdSourceMode) {
     $occManager->setCrowdSourceMode(1);
@@ -196,7 +196,7 @@ if($GLOBALS['SYMB_UID']){
 	$navStr .= '</div>';
 }
 else{
-	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+	header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -206,17 +206,18 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Edit Existing Record</title>
+    <meta name="description" content="Edit existing occurrence records of a collection">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
 		table.styledtable td {
 		    white-space: nowrap;
 		}
     </style>
-	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script src="../../js/external/jquery.js" type="text/javascript"></script>
-	<script src="../../js/external/jquery-ui.js" type="text/javascript"></script>
-    <script type="text/javascript" src="../../js/collections.occureditorshare.js?ver=20221115"></script>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.occureditorshare.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;border:0;">
 	<div>
@@ -349,7 +350,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 			}
 			?>
 			<div style="width:790px;clear:both;">
-				<span class='navpath'>
+				<span id="breadcrumbs">
 						<a href="../../index.php">Home</a> &gt;&gt;
 						<?php
                         if($crowdSourceMode){
@@ -360,7 +361,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         else{
                             if(!$isGenObs || $GLOBALS['IS_ADMIN']){
                                 ?>
-                                <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+                                <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>">Collection Control Panel</a> &gt;&gt;
                                 <?php
                             }
                             if($isGenObs){

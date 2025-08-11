@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUpload.php');
 include_once(__DIR__ . '/../../classes/TaxonomyUtilities.php');
 ini_set('max_execution_time', 7200);

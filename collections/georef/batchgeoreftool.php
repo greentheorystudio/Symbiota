@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceGeorefTools.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -54,7 +54,7 @@ if(!$georeferenceVerificationStatus) {
 }
 
 $geoManager = new OccurrenceGeorefTools();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 $geoManager->setCollId($collId);
 
 $editor = false;
@@ -108,14 +108,15 @@ if($editor && $submitAction){
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-    <title>Batch Georeference Occurrences</title>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js"></script>
-    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js"></script>
-    <script type="text/javascript" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=20230103"></script>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Batch Georeference Occurrences</title>
+    <meta name="description" content="Batch georeference occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.georef.batchgeoreftool.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
         function openSpatialInputWindow(type) {
             let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
@@ -127,35 +128,15 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 mapWindow = null;
             });
         }
-
-        function geoCloneTool(){
-            const selObj = document.getElementById("locallist");
-            let cloneWindow;
-            if (selObj.selectedIndex > -1) {
-                const f = document.queryform;
-                let url = "georefclone.php?";
-                url = url + "locality=" + selObj.options[selObj.selectedIndex].text;
-                url = url + "&country=" + f.qcountry.value;
-                url = url + "&state=" + f.qstate.value;
-                url = url + "&county=" + f.qcounty.value;
-                url = url + "&collid=" + f.collid.value;
-                cloneWindow = open(url, "geoclonetool", "resizable=1,scrollbars=1,toolbar=1,width=1000,height=800,left=20,top=20");
-                if (cloneWindow.opener == null) {
-                    cloneWindow.opener = self;
-                }
-            } else {
-                alert("Select a locality in list to open that record set in the editor");
-            }
-        }
     </script>
 </head>
 <body>
-    <div  id='innertext'>
+    <div id="mainContainer" style="padding: 10px 15px 15px;">
         <div style="float:left;">
             <div style="font-weight:bold;margin-top:6px;">
                 <?php echo $geoManager->getCollName(); ?>
             </div>
-            <div class='navpath' style="margin:10px;">
+            <div id="breadcrumbs" style="margin:10px;">
                 <a href='../../index.php'>Home</a> &gt;&gt;
                 <a href='../misc/collprofiles.php?emode=1&collid=<?php echo $collId; ?>'>Collection Control Panel</a> &gt;&gt;
                 <b>Batch Georeference Occurrences</b>
@@ -280,9 +261,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 <div style="clear:both;">
                     <form name="georefform" method="post" action="batchgeoreftool.php" onsubmit="return verifyGeorefForm(this)">
                         <div style="float:right;">
-                            <span>
-                                <a href="#" onclick="geoCloneTool();"><i style="height:15px;width:15px;" title="Search for clones previously georeferenced" class="fas fa-list"></i></a>
-                            </span>
                             <span style="margin-left:10px;">
                                 <a href="#" onclick="geoLocateLocality();"><img src="../../images/geolocate.png" title="GeoLocate locality" style="width:15px;" /></a>
                             </span>

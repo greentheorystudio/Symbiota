@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class OccurrenceLabel{
 
@@ -12,7 +12,7 @@ class OccurrenceLabel{
     private $errorArr = array();
 
     public function __construct(){
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 
@@ -36,21 +36,21 @@ class OccurrenceLabel{
             $sqlWhere = '';
             $sqlOrderBy = '';
             if($pArr['taxa']){
-                $sqlWhere .= 'AND (o.sciname = "'.Sanitizer::cleanInStr($this->conn,$pArr['taxa']).'") ';
+                $sqlWhere .= 'AND (o.sciname = "'.SanitizerService::cleanInStr($this->conn,$pArr['taxa']).'") ';
             }
             if($pArr['labelproject']){
-                $sqlWhere .= 'AND (o.labelproject = "'.Sanitizer::cleanInStr($this->conn,$pArr['labelproject']).'") ';
+                $sqlWhere .= 'AND (o.labelproject = "'.SanitizerService::cleanInStr($this->conn,$pArr['labelproject']).'") ';
             }
             if($pArr['recordenteredby']){
-                $sqlWhere .= 'AND (o.recordenteredby = "'.Sanitizer::cleanInStr($this->conn,$pArr['recordenteredby']).'") ';
+                $sqlWhere .= 'AND (o.recordenteredby = "'.SanitizerService::cleanInStr($this->conn,$pArr['recordenteredby']).'") ';
             }
-            $date1 = Sanitizer::cleanInStr($this->conn,$pArr['date1']);
-            $date2 = Sanitizer::cleanInStr($this->conn,$pArr['date2']);
+            $date1 = SanitizerService::cleanInStr($this->conn,$pArr['date1']);
+            $date2 = SanitizerService::cleanInStr($this->conn,$pArr['date2']);
             if(!$date1 && $date2){
                 $date1 = $date2;
                 $date2 = '';
             }
-            $dateTarget = Sanitizer::cleanInStr($this->conn,$pArr['datetarget']);
+            $dateTarget = SanitizerService::cleanInStr($this->conn,$pArr['datetarget']);
             if($date1){
                 if($date2){
                     $sqlWhere .= 'AND (DATE('.$dateTarget.') BETWEEN "'.$date1.'" AND "'.$date2.'") ';
@@ -60,7 +60,7 @@ class OccurrenceLabel{
                 }
             }
             if($pArr['recordnumber']){
-                $rnArr = explode(',',Sanitizer::cleanInStr($this->conn,$pArr['recordnumber']));
+                $rnArr = explode(',',SanitizerService::cleanInStr($this->conn,$pArr['recordnumber']));
                 $rnBetweenFrag = array();
                 $rnInFrag = array();
                 foreach($rnArr as $v){
@@ -93,16 +93,11 @@ class OccurrenceLabel{
                 $sqlWhere .= 'AND ('.substr($rnWhere,3).') ';
             }
             if($pArr['recordedby']){
-                $recordedBy = Sanitizer::cleanInStr($this->conn,$pArr['recordedby']);
-                if(strlen($recordedBy) < 4 || in_array(strtolower($recordedBy),array('best','little'))){
-                    $sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
-                }
-                else{
-                    $sqlWhere .= 'AND (MATCH(f.recordedby) AGAINST("'.$recordedBy.'")) ';
-                }
+                $recordedBy = SanitizerService::cleanInStr($this->conn,$pArr['recordedby']);
+                $sqlWhere .= 'AND (o.recordedby LIKE "%'.$recordedBy.'%") ';
             }
             if($pArr['identifier']){
-                $iArr = explode(',',Sanitizer::cleanInStr($this->conn,$pArr['identifier']));
+                $iArr = explode(',',SanitizerService::cleanInStr($this->conn,$pArr['identifier']));
                 $iBetweenFrag = array();
                 $iInFrag = array();
                 foreach($iArr as $v){
@@ -145,9 +140,6 @@ class OccurrenceLabel{
             $sql = 'SELECT o.occid, o.collid, IFNULL(o.duplicatequantity,1) AS q, CONCAT_WS(" ",o.recordedby,IFNULL(o.recordnumber,o.eventdate)) AS collector, o.observeruid, '.
                 'o.family, o.sciname, CONCAT_WS("; ",o.country, o.stateProvince, o.county, o.locality) AS locality, IFNULL(o.localitySecurity,0) AS localitySecurity '.
                 'FROM omoccurrences AS o ';
-            if(strpos($sqlWhere,'MATCH(f.recordedby)') || strpos($sqlWhere,'MATCH(f.locality)')){
-                $sql.= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-            }
             if($sqlWhere) {
                 $sql .= 'WHERE ' . substr($sqlWhere, 4);
             }

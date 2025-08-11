@@ -65,7 +65,7 @@ $specList = $loanManager->getSpecList($loanId);
 							<?php 
 							$instArr = $loanManager->getInstitutionArr();
 							foreach($instArr as $k => $v){
-								echo '<option value="'.$k.'" '.((int)$loanArr['iidborrower'] === (int)$k?'SELECTED':'').'>'.$v.'</option>';
+                                echo '<option value="'.$k.'" '.((int)$loanArr['iidborrower'] === (int)$k?'SELECTED':'').'>'.$v.'</option>';
 							}
 							?>
 						</select>
@@ -226,14 +226,14 @@ $specList = $loanManager->getSpecList($loanId);
 					<div id="addspecerr3" style="float:left;margin-left:30px;padding-bottom:2px;color:orange;display:none;">
 						Warning: Specimen already linked to loan.
 					</div>
-					<div style="padding-top:8px;clear:left;float:left;">
+                    <div style="padding-top:8px;clear:left;float:left;">
                         <input name="loantype" type="hidden" value="<?php echo $loanType; ?>" />
                         <input name="loanid" type="hidden" value="<?php echo $loanId; ?>" />
                         <input name="collid" type="hidden" value="<?php echo $collId; ?>" />
                         <input name="emode" type="hidden" value="1" />
                         <input name="tabindex" type="hidden" value="1" />
-						<input name="formsubmit" type="submit" value="Add Specimen" />
-					</div>
+                        <input name="formsubmit" type="submit" value="Add Specimen" />
+                    </div>
 				</form>
 				<div id="refreshbut" style="float:left;padding-top:10px;margin-left:10px;">
 					<form style="margin-bottom:0;" name="refreshspeclist" action="index.php" method="post">
@@ -323,14 +323,6 @@ $specList = $loanManager->getSpecList($loanId);
 									<div style='margin:3px;'>
 										<b>Author:</b> 
 										<input type="text" name="scientificnameauthorship" style="width:200px;" />
-									</div>
-									<div style='margin:3px;'>
-										<b>Confidence of Determination:</b> 
-										<select name="confidenceranking">
-											<option value="8">High</option>
-											<option value="5" selected>Medium</option>
-											<option value="2">Low</option>
-										</select>
 									</div>
 									<div style='margin:3px;'>
 										<b>Determiner:</b> 

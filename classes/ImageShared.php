@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageShared{
 
@@ -50,7 +50,7 @@ class ImageShared{
 	private $errArr = array();
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->conn = $connection->getConnection();
  		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'] ?? '';
 		if(substr($this->imageRootPath,-1) !== '/') {
@@ -65,9 +65,6 @@ class ImageShared{
 		}
 		if(isset($GLOBALS['IMG_WEB_WIDTH'])){
 			$this->webPixWidth = $GLOBALS['IMG_WEB_WIDTH'];
-		}
-		if(isset($GLOBALS['IMG_LG_WIDTH'])){
-			$this->lgPixWidth = $GLOBALS['IMG_LG_WIDTH'];
 		}
 		if(isset($GLOBALS['MAX_UPLOAD_FILESIZE'])){
 			$this->webFileSizeLimit = $GLOBALS['MAX_UPLOAD_FILESIZE'];
@@ -136,7 +133,7 @@ class ImageShared{
 		if(!$imgFile){
             $imgFile = 'imgfile';
         }
-	    if($this->targetPath){
+	    if($this->targetPath && (strtolower(substr($_FILES[$imgFile]['name'], -4)) === '.jpg' || strtolower(substr($_FILES[$imgFile]['name'], -5)) === '.jpeg' || strtolower(substr($_FILES[$imgFile]['name'], -4)) === '.png')){
 			if(file_exists($this->targetPath)){
 				$imgFileName = basename($_FILES[$imgFile]['name']);
 				$fileName = $this->cleanFileName($imgFileName);
@@ -494,14 +491,14 @@ class ImageShared{
 				($this->locality?'"'.$this->locality.'"':'NULL').','.
 				($this->occid?:'NULL').','.
 				($this->notes?'"'.$this->notes.'"':'NULL').',"'.
-				Sanitizer::cleanInStr($this->conn,$GLOBALS['USERNAME']).'",'.
+				SanitizerService::cleanInStr($this->conn,$GLOBALS['USERNAME']).'",'.
                 $this->sortSeq.','.
 				($this->sourceIdentifier?'"'.$this->sourceIdentifier.'"':'NULL').','.
 				($this->rights?'"'.$this->rights.'"':'NULL').','.
 				($this->accessRights?'"'.$this->accessRights.'"':'NULL').')';
 			//echo $sql; exit;
 			if($this->conn->query($sql)){
-				$guid = UuidFactory::getUuidV4();
+				$guid = UuidService::getUuidV4();
 				$this->activeImgId = $this->conn->insert_id;
 				if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$this->activeImgId.')')) {
 					$this->errArr[] = ' Warning: GUID mapping failed';
@@ -524,33 +521,33 @@ class ImageShared{
                 'anatomy, username, sourceIdentifier, mediaMD5, dynamicProperties, sortsequence) '.
                 'VALUES ('.
                 (isset($image['tid']) ? (int)$image['tid'] :'NULL').','.
-                (isset($image['url']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['url']).'"' :'NULL').','.
-                (isset($image['thumbnailurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['thumbnailurl']).'"' :'NULL').','.
-                (isset($image['originalurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['originalurl']).'"' :'NULL').','.
-                (isset($image['archiveurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['archiveurl']).'"' :'NULL').','.
-                (isset($image['photographer']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['photographer']).'"' :'NULL').','.
+                (isset($image['url']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['url']).'"' :'NULL').','.
+                (isset($image['thumbnailurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['thumbnailurl']).'"' :'NULL').','.
+                (isset($image['originalurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['originalurl']).'"' :'NULL').','.
+                (isset($image['archiveurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['archiveurl']).'"' :'NULL').','.
+                (isset($image['photographer']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['photographer']).'"' :'NULL').','.
                 (isset($image['photographeruid']) ? (int)$image['photographeruid'] :'NULL').','.
-                (isset($image['imagetype']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['imagetype']).'"' :'NULL').','.
-                (isset($image['format']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['format']).'"' :'NULL').','.
-                (isset($image['caption']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['caption'])).'"' :'NULL').','.
-                (isset($image['owner']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['owner']).'"' :'NULL').','.
-                (isset($image['sourceurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['sourceurl']).'"' :'NULL').','.
-                (isset($image['referenceurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['referenceurl']).'"' :'NULL').','.
-                (isset($image['copyright']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['copyright']).'"' :'NULL').','.
-                (isset($image['rights']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['rights']).'"' :'NULL').','.
-                (isset($image['accessrights']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['accessrights']).'"' :'NULL').','.
-                (isset($image['locality']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['locality'])).'"' :'NULL').','.
+                (isset($image['imagetype']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['imagetype']).'"' :'NULL').','.
+                (isset($image['format']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['format']).'"' :'NULL').','.
+                (isset($image['caption']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($image['caption'])).'"' :'NULL').','.
+                (isset($image['owner']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['owner']).'"' :'NULL').','.
+                (isset($image['sourceurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['sourceurl']).'"' :'NULL').','.
+                (isset($image['referenceurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['referenceurl']).'"' :'NULL').','.
+                (isset($image['copyright']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['copyright']).'"' :'NULL').','.
+                (isset($image['rights']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['rights']).'"' :'NULL').','.
+                (isset($image['accessrights']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['accessrights']).'"' :'NULL').','.
+                (isset($image['locality']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($image['locality'])).'"' :'NULL').','.
                 (isset($image['occid']) ? (int)$image['occid'] :'NULL').','.
-                (isset($image['notes']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['notes'])).'"' :'NULL').','.
-                (isset($image['anatomy']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($image['anatomy'])).'"' :'NULL').','.
+                (isset($image['notes']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($image['notes'])).'"' :'NULL').','.
+                (isset($image['anatomy']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($image['anatomy'])).'"' :'NULL').','.
                 '"'.$GLOBALS['USERNAME'].'",'.
-                (isset($image['sourceidentifier']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['sourceidentifier']).'"' :'NULL').','.
-                (isset($image['mediamd5']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['mediamd5']).'"' :'NULL').','.
-                (isset($image['dynamicproperties']) ? '"'.Sanitizer::cleanInStr($this->conn,$image['dynamicproperties']).'"' :'NULL').','.
+                (isset($image['sourceidentifier']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['sourceidentifier']).'"' :'NULL').','.
+                (isset($image['mediamd5']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['mediamd5']).'"' :'NULL').','.
+                (isset($image['dynamicproperties']) ? '"'.SanitizerService::cleanInStr($this->conn,$image['dynamicproperties']).'"' :'NULL').','.
                 (isset($image['sortsequence']) ? (int)$image['sortsequence'] : '50').')';
             //echo $sql; exit;
             if($this->conn->query($sql)){
-                $guid = UuidFactory::getUuidV4();
+                $guid = UuidService::getUuidV4();
                 $retVal = $this->conn->insert_id;
                 if(!$this->conn->query('INSERT INTO guidimages(guid,imgid) VALUES("'.$guid.'",'.$retVal.')')) {
                     $this->errArr[] = ' Warning: GUID mapping failed';
@@ -580,7 +577,7 @@ class ImageShared{
 				if($v) {
 					$imgArr[$k] = $v;
 				}
-				$imgObj .= '"'.$k.'":"'.Sanitizer::cleanInStr($this->conn,$v).'",';
+				$imgObj .= '"'.$k.'":"'.SanitizerService::cleanInStr($this->conn,$v).'",';
 			}
 			$imgObj = json_encode($imgArr);
 			$sqlArchive = 'UPDATE guidimages '.
@@ -653,42 +650,6 @@ class ImageShared{
 		return true;
 	}
 
-	public function insertImageTags($reqArr): bool
-	{
-		$status = true;
-		if($this->activeImgId){
-			$kArr = $this->getImageTagValues();
-			foreach($kArr as $key => $description) {
-				if(array_key_exists("ch_$key",$reqArr)) {
-					$sql = 'INSERT INTO imagetag (imgid,keyvalue) VALUES (?,?) ';
-					$stmt = $this->conn->stmt_init();
-					$stmt->prepare($sql);
-					if($stmt){
-						$stmt->bind_param('is',$this->activeImgId,$key);
-						if(!$stmt->execute()){
-							$status = false;
-							$this->errArr[] = "Warning: Failed to add image tag [$key] for $this->activeImgId.  " . $stmt->error;
-						}
-						$stmt->close();
-					}
-				}
-			}
-		}
-		return $status;
-	}
-
-    public function getImageTagValues(): array
-    {
-        $returnArr = array();
-        $sql = 'SELECT tagkey, description_en FROM imagetagkey ORDER BY sortorder ';
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $returnArr[$row->tagkey] = $row->description_en;
-        }
-        $result->close();
-        return $returnArr;
-    }
-
 	public function getActiveImgId(): int
 	{
 		return $this->activeImgId;
@@ -737,12 +698,12 @@ class ImageShared{
 
 	public function setCaption($v): void
 	{
-		$this->caption = Sanitizer::cleanInStr($this->conn,$v);
+		$this->caption = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setPhotographer($v): void
 	{
-		$this->photographer = Sanitizer::cleanInStr($this->conn,$v);
+		$this->photographer = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setPhotographerUid($v): void
@@ -754,7 +715,7 @@ class ImageShared{
 
 	public function setSourceUrl($v): void
 	{
-		$this->sourceUrl = Sanitizer::cleanInStr($this->conn,$v);
+		$this->sourceUrl = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getTargetPath(): string
@@ -768,12 +729,12 @@ class ImageShared{
 
 	public function setOwner($v): void
 	{
-		$this->owner = Sanitizer::cleanInStr($this->conn,$v);
+		$this->owner = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setLocality($v): void
 	{
-		$this->locality = Sanitizer::cleanInStr($this->conn,$v);
+		$this->locality = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setOccid($v): void
@@ -796,7 +757,7 @@ class ImageShared{
 
 	public function setNotes($v): void
 	{
-		$this->notes = Sanitizer::cleanInStr($this->conn,$v);
+		$this->notes = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setSortSeq($v): void
@@ -808,7 +769,7 @@ class ImageShared{
 
 	public function setCopyright($v): void
 	{
-		$this->copyright = Sanitizer::cleanInStr($this->conn,$v);
+		$this->copyright = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getErrArr(): array

@@ -1,13 +1,13 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceEditReview.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = (int)$_REQUEST['collid'];
@@ -55,7 +55,7 @@ if($isEditor){
 			$statusStr = '<br>'.implode('</br><br>',$reviewManager->getWarningArr()).'</br>';
 		}
 		if($GLOBALS['SOLR_MODE']){
-			$solrManager = new SOLRManager();
+			$solrManager = new SOLRService();
 			$solrManager->updateSOLR();
 		}
 	}
@@ -63,7 +63,7 @@ if($isEditor){
 		$idStr = implode(',',$_POST['id']);
 		$reviewManager->deleteEdits($idStr);
 		if($GLOBALS['SOLR_MODE']){
-			$solrManager = new SOLRManager();
+			$solrManager = new SOLRService();
 			$solrManager->updateSOLR();
 		}
 	}
@@ -115,13 +115,15 @@ $navStr .= '</div>';
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-    <title>Review/Verify Occurrence Edits</title>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Review/Verify Occurrence Edits</title>
+    <meta name="description" content="Review and verify occurrence edits of a collection">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
-    <script>
+    <script type="text/javascript">
         function validateFilterForm(f){
             if(f.startdate.value > f.enddate.value){
                 alert("Start date cannot be after end date");
@@ -159,7 +161,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
         function printFriendlyMode(status){
             if(status){
-                $(".navpath").hide();
+                $("#breadcrumbs").hide();
                 $(".header").hide();
                 $(".navbarDiv").hide();
                 $(".returnDiv").show();
@@ -168,7 +170,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                 $(".footer").hide();
             }
             else{
-                $(".navpath").show();
+                $("#breadcrumbs").show();
                 $(".header").show();
                 $(".navbarDiv").show();
                 $(".returnDiv").hide();
@@ -189,19 +191,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <body>
     <?php
     include(__DIR__ . '/../../header.php');
-    echo '<div class="navpath">';
-    echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-    if($reviewManager->getObsUid()){
-        echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
-    }
-    else{
-        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-    }
-    echo '<b>Review/Verify Occurrence Edits</b>';
-    echo '</div>';
     ?>
-    <div id="innertext" style="min-width:1100px">
+    <div id="mainContainer" style="padding: 10px 15px 15px;min-width:1100px">
         <?php
+        echo '<div id="breadcrumbs">';
+        echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+        if($reviewManager->getObsUid()){
+            echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
+        }
+        else{
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
+        }
+        echo '<b>Review/Verify Occurrence Edits</b>';
+        echo '</div>';
         if($collid && $isEditor){
             ?>
             <div style="font-weight:bold;"><?php echo $collName; ?></div>
@@ -494,8 +496,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         ?>
     </div>
     <?php
-    include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
     ?>
 </body>
 </html>

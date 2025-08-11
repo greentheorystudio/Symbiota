@@ -1,97 +1,96 @@
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileEditButton.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileScinameHeader.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileNotFound.js?ver=20230715" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonNotes.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonFamily.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonVernaculars.js?ver=20230630" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js?ver=20230630" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=20230817" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=20230817" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js?ver=20230817" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js?ver=20230817" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=20230719" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=20230817" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=20230718" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=20230720" type="text/javascript"></script>
-<script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-description-block.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-description-statement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-map.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileEditButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileScinameHeader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileNotFound.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonNotes.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonFamily.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonVernaculars.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonIdentifiers.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonMap.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonImageLink.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonOccurrenceLink.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImagePanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileSubtaxaPanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileMediaPanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialBaseLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/determinationRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/geneticLinkRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRow.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRowGroup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoTabModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script type="text/javascript">
     const taxonProfilePage = Vue.createApp({
         template: `
-            <template v-if="loading">
-                <div class="fill-viewport"></div>
-            </template>
-            <template v-if="!loading">
-                <template v-if="taxon">
-                    <div class="profile-split-row">
-                        <div class="profile-column">
-                            <taxa-profile-sciname-header :taxon="taxon" :style-class="styleClass"></taxa-profile-sciname-header>
-                            <taxa-profile-taxon-family :taxon="taxon"></taxa-profile-taxon-family>
-                            <taxa-profile-taxon-notes :taxon="taxon"></taxa-profile-taxon-notes>
-                            <taxa-profile-taxon-vernaculars :vernaculars="taxon.vernaculars"></taxa-profile-taxon-vernaculars>
-                            <taxa-profile-taxon-synonyms :synonyms="taxon.synonyms"></taxa-profile-taxon-synonyms>
+            <template v-if="Number(taxon['tid']) > 0">
+                <div class="row justify-between q-mt-sm">
+                    <div class="column">
+                        <taxa-profile-sciname-header></taxa-profile-sciname-header>
+                        <taxa-profile-taxon-family></taxa-profile-taxon-family>
+                        <taxa-profile-taxon-notes></taxa-profile-taxon-notes>
+                        <taxa-profile-taxon-vernaculars></taxa-profile-taxon-vernaculars>
+                        <taxa-profile-taxon-synonyms></taxa-profile-taxon-synonyms>
+                    </div>
+                    <template v-if="isTaxonEditor || isTaxonProfileEditor">
+                        <taxa-profile-edit-button :taxon-editor="isTaxonEditor" :taxon-profile-editor="isTaxonProfileEditor"></taxa-profile-edit-button>
+                    </template>
+                </div>
+                <div class="row justify-between q-mt-sm">
+                    <div class="left-column column">
+                        <taxa-profile-central-image :is-editor="isTaxonProfileEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
+                    </div>
+                    <div class="right-column column">
+                        <taxa-profile-description-tabs></taxa-profile-description-tabs>
+                        <div class="right-inner-row">
+                            <taxa-profile-taxon-map></taxa-profile-taxon-map>
                         </div>
-                        <template v-if="isEditor">
-                            <taxa-profile-edit-button :tid="taxon.tid"></taxa-profile-edit-button>
+                        <template v-if="Number(taxaImageCount) > 100">
+                            <div class="right-inner-row">
+                                <taxa-profile-taxon-image-link></taxa-profile-taxon-image-link>
+                            </div>
                         </template>
-                    </div>
-                    <div class="profile-split-row">
-                        <div class="left-column profile-column">
-                            <taxa-profile-central-image :taxon="taxon" :central-image="centralImage" :is-editor="isEditor" @update:set-image-carousel="showImageCarousel"></taxa-profile-central-image>
-                        </div>
-                        <div class="right-column profile-column">
-                            <taxa-profile-description-tabs :description-arr="descriptionArr" :glossary-arr="glossaryArr"></taxa-profile-description-tabs>
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-map :taxon="taxon"></taxa-profile-taxon-map>
-                            </div>
-                            <template v-if="taxon.imageCnt > 100">
-                                <div class="right-inner-row">
-                                    <taxa-profile-taxon-image-link :taxon="taxon"></taxa-profile-taxon-image-link>
-                                </div>
-                            </template>
-                            <div class="right-inner-row">
-                                <taxa-profile-taxon-occurrence-link :taxon="taxon"></taxa-profile-taxon-occurrence-link>
-                            </div>
+                        <div class="right-inner-row">
+                            <taxa-profile-taxon-occurrence-link></taxa-profile-taxon-occurrence-link>
                         </div>
                     </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-image-panel :taxon="taxon" :image-expansion-label="imageExpansionLabel" @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
-                    </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-media-panel :taxon="taxon"></taxa-profile-media-panel>
-                    </div>
-                    <div class="profile-center-row">
-                        <taxa-profile-subtaxa-panel :subtaxa-arr="subtaxaArr" :subtaxa-label="subtaxaLabel" :subtaxa-expansion-label="subtaxaExpansionLabel" :is-editor="isEditor"></taxa-profile-subtaxa-panel>
-                    </div>
-                </template>
-                <template v-else>
-                    <taxa-profile-not-found :taxon-value="taxonValue" :fuzzy-matches="fuzzyMatches"></taxa-profile-not-found>
-                </template>
-                <q-dialog v-model="imageCarousel" persistent full-width full-height>
-                    <taxa-profile-image-carousel :image-arr="this.taxon.images" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
-                </q-dialog>
+                </div>
+                <div class="q-mt-md">
+                    <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
+                </div>
+                <div class="row justify-center q-mt-md">
+                    <taxa-profile-image-panel @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
+                </div>
+                <div class="row justify-center q-mt-md">
+                    <taxa-profile-media-panel></taxa-profile-media-panel>
+                </div>
+                <div class="row justify-center q-mt-md">
+                    <taxa-profile-subtaxa-panel :is-editor="isTaxonProfileEditor"></taxa-profile-subtaxa-panel>
+                </div>
             </template>
+            <template v-else>
+                <taxa-profile-not-found></taxa-profile-not-found>
+            </template>
+            <q-dialog v-model="imageCarousel" persistent full-width full-height>
+                <taxa-profile-image-carousel :image-arr="taxaImageArr" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
+            </q-dialog>
         `,
-        data() {
-            return {
-                audioArr: Vue.ref({}),
-                centralImage: Vue.ref(null),
-                clValue: clVal,
-                descriptionArr: Vue.ref([]),
-                glossaryArr: Vue.ref([]),
-                imageCarousel: Vue.ref(false),
-                imageCarouselSlide: Vue.ref(null),
-                imageExpansionLabel: Vue.ref(''),
-                isEditor: isEditor,
-                fuzzyMatches: Vue.ref([]),
-                loading: Vue.ref(true),
-                subtaxaArr: Vue.ref([]),
-                subtaxaExpansionLabel: Vue.ref(''),
-                subtaxaLabel: Vue.ref(''),
-                styleClass: Vue.ref(null),
-                taxon: Vue.ref(null),
-                taxonValue: taxonVal
-            }
-        },
         components: {
             'taxa-profile-edit-button': taxaProfileEditButton,
             'taxa-profile-sciname-header': taxaProfileScinameHeader,
@@ -99,6 +98,7 @@
             'taxa-profile-taxon-notes': taxaProfileTaxonNotes,
             'taxa-profile-taxon-family': taxaProfileTaxonFamily,
             'taxa-profile-taxon-vernaculars': taxaProfileTaxonVernaculars,
+            'taxa-profile-taxon-identifiers': taxaProfileTaxonIdentifiers,
             'taxa-profile-taxon-synonyms': taxaProfileTaxonSynonyms,
             'taxa-profile-central-image': taxaProfileCentralImage,
             'taxa-profile-description-tabs': taxaProfileDescriptionTabs,
@@ -110,207 +110,89 @@
             'taxa-profile-media-panel': taxaProfileMediaPanel,
             'taxa-profile-image-carousel': taxaProfileImageCarousel
         },
-        setup () {
-            const $q = useQuasar();
-            return {
-                showLoading(){
-                    $q.loading.show({
-                        spinner: QSpinnerHourglass,
-                        spinnerColor: 'primary',
-                        spinnerSize: 140,
-                        backgroundColor: 'grey',
-                        message: 'Loading...',
-                        messageColor: 'primary',
-                        customClass: 'text-h4'
-                    })
-                },
-                hideLoading(){
-                    $q.loading.hide();
-                }
+        setup() {
+            const { hideWorking, showWorking } = useCore();
+            const baseStore = useBaseStore();
+            const taxaStore = useTaxaStore();
+
+            const clientRoot = baseStore.getClientRoot;
+            const imageCarousel = Vue.ref(false);
+            const imageCarouselSlide = Vue.ref(null);
+            const isTaxonEditor = Vue.ref(false);
+            const isTaxonProfileEditor = Vue.ref(false);
+            const subtaxaArr = Vue.computed(() => taxaStore.getTaxaChildren);
+            const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+            const taxaImageCount = Vue.computed(() => taxaStore.getTaxaImageCount);
+            const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+            const taxonValue = TAXON_VAL;
+
+            function setEditor() {
+                const formData = new FormData();
+                formData.append('permissionJson', JSON.stringify(['TaxonProfile', 'Taxonomy']));
+                formData.append('action', 'validatePermission');
+                fetch(permissionApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((resData) => {
+                    isTaxonEditor.value = resData.includes('Taxonomy');
+                    isTaxonProfileEditor.value = resData.includes('TaxonProfile');
+                });
             }
-        },
-        mounted() {
-            this.showLoading();
-            this.setTaxon();
-        },
-        methods: {
-            processDescriptions(descArr){
-                if(descArr.length > 0){
-                    descArr.forEach((desc) => {
-                        if((!desc['source'] || desc['source'] === '') && (desc['sourceurl'] && desc['sourceurl'] !== '')){
-                            desc['source'] = desc['sourceurl'];
+
+            function showImageCarousel(index) {
+                imageCarouselSlide.value = index;
+                imageCarousel.value = true;
+            }
+
+            function toggleImageCarousel(val) {
+                imageCarousel.value = val;
+            }
+
+            function updateImageCarousel(val) {
+                imageCarouselSlide.value = val;
+            }
+
+            Vue.onMounted(() => {
+                showWorking('Loading...');
+                setEditor();
+                taxaStore.setTaxa(taxonValue, (tid) => {
+                    hideWorking();
+                    if(Number(tid) > 0){
+                        taxaStore.setTaxaDescriptionData();
+                        if(subtaxaArr.value.length > 0){
+                            taxaStore.setSubtaxaImageData();
                         }
-                        desc['stmts'].forEach((stmt) => {
-                            if(stmt['statement'] && stmt['statement'] !== ''){
-                                if(stmt['statement'].startsWith('<p>')){
-                                    stmt['statement'] = stmt['statement'].slice(3);
-                                }
-                                if(stmt['statement'].endsWith('</p>')){
-                                    stmt['statement'] = stmt['statement'].substring(0, stmt['statement'].length - 4);
-                                }
-                                if(Number(stmt['displayheader']) === 1 && stmt['heading'] && stmt['heading'] !== ''){
-                                    const headingText = '<span class="desc-statement-heading">' + stmt['heading'] + '</span>: ';
-                                    stmt['statement'] = headingText + stmt['statement'];
-                                }
-                            }
-                        });
-                    });
-                }
-                this.descriptionArr = descArr;
-            },
-            processImages(){
-                this.taxon['images'].forEach((image) => {
-                    if(Number(image['occid']) > 0){
-                        image['anchorUrl'] = CLIENT_ROOT + '/collections/individual/index.php?occid=' + image['occid'];
+                        taxaStore.setTaxaImageArr();
+                        taxaStore.setTaxaMediaArr();
+                    }
+                    else if(taxonValue.value && taxonValue.value !== ''){
+                        taxaStore.setFuzzyMatches();
                     }
                     else{
-                        image['anchorUrl'] = CLIENT_ROOT + '/imagelib/imgdetails.php?imgid=' + image['id'];
+                        window.location.href = clientRoot + '/index.php';
                     }
                 });
-                this.centralImage = this.taxon['images'].length > 0 ? this.taxon['images'][0] : null;
-                if(Number(this.taxon['imageCnt']) > 100){
-                    this.imageExpansionLabel = 'View First 100 Images';
-                }
-                else{
-                    this.imageExpansionLabel = 'View All ' + this.taxon['images'].length + ' Images';
-                }
-                this.loading = false;
-                this.hideLoading();
-            },
-            processSubtaxa(){
-                if(this.taxon['clName']){
-                    this.subtaxaLabel = 'Subtaxa within ' + this.taxon['clName'];
-                }
-                else{
-                    this.subtaxaLabel = 'Subtaxa';
-                }
-                this.subtaxaExpansionLabel = 'View All ' + this.subtaxaLabel;
-                for(let i in this.taxon['sppArr']){
-                    if(this.taxon['sppArr'].hasOwnProperty(i)){
-                        const subTaxon = this.taxon['sppArr'][i];
-                        this.subtaxaArr.push(subTaxon);
-                    }
-                }
-            },
-            setGlossary(){
-                const formData = new FormData();
-                formData.append('tid', this.taxon['tid']);
-                formData.append('action', 'getTaxonGlossary');
-                fetch(glossaryApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            this.glossaryArr = resObj;
-                        });
-                    }
-                });
-            },
-            setStyleClass(){
-                if(Number(this.taxon['rankId']) > 180){
-                    this.styleClass = 'species';
-                }
-                else if(Number(this.taxon['rankId']) === 180){
-                    this.styleClass = 'genus';
-                }
-                else{
-                    this.styleClass = 'higher';
-                }
-            },
-            setTaxon(){
-                const formData = new FormData();
-                formData.append('taxonStr', this.taxonValue);
-                formData.append('clid', this.clValue);
-                formData.append('action', 'setTaxon');
-                fetch(taxaProfileApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            if(resObj.hasOwnProperty('submittedTid')){
-                                this.taxon = resObj;
-                                this.setStyleClass();
-                                this.setTaxonDescriptions();
-                                this.setGlossary();
-                                this.processSubtaxa();
-                                this.setTaxonMedia();
-                            }
-                            else if(this.taxonValue !== ''){
-                                const formData = new FormData();
-                                formData.append('sciname', this.taxonValue);
-                                formData.append('lev', '2');
-                                formData.append('action', 'getSciNameFuzzyMatches');
-                                fetch(taxonomyApiUrl, {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then((response) => {
-                                    if(response.status === 200){
-                                        response.json().then((matches) => {
-                                            this.fuzzyMatches = matches;
-                                        });
-                                    }
-                                });
-                            }
-                            else{
-                                window.location.href = CLIENT_ROOT + '/index.php';
-                            }
-                        });
-                    }
-                });
-            },
-            setTaxonDescriptions(){
-                const formData = new FormData();
-                formData.append('tid', this.taxon['tid']);
-                formData.append('action', 'getTaxonDescriptions');
-                fetch(taxonomyApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            this.processDescriptions(resObj);
-                        });
-                    }
-                });
-            },
-            setTaxonMedia(){
-                const formData = new FormData();
-                formData.append('tid', this.taxon['tid']);
-                formData.append('limit', '100');
-                formData.append('includeav', '1');
-                formData.append('action', 'getTaxonMedia');
-                fetch(taxaProfileApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.json().then((resObj) => {
-                            this.taxon['images'] = resObj['images'];
-                            this.taxon['media'] = resObj['media'];
-                            this.processImages();
-                        });
-                    }
-                });
-            },
-            showImageCarousel(index){
-                this.imageCarouselSlide = index;
-                this.imageCarousel = true;
-            },
-            toggleImageCarousel(val){
-                this.imageCarousel = val;
-            },
-            updateImageCarousel(val){
-                this.imageCarouselSlide = val;
+            });
+
+            return {
+                imageCarousel,
+                imageCarouselSlide,
+                isTaxonEditor,
+                isTaxonProfileEditor,
+                taxaImageArr,
+                taxaImageCount,
+                taxon,
+                showImageCarousel,
+                toggleImageCarousel,
+                updateImageCarousel
             }
         }
     });
     taxonProfilePage.use(Quasar, { config: {} });
-    taxonProfilePage.mount('#inner-table');
+    taxonProfilePage.use(Pinia.createPinia());
+    taxonProfilePage.mount('#mainContainer');
 </script>

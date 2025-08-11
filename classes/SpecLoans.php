@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class SpecLoans{
 
@@ -10,7 +10,7 @@ class SpecLoans{
 	private $exchangeId;
 
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
 	
@@ -273,7 +273,7 @@ class SpecLoans{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'loanid' && $k !== 'collid'){
-					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.SanitizerService::cleanInStr($this->conn,$v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE omoccurloans SET '.substr($sql,1).' WHERE (loanid = '.$loanId.')';
@@ -319,7 +319,7 @@ class SpecLoans{
 			$sql = '';
 			foreach($pArr as $k => $v){
 				if($k !== 'formsubmit' && $k !== 'loanid' && $k !== 'collid'){
-					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
+					$sql .= ','.$k.'='.($v?'"'.SanitizerService::cleanInStr($this->conn,$v).'"':'NULL');
 				}
 			}
 			$sql = 'UPDATE omoccurloans SET '.substr($sql,1).' WHERE (loanid = '.$loanId.')';
@@ -332,72 +332,72 @@ class SpecLoans{
 		}
 		return $statusStr;
 	}
-	
-	public function editExchange($pArr): string
-	{
-		$statusStr = '';
-		$retArr = array();
-		$exchangeId = $pArr['exchangeid'];
-		$collId = $pArr['collid'];
-		$Iid = $pArr['iid'];
-		if(is_numeric($exchangeId)){
-			$sql = '';
-			foreach($pArr as $k => $v){
-				if($k !== 'formsubmit' && $k !== 'exchangeid' && $k !== 'collid'){
-					$sql .= ','.$k.'='.($v?'"'.Sanitizer::cleanInStr($this->conn,$v).'"':'NULL');
-				}
-			}
-			$sql = 'UPDATE omoccurexchange SET '.substr($sql,1).' WHERE (exchangeid = '.$exchangeId.')';
-			if($this->conn->query($sql)){
-				$statusStr = 'SUCCESS: information saved';
-			}
-			else{
-				$statusStr = 'ERROR: Editing of exchange failed.';
-			}
-			
-			$sql = 'SELECT invoicebalance FROM omoccurexchange '.
-				'WHERE exchangeid =  (SELECT MAX(exchangeid) FROM omoccurexchange '.
-				'WHERE (exchangeid < '.$exchangeId.') AND (collid = '.$collId.') AND (iid = '.$Iid.'))';
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_object()){
-					$retArr['invoicebalance'] = $r->invoicebalance;
-				}
-				$rs->close();
-			}
-			if(!array_key_exists('invoicebalance',$retArr) || !$retArr['invoicebalance']){
-				$prevBalance = 0;
-			}
-			else{
-				$prevBalance = $retArr['invoicebalance'];
-			}
-			$currentBalance = 0;
-			if($pArr['transactiontype'] === 'Shipment'){
-			
-				if($pArr['in_out'] === 'In'){
-					$currentBalance = ((int)$prevBalance - ((int)$pArr['totalexmounted'] * 2 + (int)$pArr['totalexunmounted']));
-				}
-				elseif($pArr['in_out'] === 'Out'){
-					$currentBalance = ((int)$prevBalance + ((int)$pArr['totalexmounted'] * 2 + (int)$pArr['totalexunmounted']));
-				}
-			
-			}
-			elseif($pArr['transactiontype'] === 'Adjustment'){
-				$currentBalance = (int)$prevBalance + (int)$pArr['adjustment'];
-			}
-			$sql3 = 'UPDATE omoccurexchange SET invoicebalance = '.$currentBalance.' WHERE (exchangeid = '.$exchangeId.')';
-			if($this->conn->query($sql3)){
-				$statusStr .= ' and balance updated.';
-			}
-		}
-		return $statusStr;
-	}
+
+    public function editExchange($pArr): string
+    {
+        $statusStr = '';
+        $retArr = array();
+        $exchangeId = $pArr['exchangeid'];
+        $collId = $pArr['collid'];
+        $Iid = $pArr['iid'];
+        if(is_numeric($exchangeId)){
+            $sql = '';
+            foreach($pArr as $k => $v){
+                if($k !== 'formsubmit' && $k !== 'exchangeid' && $k !== 'collid'){
+                    $sql .= ','.$k.'='.($v?'"'.SanitizerService::cleanInStr($this->conn,$v).'"':'NULL');
+                }
+            }
+            $sql = 'UPDATE omoccurexchange SET '.substr($sql,1).' WHERE (exchangeid = '.$exchangeId.')';
+            if($this->conn->query($sql)){
+                $statusStr = 'SUCCESS: information saved';
+            }
+            else{
+                $statusStr = 'ERROR: Editing of exchange failed.';
+            }
+
+            $sql = 'SELECT invoicebalance FROM omoccurexchange '.
+                'WHERE exchangeid =  (SELECT MAX(exchangeid) FROM omoccurexchange '.
+                'WHERE (exchangeid < '.$exchangeId.') AND (collid = '.$collId.') AND (iid = '.$Iid.'))';
+            if($rs = $this->conn->query($sql)){
+                while($r = $rs->fetch_object()){
+                    $retArr['invoicebalance'] = $r->invoicebalance;
+                }
+                $rs->close();
+            }
+            if(!array_key_exists('invoicebalance',$retArr) || !$retArr['invoicebalance']){
+                $prevBalance = 0;
+            }
+            else{
+                $prevBalance = $retArr['invoicebalance'];
+            }
+            $currentBalance = 0;
+            if($pArr['transactiontype'] === 'Shipment'){
+
+                if($pArr['in_out'] === 'In'){
+                    $currentBalance = ((int)$prevBalance - ((int)$pArr['totalexmounted'] * 2 + (int)$pArr['totalexunmounted']));
+                }
+                elseif($pArr['in_out'] === 'Out'){
+                    $currentBalance = ((int)$prevBalance + ((int)$pArr['totalexmounted'] * 2 + (int)$pArr['totalexunmounted']));
+                }
+
+            }
+            elseif($pArr['transactiontype'] === 'Adjustment'){
+                $currentBalance = (int)$prevBalance + (int)$pArr['adjustment'];
+            }
+            $sql3 = 'UPDATE omoccurexchange SET invoicebalance = '.$currentBalance.' WHERE (exchangeid = '.$exchangeId.')';
+            if($this->conn->query($sql3)){
+                $statusStr .= ' and balance updated.';
+            }
+        }
+        return $statusStr;
+    }
 	
 	public function createNewLoanOut($pArr): string
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO omoccurloans(collidown,loanidentifierown,iidowner,iidborrower,createdbyown) '.
-			'VALUES('.$this->collId.',"'.Sanitizer::cleanInStr($this->conn,$pArr['loanidentifierown']).'",(SELECT iid FROM omcollections WHERE collid = '.$this->collId.'), '.
-			'"'.Sanitizer::cleanInStr($this->conn,$pArr['reqinstitution']).'","'.Sanitizer::cleanInStr($this->conn,$pArr['createdbyown']).'") ';
+			'VALUES('.$this->collId.',"'.SanitizerService::cleanInStr($this->conn,$pArr['loanidentifierown']).'",(SELECT iid FROM omcollections WHERE collid = '.$this->collId.'), '.
+			'"'.SanitizerService::cleanInStr($this->conn,$pArr['reqinstitution']).'","'.SanitizerService::cleanInStr($this->conn,$pArr['createdbyown']).'") ';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->loanId = $this->conn->insert_id;
@@ -412,8 +412,8 @@ class SpecLoans{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO omoccurloans(collidborr,loanidentifierown,loanidentifierborr,iidowner,createdbyborr) '.
-			'VALUES('.$this->collId.',"","'.Sanitizer::cleanInStr($this->conn,$pArr['loanidentifierborr']).'","'.Sanitizer::cleanInStr($this->conn,$pArr['iidowner']).'",'.
-			'"'.Sanitizer::cleanInStr($this->conn,$pArr['createdbyborr']).'")';
+			'VALUES('.$this->collId.',"","'.SanitizerService::cleanInStr($this->conn,$pArr['loanidentifierborr']).'","'.SanitizerService::cleanInStr($this->conn,$pArr['iidowner']).'",'.
+			'"'.SanitizerService::cleanInStr($this->conn,$pArr['createdbyborr']).'")';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->loanId = $this->conn->insert_id;
@@ -428,8 +428,8 @@ class SpecLoans{
 	{
 		$statusStr = '';
 		$sql = 'INSERT INTO omoccurexchange(identifier,collid,iid,transactiontype,createdby) '.
-			'VALUES("'.Sanitizer::cleanInStr($this->conn,$pArr['identifier']).'",'.$this->collId.',"'.Sanitizer::cleanInStr($this->conn,$pArr['iid']).'",'.
-			'"'.Sanitizer::cleanInStr($this->conn,$pArr['transactiontype']).'","'.Sanitizer::cleanInStr($this->conn,$pArr['createdby']).'")';
+			'VALUES("'.SanitizerService::cleanInStr($this->conn,$pArr['identifier']).'",'.$this->collId.',"'.SanitizerService::cleanInStr($this->conn,$pArr['iid']).'",'.
+			'"'.SanitizerService::cleanInStr($this->conn,$pArr['transactiontype']).'","'.SanitizerService::cleanInStr($this->conn,$pArr['createdby']).'")';
 		//echo $sql;
 		if($this->conn->query($sql)){
 			$this->exchangeId = $this->conn->insert_id;

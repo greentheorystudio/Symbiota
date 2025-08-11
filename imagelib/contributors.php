@@ -12,22 +12,22 @@ $pManager = new ImageLibraryManager();
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Photographer List</title>
-	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<meta name='keywords' content='' />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Contributor List</title>
+    <meta name="description" content="Image contributor list for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 	<?php
 	include(__DIR__ . '/../header.php');
 	?>
-	<div class="navpath">
-		<a href="../index.php">Home</a> &gt;&gt; 
-		<a href="index.php">Image Library</a> &gt;&gt; 
-		<b>Image contributors</b> 
-	</div>
-
-    <div id="innertext">
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+            <a href="index.php">Image Library</a> &gt;&gt;
+            <b>Image contributors</b>
+        </div>
         <?php
         $pList = $pManager->getPhotographerList();
         if($pList){
@@ -75,9 +75,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
             ?>
         </div>
     </div>
-	<?php 
-	include(__DIR__ . '/../footer.php');
+	<?php
     include_once(__DIR__ . '/../config/footer-includes.php');
+    include(__DIR__ . '/../footer.php');
 	?>
 </body>
 </html>

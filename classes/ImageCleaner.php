@@ -172,7 +172,7 @@ class ImageCleaner extends Manager{
 		$this->imgManager->setTargetPath($targetPath);
 
 		$webIsEmpty = false;
-		$imgUrl = $recUrlWeb ? trim($recUrlWeb) : '';
+        $imgUrl = $recUrlWeb ? trim($recUrlWeb) : '';
 		if(!$imgUrl && $recUrlOrig){
 			$imgUrl = trim($recUrlOrig);
 			$webIsEmpty = true;

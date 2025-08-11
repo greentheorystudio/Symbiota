@@ -5,38 +5,30 @@ const taxaProfileSubtaxaPanel = {
             default: true
         },
         isEditor: {
-            type: Boolean
-        },
-        subtaxaArr: {
-            type: Array
-        },
-        subtaxaExpansionLabel: {
-            type: String
-        },
-        subtaxaLabel: {
-            type: String
+            type: Boolean,
+            default: false
         }
     },
     template: `
         <template v-if="subtaxaArr.length">
-            <div class="expansion-container">
+            <div class="q-mb-md expansion-container">
                 <template v-if="!collapsible || subtaxaArr.length < 5">
                     <q-card>
                         <div class="q-pt-sm q-pl-md text-h6 text-weight-bold taxon-profile-subtaxa-panel-label">
-                            {{ subtaxaLabel }}
+                            Subtaxa
                         </div>
                         <div class="row">
-                            <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
-                                <q-card class="q-ma-md overflow-hidden">
+                            <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon">
+                                <q-card class="q-ma-md spp-taxon">
                                     <div class="spp-taxon-label">
-                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid + '&cl=' + (spptaxon.clid ? spptaxon.clid : ''))">
-                                            {{ spptaxon.sciName }}
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
+                                            {{ spptaxon.sciname }}
                                         </a>
                                     </div>
-                                    <div class="spp-image-container">
-                                        <template v-if="spptaxon.url">
-                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid + '&cl=' + (spptaxon.clid ? spptaxon.clid : ''))">
-                                                <q-img :src="spptaxon.url" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciName"></q-img>
+                                    <div>
+                                        <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
+                                                <q-img class="spp-image-container" :src="subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] ? subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] : subtaxaImageData[spptaxon.tid][0]['url']" fit="scale-down" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
@@ -52,8 +44,8 @@ const taxaProfileSubtaxaPanel = {
                                     </div>
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
-                                            <template v-if="spptaxon.map">
-                                                <q-img :src="spptaxon.map" :fit="contain" :title="spptaxon.sciName" :alt="spptaxon.sciName"></q-img>
+                                            <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
+                                                <q-img class="spp-map-container" :src="taxaMapData[spptaxon.tid]['url']" fit="scale-down" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">
@@ -68,19 +60,19 @@ const taxaProfileSubtaxaPanel = {
                     </q-card>
                 </template>
                 <template v-else>
-                    <q-expansion-item class="shadow-1 overflow-hidden expansion-element" :label="subtaxaExpansionLabel" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
+                    <q-expansion-item class="shadow-1 overflow-hidden expansion-element" label="View All Subtaxa" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
                         <div class="row">
                             <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <div class="spp-taxon-label">
-                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid + '&cl=' + (spptaxon.clid ? spptaxon.clid : ''))">
-                                            {{ spptaxon.sciName }}
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
+                                            {{ spptaxon.sciname }}
                                         </a>
                                     </div>
                                     <div class="spp-image-container">
-                                        <template v-if="spptaxon.url">
-                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid + '&cl=' + (spptaxon.clid ? spptaxon.clid : ''))">
-                                                <q-img :src="spptaxon.url" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciName"></q-img>
+                                        <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
+                                                <q-img :src="subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] ? subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] : subtaxaImageData[spptaxon.tid][0]['url']" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
@@ -96,8 +88,8 @@ const taxaProfileSubtaxaPanel = {
                                     </div>
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
-                                            <template v-if="spptaxon.map">
-                                                <q-img :src="spptaxon.map" :fit="contain" :title="spptaxon.sciName" :alt="spptaxon.sciName"></q-img>
+                                            <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
+                                                <q-img :src="taxaMapData[spptaxon.tid]['url']" :fit="contain" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">
@@ -114,9 +106,20 @@ const taxaProfileSubtaxaPanel = {
             </div>
         </template>
     `,
-    data() {
+    setup() {
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const clientRoot = baseStore.getClientRoot;
+        const subtaxaArr = Vue.computed(() => taxaStore.getTaxaChildren);
+        const subtaxaImageData = Vue.computed(() => taxaStore.getSubtaxaImageData);
+        const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            clientRoot,
+            subtaxaArr,
+            subtaxaImageData,
+            taxaMapData
         }
     }
 };

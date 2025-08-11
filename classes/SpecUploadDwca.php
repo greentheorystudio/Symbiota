@@ -1,13 +1,12 @@
 <?php
 include_once(__DIR__ . '/SpecUploadBase.php');
-include_once(__DIR__ . '/Utilities.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 
 class SpecUploadDwca extends SpecUploadBase{
 
     private $baseFolderName;
     private $extensionFolderName = '';
     private $metaArr;
-    private $delimiter = ',';
     private $enclosure = '"';
     private $encoding = 'utf-8';
     private $loopCnt = 0;
@@ -15,136 +14,6 @@ class SpecUploadDwca extends SpecUploadBase{
     public function __construct() {
         parent::__construct();
         $this->setUploadTargetPath();
-    }
-
-    public function uploadFile(): string
-    {
-        $localFolder = $this->collMetadataArr['collid'].'_'.time();
-        if (!mkdir($concurrentDirectory = $this->uploadTargetPath . $localFolder) && !is_dir($concurrentDirectory)) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-        }
-        $fullPath = $this->uploadTargetPath.$localFolder.'/dwca.zip';
-
-        if($this->path){
-            if($this->uploadType === $this->IPTUPLOAD){
-                if(strpos($this->path,'/resource.do')){
-                    $this->path = str_replace('/resource.do','/archive.do',$this->path);
-                }
-                elseif(strpos($this->path,'/resource?')){
-                    $this->path = str_replace('/resource','/archive.do',$this->path);
-                }
-            }
-            if($this->uploadType === $this->SYMBIOTA){
-                $searchLabel = '';
-                $pathParts = array();
-                if(strpos($this->path, 'searchvar=') !== false){
-                    $searchLabel = 'searchvar';
-                    $pathParts = explode('?searchvar=', $this->path);
-                }
-                elseif(strpos($this->path, 'starr=') !== false){
-                    $searchLabel = 'starr';
-                    $pathParts = explode('?starr=', $this->path);
-                }
-                if($pathParts){
-                    $data = array(
-                        'schema' => 'dwc',
-                        'identifications' => '1',
-                        'images' => '1',
-                        'attributes' => '1',
-                        'format' => 'csv',
-                        'cset' => 'utf-8',
-                        'zip' => '1',
-                        'publicsearch' => '1',
-                        'sourcepage' => 'specimen',
-                        $searchLabel => $pathParts[1]
-                    );
-                    $fp = fopen($fullPath, 'wb+');
-                    $ch = curl_init(str_replace(' ','%20',$this->path));
-                    curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
-                    curl_setopt($ch, CURLOPT_FILE, $fp);
-                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                    curl_setopt($ch, CURLOPT_POST, true);
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                    if(curl_exec($ch)) {
-                        $this->baseFolderName = $localFolder;
-                    }
-                    else {
-                        $this->outputMsg('<li>ERROR: unable to upload file (path: '.$fullPath.') </li>');
-                        $this->errorStr = 'ERROR: unable to upload file (path: '.$fullPath.')';
-                    }
-                    curl_close($ch);
-                    fclose($fp);
-                }
-                else{
-                    $this->outputMsg('<li>ERROR: URL not in correct format (path: '.$this->path.') </li>');
-                    $this->errorStr = 'ERROR: URL not in correct format (path: '.$this->path.')';
-                }
-            }
-            elseif(copy($this->path,$fullPath)){
-                $this->baseFolderName = $localFolder;
-            }
-            elseif(file_exists($this->path)){
-                $fp = fopen($fullPath, 'wb+');
-                $ch = curl_init(str_replace(' ','%20',$this->path));
-                curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
-                curl_setopt($ch, CURLOPT_FILE, $fp);
-                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                if(curl_exec($ch)) {
-                    $this->baseFolderName = $localFolder;
-                }
-                else {
-                    $this->outputMsg('<li>ERROR: unable to upload file (path: '.$fullPath.') </li>');
-                    $this->errorStr = 'ERROR: unable to upload file (path: '.$fullPath.')';
-                }
-                curl_close($ch);
-                fclose($fp);
-            }
-        }
-        elseif(array_key_exists('uploadfile',$_FILES)){
-            if(is_writable($this->uploadTargetPath.$localFolder)){
-                if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $fullPath)){
-                    $this->baseFolderName = $localFolder;
-                }
-                else{
-                    $msg = 'unknown';
-                    $err = (int)$_FILES['uploadfile']['error'];
-                    if($err === 1) {
-                        $msg = 'uploaded file exceeds the maximum filesize allowed';
-                    }
-                    elseif($err === 3) {
-                        $msg = 'uploaded file was only partially uploaded';
-                    }
-                    elseif($err === 4) {
-                        $msg = 'no file was uploaded';
-                    }
-                    elseif($err === 5) {
-                        $msg = 'unknown error 5';
-                    }
-                    elseif($err === 6) {
-                        $msg = 'missing a temporary folder';
-                    }
-                    elseif($err === 7) {
-                        $msg = 'failed to write file to disk';
-                    }
-                    elseif($err === 8) {
-                        $msg = 'a PHP extension stopped the file upload';
-                    }
-                    $this->outputMsg('<li>ERROR uploading file (target: '.$fullPath.'): '.$msg.' </li>');
-                    $this->errorStr = 'ERROR uploading file: '.$msg;
-                }
-            }
-            else{
-                $this->errorStr = 'ERROR uploading file: Target path is not writable to server';
-            }
-        }
-
-        if($this->baseFolderName && substr($this->baseFolderName,-1) !== '/') {
-            $this->baseFolderName .= '/';
-        }
-        if($this->baseFolderName && !$this->unpackArchive()) {
-            $this->baseFolderName = '';
-        }
-        return $this->baseFolderName;
     }
 
     public function analyzeUpload(): bool
@@ -258,12 +127,6 @@ class SpecUploadDwca extends SpecUploadBase{
                                 $this->metaArr['occur']['fields'][0] = 'id';
                             }
                             if(($this->metaArr['occur']['ignoreHeaderLines'] === 1) && $this->metaArr['occur']['fieldsTerminatedBy']) {
-                                if($this->metaArr['occur']['fieldsTerminatedBy'] === '\t'){
-                                    $this->delimiter = "\t";
-                                }
-                                else{
-                                    $this->delimiter = $this->metaArr['occur']['fieldsTerminatedBy'];
-                                }
                                 $fullPath = $this->uploadTargetPath.$this->baseFolderName.$this->extensionFolderName.$this->metaArr['occur']['name'];
                                 $fh = fopen($fullPath, 'rb') or die("Can't open occurrence file");
                                 $headerArr = $this->getRecordArr($fh);
@@ -332,12 +195,6 @@ class SpecUploadDwca extends SpecUploadBase{
                                 $this->metaArr[$tagName]['fields'][$extCoreId] = 'coreid';
 
                                 if((int)$this->metaArr[$tagName]['ignoreHeaderLines'] === 1 && $this->metaArr[$tagName]['fieldsTerminatedBy']) {
-                                    if($this->metaArr[$tagName]['fieldsTerminatedBy'] === '\t'){
-                                        $this->delimiter = "\t";
-                                    }
-                                    else{
-                                        $this->delimiter = $this->metaArr[$tagName]['fieldsTerminatedBy'];
-                                    }
                                     $fullPath = $this->uploadTargetPath.$this->baseFolderName.$this->extensionFolderName.$this->metaArr[$tagName]['name'];
                                     $fh = fopen($fullPath, 'rb') or die("Can't open $tagName extension file");
                                     $headerArr = $this->getRecordArr($fh);
@@ -381,17 +238,6 @@ class SpecUploadDwca extends SpecUploadBase{
             $this->readMetaFile();
             if(isset($this->metaArr['occur']['fields'])){
                 $fullPath .= $this->extensionFolderName;
-                if(isset($this->metaArr['occur']['fieldsTerminatedBy']) && $this->metaArr['occur']['fieldsTerminatedBy']){
-                    if($this->metaArr['occur']['fieldsTerminatedBy'] === '\t'){
-                        $this->delimiter = "\t";
-                    }
-                    else{
-                        $this->delimiter = $this->metaArr['occur']['fieldsTerminatedBy'];
-                    }
-                }
-                else{
-                    $this->delimiter = '';
-                }
                 if(isset($this->metaArr['occur']['fieldsEnclosedBy']) && $this->metaArr['occur']['fieldsEnclosedBy']){
                     $this->enclosure = $this->metaArr['occur']['fieldsEnclosedBy'];
                 }
@@ -531,7 +377,7 @@ class SpecUploadDwca extends SpecUploadBase{
             closedir($handle);
         }
         if(stripos($dirPath,$this->uploadTargetPath) === 0){
-            (new Utilities)->deleteDirectory($dirPath);
+            FileSystemService::deleteDirectory($dirPath);
         }
     }
 
@@ -543,17 +389,6 @@ class SpecUploadDwca extends SpecUploadBase{
         }
         if($fullPathExt && file_exists($fullPathExt)){
             if(isset($this->metaArr[$targetStr]['fields'])){
-                if(isset($this->metaArr[$targetStr]['fieldsTerminatedBy']) && $this->metaArr[$targetStr]['fieldsTerminatedBy']){
-                    if($this->metaArr[$targetStr]['fieldsTerminatedBy'] === '\t'){
-                        $this->delimiter = "\t";
-                    }
-                    else{
-                        $this->delimiter = $this->metaArr[$targetStr]['fieldsTerminatedBy'];
-                    }
-                }
-                else{
-                    $this->delimiter = '';
-                }
                 if(isset($this->metaArr[$targetStr]['fieldsEnclosedBy']) && $this->metaArr[$targetStr]['fieldsEnclosedBy']){
                     $this->enclosure = $this->metaArr[$targetStr]['fieldsEnclosedBy'];
                 }
@@ -609,33 +444,7 @@ class SpecUploadDwca extends SpecUploadBase{
     }
 
     private function getRecordArr($fHandler){
-        if($this->delimiter){
-            $recordArr = fgetcsv($fHandler,0,$this->delimiter,$this->enclosure);
-        }
-        else{
-            $record = fgets($fHandler);
-            if(substr($this->metaArr['occur']['name'],-4) === '.csv'){
-                $this->delimiter = ',';
-            }
-            elseif(strpos($record,"\t") !== false){
-                $this->delimiter = "\t";
-            }
-            elseif(strpos($record, '|') !== false){
-                $this->delimiter = '|';
-            }
-            else{
-                $this->delimiter = ',';
-            }
-            $recordArr = explode($this->delimiter,$record);
-            if($this->enclosure){
-                foreach($recordArr as $k => $v){
-                    if(strpos($v, $this->enclosure) === 0 && substr($v, -1) === $this->enclosure) {
-                        $recordArr[$k] = substr($v,1, -1);
-                    }
-                }
-            }
-        }
-        return $recordArr;
+        return fgetcsv($fHandler,0,',',$this->enclosure);
     }
 
     public function setBaseFolderName($name): void

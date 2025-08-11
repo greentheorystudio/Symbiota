@@ -4,63 +4,10 @@ include_once(__DIR__ . '/SpecUploadBase.php');
 class SpecUploadFile extends SpecUploadBase{
 
     private $ulFileName;
-    private $delimiter = ',';
-    private $isCsv = false;
 
     public function __construct() {
         parent::__construct();
         $this->setUploadTargetPath();
-        ini_set('auto_detect_line_endings', true);
-    }
-
-    public function uploadFile(){
-        if(!$this->ulFileName){
-            $finalPath = '';
-            if(array_key_exists('uploadfile',$_FILES)){
-                $this->ulFileName = $_FILES['uploadfile']['name'];
-                if(is_writable($this->uploadTargetPath)){
-                    if(move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->ulFileName)){
-                        $finalPath = $this->uploadTargetPath.$this->ulFileName;
-                    }
-                    else{
-                        echo '<div style="margin:15px;font-weight:bold;">';
-                        echo 'ERROR uploading file (code '.$_FILES['uploadfile']['error'].'): ';
-                        echo 'Zip file may be too large for the upload limits set within the PHP configurations (upload_max_filesize = '.ini_get('upload_max_filesize').'; post_max_size = '.ini_get('post_max_size').')';
-                        echo '</div>';
-                    }
-                }
-                else{
-                    echo 'Target path ('.$this->uploadTargetPath.') is not writable ';
-                }
-            }
-            if($finalPath && substr($this->ulFileName,-4) === '.zip'){
-                $this->ulFileName = '';
-                $zipFilePath = $finalPath;
-                $zip = new ZipArchive;
-                $res = $zip->open($finalPath);
-                if($res === TRUE) {
-                    for($i = 0; $i < $zip->numFiles; $i++) {
-                        $fileName = $zip->getNameIndex($i);
-                        if(strncmp($fileName, '._', 2) !== 0){
-                            $ext = strtolower(substr(strrchr($fileName, '.'), 1));
-                            if($ext === 'csv' || $ext === 'txt'){
-                                if($this->uploadType !== $this->NFNUPLOAD || stripos($fileName,'.reconcile.')){
-                                    $this->ulFileName = $fileName;
-                                    $zip->extractTo($this->uploadTargetPath,$fileName);
-                                    $zip->close();
-                                    unlink($zipFilePath);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                else{
-                    echo 'failed, code:' . $res;
-                }
-            }
-        }
-        return $this->ulFileName;
     }
 
     public function analyzeUpload(): bool
@@ -191,20 +138,8 @@ class SpecUploadFile extends SpecUploadBase{
 
     private function getHeaderArr($fHandler): array
     {
-        $headerData = fgets($fHandler);
-        if((strpos($headerData, ',') === false) && strpos($headerData, "\t") !== false) {
-            $this->delimiter = "\t";
-        }
-        if(strpos($headerData,$this->delimiter.'"') !== false || strtolower(substr($this->ulFileName, -4)) === '.csv'){
-            $this->isCsv = true;
-        }
-        if($this->isCsv){
-            rewind($fHandler);
-            $headerArr = fgetcsv($fHandler,0,$this->delimiter);
-        }
-        else{
-            $headerArr = explode($this->delimiter,$headerData);
-        }
+        rewind($fHandler);
+        $headerArr = fgetcsv($fHandler,0);
         $retArr = array();
         foreach($headerArr as $field){
             $fieldStr = strtolower(trim($field));
@@ -219,17 +154,7 @@ class SpecUploadFile extends SpecUploadBase{
     }
 
     private function getRecordArr($fHandler){
-        $recordArr = array();
-        if($this->isCsv){
-            $recordArr = fgetcsv($fHandler,0,$this->delimiter);
-        }
-        else{
-            $record = fgets($fHandler);
-            if($record) {
-                $recordArr = explode($this->delimiter, $record);
-            }
-        }
-        return $recordArr;
+        return fgetcsv($fHandler,0);
     }
 
     public function setUploadFileName($ulFile): void
