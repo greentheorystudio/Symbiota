@@ -643,7 +643,7 @@ function saveLayerConfigChanges(){
     const newLayerConfigArr = setNewLayerConfigArr();
     if(newLayerConfigArr.length > 0){
         const newLayerConfig = {};
-        newLayerConfig['layerConfig'] = newLayerConfigArr;
+        newLayerConfig['spatialLayerConfig'] = newLayerConfigArr;
         const http = new XMLHttpRequest();
         const url = "../../api/configurations/mapServerConfigurationController.php";
         const jsonData = JSON.stringify(newLayerConfig).replaceAll('&','%<amp>%');

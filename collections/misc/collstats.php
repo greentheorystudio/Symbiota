@@ -234,15 +234,15 @@ if($action !== 'Update Statistics'){
     include_once(__DIR__ . '/../../config/header-includes.php');
     ?>
     <head>
-        <meta name="keywords" content="Natural history collections statistics" />
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Statistics</title>
-        <link rel="stylesheet" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-        <link rel="stylesheet" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" />
-        <link rel="stylesheet" href="../../css/external/jquery-ui.css?ver=20221204" type="text/css" />
-        <script src="../../js/external/all.min.js" type="text/javascript"></script>
-        <script type="text/javascript" src="../../js/external/jquery.js"></script>
-        <script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-        <script type="text/javascript" src="../../js/search.term.manager.js?ver=20230901"></script>
+        <meta name="description" content="Statistics for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/search.term.manager.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             document.addEventListener("DOMContentLoaded", function() {
                 $("#tabs").tabs({<?php echo ($action === 'Run Statistics' ?'active: 1':''); ?>});
@@ -364,12 +364,12 @@ if($action !== 'Update Statistics'){
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div class='navpath'>
-            <a href='../../index.php'>Home</a> &gt;&gt;
-            <a href='collprofiles.php'>Collections</a> &gt;&gt;
-            <b>Collection Statistics</b>
-        </div>
-        <div id="innertext">
+        <div id="mainContainer" style="padding: 10px 15px 15px;">
+            <div id="breadcrumbs">
+                <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+                <a href='collprofiles.php'>Collections</a> &gt;&gt;
+                <b>Collection Statistics</b>
+            </div>
             <h3>Select Collections to be Analyzed</h3>
             <div id="tabs" style="margin:0;">
                 <ul>
@@ -984,8 +984,8 @@ if($action !== 'Update Statistics'){
             </div>
         </div>
         <?php
-        include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
         ?>
     </body>
 	</html>

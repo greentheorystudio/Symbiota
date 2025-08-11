@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/SpatialModuleManager.php');
 include_once(__DIR__ . '/../../classes/OccurrenceManager.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: application/json; charset=UTF-8' );
 ini_set('max_execution_time', 300);
 
@@ -10,21 +11,23 @@ $occIndex = (int)$_REQUEST['start'];
 $recordCnt = (int)$_REQUEST['rows'];
 $type = $_REQUEST['type'];
 
-$spatialManager = new SpatialModuleManager();
-$occManager = new OccurrenceManager();
+if(SanitizerService::validateInternalRequest()){
+    $spatialManager = new SpatialModuleManager();
+    $occManager = new OccurrenceManager();
 
-$retArr = array();
+    $retArr = array();
 
-$stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
+    $stArr = json_decode(str_replace('%squot;', "'",$stArrJson), true);
 
-$occManager->setSearchTermsArr($stArr);
-$spatialManager->setSearchTermsArr($stArr);
-$mapWhere = $occManager->getSqlWhere();
-$spatialManager->setSqlWhere($mapWhere);
-if($type === 'reccnt'){
-    $spatialManager->setRecordCnt();
-    echo $spatialManager->getRecordCnt();
-}
-if($type === 'geoquery'){
-    echo $spatialManager->getOccPointMapGeoJson($occIndex,$recordCnt);
+    $occManager->setSearchTermsArr($stArr);
+    $spatialManager->setSearchTermsArr($stArr);
+    $mapWhere = $occManager->getSqlWhere();
+    $spatialManager->setSqlWhere($mapWhere);
+    if($type === 'reccnt'){
+        $spatialManager->setRecordCnt();
+        echo $spatialManager->getRecordCnt();
+    }
+    if($type === 'geoquery'){
+        echo $spatialManager->getOccPointMapGeoJson($occIndex,$recordCnt);
+    }
 }

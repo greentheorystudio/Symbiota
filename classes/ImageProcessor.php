@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
+include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceMaintenance.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageProcessor {
 
@@ -23,7 +23,7 @@ class ImageProcessor {
             $this->destructConn = false;
         }
         else{
-            $connection = new DbConnection();
+            $connection = new DbService();
             $this->conn = $connection->getConnection();
             if(!$this->conn) {
                 exit('ABORT: Image upload aborted: Unable to establish connection to database');
@@ -65,41 +65,6 @@ class ImageProcessor {
         }
     }
 
-    public function loadImageFile(): string
-    {
-        $retStr = '';
-        $inFileName = basename($_FILES['uploadfile']['name']);
-        $ext = substr(strrchr($inFileName, '.'), 1);
-        $fileName = 'imageMappingFile_'.time();
-        $fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/';
-        if(is_writable($fullPath) && move_uploaded_file($_FILES['uploadfile']['tmp_name'], $fullPath . $fileName . '.' . $ext)) {
-            if($ext === 'zip'){
-                $zipFilePath = $fullPath.$fileName.'.zip';
-                $ext = '';
-                $zip = new ZipArchive;
-                $res = $zip->open($zipFilePath);
-                if($res === TRUE) {
-                    for($i = 0; $i < $zip->numFiles; $i++){
-                        $fileExt = substr(strrchr($zip->getNameIndex($i), '.'), 1);
-                        if($fileExt === 'csv' || $fileExt === 'txt'){
-                            $ext = $fileExt;
-                            $zip->renameIndex($i, $fileName.'.'.$ext);
-                            $zip->extractTo($fullPath,$fileName.'.'.$ext);
-                            $zip->close();
-                            unlink($zipFilePath);
-                            break;
-                        }
-                    }
-                }
-                else{
-                    echo 'failed, code:' . $res;
-                }
-            }
-            $retStr = $fileName.'.'.$ext;
-        }
-        return $retStr;
-    }
-
     public function echoFileMapping($fileName): void
     {
         $fullPath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) !== '/'?'/':'').'temp/data/'.$fileName;
@@ -137,10 +102,10 @@ class ImageProcessor {
                 fgetcsv($fh);
                 while($recordArr = fgetcsv($fh)){
                     if($recordArr){
-                        $catalogNumber = (isset($fieldMap['catalognumber'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['catalognumber']]):'');
-                        $originalUrl = (isset($fieldMap['originalurl'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['originalurl']]):'');
-                        $url = (isset($fieldMap['url'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['url']]):'');
-                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?Sanitizer::cleanInStr($this->conn,$recordArr[$fieldMap['thumbnailurl']]):'');
+                        $catalogNumber = (isset($fieldMap['catalognumber'])?SanitizerService::cleanInStr($this->conn,$recordArr[$fieldMap['catalognumber']]):'');
+                        $originalUrl = (isset($fieldMap['originalurl'])?SanitizerService::cleanInStr($this->conn,$recordArr[$fieldMap['originalurl']]):'');
+                        $url = (isset($fieldMap['url'])?SanitizerService::cleanInStr($this->conn,$recordArr[$fieldMap['url']]):'');
+                        $thumbnailUrl = (isset($fieldMap['thumbnailurl'])?SanitizerService::cleanInStr($this->conn,$recordArr[$fieldMap['thumbnailurl']]):'');
                         if($catalogNumber && $originalUrl){
                             echo '<li>Processing catalogNumber: '.$catalogNumber.'</li>';
                             $occArr = array();
@@ -319,8 +284,8 @@ class ImageProcessor {
             $format = 'image/jpeg';
             $sql = 'INSERT INTO images(occid,url,thumbnailurl,originalurl,archiveurl,owner,sourceIdentifier,format) '.
                 'VALUES ('.$occid.',"'.$webUrl.'",'.($tnUrl?'"'.$tnUrl.'"':'NULL').','.($lgUrl?'"'.$lgUrl.'"':'NULL').','.
-                ($archiveUrl?'"'.$archiveUrl.'"':'NULL').','.($ownerStr?'"'.Sanitizer::cleanInStr($this->conn,$ownerStr).'"':'NULL').','.
-                ($sourceIdentifier?'"'.Sanitizer::cleanInStr($this->conn,$sourceIdentifier).'"':'NULL').',"'.$format.'")';
+                ($archiveUrl?'"'.$archiveUrl.'"':'NULL').','.($ownerStr?'"'.SanitizerService::cleanInStr($this->conn,$ownerStr).'"':'NULL').','.
+                ($sourceIdentifier?'"'.SanitizerService::cleanInStr($this->conn,$sourceIdentifier).'"':'NULL').',"'.$format.'")';
             if($this->conn->query($sql)){
                 $status = true;
             }
@@ -355,7 +320,7 @@ class ImageProcessor {
         $occurMain->__destruct();
 
         $this->logOrEcho('Populating global unique identifiers (GUIDs) for all records...',2);
-        $uuidManager = new UuidFactory($this->conn);
+        $uuidManager = new GUIDManager($this->conn);
         $uuidManager->setSilent(1);
         $uuidManager->populateGuids();
         $uuidManager->__destruct();

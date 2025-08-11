@@ -26,20 +26,23 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
 ?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Crowdsourcing Score Board</title>
-    <link href="../../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <script src="../../../js/external/all.min.js" type="text/javascript"></script>
+    <meta name="description" content="Collection crowdsourcing score board in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 	<?php
 	include(__DIR__ . '/../../../header.php');
-    echo "<div class='navpath'>";
-    echo "<a href='../../../index.php'>Home</a> &gt;&gt; ";
-    echo '<b>Crowdsourcing Score Board</b>';
-    echo '</div>';
-	?>
-    <div id="innertext">
-		<h1>Crowdsourcing Score Board</h1>
+    ?>
+    <div id="mainContainer" style="padding: 10px 15px 15px;">
+        <?php
+        echo '<div id="breadcrumbs">';
+        echo "<a href='../../../index.php'>Home</a> &gt;&gt; ";
+        echo '<b>Crowdsourcing Score Board</b>';
+        echo '</div>';
+        ?>
+        <h1>Crowdsourcing Score Board</h1>
         <div style="margin-left:20px;float:left;">
 			<h2>Top Scores</h2>
 			<table class="styledtable" style="font-family:Arial,serif;width:300px;">
@@ -149,8 +152,8 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../../../footer.php');
     include_once(__DIR__ . '/../../../config/footer-includes.php');
-	?>
+	include(__DIR__ . '/../../../footer.php');
+    ?>
 </body>
 </html>

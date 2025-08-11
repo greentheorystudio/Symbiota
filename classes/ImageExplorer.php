@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ImageExplorer{
     private $debug = FALSE;
@@ -8,7 +8,7 @@ class ImageExplorer{
 	private $imgCnt = 0;
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
 	}
  
@@ -85,16 +85,16 @@ class ImageExplorer{
 			elseif(count($accArr) > 1){
 				$tidArr = array_merge($this->getTaxaChildren($accArr),$accArr);
 				$tidArr = $this->getTaxaSynonyms($tidArr);
-				$sqlWhere .= 'AND (i.tid IN('.implode(',',Sanitizer::cleanInArray($this->conn,$tidArr)).')) ';
+				$sqlWhere .= 'AND (i.tid IN('.implode(',',SanitizerService::cleanInArray($this->conn,$tidArr)).')) ';
 			}
 		}
 		
 		if (isset($searchCriteria['text']) && $searchCriteria['text']) {
-			$sqlWhere .= 'AND o.sciname like "%'.Sanitizer::cleanInStr($this->conn,$searchCriteria['text'][0]).'%" ';
+			$sqlWhere .= 'AND o.sciname like "%'.SanitizerService::cleanInStr($this->conn,$searchCriteria['text'][0]).'%" ';
 		}
 
 		if(isset($searchCriteria['country']) && $searchCriteria['country']){
-			$countryArr = Sanitizer::cleanInArray($this->conn,$searchCriteria['country']);
+			$countryArr = SanitizerService::cleanInArray($this->conn,$searchCriteria['country']);
 			$usaArr = array('usa','united states','united states of america','u.s.a','us');
 			foreach($countryArr as $countryStr){
 				if(in_array(strtolower($countryStr), $usaArr, true)){
@@ -106,59 +106,32 @@ class ImageExplorer{
 		}
 
 		if(isset($searchCriteria['state']) && $searchCriteria['state']){
-			$stateArr = Sanitizer::cleanInArray($this->conn,$searchCriteria['state']);
+			$stateArr = SanitizerService::cleanInArray($this->conn,$searchCriteria['state']);
 			$sqlWhere .= 'AND o.stateProvince IN("'.implode('","',$stateArr).'") ';
 		}
 
 		if(isset($searchCriteria['tags']) && $searchCriteria['tags']){
-			$sqlWhere .= 'AND it.keyvalue IN("'.implode('","',Sanitizer::cleanInArray($this->conn,$searchCriteria['tags'])).'") ';
+			$sqlWhere .= 'AND it.keyvalue IN("'.implode('","',SanitizerService::cleanInArray($this->conn,$searchCriteria['tags'])).'") ';
 		}
 		else{
 			$sqlWhere .= 'AND i.sortsequence < 500 ';
 		}
 		
 		if(isset($searchCriteria['collection']) && $searchCriteria['collection']){
-			$sqlWhere .= 'AND o.collid IN('.implode(',',Sanitizer::cleanInArray($this->conn,$searchCriteria['collection'])).') ';
+			$sqlWhere .= 'AND o.collid IN('.implode(',',SanitizerService::cleanInArray($this->conn,$searchCriteria['collection'])).') ';
 		}
 
 		if(isset($searchCriteria['photographer']) && $searchCriteria['photographer']){
-			$sqlWhere .= 'AND i.photographerUid IN('.implode(',',Sanitizer::cleanInArray($this->conn,$searchCriteria['photographer'])).') ';
-		}
-		
-		if (isset($searchCriteria['idToSpecies'], $searchCriteria['idNeeded']) && $searchCriteria['idToSpecies'] && $searchCriteria['idNeeded']) {
-			$includeVerification = FALSE;  // used later to include/exclude the join to omoccurrverification
-		} else { 
-			$includeVerification = FALSE;
-		    if(isset($searchCriteria['idNeeded']) && $searchCriteria['idNeeded']){
-	   		    $includeVerification = TRUE;
-	   		    $sqlWhere .= 'AND ( ' .
-					'   (o.occid NOT IN (SELECT occid FROM omoccurverification WHERE (category = "identification")) AND (t.rankid < 220 OR ISNULL(o.tid)) ) ' .
-					' ) ';
-		    }
-		    if(isset($searchCriteria['idToSpecies']) && $searchCriteria['idToSpecies']){
-	   		   $includeVerification = TRUE;
-	   		    $sqlWhere .= 'AND ( (o.occid IS NULL AND t.rankid IN(220,230,240,260)) OR ' .
-					'   (o.occid NOT IN (SELECT occid FROM omoccurverification WHERE (category = "identification")) AND t.rankid IN(220,230,240,260)) ' .
-					'   OR ' .
-					"   (v.category = 'identification' AND v.ranking >= 5) " .
-					' ) ';
-		    }
-            if(isset($searchCriteria['idPoor']) && $searchCriteria['idPoor']){
-	   		    $includeVerification = TRUE;
-	   		    $sqlWhere .= "AND ( v.category = 'identification' AND v.ranking < 5 ) ";
-		    }
+			$sqlWhere .= 'AND i.photographerUid IN('.implode(',',SanitizerService::cleanInArray($this->conn,$searchCriteria['photographer'])).') ';
 		}
 
-		$sqlStr = 'SELECT DISTINCT i.imgid, t.tidaccepted, i.url, i.thumbnailurl, i.originalurl, '.
+        $sqlStr = 'SELECT DISTINCT i.imgid, t.tidaccepted, i.url, i.thumbnailurl, i.originalurl, '.
 			'u.uid, CONCAT_WS(", ",u.lastname,u.firstname) AS photographer, i.caption, '.
 			'o.occid, o.stateprovince, o.catalognumber, i.initialtimestamp '.
 			'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
 			'LEFT JOIN users AS u ON i.photographeruid = u.uid '.
 			'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
 			'LEFT JOIN omcollections AS c ON o.collid = c.collid ';
-		if($includeVerification){
-			$sqlStr .= 'LEFT JOIN omoccurverification AS v ON o.occid = v.occid ';
-		}
 		if(isset($searchCriteria['tags']) && $searchCriteria['tags']){
 			$sqlStr .= 'LEFT JOIN imagetag AS it ON i.imgid = it.imgid ';
 		}

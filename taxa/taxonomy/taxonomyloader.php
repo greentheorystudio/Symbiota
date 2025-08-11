@@ -3,7 +3,7 @@
 /** @var string $status */
 /** @var array $tRankArr */
 ?>
-<script src="../../js/taxa.taxonomyloader.js?ver=20230103"></script>
+<script src="../../js/taxa.taxonomyloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>"></script>
 <div>
     <?php
     if($status){
@@ -15,7 +15,7 @@
             <legend><b>Add New Taxon</b></legend>
             <div>
                 <div style="float:left;width:170px;">Taxon Name:</div>
-                <input type="text" id="sciname" name="sciname" style="width:300px;border:inset;" value="" onchange="parseName(this.form);clearValidations();"/>
+                <input type="text" id="sciname" name="sciname" style="width:300px;border:inset;" onchange="clearValidations();parseName(this.form);"/>
             </div>
             <div>
                 <div style="float:left;width:170px;">Author:</div>
@@ -76,8 +76,8 @@
                 <fieldset>
                     <legend><b>Acceptance Status</b></legend>
                     <div>
-                        <input type="radio" id="isaccepted" name="acceptstatus" value="1" onchange="acceptanceChanged(this.form);clearValidations();" checked> Accepted
-                        <input type="radio" id="isnotaccepted" name="acceptstatus" value="0" onchange="acceptanceChanged(this.form);clearValidations();"> Not Accepted
+                        <input type="radio" id="isaccepted" name="acceptstatus" value="1" onchange="clearValidations();acceptanceChanged(this.form);" checked> Accepted
+                        <input type="radio" id="isnotaccepted" name="acceptstatus" value="0" onchange="clearValidations();acceptanceChanged(this.form);"> Not Accepted
                     </div>
                     <div id="accdiv" style="display:none;margin-top:3px;">
                         Accepted Taxon:

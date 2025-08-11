@@ -9,7 +9,7 @@ $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
 $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 ?>
-<script>
+<script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
         $("#remapvalue").autocomplete({
 				source: "../../api/taxa/autofillsciname.php",
@@ -197,7 +197,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 				<ul>
 					<?php 
 					foreach($clArr as $k => $v){
-						echo '<li><a href="../../checklists/checklist.php?cl='.$k.'" target="_blank">';
+						echo '<li><a href="../../checklists/checklist.php?clid='.$k.'" target="_blank">';
 						echo $v;
 						echo '</a></li>';
 					}

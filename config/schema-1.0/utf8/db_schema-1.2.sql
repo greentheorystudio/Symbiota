@@ -59,19 +59,6 @@ CREATE TABLE `fmchecklists` (
     CONSTRAINT `FK_checklists_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`)
 );
 
-CREATE TABLE `fmchklstchildren` (
-    `clid` int(10) unsigned NOT NULL,
-    `clidchild` int(10) unsigned NOT NULL,
-    `modifiedUid` int(10) unsigned NOT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`clid`,`clidchild`),
-    KEY `FK_fmchklstchild_clid_idx` (`clid`),
-    KEY `FK_fmchklstchild_child_idx` (`clidchild`),
-    CONSTRAINT `FK_fmchklstchild_child` FOREIGN KEY (`clidchild`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_fmchklstchild_clid` FOREIGN KEY (`clid`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `fmchklstprojlink` (
     `pid` int(10) unsigned NOT NULL,
     `clid` int(10) unsigned NOT NULL,
@@ -105,45 +92,6 @@ CREATE TABLE `fmchklsttaxalink` (
     PRIMARY KEY (`TID`,`CLID`,`morphospecies`),
     KEY `FK_chklsttaxalink_cid` (`CLID`),
     KEY `FK_chklsttaxalink_tid` (`TID`)
-);
-
-CREATE TABLE `fmdynamicchecklists` (
-    `dynclid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `name` varchar(50) DEFAULT NULL,
-    `details` varchar(250) DEFAULT NULL,
-    `uid` varchar(45) DEFAULT NULL,
-    `type` varchar(45) NOT NULL DEFAULT 'DynamicList',
-    `notes` varchar(250) DEFAULT NULL,
-    `expiration` datetime NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`dynclid`)
-);
-
-CREATE TABLE `fmdyncltaxalink` (
-    `dynclid` int(10) unsigned NOT NULL,
-    `tid` int(10) unsigned NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`dynclid`,`tid`),
-    KEY `FK_dyncltaxalink_taxa` (`tid`),
-    CONSTRAINT `FK_dyncltaxalink_dynclid` FOREIGN KEY (`dynclid`) REFERENCES `fmdynamicchecklists` (`dynclid`) ON DELETE CASCADE,
-    CONSTRAINT `FK_dyncltaxalink_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE
-);
-
-CREATE TABLE `fmprojectcategories` (
-    `projcatid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `pid` int(10) unsigned NOT NULL,
-    `categoryname` varchar(150) NOT NULL,
-    `managers` varchar(100) DEFAULT NULL,
-    `description` varchar(250) DEFAULT NULL,
-    `parentpid` int(11) DEFAULT NULL,
-    `occurrencesearch` int(11) DEFAULT '0',
-    `ispublic` int(11) DEFAULT '1',
-    `notes` varchar(250) DEFAULT NULL,
-    `sortsequence` int(11) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`projcatid`),
-    KEY `FK_fmprojcat_pid_idx` (`pid`),
-    CONSTRAINT `FK_fmprojcat_pid` FOREIGN KEY (`pid`) REFERENCES `fmprojects` (`pid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
 CREATE TABLE `fmprojects` (
@@ -283,20 +231,6 @@ CREATE TABLE `guidoccurrences` (
     UNIQUE KEY `guidoccurrences_occid_unique` (`occid`)
 );
 
-CREATE TABLE `imagekeywords` (
-    `imgkeywordid` int(11) NOT NULL AUTO_INCREMENT,
-    `imgid` int(10) unsigned NOT NULL,
-    `keyword` varchar(45) NOT NULL,
-    `uidassignedby` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`imgkeywordid`),
-    KEY `FK_imagekeywords_imgid_idx` (`imgid`),
-    KEY `FK_imagekeyword_uid_idx` (`uidassignedby`),
-    KEY `INDEX_imagekeyword` (`keyword`),
-    CONSTRAINT `FK_imagekeyword_uid` FOREIGN KEY (`uidassignedby`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_imagekeywords_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `images` (
     `imgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
     `tid` int(10) unsigned DEFAULT NULL,
@@ -344,18 +278,7 @@ CREATE TABLE `imagetag` (
     UNIQUE KEY `imgid` (`imgid`,`keyvalue`),
     KEY `keyvalue` (`keyvalue`),
     KEY `FK_imagetag_imgid_idx` (`imgid`),
-    CONSTRAINT `FK_imagetag_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_imagetag_tagkey` FOREIGN KEY (`keyvalue`) REFERENCES `imagetagkey` (`tagkey`) ON DELETE NO ACTION ON UPDATE CASCADE
-);
-
-CREATE TABLE `imagetagkey` (
-    `tagkey` varchar(30) NOT NULL,
-    `shortlabel` varchar(30) NOT NULL,
-    `description_en` varchar(255) NOT NULL,
-    `sortorder` int(11) NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`tagkey`),
-    KEY `sortorder` (`sortorder`)
+    CONSTRAINT `FK_imagetag_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `institutions` (
@@ -380,150 +303,6 @@ CREATE TABLE `institutions` (
     PRIMARY KEY (`iid`),
     KEY `FK_inst_uid_idx` (`modifieduid`),
     CONSTRAINT `FK_inst_uid` FOREIGN KEY (`modifieduid`) REFERENCES `users` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-CREATE TABLE `kmcharacterlang` (
-    `cid` int(10) unsigned NOT NULL,
-    `charname` varchar(150) NOT NULL,
-    `language` varchar(45) NOT NULL,
-    `langid` int(11) NOT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `helpurl` varchar(500) DEFAULT NULL,
-    `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`cid`,`langid`),
-    KEY `FK_charlang_lang_idx` (`langid`),
-    CONSTRAINT `FK_characterlang_1` FOREIGN KEY (`cid`) REFERENCES `kmcharacters` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_charlang_lang` FOREIGN KEY (`langid`) REFERENCES `adminlanguages` (`langid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-CREATE TABLE `kmcharacters` (
-    `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `charname` varchar(150) NOT NULL,
-    `chartype` varchar(2) NOT NULL DEFAULT 'UM',
-    `defaultlang` varchar(45) NOT NULL DEFAULT 'English',
-    `difficultyrank` smallint(5) unsigned NOT NULL DEFAULT '1',
-    `hid` int(10) unsigned DEFAULT NULL,
-    `units` varchar(45) DEFAULT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `display` varchar(45) DEFAULT NULL,
-    `helpurl` varchar(500) DEFAULT NULL,
-    `enteredby` varchar(45) DEFAULT NULL,
-    `sortsequence` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`cid`),
-    KEY `Index_charname` (`charname`),
-    KEY `Index_sort` (`sortsequence`),
-    KEY `FK_charheading_idx` (`hid`),
-    CONSTRAINT `FK_charheading` FOREIGN KEY (`hid`) REFERENCES `kmcharheading` (`hid`) ON UPDATE CASCADE
-);
-
-CREATE TABLE `kmchardependence` (
-    `CID` int(10) unsigned NOT NULL,
-    `CIDDependance` int(10) unsigned NOT NULL,
-    `CSDependance` varchar(16) NOT NULL,
-    `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`CSDependance`,`CIDDependance`,`CID`),
-    KEY `FK_chardependance_cid_idx` (`CID`),
-    KEY `FK_chardependance_cs_idx` (`CIDDependance`,`CSDependance`),
-    CONSTRAINT `FK_chardependance_cid` FOREIGN KEY (`CID`) REFERENCES `kmcharacters` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_chardependance_cs` FOREIGN KEY (`CIDDependance`, `CSDependance`) REFERENCES `kmcs` (`cid`, `cs`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `kmcharheading` (
-    `hid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `headingname` varchar(255) NOT NULL,
-    `language` varchar(45) NOT NULL DEFAULT 'English',
-    `langid` int(11) NOT NULL,
-    `notes` longtext,
-    `sortsequence` int(11) DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`hid`,`langid`),
-    UNIQUE KEY `unique_kmcharheading` (`headingname`,`langid`),
-    KEY `HeadingName` (`headingname`),
-    KEY `FK_kmcharheading_lang_idx` (`langid`),
-    CONSTRAINT `FK_kmcharheading_lang` FOREIGN KEY (`langid`) REFERENCES `adminlanguages` (`langid`)
-);
-
-CREATE TABLE `kmchartaxalink` (
-    `CID` int(10) unsigned NOT NULL DEFAULT '0',
-    `TID` int(10) unsigned NOT NULL DEFAULT '0',
-    `Status` varchar(50) DEFAULT NULL,
-    `Notes` varchar(255) DEFAULT NULL,
-    `Relation` varchar(45) NOT NULL DEFAULT 'include',
-    `EditabilityInherited` bit(1) DEFAULT NULL,
-    `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`CID`,`TID`),
-    KEY `FK_CharTaxaLink-TID` (`TID`),
-    CONSTRAINT `FK_chartaxalink_cid` FOREIGN KEY (`CID`) REFERENCES `kmcharacters` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_chartaxalink_tid` FOREIGN KEY (`TID`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `kmcs` (
-    `cid` int(10) unsigned NOT NULL DEFAULT '0',
-    `cs` varchar(16) NOT NULL,
-    `CharStateName` varchar(255) DEFAULT NULL,
-    `Implicit` tinyint(1) NOT NULL DEFAULT '0',
-    `Notes` longtext,
-    `Description` varchar(255) DEFAULT NULL,
-    `IllustrationUrl` varchar(250) DEFAULT NULL,
-    `StateID` int(10) unsigned DEFAULT NULL,
-    `SortSequence` int(10) unsigned DEFAULT NULL,
-    `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `EnteredBy` varchar(45) DEFAULT NULL,
-    PRIMARY KEY (`cs`,`cid`),
-    KEY `FK_cs_chars` (`cid`),
-    CONSTRAINT `FK_cs_chars` FOREIGN KEY (`cid`) REFERENCES `kmcharacters` (`cid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `kmcsimages` (
-    `csimgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `cid` int(10) unsigned NOT NULL,
-    `cs` varchar(16) NOT NULL,
-    `url` varchar(255) NOT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `sortsequence` varchar(45) NOT NULL DEFAULT '50',
-    `username` varchar(45) DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`csimgid`),
-    KEY `FK_kscsimages_kscs_idx` (`cid`,`cs`),
-    CONSTRAINT `FK_kscsimages_kscs` FOREIGN KEY (`cid`, `cs`) REFERENCES `kmcs` (`cid`, `cs`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `kmcslang` (
-    `cid` int(10) unsigned NOT NULL,
-    `cs` varchar(16) NOT NULL,
-    `charstatename` varchar(150) NOT NULL,
-    `language` varchar(45) NOT NULL,
-    `langid` int(11) NOT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`cid`,`cs`,`langid`),
-    KEY `FK_cslang_lang_idx` (`langid`),
-    CONSTRAINT `FK_cslang_1` FOREIGN KEY (`cid`, `cs`) REFERENCES `kmcs` (`cid`, `cs`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_cslang_lang` FOREIGN KEY (`langid`) REFERENCES `adminlanguages` (`langid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-CREATE TABLE `kmdescr` (
-    `TID` int(10) unsigned NOT NULL DEFAULT '0',
-    `CID` int(10) unsigned NOT NULL DEFAULT '0',
-    `Modifier` varchar(255) DEFAULT NULL,
-    `CS` varchar(16) NOT NULL,
-    `X` double(15,5) DEFAULT NULL,
-    `TXT` longtext,
-    `PseudoTrait` int(5) unsigned DEFAULT '0',
-    `Frequency` int(5) unsigned NOT NULL DEFAULT '5' COMMENT 'Frequency of occurrence; 1 = rare... 5 = common',
-    `Inherited` varchar(50) DEFAULT NULL,
-    `Source` varchar(100) DEFAULT NULL,
-    `Seq` int(10) DEFAULT NULL,
-    `Notes` longtext,
-    `DateEntered` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`TID`,`CID`,`CS`),
-    KEY `CSDescr` (`CID`,`CS`),
-    CONSTRAINT `FK_descr_cs` FOREIGN KEY (`CID`, `CS`) REFERENCES `kmcs` (`cid`, `cs`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_descr_tid` FOREIGN KEY (`TID`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `lkupcountry` (
@@ -642,6 +421,8 @@ CREATE TABLE `omcollections` (
     `icon` varchar(250) DEFAULT NULL,
     `CollType` varchar(45) NOT NULL DEFAULT 'PreservedSpecimen' COMMENT 'PreservedSpecimen, HumanObservation, FossilSpecimen, LivingSpecimen, MaterialSample',
     `ManagementType` varchar(45) DEFAULT 'Snapshot' COMMENT 'Snapshot, Live Data',
+    `DataRecordingMethod` varchar(45) NULL DEFAULT 'specimen',
+    `defaultRepCount` int(10) DEFAULT NULL,
     `PublicEdits` int(1) unsigned NOT NULL DEFAULT '1',
     `collectionguid` varchar(45) DEFAULT NULL,
     `securitykey` varchar(45) DEFAULT NULL,
@@ -657,10 +438,12 @@ CREATE TABLE `omcollections` (
     `accessrights` varchar(1000) DEFAULT NULL,
     `dynamicProperties` text,
     `SortSeq` int(10) unsigned DEFAULT NULL,
+    `isPublic` smallint(1) NOT NULL DEFAULT 1,
     `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`CollID`),
     UNIQUE KEY `Index_inst` (`InstitutionCode`,`CollectionCode`),
     KEY `FK_collid_iid_idx` (`iid`),
+    KEY `isPublic` (`isPublic`),
     CONSTRAINT `FK_collid_iid` FOREIGN KEY (`iid`) REFERENCES `institutions` (`iid`) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -678,52 +461,6 @@ CREATE TABLE `omcollectionstats` (
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`collid`),
     CONSTRAINT `FK_collectionstats_coll` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`)
-);
-
-CREATE TABLE `omcollectors` (
-    `recordedById` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `familyname` varchar(45) NOT NULL,
-    `firstname` varchar(45) DEFAULT NULL,
-    `middlename` varchar(45) DEFAULT NULL,
-    `startyearactive` int(11) DEFAULT NULL,
-    `endyearactive` int(11) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `rating` int(11) DEFAULT '10',
-    `guid` varchar(45) DEFAULT NULL,
-    `preferredrecbyid` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`recordedById`),
-    KEY `fullname` (`familyname`,`firstname`),
-    KEY `FK_preferred_recby_idx` (`preferredrecbyid`)
-);
-
-CREATE TABLE `omcollpublications` (
-    `pubid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `collid` int(10) unsigned NOT NULL,
-    `targeturl` varchar(250) NOT NULL,
-    `securityguid` varchar(45) NOT NULL,
-    `criteriajson` varchar(250) DEFAULT NULL,
-    `includedeterminations` int(11) DEFAULT '1',
-    `includeimages` int(11) DEFAULT '1',
-    `autoupdate` int(11) DEFAULT '0',
-    `lastdateupdate` datetime DEFAULT NULL,
-    `updateinterval` int(11) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`pubid`),
-    KEY `FK_adminpub_collid_idx` (`collid`),
-    CONSTRAINT `FK_adminpub_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `omcollpuboccurlink` (
-    `pubid` int(10) unsigned NOT NULL,
-    `occid` int(10) unsigned NOT NULL,
-    `verification` int(11) NOT NULL DEFAULT '0',
-    `refreshtimestamp` datetime NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`pubid`,`occid`),
-    KEY `FK_ompuboccid_idx` (`occid`),
-    CONSTRAINT `FK_ompuboccid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_ompubpubid` FOREIGN KEY (`pubid`) REFERENCES `omcollpublications` (`pubid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `omcrowdsourcecentral` (
@@ -800,19 +537,22 @@ CREATE TABLE `omexsiccatititles` (
     KEY `index_exsiccatiTitle` (`title`)
 );
 
-CREATE TABLE `omoccuraccessstats` (
-    `oasid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `accessdate` date NOT NULL,
-    `ipaddress` varchar(45) NOT NULL,
-    `cnt` int(10) unsigned NOT NULL,
-    `accesstype` varchar(45) NOT NULL,
-    `dynamicProperties` varchar(250) DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`oasid`),
-    UNIQUE KEY `UNIQUE_occuraccess` (`occid`,`accessdate`,`ipaddress`,`accesstype`),
-    CONSTRAINT `FK_occuraccess_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
+CREATE TABLE `ommofextension` (
+    `mofID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `eventID` int(10) unsigned DEFAULT NULL,
+    `occId` int(10) unsigned DEFAULT NULL,
+    `field` varchar(250) NOT NULL,
+    `datavalue` varchar(1000) DEFAULT NULL,
+    `enteredBy` varchar(250) DEFAULT NULL,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`mofID`),
+    UNIQUE KEY `INDEX_UNIQUE_event_field` (`eventID`,`field`),
+    UNIQUE KEY `INDEX_UNIQUE_OCCID` (`occId`,`field`),
+    KEY `field` (`field`),
+    KEY `datavalue` (`datavalue`),
+    KEY `FK_eventID` (`eventID`),
+    CONSTRAINT `FK_event` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`),
+    CONSTRAINT `FK_ommofextension_occid` FOREIGN KEY (`occId`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
 CREATE TABLE `omoccurassociations` (
@@ -848,19 +588,59 @@ CREATE TABLE `omoccurassociations` (
     CONSTRAINT `FK_occurassoc_uidmodified` FOREIGN KEY (`modifieduid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE TABLE `omoccurcomments` (
-    `comid` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `comment` text NOT NULL,
-    `uid` int(10) unsigned NOT NULL,
-    `reviewstatus` int(10) unsigned NOT NULL DEFAULT '0',
-    `parentcomid` int(10) unsigned DEFAULT NULL,
+CREATE TABLE `omoccurcollectingevents` (
+    `eventID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `collid` int(10) unsigned DEFAULT NULL,
+    `locationID` int(11) DEFAULT NULL,
+    `eventType` varchar(255) DEFAULT NULL,
+    `fieldNotes` text,
+    `fieldnumber` varchar(45) DEFAULT NULL,
+    `recordedBy` varchar(255) DEFAULT NULL,
+    `recordNumber` varchar(45) DEFAULT NULL,
+    `recordedbyid` bigint(20) DEFAULT NULL,
+    `associatedCollectors` varchar(255) DEFAULT NULL,
+    `eventDate` date DEFAULT NULL,
+    `latestDateCollected` date DEFAULT NULL,
+    `eventTime` time DEFAULT NULL,
+    `year` int(10) DEFAULT NULL,
+    `month` int(10) DEFAULT NULL,
+    `day` int(10) DEFAULT NULL,
+    `startDayOfYear` int(10) DEFAULT NULL,
+    `endDayOfYear` int(10) DEFAULT NULL,
+    `verbatimEventDate` varchar(255) DEFAULT NULL,
+    `habitat` text,
+    `substrate` varchar(500) DEFAULT NULL,
+    `localitySecurity` int(10) DEFAULT NULL,
+    `localitySecurityReason` varchar(100) DEFAULT NULL,
+    `decimalLatitude` double DEFAULT NULL,
+    `decimalLongitude` double DEFAULT NULL,
+    `geodeticDatum` varchar(255) DEFAULT NULL,
+    `coordinateUncertaintyInMeters` int(10) DEFAULT NULL,
+    `footprintWKT` text,
+    `eventRemarks` text,
+    `georeferencedBy` varchar(255) DEFAULT NULL,
+    `georeferenceProtocol` varchar(255) DEFAULT NULL,
+    `georeferenceSources` varchar(255) DEFAULT NULL,
+    `georeferenceVerificationStatus` varchar(32) DEFAULT NULL,
+    `georeferenceRemarks` varchar(500) DEFAULT NULL,
+    `minimumDepthInMeters` double DEFAULT NULL,
+    `maximumDepthInMeters` double DEFAULT NULL,
+    `verbatimDepth` varchar(50) DEFAULT NULL,
+    `samplingProtocol` varchar(100) DEFAULT NULL,
+    `samplingEffort` varchar(200) DEFAULT NULL,
+    `repCount` int(10) DEFAULT NULL,
+    `labelProject` varchar(250) DEFAULT NULL,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`comid`),
-    KEY `fk_omoccurcomments_occid` (`occid`),
-    KEY `fk_omoccurcomments_uid` (`uid`),
-    CONSTRAINT `fk_omoccurcomments_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_omoccurcomments_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (`eventID`),
+    KEY `eventType` (`eventType`),
+    KEY `eventDate` (`eventDate`),
+    KEY `eventTime` (`eventTime`),
+    KEY `localitySecurity` (`localitySecurity`),
+    KEY `decimalLatitude` (`decimalLatitude`),
+    KEY `decimalLongitude` (`decimalLongitude`),
+    KEY `FK_eventcollid` (`collid`),
+    KEY `locationID` (`locationID`),
+    CONSTRAINT `FK_eventcollid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `omoccurdatasetlink` (
@@ -916,33 +696,8 @@ CREATE TABLE `omoccurdeterminations` (
     KEY `FK_omoccurdets_tid` (`tid`),
     KEY `FK_omoccurdets_idby_idx` (`idbyid`),
     KEY `Index_dateIdentInterpreted` (`dateIdentifiedInterpreted`),
-    CONSTRAINT `FK_omoccurdets_idby` FOREIGN KEY (`idbyid`) REFERENCES `omcollectors` (`recordedById`) ON DELETE SET NULL ON UPDATE SET NULL,
     CONSTRAINT `FK_omoccurdets_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FK_omoccurdets_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`)
-);
-
-CREATE TABLE `omoccurduplicatelink` (
-    `occid` int(10) unsigned NOT NULL,
-    `duplicateid` int(11) NOT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `modifiedUid` int(10) unsigned DEFAULT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`occid`,`duplicateid`),
-    KEY `FK_omoccurdupelink_occid_idx` (`occid`),
-    KEY `FK_omoccurdupelink_dupeid_idx` (`duplicateid`),
-    CONSTRAINT `FK_omoccurdupelink_dupeid` FOREIGN KEY (`duplicateid`) REFERENCES `omoccurduplicates` (`duplicateid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurdupelink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `omoccurduplicates` (
-    `duplicateid` int(11) NOT NULL AUTO_INCREMENT,
-    `title` varchar(50) NOT NULL,
-    `description` varchar(255) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `dupeType` varchar(45) NOT NULL DEFAULT 'Exact Duplicate',
-    `initialTimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`duplicateid`)
 );
 
 CREATE TABLE `omoccureditlocks` (
@@ -1017,21 +772,6 @@ CREATE TABLE `omoccurgenetic` (
     CONSTRAINT `FK_omoccurgenetic` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE `omoccuridentifiers` (
-    `idomoccuridentifiers` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `identifiervalue` varchar(45) NOT NULL,
-    `identifiername` varchar(45) DEFAULT NULL COMMENT 'barcode, accession number, old catalog number, NPS, etc',
-    `notes` varchar(250) DEFAULT NULL,
-    `modifiedUid` int(10) unsigned NOT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`idomoccuridentifiers`),
-    KEY `FK_omoccuridentifiers_occid_idx` (`occid`),
-    KEY `Index_value` (`identifiervalue`),
-    CONSTRAINT `FK_omoccuridentifiers_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `omoccurlithostratigraphy` (
     `occid` int(10) unsigned NOT NULL,
     `chronoId` int(10) unsigned NOT NULL,
@@ -1104,6 +844,51 @@ CREATE TABLE `omoccurloanslink` (
     KEY `FK_occurloanlink_loanid` (`loanid`),
     CONSTRAINT `FK_occurloanlink_loanid` FOREIGN KEY (`loanid`) REFERENCES `omoccurloans` (`loanid`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FK_occurloanlink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE `omoccurlocations` (
+    `locationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `collid` int(10) unsigned NOT NULL,
+    `locationName` varchar(255) DEFAULT NULL,
+    `locationCode` varchar(50) DEFAULT NULL,
+    `waterBody` varchar(255) DEFAULT NULL,
+    `country` varchar(64) DEFAULT NULL,
+    `stateProvince` varchar(255) DEFAULT NULL,
+    `county` varchar(255) DEFAULT NULL,
+    `municipality` varchar(255) DEFAULT NULL,
+    `locality` text,
+    `localitySecurity` int(10) DEFAULT NULL,
+    `localitySecurityReason` varchar(100) DEFAULT NULL,
+    `decimalLatitude` double DEFAULT NULL,
+    `decimalLongitude` double DEFAULT NULL,
+    `geodeticDatum` varchar(255) DEFAULT NULL,
+    `coordinateUncertaintyInMeters` int(10) DEFAULT NULL,
+    `footprintWKT` text,
+    `coordinatePrecision` decimal(9,0) DEFAULT NULL,
+    `locationRemarks` text,
+    `verbatimCoordinates` varchar(255) DEFAULT NULL,
+    `verbatimCoordinateSystem` varchar(255) DEFAULT NULL,
+    `georeferencedBy` varchar(255) DEFAULT NULL,
+    `georeferenceProtocol` varchar(255) DEFAULT NULL,
+    `georeferenceSources` varchar(255) DEFAULT NULL,
+    `georeferenceVerificationStatus` varchar(32) DEFAULT NULL,
+    `georeferenceRemarks` varchar(500) DEFAULT NULL,
+    `minimumElevationInMeters` int(6) DEFAULT NULL,
+    `maximumElevationInMeters` int(6) DEFAULT NULL,
+    `verbatimElevation` varchar(255) DEFAULT NULL,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`locationID`),
+    KEY `locationName` (`locationName`),
+    KEY `locationCode` (`locationCode`),
+    KEY `waterBody` (`waterBody`),
+    KEY `country` (`country`),
+    KEY `stateProvince` (`stateProvince`),
+    KEY `county` (`county`),
+    KEY `localitySecurity` (`localitySecurity`),
+    KEY `decimalLatitude` (`decimalLatitude`),
+    KEY `decimalLongitude` (`decimalLongitude`),
+    KEY `FK_collid` (`collid`),
+    CONSTRAINT `FK_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `omoccurpaleo` (
@@ -1197,6 +982,7 @@ CREATE TABLE `omoccurrences` (
     `associatedCollectors` varchar(255) DEFAULT NULL COMMENT 'not DwC',
     `eventDate` date DEFAULT NULL,
     `latestDateCollected` date DEFAULT NULL,
+    `eventTime` time DEFAULT NULL,
     `year` int(10) DEFAULT NULL,
     `month` int(10) DEFAULT NULL,
     `day` int(10) DEFAULT NULL,
@@ -1207,7 +993,8 @@ CREATE TABLE `omoccurrences` (
     `substrate` varchar(500) DEFAULT NULL,
     `fieldNotes` text,
     `fieldnumber` varchar(45) DEFAULT NULL,
-    `eventID` varchar(45) DEFAULT NULL,
+    `eventID` int(11) UNSIGNED NULL DEFAULT NULL,
+    `eventRemarks` text,
     `occurrenceRemarks` text COMMENT 'General Notes',
     `informationWithheld` varchar(250) DEFAULT NULL,
     `dataGeneralizations` varchar(250) DEFAULT NULL,
@@ -1224,8 +1011,9 @@ CREATE TABLE `omoccurrences` (
     `individualCount` varchar(45) DEFAULT NULL,
     `samplingProtocol` varchar(100) DEFAULT NULL,
     `samplingEffort` varchar(200) DEFAULT NULL,
+    `rep` int(10) DEFAULT NULL,
     `preparations` varchar(100) DEFAULT NULL,
-    `locationID` varchar(100) DEFAULT NULL,
+    `locationID` int(11) UNSIGNED NULL DEFAULT NULL,
     `waterBody` varchar(255) DEFAULT NULL,
     `country` varchar(64) DEFAULT NULL,
     `stateProvince` varchar(255) DEFAULT NULL,
@@ -1251,8 +1039,8 @@ CREATE TABLE `omoccurrences` (
     `minimumElevationInMeters` int(6) DEFAULT NULL,
     `maximumElevationInMeters` int(6) DEFAULT NULL,
     `verbatimElevation` varchar(255) DEFAULT NULL,
-    `minimumDepthInMeters` int(11) DEFAULT NULL,
-    `maximumDepthInMeters` int(11) DEFAULT NULL,
+    `minimumDepthInMeters` double DEFAULT NULL,
+    `maximumDepthInMeters` double DEFAULT NULL,
     `verbatimDepth` varchar(50) DEFAULT NULL,
     `previousIdentifications` text,
     `disposition` varchar(250) DEFAULT NULL,
@@ -1267,6 +1055,7 @@ CREATE TABLE `omoccurrences` (
     `duplicateQuantity` int(10) unsigned DEFAULT NULL,
     `labelProject` varchar(250) DEFAULT NULL,
     `dynamicFields` text,
+    `isPublic` smallint(1) NOT NULL DEFAULT 1,
     `dateEntered` datetime DEFAULT NULL,
     `dateLastModified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`occid`),
@@ -1299,91 +1088,16 @@ CREATE TABLE `omoccurrences` (
     KEY `Index_latestDateCollected` (`latestDateCollected`),
     KEY `Index_occurrenceRemarks` (`occurrenceRemarks`(100)),
     KEY `Index_locationID` (`locationID`),
-    KEY `Index_eventID` (`eventID`),
     KEY `Index_occur_localitySecurity` (`localitySecurity`),
     KEY `Index_latlng` (`decimalLatitude`,`decimalLongitude`),
     KEY `Index_ labelProject` (`labelProject`),
     KEY `Index_verbatimScientificName` (`verbatimScientificName`),
+    KEY `isPublic` (`isPublic`),
+    KEY `rep` (`rep`),
     CONSTRAINT `FK_omoccurrences_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `FK_omoccurrences_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`)
-);
-
-CREATE TABLE `omoccurrencesfulltext` (
-    `occid` int(11) NOT NULL,
-    `locality` text,
-    `recordedby` varchar(255) DEFAULT NULL,
-    PRIMARY KEY (`occid`),
-    FULLTEXT KEY `ft_occur_locality` (`locality`),
-    FULLTEXT KEY `ft_occur_recordedby` (`recordedby`)
-);
-
-CREATE TABLE `omoccurrencetypes` (
-    `occurtypeid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned DEFAULT NULL,
-    `typestatus` varchar(45) DEFAULT NULL,
-    `typeDesignationType` varchar(45) DEFAULT NULL,
-    `typeDesignatedBy` varchar(45) DEFAULT NULL,
-    `scientificName` varchar(250) DEFAULT NULL,
-    `scientificNameAuthorship` varchar(45) DEFAULT NULL,
-    `tid` int(10) unsigned DEFAULT NULL,
-    `basionym` varchar(250) DEFAULT NULL,
-    `refid` int(11) DEFAULT NULL,
-    `bibliographicCitation` varchar(250) DEFAULT NULL,
-    `dynamicProperties` varchar(250) DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`occurtypeid`),
-    KEY `FK_occurtype_occid_idx` (`occid`),
-    KEY `FK_occurtype_refid_idx` (`refid`),
-    KEY `FK_occurtype_tid_idx` (`tid`),
-    CONSTRAINT `FK_occurtype_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_occurtype_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_occurtype_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-CREATE TABLE `omoccurrevisions` (
-    `orid` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `oldValues` text,
-    `newValues` text,
-    `externalSource` varchar(45) DEFAULT NULL,
-    `externalEditor` varchar(100) DEFAULT NULL,
-    `guid` varchar(45) DEFAULT NULL,
-    `reviewStatus` int(11) DEFAULT NULL,
-    `appliedStatus` int(11) DEFAULT NULL,
-    `errorMessage` varchar(500) DEFAULT NULL,
-    `uid` int(10) unsigned DEFAULT NULL,
-    `externalTimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`orid`),
-    UNIQUE KEY `guid_UNIQUE` (`guid`),
-    KEY `fk_omrevisions_occid_idx` (`occid`),
-    KEY `fk_omrevisions_uid_idx` (`uid`),
-    KEY `Index_omrevisions_applied` (`appliedStatus`),
-    KEY `Index_omrevisions_reviewed` (`reviewStatus`),
-    KEY `Index_omrevisions_source` (`externalSource`),
-    KEY `Index_omrevisions_editor` (`externalEditor`),
-    CONSTRAINT `fk_omrevisions_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_omrevisions_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-CREATE TABLE `omoccurverification` (
-    `ovsid` int(11) NOT NULL AUTO_INCREMENT,
-    `occid` int(10) unsigned NOT NULL,
-    `category` varchar(45) NOT NULL,
-    `ranking` int(11) NOT NULL,
-    `protocol` varchar(100) DEFAULT NULL,
-    `source` varchar(45) DEFAULT NULL,
-    `uid` int(10) unsigned DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`ovsid`),
-    UNIQUE KEY `UNIQUE_omoccurverification` (`occid`,`category`),
-    KEY `FK_omoccurverification_occid_idx` (`occid`),
-    KEY `FK_omoccurverification_uid_idx` (`uid`),
-    CONSTRAINT `FK_omoccurverification_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_omoccurverification_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `FK_omoccurrences_uid` FOREIGN KEY (`observeruid`) REFERENCES `users` (`uid`),
+    CONSTRAINT `FK_eventID` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`) ON DELETE RESTRICT ON UPDATE NO ACTION
 );
 
 CREATE TABLE `paleochronostratigraphy` (
@@ -1399,137 +1113,6 @@ CREATE TABLE `paleochronostratigraphy` (
     KEY `Period` (`Period`),
     KEY `Epoch` (`Epoch`),
     KEY `Stage` (`Stage`)
-);
-
-CREATE TABLE `referenceauthorlink` (
-    `refid` int(11) NOT NULL,
-    `refauthid` int(11) NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`refid`,`refauthid`),
-    KEY `FK_refauthlink_refid_idx` (`refid`),
-    KEY `FK_refauthlink_refauthid_idx` (`refauthid`),
-    CONSTRAINT `FK_refauthlink_refauthid` FOREIGN KEY (`refauthid`) REFERENCES `referenceauthors` (`refauthorid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_refauthlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `referenceauthors` (
-    `refauthorid` int(11) NOT NULL AUTO_INCREMENT,
-    `lastname` varchar(100) NOT NULL,
-    `firstname` varchar(100) DEFAULT NULL,
-    `middlename` varchar(100) DEFAULT NULL,
-    `modifieduid` int(10) unsigned DEFAULT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`refauthorid`),
-    KEY `INDEX_refauthlastname` (`lastname`)
-);
-
-CREATE TABLE `referencechecklistlink` (
-    `refid` int(11) NOT NULL,
-    `clid` int(10) unsigned NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`refid`,`clid`),
-    KEY `FK_refcheckllistlink_refid_idx` (`refid`),
-    KEY `FK_refcheckllistlink_clid_idx` (`clid`),
-    CONSTRAINT `FK_refchecklistlink_clid` FOREIGN KEY (`clid`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_refchecklistlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `referencecollectionlink` (
-    `refid` int(11) NOT NULL,
-    `collid` int(10) unsigned NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`refid`,`collid`),
-    KEY `FK_refcollectionlink_collid_idx` (`collid`),
-    CONSTRAINT `FK_refcollectionlink_collid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_refcollectionlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-CREATE TABLE `referenceobject` (
-    `refid` int(11) NOT NULL AUTO_INCREMENT,
-    `parentRefId` int(11) DEFAULT NULL,
-    `ReferenceTypeId` int(11) DEFAULT NULL,
-    `title` varchar(150) NOT NULL,
-    `secondarytitle` varchar(250) DEFAULT NULL,
-    `shorttitle` varchar(250) DEFAULT NULL,
-    `tertiarytitle` varchar(250) DEFAULT NULL,
-    `alternativetitle` varchar(250) DEFAULT NULL,
-    `typework` varchar(150) DEFAULT NULL,
-    `figures` varchar(150) DEFAULT NULL,
-    `pubdate` varchar(45) DEFAULT NULL,
-    `edition` varchar(45) DEFAULT NULL,
-    `volume` varchar(45) DEFAULT NULL,
-    `numbervolumes` varchar(45) DEFAULT NULL,
-    `number` varchar(45) DEFAULT NULL,
-    `pages` varchar(45) DEFAULT NULL,
-    `section` varchar(45) DEFAULT NULL,
-    `placeofpublication` varchar(45) DEFAULT NULL,
-    `publisher` varchar(150) DEFAULT NULL,
-    `isbn_issn` varchar(45) DEFAULT NULL,
-    `url` varchar(150) DEFAULT NULL,
-    `guid` varchar(45) DEFAULT NULL,
-    `ispublished` varchar(45) DEFAULT NULL,
-    `notes` varchar(45) DEFAULT NULL,
-    `cheatauthors` varchar(250) DEFAULT NULL,
-    `cheatcitation` varchar(250) DEFAULT NULL,
-    `modifieduid` int(10) unsigned DEFAULT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`refid`),
-    KEY `INDEX_refobj_title` (`title`),
-    KEY `FK_refobj_parentrefid_idx` (`parentRefId`),
-    KEY `FK_refobj_typeid_idx` (`ReferenceTypeId`),
-    CONSTRAINT `FK_refobj_parentrefid` FOREIGN KEY (`parentRefId`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_refobj_reftypeid` FOREIGN KEY (`ReferenceTypeId`) REFERENCES `referencetype` (`ReferenceTypeId`)
-);
-
-CREATE TABLE `referenceoccurlink` (
-    `refid` int(11) NOT NULL,
-    `occid` int(10) unsigned NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`refid`,`occid`),
-    KEY `FK_refoccurlink_refid_idx` (`refid`),
-    KEY `FK_refoccurlink_occid_idx` (`occid`),
-    CONSTRAINT `FK_refoccurlink_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_refoccurlink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `referencetaxalink` (
-    `refid` int(11) NOT NULL,
-    `tid` int(10) unsigned NOT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`refid`,`tid`),
-    KEY `FK_reftaxalink_refid_idx` (`refid`),
-    KEY `FK_reftaxalink_tid_idx` (`tid`),
-    CONSTRAINT `FK_reftaxalink_refid` FOREIGN KEY (`refid`) REFERENCES `referenceobject` (`refid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_reftaxalink_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `referencetype` (
-    `ReferenceTypeId` int(11) NOT NULL AUTO_INCREMENT,
-    `ReferenceType` varchar(45) NOT NULL,
-    `IsParent` int(11) DEFAULT NULL,
-    `Title` varchar(45) DEFAULT NULL,
-    `SecondaryTitle` varchar(45) DEFAULT NULL,
-    `PlacePublished` varchar(45) DEFAULT NULL,
-    `Publisher` varchar(45) DEFAULT NULL,
-    `Volume` varchar(45) DEFAULT NULL,
-    `NumberVolumes` varchar(45) DEFAULT NULL,
-    `Number` varchar(45) DEFAULT NULL,
-    `Pages` varchar(45) DEFAULT NULL,
-    `Section` varchar(45) DEFAULT NULL,
-    `TertiaryTitle` varchar(45) DEFAULT NULL,
-    `Edition` varchar(45) DEFAULT NULL,
-    `Date` varchar(45) DEFAULT NULL,
-    `TypeWork` varchar(45) DEFAULT NULL,
-    `ShortTitle` varchar(45) DEFAULT NULL,
-    `AlternativeTitle` varchar(45) DEFAULT NULL,
-    `ISBN_ISSN` varchar(45) DEFAULT NULL,
-    `Figures` varchar(45) DEFAULT NULL,
-    `addedByUid` int(11) DEFAULT NULL,
-    `initialTimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`ReferenceTypeId`),
-    UNIQUE KEY `ReferenceType_UNIQUE` (`ReferenceType`)
 );
 
 CREATE TABLE `specprocessorprojects` (
@@ -1710,99 +1293,6 @@ CREATE TABLE `taxonunits` (
     CONSTRAINT `FK-kingdomid` FOREIGN KEY (`kingdomid`) REFERENCES `taxonkingdoms` (`kingdom_id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE `tmattributes` (
-    `stateid` int(10) unsigned NOT NULL,
-    `occid` int(10) unsigned NOT NULL,
-    `modifier` varchar(100) DEFAULT NULL,
-    `xvalue` double(15,5) DEFAULT NULL,
-    `imgid` int(10) unsigned DEFAULT NULL,
-    `imagecoordinates` varchar(45) DEFAULT NULL,
-    `source` varchar(250) DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `statuscode` tinyint(4) DEFAULT NULL,
-    `modifieduid` int(10) unsigned DEFAULT NULL,
-    `datelastmodified` datetime DEFAULT NULL,
-    `createduid` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`stateid`,`occid`),
-    KEY `FK_tmattr_stateid_idx` (`stateid`),
-    KEY `FK_tmattr_occid_idx` (`occid`),
-    KEY `FK_tmattr_imgid_idx` (`imgid`),
-    KEY `FK_attr_uidcreate_idx` (`createduid`),
-    KEY `FK_tmattr_uidmodified_idx` (`modifieduid`),
-    CONSTRAINT `FK_tmattr_imgid` FOREIGN KEY (`imgid`) REFERENCES `images` (`imgid`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_tmattr_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_tmattr_stateid` FOREIGN KEY (`stateid`) REFERENCES `tmstates` (`stateid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_tmattr_uidcreate` FOREIGN KEY (`createduid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_tmattr_uidmodified` FOREIGN KEY (`modifieduid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-CREATE TABLE `tmstates` (
-    `stateid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `traitid` int(10) unsigned NOT NULL,
-    `statecode` varchar(2) NOT NULL,
-    `statename` varchar(75) NOT NULL,
-    `description` varchar(250) DEFAULT NULL,
-    `refurl` varchar(250) DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `sortseq` int(11) DEFAULT NULL,
-    `modifieduid` int(10) unsigned DEFAULT NULL,
-    `datelastmodified` datetime DEFAULT NULL,
-    `createduid` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`stateid`),
-    UNIQUE KEY `traitid_code_UNIQUE` (`traitid`,`statecode`),
-    KEY `FK_tmstate_uidcreated_idx` (`createduid`),
-    KEY `FK_tmstate_uidmodified_idx` (`modifieduid`),
-    CONSTRAINT `FK_tmstates_traits` FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`) ON UPDATE CASCADE,
-    CONSTRAINT `FK_tmstates_uidcreated` FOREIGN KEY (`createduid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_tmstates_uidmodified` FOREIGN KEY (`modifieduid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-CREATE TABLE `tmtraitdependencies` (
-    `traitid` int(10) unsigned NOT NULL,
-    `parentstateid` int(10) unsigned NOT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`traitid`,`parentstateid`),
-    KEY `FK_tmdepend_traitid_idx` (`traitid`),
-    KEY `FK_tmdepend_stateid_idx` (`parentstateid`),
-    CONSTRAINT `FK_tmdepend_stateid` FOREIGN KEY (`parentstateid`) REFERENCES `tmstates` (`stateid`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_tmdepend_traitid` FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE `tmtraits` (
-    `traitid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `traitname` varchar(100) NOT NULL,
-    `traittype` varchar(2) NOT NULL DEFAULT 'UM',
-    `units` varchar(45) DEFAULT NULL,
-    `description` varchar(250) DEFAULT NULL,
-    `refurl` varchar(250) DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `dynamicProperties` text,
-    `modifieduid` int(10) unsigned DEFAULT NULL,
-    `datelastmodified` datetime DEFAULT NULL,
-    `createduid` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`traitid`),
-    KEY `traitsname` (`traitname`),
-    KEY `FK_traits_uidcreated_idx` (`createduid`),
-    KEY `FK_traits_uidmodified_idx` (`modifieduid`),
-    CONSTRAINT `FK_traits_uidcreated` FOREIGN KEY (`createduid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `FK_traits_uidmodified` FOREIGN KEY (`modifieduid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-);
-
-CREATE TABLE `tmtraittaxalink` (
-    `traitid` int(10) unsigned NOT NULL,
-    `tid` int(10) unsigned NOT NULL,
-    `relation` varchar(45) NOT NULL DEFAULT 'include',
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`traitid`,`tid`),
-    KEY `FK_traittaxalink_traitid_idx` (`traitid`),
-    KEY `FK_traittaxalink_tid_idx` (`tid`),
-    CONSTRAINT `FK_traittaxalink_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_traittaxalink_traitid` FOREIGN KEY (`traitid`) REFERENCES `tmtraits` (`traitid`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `uploaddetermtemp` (
     `occid` int(10) unsigned DEFAULT NULL,
     `collid` int(10) unsigned DEFAULT NULL,
@@ -1841,38 +1331,6 @@ CREATE TABLE `uploadglossary` (
     `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     KEY `term_index` (`term`),
     KEY `relatedterm_index` (`newGroupId`)
-);
-
-CREATE TABLE `uploadimagetemp` (
-    `tid` int(10) unsigned DEFAULT NULL,
-    `url` varchar(255) DEFAULT NULL,
-    `thumbnailurl` varchar(255) DEFAULT NULL,
-    `originalurl` varchar(255) DEFAULT NULL,
-    `archiveurl` varchar(255) DEFAULT NULL,
-    `photographer` varchar(100) DEFAULT NULL,
-    `photographeruid` int(10) unsigned DEFAULT NULL,
-    `imagetype` varchar(50) DEFAULT NULL,
-    `format` varchar(45) DEFAULT NULL,
-    `caption` varchar(100) DEFAULT NULL,
-    `owner` varchar(100) DEFAULT NULL,
-    `sourceUrl` varchar(255),
-    `referenceurl` varchar(255),
-    `copyright` varchar(255),
-    `accessrights` varchar(255),
-    `rights` varchar(255),
-    `locality` varchar(250),
-    `occid` int(10) unsigned DEFAULT NULL,
-    `collid` int(10) unsigned DEFAULT NULL,
-    `dbpk` varchar(150) DEFAULT NULL,
-    `sourceIdentifier` varchar(150) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `username` varchar(45) DEFAULT NULL,
-    `sortsequence` int(10) unsigned DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    KEY `Index_uploadimg_occid` (`occid`),
-    KEY `Index_uploadimg_collid` (`collid`),
-    KEY `Index_uploadimg_dbpk` (`dbpk`),
-    KEY `Index_uploadimg_ts` (`initialtimestamp`)
 );
 
 CREATE TABLE `uploadspecmap` (
@@ -2172,48 +1630,13 @@ CREATE TABLE `users` (
     `password` varchar(255) NOT NULL,
     `title` varchar(150) DEFAULT NULL,
     `institution` varchar(200) DEFAULT NULL,
-    `department` varchar(200) DEFAULT NULL,
-    `address` varchar(255) DEFAULT NULL,
-    `city` varchar(100) DEFAULT NULL,
-    `state` varchar(50) DEFAULT NULL,
-    `zip` varchar(15) DEFAULT NULL,
-    `country` varchar(50) DEFAULT NULL,
-    `phone` varchar(45) DEFAULT NULL,
     `email` varchar(100) NOT NULL,
-    `RegionOfInterest` varchar(45) DEFAULT NULL,
-    `url` varchar(400) DEFAULT NULL,
-    `Biography` varchar(1500) DEFAULT NULL,
-    `notes` varchar(255) DEFAULT NULL,
-    `ispublic` int(10) unsigned NOT NULL DEFAULT '0',
-    `defaultrights` varchar(250) DEFAULT NULL,
-    `rightsholder` varchar(250) DEFAULT NULL,
-    `rights` varchar(250) DEFAULT NULL,
-    `accessrights` varchar(250) DEFAULT NULL,
     `guid` varchar(45) DEFAULT NULL,
     `validated` varchar(45) NOT NULL DEFAULT '0',
-    `usergroups` varchar(100) DEFAULT NULL,
     `lastlogindate` datetime,
-    `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`uid`),
     UNIQUE KEY `Index_email` (`email`,`lastname`)
-);
-
-CREATE TABLE `usertaxonomy` (
-    `idusertaxonomy` int(11) NOT NULL AUTO_INCREMENT,
-    `uid` int(10) unsigned NOT NULL,
-    `tid` int(10) unsigned NOT NULL,
-    `editorstatus` varchar(45) DEFAULT NULL,
-    `geographicScope` varchar(250) DEFAULT NULL,
-    `notes` varchar(250) DEFAULT NULL,
-    `modifiedUid` int(10) unsigned NOT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`idusertaxonomy`),
-    UNIQUE KEY `usertaxonomy_UNIQUE` (`uid`,`tid`,`editorstatus`),
-    KEY `FK_usertaxonomy_uid_idx` (`uid`),
-    KEY `FK_usertaxonomy_tid_idx` (`tid`),
-    CONSTRAINT `FK_usertaxonomy_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_usertaxonomy_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 delimiter ;;
@@ -2222,8 +1645,6 @@ CREATE TRIGGER `omoccurrences_insert` AFTER INSERT ON `omoccurrences` FOR EACH R
 		INSERT INTO omoccurpoints (`occid`,`point`)
 		VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
     END IF;
-INSERT INTO omoccurrencesfulltext (`occid`,`recordedby`,`locality`)
-VALUES (NEW.`occid`,NEW.`recordedby`,NEW.`locality`);
 END
 ;;
 delimiter ;
@@ -2240,9 +1661,6 @@ CREATE TRIGGER `omoccurrences_update` AFTER UPDATE ON `omoccurrences` FOR EACH R
 			VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
         END IF;
     END IF;
-UPDATE omoccurrencesfulltext
-SET `recordedby` = NEW.`recordedby`,`locality` = NEW.`locality`
-WHERE `occid` = NEW.`occid`;
 END
 ;;
 delimiter ;
@@ -2250,7 +1668,6 @@ delimiter ;
 delimiter ;;
 CREATE TRIGGER `omoccurrences_delete` BEFORE DELETE ON `omoccurrences` FOR EACH ROW BEGIN
     DELETE FROM omoccurpoints WHERE `occid` = OLD.`occid`;
-    DELETE FROM omoccurrencesfulltext WHERE `occid` = OLD.`occid`;
 END
 ;;
 delimiter ;
@@ -2261,13 +1678,6 @@ CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH
 		INSERT INTO uploadspectemppoints (`collid`,`upspid`,`point`)
 		VALUES (NEW.`collid`,NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
     END IF;
-END
-;;
-delimiter ;
-
-delimiter ;;
-CREATE TRIGGER `uploadspectemp_delete` BEFORE DELETE ON `uploadspectemp` FOR EACH ROW BEGIN
-    DELETE FROM uploadspectemppoints WHERE `upspid` = OLD.`upspid`;
 END
 ;;
 delimiter ;
@@ -2506,49 +1916,6 @@ INSERT INTO `adminlanguages` (`langid`, `langname`, `iso639_1`, `iso639_2`) VALU
 INSERT INTO `adminlanguages` (`langid`, `langname`, `iso639_1`, `iso639_2`) VALUES (203, "Zhuang, Chuang", "za", "zha");
 INSERT INTO `adminlanguages` (`langid`, `langname`, `iso639_1`, `iso639_2`) VALUES (204, "Zulu", "zu", "zul");
 
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasOrganism','Image shows an organism.','Organism',0);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasLabel','Image shows label data.','Label',10);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasIDLabel','Image shows an annotation/identification label.','Annotation',20);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('TypedText','Image has typed or printed text.','Typed/Printed',30);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('Handwriting','Image has handwritten label text.','Handwritten',40);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('ShowsHabitat','Field image of habitat.','Habitat',50);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('HasProblem','There is a problem with this image.','QC Problem',60);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('ImageOfAdult','Image contains the adult organism.','Adult',80);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('Diagnostic','Image contains a diagnostic character.','Diagnostic',70);
-INSERT into imagetagkey (tagkey,description_en,shortlabel,sortorder) values ('ImageOfImmature','Image contains the immature organism.','Immature',90);
-
-INSERT INTO `referencetype` VALUES ('1', 'Generic', null, 'Title', 'SecondaryTitle', 'PlacePublished', 'Publisher', 'Volume', 'NumberVolumes', 'Number', 'Pages', 'Section', 'TertiaryTitle', 'Edition', 'Date', 'TypeWork', 'ShortTitle', 'AlternativeTitle', 'Isbn_Issn', 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('2', 'Journal Article', null, 'Title', 'Periodical Title', null, null, 'Volume', null, 'Issue', 'Pages', null, null, null, 'Date', null, 'Short Title', 'Alt. Jour.', null, 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('3', 'Book', '1', 'Title', 'Series Title', 'City', 'Publisher', 'Volume', 'No. Vols.', 'Number', 'Pages', null, null, 'Edition', 'Date', null, 'Short Title', null, 'ISBN', 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('4', 'Book Section', null, 'Title', 'Book Title', 'City', 'Publisher', 'Volume', 'No. Vols.', 'Number', 'Pages', null, 'Ser. Title', 'Edition', 'Date', null, 'Short Title', null, 'ISBN', 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('5', 'Manuscript', null, 'Title', 'Collection Title', 'City', null, null, null, 'Number', 'Pages', null, null, 'Edition', 'Date', 'Type Work', 'Short Title', null, null, 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('6', 'Edited Book', '1', 'Title', 'Series Title', 'City', 'Publisher', 'Volume', 'No. Vols.', 'Number', 'Pages', null, null, 'Edition', 'Date', null, 'Short Title', null, 'ISBN', 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('7', 'Magazine Article', null, 'Title', 'Periodical Title', null, null, 'Volume', null, 'Issue', 'Pages', null, null, null, 'Date', null, 'Short Title', null, null, 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('8', 'Newspaper Article', null, 'Title', 'Periodical Title', 'City', null, null, null, null, 'Pages', 'Section', null, 'Edition', 'Date', 'Type Art.', 'Short Title', null, null, 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('9', 'Conference Proceedings', null, 'Title', 'Conf. Name', 'Conf. Loc.', 'Publisher', 'Volume', 'No. Vols.', null, 'Pages', null, 'Ser. Title', 'Edition', 'Date', null, 'Short Title', null, 'ISBN', 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('10', 'Thesis', null, 'Title', 'Academic Dept.', 'City', 'University', null, null, null, 'Pages', null, null, null, 'Date', 'Thesis Type', 'Short Title', null, null, 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('11', 'Report', null, 'Title', null, 'City', 'Institution', null, null, null, 'Pages', null, null, null, 'Date', 'Type Work', 'Short Title', null, 'Rpt. No.', 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('12', 'Personal Communication', null, 'Title', null, 'City', 'Publisher', null, null, null, null, null, null, null, 'Date', 'Type Work', 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('13', 'Computer Program', null, 'Title', null, 'City', 'Publisher', 'Version', null, null, null, null, null, 'Platform', 'Date', 'Type Work', 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('14', 'Electronic Source', null, 'Title', null, null, 'Publisher', 'Access Year', 'Extent', 'Acc. Date', null, null, null, 'Edition', 'Date', 'Medium', 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('15', 'Audiovisual Material', null, 'Title', 'Collection Title', 'City', 'Publisher', null, null, 'Number', null, null, null, null, 'Date', 'Type Work', 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('16', 'Film or Broadcast', null, 'Title', 'Series Title', 'City', 'Distributor', null, null, null, 'Length', null, null, null, 'Date', 'Medium', 'Short Title', null, 'ISBN', null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('17', 'Artwork', null, 'Title', null, 'City', 'Publisher', null, null, null, null, null, null, null, 'Date', 'Type Work', 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('18', 'Map', null, 'Title', null, 'City', 'Publisher', null, null, null, 'Scale', null, null, 'Edition', 'Date', 'Type Work', 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('19', 'Patent', null, 'Title', 'Published Source', 'Country', 'Assignee', 'Volume', 'No. Vols.', 'Issue', 'Pages', null, null, null, 'Date', null, 'Short Title', null, 'Pat. No.', 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('20', 'Hearing', null, 'Title', 'Committee', 'City', 'Publisher', null, null, 'Doc. No.', 'Pages', null, 'Leg. Boby', 'Session', 'Date', null, 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('21', 'Bill', null, 'Title', 'Code', null, null, 'Code Volume', null, 'Bill No.', 'Pages', 'Section', 'Leg. Boby', 'Session', 'Date', null, 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('22', 'Statute', null, 'Title', 'Code', null, null, 'Code Number', null, 'Law No.', '1st Pg.', 'Section', null, 'Session', 'Date', null, 'Short Title', null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('23', 'Case', null, 'Title', null, null, 'Court', 'Reporter Vol.', null, null, null, null, null, null, 'Date', null, null, null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('24', 'Figure', null, 'Title', 'Source Program', null, null, null, '-', null, null, null, null, null, 'Date', null, null, null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('25', 'Chart or Table', null, 'Title', 'Source Program', null, null, null, null, null, null, null, null, null, 'Date', null, null, null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('26', 'Equation', null, 'Title', 'Source Program', null, null, 'Volume', null, 'Number', null, null, null, null, 'Date', null, null, null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('27', 'Book Series', '1', 'Title', null, 'City', 'Publisher', null, 'No. Vols.', null, 'Pages', null, null, 'Edition', 'Date', null, null, null, 'ISBN', 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('28', 'Determination', null, 'Title', null, null, 'Institution', null, null, null, null, null, null, null, 'Date', null, null, null, null, null, null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('29', 'Sub-Reference', null, 'Title', null, null, null, null, null, null, 'Pages', null, null, null, 'Date', null, null, null, null, 'Figures', null, '2014-06-17 00:27:12');
-INSERT INTO `referencetype` VALUES ('30', 'Periodical', '1', 'Title', null, 'City', null, 'Volume', null, 'Issue', null, null, null, 'Edition', 'Date', null, 'Short Title', 'Alt. Jour.', null, null, null, '2014-10-30 21:34:44');
-INSERT INTO `referencetype` VALUES ('31', 'Web Page', null, 'Title', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, '2014-10-30 21:37:12');
-
 INSERT INTO `paleochronostratigraphy` VALUES ('1', 'Hadean', null, null, null, null);
 INSERT INTO `paleochronostratigraphy` VALUES ('2', 'Archean', null, null, null, null);
 INSERT INTO `paleochronostratigraphy` VALUES ('3', 'Archean', 'Eoarchean', null, null, null);
@@ -2706,7 +2073,7 @@ INSERT INTO `paleochronostratigraphy` VALUES ('154', 'Phanerozoic', 'Cenozoic', 
 INSERT INTO `paleochronostratigraphy` VALUES ('155', 'Phanerozoic', 'Cenozoic', 'Quaternary', 'Pleistocene', 'Upper Pleistocene');
 INSERT INTO `paleochronostratigraphy` VALUES ('156', 'Phanerozoic', 'Cenozoic', 'Quaternary', 'Holocene', null);
 
-INSERT INTO users(uid,firstname,lastname,username,password,state,country,email,validated) VALUES (1,'General','Administrator','admin',SHA2('admin', 224),'NA','NA','NA',1);
+INSERT INTO users(uid,firstname,lastname,username,password,email,validated) VALUES (1,'General','Administrator','admin',SHA2('admin', 256),'NA',1);
 INSERT INTO userroles(uid,role) VALUES (1,'SuperAdmin');
 
 INSERT INTO `taxonunits`(`kingdomid`, `rankid`, `rankname`, `dirparentrankid`, `reqparentrankid`)
@@ -2890,28 +2257,7 @@ VALUES (1, 10, 'Kingdom', 10, 10),
        (7, 180, 'Genus', 170, 140),
        (7, 190, 'Subgenus', 180, 180),
        (7, 220, 'Species', 190, 180),
-       (7, 230, 'Subspecies', 220, 180),
-       (100, 10, 'Kingdom', 10, 10),
-       (100, 20, 'Subkingdom', 10, 10),
-       (100, 30, 'Phylum', 20, 10),
-       (100, 40, 'Subphylum', 30, 30),
-       (100, 50, 'Superclass', 40, 30),
-       (100, 60, 'Class', 50, 30),
-       (100, 70, 'Subclass', 60, 60),
-       (100, 80, 'Infraclass', 70, 60),
-       (100, 90, 'Superorder', 80, 60),
-       (100, 100, 'Order', 90, 60),
-       (100, 110, 'Suborder', 100, 100),
-       (100, 120, 'Infraorder', 110, 100),
-       (100, 130, 'Superfamily', 120, 100),
-       (100, 140, 'Family', 130, 100),
-       (100, 150, 'Subfamily', 140, 140),
-       (100, 160, 'Tribe', 150, 140),
-       (100, 170, 'Subtribe', 160, 140),
-       (100, 180, 'Genus', 170, 140),
-       (100, 190, 'Subgenus', 180, 180),
-       (100, 220, 'Species', 190, 180),
-       (100, 230, 'Subspecies', 220, 180);
+       (7, 230, 'Subspecies', 220, 180);
 
 INSERT INTO `taxonkingdoms` VALUES (1, 'Bacteria');
 INSERT INTO `taxonkingdoms` VALUES (2, 'Protozoa');

@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
-include_once(__DIR__ . '/TaxonomyUtilities.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/TaxonomyService.php');
 
 class TaxonomyEditorManager{
 
@@ -34,7 +34,7 @@ class TaxonomyEditorManager{
     private $errorStr = '';
 
     public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
     }
 
@@ -173,46 +173,46 @@ class TaxonomyEditorManager{
                 $sql .= 'kingdomId = '.(int)$postArr['kingdomid'].', ';
             }
             if(array_key_exists('unitind1',$postArr)){
-                $sql .= 'unitind1 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind1'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind1']).'"':'NULL').', ';
+                $sql .= 'unitind1 = '.(SanitizerService::cleanInStr($this->conn,$postArr['unitind1'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['unitind1']).'"':'NULL').', ';
             }
             if(array_key_exists('unitname1',$postArr) && $postArr['unitname1']){
-                $sql .= 'unitname1 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname1'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname1']).'"':'NULL').', ';
+                $sql .= 'unitname1 = '.(SanitizerService::cleanInStr($this->conn,$postArr['unitname1'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['unitname1']).'"':'NULL').', ';
             }
             if(array_key_exists('unitind2',$postArr)){
-                $sql .= 'unitind2 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind2'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind2']).'"':'NULL').', ';
+                $sql .= 'unitind2 = '.(SanitizerService::cleanInStr($this->conn,$postArr['unitind2'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['unitind2']).'"':'NULL').', ';
             }
             if(array_key_exists('unitname2',$postArr)){
-                $sql .= 'unitname2 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname2'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname2']).'"':'NULL').', ';
+                $sql .= 'unitname2 = '.(SanitizerService::cleanInStr($this->conn,$postArr['unitname2'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['unitname2']).'"':'NULL').', ';
             }
             if(array_key_exists('unitind3',$postArr)){
-                $sql .= 'unitind3 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitind3'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitind3']).'"':'NULL').', ';
+                $sql .= 'unitind3 = '.(SanitizerService::cleanInStr($this->conn,$postArr['unitind3'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['unitind3']).'"':'NULL').', ';
             }
             if(array_key_exists('unitname3',$postArr)){
-                $sql .= 'unitname3 = '.(Sanitizer::cleanInStr($this->conn,$postArr['unitname3'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['unitname3']).'"':'NULL').', ';
+                $sql .= 'unitname3 = '.(SanitizerService::cleanInStr($this->conn,$postArr['unitname3'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['unitname3']).'"':'NULL').', ';
             }
             if(array_key_exists('author',$postArr)){
-                $sql .= 'author = '.(Sanitizer::cleanInStr($this->conn,$postArr['author'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['author']).'"':'NULL').', ';
+                $sql .= 'author = '.(SanitizerService::cleanInStr($this->conn,$postArr['author'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['author']).'"':'NULL').', ';
             }
             if(array_key_exists('family',$postArr)){
-                $sql .= 'family = '.(Sanitizer::cleanInStr($this->conn,$postArr['family'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['family']).'"':'NULL').', ';
+                $sql .= 'family = '.(SanitizerService::cleanInStr($this->conn,$postArr['family'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['family']).'"':'NULL').', ';
             }
             if(array_key_exists('rankid',$postArr) && (int)$postArr['rankid']){
                 $sql .= 'rankid = '.(int)$postArr['rankid'].', ';
             }
             if(array_key_exists('source',$postArr)){
-                $sql .= '`source` = '.(Sanitizer::cleanInStr($this->conn,$postArr['source'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', ';
+                $sql .= '`source` = '.(SanitizerService::cleanInStr($this->conn,$postArr['source'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['source']).'"':'NULL').', ';
             }
             if(array_key_exists('notes',$postArr)){
-                $sql .= 'notes = '.(Sanitizer::cleanInStr($this->conn,$postArr['notes'])?'"'.Sanitizer::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', ';
+                $sql .= 'notes = '.(SanitizerService::cleanInStr($this->conn,$postArr['notes'])?'"'.SanitizerService::cleanInStr($this->conn,$postArr['notes']).'"':'NULL').', ';
             }
             if(array_key_exists('securitystatus',$postArr)){
                 $sql .= 'securitystatus = '.(int)$postArr['securitystatus'].', ';
             }
             if(array_key_exists('sciname',$postArr) && $postArr['sciname']){
-                $sql .= 'sciname = "'.Sanitizer::cleanInStr($this->conn,$postArr['sciname']).'", ';
+                $sql .= 'sciname = "'.SanitizerService::cleanInStr($this->conn,$postArr['sciname']).'", ';
             }
             elseif(array_key_exists('unitname1',$postArr) && $postArr['unitname1']){
-                $sql .= 'sciname = "'.Sanitizer::cleanInStr($this->conn,($postArr['unitind1']?$postArr['unitind1']. ' ' : '').
+                $sql .= 'sciname = "'.SanitizerService::cleanInStr($this->conn,($postArr['unitind1']?$postArr['unitind1']. ' ' : '').
                         $postArr['unitname1'].($postArr['unitind2']? ' ' .$postArr['unitind2']: '').
                         ($postArr['unitname2']? ' ' .$postArr['unitname2']: '').
                         ($postArr['unitind3']? ' ' .$postArr['unitind3']: '').
@@ -354,11 +354,6 @@ class TaxonomyEditorManager{
     private function updateDependentData($tid, $tidNew): void
     {
         if(is_numeric($tid) && is_numeric($tidNew)){
-            $this->conn->query('DELETE FROM kmdescr WHERE inherited IS NOT NULL AND tid = '.$tid.' ');
-            $this->conn->query('UPDATE IGNORE kmdescr SET tid = '.$tidNew.' WHERE tid = '.$tid.' ');
-            $this->conn->query('DELETE FROM kmdescr WHERE tid = '.$tid.' ');
-            $this->resetCharStateInheritance($tidNew);
-
             $sqlVerns = 'DELETE v2.* '.
                 'FROM taxavernaculars AS v1 LEFT JOIN taxavernaculars AS v2 ON v1.VernacularName = v2.VernacularName AND v1.langid = v2.langid '.
                 'WHERE v1.TID = '.$tidNew.' AND v2.TID = '.$tid.' AND v2.VID IS NOT NULL ';
@@ -369,74 +364,27 @@ class TaxonomyEditorManager{
         }
     }
 
-    private function resetCharStateInheritance($tid): void
-    {
-        $sqlAdd1 = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-            'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-            'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-            'FROM ((taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID) '.
-            'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid) '.
-            'LEFT JOIN kmdescr AS d2 ON d1.CID = d2.CID AND t2.TID = d2.TID '.
-            'WHERE t2.tid = t2.tidaccepted AND t2.tid = '.$tid.' AND ISNULL(d2.CID) ';
-        $this->conn->query($sqlAdd1);
-
-        if($this->rankid === 140){
-            $sqlAdd2a = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-                'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-                'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-                'FROM ((taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID) '.
-                'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid) '.
-                'LEFT JOIN kmdescr AS d2 ON d1.CID = d2.CID AND t2.TID = d2.TID '.
-                'WHERE t2.tid = t2.tidaccepted '.
-                'AND t2.RankId = 180 AND t1.tid = '.$tid.' AND ISNULL(d2.CID) ';
-            //echo $sqlAdd2a;
-            $this->conn->query($sqlAdd2a);
-            $sqlAdd2b = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-                'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-                'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-                'FROM ((taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID) '.
-                'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid) '.
-                'LEFT JOIN kmdescr AS d2 ON d1.CID = d2.CID AND t2.TID = d2.TID '.
-                "WHERE t2.family = '".$this->sciName."' AND t2.tid = t2.tidaccepted ".
-                'AND t2.RankId = 220 AND ISNULL(d2.CID) ';
-            $this->conn->query($sqlAdd2b);
-        }
-
-        if($this->rankid > 140 && $this->rankid < 220){
-            $sqlAdd3 = 'INSERT INTO kmdescr ( TID, CID, CS, Modifier, X, TXT, Seq, Notes, Inherited ) '.
-                'SELECT DISTINCT t2.TID, d1.CID, d1.CS, d1.Modifier, d1.X, d1.TXT, '.
-                'd1.Seq, d1.Notes, IFNULL(d1.Inherited,t1.SciName) AS parent '.
-                'FROM ((taxa AS t1 INNER JOIN kmdescr AS d1 ON t1.TID = d1.TID) '.
-                'INNER JOIN taxa AS t2 ON t1.tidaccepted = t2.parenttid) '.
-                'LEFT JOIN kmdescr AS d2 ON d1.CID = d2.CID AND t2.TID = d2.TID '.
-                'WHERE t2.tid = t2.tidaccepted '.
-                'AND t2.RankId = 220 AND t1.tid = '.$tid.' AND ISNULL(d2.CID) ';
-            //echo $sqlAdd2b;
-            $this->conn->query($sqlAdd3);
-        }
-    }
-
     public function loadNewName($dataArr): int
     {
         $tid = 0;
         $dataArr = $this->validateNewTaxonArr($dataArr);
         $sqlTaxa = 'INSERT IGNORE INTO taxa(sciname,author,kingdomId,rankid,unitind1,unitname1,unitind2,unitname2,unitind3,unitname3,'.
             'tidaccepted,parenttid,family,`source`,notes,securitystatus,modifiedUid,modifiedTimeStamp) '.
-            'VALUES ("'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'",'.
-            ($dataArr['author']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['author']).'"':'NULL').','.
+            'VALUES ("'.SanitizerService::cleanInStr($this->conn,$dataArr['sciname']).'",'.
+            ($dataArr['author']?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['author']).'"':'NULL').','.
             ($dataArr['kingdomid']?(int)$dataArr['kingdomid']:'NULL').','.
             ($dataArr['rankid']?(int)$dataArr['rankid']:'NULL').','.
-            ($dataArr['unitind1']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind1']).'"':'NULL').',"'.
-            Sanitizer::cleanInStr($this->conn,$dataArr['unitname1']).'",'.
-            ($dataArr['unitind2']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind2']).'"':'NULL').','.
-            ($dataArr['unitname2']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitname2']).'"':'NULL').','.
-            ($dataArr['unitind3']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitind3']).'"':'NULL').','.
-            ($dataArr['unitname3']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['unitname3']).'"':'NULL').','.
+            ($dataArr['unitind1']?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['unitind1']).'"':'NULL').',"'.
+            SanitizerService::cleanInStr($this->conn,$dataArr['unitname1']).'",'.
+            ($dataArr['unitind2']?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['unitind2']).'"':'NULL').','.
+            ($dataArr['unitname2']?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['unitname2']).'"':'NULL').','.
+            ($dataArr['unitind3']?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['unitind3']).'"':'NULL').','.
+            ($dataArr['unitname3']?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['unitname3']).'"':'NULL').','.
             ($dataArr['tidaccepted']?(int)$dataArr['tidaccepted']:'NULL').','.
             ($dataArr['parenttid']?(int)$dataArr['parenttid']:'NULL').','.
-            ((array_key_exists('family',$dataArr) && $dataArr['family'])?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['family']).'"':'NULL').','.
-            ($dataArr['source']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['source']).'"':'NULL').','.
-            ($dataArr['notes']?'"'.Sanitizer::cleanInStr($this->conn,$dataArr['notes']).'"':'NULL').','.
+            ((array_key_exists('family',$dataArr) && $dataArr['family'])?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['family']).'"':'NULL').','.
+            ($dataArr['source']?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['source']).'"':'NULL').','.
+            ($dataArr['notes']?'"'.SanitizerService::cleanInStr($this->conn,$dataArr['notes']).'"':'NULL').','.
             (int)$dataArr['securitystatus'].','.
             $GLOBALS['SYMB_UID'].',"'.date('Y-m-d H:i:s').'")';
         //echo "sqlTaxa: ".$sqlTaxa;
@@ -450,7 +398,7 @@ class TaxonomyEditorManager{
                 }
                 if(array_key_exists('source-name',$dataArr) && array_key_exists('source-id',$dataArr) && $dataArr['source-name'] && $dataArr['source-id']){
                     $sqlId = 'INSERT IGNORE INTO taxaidentifiers(tid,`name`,identifier) VALUES('.
-                        $tid.',"'.Sanitizer::cleanInStr($this->conn,$dataArr['source-name']).'","'.Sanitizer::cleanInStr($this->conn,$dataArr['source-id']).'")';
+                        $tid.',"'.SanitizerService::cleanInStr($this->conn,$dataArr['source-name']).'","'.SanitizerService::cleanInStr($this->conn,$dataArr['source-id']).'")';
                     //echo $sqlId; exit;
                     $this->conn->query($sqlId);
                 }
@@ -463,7 +411,7 @@ class TaxonomyEditorManager{
     {
         $dataArr['kingdomid'] = 0;
         $dataArr['family'] = '';
-        if(array_key_exists('rankid',$dataArr) && (int)$dataArr['rankid'] === 10 && Sanitizer::cleanInStr($this->conn,$dataArr['sciname'])){
+        if(array_key_exists('rankid',$dataArr) && (int)$dataArr['rankid'] === 10 && SanitizerService::cleanInStr($this->conn,$dataArr['sciname'])){
             $dataArr['kingdomid'] = $this->addNewTaxonomicKingdom($dataArr['sciname']);
         }
         elseif((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
@@ -480,7 +428,7 @@ class TaxonomyEditorManager{
             }
         }
         if(!array_key_exists('unitname1',$dataArr) || !$dataArr['unitname1']){
-            $sciNameArr = (new TaxonomyUtilities)->parseScientificName($dataArr['sciname'],$dataArr['rankid']);
+            $sciNameArr = (new TaxonomyService)->parseScientificName($dataArr['sciname'],$dataArr['rankid']);
             $dataArr['unitind1'] = array_key_exists('unitind1',$sciNameArr) ? $sciNameArr['unitind1'] : '';
             $dataArr['unitname1'] = array_key_exists('unitname1',$sciNameArr) ? $sciNameArr['unitname1'] : '';
             $dataArr['unitind2'] = array_key_exists('unitind2',$sciNameArr) ? $sciNameArr['unitind2'] : '';
@@ -503,12 +451,14 @@ class TaxonomyEditorManager{
     public function addNewTaxonomicKingdom($name): int
     {
         $retVal = 0;
-        $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("'.Sanitizer::cleanInStr($this->conn,$name).'")';
+        $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("'.SanitizerService::cleanInStr($this->conn,$name).'")';
         if($this->conn->query($sql)){
             $retVal = $this->conn->insert_id;
-            $sql = 'INSERT INTO taxonunits(kingdomid,rankid,rankname,dirparentrankid,reqparentrankid) '.
-                'SELECT '.$retVal.',rankid,rankname,dirparentrankid,reqparentrankid '.
-                'FROM taxonunits WHERE kingdomid = 100 ';
+            $unitValueArr = array();
+            foreach($GLOBALS['TAXON_UNITS'] as $unitArr){
+                $unitValueArr[] = '(' . $retVal . ', ' . (int)$unitArr['rankid'] . ', "' . $unitArr['rankname'] . '", ' . (int)$unitArr['dirparentrankid'] . ', ' . (int)$unitArr['reqparentrankid'] . ')';
+            }
+            $sql = 'INSERT INTO taxonunits(kingdomid, rankid, rankname, dirparentrankid, reqparentrankid) VALUES ' . implode(', ', $unitValueArr);
             $this->conn->query($sql);
         }
         return $retVal;
@@ -521,7 +471,7 @@ class TaxonomyEditorManager{
             if($dataArr['securitystatus'] === 1) {
                 $sql1 .= ',o.localitysecurity = 1 ';
             }
-            $sql1 .= 'WHERE o.sciname = "'.Sanitizer::cleanInStr($this->conn,$dataArr['sciname']).'" ';
+            $sql1 .= 'WHERE o.sciname = "'.SanitizerService::cleanInStr($this->conn,$dataArr['sciname']).'" ';
             $this->conn->query($sql1);
 
             $sql2 = 'UPDATE omoccurrences AS o INNER JOIN images AS i ON o.occid = i.occid '.
@@ -600,7 +550,7 @@ class TaxonomyEditorManager{
         }
         $rs->free();
 
-        $sql ='SELECT COUNT(*) AS cnt FROM kmdescr WHERE ISNULL(inherited) AND tid = '.$this->tid;
+        $sql ='SELECT COUNT(cstlid) AS cnt FROM keycharacterstatetaxalink WHERE tid = '.$this->tid;
         $rs = $this->conn->query($sql);
         while($r = $rs->fetch_object()){
             $retArr['kmdesc'] = $r->cnt;
@@ -656,7 +606,7 @@ class TaxonomyEditorManager{
                 $statusStr .= 'ERROR deleting leftover checklist links<br/>';
             }
 
-            $sql ='UPDATE IGNORE kmdescr SET tid = '.$targetTid.' WHERE inherited IS NULL AND tid = '.$this->tid;
+            $sql ='UPDATE IGNORE keycharacterstatetaxalink SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
             if(!$this->conn->query($sql)){
                 $statusStr .= 'ERROR transferring morphology for ID key<br/>';
             }
@@ -696,6 +646,11 @@ class TaxonomyEditorManager{
             $statusStr .= 'ERROR setting tid to NULL in deleteTaxon method<br/>';
         }
 
+        $sql = 'UPDATE omoccurdeterminations SET tid = NULL WHERE tid = '.$this->tid;
+        if(!$this->conn->query($sql)){
+            $statusStr .= 'ERROR setting tid to NULL in deleteTaxon method<br/>';
+        }
+
         $sql ='DELETE FROM fmvouchers WHERE tid = '.$this->tid;
         if(!$this->conn->query($sql)){
             $statusStr .= 'ERROR deleting voucher links in deleteTaxon method<br/>';
@@ -706,7 +661,7 @@ class TaxonomyEditorManager{
             $statusStr .= 'ERROR deleting checklist links in deleteTaxon method<br/>';
         }
 
-        $sql ='DELETE FROM kmdescr WHERE tid = '.$this->tid;
+        $sql ='DELETE FROM keycharacterstatetaxalink WHERE tid = '.$this->tid;
         if(!$this->conn->query($sql)){
             $statusStr .= 'ERROR deleting morphology for ID Key in deleteTaxon method<br/>';
         }

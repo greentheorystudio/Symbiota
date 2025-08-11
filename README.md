@@ -43,9 +43,14 @@ These configurations are recommended for the php and MySQL/MariaDB installations
 
 ### MySQL/MariaDB configurations (usually made in the mysqld.cnf file)
 
-- `character-set-server=utf8` - replace utf8 with your desired character set
-- `collation-server=utf8_general_ci` - replace utf8_general_ci with your desired collation
-- `skip-character-set-client-handshake`
+- `character_set_client=utf8mb4`
+- `character_set_connection=utf8mb4`
+- `character_set_database=utf8mb4`
+- `character_set_filesystem=utf8mb4`
+- `character_set_results=utf8mb4`
+- `character_set_server=utf8mb4`
+- `collation_connection=utf8mb4_0900_ai_ci`
+- `skip-character-set-client-handshake=1`
 - `sql_mode=IGNORE_SPACE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION`
 - `key_buffer_size=100M`
 - `max_allowed_packet=100M`

@@ -162,7 +162,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 			}
 		}
 
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'webservices/dwc/rss.xml';
+		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
 		if(file_exists($rssFile)){
 			$oldDoc = new DOMDocument();
 			$oldDoc->load($rssFile);
@@ -188,7 +188,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	public function getDwcaItems($collid = null): array
 	{
 		$retArr = array();
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'webservices/dwc/rss.xml';
+		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
 		if(file_exists($rssFile)){
 			$xmlDoc = new DOMDocument();
 			$xmlDoc->load($rssFile);
@@ -307,7 +307,8 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	public function humanFileSize($filePath): string
 	{
 		if(strncmp($filePath, 'http', 4) === 0) {
-			$x = array_change_key_case(get_headers($filePath, 1),CASE_LOWER);
+			echo 'file path: ' . $filePath;
+            $x = array_change_key_case(get_headers($filePath, 1),CASE_LOWER);
 			if($x){
                 if( strcasecmp($x[0], 'HTTP/1.1 200 OK') !== 0 ) {
                     $x = $x['content-length'][1];

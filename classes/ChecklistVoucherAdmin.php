@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class ChecklistVoucherAdmin {
 
@@ -13,7 +13,7 @@ class ChecklistVoucherAdmin {
 	private $closeConnOnDestroy = true;
 
 	public function __construct() {
-        $connection = new DbConnection();
+        $connection = new DbService();
         $this->conn = $connection->getConnection();
 	}
 
@@ -31,17 +31,15 @@ class ChecklistVoucherAdmin {
 	public function setCollectionVariables(): void
 	{
 		if($this->clid){
-			$sql = 'SELECT name, dynamicsql FROM fmchecklists WHERE clid = '.$this->clid.' ';
+			$sql = 'SELECT name, searchterms FROM fmchecklists WHERE clid = '.$this->clid.' ';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
-				$this->clName = Sanitizer::cleanOutStr($row->name);
-				$sqlFrag = $row->dynamicsql;
-				$varArr = json_decode($sqlFrag, true);
-				if(json_last_error() !== JSON_ERROR_NONE){
-					$varArr = $this->parseSqlFrag($sqlFrag);
-					$this->saveQueryVariables($varArr);
-				}
-				$this->queryVariablesArr = $varArr;
+				$this->clName = SanitizerService::cleanOutStr($row->name);
+				if($row->searchterms){
+                    $varArr = $this->parseSqlFrag(json_decode($row->searchterms, true));
+                    $this->saveQueryVariables($varArr);
+                    $this->queryVariablesArr = $varArr;
+                }
 			}
 			else{
 				$this->clName = 'Unknown';
@@ -76,7 +74,7 @@ class ChecklistVoucherAdmin {
 				$jsonArr[$fieldName] = $postArr[$fieldName];
 			}
 		}
-		$sql = 'UPDATE fmchecklists AS c SET c.dynamicsql = '.($jsonArr?'"'.Sanitizer::cleanInStr($this->conn,json_encode($jsonArr)).'"':'NULL').' WHERE c.clid = '.$this->clid.' ';
+		$sql = 'UPDATE fmchecklists AS c SET c.searchterms = '.($jsonArr?'"'.SanitizerService::cleanInStr($this->conn,json_encode($jsonArr)).'"':'NULL').' WHERE c.clid = '.$this->clid.' ';
 		//echo $sql; exit;
 		$this->conn->query($sql);
 	}
@@ -85,42 +83,42 @@ class ChecklistVoucherAdmin {
 	{
 		$retArr = array();
 		if($sqlFrag){
-			if(preg_match('/country = "([^"]+)"/',$sqlFrag,$m)){
-				$retArr['country'] = $m[1];
+			if(array_key_exists('country', $sqlFrag)){
+				$retArr['country'] = $sqlFrag['country'];
 			}
-			if(preg_match('/stateprovince = "([^"]+)"/',$sqlFrag,$m)){
-				$retArr['state'] = $m[1];
+			if(array_key_exists('state', $sqlFrag)){
+				$retArr['state'] = $sqlFrag['state'];
 			}
-			if(preg_match('/county LIKE "([^%"]+)%"/',$sqlFrag,$m)){
-				$retArr['county'] = trim($m[1],' %');
+			if(array_key_exists('county', $sqlFrag)){
+				$retArr['county'] = $sqlFrag['county'];
 			}
-			if(preg_match('/locality LIKE "%([^%"]+)%"/',$sqlFrag,$m)){
-				$retArr['locality'] = trim($m[1],' %');
+			if(array_key_exists('locality', $sqlFrag)){
+				$retArr['locality'] = $sqlFrag['locality'];
 			}
-			if(preg_match('/parenttid = (\d+)\)/',$sqlFrag,$m)){
-				$retArr['taxon'] = $this->getSciname($m[1]);
+			if(array_key_exists('parenttid', $sqlFrag)){
+				$retArr['taxon'] = $this->getSciname($sqlFrag['parenttid']);
 			}
-			if(preg_match_all('/AGAINST\("([^()"]+)"\)/',$sqlFrag,$m)){
-				$retArr['recordedby'] = implode(',',$m[1]);
+			if(array_key_exists('recordedby', $sqlFrag)){
+				$retArr['recordedby'] = $sqlFrag['recordedby'];
 			}
-			if(preg_match('/decimallatitude BETWEEN ([-.\d]+) AND ([-.\d]+)\D+/',$sqlFrag,$m)){
-				$retArr['latsouth'] = $m[1];
-				$retArr['latnorth'] = $m[2];
+			if(array_key_exists('decimallatitude', $sqlFrag)){
+				$retArr['latsouth'] = $sqlFrag['decimallatitude'];
+				$retArr['latnorth'] = $sqlFrag['decimallatitude'];
 			}
-			if(preg_match('/decimallongitude BETWEEN ([-.\d]+) AND ([-.\d]+)\D+/',$sqlFrag,$m)){
-				$retArr['lngwest'] = $m[1];
-				$retArr['lngeast'] = $m[2];
+			if(array_key_exists('decimallongitude', $sqlFrag)){
+				$retArr['lngwest'] = $sqlFrag['decimallongitude'];
+				$retArr['lngeast'] = $sqlFrag['decimallongitude'];
 			}
-			if(preg_match('/collid = (\d+)\D/',$sqlFrag,$m)){
-				$retArr['collid'] = $m[1];
+			if(array_key_exists('collid', $sqlFrag)){
+				$retArr['collid'] = $sqlFrag['collid'];
 			}
-			if(preg_match('/ OR \(\(o.decimallatitude/',$sqlFrag) || preg_match('/ OR \(\(o.decimallongitude/',$sqlFrag)){
+			if(array_key_exists('decimallatitude', $sqlFrag) && array_key_exists('decimallongitude', $sqlFrag)){
 				$retArr['latlngor'] = 1;
 			}
-			if(strpos($sqlFrag, 'cultivationStatus') !== false){
+			if(array_key_exists('cultivationStatus', $sqlFrag)){
 				$retArr['excludecult'] = 1;
 			}
-			if(strpos($sqlFrag, 'decimallatitude') !== false){
+			if(array_key_exists('decimallatitude', $sqlFrag)){
 				$retArr['onlycoord'] = 1;
 			}
 		}
@@ -130,94 +128,85 @@ class ChecklistVoucherAdmin {
 	public function getSqlFrag(): string
 	{
 		$sqlFrag = '';
-		if(isset($this->queryVariablesArr['country']) && $this->queryVariablesArr['country']){
-			$countryStr = str_replace(';',',',Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['country']));
-			$sqlFrag = 'AND (o.country IN("'.$countryStr.'")) ';
-		}
-		if(isset($this->queryVariablesArr['state']) && $this->queryVariablesArr['state']){
-			$stateStr = str_replace(';',',',Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['state']));
-			$sqlFrag .= 'AND (o.stateprovince = "'.$stateStr.'") ';
-		}
-		if(isset($this->queryVariablesArr['county']) && $this->queryVariablesArr['county']){
-			$countyStr = str_replace(';',',',$this->queryVariablesArr['county']);
-			$cArr = explode(',', $countyStr);
-			$cStr = '';
-			foreach($cArr as $str){
-				$cStr .= 'OR (o.county LIKE "'.Sanitizer::cleanInStr($this->conn,$str).'%") ';
-			}
-			$sqlFrag .= 'AND ('.substr($cStr, 2).') ';
-		}
-		if(isset($this->queryVariablesArr['locality']) && $this->queryVariablesArr['locality']){
-			$localityStr = str_replace(';',',',$this->queryVariablesArr['locality']);
-			$locArr = explode(',', $localityStr);
-			$locStr = '';
-			foreach($locArr as $str){
-				$str = Sanitizer::cleanInStr($this->conn,$str);
-				if(strlen($str) > 4){
-					$locStr .= 'OR (MATCH(f.locality) AGAINST("'.$str.'")) ';
-				}
-				else{
-					$locStr .= 'OR (o.locality LIKE "%'.$str.'%") ';
-				}
-			}
-			$sqlFrag .= 'AND ('.substr($locStr, 2).') ';
-		}
-		if(isset($this->queryVariablesArr['taxon']) && $this->queryVariablesArr['taxon']){
-			$tStr = Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['taxon']);
-			$tidPar = $this->getTid($tStr);
-			if($tidPar){
-				$sqlFrag .= 'AND (o.tid IN (SELECT tid FROM taxaenumtree WHERE parenttid = '.$tidPar.')) ';
-			}
-		}
-		$llStr = '';
-		if(isset($this->queryVariablesArr['latnorth'], $this->queryVariablesArr['latsouth']) && is_numeric($this->queryVariablesArr['latnorth']) && is_numeric($this->queryVariablesArr['latsouth'])){
-			$llStr .= 'AND (o.decimallatitude BETWEEN '.$this->queryVariablesArr['latsouth'].' AND '.$this->queryVariablesArr['latnorth'].') ';
-		}
-		if(isset($this->queryVariablesArr['lngwest'], $this->queryVariablesArr['lngeast']) && is_numeric($this->queryVariablesArr['lngwest']) && is_numeric($this->queryVariablesArr['lngeast'])){
-			$llStr .= 'AND (o.decimallongitude BETWEEN '.$this->queryVariablesArr['lngwest'].' AND '.$this->queryVariablesArr['lngeast'].') ';
-		}
-		if($llStr){
-			if(array_key_exists('latlngor',$this->queryVariablesArr)) {
-				$llStr = 'OR (' . trim(substr($llStr, 3)) . ') ';
-			}
-			$sqlFrag .= $llStr;
-		}
-		if(!$llStr && isset($this->queryVariablesArr['onlycoord']) && $this->queryVariablesArr['onlycoord']){
-			$sqlFrag .= 'AND (o.decimallatitude IS NOT NULL) ';
-		}
-		if(isset($this->queryVariablesArr['excludecult']) && $this->queryVariablesArr['excludecult']){
-			$sqlFrag .= 'AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) ';
-		}
-		if(isset($this->queryVariablesArr['collid']) && is_numeric($this->queryVariablesArr['collid'])){
-			$sqlFrag .= 'AND (o.collid = '.$this->queryVariablesArr['collid'].') ';
-		}
+		if($this->queryVariablesArr){
+            if(isset($this->queryVariablesArr['country']) && $this->queryVariablesArr['country']){
+                $countryStr = str_replace(';',',',SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['country']));
+                $sqlFrag = 'AND (o.country IN("'.$countryStr.'")) ';
+            }
+            if(isset($this->queryVariablesArr['state']) && $this->queryVariablesArr['state']){
+                $stateStr = str_replace(';',',',SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['state']));
+                $sqlFrag .= 'AND (o.stateprovince = "'.$stateStr.'") ';
+            }
+            if(isset($this->queryVariablesArr['county']) && $this->queryVariablesArr['county']){
+                $countyStr = str_replace(';',',',$this->queryVariablesArr['county']);
+                $cArr = explode(',', $countyStr);
+                $cStr = '';
+                foreach($cArr as $str){
+                    $cStr .= 'OR (o.county LIKE "'.SanitizerService::cleanInStr($this->conn,$str).'%") ';
+                }
+                $sqlFrag .= 'AND ('.substr($cStr, 2).') ';
+            }
+            if(isset($this->queryVariablesArr['locality']) && $this->queryVariablesArr['locality']){
+                $localityStr = str_replace(';',',',$this->queryVariablesArr['locality']);
+                $locArr = explode(',', $localityStr);
+                $locStr = '';
+                foreach($locArr as $str){
+                    $str = SanitizerService::cleanInStr($this->conn,$str);
+                    $locStr .= 'OR (o.locality LIKE "%'.$str.'%") ';
+                }
+                $sqlFrag .= 'AND ('.substr($locStr, 2).') ';
+            }
+            if(isset($this->queryVariablesArr['taxon']) && $this->queryVariablesArr['taxon']){
+                $tStr = SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['taxon']);
+                $tidPar = $this->getTid($tStr);
+                if($tidPar){
+                    $sqlFrag .= 'AND (o.tid IN (SELECT tid FROM taxaenumtree WHERE parenttid = '.$tidPar.')) ';
+                }
+            }
+            $llStr = '';
+            if(isset($this->queryVariablesArr['latnorth'], $this->queryVariablesArr['latsouth']) && is_numeric($this->queryVariablesArr['latnorth']) && is_numeric($this->queryVariablesArr['latsouth'])){
+                $llStr .= 'AND (o.decimallatitude BETWEEN '.$this->queryVariablesArr['latsouth'].' AND '.$this->queryVariablesArr['latnorth'].') ';
+            }
+            if(isset($this->queryVariablesArr['lngwest'], $this->queryVariablesArr['lngeast']) && is_numeric($this->queryVariablesArr['lngwest']) && is_numeric($this->queryVariablesArr['lngeast'])){
+                $llStr .= 'AND (o.decimallongitude BETWEEN '.$this->queryVariablesArr['lngwest'].' AND '.$this->queryVariablesArr['lngeast'].') ';
+            }
+            if($llStr){
+                if(array_key_exists('latlngor',$this->queryVariablesArr)) {
+                    $llStr = 'OR (' . trim(substr($llStr, 3)) . ') ';
+                }
+                $sqlFrag .= $llStr;
+            }
+            if(!$llStr && isset($this->queryVariablesArr['onlycoord']) && $this->queryVariablesArr['onlycoord']){
+                $sqlFrag .= 'AND (o.decimallatitude IS NOT NULL) ';
+            }
+            if(isset($this->queryVariablesArr['excludecult']) && $this->queryVariablesArr['excludecult']){
+                $sqlFrag .= 'AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) ';
+            }
+            if(isset($this->queryVariablesArr['collid']) && is_numeric($this->queryVariablesArr['collid'])){
+                $sqlFrag .= 'AND (o.collid = '.$this->queryVariablesArr['collid'].') ';
+            }
 
-		if(isset($this->queryVariablesArr['recordedby']) && $this->queryVariablesArr['recordedby']){
-			$collStr = str_replace(',', ';', $this->queryVariablesArr['recordedby']);
-			$collArr = explode(';',$collStr);
-			$tempArr = array();
-			foreach($collArr as $str => $postArr){
-				if(strlen($str) < 4 || strtolower($str) === 'best'){
-					$tempArr[] = '(o.recordedby LIKE "%'.Sanitizer::cleanInStr($this->conn,$this->queryVariablesArr['recordedby']).'%")';
-				}
-				else{
-					$tempArr[] = '(MATCH(f.recordedby) AGAINST("'.Sanitizer::cleanInStr($this->conn,$str).'"))';
-				}
-			}
-			$sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
-		}
+            if(isset($this->queryVariablesArr['recordedby']) && $this->queryVariablesArr['recordedby']){
+                $collStr = str_replace(',', ';', $this->queryVariablesArr['recordedby']);
+                $collArr = explode(';',$collStr);
+                $tempArr = array();
+                foreach($collArr as $str => $postArr){
+                    $tempArr[] = '(o.recordedby LIKE "%'.SanitizerService::cleanInStr($this->conn,$this->queryVariablesArr['recordedby']).'%")';
+                }
+                $sqlFrag .= 'AND ('.implode(' OR ', $tempArr).') ';
+            }
 
-		if($sqlFrag) {
-			$sqlFrag = trim(substr($sqlFrag, 3));
-		}
+            if($sqlFrag) {
+                $sqlFrag = trim(substr($sqlFrag, 3));
+            }
+        }
 		return $sqlFrag;
 	}
 
 	public function deleteQueryVariables(): string
 	{
 		$statusStr = '';
-		if($this->conn->query('UPDATE fmchecklists AS c SET c.dynamicsql = NULL WHERE c.clid = '.$this->clid.' ')){
-			unset($this->queryVariablesArr);
+		if($this->conn->query('UPDATE fmchecklists AS c SET c.searchterms = NULL WHERE c.clid = '.$this->clid.' ')){
 			$this->queryVariablesArr = array();
 		}
 		else{
@@ -253,7 +242,7 @@ class ChecklistVoucherAdmin {
 		//echo '<div>'.$sql.'</div>';
 		$rs = $this->conn->query($sql);
 		while($row = $rs->fetch_object()){
-			$retArr[$row->family][$row->tid] = Sanitizer::cleanOutStr($row->sciname);
+			$retArr[$row->family][$row->tid] = SanitizerService::cleanOutStr($row->sciname);
 		}
 		$rs->free();
 		return $retArr;
@@ -276,9 +265,6 @@ class ChecklistVoucherAdmin {
                     'LEFT JOIN taxa AS t ON o.tid = t.TID '.
                     'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
 					'INNER JOIN fmchklsttaxalink AS cl ON t.tidaccepted = cl.tid ';
-				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
-					$sql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND cl.clid = '.$this->clid.' ';
 				$sql .= $includeAll === 1 ? 'AND cl.tid NOT IN(SELECT tid FROM fmvouchers WHERE clid IN('.$clidStr.')) ' : 'AND o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.')) ';
                 $sql .= 'ORDER BY t.family, o.sciname LIMIT '.$startLimit.', 500';
@@ -305,9 +291,6 @@ class ChecklistVoucherAdmin {
 					'CONCAT_WS("; ",o.country, o.stateprovince, o.county, o.locality) as locality '.
 					'FROM omcollections AS c INNER JOIN omoccurrences AS o ON c.collid = o.collid '.
 					'LEFT JOIN taxa AS t ON o.tid = t.TID ';
-				if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
-					$sql .= 'LEFT JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-				}
 				$sql .= 'WHERE ('.$sqlFrag.') AND ((t.RankId < 220)) '.
 					'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE CLID IN('.$clidStr.'))) ';
 				$sql .= 'ORDER BY o.family, o.sciname LIMIT '.$startLimit.', 500';
@@ -340,7 +323,7 @@ class ChecklistVoucherAdmin {
 			//echo '<div>'.$sql.'</div>';
 			$rs = $this->conn->query($sql);
 			while($row = $rs->fetch_object()){
-				$retArr[$row->tid] = Sanitizer::cleanOutStr($row->sciname);
+				$retArr[$row->tid] = SanitizerService::cleanOutStr($row->sciname);
 			}
 			asort($retArr);
 			$rs->free();
@@ -418,13 +401,13 @@ class ChecklistVoucherAdmin {
 			if($row->recordnumber) {
 				$collStr .= ' (' . $row->recordnumber . ')';
 			}
-			$retArr[$cnt]['recordnumber'] = Sanitizer::cleanOutStr($collStr);
-			$retArr[$cnt]['specid'] = Sanitizer::cleanOutStr($voucherSciname);
+			$retArr[$cnt]['recordnumber'] = SanitizerService::cleanOutStr($collStr);
+			$retArr[$cnt]['specid'] = SanitizerService::cleanOutStr($voucherSciname);
 			$idBy = $row->identifiedby;
 			if($row->dateidentified) {
-				$idBy .= ' (' . Sanitizer::cleanOutStr($row->dateidentified) . ')';
+				$idBy .= ' (' . SanitizerService::cleanOutStr($row->dateidentified) . ')';
 			}
-			$retArr[$cnt]['identifiedby'] = Sanitizer::cleanOutStr($idBy);
+			$retArr[$cnt]['identifiedby'] = SanitizerService::cleanOutStr($idBy);
 			$cnt++;
 		}
 		$rs->free();
@@ -489,9 +472,6 @@ class ChecklistVoucherAdmin {
 			'INNER JOIN taxa AS t ON o.tid = t.tid '.
             'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
 			'LEFT JOIN guidoccurrences AS g ON o.occid = g.occid ';
-		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
-			$retSql .= 'INNER JOIN omoccurrencesfulltext AS f ON o.occid = f.occid ';
-		}
 		$retSql .= 'WHERE ('.$sqlFrag.') '.
 			'AND (t.rankid IN(220,230,240,260,230)) '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) '.
@@ -548,9 +528,6 @@ class ChecklistVoucherAdmin {
             'LEFT JOIN taxa AS t ON o.tid = t.TID '.
             'LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
 			'LEFT JOIN guidoccurrences g ON o.occid = g.occid ';
-		if(strpos($sqlFrag,'MATCH(f.recordedby)') || strpos($sqlFrag,'MATCH(f.locality)')) {
-			$retSql .= 'INNER JOIN omoccurrencesfulltext f ON o.occid = f.occid ';
-		}
 		$retSql .= 'WHERE ('.$sqlFrag.') AND ISNULL(o.tid) AND o.sciname IS NOT NULL '.
 			'AND (o.occid NOT IN(SELECT occid FROM fmvouchers WHERE clid IN('.$clidStr.'))) ';
 		return $retSql;
@@ -788,44 +765,47 @@ class ChecklistVoucherAdmin {
 	public function getQueryVariableStr(): string
 	{
 		$retStr = '';
-		if(isset($this->queryVariablesArr['collid'])){
-			$collArr = $this->getCollectionList($this->queryVariablesArr['collid']);
-			$retStr .= $collArr[$this->queryVariablesArr['collid']].'; ';
-		}
-		if(isset($this->queryVariablesArr['country'])) {
-			$retStr .= $this->queryVariablesArr['country'] . '; ';
-		}
-		if(isset($this->queryVariablesArr['state'])) {
-			$retStr .= $this->queryVariablesArr['state'] . '; ';
-		}
-		if(isset($this->queryVariablesArr['county'])) {
-			$retStr .= $this->queryVariablesArr['county'] . '; ';
-		}
-		if(isset($this->queryVariablesArr['locality'])) {
-			$retStr .= $this->queryVariablesArr['locality'] . '; ';
-		}
-		if(isset($this->queryVariablesArr['taxon'])) {
-			$retStr .= $this->queryVariablesArr['taxon'] . '; ';
-		}
-		if(isset($this->queryVariablesArr['recordedby'])) {
-			$retStr .= $this->queryVariablesArr['recordedby'] . '; ';
-		}
-		if(isset($this->queryVariablesArr['latsouth'], $this->queryVariablesArr['latnorth'])) {
-			$retStr .= 'Lat between ' . $this->queryVariablesArr['latsouth'] . ' and ' . $this->queryVariablesArr['latnorth'] . '; ';
-		}
-		if(isset($this->queryVariablesArr['lngwest'], $this->queryVariablesArr['lngeast'])) {
-			$retStr .= 'Long between ' . $this->queryVariablesArr['lngwest'] . ' and ' . $this->queryVariablesArr['lngeast'] . '; ';
-		}
-		if(isset($this->queryVariablesArr['latlngor'])) {
-			$retStr .= 'Include Lat/Long and locality as an "OR" condition; ';
-		}
-		if(isset($this->queryVariablesArr['excludecult'])) {
-			$retStr .= 'Exclude cultivated species; ';
-		}
-		if(isset($this->queryVariablesArr['onlycoord'])) {
-			$retStr .= 'Only include occurrences with coordinates; ';
-		}
-		return trim($retStr,' ;');
+		if($this->queryVariablesArr){
+            if(isset($this->queryVariablesArr['collid'])){
+                $collArr = $this->getCollectionList($this->queryVariablesArr['collid']);
+                $retStr .= $collArr[$this->queryVariablesArr['collid']].'; ';
+            }
+            if(isset($this->queryVariablesArr['country'])) {
+                $retStr .= $this->queryVariablesArr['country'] . '; ';
+            }
+            if(isset($this->queryVariablesArr['state'])) {
+                $retStr .= $this->queryVariablesArr['state'] . '; ';
+            }
+            if(isset($this->queryVariablesArr['county'])) {
+                $retStr .= $this->queryVariablesArr['county'] . '; ';
+            }
+            if(isset($this->queryVariablesArr['locality'])) {
+                $retStr .= $this->queryVariablesArr['locality'] . '; ';
+            }
+            if(isset($this->queryVariablesArr['taxon'])) {
+                $retStr .= $this->queryVariablesArr['taxon'] . '; ';
+            }
+            if(isset($this->queryVariablesArr['recordedby'])) {
+                $retStr .= $this->queryVariablesArr['recordedby'] . '; ';
+            }
+            if(isset($this->queryVariablesArr['latsouth'], $this->queryVariablesArr['latnorth'])) {
+                $retStr .= 'Lat between ' . $this->queryVariablesArr['latsouth'] . ' and ' . $this->queryVariablesArr['latnorth'] . '; ';
+            }
+            if(isset($this->queryVariablesArr['lngwest'], $this->queryVariablesArr['lngeast'])) {
+                $retStr .= 'Long between ' . $this->queryVariablesArr['lngwest'] . ' and ' . $this->queryVariablesArr['lngeast'] . '; ';
+            }
+            if(isset($this->queryVariablesArr['latlngor'])) {
+                $retStr .= 'Include Lat/Long and locality as an "OR" condition; ';
+            }
+            if(isset($this->queryVariablesArr['excludecult'])) {
+                $retStr .= 'Exclude cultivated species; ';
+            }
+            if(isset($this->queryVariablesArr['onlycoord'])) {
+                $retStr .= 'Only include occurrences with coordinates; ';
+            }
+            $retStr = trim($retStr,' ;');
+        }
+		return $retStr;
 	}
 
 	public function getMissingTaxaCount(): int
@@ -877,7 +857,7 @@ class ChecklistVoucherAdmin {
 	private function getTid($sciname): int
 	{
 		$tidRet = 0;
-		$sql = 'SELECT tid FROM taxa WHERE sciname = "'.Sanitizer::cleanInStr($this->conn,$sciname).'" ';
+		$sql = 'SELECT tid FROM taxa WHERE sciname = "'.SanitizerService::cleanInStr($this->conn,$sciname).'" ';
 		$rs = $this->conn->query($sql);
 		if($r = $rs->fetch_object()){
 			$tidRet = $r->tid;

@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/UuidFactory.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/UuidService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class MediaShared{
 
@@ -49,7 +49,7 @@ class MediaShared{
 	private $errArr = array();
 
 	public function __construct(){
-		$connection = new DbConnection();
+		$connection = new DbService();
  		$this->conn = $connection->getConnection();
  		$this->imageRootPath = $GLOBALS['IMAGE_ROOT_PATH'];
 		if(substr($this->imageRootPath,-1) !== '/') {
@@ -110,7 +110,7 @@ class MediaShared{
         if(!$medFile){
             $medFile = 'medfile';
         }
-        if($this->targetPath){
+        if($this->targetPath && (strtolower(substr($_FILES[$medFile]['name'], -3)) === '.zc' || strtolower(substr($_FILES[$medFile]['name'], -4)) === '.mp4' || strtolower(substr($_FILES[$medFile]['name'], -5)) === '.webm' || strtolower(substr($_FILES[$medFile]['name'], -4)) === '.ogg' || strtolower(substr($_FILES[$medFile]['name'], -4)) === '.wav' || strtolower(substr($_FILES[$medFile]['name'], -4)) === '.mp3')){
 			if(file_exists($this->targetPath)){
 				$medFileName = basename($_FILES[$medFile]['name']);
 				$fileName = $this->cleanFileName($medFileName);
@@ -311,21 +311,21 @@ class MediaShared{
                 'VALUES ('.
                 (isset($media['tid']) ? (int)$media['tid'] :'NULL').','.
                 (isset($media['occid']) ? (int)$media['occid'] :'NULL').','.
-                (isset($media['accessuri']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['accessuri']).'"' :'NULL').','.
-                (isset($media['title']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($media['title'])).'"' :'NULL').','.
-                (isset($media['creator']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['creator']).'"' :'NULL').','.
-                (isset($media['type']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['type']).'"' :'NULL').','.
-                (isset($media['format']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['format']).'"' :'NULL').','.
-                (isset($media['owner']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['owner']).'"' :'NULL').','.
-                (isset($media['furtherinformationurl']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['furtherinformationurl']).'"' :'NULL').','.
-                (isset($media['language']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['language']).'"' :'NULL').','.
-                (isset($media['usageterms']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['usageterms']).'"' :'NULL').','.
-                (isset($media['rights']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['rights']).'"' :'NULL').','.
-                (isset($media['bibliographiccitation']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['bibliographiccitation']).'"' :'NULL').','.
-                (isset($media['publisher']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['publisher']).'"' :'NULL').','.
-                (isset($media['contributor']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['contributor']).'"' :'NULL').','.
-                (isset($media['locationcreated']) ? '"'.Sanitizer::cleanInStr($this->conn,$media['locationcreated']).'"' :'NULL').','.
-                (isset($media['description']) ? '"'.Sanitizer::cleanInStr($this->conn,strip_tags($media['description'])).'"' :'NULL').','.
+                (isset($media['accessuri']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['accessuri']).'"' :'NULL').','.
+                (isset($media['title']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($media['title'])).'"' :'NULL').','.
+                (isset($media['creator']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['creator']).'"' :'NULL').','.
+                (isset($media['type']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['type']).'"' :'NULL').','.
+                (isset($media['format']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['format']).'"' :'NULL').','.
+                (isset($media['owner']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['owner']).'"' :'NULL').','.
+                (isset($media['furtherinformationurl']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['furtherinformationurl']).'"' :'NULL').','.
+                (isset($media['language']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['language']).'"' :'NULL').','.
+                (isset($media['usageterms']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['usageterms']).'"' :'NULL').','.
+                (isset($media['rights']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['rights']).'"' :'NULL').','.
+                (isset($media['bibliographiccitation']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['bibliographiccitation']).'"' :'NULL').','.
+                (isset($media['publisher']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['publisher']).'"' :'NULL').','.
+                (isset($media['contributor']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['contributor']).'"' :'NULL').','.
+                (isset($media['locationcreated']) ? '"'.SanitizerService::cleanInStr($this->conn,$media['locationcreated']).'"' :'NULL').','.
+                (isset($media['description']) ? '"'.SanitizerService::cleanInStr($this->conn,strip_tags($media['description'])).'"' :'NULL').','.
                 (isset($media['sortsequence']) ? (int)$media['sortsequence'] : '50').')';
             //echo $sql; exit;
             if($this->conn->query($sql)){
@@ -422,12 +422,12 @@ class MediaShared{
 
 	public function setTitle($v): void
 	{
-		$this->title = Sanitizer::cleanInStr($this->conn,$v);
+		$this->title = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setCreator($v): void
 	{
-		$this->creator = Sanitizer::cleanInStr($this->conn,$v);
+		$this->creator = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setCreatorUid($v): void
@@ -439,7 +439,7 @@ class MediaShared{
 
 	public function setDescription($v): void
 	{
-		$this->description = Sanitizer::cleanInStr($this->conn,$v);
+		$this->description = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getTargetPath(): string
@@ -453,47 +453,47 @@ class MediaShared{
 
 	public function setOwner($v): void
 	{
-		$this->owner = Sanitizer::cleanInStr($this->conn,$v);
+		$this->owner = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setType($v): void
 	{
-		$this->type = Sanitizer::cleanInStr($this->conn,$v);
+		$this->type = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
     public function setFormat($v): void
     {
-        $this->format = Sanitizer::cleanInStr($this->conn,$v);
+        $this->format = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setUsageTerms($v): void
     {
-        $this->usageterms = Sanitizer::cleanInStr($this->conn,$v);
+        $this->usageterms = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setRights($v): void
     {
-        $this->rights = Sanitizer::cleanInStr($this->conn,$v);
+        $this->rights = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setPublisher($v): void
     {
-        $this->publisher = Sanitizer::cleanInStr($this->conn,$v);
+        $this->publisher = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setContributor($v): void
     {
-        $this->contributor = Sanitizer::cleanInStr($this->conn,$v);
+        $this->contributor = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setBibliographicCitation($v): void
     {
-        $this->bibliographiccitation = Sanitizer::cleanInStr($this->conn,$v);
+        $this->bibliographiccitation = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setFurtherInformationURL($v): void
     {
-        $this->furtherinformationurl = Sanitizer::cleanInStr($this->conn,$v);
+        $this->furtherinformationurl = SanitizerService::cleanInStr($this->conn,$v);
     }
 
     public function setOccid($v): void
@@ -516,7 +516,7 @@ class MediaShared{
 
 	public function setLanguage($v): void
 	{
-		$this->language = Sanitizer::cleanInStr($this->conn,$v);
+		$this->language = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function setSortSequence($v): void
@@ -528,7 +528,7 @@ class MediaShared{
 
 	public function setLocationCreated($v): void
 	{
-		$this->locationcreated = Sanitizer::cleanInStr($this->conn,$v);
+		$this->locationcreated = SanitizerService::cleanInStr($this->conn,$v);
 	}
 
 	public function getErrArr(): array
