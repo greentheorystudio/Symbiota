@@ -132,7 +132,6 @@ class Permissions{
                     unset($rows[$index]);
                 }
             }
-
             if(!$skipLabels){
                 if(array_key_exists('CollAdmin', $perArr)){
                     $perArr['CollAdmin'] = (new Collections)->getCollectionPermissionLabels($perArr['CollAdmin']);

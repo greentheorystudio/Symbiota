@@ -3,7 +3,7 @@ const projectEditorAdminTab = {
         <div class="q-pa-md column q-col-gutter-sm">
             <q-card flat bordered>
                 <q-card-section>
-                    <user-permission-management-module permission-label="Manager" :permission="ProjAdmin" :table-pk="projectId" @update:user-list="(value) => managerUserArr = value"></user-permission-management-module>
+                    <user-permission-management-module permission-label="Manager" permission="ProjAdmin" :table-pk="projectId" @update:user-list="(value) => managerUserArr = value"></user-permission-management-module>
                 </q-card-section>
             </q-card>
             <q-card flat bordered>

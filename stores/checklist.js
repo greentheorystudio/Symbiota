@@ -238,9 +238,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 callback(Number(res));
             });
         },
-        deleteChecklistRecord(clid, callback) {
+        deleteChecklistRecord(callback) {
             const formData = new FormData();
-            formData.append('clid', clid.toString());
+            formData.append('clid', this.checklistId.toString());
             formData.append('action', 'deleteChecklistRecord');
             fetch(checklistApiUrl, {
                 method: 'POST',

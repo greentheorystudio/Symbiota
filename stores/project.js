@@ -97,9 +97,9 @@ const useProjectStore = Pinia.defineStore('project', {
                 }
             });
         },
-        deleteProjectRecord(pid, callback) {
+        deleteProjectRecord(callback) {
             const formData = new FormData();
-            formData.append('pid', pid.toString());
+            formData.append('pid', this.projectId.toString());
             formData.append('action', 'deleteProjectRecord');
             fetch(projectApiUrl, {
                 method: 'POST',
