@@ -71,7 +71,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                 </div>
                 <div v-if="projectData.hasOwnProperty('fulldescription') && projectData['fulldescription']" class="text-body1" v-html="projectData['fulldescription']"></div>
                 <template v-if="projectChecklistArr.length > 0">
-                    <div class="column">
+                    <div class="q-mt-md column">
                         <div class="row justify-start q-gutter-md">
                             <div class="text-h6 text-bold">Checklists</div>
                             <div v-if="projectChecklistCoordArr.length > 0" class="self-center">

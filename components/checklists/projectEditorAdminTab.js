@@ -1,132 +1,71 @@
 const projectEditorAdminTab = {
     template: `
         <div class="q-pa-md column q-col-gutter-sm">
-            <div class="row justify-between">
-                <div>
-                    <template v-if="checklistTaxaId > 0 && editsExist">
-                        <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
-                    </template>
-                </div>
-                <div class="row justify-end">
-                    <template v-if="checklistTaxaId > 0">
-                        <q-btn color="secondary" @click="saveChecklistTaxaEdits();" label="Save Edits" :disabled="!editsExist || !checklistTaxaValid" />
-                    </template>
-                    <template v-else>
-                        <q-btn color="secondary" @click="addChecklistTaxon();" label="Add Taxon" :disabled="!checklistTaxaValid" />
-                    </template>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <single-scientific-common-name-auto-complete :sciname="checklistTaxaData['sciname']" :disabled="Number(checklistTaxaData['tid']) > 0" label="Taxon" limit-to-options="true" @update:sciname="processTaxonValChange"></single-scientific-common-name-auto-complete>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element label="Habitat" :value="checklistTaxaData['habitat']" maxlength="250" @update:value="(value) => updateChecklistTaxonData('habitat', value)"></text-field-input-element>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element label="Abundance" :value="checklistTaxaData['abundance']" maxlength="50" @update:value="(value) => updateChecklistTaxonData('abundance', value)"></text-field-input-element>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element data-type="textarea" label="Notes" :value="checklistTaxaData['notes']" maxlength="2000" @update:value="(value) => updateChecklistTaxonData('notes', value)"></text-field-input-element>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow">
-                    <text-field-input-element label="Source" :value="checklistTaxaData['source']" maxlength="250" @update:value="(value) => updateChecklistTaxonData('source', value)"></text-field-input-element>
-                </div>
-            </div>
-            <div v-if="Number(checklistTaxaId) > 0" class="row justify-end q-gutter-md">
-                <div>
-                    <q-btn color="negative" @click="deleteChecklistTaxon();" label="Remove Taxon" />
-                </div>
-            </div>
+            <q-card flat bordered>
+                <q-card-section>
+                    <user-permission-management-module permission-label="Manager" :permission="ProjAdmin" :table-pk="projectId" @update:user-list="(value) => managerUserArr = value"></user-permission-management-module>
+                </q-card-section>
+            </q-card>
+            <q-card flat bordered>
+                <q-card-section class="column q-gutter-sm">
+                    <div class="text-h6 text-bold">Delete project</div>
+                    <div v-if="!deleteValid">
+                        All managers (except yourself) must be removed before a project can be deleted
+                    </div>
+                    <div class="row justify-end">
+                        <div>
+                            <q-btn color="negative" @click="deleteProject();" label="Delete" :disabled="!deleteValid" />
+                        </div>
+                    </div>
+                </q-card-section>
+            </q-card>
         </div>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
         'confirmation-popup': confirmationPopup,
-        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'text-field-input-element': textFieldInputElement
+        'user-permission-management-module': userPermissionManagementModule
     },
-    setup(props, context) {
-        const { hideWorking, showNotification, showWorking } = useCore();
-        const checklistStore = useChecklistStore();
+    setup() {
+        const { showNotification } = useCore();
+        const baseStore = useBaseStore();
+        const projectStore = useProjectStore();
 
-        const checklistTaxaData = Vue.computed(() => checklistStore.getChecklistTaxaData);
-        const checklistTaxaId = Vue.computed(() => checklistStore.getChecklistTaxaID);
-        const checklistTaxaValid = Vue.computed(() => checklistStore.getChecklistTaxaValid);
-        const editsExist = Vue.computed(() => checklistStore.getChecklistTaxaEditsExist);
+        const clientRoot = baseStore.getClientRoot;
         const confirmationPopupRef = Vue.ref(null);
+        const deleteValid = Vue.computed(() => {
+            let returnVal = false;
+            if((managerUserArr.value.length === 1 && Number(managerUserArr.value[0]['uid']) === Number(symbUid)) || managerUserArr.value.length === 0){
+                returnVal = true;
+            }
+            return returnVal;
+        });
+        const managerUserArr = Vue.ref([]);
+        const projectId = Vue.computed(() => projectStore.getProjectID);
+        const symbUid = baseStore.getSymbUid;
 
-        function addChecklistTaxon() {
-            checklistStore.createChecklistTaxaRecord((newChecklistTaxaId) => {
-                if(newChecklistTaxaId > 0){
-                    showNotification('positive','Taxon added successfully.');
-                    context.emit('close:popup');
-                }
-                else{
-                    showNotification('negative', 'There was an error adding the taxon to the checklist');
-                }
-            });
-        }
-
-        function deleteChecklistTaxon() {
-            const confirmText = 'Are you sure you want to remove this taxon from the checklist? This action cannot be undone';
+        function deleteProject() {
+            const confirmText = 'Are you sure you want to delete this project? This action cannot be undone';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    checklistStore.deleteChecklistTaxonRecord((res) => {
+                    projectStore.deleteProjectRecord((res) => {
                         if(res === 1){
-                            showNotification('positive','The taxon has been removed');
-                            context.emit('close:popup');
+                            window.location.href = (clientRoot + '/projects/index.php');
                         }
                         else{
-                            showNotification('negative', 'There was an error removing the taxon from the checklist');
+                            showNotification('negative', 'There was an error deleting the project');
                         }
                     });
                 }
             }});
         }
 
-        function processTaxonValChange(taxon) {
-            checklistStore.updateChecklistTaxonEditData('tid', (taxon ? taxon['tid'] : null));
-            checklistStore.updateChecklistTaxonEditData('sciname', (taxon ? taxon['sciname'] : null));
-        }
-
-        function saveChecklistTaxaEdits() {
-            showWorking('Saving edits...');
-            checklistStore.updateChecklistTaxonRecord((res) => {
-                hideWorking();
-                if(res === 1){
-                    showNotification('positive','Edits saved.');
-                }
-                else{
-                    showNotification('negative', 'There was an error saving the taxon edits.');
-                }
-                context.emit('close:popup');
-            });
-        }
-
-        function updateChecklistTaxonData(key, value) {
-            checklistStore.updateChecklistTaxonEditData(key, value);
-        }
-
         return {
-            checklistTaxaData,
-            checklistTaxaId,
-            checklistTaxaValid,
             confirmationPopupRef,
-            editsExist,
-            addChecklistTaxon,
-            deleteChecklistTaxon,
-            processTaxonValChange,
-            saveChecklistTaxaEdits,
-            updateChecklistTaxonData
+            deleteValid,
+            managerUserArr,
+            projectId,
+            deleteProject
         }
     }
 };

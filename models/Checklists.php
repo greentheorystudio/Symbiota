@@ -141,6 +141,14 @@ class Checklists{
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
+        $sql = 'DELETE FROM imagetag WHERE keyvalue LIKE "CLID-' . (int)$clid . '-%" ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'UPDATE fmchecklists SET parentclid = NULL WHERE parentclid = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
         $sql = 'DELETE FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
@@ -254,7 +262,7 @@ class Checklists{
     public function getChecklistChildClidArr($clidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(' . implode(',', $clidArr) . ') ';
+        $sql = 'SELECT clid FROM fmchecklists WHERE parentclid IN(' . implode(',', $clidArr) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);

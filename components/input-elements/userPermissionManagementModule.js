@@ -69,7 +69,6 @@ const userPermissionManagementModule = {
     },
     setup(props, context) {
         const { showNotification } = useCore();
-        const userStore = useUserStore();
 
         const permittedUserArr = Vue.ref([]);
         const selectedAddUser = Vue.ref(null);
