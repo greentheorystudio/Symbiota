@@ -141,6 +141,14 @@ class Checklists{
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
+        $sql = 'DELETE FROM imagetag WHERE keyvalue LIKE "CLID-' . (int)$clid . '-%" ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'UPDATE fmchecklists SET parentclid = NULL WHERE parentclid = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
         $sql = 'DELETE FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
@@ -254,7 +262,7 @@ class Checklists{
     public function getChecklistChildClidArr($clidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(' . implode(',', $clidArr) . ') ';
+        $sql = 'SELECT clid FROM fmchecklists WHERE parentclid IN(' . implode(',', $clidArr) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -304,7 +312,10 @@ class Checklists{
                 'FROM fmchecklists AS c ';
             if((int)$uid !== (int)$GLOBALS['SYMB_UID'] || !$GLOBALS['IS_ADMIN']){
                 $sql .= 'LEFT JOIN userroles AS r ON c.clid = r.tablepk ';
-                $sql .= 'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" ';
+                $sql .= 'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" AND ISNULL(c.expiration) ';
+            }
+            else{
+                $sql .= 'WHERE ISNULL(c.expiration) ';
             }
             $sql .= 'ORDER BY c.`name` ';
             if($result = $this->conn->query($sql)){

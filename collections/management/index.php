@@ -89,7 +89,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         <?php
         echo '<div id="breadcrumbs">';
         echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+        echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
         echo '<b>Data Management Toolbox</b>';
         echo '</div>';
         ?>

@@ -41,7 +41,7 @@ include(__DIR__ . '/../../header.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
         <?php
         if($collId){
-            echo '<a href="../../collections/misc/collprofiles.php?collid='.$collId.'&emode=1">Collection Control Panel</a> &gt;&gt;';
+            echo '<a href="../../collections/misc/collprofiles.php?collid='.$collId.'">Collection Control Panel</a> &gt;&gt;';
         }
         ?>
         <b>GUID/UUID Generator</b>

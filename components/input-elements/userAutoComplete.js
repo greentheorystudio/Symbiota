@@ -18,7 +18,7 @@ const userAutoComplete = {
         }
     },
     template: `
-        <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :label="label" :disable="disabled">
+        <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @blur="blurAction" :options="autocompleteOptions" @filter="getOptions" @update:model-value="processValueChange" :label="label" :disable="disabled">
             <template v-if="!disabled && (value || definition)" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -76,6 +76,7 @@ const userAutoComplete = {
                 if(Number(user['uid']) !== Number(symbUid)){
                     returnArr.push({
                         value: user['uid'],
+                        uid: user['uid'],
                         label: (user['lastname'] + ', ' + user['firstname'] + ' (' + user['username'] + ')'),
                     });
                 }
@@ -121,7 +122,7 @@ const userAutoComplete = {
         }
 
         function processValueChange(selectedObj) {
-            context.emit('update:value', (selectedObj ? selectedObj.name : null));
+            context.emit('update:value', selectedObj);
         }
 
         return {

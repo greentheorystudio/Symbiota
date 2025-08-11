@@ -12,14 +12,14 @@ if($GLOBALS['IS_ADMIN']){
     $isEditor = true;
 }
 elseif($collid){
-    if(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
+    if(array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)){
         $isEditor = true;
     }
-    elseif(array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
+    elseif(array_key_exists('CollEditor', $GLOBALS['USER_RIGHTS']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollEditor'], true)){
         $isEditor = true;
     }
 }
-elseif($action === 'updateLocalitySecurity' && array_key_exists('RareSppAdmin',$GLOBALS['USER_RIGHTS'])){
+elseif($action === 'updateLocalitySecurity' && array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS'])){
     $isEditor = true;
 }
 
