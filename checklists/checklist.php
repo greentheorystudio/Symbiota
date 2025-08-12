@@ -49,11 +49,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="!temporaryChecklist">
-                    <template v-if="Number(clId) > 0">
-                        <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
-                    </template>
-                    <template v-else-if="Number(pId) > 0">
+                    <template v-if="Number(pId) > 0">
                         <a :href="(clientRoot + '/projects/project.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
+                    </template>
+                    <template v-else-if="Number(clId) > 0">
+                        <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
                     </template>
                     <template v-if="Number(clId) > 0">
                         <span class="text-bold">{{ checklistName }}</span>
@@ -82,7 +82,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     </q-btn>
                                 </div>
                                 <div v-if="taxaDataArr.length > 0">
-                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/games/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false">
+                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/checklists/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Flashcard Game
                                         </q-tooltip>
@@ -808,7 +808,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
-                            if(Number(pid) > 0){
+                            if(Number(pid) > 0 && Number(clId.value) === 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
                                 checklistStore.setChecklistTaxaArr(false, true, true);
                             }
@@ -833,11 +833,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     Vue.onMounted(() => {
-                        if(Number(clId.value) > 0){
-                            setChecklistData();
-                        }
-                        else if(Number(pId.value) > 0){
-                            setProjectData();
+                        if(Number(clId.value) > 0 || Number(pId.value) > 0){
+                            if(Number(clId.value) > 0){
+                                setChecklistData();
+                            }
+                            if(Number(pId.value) > 0){
+                                setProjectData();
+                            }
                         }
                         else{
                             if(Number(queryId) === 0){
