@@ -37,15 +37,7 @@ if($GLOBALS['SYMB_UID']){
                 <?php
                 if($editor){
                     ?>
-                    <fieldset style="width: 300px;">
-                        <legend><b>Quick Search</b></legend>
-                        <b>Catalog Number</b><br/>
-                        <form name="quicksearch" action="collections/editor/occurrenceeditor.php" method="post">
-                            <input name="q_catalognumber" type="text" />
-                            <input name="collid" type="hidden" value="1" />
-                            <input name="occindex" type="hidden" value="0" />
-                        </form>
-                    </fieldset>
+                    <collection-catalog-number-quick-search collection-id="1"></collection-catalog-number-quick-search>
                     <?php
                 }
                 elseif(!$GLOBALS['SYMB_UID']){
@@ -60,8 +52,13 @@ if($GLOBALS['SYMB_UID']){
         include(__DIR__ . '/footer.php');
         include_once(__DIR__ . '/config/footer-includes.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionCatalogNumberQuickSearch.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
-            const homePageModule = Vue.createApp();
+            const homePageModule = Vue.createApp({
+                components: {
+                    'collection-catalog-number-quick-search': collectionCatalogNumberQuickSearch
+                }
+            });
             homePageModule.use(Quasar, { config: {} });
             homePageModule.use(Pinia.createPinia());
             homePageModule.mount('#mainContainer');
