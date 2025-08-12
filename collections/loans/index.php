@@ -113,7 +113,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <div id="mainContainer" style="padding: 10px 15px 15px;">
         <div id="breadcrumbs">
             <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collId; ?>">Collection Control Panel</a> &gt;&gt;
             <a href='index.php?collid=<?php echo $collId; ?>'> <b>Loan Management</b></a>
         </div>
         <?php

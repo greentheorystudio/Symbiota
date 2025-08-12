@@ -398,10 +398,10 @@ include(__DIR__ . '/../../header.php');
             echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
         }
         elseif($collid){
-            echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Management Panel</a> &gt;&gt; ';
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Management Panel</a> &gt;&gt; ';
         }
         ?>
-        <a href="labelmanager.php?collid=<?php echo $collid; ?>&emode=1">Print Labels/Annotations</a> &gt;&gt;
+        <a href="labelmanager.php?collid=<?php echo $collid; ?>">Print Labels/Annotations</a> &gt;&gt;
         <b>Label Profile Manager</b>
     </div>
     <?php

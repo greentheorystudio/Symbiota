@@ -59,19 +59,6 @@ CREATE TABLE `fmchecklists` (
     CONSTRAINT `FK_checklists_uid` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`)
 );
 
-CREATE TABLE `fmchklstchildren` (
-    `clid` int(10) unsigned NOT NULL,
-    `clidchild` int(10) unsigned NOT NULL,
-    `modifiedUid` int(10) unsigned NOT NULL,
-    `modifiedtimestamp` datetime DEFAULT NULL,
-    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`clid`,`clidchild`),
-    KEY `FK_fmchklstchild_clid_idx` (`clid`),
-    KEY `FK_fmchklstchild_child_idx` (`clidchild`),
-    CONSTRAINT `FK_fmchklstchild_child` FOREIGN KEY (`clidchild`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `FK_fmchklstchild_clid` FOREIGN KEY (`clid`) REFERENCES `fmchecklists` (`CLID`) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE `fmchklstprojlink` (
     `pid` int(10) unsigned NOT NULL,
     `clid` int(10) unsigned NOT NULL,
@@ -105,23 +92,6 @@ CREATE TABLE `fmchklsttaxalink` (
     PRIMARY KEY (`TID`,`CLID`,`morphospecies`),
     KEY `FK_chklsttaxalink_cid` (`CLID`),
     KEY `FK_chklsttaxalink_tid` (`TID`)
-);
-
-CREATE TABLE `fmprojectcategories` (
-    `projcatid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-    `pid` int(10) unsigned NOT NULL,
-    `categoryname` varchar(150) NOT NULL,
-    `managers` varchar(100) DEFAULT NULL,
-    `description` varchar(250) DEFAULT NULL,
-    `parentpid` int(11) DEFAULT NULL,
-    `occurrencesearch` int(11) DEFAULT '0',
-    `ispublic` int(11) DEFAULT '1',
-    `notes` varchar(250) DEFAULT NULL,
-    `sortsequence` int(11) DEFAULT NULL,
-    `initialtimestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`projcatid`),
-    KEY `FK_fmprojcat_pid_idx` (`pid`),
-    CONSTRAINT `FK_fmprojcat_pid` FOREIGN KEY (`pid`) REFERENCES `fmprojects` (`pid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
 CREATE TABLE `fmprojects` (

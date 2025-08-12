@@ -9,7 +9,7 @@ $taxonEditorObj = new TaxonomyEditorManager();
 $taxonEditorObj->setTid($tid);
 $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 ?>
-<script>
+<script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
         $("#remapvalue").autocomplete({
 				source: "../../api/taxa/autofillsciname.php",

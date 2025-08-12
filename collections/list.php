@@ -363,7 +363,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script>
+        <script type="text/javascript">
             const searchListDisplayModule = Vue.createApp({
                 components: {
                     'checklist-display-button': checklistDisplayButton,
