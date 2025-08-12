@@ -55,7 +55,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
             <?php
             if($collid){
-                echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt;';
+                echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt;';
             }
             else{
                 echo '<a href="../../sitemap.php">Sitemap</a> &gt;&gt;';

@@ -198,7 +198,9 @@ ALTER TABLE `imagetag`
 
 ALTER TABLE `fmchecklists`
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
-    MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`;
+    MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`,
+    MODIFY COLUMN `SortSequence` int(10) UNSIGNED NULL DEFAULT 50 AFTER `uid`,
+    ADD INDEX `fmchecklists_parentclid`(`parentclid`);
 
 ALTER TABLE `fmchklsttaxalink`
     ADD COLUMN `cltlid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,

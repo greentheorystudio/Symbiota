@@ -120,7 +120,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         </div>
     </div>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/reveal.js"></script>
-    <script>
+    <script type="text/javascript">
         Reveal.initialize({
             controls: true,
             controlsTutorial: true,

@@ -238,7 +238,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                     </q-card-section>
                                     <q-card-section class="column">
                                         <div class="text-h6 text-bold">
-                                            <a @click="setCollection(collection.collid)">
+                                            <a class="cursor-pointer" @click="setCollection(collection.collid)">
                                                 {{ collection.collectionname }}
                                             </a>
                                         </div>
