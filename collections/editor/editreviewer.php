@@ -123,7 +123,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
-    <script>
+    <script type="text/javascript">
         function validateFilterForm(f){
             if(f.startdate.value > f.enddate.value){
                 alert("Start date cannot be after end date");
@@ -200,7 +200,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
             echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Occurrence Management</a> &gt;&gt; ';
         }
         else{
-            echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
         }
         echo '<b>Review/Verify Occurrence Edits</b>';
         echo '</div>';

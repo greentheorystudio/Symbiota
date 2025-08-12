@@ -70,7 +70,7 @@ class Checklists{
                 else{
                     $fieldNameArr[] = $field;
                 }
-                if($field === 'defaultsettings' || $field === 'searchterms'){
+                if(($field === 'defaultsettings' || $field === 'searchterms') && $data[$field]){
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
                 }
                 else{
@@ -141,6 +141,14 @@ class Checklists{
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
+        $sql = 'DELETE FROM imagetag WHERE keyvalue LIKE "CLID-' . (int)$clid . '-%" ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'UPDATE fmchecklists SET parentclid = NULL WHERE parentclid = ' . (int)$clid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
         $sql = 'DELETE FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
@@ -154,7 +162,10 @@ class Checklists{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmchecklists ';
-        if(!$GLOBALS['IS_ADMIN']){
+        if($GLOBALS['IS_ADMIN']) {
+            $sql .= 'WHERE ISNULL(expiration) ';
+        }
+        else {
             $sql .= 'WHERE access = "public" ';
             if($GLOBALS['PERMITTED_CHECKLISTS']){
                 $sql .= 'OR clid IN('.implode(',', $GLOBALS['PERMITTED_CHECKLISTS']).') ';
@@ -170,7 +181,12 @@ class Checklists{
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
+                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings')){
+                        $nodeArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $nodeArr[$name] = $row[$name];
+                    }
                 }
                 $retArr[] = $nodeArr;
                 unset($rows[$index]);
@@ -182,6 +198,7 @@ class Checklists{
     public function getChecklistIndexArr(): array
     {
         $retArr = array();
+        $dataArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
         $fieldNameArr[] = 'p.pid';
         $fieldNameArr[] = 'p.projname';
@@ -189,13 +206,16 @@ class Checklists{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmchecklists AS c LEFT JOIN fmchklstprojlink AS cpl ON c.clid = cpl.clid '.
             'LEFT JOIN fmprojects AS p ON cpl.pid = p.pid ';
-        if(!$GLOBALS['IS_ADMIN']){
+        if($GLOBALS['IS_ADMIN']) {
+            $sql .= 'WHERE ISNULL(expiration) ';
+        }
+        else {
             $sql .= 'WHERE c.access = "public" ';
             if($GLOBALS['PERMITTED_CHECKLISTS']){
                 $sql .= 'OR c.clid IN('.implode(',', $GLOBALS['PERMITTED_CHECKLISTS']).') ';
             }
         }
-        $sql .= 'ORDER BY p.projname, c.`name` ';
+        $sql .= 'ORDER BY p.projname ';
         //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
@@ -206,26 +226,34 @@ class Checklists{
                 $coordArr = array();
                 $pid = (int)$row['ispublic'] === 1 ? (int)$row['pid'] : 0;
                 $projectName = $pid > 0 ? $row['projname'] : null;
-                if(!array_key_exists($pid, $retArr)){
-                    $retArr[$pid] = array();
-                    $retArr[$pid]['pid'] = $pid;
-                    $retArr[$pid]['projname'] = $projectName;
-                    $retArr[$pid]['coordinates'] = array();
-                    $retArr[$pid]['checklists'] = array();
+                if(!array_key_exists($pid, $dataArr)){
+                    $dataArr[$pid] = array();
+                    $dataArr[$pid]['pid'] = $pid;
+                    $dataArr[$pid]['projname'] = $projectName;
+                    $dataArr[$pid]['coordinates'] = array();
+                    $dataArr[$pid]['checklists'] = array();
                 }
                 foreach($fields as $val){
                     $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
+                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings')){
+                        $nodeArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $nodeArr[$name] = $row[$name];
+                    }
                 }
                 if($row['latcentroid'] && $row['longcentroid']){
                     $coordArr[] = (float)$row['longcentroid'];
                     $coordArr[] = (float)$row['latcentroid'];
                 }
-                $retArr[$pid]['checklists'][] = $nodeArr;
+                $dataArr[$pid]['checklists'][] = $nodeArr;
                 if($coordArr){
-                    $retArr[$pid]['coordinates'][] = $coordArr;
+                    $dataArr[$pid]['coordinates'][] = $coordArr;
                 }
                 unset($rows[$index]);
+            }
+            foreach($dataArr as $data){
+                $retArr[] = $data;
             }
         }
         return $retArr;
@@ -234,7 +262,7 @@ class Checklists{
     public function getChecklistChildClidArr($clidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT clidchild FROM fmchklstchildren WHERE clid IN(' . implode(',', $clidArr) . ') ';
+        $sql = 'SELECT clid FROM fmchecklists WHERE parentclid IN(' . implode(',', $clidArr) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -280,10 +308,16 @@ class Checklists{
     {
         $retArr = array();
         if((int)$uid > 0){
-            $sql = 'SELECT DISTINCT c.clid, c.name '.
-                'FROM userroles AS r LEFT JOIN fmchecklists AS c ON r.tablepk = c.clid '.
-                'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" '.
-                'ORDER BY c.name ';
+            $sql = 'SELECT DISTINCT c.clid, c.`name` '.
+                'FROM fmchecklists AS c ';
+            if((int)$uid !== (int)$GLOBALS['SYMB_UID'] || !$GLOBALS['IS_ADMIN']){
+                $sql .= 'LEFT JOIN userroles AS r ON c.clid = r.tablepk ';
+                $sql .= 'WHERE r.uid = ' . (int)$uid . ' AND r.role = "ClAdmin" AND ISNULL(c.expiration) ';
+            }
+            else{
+                $sql .= 'WHERE ISNULL(c.expiration) ';
+            }
+            $sql .= 'ORDER BY c.`name` ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

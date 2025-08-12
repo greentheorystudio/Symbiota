@@ -1,6 +1,7 @@
 <script type="text/javascript">
     const ACTIVATE_EXSICCATI = <?php echo ($GLOBALS['ACTIVATE_EXSICCATI'] ? 'true' : 'false'); ?>;
     const ADMIN_EMAIL = '<?php echo $GLOBALS['ADMIN_EMAIL']; ?>';
+    const APP_ENABLED = <?php echo ($GLOBALS['APP_ENABLED'] ? 'true' : 'false'); ?>;
     const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
     const DEFAULT_COLLECTION_CATEGORY_ID = '<?php echo $GLOBALS['DEFAULTCATID']; ?>';
     const DEFAULT_LANG = '<?php echo $GLOBALS['DEFAULT_LANG']; ?>';

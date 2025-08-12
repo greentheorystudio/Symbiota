@@ -71,7 +71,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/sitemap.php'" label="Sitemap" stretch flat no-wrap></q-btn>
         </q-toolbar>
     </div>
-    <script>
+    <script type="text/javascript">
         const REQUEST_PATH = "<?php echo SanitizerService::getCleanedRequestPath(true); ?>";
         document.addEventListener("DOMContentLoaded", () => {
             const dropDownNavBar = Vue.createApp({

@@ -1,15 +1,6 @@
 function useCore() {
     const $q = useQuasar();
 
-    function checkObjectNotEmpty(obj) {
-        for(const i in obj){
-            if(obj.hasOwnProperty(i) && obj[i]){
-                return true;
-            }
-        }
-        return false;
-    }
-
     function convertMysqlWKT(wkt) {
         let long;
         let lat;
@@ -205,6 +196,21 @@ function useCore() {
         });
     }
 
+    function getCorrectedPolygonCoordArr(coordArr) {
+        const returnArr = [];
+        if(coordArr.length > 0){
+            coordArr.forEach((coords) => {
+                if(Array.isArray(coords[0])){
+                    returnArr.push(getCorrectedPolygonCoordArr(coords));
+                }
+                else if(coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])){
+                    returnArr.push([Number(coords[1]), Number(coords[0])]);
+                }
+            });
+        }
+        return returnArr;
+    }
+
     function getErrorResponseText(status, statusText){
         let text;
         if(status === 0){
@@ -286,7 +292,7 @@ function useCore() {
             day: null,
             startDayOfYear: null,
             endDayOfYear: null
-        }
+        };
         if(dateStr){
             const dateObj = new Date(dateStr);
             let dateTokens;
@@ -441,6 +447,19 @@ function useCore() {
         })
     }
 
+    function validatePolygonCoordArr(coordArr) {
+        let returnVal = false;
+        if(coordArr.length > 0){
+            if(Array.isArray(coordArr[0])){
+                returnVal = validatePolygonCoordArr(coordArr[0]);
+            }
+            else if(coordArr.length === 2 && !isNaN(coordArr[0]) && !isNaN(coordArr[1])){
+                returnVal = true;
+            }
+        }
+        return returnVal;
+    }
+
     function writeMySQLWktString(type, geocoords) {
         let long, lat;
         let wktStr = '';
@@ -483,12 +502,12 @@ function useCore() {
     }
 
     return {
-        checkObjectNotEmpty,
         csvToArray,
         convertMysqlWKT,
         convertUtmToDecimalDegrees,
         generateRandHexColor,
         getArrayBuffer,
+        getCorrectedPolygonCoordArr,
         getErrorResponseText,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,
@@ -501,6 +520,7 @@ function useCore() {
         processCsvDownload,
         showNotification,
         showWorking,
+        validatePolygonCoordArr,
         writeMySQLWktString
     }
 }

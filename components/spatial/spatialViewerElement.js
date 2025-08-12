@@ -35,7 +35,7 @@ const spatialViewerElement = {
         'spatial-base-layer-selector': spatialBaseLayerSelector
     },
     setup(props) {
-        const { getArrayBuffer, getRgbaStrFromHexOpacity, hideWorking, showNotification, showWorking } = useCore();
+        const { getArrayBuffer, getCorrectedPolygonCoordArr, getRgbaStrFromHexOpacity, hideWorking, showNotification, showWorking, validatePolygonCoordArr } = useCore();
         const spatialStore = useSpatialStore();
 
         const dragAndDropInteraction = new ol.interaction.DragAndDrop({
@@ -97,7 +97,7 @@ const spatialViewerElement = {
 
         function changeBaseMap(){
             let blsource;
-            const baseLayer = map.value.getLayers().getArray()[0];
+            const baseLayer = map.getLayers().getArray()[0];
             if(mapSettings.selectedBaseLayer === 'googleroadmap'){
                 blsource = new ol.source.XYZ({
                     url: 'https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
@@ -201,14 +201,43 @@ const spatialViewerElement = {
         function coordFormat() {
             return((coords) => {
                 if(coords[0] < -180){
-                    coords[0] = coords[0] + 360;
+                    coords[0] += 360;
                 }
                 if(coords[0] > 180){
-                    coords[0] = coords[0] - 360;
+                    coords[0] -= 360;
                 }
                 const template = 'Lat: {y} Lon: {x}';
                 return ol.coordinate.format(coords,template,5);
             });
+        }
+
+        function getValidatedFootprintWkt() {
+            const wktFormat = new ol.format.WKT();
+            const wgs84Projection = new ol.proj.Projection({
+                code: 'EPSG:4326',
+                units: 'degrees'
+            });
+            const mapProjection = new ol.proj.Projection({
+                code: 'EPSG:3857'
+            });
+            const footprintpoly = wktFormat.readFeature(props.footprintWkt, mapProjection);
+            if(footprintpoly){
+                const polyClone = footprintpoly.clone();
+                polyClone.getGeometry().transform(wgs84Projection, mapProjection);
+                if(validatePolygonCoordArr(polyClone.getGeometry().getCoordinates())){
+                    return polyClone;
+                }
+                else{
+                    const geoJSONFormat = new ol.format.GeoJSON();
+                    const geojsonStr = geoJSONFormat.writeGeometry(footprintpoly.getGeometry());
+                    const coordArr = JSON.parse(geojsonStr).coordinates;
+                    const fixedCoords = getCorrectedPolygonCoordArr(coordArr);
+                    const turfSimple = turf.polygon(fixedCoords);
+                    const polySimple = geoJSONFormat.readFeature(turfSimple, wgs84Projection);
+                    polySimple.getGeometry().transform(wgs84Projection, mapProjection);
+                    return polySimple;
+                }
+            }
         }
 
         function getVectorLayerStyle(fillColor, borderColor, borderWidth, pointRadius, opacity) {
@@ -254,7 +283,7 @@ const spatialViewerElement = {
         }
 
         function processCoordinateSet() {
-            if(props.coordinateSet.length > 0){
+            if(props.coordinateSet && props.coordinateSet.length > 0){
                 props.coordinateSet.forEach((coords) => {
                     const pointGeom = new ol.geom.Point(ol.proj.fromLonLat([
                         Number(coords[0]), Number(coords[1])
@@ -270,17 +299,8 @@ const spatialViewerElement = {
 
         function processFootprintWkt() {
             if(props.footprintWkt){
-                const wktFormat = new ol.format.WKT();
-                const wgs84Projection = new ol.proj.Projection({
-                    code: 'EPSG:4326',
-                    units: 'degrees'
-                });
-                const mapProjection = new ol.proj.Projection({
-                    code: 'EPSG:3857'
-                });
-                const footprintpoly = wktFormat.readFeature(props.footprintWkt, mapProjection);
+                const footprintpoly = getValidatedFootprintWkt();
                 if(footprintpoly){
-                    footprintpoly.getGeometry().transform(wgs84Projection, mapProjection);
                     mapSettings.vectorSource.addFeature(footprintpoly);
                     const vectorextent = mapSettings.vectorSource.getExtent();
                     map.getView().fit(vectorextent, map.getSize());
@@ -396,7 +416,7 @@ const spatialViewerElement = {
                             width: 1
                         }),
                         fill: new ol.style.Fill({
-                            color: 'rgba(255, 0, 0)'
+                            color: 'rgb(255,0,0)'
                         })
                     })
                 })
@@ -429,7 +449,6 @@ const spatialViewerElement = {
             dragAndDropInteraction.on('addfeatures', (event) => {
                 let filename = event.file.name.split('.');
                 const fileType = filename.pop();
-                filename = filename.join("");
                 if(fileType === 'geojson' || fileType === 'kml' || fileType === 'zip' || fileType === 'tif' || fileType === 'tiff'){
                     if(fileType === 'geojson' || fileType === 'kml'){
                         if(setDragDropTarget()){

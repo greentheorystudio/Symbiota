@@ -331,7 +331,7 @@ include(__DIR__ . '/../../header.php');
     <div id="breadcrumbs">
         <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
         <?php
-        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
+        echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
         ?>
         <b>Batch Determinations/Nomenclatural Adjustments</b>
     </div>
