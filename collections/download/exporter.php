@@ -37,7 +37,7 @@ $advFieldArr = array('family'=>'Family','sciname'=>'Scientific Name','identified
 	'minimumElevationInMeters'=>'Elevation Minimum (m)','maximumElevationInMeters'=>'Elevation Maximum (m)',
 	'verbatimElevation'=>'Verbatim Elevation','disposition'=>'Disposition');
 ?>
-<script>
+<script type="text/javascript">
     $(function() {
         const dialogArr = ["schemanative", "schemadwc", "newrecs"];
         let dialogStr = "";

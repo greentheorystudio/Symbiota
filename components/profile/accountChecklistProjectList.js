@@ -8,14 +8,11 @@ const accountChecklistProjectList = {
                             <q-list bordered separator>
                                 <template v-for="checklist in checklistArr">
                                     <template v-if="checklist.name">
-                                        <q-item :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)">
+                                        <q-item class="cursor-pointer" :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)">
                                             <q-item-section>
                                                 <div class="row justify-start q-gutter-md items-center">
                                                     <div class="text-h6">
                                                         {{ checklist.name }}
-                                                    </div>
-                                                    <div>
-                                                        <q-btn round color="primary" size=".6rem" :href="(clientRoot + '/checklists/checklistadmin.php?clid=' + checklist.clid + '&emode=1')" icon="far fa-edit"></q-btn>
                                                     </div>
                                                 </div>
                                             </q-item-section>
@@ -42,14 +39,11 @@ const accountChecklistProjectList = {
                         <q-card-section>
                             <q-list bordered separator>
                                 <template v-for="project in projectArr">
-                                    <q-item :href="(clientRoot + '/projects/index.php?pid=' + project.pid)">
+                                    <q-item class="cursor-pointer" :href="(clientRoot + '/projects/project.php?pid=' + project.pid)">
                                         <q-item-section>
                                             <div class="row justify-start q-gutter-md items-center">
                                                 <div class="text-h6">
                                                     {{ project.projname }}
-                                                </div>
-                                                <div>
-                                                    <q-btn round color="primary" size=".6rem" :href="(clientRoot + '/projects/index.php?pid=' + project.pid + '&emode=1')" icon="far fa-edit"></q-btn>
                                                 </div>
                                             </div>
                                         </q-item-section>

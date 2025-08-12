@@ -216,6 +216,12 @@ $databaseProperties = $confManager->getDatabasePropArr();
     <fieldset style="margin: 10px 0;">
         <legend><b>Activate Optional Modules</b></legend>
         <div class="field-block">
+            <span class="field-label">Mobile Checklist App Enabled:</span>
+            <span class="field-elem">
+                <input type="checkbox" id="APP_ENABLED" value="1" onchange="processCheckConfigurationChange('APP_ENABLED');" <?php echo (array_key_exists('APP_ENABLED',$coreConfArr) && $coreConfArr['APP_ENABLED']?'CHECKED':''); ?> />
+            </span>
+        </div>
+        <div class="field-block">
             <span class="field-label">Activate Key Module:</span>
             <span class="field-elem">
                 <input type="checkbox" id="KEY_MOD_IS_ACTIVE" value="1" onchange="processCheckConfigurationChange('KEY_MOD_IS_ACTIVE');" <?php echo (array_key_exists('KEY_MOD_IS_ACTIVE',$coreConfArr) && $coreConfArr['KEY_MOD_IS_ACTIVE']?'CHECKED':''); ?> />

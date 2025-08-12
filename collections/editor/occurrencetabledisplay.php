@@ -361,7 +361,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                         else{
                             if(!$isGenObs || $GLOBALS['IS_ADMIN']){
                                 ?>
-                                <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
+                                <a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>">Collection Control Panel</a> &gt;&gt;
                                 <?php
                             }
                             if($isGenObs){
