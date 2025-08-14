@@ -191,7 +191,8 @@ ALTER TABLE `media`
     ADD INDEX `sourceurl`(`sourceurl`);
 
 ALTER TABLE `images`
-    ADD INDEX `sourceurl`(`sourceurl`);
+    ADD INDEX `sourceurl`(`sourceurl`),
+    ADD INDEX `images_sortsequence`(`sortsequence`);
 
 ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
