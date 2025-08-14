@@ -13,7 +13,6 @@ header('Content-Type: text/html; charset=UTF-8' );
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-        <meta name='keywords' content='' />
     </head>
     <body>
         <?php
