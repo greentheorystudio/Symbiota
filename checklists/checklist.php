@@ -49,17 +49,18 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="!temporaryChecklist">
-                    <template v-if="Number(clId) > 0">
-                        <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
-                    </template>
-                    <template v-else-if="Number(pId) > 0">
+                    <template v-if="Number(pId) > 0">
+                        <a :href="(clientRoot + '/projects/index.php')">Biotic Inventory Projects</a> &gt;&gt;
                         <a :href="(clientRoot + '/projects/project.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
+                    </template>
+                    <template v-else-if="Number(clId) > 0">
+                        <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
                     </template>
                     <template v-if="Number(clId) > 0">
                         <span class="text-bold">{{ checklistName }}</span>
                     </template>
-                    <template v-else>
-                        <span class="text-bold">Dynamic Checklist</span>
+                    <template v-else-if="Number(pId) > 0">
+                        <span class="text-bold">Checklist</span>
                     </template>
                 </template>
                 <template v-else>
@@ -82,7 +83,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     </q-btn>
                                 </div>
                                 <div v-if="taxaDataArr.length > 0">
-                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/games/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false">
+                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/checklists/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Flashcard Game
                                         </q-tooltip>
@@ -459,7 +460,37 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const projectStore = useProjectStore();
                     const searchStore = useSearchStore();
 
-                    const activeTaxaArr = Vue.ref([]);
+                    const activeTaxaArr = Vue.computed(() => {
+                        const returnArr = [];
+                        taxaDataArr.value.forEach(taxon => {
+                            let includeTaxon = false;
+                            if(taxonFilterVal.value){
+                                if(Number(taxonFilterVal.value['rankid']) === 140 && taxon['family'] === taxonFilterVal.value['sciname']){
+                                    includeTaxon = true;
+                                }
+                                else if(Number(taxonFilterVal.value['rankid']) > 140 && (taxon['sciname'] === taxonFilterVal.value['sciname'] || taxon['sciname'].startsWith((taxonFilterVal.value['sciname'] + ' ')))){
+                                    includeTaxon = true;
+                                }
+                            }
+                            else{
+                                includeTaxon = true;
+                            }
+                            if(includeTaxon){
+                                returnArr.push(taxon);
+                            }
+                        });
+                        if(selectedSortByOption.value === 'family'){
+                            returnArr.sort((a, b) => {
+                                return a['family'].localeCompare(b['family']) || a['sciname'].localeCompare(b['sciname']);
+                            });
+                        }
+                        else{
+                            returnArr.sort((a, b) => {
+                                return a['sciname'].localeCompare(b['sciname']);
+                            });
+                        }
+                        return returnArr;
+                    });
                     const checklistData = Vue.computed(() => checklistStore.getChecklistData);
                     const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
                     const checklistLocalityText = Vue.computed(() => {
@@ -628,10 +659,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const validUser = baseStore.getValidUser;
 
-                    Vue.watch(taxaDataArr, () => {
-                        setActiveTaxa();
-                    });
-
                     function buildChecklist(){
                         if(searchStore.getSearchTermsValid){
                             showWorking('Loading...');
@@ -723,7 +750,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processSortByChange(value) {
                         checklistStore.setDisplaySortVal(value);
-                        sortActiveTaxa();
                         paginationPage.value = 1;
                     }
 
@@ -733,7 +759,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processTaxonFilterValChange(taxon) {
                         checklistStore.setDisplayTaxonFilterVal(taxon);
-                        setActiveTaxa();
                         paginationPage.value = 1;
                     }
 
@@ -749,37 +774,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         });
                     }
 
-                    function setActiveTaxa() {
-                        const newActiveTaxaArr = [];
-                        taxaDataArr.value.forEach(taxon => {
-                            let includeTaxon = false;
-                            if(taxonFilterVal.value){
-                                if(Number(taxonFilterVal.value['rankid']) === 140 && taxon['family'] === taxonFilterVal.value['sciname']){
-                                    includeTaxon = true;
-                                }
-                                else if(Number(taxonFilterVal.value['rankid']) > 140 && (taxon['sciname'] === taxonFilterVal.value['sciname'] || taxon['sciname'].startsWith((taxonFilterVal.value['sciname'] + ' ')))){
-                                    includeTaxon = true;
-                                }
-                            }
-                            else{
-                                includeTaxon = true;
-                            }
-                            if(includeTaxon){
-                                newActiveTaxaArr.push(taxon);
-                            }
-                        });
-                        activeTaxaArr.value = newActiveTaxaArr.slice();
-                        sortActiveTaxa();
-                    }
-
                     function setChecklistData() {
-                        showWorking();
                         setEditor();
                         checklistStore.setChecklist(clId.value, (clid) => {
-                            hideWorking();
                             if(Number(clid) > 0){
                                 checklistStore.setChecklistTaxaArr(false, true, true, () => {
-                                    setActiveTaxa();
                                     checklistStore.setChecklistImageData(1);
                                     checklistStore.setChecklistVoucherData();
                                 });
@@ -808,9 +807,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
-                            if(Number(pid) > 0){
+                            if(Number(pid) > 0 && Number(clId.value) === 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
-                                checklistStore.setChecklistTaxaArr(false, true, true);
+                                checklistStore.setChecklistTaxaArr(false, true, true, () => {
+                                    checklistStore.setChecklistImageData(1);
+                                    checklistStore.setChecklistVoucherData();
+                                });
                             }
                         });
                     }
@@ -819,25 +821,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         displayQueryPopup.value = val;
                     }
 
-                    function sortActiveTaxa() {
-                        if(selectedSortByOption.value === 'family'){
-                            activeTaxaArr.value.sort((a, b) => {
-                                return a['family'].localeCompare(b['family']) || a['sciname'].localeCompare(b['sciname']);
-                            });
-                        }
-                        else{
-                            activeTaxaArr.value.sort((a, b) => {
-                                return a['sciname'].localeCompare(b['sciname']);
-                            });
-                        }
-                    }
-
                     Vue.onMounted(() => {
-                        if(Number(clId.value) > 0){
-                            setChecklistData();
-                        }
-                        else if(Number(pId.value) > 0){
-                            setProjectData();
+                        if(Number(clId.value) > 0 || Number(pId.value) > 0){
+                            if(Number(clId.value) > 0){
+                                setChecklistData();
+                            }
+                            if(Number(pId.value) > 0){
+                                setProjectData();
+                            }
                         }
                         else{
                             if(Number(queryId) === 0){

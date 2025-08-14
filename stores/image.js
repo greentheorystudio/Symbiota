@@ -141,9 +141,11 @@ const useImageStore = Pinia.defineStore('image', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
+                const existingData = Object.assign({}, this.checklistImageData);
                 Object.keys(data).forEach((key) => {
-                    this.checklistImageData[key] = data[key];
+                    existingData[key] = data[key];
                 });
+                this.checklistImageData = Object.assign({}, existingData);
                 if(this.checklistTargetTidArr.length > 0){
                     this.lazyLoadChecklistImageData(numberPerTaxon);
                 }
@@ -182,7 +184,9 @@ const useImageStore = Pinia.defineStore('image', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.checklistImageData = Object.assign({}, data);
+                if(data){
+                    this.checklistImageData = Object.assign({}, data);
+                }
                 callback();
             });
         },
