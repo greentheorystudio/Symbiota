@@ -9,7 +9,6 @@ html {
 }
 
 body{
-	border: 1px solid black;
 	margin: 0;
 	padding: 0;
 	background: #f7f7f7;
@@ -43,11 +42,11 @@ body{
 	padding: 10px 15px 15px;
 }
 
-div.navpath {
-	padding-top: 8px;
-	padding-bottom: 0;
-	padding-left: 10px;
-	margin-bottom: 0;
+#breadcrumbs {
+    padding-top: 8px;
+    padding-bottom: 0;
+    padding-left: 10px;
+    margin-bottom: 0;
 }
 
 #topNavigation {
