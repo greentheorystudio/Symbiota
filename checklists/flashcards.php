@@ -435,11 +435,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function showAnswerNotification(correct, message) {
                         $q.notify({
                             color: (correct ? 'green' : 'red'),
+                            classes: 'text-h6 text-bold',
                             textColor: 'white',
                             message: message,
                             position: 'center',
                             multiLine: true,
-                            timeout: 5000
+                            timeout: 2500
                         })
                     }
 
