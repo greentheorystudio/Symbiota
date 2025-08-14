@@ -97,7 +97,9 @@ const occurrenceEditorSingleDisplay = {
                 </template>
             </div>
         </div>
-        <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup" @close:popup="displayImageTranscriberPopup = false"></occurrence-editor-image-transcriber-popup>
+        <template v-if="displayImageTranscriberPopup">
+            <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup" @close:popup="displayImageTranscriberPopup = false"></occurrence-editor-image-transcriber-popup>
+        </template>
         <search-criteria-popup :show-popup="displayQueryPopup" @close:popup="displayQueryPopup = false"></search-criteria-popup>
     `,
     components: {
