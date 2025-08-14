@@ -10,9 +10,11 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             notes: null,
             source: null
         },
+        checklistFlashcardTaxaArr: [],
         checklistTaxaArr: [],
         checklistTaxaData: {},
         checklistTaxaEditData: {},
+        checklistTaxaFlashcardTidAcceptedArr: [],
         checklistTaxaId: 0,
         checklistTaxaImageOptionArr: [],
         checklistTaxaTaggedImageArr: [],
@@ -23,6 +25,9 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         taxaFilterOptions: []
     }),
     getters: {
+        getChecklistFlashcardTaxaArr(state) {
+            return state.checklistFlashcardTaxaArr;
+        },
         getChecklistTaxaArr(state) {
             return state.checklistTaxaArr;
         },
@@ -39,6 +44,9 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                 }
             }
             return exist;
+        },
+        getChecklistTaxaFlashcardTidAcceptedArr(state) {
+            return state.checklistTaxaFlashcardTidAcceptedArr;
         },
         getChecklistTaxaID(state) {
             return state.checklistTaxaId;
@@ -96,7 +104,9 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             });
         },
         clearChecklistTaxaArr() {
+            this.checklistFlashcardTaxaArr.length = 0;
             this.checklistTaxaArr.length = 0;
+            this.checklistTaxaFlashcardTidAcceptedArr.length = 0;
             this.checklistTaxaTidAcceptedArr.length = 0;
             this.checklistTaxaTidArr.length = 0;
             this.taxaFilterOptions.length = 0;
@@ -193,6 +203,10 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                 }
                 if(!this.checklistTaxaTidArr.includes(Number(taxon['tid']))){
                     this.checklistTaxaTidArr.push(Number(taxon['tid']));
+                }
+                if(Number(taxon['rankid']) >= 220 && !this.checklistTaxaFlashcardTidAcceptedArr.includes(Number(taxon['tidaccepted']))){
+                    this.checklistFlashcardTaxaArr.push(taxon);
+                    this.checklistTaxaFlashcardTidAcceptedArr.push(Number(taxon['tidaccepted']));
                 }
             });
         },
