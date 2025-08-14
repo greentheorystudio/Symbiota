@@ -191,7 +191,8 @@ ALTER TABLE `media`
     ADD INDEX `sourceurl`(`sourceurl`);
 
 ALTER TABLE `images`
-    ADD INDEX `sourceurl`(`sourceurl`);
+    ADD INDEX `sourceurl`(`sourceurl`),
+    ADD INDEX `images_sortsequence`(`sortsequence`);
 
 ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
@@ -200,7 +201,7 @@ ALTER TABLE `fmchecklists`
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`,
     MODIFY COLUMN `SortSequence` int(10) UNSIGNED NULL DEFAULT 50 AFTER `uid`,
-    ADD INDEX `fmchecklists_parentclid`(`parentclid`)
+    ADD INDEX `fmchecklists_parentclid`(`parentclid`);
 
 ALTER TABLE `fmchklsttaxalink`
     ADD COLUMN `cltlid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT FIRST,
