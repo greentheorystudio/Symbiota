@@ -396,9 +396,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 						}
 						echo '<tr ' .(($recCnt%2)?'class="alt"':'').">\n";
 						echo '<td>';
-						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" title="open in same window">'.$id.'</a> ';
 						echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" target="_blank" title="open in new window">';
-						echo '<i style="height:15px;width:15px;" class="fas fa-external-link-alt"></i>';
+						echo $id . '<i style="margin-left:4px;height:15px;width:15px;" class="fas fa-external-link-alt"></i>';
 						echo '</a>';
 						echo '</td>'."\n";
 						foreach($headerMap as $k => $v){

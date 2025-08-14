@@ -126,12 +126,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <single-scientific-common-name-auto-complete :sciname="(scinameAnswer ? scinameAnswer.sciname : null)" :options="scinameAnswerOptions" label="Scientific Name" limit-to-options="true" @update:sciname="processScinameAnswerChange"></single-scientific-common-name-auto-complete>
+                                        <single-scientific-common-name-auto-complete :sciname="(familyAnswer ? familyAnswer.sciname : null)" :options="familyAnswerOptions" label="Family" limit-to-options="true" @update:sciname="processFamilyAnswerChange"></single-scientific-common-name-auto-complete>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-grow">
-                                        <single-scientific-common-name-auto-complete :sciname="(familyAnswer ? familyAnswer.sciname : null)" :options="familyAnswerOptions" label="Family" limit-to-options="true" @update:sciname="processFamilyAnswerChange"></single-scientific-common-name-auto-complete>
+                                        <single-scientific-common-name-auto-complete :sciname="(scinameAnswer ? scinameAnswer.sciname : null)" :options="scinameAnswerOptions" label="Scientific Name" limit-to-options="true" @update:sciname="processScinameAnswerChange"></single-scientific-common-name-auto-complete>
                                     </div>
                                 </div>
                                 <div class="row justify-between">
@@ -435,11 +435,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function showAnswerNotification(correct, message) {
                         $q.notify({
                             color: (correct ? 'green' : 'red'),
+                            classes: 'text-h6 text-bold',
                             textColor: 'white',
                             message: message,
                             position: 'center',
                             multiLine: true,
-                            timeout: 5000
+                            timeout: 2500
                         })
                     }
 
