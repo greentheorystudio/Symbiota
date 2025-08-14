@@ -43,21 +43,21 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <div id="mainContainer">
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
-                <template v-if="Number(clId) > 0">
-                    <template v-if="temporaryChecklist">
-                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Dynamic Checklist</a> &gt;&gt;
-                        <span class="text-bold">Dynamic Key</span>
+                <template v-if="!temporaryChecklist">
+                    <template v-if="Number(pId) > 0">
+                        <a :href="(clientRoot + '/projects/index.php')">Biotic Inventory Projects</a> &gt;&gt;
+                        <a :href="(clientRoot + '/projects/project.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
                     </template>
-                    <template v-else>
+                    <template v-else-if="Number(clId) > 0">
+                        <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
+                    </template>
+                    <template v-if="Number(clId) > 0">
                         <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Checklist: {{ checklistName }}</a> &gt;&gt;
-                        <span class="text-bold">Key: {{ checklistName }}</span>
                     </template>
-                </template>
-                <template v-else-if="Number(pId) > 0">
-                    <a :href="(clientRoot + '/projects/project.php?pid=' + pId)">Project Checklists</a> &gt;&gt;
-                    <span class="text-bold">Key: {{ projectName }} Project</span>
+                    <span class="text-bold">Key</span>
                 </template>
                 <template v-else>
+                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Dynamic Checklist</a> &gt;&gt;
                     <span class="text-bold">Dynamic Key</span>
                 </template>
             </div>
@@ -285,7 +285,40 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         return valArr;
                     });
                     const activeCidArr = Vue.ref([]);
-                    const activeTaxaArr = Vue.ref([]);
+                    const activeTaxaArr = Vue.computed(() => {
+                        const returnArr = [];
+                        taxaDataArr.value.forEach(taxon => {
+                            const cidArr = [];
+                            let includeTaxon = true;
+                            taxon['keyData'].forEach(char => {
+                                if(includeTaxon && selectedCidArr.value.includes(Number(char['cid'])) && !selectedCsidArr.value.includes(Number(char['csid']))){
+                                    includeTaxon = false;
+                                }
+                                else if(!cidArr.includes(Number(char['cid']))){
+                                    cidArr.push(Number(char['cid']));
+                                }
+                            });
+                            selectedCidArr.value.forEach(cid => {
+                                if(!cidArr.includes(Number(cid))){
+                                    includeTaxon = false;
+                                }
+                            });
+                            if(includeTaxon){
+                                returnArr.push(taxon);
+                            }
+                        });
+                        if(selectedSortByOption.value === 'family'){
+                            returnArr.sort((a, b) => {
+                                return a['family'].localeCompare(b['family']) || a['sciname'].localeCompare(b['sciname']);
+                            });
+                        }
+                        else{
+                            returnArr.sort((a, b) => {
+                                return a['sciname'].localeCompare(b['sciname']);
+                            });
+                        }
+                        return returnArr;
+                    });
                     const characterDependencyDataArr = Vue.ref([]);
                     const checklistData = Vue.computed(() => checklistStore.getChecklistData);
                     const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
@@ -420,7 +453,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             selectedStateArr.value.splice(index, 1);
                         }
                         setActiveCidArr();
-                        setActiveTaxa();
                     }
 
                     function processDisplayAuthorsChange(value) {
@@ -463,12 +495,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         });
                         keyDataArr.value.sort((a, b) => Number(a.sortsequence) - Number(b.sortsequence));
                         setActiveCidArr();
-                        setActiveTaxa();
                     }
 
                     function processSortByChange(value) {
                         checklistStore.setDisplaySortVal(value);
-                        sortActiveTaxa();
                     }
 
                     function processSpatialData(data) {
@@ -529,32 +559,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         });
                     }
 
-                    function setActiveTaxa() {
-                        const newActiveTaxaArr = [];
-                        taxaDataArr.value.forEach(taxon => {
-                            const cidArr = [];
-                            let includeTaxon = true;
-                            taxon['keyData'].forEach(char => {
-                                if(includeTaxon && selectedCidArr.value.includes(Number(char['cid'])) && !selectedCsidArr.value.includes(Number(char['csid']))){
-                                    includeTaxon = false;
-                                }
-                                else if(!cidArr.includes(Number(char['cid']))){
-                                    cidArr.push(Number(char['cid']));
-                                }
-                            });
-                            selectedCidArr.value.forEach(cid => {
-                                if(!cidArr.includes(Number(cid))){
-                                    includeTaxon = false;
-                                }
-                            });
-                            if(includeTaxon){
-                                newActiveTaxaArr.push(taxon);
-                            }
-                        });
-                        activeTaxaArr.value = newActiveTaxaArr.slice();
-                        sortActiveTaxa();
-                    }
-
                     function setChecklistData() {
                         checklistStore.setChecklist(clId.value, (clid) => {
                             if(Number(clid) > 0){
@@ -589,12 +593,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setProjectData() {
                         projectStore.setProject(pId.value, (pid) => {
-                            if(Number(pid) > 0){
+                            if(Number(pid) > 0 && Number(clId.value) === 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
                                 setExtendedData();
-                            }
-                            else{
-                                showNotification('negative', 'An error occurred while setting the project data.');
                             }
                         });
                     }
@@ -603,22 +604,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         displayQueryPopup.value = val;
                     }
 
-                    function sortActiveTaxa() {
-                        if(selectedSortByOption.value === 'family'){
-                            activeTaxaArr.value.sort((a, b) => {
-                                return a['family'].localeCompare(b['family']) || a['sciname'].localeCompare(b['sciname']);
-                            });
-                        }
-                        else{
-                            activeTaxaArr.value.sort((a, b) => {
-                                return a['sciname'].localeCompare(b['sciname']);
-                            });
-                        }
-                    }
-
                     Vue.onMounted(() => {
                         if(Number(clId.value) > 0 || Number(pId.value) > 0){
-                            setChecklistData();
+                            if(Number(clId.value) > 0){
+                                setChecklistData();
+                            }
                             if(Number(pId.value) > 0){
                                 setProjectData();
                             }

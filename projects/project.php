@@ -86,7 +86,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <template v-for="checklist in projectChecklistArr">
                                 <div class="row justify-start">
                                     <div class="text-body1">
-                                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])">{{ checklist['name'] }}</a>
+                                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'] + '&pid=' + projectData['pid'])">{{ checklist['name'] }}</a>
                                     </div>
                                     <div v-if="keyModuleIsActive && checklist['defaultsettings'] && checklist['defaultsettings'].hasOwnProperty('keyactive') && checklist['defaultsettings']['keyactive']" class="self-center">
                                         <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + checklist['clid'] + '&pid=' + projectId)" icon="fas fa-key" dense unelevated :ripple="false">
