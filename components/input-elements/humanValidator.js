@@ -1,11 +1,17 @@
 const humanValidator = {
+    props: {
+        tabindex: {
+            type: Number,
+            default: 1
+        }
+    },
     template: `
         <div class="column justify-center">
             <div class="row justify-center">
                 <canvas ref="humanValidationCanvasRef" class="human-validator-canvas" :aria-label="randNumber" role="img"></canvas>
             </div>
             <div class="row justify-center q-mt-sm">
-                <q-input ref="humanValidationRef" outlined bottom-slots v-model="humanValidationValue" label="Enter the numbers in the box above" bg-color="white" class="col-4" dense lazy-rules :rules="humanValidationRules">
+                <q-input ref="humanValidationRef" outlined bottom-slots v-model="humanValidationValue" label="Enter the numbers in the box above" bg-color="white" class="col-4" :tabindex="tabindex" dense lazy-rules :rules="humanValidationRules">
                     <template v-slot:hint>
                         Required
                     </template>
