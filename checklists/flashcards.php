@@ -219,7 +219,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const cardStyle = Vue.ref(null);
                     const cardImageHeight = Vue.ref(null);
-                    const cardImageWidth = Vue.ref(null);
                     const checklistData = Vue.computed(() => checklistStore.getChecklistData);
                     const checklistImageData = Vue.computed(() => checklistStore.getChecklistImageData);
                     const checklistName = Vue.computed(() => {
@@ -389,7 +388,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setContentStyle() {
                         cardStyle.value = null;
-                        cardImageWidth.value = null;
+                        cardImageHeight.value = null;
                         if(containerRef.value){
                             let cardDim;
                             if(containerRef.value.clientWidth > 900){
@@ -406,7 +405,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             }
                             cardStyle.value = 'width: ' + cardDim + 'px;';
                             cardImageHeight.value = cardDim + 'px';
-                            cardImageWidth.value = cardDim + 'px';
                         }
                     }
 
@@ -469,7 +467,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     return {
                         cardStyle,
                         cardImageHeight,
-                        cardImageWidth,
                         checklistData,
                         checklistImageData,
                         checklistName,
