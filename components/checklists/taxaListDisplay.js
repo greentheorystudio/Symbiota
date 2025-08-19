@@ -34,10 +34,10 @@ const taxaListDisplay = {
         }
     },
     template: `
-        <div class="fit q-pa-md column q-gutter-sm">
+        <div class="fit q-pa-md column q-gutter-sm no-wrap">
             <template v-if="sortBy === 'family'">
                 <template v-for="family in taxaArr">
-                    <div class="full-width column">
+                    <div class="full-width column no-wrap">
                         <div class="full-width text-h6 text-bold">
                             {{ family['familyName'] }}
                         </div>
