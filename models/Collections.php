@@ -570,18 +570,6 @@ class Collections {
             }
         }
 
-        $sql = 'SELECT count(r.occid) AS refcnt '.
-            'FROM omoccurrences AS o LEFT JOIN referenceoccurlink AS r ON o.occid = r.occid '.
-            'WHERE o.collid IN(' . $collidStr . ') ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $statsArr['refcnt'] = $row['refcnt'];
-                unset($rows[$index]);
-            }
-        }
-
         $sql = 'SELECT o.family, COUNT(o.occid) AS SpecimensPerFamily, COUNT(o.decimalLatitude) AS GeorefSpecimensPerFamily, '.
             'COUNT(CASE WHEN t.RankId >= 220 THEN o.occid ELSE NULL END) AS IDSpecimensPerFamily, '.
             'COUNT(CASE WHEN t.RankId >= 220 AND o.decimalLatitude IS NOT NULL THEN o.occid ELSE NULL END) AS IDGeorefSpecimensPerFamily '.

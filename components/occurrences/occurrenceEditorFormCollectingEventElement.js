@@ -57,9 +57,11 @@ const occurrenceEditorFormCollectingEventElement = {
     setup() {
         const { showNotification } = useCore();
         const occurrenceStore = useOccurrenceStore();
+        const searchStore = useSearchStore();
 
         const collectingEventArr = Vue.ref([]);
         const collectionEventAutoSearch = Vue.computed(() => occurrenceStore.getCollectingEventAutoSearch);
+        const collId = Vue.computed(() => occurrenceStore.getCollId);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
         const configuredDataLabel = Vue.computed(() => occurrenceStore.getEventMofDataLabel);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
@@ -77,9 +79,25 @@ const occurrenceEditorFormCollectingEventElement = {
 
         function processCollectingEventSearch(silent = true) {
             if(occurrenceData.value.recordedby && ((occurrenceData.value.recordnumber && !isNaN(occurrenceData.value.recordnumber)) || occurrenceData.value.eventdate)){
-                occurrenceStore.getOccurrenceCollectingEvents((listArr) => {
-                    if(listArr.length > 0){
-                        collectingEventArr.value = listArr;
+                const searchTermsArr = {
+                    db: [collId.value],
+                    collector: occurrenceData.value.recordedby,
+                    collnum: occurrenceData.value.recordnumber,
+                    eventdate1: occurrenceData.value.eventdate
+                };
+                const options = {
+                    schema: 'occurrence',
+                    output: 'json'
+                };
+                searchStore.processSimpleSearch(searchTermsArr, options, (data) => {
+                    const returnData = [];
+                    data.forEach(record => {
+                        if(Number(record.occid) !== Number(occId.value)){
+                            returnData.push(record);
+                        }
+                    });
+                    if(returnData.length > 0){
+                        collectingEventArr.value = returnData.slice();
                         showCollectingEventListPopup.value = true;
                     }
                     else{

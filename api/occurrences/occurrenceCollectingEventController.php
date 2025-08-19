@@ -38,15 +38,6 @@ if($action && SanitizerService::validateInternalRequest()){
         $locationid = (int)$_POST['locationid'];
         echo json_encode($occurrenceCollectingEvents->getLocationCollectingEventArr($collid, $locationid));
     }
-    elseif($action === 'getOccurrenceCollectingEventArr' && $collid){
-        $occid = $_POST['occid'] ?? null;
-        $varsArr = array();
-        $varsArr['recordedby'] = $_POST['recordedby'] ?? null;
-        $varsArr['recordnumber'] = $_POST['recordnumber'] ?? null;
-        $varsArr['eventdate'] = $_POST['eventdate'] ?? null;
-        $varsArr['lastname'] = $_POST['lastname'] ?? null;
-        echo json_encode($occurrenceCollectingEvents->getOccurrenceCollectingEventArr($collid, $occid, $varsArr));
-    }
     elseif($action === 'getCollectingEventBenthicData' && $eventid){
         echo json_encode($occurrenceCollectingEvents->getCollectingEventBenthicData($eventid));
     }

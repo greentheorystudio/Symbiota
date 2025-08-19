@@ -171,9 +171,10 @@ const useImageStore = Pinia.defineStore('image', {
             this.checklistTargetTidArr = tidArr.slice();
             this.lazyLoadChecklistImageData(numberPerTaxon);
         },
-        setChecklistTaggedImageData(clidArr, numberPerTaxon, callback) {
+        setChecklistTaggedImageData(clidArr, numberPerTaxon, callback, tidArr = null) {
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr));
+            formData.append('tidArr', (tidArr ? JSON.stringify(tidArr) : null));
             formData.append('numberPerTaxon', numberPerTaxon.toString());
             formData.append('action', 'getChecklistTaggedImageData');
             fetch(imageApiUrl, {

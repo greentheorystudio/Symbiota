@@ -386,13 +386,24 @@ class Images{
         return $queryTidArr;
     }
 
-    public function getChecklistTaggedImageData($clidArr, $taxonLimit): array
+    public function getChecklistTaggedImageData($clidArr, $taxonLimit, $tidArr = null): array
     {
         $retArr = array();
         $sqlWhereArr = array();
         if(count($clidArr) > 0){
-            foreach($clidArr as $clid){
-                $sqlWhereArr[] = 't.keyvalue LIKE "CLID-' . (int)$clid . '-%"';
+            if($tidArr){
+                $keyValueArr = array();
+                foreach($clidArr as $clid){
+                    foreach($tidArr as $tid){
+                        $keyValueArr[] = '"CLID-' . (int)$clid . '-' . (int)$tid . '"';
+                    }
+                }
+                $sqlWhereArr[] = 't.keyvalue IN(' . implode(',', $keyValueArr)  . ')';
+            }
+            else{
+                foreach($clidArr as $clid){
+                    $sqlWhereArr[] = 't.keyvalue LIKE "CLID-' . (int)$clid . '-%"';
+                }
             }
             $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, t.keyvalue '.
                 'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.

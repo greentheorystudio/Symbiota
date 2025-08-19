@@ -270,7 +270,7 @@ function processUpdateCss(){
     const http = new XMLHttpRequest();
     const url = "../../api/configurations/configurationModelController.php";
     const params = 'action=updateCss';
-    console.log(url+'?'+params);
+    //console.log(url+'?'+params);
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     http.onreadystatechange = function() {

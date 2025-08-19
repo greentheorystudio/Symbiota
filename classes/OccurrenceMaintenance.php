@@ -251,18 +251,6 @@ class OccurrenceMaintenance {
 			$rs->free();
 
 			if($this->verbose) {
-				$this->outputMsg('Calculating reference counts... ', 1);
-			}
-			$sql = 'SELECT count(r.occid) AS refcnt '.
-				'FROM omoccurrences AS o INNER JOIN referenceoccurlink AS r ON o.occid = r.occid '.
-				'WHERE o.collid IN('.$collid.') ';
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$statsArr['refcnt'] = $r->refcnt;
-			}
-			$rs->free();
-
-			if($this->verbose) {
 				$this->outputMsg('Calculating counts per family... ', 1);
 			}
 			$sql = 'SELECT o.family, COUNT(o.occid) AS SpecimensPerFamily, COUNT(o.decimalLatitude) AS GeorefSpecimensPerFamily, '.
