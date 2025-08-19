@@ -435,12 +435,13 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 }
             });
         },
-        setChecklist(clid, callback = null) {
+        setChecklist(clid, callback = null, privateOverride = false) {
             this.clearChecklistData();
             if(Number(clid) > 0){
                 this.checklistEditData = Object.assign({}, {});
                 const formData = new FormData();
                 formData.append('clid', clid.toString());
+                formData.append('privateOverride', (privateOverride ? '1' : '0'));
                 formData.append('action', 'getChecklistData');
                 fetch(checklistApiUrl, {
                     method: 'POST',

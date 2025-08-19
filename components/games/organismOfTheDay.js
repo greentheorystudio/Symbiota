@@ -305,11 +305,11 @@ const organismOfTheDay = {
         }
 
         function getRandomStyles() {
-            var r = random(255);
-            var g = random(255);
-            var b = random(255);
-            var ml = random(containerRef.value.clientWidth);
-            var dur = random(5) + 5;
+            const r = random(255);
+            const g = random(255);
+            const b = random(255);
+            const ml = random(containerRef.value.clientWidth);
+            const dur = random(5) + 5;
             return `
                 background-color: rgba(${r},${g},${b},0.7);
                 color: rgba(${r},${g},${b},0.7); 
@@ -426,7 +426,7 @@ const organismOfTheDay = {
                             }
                         });
                     }
-                });
+                }, true);
             }
         }
 
