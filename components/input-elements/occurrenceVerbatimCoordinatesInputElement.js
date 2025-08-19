@@ -28,6 +28,10 @@ const occurrenceVerbatimCoordinatesInputElement = {
             type: Boolean,
             default: true
         },
+        tabindex: {
+            type: Number,
+            default: 1
+        },
         value: {
             type: String,
             default: null
@@ -35,7 +39,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
     },
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-            <q-input outlined v-model="value" :label="label" bg-color="white" :maxlength="maxlength" @update:model-value="processValueChange" dense>
+            <q-input outlined v-model="value" :label="label" bg-color="white" :maxlength="maxlength" @update:model-value="processValueChange" :tabindex="tabindex" dense>
                 <template v-if="value || definition" v-slot:append>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -56,7 +60,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
             </q-input>
         </template>
         <template v-else>
-            <q-input outlined v-model="value" :label="label" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" dense>
+            <q-input outlined v-model="value" :label="label" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :tabindex="tabindex" dense>
                 <template v-if="!disabled && (value || definition)" v-slot:append>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">

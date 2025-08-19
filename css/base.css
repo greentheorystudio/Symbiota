@@ -808,6 +808,11 @@ body.processing .loadingModal {
 	height: 60%;
 	border: 1px solid black;
 }
+.md-tall-popup {
+    width: 70%;
+    height: 95%;
+    border: 1px solid black;
+}
 .md-popup {
 	max-width: 75% !important;
 	width: 75% !important;
@@ -1142,4 +1147,43 @@ body.processing .loadingModal {
 }
 .error-border {
     border: 3px solid #C10015;
+}
+.ootd-balloon {
+    height: 125px;
+    width: 105px;
+    border-radius: 75% 75% 70% 70%;
+    position: relative;
+    z-index: 1;
+}
+.ootd-balloon:before {
+    content: "";
+    height: 75px;
+    width: 1px;
+    padding: 1px;
+    background-color: #FDFD96;
+    display: block;
+    position: absolute;
+    top: 125px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 1;
+}
+.ootd-balloon:after {
+    content: "▲";
+    text-align: center;
+    display: block;
+    position: absolute;
+    color: inherit;
+    top: 120px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 1;
+}
+@keyframes ootd-float {
+    from {transform: translateY(100vh);
+        opacity: 1;}
+    to {transform: translateY(-300vh);
+        opacity: 0.5;}
 }

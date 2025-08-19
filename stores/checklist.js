@@ -480,7 +480,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     }
                 });
                 this.imageStore.setChecklistImageData(targetArr, numberPerTaxon);
-            });
+            }, this.getChecklistTaxaFlashcardTidAcceptedArr);
         },
         setChecklistImageData(numberPerTaxon) {
             this.imageCountPerTaxon = numberPerTaxon;

@@ -3,10 +3,14 @@ const occurrenceEntryFollowUpActionSelector = {
         selectedAction: {
             type: String,
             default: 'remain'
+        },
+        tabindex: {
+            type: Number,
+            default: 1
         }
     },
     template: `
-        <q-select bg-color="white" outlined v-model="selectedOption" :options="actionOptions" option-value="value" option-label="label" label="Follow Up Action" popup-content-class="z-max" @update:model-value="changeAction" behavior="menu" dense options-dense />
+        <q-select bg-color="white" outlined v-model="selectedOption" :options="actionOptions" option-value="value" option-label="label" label="Follow Up Action" popup-content-class="z-max" @update:model-value="changeAction" behavior="menu" :tabindex="tabindex" dense options-dense />
     `,
     setup(props, context) {
         const actionOptions = [
