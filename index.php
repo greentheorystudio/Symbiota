@@ -24,7 +24,7 @@ include_once(__DIR__ . '/config/header-includes.php');
     <div id="mainContainer">
         <div class="q-pa-md">
             <h1>Welcome to the Online Virtual Flora of Wisconsin</h1>
-            <div class="row q-col-gutter-md">
+            <div class="q-mb-md row q-col-gutter-md">
                 <div class="col-12 col-sm-6 col-md-7">
                     <p>
                         This site is a collaborative effort between the herbaria of the UW-Madison (WIS) and the UW-Steven's Point (UWSP),
@@ -54,27 +54,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                     <p class="text-italic">NOTE: 'Interactive Maps' will plot only collections with known GPS localities.</p>
                 </div>
                 <div class="col-12 col-sm-6 col-md-5 row justify-center">
-                    <?php
-                    $oodID = 1;
-                    $ootdGameChecklist = 19;
-                    $ootdGameTitle = "Plant of the Day ";
-                    $ootdGameType = "plant";
-                    include_once(__DIR__ . '/classes/GamesManager.php');
-                    $gameManager = new GamesManager();
-                    $gameInfo = $gameManager->setOOTD($oodID,$ootdGameChecklist);
-                    ?>
-                    <div style="text-align:center;">
-                        <div style="font-size:130%;font-weight:bold;">
-                            <?php echo $ootdGameTitle; ?>
-                        </div>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
-                            <img src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/temp/ootd/<?php echo $oodID; ?>_organism300_1.jpg" style="width:250px;border:0;" />
-                        </a><br/>
-                        <b>What is this <?php echo $ootdGameType; ?>?</b><br/>
-                        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/games/ootd/index.php?oodid=<?php echo $oodID.'&cl='.$ootdGameChecklist.'&title='.$ootdGameTitle.'&type='.$ootdGameType; ?>">
-                            Click here to test your knowledge
-                        </a>
-                    </div>
+                    <organism-of-the-day checklist-id="19" title="Plant of the Day" type="plant"></organism-of-the-day>
                 </div>
             </div>
             <q-card class="update-card q-mb-md bg-green-1">
@@ -111,9 +91,17 @@ include_once(__DIR__ . '/config/header-includes.php');
     include(__DIR__ . '/footer.php');
     include_once(__DIR__ . '/config/footer-includes.php');
     ?>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/games/organismOfTheDay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script>
         const homePageModule = Vue.createApp({
             components: {
+                'organism-of-the-day': organismOfTheDay,
                 'taxa-quick-search': taxaQuickSearch
             }
         });
