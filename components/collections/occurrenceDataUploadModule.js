@@ -1412,6 +1412,7 @@ const occurrenceDataUploadModule = {
 
         function getFieldData() {
             const formData = new FormData();
+            formData.append('collid', props.collid.toString());
             formData.append('tableArr', JSON.stringify(['uploaddetermtemp', 'uploadmediatemp', 'uploadspectemp']));
             formData.append('action', 'getUploadTableFieldData');
             fetch(dataUploadServiceApiUrl, {
