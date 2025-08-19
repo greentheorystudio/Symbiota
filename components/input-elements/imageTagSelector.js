@@ -8,12 +8,16 @@ const imageTagSelector = {
             type: String,
             default: 'Image Tags'
         },
+        tabindex: {
+            type: Number,
+            default: 1
+        },
         tagArr: {
             type: Array
         }
     },
     template: `
-        <q-select ref="inputRef" v-model="tagArr" outlined dense options-dense clearable multiple use-chips popup-content-class="z-max" behavior="menu" bg-color="white" :options="imageTagOptions" @clear="clearAction" @update:model-value="processChange" :label="label" :disable="disable"></q-select>
+        <q-select ref="inputRef" v-model="tagArr" outlined dense options-dense clearable multiple use-chips popup-content-class="z-max" behavior="menu" bg-color="white" :options="imageTagOptions" @clear="clearAction" @update:model-value="processChange" :label="label" :tabindex="tabindex" :disable="disable"></q-select>
     `,
     setup(props, context) {
         const baseStore = useBaseStore();

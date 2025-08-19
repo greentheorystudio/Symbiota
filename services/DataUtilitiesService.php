@@ -29,9 +29,9 @@ class DataUtilitiesService {
         'WGS 72' => array(6378135, 0.006694318),
         'WGS 84' => array(6378137, 0.00669438)
     );
-    public static $monthRoman = array('I'=>'01','II'=>'02','III'=>'03','IV'=>'04','V'=>'05','VI'=>'06','VII'=>'07','VIII'=>'08','IX'=>'09','X'=>'10','XI'=>'11','XII'=>'12');
     public static $monthNames = array('jan'=>'01','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04','apr'=>'04','may'=>'05','jun'=>'06','jul'=>'07','ago'=>'08',
         'aug'=>'08','sep'=>'09','oct'=>'10','nov'=>'11','dec'=>'12','dic'=>'12');
+    public static $monthRoman = array('I'=>'01','II'=>'02','III'=>'03','IV'=>'04','V'=>'05','VI'=>'06','VII'=>'07','VIII'=>'08','IX'=>'09','X'=>'10','XI'=>'11','XII'=>'12');
 
     public static function cleanOccurrenceData($occData){
         foreach($occData as $k => $v){
@@ -573,7 +573,31 @@ class DataUtilitiesService {
         return $retDate;
     }
 
-    public static function parseVerbatimCoordinates($inStr, $target = null){
+    public static function parseRecordedByLastName($recordedByStr): string
+    {
+        $returnVal = '';
+        $recordedByStr = trim($recordedByStr);
+        if($recordedByStr){
+            $primaryArr = explode(';', $recordedByStr);
+            $primaryArr = explode('&', $primaryArr[0]);
+            $primaryArr = explode(' and ', $primaryArr[0]);
+            $lastNameArr = explode(',', $primaryArr[0]);
+            if(count($lastNameArr) > 1){
+                $returnVal = array_shift($lastNameArr);
+            }
+            else{
+                $tempArr = explode(' ', $lastNameArr[0]);
+                $returnVal = array_pop($tempArr);
+                while($tempArr && (strpos($returnVal,'.') || $returnVal === 'III' || strlen($returnVal) < 3)){
+                    $returnVal = array_pop($tempArr);
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public static function parseVerbatimCoordinates($inStr, $target = null): array
+    {
         $retArr = array();
         if(!strpos($inStr,' to ') && !strpos($inStr,' betw ')){
             $search = array(chr(145), chr(146), chr(147), chr(148), chr(149), chr(150), chr(151));
@@ -660,7 +684,7 @@ class DataUtilitiesService {
                     }
 
                 }
-                elseif(false !== strpos($inStr, 'UTM') || preg_match('/\d{1,2}[\D\s]+\d{6,7}[\D\s]+\d{6,7}/', $inStr)){
+                elseif(strpos($inStr, 'UTM') !== false || preg_match('/\d{1,2}[\D\s]+\d{6,7}[\D\s]+\d{6,7}/', $inStr)){
                     $z = '';
                     $e = '';
                     $n = '';

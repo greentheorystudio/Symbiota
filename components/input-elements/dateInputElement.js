@@ -20,13 +20,17 @@ const dateInputElement = {
             type: String,
             default: null
         },
+        tabindex: {
+            type: Number,
+            default: 1
+        },
         value: {
             type: String,
             default: null
         }
     },
     template: `
-        <q-input outlined v-model="displayValue" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" dense>
+        <q-input outlined v-model="displayValue" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :tabindex="tabindex" :readonly="disabled" dense>
             <template v-if="!disabled" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">

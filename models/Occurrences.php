@@ -1256,9 +1256,10 @@ class Occurrences{
                 if($this->conn->query($sql)){
                     $retVal = 1;
                     if($determinationUpdate){
-                        (new ChecklistVouchers)->updateTidFromOccurrenceRecord($occId, $editData['tid']);
-                        (new Images)->updateTidFromOccurrenceRecord($occId, $editData['tid']);
-                        (new Media)->updateTidFromOccurrenceRecord($occId, $editData['tid']);
+                        $newTid = array_key_exists('tid', $editData) ? (int)$editData['tid'] : 0;
+                        (new ChecklistVouchers)->updateTidFromOccurrenceRecord($occId, $newTid);
+                        (new Images)->updateTidFromOccurrenceRecord($occId, $newTid);
+                        (new Media)->updateTidFromOccurrenceRecord($occId, $newTid);
                     }
                 }
             }

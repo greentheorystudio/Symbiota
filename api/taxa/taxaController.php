@@ -15,56 +15,57 @@ if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array
 if($action && SanitizerService::validateInternalRequest()){
     $taxa = new Taxa();
     if($action === 'getTid' && array_key_exists('sciname',$_POST) && array_key_exists('kingdomid',$_POST)){
-        $rankid = array_key_exists('rankid',$_POST) ? (int)$_POST['rankid'] : null;
-        $author = array_key_exists('author',$_POST) ? $_POST['author'] : null;
+        $rankid = array_key_exists('rankid', $_POST) ? (int)$_POST['rankid'] : null;
+        $author = array_key_exists('author', $_POST) ? $_POST['author'] : null;
         echo $taxa->getTid(htmlspecialchars($_POST['sciname']), (int)$_POST['kingdomid'], $rankid, $author);
     }
-    elseif($isEditor && $action === 'addTaxon' && array_key_exists('taxon',$_POST)){
+    elseif($isEditor && $action === 'addTaxon' && array_key_exists('taxon', $_POST)){
         echo $taxa->createTaxaRecord(json_decode($_POST['taxon'], true));
     }
-    elseif($action === 'getSciNameFuzzyMatches' && array_key_exists('sciname',$_POST) && array_key_exists('lev',$_POST)){
-        echo json_encode($taxa->getCloseTaxaMatches($_POST['sciname'],$_POST['lev'],$kingdomid));
+    elseif($action === 'getSciNameFuzzyMatches' && array_key_exists('sciname', $_POST) && array_key_exists('lev', $_POST)){
+        echo json_encode($taxa->getCloseTaxaMatches($_POST['sciname'],$_POST['lev'], $kingdomid));
     }
     elseif($action === 'getAutocompleteSciNameList' && $_POST['term']){
         echo json_encode($taxa->getAutocompleteSciNameList($_POST));
     }
-    elseif($action === 'getImageCountsForTaxonomicGroup' && $tId && array_key_exists('index',$_POST)){
-        echo json_encode($taxa->getImageCountsForTaxonomicGroup($tId,(int)$_POST['index']));
+    elseif($action === 'getImageCountsForTaxonomicGroup' && $tId && array_key_exists('index', $_POST)){
+        echo json_encode($taxa->getImageCountsForTaxonomicGroup($tId, (int)$_POST['index']));
     }
-    elseif($action === 'getVideoCountsForTaxonomicGroup' && $tId && array_key_exists('index',$_POST)){
-        echo json_encode($taxa->getVideoCountsForTaxonomicGroup($tId,(int)$_POST['index']));
+    elseif($action === 'getVideoCountsForTaxonomicGroup' && $tId && array_key_exists('index', $_POST)){
+        echo json_encode($taxa->getVideoCountsForTaxonomicGroup($tId, (int)$_POST['index']));
     }
-    elseif($action === 'getAudioCountsForTaxonomicGroup' && $tId && array_key_exists('index',$_POST)){
-        echo json_encode($taxa->getAudioCountsForTaxonomicGroup($tId,(int)$_POST['index']));
+    elseif($action === 'getAudioCountsForTaxonomicGroup' && $tId && array_key_exists('index', $_POST)){
+        echo json_encode($taxa->getAudioCountsForTaxonomicGroup($tId, (int)$_POST['index']));
     }
-    elseif($action === 'getDescriptionCountsForTaxonomicGroup' && $tId && array_key_exists('index',$_POST)){
-        echo json_encode($taxa->getDescriptionCountsForTaxonomicGroup($tId,(int)$_POST['index']));
+    elseif($action === 'getDescriptionCountsForTaxonomicGroup' && $tId && array_key_exists('index', $_POST)){
+        echo json_encode($taxa->getDescriptionCountsForTaxonomicGroup($tId, (int)$_POST['index']));
     }
-    elseif($action === 'getIdentifiersForTaxonomicGroup' && $tId && array_key_exists('index',$_POST) && array_key_exists('source',$_POST)){
+    elseif($action === 'getIdentifiersForTaxonomicGroup' && $tId && array_key_exists('index', $_POST) && array_key_exists('source', $_POST)){
         echo json_encode($taxa->getIdentifiersForTaxonomicGroup($tId, (int)$_POST['index'], $_POST['source']));
     }
-    elseif($isEditor && $action === 'addTaxonIdentifier' && $tId && array_key_exists('idname',$_POST) && array_key_exists('id',$_POST)){
+    elseif($isEditor && $action === 'addTaxonIdentifier' && $tId && array_key_exists('idname', $_POST) && array_key_exists('id', $_POST)){
         echo $taxa->addTaxonIdentifier($tId, $_POST['idname'], $_POST['id']);
     }
     elseif($action === 'getTaxonomicTreeKingdomNodes'){
         echo json_encode($taxa->getTaxonomicTreeKingdomNodes());
     }
     elseif($action === 'getTaxonomicTreeChildNodes' && $tId){
-        $includeImage = array_key_exists('includeimage',$_POST) && (int)$_POST['includeimage'] === 1;
-        $limitToAccepted = array_key_exists('limittoaccepted',$_POST) && (int)$_POST['limittoaccepted'] === 1;
+        $includeImage = array_key_exists('includeimage', $_POST) && (int)$_POST['includeimage'] === 1;
+        $limitToAccepted = array_key_exists('limittoaccepted', $_POST) && (int)$_POST['limittoaccepted'] === 1;
         echo json_encode($taxa->getTaxonomicTreeChildNodes($tId, $limitToAccepted, $includeImage));
     }
-    elseif($action === 'getTaxaIdDataFromNameArr' && array_key_exists('taxa',$_POST)){
+    elseif($action === 'getTaxaIdDataFromNameArr' && array_key_exists('taxa', $_POST)){
         echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], true)));
     }
-    elseif($action === 'getTaxonFromTid' && array_key_exists('tid',$_POST)){
-        echo json_encode($taxa->getTaxonFromTid($_POST['tid']));
+    elseif($action === 'getTaxonFromTid' && array_key_exists('tid', $_POST)){
+        $fullData = !array_key_exists('full', $_POST) || (int)$_POST['full'] === 1;
+        echo json_encode($taxa->getTaxonFromTid($_POST['tid'], $fullData));
     }
-    elseif($isEditor && $action === 'updateTaxonTidAccepted' && $tId && array_key_exists('tidaccepted',$_POST) && (int)$_POST['tidaccepted']){
-        $kingdom = array_key_exists('kingdom',$_POST) ? (int)$_POST['kingdom'] : 0;
+    elseif($isEditor && $action === 'updateTaxonTidAccepted' && $tId && array_key_exists('tidaccepted', $_POST) && (int)$_POST['tidaccepted']){
+        $kingdom = array_key_exists('kingdom', $_POST) ? (int)$_POST['kingdom'] : 0;
         echo $taxa->submitChangeToNotAccepted($tId, $_POST['tidaccepted'], $kingdom);
     }
-    elseif($isEditor && $action === 'editTaxon' && $tId && array_key_exists('taxonData',$_POST)){
+    elseif($isEditor && $action === 'editTaxon' && $tId && array_key_exists('taxonData', $_POST)){
         echo $taxa->updateTaxaRecord($tId, json_decode($_POST['taxonData'], true));
     }
     elseif($isEditor && $action === 'editTaxonParent' && $tId && array_key_exists('parenttid',$_POST) && (int)$_POST['parenttid']){
