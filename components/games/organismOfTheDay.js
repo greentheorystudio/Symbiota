@@ -499,6 +499,7 @@ const organismOfTheDay = {
             cardContainerRef,
             cardImageHeight,
             cardStyle,
+            clientRoot,
             containerRef,
             containerStyle,
             currentImage,
