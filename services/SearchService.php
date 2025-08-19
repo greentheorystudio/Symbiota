@@ -369,17 +369,15 @@ class SearchService {
                 $tempArr[] = '(ISNULL(o.recordedby))';
             }
             else{
-                $tempInnerArr = array();
-                $collValueArr = explode(' ', trim($collectorArr[0]));
-                foreach($collValueArr as $collV){
-                    $tempInnerArr[] = '(o.recordedBy REGEXP "' . SanitizerService::cleanInStr($this->conn, $collV) . '")';
-                }
-                $tempArr[] = implode(' AND ', $tempInnerArr);
+                $lastName = DataUtilitiesService::parseRecordedByLastName($collectorArr[0]);
+                $tempArr[] = '(o.recordedby LIKE "%' . $lastName . '%")';
             }
         }
         elseif(count($collectorArr) > 1){
-            $collStr = current($collectorArr);
-            $tempArr[] = '(o.recordedby REGEXP "' . SanitizerService::cleanInStr($this->conn, $collStr) . '")';
+            foreach($collectorArr as $collStr){
+                $lastName = DataUtilitiesService::parseRecordedByLastName($collStr);
+                $tempArr[] = '(o.recordedby LIKE "%' . $lastName . '%")';
+            }
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
     }

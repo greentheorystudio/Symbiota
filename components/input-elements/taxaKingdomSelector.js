@@ -11,10 +11,14 @@ const taxaKingdomSelector = {
         selectedKingdom: {
             type: Object,
             default: null
+        },
+        tabindex: {
+            type: Number,
+            default: 1
         }
     },
     template: `
-        <q-select outlined v-model="selectedKingdom" popup-content-class="z-max" behavior="menu" :options="kingdomOpts" option-value="id" option-label="name" :label="label" @update:model-value="processChange" :readonly="disable" dense options-dense />
+        <q-select outlined v-model="selectedKingdom" popup-content-class="z-max" behavior="menu" :options="kingdomOpts" option-value="id" option-label="name" :label="label" @update:model-value="processChange" :tabindex="tabindex" :readonly="disable" dense options-dense />
     `,
     setup(props, context) {
         const kingdomOpts = Vue.ref([]);
