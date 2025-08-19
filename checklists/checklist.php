@@ -254,7 +254,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     </div>
                     <template v-if="activeTaxaArr.length > taxaPerPage">
                         <div class="q-mb-sm q-px-md full-width row justify-end">
-                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary"></q-pagination>
+                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10"></q-pagination>
                         </div>
                         <div class="q-mb-sm full-width">
                             <q-separator ></q-separator>
@@ -292,7 +292,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <q-separator ></q-separator>
                         </div>
                         <div class="q-mb-sm q-px-md full-width row justify-end">
-                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary"></q-pagination>
+                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10"></q-pagination>
                         </div>
                         <div class="q-mb-sm full-width">
                             <q-separator ></q-separator>
@@ -669,7 +669,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             searchStore.getSearchTidArr(options, (tidArr) => {
                                 if(tidArr.length > 0){
                                     checklistStore.createTemporaryChecklistFromTidArr(tidArr, (res) => {
-                                        hideWorking();
                                         if(Number(res) > 0){
                                             setQueryPopupDisplay(false);
                                             clId.value = Number(res);
@@ -779,9 +778,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         checklistStore.setChecklist(clId.value, (clid) => {
                             if(Number(clid) > 0){
                                 checklistStore.setChecklistTaxaArr(false, true, true, () => {
+                                    hideWorking();
                                     checklistStore.setChecklistImageData(1);
                                     checklistStore.setChecklistVoucherData();
                                 });
+                            }
+                            else{
+                                hideWorking();
                             }
                         });
                     }
@@ -810,9 +813,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             if(Number(pid) > 0 && Number(clId.value) === 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
                                 checklistStore.setChecklistTaxaArr(false, true, true, () => {
+                                    hideWorking();
                                     checklistStore.setChecklistImageData(1);
                                     checklistStore.setChecklistVoucherData();
                                 });
+                            }
+                            else{
+                                hideWorking();
                             }
                         });
                     }
@@ -823,6 +830,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     Vue.onMounted(() => {
                         if(Number(clId.value) > 0 || Number(pId.value) > 0){
+                            showWorking();
                             if(Number(clId.value) > 0){
                                 setChecklistData();
                             }
