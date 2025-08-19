@@ -664,6 +664,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
+                                checklist: 1,
                                 spatial: 0
                             };
                             searchStore.getSearchTidArr(options, (tidArr) => {
