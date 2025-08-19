@@ -19,7 +19,7 @@ const occurrenceEditorImageTranscriberPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="row justify-between">
-                        <div class="full-height col-6 overflow-auto">
+                        <div class="full-height col-6 overflow-auto image-transcriber-data-panel z-max">
                             <div class="q-pa-sm column q-gutter-sm">
                                 <div>
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['catalognumber']" label="Catalog Number" :maxlength="occurrenceFields['catalognumber'] ? occurrenceFields['catalognumber']['length'] : 0" :value="occurrenceData.catalognumber" @update:value="(value) => updateOccurrenceData('catalognumber', value)"></text-field-input-element>
@@ -214,20 +214,25 @@ const occurrenceEditorImageTranscriberPopup = {
                         </div>
                         <div class="col-6 occurrence-editor-image-transcriber-image overflow-hidden">
                             <div class="fit">
-                                <q-carousel ref="carousel" swipeable animated v-model="currentImage" :arrows="(imageArr.length > 1)" control-color="black" infinite class="fit">
-                                    <template v-for="image in imageArr" :key="image">
-                                        <q-carousel-slide :name="image.imgid" class="fit row justify-center q-ma-none q-pa-none">
-                                            <div :style="imageStyle" class="overflow-hidden">
-                                                <template v-if="image.originalurl">
-                                                    <img :ref="(element) => setImageRef(element, image.imgid)" :src="(image.originalurl.startsWith('/') ? (clientRoot + image.originalurl) : image.originalurl)" />
-                                                </template>
-                                                <template v-else>
-                                                    <img :ref="(element) => setImageRef(element, image.imgid)" :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" />
-                                                </template>
-                                            </div>
-                                        </q-carousel-slide>
-                                    </template>
-                                </q-carousel>
+                                <q-card>
+                                    <q-carousel ref="carousel" swipeable animated v-model="currentImage" :arrows="(imageArr.length > 1)" control-color="black" infinite class="fit">
+                                        <template v-for="image in imageArr" :key="image">
+                                            <q-carousel-slide :name="image.imgid" class="fit row justify-center q-ma-none q-pa-none">
+                                                <div :style="imageStyle" class="overflow-hidden">
+                                                    <template v-if="image.originalurl">
+                                                        <img :ref="(element) => imageElement = element" :src="(image.originalurl.startsWith('/') ? (clientRoot + image.originalurl) : image.originalurl)" @load="imageLoadPostProcessing();" />
+                                                    </template>
+                                                    <template v-else>
+                                                        <img :ref="(element) => imageElement = element" :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" @load="imageLoadPostProcessing();" />
+                                                    </template>
+                                                </div>
+                                            </q-carousel-slide>
+                                        </template>
+                                    </q-carousel>
+                                    <q-inner-loading :showing="imageLoading">
+                                        <q-spinner color="primary" size="3em" :thickness="10"></q-spinner>
+                                    </q-inner-loading>
+                                </q-card>
                             </div>
                         </div>
                     </div>
@@ -256,11 +261,14 @@ const occurrenceEditorImageTranscriberPopup = {
         const contentStyle = Vue.ref(null);
         const currentImage = Vue.ref(null);
         const imageArr = Vue.computed(() => occurrenceStore.getImageArr);
+        const imageElement = Vue.ref(null);
+        const imageLoading = Vue.ref(true);
         const imageStyle = Vue.ref(null);
         const instructionRef = Vue.ref(null);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const panzoomInitialized = Vue.ref(false);
         const topBarRef = Vue.ref(null);
 
         const validateCoordinates = Vue.inject('validateCoordinates');
@@ -275,6 +283,19 @@ const occurrenceEditorImageTranscriberPopup = {
 
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function imageLoadPostProcessing() {
+            const initialZoomVal = contentRef.value.clientHeight / imageElement.value.clientHeight;
+            const initialZoomedWidth = imageElement.value.clientWidth * initialZoomVal;
+            const initialXVal = ((contentRef.value.clientWidth / 2) - initialZoomedWidth) / 2;
+            panzoom(imageElement.value, {
+                initialX: initialXVal,
+                initialZoom: initialZoomVal,
+                excludeClass: 'image-transcriber-data-panel'
+            });
+            panzoomInitialized.value = true;
+            imageLoading.value = false;
         }
 
         function processRecalculatedDecimalCoordinates(data) {
@@ -305,20 +326,6 @@ const occurrenceEditorImageTranscriberPopup = {
         function setCurrentImage() {
             if(imageArr.value.length > 0){
                 currentImage.value = imageArr.value[0]['imgid'];
-            }
-        }
-
-        function setImageRef(element, refIndex) {
-            if(element){
-                setTimeout(() => {
-                    const initialZoomVal = contentRef.value.clientHeight / element.clientHeight;
-                    const initialZoomedWidth = element.clientWidth * initialZoomVal;
-                    const initialXVal = ((contentRef.value.clientWidth / 2) - initialZoomedWidth) / 2;
-                    panzoom(element, {
-                        initialX: initialXVal,
-                        initialZoom: initialZoomVal
-                    });
-                }, 200 );
             }
         }
 
@@ -358,6 +365,8 @@ const occurrenceEditorImageTranscriberPopup = {
             contentStyle,
             currentImage,
             imageArr,
+            imageElement,
+            imageLoading,
             imageStyle,
             instructionRef,
             occurrenceData,
@@ -365,9 +374,9 @@ const occurrenceEditorImageTranscriberPopup = {
             occurrenceFieldDefinitions,
             topBarRef,
             closePopup,
+            imageLoadPostProcessing,
             processRecalculatedDecimalCoordinates,
             processRecalculatedElevationValues,
-            setImageRef,
             updateCultivationStatusSetting,
             updateDateData,
             updateOccurrenceData,

@@ -17,7 +17,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     if($action === 'getUploadTableFieldData' && array_key_exists('tableArr', $_POST)){
         echo json_encode($dataUploadService->getUploadTableFieldData(json_decode($_POST['tableArr'], false)));
     }
-    elseif($action === 'processExternalDwcaTransfer' && array_key_exists('uploadType', $_POST) && array_key_exists('dwcaPath', $_POST) && strtolower(substr($_POST['dwcaPath'], -4)) === '.zip'){
+    elseif($action === 'processExternalDwcaTransfer' && array_key_exists('uploadType', $_POST) && array_key_exists('dwcaPath', $_POST)){
         echo json_encode($dataUploadService->processExternalDwcaTransfer($_POST['uploadType'], $_POST['dwcaPath']));
     }
     elseif($action === 'processExternalDwcaUnpack' && array_key_exists('targetPath', $_POST) && array_key_exists('archivePath', $_POST)){

@@ -47,7 +47,6 @@
       "@php -r \"file_exists('./temp/data/geolocate') || mkdir('./temp/data/geolocate');\"",
       "@php -r \"file_exists('./temp/downloads') || mkdir('./temp/downloads');\"",
       "@php -r \"file_exists('./temp/images') || mkdir('./temp/images');\"",
-      "@php -r \"file_exists('./temp/ootd') || mkdir('./temp/ootd');\"",
       "@php -r \"file_exists('./temp/report') || mkdir('./temp/report');\""
     ],
     "post-update-cmd": [
@@ -62,7 +61,6 @@
       "chmod -R 777 ./temp/data",
       "chmod -R 777 ./temp/downloads",
       "chmod -R 777 ./temp/images",
-      "chmod -R 777 ./temp/ootd",
       "chmod -R 777 ./temp/report",
       "chmod -R 777 ./rss.xml"
     ],
