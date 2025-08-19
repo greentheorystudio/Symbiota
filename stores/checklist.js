@@ -66,9 +66,15 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             let exist = false;
             state.checklistUpdateData = Object.assign({}, {});
             for(let key in state.checklistEditData) {
-                if(state.checklistEditData.hasOwnProperty(key) && state.checklistEditData[key] !== state.checklistData[key]) {
-                    exist = true;
-                    state.checklistUpdateData[key] = state.checklistEditData[key];
+                if(state.checklistEditData.hasOwnProperty(key)){
+                    if((key === 'searchterms' || key === 'defaultsettings') && JSON.stringify(state.checklistEditData[key]) !== JSON.stringify(state.checklistData[key])) {
+                        exist = true;
+                        state.checklistUpdateData[key] = Object.assign({}, state.checklistEditData[key]);
+                    }
+                    else if(state.checklistEditData[key] !== state.checklistData[key]) {
+                        exist = true;
+                        state.checklistUpdateData[key] = state.checklistEditData[key];
+                    }
                 }
             }
             return exist;
@@ -544,10 +550,12 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             this.checklistEditData[key] = value;
         },
         updateChecklistEditDefaultSettingsData(key, value) {
-            if(!this.checklistEditData['defaultsettings']){
-                this.checklistEditData['defaultsettings'] = {};
+            let newSettings = {};
+            if(this.checklistEditData['defaultsettings']){
+                newSettings = Object.assign({}, this.checklistEditData['defaultsettings']);
             }
-            this.checklistEditData['defaultsettings'][key] = value;
+            newSettings[key] = value;
+            this.checklistEditData['defaultsettings'] = Object.assign({}, newSettings);
         },
         updateChecklistRecord(callback) {
             const formData = new FormData();
