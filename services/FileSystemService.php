@@ -1,6 +1,30 @@
 <?php
 class FileSystemService {
 
+    public static $baseDirectories = array(
+        'admin',
+        'api',
+        'checklists',
+        'classes',
+        'collections',
+        'components',
+        'config',
+        'games',
+        'glossary',
+        'hooks',
+        'ident',
+        'imagelib',
+        'misc',
+        'models',
+        'profile',
+        'projects',
+        'services',
+        'spatial',
+        'stores',
+        'taxa',
+        'tutorial'
+    );
+
     public static function addFileToZipArchive($zipArchive, $filePath): void
     {
         if(file_exists($filePath)) {
@@ -76,6 +100,40 @@ class FileSystemService {
         }
     }
 
+    public static function getClientMediaRootPath(): string
+    {
+        $clientPath = self::getClientRootPath();
+        return $clientPath . '/content/imglib';
+    }
+
+    public static function getClientRootPath(): string
+    {
+        $returnPath = '';
+        $urlPath = substr($_SERVER['REQUEST_URI'], 1);
+        $urlPathArr = explode('/', $urlPath);
+        if($urlPathArr){
+            $lastIndex = (count($urlPathArr)) - 1;
+            if($lastIndex > 0){
+                if(strpos($urlPathArr[$lastIndex], '.php') !== false){
+                    --$lastIndex;
+                }
+                if(!in_array($urlPathArr[$lastIndex], self::$baseDirectories, true)){
+                    do {
+                        --$lastIndex;
+                    } while(!in_array($urlPathArr[$lastIndex], self::$baseDirectories, true) && $lastIndex > 0);
+                }
+                if($lastIndex > 0){
+                    $index = 0;
+                    do {
+                        $returnPath .= '/' . $urlPathArr[$index];
+                        $index++;
+                    } while($index <= $lastIndex);
+                }
+            }
+        }
+        return $returnPath;
+    }
+
     public static function getDirectoryFilenameArr($dirPath): array
     {
         $returnArr = array();
@@ -98,9 +156,87 @@ class FileSystemService {
         return getimagesize($imageUrl);
     }
 
+    public static function getServerLogFilePath(): string
+    {
+        $serverPath = self::getServerRootPath();
+        return $serverPath . '/content/logs';
+    }
+
+    public static function getServerMaxFilesize(): int
+    {
+        $upload = self::getServerMaxUploadFilesize();
+        $post = self::getServerMaxPostSize();
+        return max($upload, $post);
+    }
+
+    public static function getServerMaxPostSize(): int
+    {
+        return (int)ini_get('post_max_size');
+    }
+
+    public static function getServerMaxUploadFilesize(): int
+    {
+        return (int)ini_get('upload_max_filesize');
+    }
+
+    public static function getServerMediaBaseUploadPath(): string
+    {
+        $serverPath = self::getServerRootPath();
+        return $serverPath . '/content/imglib';
+    }
+
+    public static function getServerMediaUploadPath($fragment): string
+    {
+        $fullUploadPath = $GLOBALS['IMAGE_ROOT_PATH'] . '/' . $fragment;
+        if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
+            $fullUploadPath = '';
+        }
+        $fullUploadPath .= '/' . date('Ym');
+        if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
+            $fullUploadPath = '';
+        }
+        return $fullUploadPath;
+    }
+
     public static function getServerPathFromUrlPath($path): string
     {
         return str_replace($GLOBALS['IMAGE_ROOT_URL'], $GLOBALS['IMAGE_ROOT_PATH'], $path);
+    }
+
+    public static function getServerRootPath(): string
+    {
+        $returnPath = '';
+        $serverPath = substr(getcwd(), 1);
+        $serverPathArr = explode('/', $serverPath);
+        if($serverPathArr){
+            $lastIndex = (count($serverPathArr)) - 1;
+            if($lastIndex > 0){
+                if(array_intersect($serverPathArr, self::$baseDirectories)){
+                    if(in_array($serverPathArr[$lastIndex], self::$baseDirectories, true)){
+                        --$lastIndex;
+                    }
+                    else{
+                        do {
+                            --$lastIndex;
+                        } while(!in_array($serverPathArr[$lastIndex], self::$baseDirectories, true) && $lastIndex > 0);
+                    }
+                }
+                if($lastIndex > 0){
+                    $index = 0;
+                    do {
+                        $returnPath .= '/' . $serverPathArr[$index];
+                        $index++;
+                    } while($index <= $lastIndex);
+                }
+            }
+        }
+        return $returnPath;
+    }
+
+    public static function getServerTempDirPath(): string
+    {
+        $serverPath = self::getServerRootPath();
+        return $serverPath . '/temp';
     }
 
     public static function getServerUploadFilename($targetPath, $origFilename, $suffix = null): string
@@ -124,19 +260,6 @@ class FileSystemService {
             $returnStr = $origFilename;
         }
         return $returnStr;
-    }
-
-    public static function getServerMediaUploadPath($fragment): string
-    {
-        $fullUploadPath = $GLOBALS['IMAGE_ROOT_PATH'] . '/' . $fragment;
-        if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
-            $fullUploadPath = '';
-        }
-        $fullUploadPath .= '/' . date('Ym');
-        if(!file_exists($fullUploadPath) && !mkdir($fullUploadPath, 0777, true) && !is_dir($fullUploadPath)) {
-            $fullUploadPath = '';
-        }
-        return $fullUploadPath;
     }
 
     public static function getTempDownloadUploadPath(): string
@@ -311,6 +434,17 @@ class FileSystemService {
         if(@$zip->extractTo($targetPath . '/')){
             $zip->close();
         }
+    }
+
+    public static function validatePathIsWritable($path): bool
+    {
+        return is_writable($path);
+    }
+
+    public static function validateServerPath($path): bool
+    {
+        $testPath = $path . '/sitemap.php';
+        return file_exists($testPath);
     }
 
     public static function writeRowToCsv($fileHandler, $row): void

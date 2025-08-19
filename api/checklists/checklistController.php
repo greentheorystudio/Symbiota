@@ -28,7 +28,8 @@ if($action){
             echo $checklists->updateChecklistRecord($clid, json_decode($_POST['checklistData'], true));
         }
         elseif($action === 'getChecklistData' && $clid){
-            echo json_encode($checklists->getChecklistData($clid));
+            $privateOverride = array_key_exists('privateOverride', $_POST) && (int)$_POST['privateOverride'] === 1;
+            echo json_encode($checklists->getChecklistData($clid, $privateOverride));
         }
         elseif($action === 'deleteChecklistRecord' && $clid && $isEditor){
             echo $checklists->deleteChecklistRecord($clid);

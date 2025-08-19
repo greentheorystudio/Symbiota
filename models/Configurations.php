@@ -2,36 +2,13 @@
 include_once(__DIR__ . '/Users.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/EncryptionService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
 class Configurations{
 
     private $conn;
-
-    public $baseDirectories = array(
-        'admin',
-        'api',
-        'checklists',
-        'classes',
-        'collections',
-        'components',
-        'config',
-        'games',
-        'glossary',
-        'hooks',
-        'ident',
-        'imagelib',
-        'misc',
-        'models',
-        'profile',
-        'projects',
-        'services',
-        'spatial',
-        'stores',
-        'taxa',
-        'tutorial'
-    );
 
     public $coreConfigurations = array(
         'ACTIVATE_EXSICCATI',
@@ -58,6 +35,7 @@ class Configurations{
         'LOG_PATH',
         'MAX_UPLOAD_FILESIZE',
         'MOF_SEARCH_FIELD_JSON',
+        'OOTD_CONFIG_JSON',
         'PARAMS_ARR',
         'PORTAL_EMAIL_ADDRESS',
         'PORTAL_GUID',
@@ -161,68 +139,35 @@ class Configurations{
         $this->conn->close();
     }
 
-    public function addConfiguration($name, $value): bool
+    public function addConfiguration($name, $value): int
     {
+        $returnVal = 0;
         if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
             $value = EncryptionService::encrypt($value);
         }
         $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
-            'VALUES("' . SanitizerService::cleanInStr($this->conn, $name) . '", "' . SanitizerService::cleanInStr($this->conn, $value) . '") ';
-        return $this->conn->query($sql);
+            "VALUES('" . SanitizerService::cleanInStr($this->conn, $name) . "', '" . SanitizerService::cleanInStr($this->conn, $value) . "') ";
+        if($this->conn->query($sql)){
+            $returnVal = 1;
+        }
+        return $returnVal;
     }
 
-    public function deleteConfiguration($name): bool
+    public function deleteConfiguration($name): int
     {
+        $returnVal = 0;
         $sql = 'DELETE FROM configurations '.
             'WHERE configurationname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
-        return $this->conn->query($sql);
+        if($this->conn->query($sql)){
+            $returnVal = 1;
+        }
+        return $returnVal;
     }
 
     public function deleteMapDataFile($fileName): bool
     {
-        $status = false;
-        $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial/' . $fileName;
-        if(!file_exists($targetPath)) {
-            $status = true;
-        }
-        elseif(unlink($targetPath)){
-            $status = true;
-        }
-        return $status;
-    }
-
-    public function getClientMediaRootPath(): string
-    {
-        $clientPath = $this->getClientRootPath();
-        return $clientPath . '/content/imglib';
-    }
-
-    public function getClientRootPath(): string
-    {
-        $returnPath = '';
-        $urlPath = substr($_SERVER['REQUEST_URI'], 1);
-        $urlPathArr = explode('/', $urlPath);
-        if($urlPathArr){
-            $lastIndex = (count($urlPathArr)) - 1;
-            if($lastIndex > 0){
-                if(strpos($urlPathArr[$lastIndex], '.php') !== false){
-                    --$lastIndex;
-                }
-                if(!in_array($urlPathArr[$lastIndex], $this->baseDirectories, true)){
-                    do {
-                        --$lastIndex;
-                    } while(!in_array($urlPathArr[$lastIndex], $this->baseDirectories, true) && $lastIndex > 0);
-                }
-                if($lastIndex > 0){
-                    $index = 0;
-                    do {
-                        $returnPath .= '/' . $urlPathArr[$index];
-                        $index++;
-                    } while($index <= $lastIndex);
-                }
-            }
-        }
-        return $returnPath;
+        FileSystemService::deleteFile($GLOBALS['SERVER_ROOT'] . '/content/spatial/' . $fileName);
+        return true;
     }
 
     public function getCollectionCategoryArr(): array
@@ -331,71 +276,6 @@ class Configurations{
         return $returnArr;
     }
 
-    public function getServerLogFilePath(): string
-    {
-        $serverPath = $this->getServerRootPath();
-        return $serverPath . '/content/logs';
-    }
-
-    public function getServerMaxFilesize(): int
-    {
-        $upload = $this->getServerMaxUploadFilesize();
-        $post = $this->getServerMaxPostSize();
-        return max($upload, $post);
-    }
-
-    public function getServerMaxPostSize(): int
-    {
-        return (int)ini_get('post_max_size');
-    }
-
-    public function getServerMaxUploadFilesize(): int
-    {
-        return (int)ini_get('upload_max_filesize');
-    }
-
-    public function getServerMediaUploadPath(): string
-    {
-        $serverPath = $this->getServerRootPath();
-        return $serverPath . '/content/imglib';
-    }
-
-    public function getServerRootPath(): string
-    {
-        $returnPath = '';
-        $serverPath = substr(getcwd(), 1);
-        $serverPathArr = explode('/', $serverPath);
-        if($serverPathArr){
-            $lastIndex = (count($serverPathArr)) - 1;
-            if($lastIndex > 0){
-                if(array_intersect($serverPathArr, $this->baseDirectories)){
-                    if(in_array($serverPathArr[$lastIndex], $this->baseDirectories, true)){
-                        --$lastIndex;
-                    }
-                    else{
-                        do {
-                            --$lastIndex;
-                        } while(!in_array($serverPathArr[$lastIndex], $this->baseDirectories, true) && $lastIndex > 0);
-                    }
-                }
-                if($lastIndex > 0){
-                    $index = 0;
-                    do {
-                        $returnPath .= '/' . $serverPathArr[$index];
-                        $index++;
-                    } while($index <= $lastIndex);
-                }
-            }
-        }
-        return $returnPath;
-    }
-
-    public function getServerTempDirPath(): string
-    {
-        $serverPath = $this->getServerRootPath();
-        return $serverPath . '/temp';
-    }
-
     public function initializeImportConfigurations(): void
     {
         if(file_exists(__DIR__ . '/../config/symbini.php')){
@@ -417,7 +297,7 @@ class Configurations{
                 $users->clearCookieSession();
             }
         }
-        if((isset($_COOKIE['BioSurvCrumb']) && (isset($_REQUEST['action']) && ($_REQUEST['action'] === 'logout' || $_REQUEST['action'] === 'loginas')))){
+        if((isset($_COOKIE['BioSurvCrumb'], $_REQUEST['action']) && ($_REQUEST['action'] === 'logout' || $_REQUEST['action'] === 'loginas'))){
             $tokenArr = json_decode(EncryptionService::decrypt($_COOKIE['BioSurvCrumb']), true);
             if($tokenArr){
                 $user = $users->getUserByUsername($tokenArr[0]);
@@ -436,7 +316,7 @@ class Configurations{
                     $sql .= "VALUES('" . SanitizerService::cleanInStr($this->conn, $key) . "', '" . json_encode($GLOBALS[$key]) . "') ";
                 }
                 else{
-                    $sql .= 'VALUES("' . SanitizerService::cleanInStr($this->conn, $key) . '", "' . SanitizerService::cleanInStr($this->conn, $GLOBALS[$key]) . '") ';
+                    $sql .= "VALUES('" . SanitizerService::cleanInStr($this->conn, $key) . "', '" . SanitizerService::cleanInStr($this->conn, $GLOBALS[$key]) . "') ";
                 }
                 $this->conn->query($sql);
             }
@@ -478,8 +358,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '20250124';
-        $GLOBALS['JS_VERSION'] = '20250509111111111111111111111111';
+        $GLOBALS['CSS_VERSION'] = '20250130';
+        $GLOBALS['JS_VERSION'] = '2025051311111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -487,20 +367,20 @@ class Configurations{
 
     public function setGlobalArrFromDefaults(): void
     {
-        $GLOBALS['CLIENT_ROOT'] = $this->getClientRootPath();
+        $GLOBALS['CLIENT_ROOT'] = FileSystemService::getClientRootPath();
         $GLOBALS['CSS_VERSION_LOCAL'] = $this->getCssVersion();
         $GLOBALS['DEFAULT_LANG'] = 'en';
-        $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
-        $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
+        $GLOBALS['IMAGE_ROOT_PATH'] = FileSystemService::getServerMediaBaseUploadPath();
+        $GLOBALS['IMAGE_ROOT_URL'] = FileSystemService::getClientMediaRootPath();
         $GLOBALS['IMAGE_TAG_OPTIONS'] = '["Diagnostic","Handwriting","HasIDLabel","HasLabel","HasOrganism","HasProblem","ImageOfAdult","ImageOfImmature","ShowsHabitat","TypedText"]';
         $GLOBALS['IMG_TN_WIDTH'] = 200;
         $GLOBALS['IMG_WEB_WIDTH'] = 1400;
-        $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
-        $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
+        $GLOBALS['LOG_PATH'] = FileSystemService::getServerLogFilePath();
+        $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxFilesize();
         $GLOBALS['PORTAL_GUID'] = UuidService::getUuidV4();
         $GLOBALS['PROCESSING_STATUS_OPTIONS'] = array('Unprocessed','Stage 1','Stage 2','Stage 3','Pending Review','Expert Required','Reviewed','Closed');
         $GLOBALS['SECURITY_KEY'] = UuidService::getUuidV4();
-        $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
+        $GLOBALS['SERVER_ROOT'] = FileSystemService::getServerRootPath();
         $GLOBALS['SPATIAL_LAYER_CONFIG_JSON'] = null;
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
@@ -532,19 +412,23 @@ class Configurations{
         $GLOBALS['SPATIAL_SHAPES_SELECTIONS_FILL_COLOR'] = '#FFFFFF';
         $GLOBALS['SPATIAL_SHAPES_SELECTIONS_OPACITY'] = '0.5';
         $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
-        $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
+        $GLOBALS['TEMP_DIR_ROOT'] = FileSystemService::getServerTempDirPath();
         $GLOBALS['RIGHTS_TERMS'] = $this->rightsTerms;
     }
 
-    public function updateConfigurationValue($name, $value): bool
+    public function updateConfigurationValue($name, $value): int
     {
+        $returnVal = 0;
         if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
             $value = EncryptionService::encrypt($value);
         }
         $sql = 'UPDATE configurations '.
-            'SET configurationvalue = "' . SanitizerService::cleanInStr($this->conn, $value) . '" '.
+            "SET configurationvalue = '" . SanitizerService::cleanInStr($this->conn, $value) . "' ".
             'WHERE configurationname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
-        return $this->conn->query($sql);
+        if($this->conn->query($sql)){
+            $returnVal = 1;
+        }
+        return $returnVal;
     }
 
     public function updateCssVersion(): bool
@@ -656,8 +540,8 @@ class Configurations{
             $GLOBALS['DEFAULT_LANG'] = 'en';
         }
         if(!isset($GLOBALS['IMAGE_ROOT_PATH']) || $GLOBALS['IMAGE_ROOT_PATH'] === ''){
-            $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
-            $GLOBALS['IMAGE_ROOT_URL'] = $this->getClientMediaRootPath();
+            $GLOBALS['IMAGE_ROOT_PATH'] = FileSystemService::getServerMediaBaseUploadPath();
+            $GLOBALS['IMAGE_ROOT_URL'] = FileSystemService::getClientMediaRootPath();
         }
         if(!isset($GLOBALS['IMAGE_ROOT_URL'])){
             $GLOBALS['IMAGE_ROOT_URL'] = '';
@@ -680,14 +564,17 @@ class Configurations{
         if(!isset($GLOBALS['KEY_MOD_IS_ACTIVE'])){
             $GLOBALS['KEY_MOD_IS_ACTIVE'] = false;
         }
+        if(!isset($GLOBALS['OOTD_CONFIG_JSON']) || $GLOBALS['OOTD_CONFIG_JSON'] === ''){
+            $GLOBALS['OOTD_CONFIG_JSON'] = null;
+        }
         if(!isset($GLOBALS['GLOSSARY_MOD_IS_ACTIVE'])){
             $GLOBALS['GLOSSARY_MOD_IS_ACTIVE'] = false;
         }
         if(!isset($GLOBALS['LOG_PATH']) || $GLOBALS['LOG_PATH'] === ''){
-            $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
+            $GLOBALS['LOG_PATH'] = FileSystemService::getServerLogFilePath();
         }
-        if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE'] || (int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > $this->getServerMaxFilesize()){
-            $GLOBALS['MAX_UPLOAD_FILESIZE'] = $this->getServerMaxFilesize();
+        if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE'] || (int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxFilesize()){
+            $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxFilesize();
         }
         if((!isset($GLOBALS['PORTAL_EMAIL_ADDRESS']) || !$GLOBALS['PORTAL_EMAIL_ADDRESS']) && isset($GLOBALS['ADMIN_EMAIL'])){
             $GLOBALS['PORTAL_EMAIL_ADDRESS'] = $GLOBALS['ADMIN_EMAIL'];
@@ -702,9 +589,9 @@ class Configurations{
             $GLOBALS['SECURITY_KEY'] = UuidService::getUuidV4();
         }
         if(!isset($GLOBALS['SERVER_ROOT']) || $GLOBALS['SERVER_ROOT'] === ''){
-            $GLOBALS['SERVER_ROOT'] = $this->getServerRootPath();
-            $GLOBALS['LOG_PATH'] = $this->getServerLogFilePath();
-            $GLOBALS['IMAGE_ROOT_PATH'] = $this->getServerMediaUploadPath();
+            $GLOBALS['SERVER_ROOT'] = FileSystemService::getServerRootPath();
+            $GLOBALS['LOG_PATH'] = FileSystemService::getServerLogFilePath();
+            $GLOBALS['IMAGE_ROOT_PATH'] = FileSystemService::getServerMediaBaseUploadPath();
         }
         if(isset($GLOBALS['SERVER_ROOT']) && substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
             $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
@@ -817,7 +704,7 @@ class Configurations{
             $GLOBALS['TAXONOMIC_RANKS'] = '[10,30,60,100,140,180,220,230,240]';
         }
         if(!isset($GLOBALS['TEMP_DIR_ROOT']) || $GLOBALS['TEMP_DIR_ROOT'] === ''){
-            $GLOBALS['TEMP_DIR_ROOT'] = $this->getServerTempDirPath();
+            $GLOBALS['TEMP_DIR_ROOT'] = FileSystemService::getServerTempDirPath();
         }
         $GLOBALS['EMAIL_CONFIGURED'] = (
             isset($GLOBALS['PORTAL_EMAIL_ADDRESS'], $GLOBALS['SMTP_USERNAME'], $GLOBALS['SMTP_PASSWORD'], $GLOBALS['SMTP_HOST'], $GLOBALS['SMTP_PORT']) &&
@@ -877,14 +764,26 @@ class Configurations{
         return $this->conn->query($sql)->num_rows;
     }
 
+    public function validateOotdConfigJson($jsonStr): bool
+    {
+        $returnVal = false;
+        $configArr = json_decode($jsonStr, true);
+        if(array_key_exists('date', $configArr) && $configArr['date'] && is_string($configArr['date'])) {
+            $dateArr = explode(' ', $configArr['date']);
+            if(array_key_exists('tid', $configArr) && (int)$configArr['tid'] > 0 && count($dateArr) === 4) {
+                $returnVal = true;
+            }
+        }
+        return $returnVal;
+    }
+
     public function validatePathIsWritable($path): bool
     {
-        return is_writable($path);
+        return FileSystemService::validatePathIsWritable($path);
     }
 
     public function validateServerPath($path): bool
     {
-        $testPath = $path . '/sitemap.php';
-        return file_exists($testPath);
+        return FileSystemService::validateServerPath($path);
     }
 }
