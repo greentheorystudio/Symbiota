@@ -8,7 +8,7 @@ const imageCarousel = {
     template: `
         <q-card flat bordered class="fit preview-image-carousel">
             <q-card-section class="fit">
-                <q-carousel swipeable animated v-model="currentImage" :arrows="(imageArr.length > 1)" control-color="black" infinite class="fit">
+                <q-carousel swipeable animated v-model="currentImage" :arrows="(imageArr.length > 1)" control-color="primary" infinite class="fit">
                     <template v-for="image in imageArr" :key="image">
                         <q-carousel-slide v-if="image.url" :name="image.imgid" class="column no-wrap">
                             <div class="row fit justify-start items-center q-gutter-xs q-col-gutter no-wrap">
