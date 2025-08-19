@@ -12,13 +12,17 @@ const wysiwygInputElement = {
             type: String,
             default: ''
         },
+        tabindex: {
+            type: Number,
+            default: 1
+        },
         value: {
             type: String,
             default: null
         }
     },
     template: `
-        <q-editor v-model="value" content-class="wysiwyg-editor" :toolbar="editorToolbarConfig" :fonts="editorToolbarFonts" :placeholder="label" :disable="disabled" @update:model-value="processValueChange"></q-editor>
+        <q-editor v-model="value" content-class="wysiwyg-editor" :toolbar="editorToolbarConfig" :fonts="editorToolbarFonts" :placeholder="label" :disable="disabled" :tabindex="tabindex" @update:model-value="processValueChange"></q-editor>
     `,
     setup(props, context) {
         const $q = useQuasar();

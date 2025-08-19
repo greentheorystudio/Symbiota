@@ -1,6 +1,12 @@
 const spatialDrawToolSelector = {
+    props: {
+        tabindex: {
+            type: Number,
+            default: 1
+        }
+    },
     template: `
-        <q-select bg-color="white" outlined v-model="selectedOption" :options="drawSelectorOptions" option-value="value" option-label="label" label="Draw" popup-content-class="z-max" class="draw-tool-dropdown" @update:model-value="drawSelectorChange" behavior="menu" dense options-dense />
+        <q-select bg-color="white" outlined v-model="selectedOption" :options="drawSelectorOptions" option-value="value" option-label="label" label="Draw" popup-content-class="z-max" class="draw-tool-dropdown" @update:model-value="drawSelectorChange" behavior="menu" :tabindex="tabindex" dense options-dense />
     `,
     setup() {
         const drawSelectorOptions = Vue.ref([

@@ -210,7 +210,12 @@ class ChecklistVouchers{
     public function updateTidFromOccurrenceRecord($occid, $tid): void
     {
         if((int)$occid > 0){
-            $sql = 'UPDATE fmvouchers SET tid = ' . (((int)$tid > 0) ? (int)$tid : 'NULL') . ' WHERE occid = ' . (int)$occid . ' ';
+            if((int)$tid > 0){
+                $sql = 'UPDATE fmvouchers SET tid = ' . (int)$tid . ' WHERE occid = ' . (int)$occid . ' ';
+            }
+            else{
+                $sql = 'DELETE FROM fmvouchers WHERE occid = ' . (int)$occid . ' ';
+            }
             $this->conn->query($sql);
         }
     }

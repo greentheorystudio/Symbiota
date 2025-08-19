@@ -588,26 +588,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getNearbyLocations(callback) {
             this.locationStore.getNearbyLocations(this.getCollId, callback);
         },
-        getOccurrenceCollectingEvents(callback) {
-            const formData = new FormData();
-            formData.append('collid', this.getCollId.toString());
-            formData.append('occid', this.occId.toString());
-            formData.append('recordedby', this.occurrenceEditData['recordedby']);
-            formData.append('recordnumber', this.occurrenceEditData['recordnumber']);
-            formData.append('eventdate', this.occurrenceEditData['eventdate']);
-            formData.append('lastname', this.parseRecordedByLastName(this.occurrenceEditData['recordedby']));
-            formData.append('action', 'getOccurrenceCollectingEventArr');
-            fetch(occurrenceCollectingEventApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                callback(data);
-            });
-        },
         getOccurrenceDuplicateIdentifierRecordArr(identifierField, identifier, callback) {
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());

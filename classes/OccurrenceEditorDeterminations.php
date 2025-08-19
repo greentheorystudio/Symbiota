@@ -355,11 +355,11 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
             if(strlen($loc) > 500) {
                 $loc = substr($loc, 400);
             }
+            $openStr = "window.open('" . $GLOBALS['CLIENT_ROOT'] . '/collections/editor/occurrenceeditor.php?occid=' . $r->occid . "', '_blank');";
             $retHtml .= '<tr>';
             $retHtml .= '<td><input type="checkbox" name="occid[]" value="'.$r->occid.'" checked /></td>';
             $retHtml .= '<td>';
-            $retHtml .= '<a href="#" onclick="openIndPopup('.$r->occid.'); return false;">'.($r->catalogNumber?:'[no catalog number]').'</a>';
-            $retHtml .= '<a href="#" onclick="openEditorPopup('.$r->occid.'); return false;"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>';
+            $retHtml .= '<a href="#" onclick="' . $openStr . '">'.($r->catalogNumber?:'[no catalog number]').'<i style="margin-left:4px;height:15px;width:15px;" class="far fa-edit"></i></a>';
             $retHtml .= '</td>';
             $retHtml .= '<td>'.$r->sciname.'</td>';
             $retHtml .= '<td>'.$r->collector.'; '.$loc.'</td>';

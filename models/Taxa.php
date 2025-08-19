@@ -549,7 +549,7 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxonFromTid($tid): array
+    public function getTaxonFromTid($tid, $fullData = true): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
@@ -569,10 +569,12 @@ class Taxa{
                 $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted']) : null;
                 $acceptedTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['tid'] : (int)$row['tidaccepted'];
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
-                $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
-                $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($acceptedTid);
-                $retArr['children'] = $this->getChildTaxaFromTid($acceptedTid);
+                if($fullData){
+                    $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
+                    $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
+                    $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($acceptedTid);
+                    $retArr['children'] = $this->getChildTaxaFromTid($acceptedTid);
+                }
             }
         }
         return $retArr;
