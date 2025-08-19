@@ -286,7 +286,7 @@ class Checklists{
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
             $result->free();
-            if($row && ($privateOverride || ($row['access'] === 'public' || $GLOBALS['IS_ADMIN'] || in_array((int)$row['clid'], $GLOBALS['PERMITTED_CHECKLISTS'], true)))){
+            if($row && ($privateOverride || $row['expiration'] || $row['access'] === 'public' || $GLOBALS['IS_ADMIN'] || in_array((int)$row['clid'], $GLOBALS['PERMITTED_CHECKLISTS'], true))){
                 foreach($fields as $val){
                     $name = $val->name;
                     if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms')){
