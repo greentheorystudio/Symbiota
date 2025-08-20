@@ -22,7 +22,7 @@ const organismOfTheDay = {
                     </div>
                     <div class="row justify-center">
                         <div :style="cardStyle">
-                            <q-img :height="cardImageHeight" :src="(imageData[taxonData['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxonData['tidaccepted']][0]['url']) : imageData[taxonData['tidaccepted']][0]['url'])" fit="scale-down" :no-native-menu="true"></q-img>
+                            <q-img :height="cardImageHeight" :src="(currentImage['url'].startsWith('/') ? (clientRoot + currentImage['url']) : currentImage['url'])" fit="scale-down" :no-native-menu="true"></q-img>
                         </div>
                     </div>
                     <div class="text-body1 text-bold row justify-center">
@@ -404,7 +404,7 @@ const organismOfTheDay = {
                 else{
                     cardDim = containerRef.value.clientWidth * 0.8;
                 }
-                containerStyle.value = 'height: ' + containerRef.value.clientHeight + 'px;width: ' + containerRef.value.clientWidth + 'px;';
+                containerStyle.value = 'height: ' + (containerRef.value.clientHeight + 100) + 'px;width: ' + containerRef.value.clientWidth + 'px;';
                 popupCardImageWidth.value = 'height: ' + (Math.floor(cardDim) + 100) + 'px;';
             }
         }
@@ -499,6 +499,7 @@ const organismOfTheDay = {
             cardContainerRef,
             cardImageHeight,
             cardStyle,
+            clientRoot,
             containerRef,
             containerStyle,
             currentImage,
