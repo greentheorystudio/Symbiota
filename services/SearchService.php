@@ -127,6 +127,9 @@ class SearchService {
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 $sql .= 'AND t.tidaccepted IS NOT NULL ';
+                if(array_key_exists('checklist', $options) && (int)$options['checklist'] === 1){
+                    $sql .= 'AND t.rankid > 140 ';
+                }
                 //echo '<div>Tid sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
