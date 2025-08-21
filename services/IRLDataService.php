@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
 
-class IRLManager {
+class IRLDataService {
 
 	private $conn;
     private $tidArr = array();
