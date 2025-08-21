@@ -1,14 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../models/Configurations.php');
+include_once(__DIR__ . '/../../services/FileSystemService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['IS_ADMIN']) {
     header('Location: ../../index.php');
 }
-
-$confManager = new Configurations();
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -27,8 +25,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js?ver=20130917" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/admin.portal.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
-        const maxPostSize = <?php echo $confManager->getServerMaxPostSize(); ?>;
-        const maxUploadSize = <?php echo $confManager->getServerMaxUploadFilesize(); ?>;
+        const maxPostSize = <?php echo FileSystemService::getServerMaxPostSize(); ?>;
+        const maxUploadSize = <?php echo FileSystemService::getServerMaxUploadFilesize(); ?>;
 
         document.addEventListener("DOMContentLoaded", function() {
             $('#tabs').tabs({

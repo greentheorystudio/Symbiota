@@ -18,7 +18,7 @@ const checklistTaxaAddEditModule = {
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <single-scientific-common-name-auto-complete :sciname="checklistTaxaData['sciname']" :disabled="Number(checklistTaxaData['tid']) > 0" label="Taxon" limit-to-options="true" @update:sciname="processTaxonValChange"></single-scientific-common-name-auto-complete>
+                    <single-scientific-common-name-auto-complete :sciname="checklistTaxaData['sciname']" :disabled="Number(checklistTaxaData['tid']) > 0" label="Taxon" rank-low="180" limit-to-options="true" @update:sciname="processTaxonValChange"></single-scientific-common-name-auto-complete>
                 </div>
             </div>
             <div class="row">
