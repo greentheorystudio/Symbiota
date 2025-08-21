@@ -4,7 +4,6 @@ include_once(__DIR__ . '/../services/DbService.php');
 class IRLDataService {
 
 	private $conn;
-    private $tidArr = array();
 
     public function __construct(){
         $connection = new DbService();
@@ -16,45 +15,6 @@ class IRLDataService {
 			$this->conn->close();
 		}
 	}
-
-    public function getChecklistTaxa($clid): array
-    {
-        $returnArr = array();
-        $sql = 'SELECT c.TID, t.SciName, c.Habitat, c.Notes ' .
-            'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.TID = t.TID  ' .
-            'WHERE c.CLID = ' .$clid. ' '.
-            'ORDER BY t.SciName ';
-        //echo $sql;
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $sciname = $row->SciName;
-            if(strpos($sciname, ' ') === false){
-                $sciname .= ' spp.';
-            }
-            $returnArr[$row->TID]['sciname'] = $sciname;
-            $returnArr[$row->TID]['habitat'] = $row->Habitat;
-            $returnArr[$row->TID]['notes'] = $row->Notes;
-            $this->tidArr[] = $row->TID;
-        }
-        $result->free();
-        return $returnArr;
-    }
-
-    public function getChecklistVernaculars(): array
-    {
-        $returnArr = array();
-        $sql = 'SELECT TID, VernacularName ' .
-            'FROM taxavernaculars  ' .
-            'WHERE TID IN(' .implode(',', $this->tidArr). ') '.
-            'ORDER BY TID, VernacularName ';
-        //echo $sql;
-        $result = $this->conn->query($sql);
-        while($row = $result->fetch_object()){
-            $returnArr[$row->TID][] = $row->VernacularName;
-        }
-        $result->free();
-        return $returnArr;
-    }
 
     public function getConfiguredData($collid): array
     {
@@ -95,11 +55,13 @@ class IRLDataService {
     {
         $returnArr = array();
         $alphaArr = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l');
-        $headerCodeArr = array('');
-        $headerRepArr = array('');
+        $headerCodeArr = array('Kingdom','Phylum','Class','Order','Family','Scientific Name');
+        $headerRepArr = array('','','','','','');
         $keyArr = array();
         $taxaDataArr = array();
         $taxaNameArr = array();
+        $targetTidArr = array();
+        $parentTaxonArr = array();
         $sql = 'SELECT DISTINCT l.locationCode, o.`year`, o.`month`, o.rep '.
             'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
             'WHERE o.collid = ' . (int)$collid . ' ORDER BY l.locationCode, o.`year`, o.`month`, o.rep ';
@@ -117,22 +79,50 @@ class IRLDataService {
         $returnArr[] = $headerCodeArr;
         $returnArr[] = $headerRepArr;
 
-        $sql = 'SELECT l.locationCode, o.sciname, o.`year`, o.`month`, o.rep, o.individualCount '.
+        $sql = 'SELECT l.locationCode, o.sciname, t.tid, t.rankid, o.`year`, o.`month`, o.rep, o.individualCount '.
             'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
+            'LEFT JOIN taxa AS t ON o.tid = t.tid '.
             'WHERE o.collid = ' . (int)$collid . ' ORDER BY o.sciname ';
         //echo $sql;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $keyCode = $row->locationCode . '.' . $row->year . '.' . ((int)$row->month < 10 ? ('0' . $row->month) : $row->month) . '-' . $row->rep;
-            if(!in_array($row->sciname, $taxaNameArr)){
-                $taxaNameArr[] = $row->sciname;
+            if($row->sciname && !array_key_exists($row->tid, $taxaNameArr)){
+                $taxaNameArr[$row->tid] = $row->sciname;
+            }
+            if($row->tid && !in_array($row->tid, $targetTidArr)){
+                $targetTidArr[] = $row->tid;
             }
             $taxaDataArr[$row->sciname][$keyCode] = $row->individualCount;
+            if((int)$row->rankid === 10 || (int)$row->rankid === 30 || (int)$row->rankid === 60 || (int)$row->rankid === 100 || (int)$row->rankid === 140){
+                $parentTaxonArr[$row->tid][(int)$row->rankid]['id'] = $row->tid;
+                $parentTaxonArr[$row->tid][(int)$row->rankid]['sciname'] = $row->sciname;
+            }
         }
         $result->free();
 
-        foreach($taxaNameArr as $sciname){
+        $parentTaxonSql = 'SELECT DISTINCT te.tid, t.tid AS parentTid, t.rankid, t.sciname '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.tid '.
+            'WHERE te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted AND t.RankId IN(10,30,60,100,140) ';
+        //echo '<div>Parent sql: ' .$parentTaxonSql. '</div>';
+        if($result = $this->conn->query($parentTaxonSql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $parentTaxonArr[$row['tid']][(int)$row['rankid']]['id'] = $row['parentTid'];
+                $parentTaxonArr[$row['tid']][(int)$row['rankid']]['sciname'] = $row['sciname'];
+                unset($rows[$index]);
+            }
+        }
+
+        foreach($taxaNameArr as $tid => $sciname){
+            $parentArr = (array_key_exists($tid, $parentTaxonArr) ? $parentTaxonArr[$tid] : array());
             $rowArr = array();
+            $rowArr[] = (array_key_exists(10, $parentArr) ? $parentArr[10]['sciname'] : '');
+            $rowArr[] = (array_key_exists(30, $parentArr) ? $parentArr[30]['sciname'] : '');
+            $rowArr[] = (array_key_exists(60, $parentArr) ? $parentArr[60]['sciname'] : '');
+            $rowArr[] = (array_key_exists(100, $parentArr) ? $parentArr[100]['sciname'] : '');
+            $rowArr[] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
             $rowArr[] = $sciname;
             foreach($keyArr as $key){
                 $rowArr[] = ((array_key_exists($key, $taxaDataArr[$sciname]) && (int)$taxaDataArr[$sciname][$key] > 0) ? $taxaDataArr[$sciname][$key] : '0');
@@ -194,14 +184,18 @@ class IRLDataService {
     public function getProjectRScriptData($collid): array
     {
         $returnArr = array();
+        $taxaNameArr = array();
+        $targetTidArr = array();
+        $parentTaxonArr = array();
         $oArr = array("M01", "M15");
         $mArr = array("M02", "M03", "M04", "M14");
         $pArr = array("M05", "M06", "M08");
         $eArr = array("M07", "M09", "M10", "M11", "M12", "M13");
         $sql = 'SELECT DISTINCT l.locationcode, o.decimallatitude, o.decimallongitude, o.rep, o.eventdate, '.
-            'o.sciname, o.individualcount, o.identificationRemarks, m.datavalue '.
+            'o.sciname, t.tid, t.rankid, o.individualcount, o.identificationRemarks, m.datavalue '.
             'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
             'LEFT JOIN ommofextension AS m ON o.eventID = m.eventID '.
+            'LEFT JOIN taxa AS t ON o.tid = t.tid '.
             'WHERE o.collid = ' . (int)$collid . ' AND (m.field = "bottom_salinity" OR ISNULL(m.mofID)) ';
         //echo $sql;
         $result = $this->conn->query($sql);
@@ -228,12 +222,53 @@ class IRLDataService {
                 $nodeArr['HabClassName'] = '';
             }
             $nodeArr['Salinity'] = $row->datavalue;
+            $nodeArr['Kingdom'] = '';
+            $nodeArr['Phylum'] = '';
+            $nodeArr['Class'] = '';
+            $nodeArr['Order'] = '';
+            $nodeArr['Family'] = '';
             $nodeArr['Species'] = $row->sciname;
             $nodeArr['Abundance'] = $row->individualcount;
             $nodeArr['IDRemarks'] = $row->identificationRemarks;
+            if($row->sciname && !array_key_exists($row->sciname, $taxaNameArr)){
+                $taxaNameArr[$row->sciname] = $row->tid;
+            }
+            if($row->tid && !in_array($row->tid, $targetTidArr)){
+                $targetTidArr[] = $row->tid;
+            }
+            if((int)$row->rankid === 10 || (int)$row->rankid === 30 || (int)$row->rankid === 60 || (int)$row->rankid === 100 || (int)$row->rankid === 140){
+                $parentTaxonArr[$row->tid][(int)$row->rankid]['id'] = $row->tid;
+                $parentTaxonArr[$row->tid][(int)$row->rankid]['sciname'] = $row->sciname;
+            }
             $returnArr[] = $nodeArr;
         }
         $result->free();
+
+        $parentTaxonSql = 'SELECT DISTINCT te.tid, t.tid AS parentTid, t.rankid, t.sciname '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.tid '.
+            'WHERE te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted AND t.RankId IN(10,30,60,100,140) ';
+        //echo '<div>Parent sql: ' .$parentTaxonSql. '</div>';
+        if($result = $this->conn->query($parentTaxonSql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $parentTaxonArr[$row['tid']][(int)$row['rankid']]['id'] = $row['parentTid'];
+                $parentTaxonArr[$row['tid']][(int)$row['rankid']]['sciname'] = $row['sciname'];
+                unset($rows[$index]);
+            }
+        }
+
+        foreach($returnArr as $nodeArr){
+            $tid = $nodeArr['Species'] ? $taxaNameArr[$nodeArr['Species']] : null;
+            if($tid){
+                $parentArr = (array_key_exists($tid, $parentTaxonArr) ? $parentTaxonArr[$tid] : array());
+                $nodeArr['Kingdom'] = (array_key_exists(10, $parentArr) ? $parentArr[10]['sciname'] : '');
+                $nodeArr['Phylum'] = (array_key_exists(30, $parentArr) ? $parentArr[30]['sciname'] : '');
+                $nodeArr['Class'] = (array_key_exists(60, $parentArr) ? $parentArr[60]['sciname'] : '');
+                $nodeArr['Order'] = (array_key_exists(100, $parentArr) ? $parentArr[100]['sciname'] : '');
+                $nodeArr['Family'] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
+            }
+        }
         return $returnArr;
     }
 
