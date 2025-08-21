@@ -183,6 +183,7 @@ class IRLDataService {
 
     public function getProjectRScriptData($collid): array
     {
+        $dataArr = array();
         $returnArr = array();
         $taxaNameArr = array();
         $targetTidArr = array();
@@ -240,7 +241,7 @@ class IRLDataService {
                 $parentTaxonArr[$row->tid][(int)$row->rankid]['id'] = $row->tid;
                 $parentTaxonArr[$row->tid][(int)$row->rankid]['sciname'] = $row->sciname;
             }
-            $returnArr[] = $nodeArr;
+            $dataArr[] = $nodeArr;
         }
         $result->free();
 
@@ -258,7 +259,7 @@ class IRLDataService {
             }
         }
 
-        foreach($returnArr as $nodeArr){
+        foreach($dataArr as $nodeArr){
             $tid = $nodeArr['Species'] ? $taxaNameArr[$nodeArr['Species']] : null;
             if($tid){
                 $parentArr = (array_key_exists($tid, $parentTaxonArr) ? $parentTaxonArr[$tid] : array());
@@ -268,6 +269,7 @@ class IRLDataService {
                 $nodeArr['Order'] = (array_key_exists(100, $parentArr) ? $parentArr[100]['sciname'] : '');
                 $nodeArr['Family'] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
             }
+            $returnArr[] = $nodeArr;
         }
         return $returnArr;
     }
