@@ -21,7 +21,7 @@ const mofDataFieldModule = {
                     <q-btn color="secondary" @click="processSaveDataEdits();" :label="('Save ' + configuredDataLabel + ' Edits')" :disabled="!editsExist" />
                 </div>
             </div>
-            <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-gutter-sm">
+            <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-col-gutter-sm">
                 <template v-for="layoutElement in configuredDataFieldsLayoutData">
                     <template v-if="layoutElement.type === 'dataFieldRow'">
                         <mof-data-field-row :editor="true" :configured-data="configuredData" :configured-data-fields="configuredDataFields" :fields="layoutElement.fields" @update:configured-edit-data="updateConfiguredEditData"></mof-data-field-row>

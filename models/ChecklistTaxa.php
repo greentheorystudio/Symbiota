@@ -97,7 +97,7 @@ class ChecklistTaxa{
         return $retVal;
     }
 
-    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort = null): array
+    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort = null, $index = null, $recCnt = null): array
     {
         $retArr = array();
         $tempArr = array();
@@ -120,13 +120,17 @@ class ChecklistTaxa{
             else{
                 $sql .= 'ORDER BY t.sciname ';
             }
+            if((int)$recCnt > 0){
+                $startIndex = (int)$index + ((int)$index * (int)$recCnt);
+                $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
+            }
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $tidArr = array();
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
-                foreach($rows as $index => $row){
+                foreach($rows as $rowIndex => $row){
                     if((int)$row['tidaccepted'] > 0){
                         if(!in_array($row['tidaccepted'], $tidArr, true)){
                             $tidArr[] = $row['tidaccepted'];
@@ -148,7 +152,7 @@ class ChecklistTaxa{
                             $retArr[] = $nodeArr;
                         }
                     }
-                    unset($rows[$index]);
+                    unset($rows[$rowIndex]);
                 }
                 if(($includeKeyData || $includeSynonymyData || $includeVernacularData) && count($tidArr) > 0){
                     if($includeKeyData){

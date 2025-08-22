@@ -385,63 +385,65 @@ class Collections {
         $returnArr = array();
         $targetTidArr = array();
         $parentTaxonArr = array();
-        $tidSql = 'SELECT DISTINCT tid FROM omoccurrences WHERE collid = ' . (int)$collid . ' ';
+        $tidSql = 'SELECT DISTINCT t.tid, t.sciname, t.rankid FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.tid WHERE o.collid = ' . (int)$collid . ' ';
         if($result = $this->conn->query($tidSql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
                 if($row['tid']){
                     $targetTidArr[] = $row['tid'];
+                    if((int)$row['rankid'] === 10 || (int)$row['rankid'] === 30 || (int)$row['rankid'] === 60 || (int)$row['rankid'] === 100 || (int)$row['rankid'] === 140){
+                        $parentTaxonArr[$row['tid']][(int)$row['rankid']]['id'] = $row['tid'];
+                        $parentTaxonArr[$row['tid']][(int)$row['rankid']]['sciname'] = $row['sciname'];
+                    }
                 }
                 unset($rows[$index]);
             }
         }
-        $parentTaxonSql = 'SELECT DISTINCT te.tid, t.TID AS parentTid, t.RankId, t.SciName '.
-            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
+        $parentTaxonSql = 'SELECT DISTINCT te.tid, t.tid AS parentTid, t.rankid, t.sciname '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.tid '.
             'WHERE te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted AND t.RankId IN(10,30,60,100,140) ';
         //echo '<div>Parent sql: ' .$parentTaxonSql. '</div>';
         if($result = $this->conn->query($parentTaxonSql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $parentTaxonArr[$row['tid']][(int)$row['RankId']]['id'] = $row['parentTid'];
-                $parentTaxonArr[$row['tid']][(int)$row['RankId']]['sciname'] = $row['SciName'];
+                $parentTaxonArr[$row['tid']][(int)$row['rankid']]['id'] = $row['parentTid'];
+                $parentTaxonArr[$row['tid']][(int)$row['rankid']]['sciname'] = $row['sciname'];
                 unset($rows[$index]);
             }
         }
 
-        $sql = 'SELECT DISTINCT t.TID, t.SciName '.
-            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
-            'WHERE (te.tid IN(' . implode(',', $targetTidArr) . ') AND t.RankId >= 180 AND t.tid = t.tidaccepted) '.
-            'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT DISTINCT parenttid FROM taxa)) ';
+        $sql = 'SELECT DISTINCT t.tid, t.sciname '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.tid '.
+            'WHERE (te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted) ';
         //echo '<div>Table sql: ' .$sql. '</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $tid = $row['TID'];
+                $tid = $row['tid'];
                 if($tid){
                     $recordArr = array();
-                    $parentArr = (array_key_exists($tid,$parentTaxonArr) ? $parentTaxonArr[$tid] : array());
-                    $recordArr['kingdomName'] = (array_key_exists(10, $parentArr) ? $parentArr[10]['sciname'] : '');
-                    $recordArr['phylumName'] = (array_key_exists(30, $parentArr) ? $parentArr[30]['sciname'] : '');
-                    $recordArr['className'] = (array_key_exists(60, $parentArr) ? $parentArr[60]['sciname'] : '');
-                    $recordArr['orderName'] = (array_key_exists(100, $parentArr) ? $parentArr[100]['sciname'] : '');
-                    $recordArr['familyName'] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
-                    $recordArr['SciName'] = $row['SciName'];
+                    $parentArr = (array_key_exists($tid, $parentTaxonArr) ? $parentTaxonArr[$tid] : array());
+                    $recordArr['Kingdom'] = (array_key_exists(10, $parentArr) ? $parentArr[10]['sciname'] : '');
+                    $recordArr['Phylum'] = (array_key_exists(30, $parentArr) ? $parentArr[30]['sciname'] : '');
+                    $recordArr['Class'] = (array_key_exists(60, $parentArr) ? $parentArr[60]['sciname'] : '');
+                    $recordArr['Order'] = (array_key_exists(100, $parentArr) ? $parentArr[100]['sciname'] : '');
+                    $recordArr['Family'] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
+                    $recordArr['Scientific Name'] = $row['sciname'];
                     $returnArr[] = $recordArr;
                 }
                 unset($rows[$index]);
             }
         }
-        $kingdomName  = array_column($returnArr, 'kingdomName');
-        $phylumName = array_column($returnArr, 'phylumName');
-        $className = array_column($returnArr, 'className');
-        $orderName = array_column($returnArr, 'orderName');
-        $familyName = array_column($returnArr, 'familyName');
-        $SciName = array_column($returnArr, 'SciName');
+        $kingdomName  = array_column($returnArr, 'Kingdom');
+        $phylumName = array_column($returnArr, 'Phylum');
+        $className = array_column($returnArr, 'Class');
+        $orderName = array_column($returnArr, 'Order');
+        $familyName = array_column($returnArr, 'Family');
+        $SciName = array_column($returnArr, 'Scientific Name');
         array_multisort($kingdomName, SORT_ASC, $phylumName, SORT_ASC, $className, SORT_ASC, $orderName, SORT_ASC, $familyName, SORT_ASC, $SciName, SORT_ASC, $returnArr);
-        array_unshift($returnArr, array('Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Scientific Name'));
         return $returnArr;
     }
 

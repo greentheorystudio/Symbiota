@@ -48,4 +48,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $locationid = (int)$_POST['locationid'];
         echo $occurrenceCollectingEvents->updateCollectingEventLocation($eventid, $locationid);
     }
+    elseif($action === 'deleteCollectingEventRecord' && $eventid && $isEditor){
+        echo $occurrenceCollectingEvents->deleteCollectingEventRecord($eventid);
+    }
 }
