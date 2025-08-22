@@ -22,6 +22,7 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         checklistTaxaTidArr: [],
         checklistTaxaUpdateData: {},
         checklistTaxaVoucherArr: [],
+        loadingIndex: 0,
         taxaFilterOptions: []
     }),
     getters: {
@@ -110,6 +111,7 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             this.checklistTaxaTidAcceptedArr.length = 0;
             this.checklistTaxaTidArr.length = 0;
             this.taxaFilterOptions.length = 0;
+            this.loadingIndex = 0;
         },
         clearCurrentChecklistTaxon() {
             this.checklistTaxaImageOptionArr.length = 0;
@@ -172,11 +174,14 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
             return this.checklistTaxaArr.find(taxon => Number(taxon.cltlid) === this.checklistTaxaId);
         },
         setChecklistTaxaArr(clidArr, includeKeyData, includeSynonymyData, includeVernacularData, callback = null) {
+            const loadingCnt = 200;
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr));
             formData.append('includeKeyData', (includeKeyData ? '1' : '0'));
             formData.append('includeSynonymyData', (includeSynonymyData ? '1' : '0'));
             formData.append('includeVernacularData', (includeVernacularData ? '1' : '0'));
+            formData.append('index', this.loadingIndex.toString());
+            formData.append('reccnt', loadingCnt.toString());
             formData.append('action', 'getChecklistTaxa');
             fetch(checklistTaxaApiUrl, {
                 method: 'POST',
@@ -186,13 +191,19 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.checklistTaxaArr = data;
-                this.setChecklistTaxaIdArrs();
-                if(!includeKeyData && this.checklistTaxaArr.length > 0){
-                    this.setTaxaFilterOptions();
+                this.checklistTaxaArr = this.checklistTaxaArr.concat(data);
+                if(data.length < loadingCnt){
+                    this.setChecklistTaxaIdArrs();
+                    if(!includeKeyData && this.checklistTaxaArr.length > 0){
+                        this.setTaxaFilterOptions();
+                    }
+                    if(callback){
+                        callback();
+                    }
                 }
-                if(callback){
-                    callback();
+                else{
+                    this.loadingIndex++;
+                    this.setChecklistTaxaArr(clidArr, includeKeyData, includeSynonymyData, includeVernacularData, callback);
                 }
             });
         },
