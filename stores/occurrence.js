@@ -471,6 +471,26 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
             });
         },
+        deleteCollectingEventRecord(callback = null) {
+            this.collectingEventStore.deleteCollectingEventRecord(this.getCollId, (res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setCurrentCollectingEventRecord(0);
+                }
+            });
+        },
+        deleteLocationRecord(callback = null) {
+            this.locationStore.deleteLocationRecord(this.getCollId, (res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setCurrentLocationRecord(0);
+                }
+            });
+        },
         deleteOccurrenceDeterminationRecord(callback = null) {
             this.determinationStore.deleteDeterminationRecord(this.getCollId, (res) => {
                 if(callback){
@@ -868,7 +888,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setCurrentCollectingEventRecord(eventid) {
             this.collectingEventStore.setCurrentCollectingEventRecord(eventid, this.occurrenceEntryFormat, this.getCollectionData['defaultrepcount'], this.getEventMofDataFields, () => {
                 this.setCurrentOccurrenceRecord(this.occId);
-                this.updateOccurrenceEditData('eventid', this.getCollectingEventID.toString());
+                this.updateOccurrenceEditData('eventid', (Number(this.getCollectingEventID) > 0 ? this.getCollectingEventID.toString() : null));
             });
         },
         setCurrentDeterminationRecord(detid) {
@@ -879,7 +899,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         setCurrentLocationRecord(locationid) {
             this.locationStore.setCurrentLocationRecord(locationid, this.getCollId, () => {
-                this.updateOccurrenceEditData('locationid', this.getLocationID.toString());
+                this.updateOccurrenceEditData('locationid', (Number(this.getLocationID) > 0 ? this.getLocationID.toString() : null));
                 this.collectingEventStore.getLocationCollectingEvents(this.getCollId, locationid);
             });
         },
