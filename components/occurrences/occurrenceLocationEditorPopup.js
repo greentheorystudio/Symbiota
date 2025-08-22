@@ -22,7 +22,8 @@ const occurrenceLocationEditorPopup = {
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
-                                <div class="row justify-end">
+                                <div class="row justify-end q-gutter-xs">
+                                    <q-btn color="negative" @click="deleteLocation();" label="Delete Location" :disabled="locationId === 0 || collectingEventArr.length > 0" />
                                     <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" />
                                 </div>
                             </div>
@@ -49,11 +50,13 @@ const occurrenceLocationEditorPopup = {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = useOccurrenceStore();
 
+        const collectingEventArr = Vue.computed(() => occurrenceStore.getLocationCollectingEventArr);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const editsExist = Vue.computed(() => occurrenceStore.getLocationEditsExist);
         const locationData = Vue.computed(() => occurrenceStore.getLocationData);
         const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
+        const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const locationValid = Vue.computed(() => occurrenceStore.getLocationValid);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
 
@@ -66,6 +69,17 @@ const occurrenceLocationEditorPopup = {
                 occurrenceStore.revertLocationEditData();
             }
             context.emit('close:popup');
+        }
+
+        function deleteLocation() {
+            occurrenceStore.deleteLocationRecord((res) => {
+                if(res === 1){
+                    context.emit('close:popup');
+                }
+                else{
+                    showNotification('negative', 'There was an error while deleting the location');
+                }
+            });
         }
 
         function saveLocationEdits() {
@@ -100,14 +114,17 @@ const occurrenceLocationEditorPopup = {
         });
 
         return {
+            collectingEventArr,
             contentRef,
             contentStyle,
             editsExist,
             locationData,
             locationFields,
+            locationId,
             locationValid,
             occurrenceFieldDefinitions,
             closePopup,
+            deleteLocation,
             saveLocationEdits,
             updateLocationData
         }
