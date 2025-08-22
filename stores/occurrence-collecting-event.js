@@ -177,6 +177,22 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 });
             });
         },
+        deleteCollectingEventRecord(collid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('eventid', this.collectingEventId.toString());
+            formData.append('action', 'deleteCollectingEventRecord');
+            fetch(occurrenceCollectingEventApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         getLocationCollectingEvents(collid, locationid) {
             this.locationCollectingEventArr.length = 0;
             const formData = new FormData();

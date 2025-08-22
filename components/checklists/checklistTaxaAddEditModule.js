@@ -18,7 +18,7 @@ const checklistTaxaAddEditModule = {
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <single-scientific-common-name-auto-complete :sciname="checklistTaxaData['sciname']" :disabled="Number(checklistTaxaData['tid']) > 0" label="Taxon" limit-to-options="true" @update:sciname="processTaxonValChange"></single-scientific-common-name-auto-complete>
+                    <single-scientific-common-name-auto-complete :sciname="checklistTaxaData['sciname']" :disabled="Number(checklistTaxaData['tid']) > 0" label="Taxon" rank-low="180" limit-to-options="true" @update:sciname="processTaxonValChange"></single-scientific-common-name-auto-complete>
                 </div>
             </div>
             <div class="row">
@@ -63,17 +63,24 @@ const checklistTaxaAddEditModule = {
         const checklistTaxaValid = Vue.computed(() => checklistStore.getChecklistTaxaValid);
         const editsExist = Vue.computed(() => checklistStore.getChecklistTaxaEditsExist);
         const confirmationPopupRef = Vue.ref(null);
+        const taxaDataArr = Vue.computed(() => checklistStore.getChecklistTaxaArr);
 
         function addChecklistTaxon() {
-            checklistStore.createChecklistTaxaRecord((newChecklistTaxaId) => {
-                if(newChecklistTaxaId > 0){
-                    showNotification('positive','Taxon added successfully.');
-                    context.emit('close:popup');
-                }
-                else{
-                    showNotification('negative', 'There was an error adding the taxon to the checklist');
-                }
-            });
+            const existingTaxon = taxaDataArr.value.find(taxon => Number(taxon['tid']) === Number(checklistTaxaData.value['tid']));
+            if(!existingTaxon){
+                checklistStore.createChecklistTaxaRecord((newChecklistTaxaId) => {
+                    if(newChecklistTaxaId > 0){
+                        showNotification('positive','Taxon added successfully.');
+                        context.emit('close:popup');
+                    }
+                    else{
+                        showNotification('negative', 'There was an error adding the taxon to the checklist');
+                    }
+                });
+            }
+            else{
+                showNotification('negative', 'That taxon is already included in the checklist');
+            }
         }
 
         function deleteChecklistTaxon() {

@@ -34,13 +34,16 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getLocationFields'){
         echo json_encode($occurrenceLocations->getLocationFields());
     }
-    else if($action === 'getNameCodeAutocompleteLocationList'){
+    elseif($action === 'getNameCodeAutocompleteLocationList'){
         echo json_encode($occurrenceLocations->getAutocompleteLocationList($collid, $_POST['key'], $_POST['term']));
     }
-    else if($action === 'getNearbyLocationArr' && array_key_exists('decimallatitude',$_POST) && array_key_exists('decimallongitude',$_POST)){
+    elseif($action === 'getNearbyLocationArr' && array_key_exists('decimallatitude',$_POST) && array_key_exists('decimallongitude',$_POST)){
         echo json_encode($occurrenceLocations->getNearbyLocationArr($collid, $locationid, $_POST['decimallatitude'], $_POST['decimallongitude']));
     }
-    else if($action === 'searchLocations' && array_key_exists('criteria',$_POST)){
+    elseif($action === 'searchLocations' && array_key_exists('criteria',$_POST)){
         echo json_encode($occurrenceLocations->searchLocations($collid, json_decode($_POST['criteria'], true)));
+    }
+    elseif($action === 'deleteLocationRecord' && $locationid && $isEditor){
+        echo $occurrenceLocations->deleteLocationRecord($locationid);
     }
 }

@@ -97,6 +97,22 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
                 });
             });
         },
+        deleteLocationRecord(collid, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('locationid', this.locationId.toString());
+            formData.append('action', 'deleteLocationRecord');
+            fetch(occurrenceLocationApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         getNearbyLocations(collid, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
