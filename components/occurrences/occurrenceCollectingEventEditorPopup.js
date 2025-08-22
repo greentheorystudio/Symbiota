@@ -23,6 +23,7 @@ const occurrenceCollectingEventEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end q-gutter-xs">
+                                    <q-btn color="negative" @click="deleteEvent();" label="Delete Event" :disabled="eventId === 0 || collectingEventBenthicTaxaCnt > 0 || collectingEventCollectionArr.length > 0 || Object.keys(configuredData).length > 0" />
                                     <q-btn color="secondary" @click="showEventTransferPopup = true" label="Change Location" />
                                     <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
                                 </div>
@@ -58,11 +59,15 @@ const occurrenceCollectingEventEditorPopup = {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = useOccurrenceStore();
 
+        const collectingEventBenthicTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventBenthicTaxaCnt);
+        const collectingEventCollectionArr = Vue.computed(() => occurrenceStore.getCollectingEventCollectionArr);
+        const configuredData = Vue.computed(() => occurrenceStore.getEventMofData);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const editsExist = Vue.computed(() => occurrenceStore.getCollectingEventEditsExist);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
+        const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
         const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
         const showEventTransferPopup = Vue.ref(false);
@@ -76,6 +81,17 @@ const occurrenceCollectingEventEditorPopup = {
                 occurrenceStore.revertCollectingEventEditData();
             }
             context.emit('close:popup');
+        }
+
+        function deleteEvent() {
+            occurrenceStore.deleteCollectingEventRecord((res) => {
+                if(res === 1){
+                    context.emit('close:popup');
+                }
+                else{
+                    showNotification('negative', 'There was an error while deleting the collecting event');
+                }
+            });
         }
 
         function saveEventEdits() {
@@ -110,15 +126,20 @@ const occurrenceCollectingEventEditorPopup = {
         });
 
         return {
+            collectingEventBenthicTaxaCnt,
+            collectingEventCollectionArr,
+            configuredData,
             contentRef,
             contentStyle,
             editsExist,
             eventData,
             eventFields,
+            eventId,
             eventValid,
             occurrenceFieldDefinitions,
             showEventTransferPopup,
             closePopup,
+            deleteEvent,
             saveEventEdits,
             updateCollectingEventData
         }
