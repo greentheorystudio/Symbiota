@@ -63,17 +63,24 @@ const checklistTaxaAddEditModule = {
         const checklistTaxaValid = Vue.computed(() => checklistStore.getChecklistTaxaValid);
         const editsExist = Vue.computed(() => checklistStore.getChecklistTaxaEditsExist);
         const confirmationPopupRef = Vue.ref(null);
+        const taxaDataArr = Vue.computed(() => checklistStore.getChecklistTaxaArr);
 
         function addChecklistTaxon() {
-            checklistStore.createChecklistTaxaRecord((newChecklistTaxaId) => {
-                if(newChecklistTaxaId > 0){
-                    showNotification('positive','Taxon added successfully.');
-                    context.emit('close:popup');
-                }
-                else{
-                    showNotification('negative', 'There was an error adding the taxon to the checklist');
-                }
-            });
+            const existingTaxon = taxaDataArr.value.find(taxon => Number(taxon['tid']) === Number(checklistTaxaData.value['tid']));
+            if(!existingTaxon){
+                checklistStore.createChecklistTaxaRecord((newChecklistTaxaId) => {
+                    if(newChecklistTaxaId > 0){
+                        showNotification('positive','Taxon added successfully.');
+                        context.emit('close:popup');
+                    }
+                    else{
+                        showNotification('negative', 'There was an error adding the taxon to the checklist');
+                    }
+                });
+            }
+            else{
+                showNotification('negative', 'That taxon is already included in the checklist');
+            }
         }
 
         function deleteChecklistTaxon() {
