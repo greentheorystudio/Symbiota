@@ -18,7 +18,9 @@ if($action && SanitizerService::validateInternalRequest()){
         $includeSynonymyData = array_key_exists('includeSynonymyData', $_POST) && (int)$_POST['includeSynonymyData'] === 1;
         $includeVernacularData = array_key_exists('includeVernacularData', $_POST) && (int)$_POST['includeVernacularData'] === 1;
         $taxonSort = (array_key_exists('taxonSort', $_POST) && $_POST['taxonSort']) ? $_POST['taxonSort'] : null;
-        echo json_encode($checklistTaxa->getChecklistTaxa(json_decode($_POST['clidArr'], false), $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort));
+        $index = array_key_exists('index', $_POST) ? (int)$_POST['index'] : null;
+        $recCnt = (array_key_exists('reccnt', $_POST) && (int)$_POST['reccnt'] > 0) ? (int)$_POST['reccnt'] : null;
+        echo json_encode($checklistTaxa->getChecklistTaxa(json_decode($_POST['clidArr'], false), $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort, $index, $recCnt));
     }
     elseif($action === 'deleteChecklistTaxonRecord' && $isEditor && $clid && array_key_exists('cltlid', $_POST)){
         echo $checklistTaxa->deleteChecklistTaxonRecord($_POST['cltlid']);

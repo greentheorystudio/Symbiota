@@ -88,6 +88,24 @@ class OccurrenceLocations{
         return $newID;
     }
 
+    public function deleteLocationRecord($locationid): int
+    {
+        $retVal = 1;
+        $sql = 'UPDATE omoccurrences SET locationid = NULL WHERE locationid = ' . (int)$locationid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'UPDATE omoccurcollectingevents SET locationid = NULL WHERE locationid = ' . (int)$locationid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurlocations WHERE locationid = ' . (int)$locationid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getAutocompleteLocationList($collid, $key, $queryString): array
     {
         $retArr = array();
