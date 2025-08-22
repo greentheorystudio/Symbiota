@@ -52,7 +52,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/taxa/index.php?taxon=Zizia" ><i>Zizia</i></a>.
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-5 row justify-center">
+                    <div class="col-12 col-sm-6 col-md-4 row justify-center">
                         <organism-of-the-day checklist-id="1" title="Plant of the Day" type="plant"></organism-of-the-day>
                     </div>
                 </div>
