@@ -88,6 +88,24 @@ class OccurrenceCollectingEvents{
         return $newID;
     }
 
+    public function deleteCollectingEventRecord($eventid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM ommofextension WHERE eventid = ' . (int)$eventid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'UPDATE omoccurrences SET eventid = NULL WHERE eventid = ' . (int)$eventid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM omoccurcollectingevents WHERE eventid = ' . (int)$eventid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getCollectingEventBenthicData($eventid): array
     {
         $retArr = array();

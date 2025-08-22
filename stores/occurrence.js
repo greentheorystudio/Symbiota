@@ -471,6 +471,26 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
             });
         },
+        deleteCollectingEventRecord(callback = null) {
+            this.collectingEventStore.deleteCollectingEventRecord(this.getCollId, (res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setCurrentCollectingEventRecord(0);
+                }
+            });
+        },
+        deleteLocationRecord(callback = null) {
+            this.locationStore.deleteLocationRecord(this.getCollId, (res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setCurrentLocationRecord(0);
+                }
+            });
+        },
         deleteOccurrenceDeterminationRecord(callback = null) {
             this.determinationStore.deleteDeterminationRecord(this.getCollId, (res) => {
                 if(callback){
