@@ -24,7 +24,7 @@ include_once(__DIR__ . '/config/header-includes.php');
     <div id="mainContainer">
         <div class="q-pa-md">
             <h1>Welcome to the Online Virtual Flora of Wisconsin</h1>
-            <div class="q-mb-md row q-col-gutter-md">
+            <div class="q-my-md row q-col-gutter-md">
                 <div class="col-12 col-sm-6 col-md-7">
                     <p>
                         This site is a collaborative effort between the herbaria of the UW-Madison (WIS) and the UW-Steven's Point (UWSP),
