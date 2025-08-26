@@ -153,6 +153,19 @@ class Configurations{
         return $returnVal;
     }
 
+    public function addConfigurationArr($configArr): int
+    {
+        $returnVal = 0;
+        if(count($configArr) > 0){
+            foreach($configArr as $key => $value){
+                if($key && $returnVal === 1){
+                    $returnVal = $this->addConfiguration($key,$value);
+                }
+            }
+        }
+        return $returnVal;
+    }
+
     public function deleteConfiguration($name): int
     {
         $returnVal = 0;
@@ -160,6 +173,19 @@ class Configurations{
             'WHERE configurationname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
         if($this->conn->query($sql)){
             $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
+    public function deleteConfigurationArr($configArr): int
+    {
+        $returnVal = 0;
+        if(count($configArr) > 0){
+            foreach($configArr as $key => $value){
+                if($key && $returnVal === 1){
+                    $returnVal = $this->deleteConfiguration($key);
+                }
+            }
         }
         return $returnVal;
     }
@@ -323,21 +349,6 @@ class Configurations{
         }
     }
 
-    public function saveMapServerConfig($json): bool
-    {
-        $status = true;
-        if($fh = fopen($GLOBALS['SERVER_ROOT'] . '/content/json/portalconfig.json', 'wb')){
-            if(!fwrite($fh,$json)){
-                $status = false;
-            }
-            fclose($fh);
-        }
-        else{
-            $status = false;
-        }
-        return $status;
-    }
-
     public function setGlobalArr(): void
     {
         $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
@@ -359,7 +370,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20250130';
-        $GLOBALS['JS_VERSION'] = '202505131111111111111111';
+        $GLOBALS['JS_VERSION'] = '20250514';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -431,8 +442,22 @@ class Configurations{
         return $returnVal;
     }
 
-    public function updateCssVersion(): bool
+    public function updateConfigurationValueArr($configArr): int
     {
+        $returnVal = 0;
+        if(count($configArr) > 0){
+            foreach($configArr as $key => $value){
+                if($key && $returnVal === 1){
+                    $returnVal = $this->updateConfigurationValue($key,$value);
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function updateCssVersion(): int
+    {
+        $returnVal = 0;
         $currentCssVersion = '';
         $subVersion = 0;
         $sql = 'SELECT configurationvalue FROM configurations WHERE configurationname = "CSS_VERSION_LOCAL" ';
@@ -473,7 +498,10 @@ class Configurations{
             $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
                 'VALUES("CSS_VERSION_LOCAL", "' . $newCssVersion . '") ';
         }
-        return $this->conn->query($sql);
+        if($this->conn->query($sql)){
+            $returnVal = 1;
+        }
+        return $returnVal;
     }
 
     public function uploadMapDataFile(): string
@@ -503,14 +531,14 @@ class Configurations{
         return $returnStr;
     }
 
-    public function validateClientPath($path): bool
+    public function validateClientPath($path): int
     {
         $testURL = $_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://';
         $testURL .= $_SERVER['HTTP_HOST'];
         $testURL .= $path . '/sitemap.php';
         $headers = @get_headers($testURL);
         $firstHeader = ($headers ? $headers[0] : '');
-        return stripos($firstHeader, '200 OK');
+        return stripos($firstHeader, '200 OK') ? 1 : 0;
     }
 
     public function validateGlobalArr(): void
@@ -753,12 +781,12 @@ class Configurations{
         );
     }
 
-    public function validateNewConfNameCore($name): bool
+    public function validateNewConfNameCore($name): int
     {
-        return in_array($name, $this->coreConfigurations, true);
+        return in_array($name, $this->coreConfigurations, true) ? 1 : 0;
     }
 
-    public function validateNewConfNameExisting($name): bool
+    public function validateNewConfNameExisting($name): int
     {
         $sql = 'SELECT id FROM configurations WHERE configurationname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
         return $this->conn->query($sql)->num_rows;
@@ -777,13 +805,13 @@ class Configurations{
         return $returnVal;
     }
 
-    public function validatePathIsWritable($path): bool
+    public function validatePathIsWritable($path): int
     {
-        return FileSystemService::validatePathIsWritable($path);
+        return FileSystemService::validatePathIsWritable($path) ? 1 : 0;
     }
 
-    public function validateServerPath($path): bool
+    public function validateServerPath($path): int
     {
-        return FileSystemService::validateServerPath($path);
+        return FileSystemService::validateServerPath($path) ? 1 : 0;
     }
 }

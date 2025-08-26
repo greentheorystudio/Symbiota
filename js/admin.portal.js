@@ -22,7 +22,7 @@ function processAddConfiguration(){
     const name = document.getElementById('newConfName').value;
     const value = document.getElementById('newConfValue').value;
     if(name && value){
-        sendAPIRequest("add",name,value);
+        sendAPIRequest("addConfigurationArr",name,value);
     }
     else{
         alert('Please enter both a valid configuration name and a configuration value to add a new configuration.');
@@ -32,10 +32,10 @@ function processAddConfiguration(){
 function processCheckConfigurationChange(configname){
     const checked = document.getElementById(configname).checked;
     if(checked){
-        sendAPIRequest("add",configname,1);
+        sendAPIRequest("addConfigurationArr",configname,1);
     }
     else{
-        sendAPIRequest("delete",configname,"");
+        sendAPIRequest("deleteConfigurationArr",configname,"");
     }
 }
 
@@ -43,37 +43,38 @@ function processClientPathConfigurationChange(configname,oldValue){
     document.getElementById(configname).value = formatPath(document.getElementById(configname).value);
     const configvalue = document.getElementById(configname).value;
     if(configvalue !== ''){
-        const http = new XMLHttpRequest();
-        const url = "../../api/configurations/configurationValidationController.php";
-        let params = 'action=validateClientPath&value='+configvalue;
-        console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                if(http.responseText){
-                    if(confirm("Do you want to save and activate this change?")){
-                        if(oldValue){
-                            sendAPIRequest("update",configname,configvalue);
-                        }
-                        else{
-                            sendAPIRequest("add",configname,configvalue);
-                        }
+        const formData = new FormData();
+        formData.append('value', configvalue);
+        formData.append('action', 'validateClientPath');
+        fetch(configurationsApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            if(Number(res) === 1){
+                if(confirm("Do you want to save and activate this change?")){
+                    if(oldValue){
+                        sendAPIRequest("updateConfigurationValueArr",configname,configvalue);
                     }
                     else{
-                        document.getElementById(configname).value = oldValue;
+                        sendAPIRequest("addConfigurationArr",configname,configvalue);
                     }
                 }
                 else{
-                    alert('The path entered is not a valid URL path to a portal.');
                     document.getElementById(configname).value = oldValue;
                 }
             }
-        };
-        http.send(params);
+            else{
+                alert('The path entered is not a valid URL path to a portal.');
+                document.getElementById(configname).value = oldValue;
+            }
+        });
     }
     else{
-        sendAPIRequest("delete",configname,"");
+        sendAPIRequest("deleteConfigurationArr",configname,"");
     }
 }
 
@@ -83,10 +84,10 @@ function processIntConfigurationChange(configname,oldValue,required){
         if(Number.isInteger(configvalue)){
             if(confirm("Do you want to save and activate this change?")){
                 if(oldValue){
-                    sendAPIRequest("update",configname,configvalue);
+                    sendAPIRequest("updateConfigurationValueArr",configname,configvalue);
                 }
                 else{
-                    sendAPIRequest("add",configname,configvalue);
+                    sendAPIRequest("addConfigurationArr",configname,configvalue);
                 }
             }
             else{
@@ -105,7 +106,7 @@ function processIntConfigurationChange(configname,oldValue,required){
         }
         else{
             if(confirm("Do you want to remove this configuration?")){
-                sendAPIRequest("delete",configname,configvalue);
+                sendAPIRequest("deleteConfigurationArr",configname,configvalue);
             }
             else{
                 document.getElementById(configname).value = oldValue;
@@ -115,69 +116,74 @@ function processIntConfigurationChange(configname,oldValue,required){
 }
 
 function processNewConfNameChange(){
-    const http = new XMLHttpRequest();
-    const url = "../../api/configurations/configurationValidationController.php";
     let newNameValue = document.getElementById('newConfName').value;
     newNameValue = newNameValue.replace(/ /g, "_");
     newNameValue = newNameValue.toUpperCase();
     document.getElementById('newConfName').value = newNameValue;
-    let params = 'action=validateNameCore&value='+newNameValue;
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
-            if(http.responseText){
-                alert('That Configuration Name is used internally within the software and cannot be set as an additional configuration name. Please enter a different name.');
-                document.getElementById('newConfName').value = '';
-            }
-            else{
-                params = 'action=validateNameExisting&value='+newNameValue;
-                //console.log(url+'?'+params);
-                http.open("POST", url, true);
-                http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                http.onreadystatechange = function() {
-                    if(http.readyState === 4 && http.status === 200) {
-                        if(http.responseText > 0){
-                            alert('That Configuration Name is already set and in use within the portal. Please enter a different name.');
-                            document.getElementById('newConfName').value = '';
-                        }
-                    }
-                };
-                http.send(params);
-            }
+    const formData = new FormData();
+    formData.append('value', newNameValue);
+    formData.append('action', 'validateNameCore');
+    fetch(configurationsApiUrl, {
+        method: 'POST',
+        body: formData
+    })
+    .then((response) => {
+        return response.ok ? response.text() : null;
+    })
+    .then((res) => {
+        if(Number(res) === 1){
+            alert('That Configuration Name is used internally within the software and cannot be set as an additional configuration name. Please enter a different name.');
+            document.getElementById('newConfName').value = '';
         }
-    };
-    http.send(params);
+        else{
+            const formData = new FormData();
+            formData.append('value', newNameValue);
+            formData.append('action', 'validateNameExisting');
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    alert('That Configuration Name is already set and in use within the portal. Please enter a different name.');
+                    document.getElementById('newConfName').value = '';
+                }
+            });
+        }
+    });
 }
 
 function processServerPathConfigurationChange(configname,oldValue){
     document.getElementById(configname).value = formatPath(document.getElementById(configname).value);
     const configvalue = document.getElementById(configname).value;
     if(configvalue !== ''){
-        const http = new XMLHttpRequest();
-        const url = "../../api/configurations/configurationValidationController.php";
-        let params = 'action=validateServerPath&value='+configvalue;
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                if(http.responseText){
-                    if(confirm("Do you want to save and activate this change?")){
-                        sendAPIRequest("update",configname,configvalue);
-                    }
-                    else{
-                        document.getElementById(configname).value = oldValue;
-                    }
+        const formData = new FormData();
+        formData.append('value', configvalue);
+        formData.append('action', 'validateServerPath');
+        fetch(configurationsApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            if(Number(res) === 1){
+                if(confirm("Do you want to save and activate this change?")){
+                    sendAPIRequest("updateConfigurationValueArr",configname,configvalue);
                 }
                 else{
-                    alert('The path entered is not a valid path to a portal installation on the server.');
                     document.getElementById(configname).value = oldValue;
                 }
             }
-        };
-        http.send(params);
+            else{
+                alert('The path entered is not a valid path to a portal installation on the server.');
+                document.getElementById(configname).value = oldValue;
+            }
+        });
     }
     else{
         alert('This value is required.');
@@ -189,29 +195,30 @@ function processServerWritePathConfigurationChange(configname,oldValue){
     document.getElementById(configname).value = formatPath(document.getElementById(configname).value);
     const configvalue = document.getElementById(configname).value;
     if(configvalue !== ''){
-        const http = new XMLHttpRequest();
-        const url = "../../api/configurations/configurationValidationController.php";
-        let params = 'action=validateServerWritePath&value='+configvalue;
-        //console.log(url+'?'+params);
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                if(http.responseText){
-                    if(confirm("Do you want to save and activate this change?")){
-                        sendAPIRequest("update",configname,configvalue);
-                    }
-                    else{
-                        document.getElementById(configname).value = oldValue;
-                    }
+        const formData = new FormData();
+        formData.append('value', configvalue);
+        formData.append('action', 'validateServerWritePath');
+        fetch(configurationsApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            if(Number(res) === 1){
+                if(confirm("Do you want to save and activate this change?")){
+                    sendAPIRequest("updateConfigurationValueArr",configname,configvalue);
                 }
                 else{
-                    alert('The path entered is not writable on the server.');
                     document.getElementById(configname).value = oldValue;
                 }
             }
-        };
-        http.send(params);
+            else{
+                alert('The path entered is not writable on the server.');
+                document.getElementById(configname).value = oldValue;
+            }
+        });
     }
     else{
         alert('This value is required.');
@@ -228,10 +235,10 @@ function processTaxonomyRankCheckChange(action){
         }
     }
     if(action === 'add'){
-        sendAPIRequest('add','TAXONOMIC_RANKS',JSON.stringify(rankArr));
+        sendAPIRequest('addConfigurationArr','TAXONOMIC_RANKS',JSON.stringify(rankArr));
     }
     else if(action === 'update'){
-        sendAPIRequest('update','TAXONOMIC_RANKS',JSON.stringify(rankArr),false);
+        sendAPIRequest('updateConfigurationValueArr','TAXONOMIC_RANKS',JSON.stringify(rankArr),false);
     }
 }
 
@@ -240,10 +247,10 @@ function processTextConfigurationChange(configname,oldValue,required){
     if(configvalue !== ""){
         if(confirm("Do you want to save and activate this change?")){
             if(oldValue){
-                sendAPIRequest("update",configname,configvalue);
+                sendAPIRequest("updateConfigurationValueArr",configname,configvalue);
             }
             else{
-                sendAPIRequest("add",configname,configvalue);
+                sendAPIRequest("addConfigurationArr",configname,configvalue);
             }
         }
         else{
@@ -257,7 +264,7 @@ function processTextConfigurationChange(configname,oldValue,required){
         }
         else{
             if(confirm("Do you want to remove this configuration?")){
-                sendAPIRequest("delete",configname,configvalue);
+                sendAPIRequest("deleteConfigurationArr",configname,configvalue);
             }
             else{
                 document.getElementById(configname).value = oldValue;
@@ -267,18 +274,20 @@ function processTextConfigurationChange(configname,oldValue,required){
 }
 
 function processUpdateCss(){
-    const http = new XMLHttpRequest();
-    const url = "../../api/configurations/configurationModelController.php";
-    const params = 'action=updateCss';
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
+    const formData = new FormData();
+    formData.append('action', 'updateCss');
+    fetch(configurationsApiUrl, {
+        method: 'POST',
+        body: formData
+    })
+    .then((response) => {
+        return response.ok ? response.text() : null;
+    })
+    .then((res) => {
+        if(Number(res) === 1){
             location.reload();
         }
-    };
-    http.send(params);
+    });
 }
 
 function processUploadFilesizeConfigurationChange(configname,oldValue){
@@ -286,7 +295,7 @@ function processUploadFilesizeConfigurationChange(configname,oldValue){
     if(configvalue !== 0){
         if(Number.isInteger(configvalue) && configvalue <= maxPostSize && configvalue <= maxUploadSize){
             if(confirm("Do you want to save and activate this change?")){
-                sendAPIRequest("update",configname,configvalue);
+                sendAPIRequest("updateConfigurationValueArr",configname,configvalue);
             }
             else{
                 document.getElementById(configname).value = oldValue;
@@ -306,22 +315,23 @@ function processUploadFilesizeConfigurationChange(configname,oldValue){
 function sendAPIRequest(action,configname,configvalue,reload = true){
     configvalue = configvalue.toString().replaceAll('+','%2B');
     const data = {};
-    const http = new XMLHttpRequest();
-    const url = "../../api/configurations/configurationModelController.php";
     data[configname] = configvalue;
     const jsonData = JSON.stringify(data);
-    const params = 'action='+action+'&data='+jsonData;
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
-            if(reload){
-                location.reload();
-            }
+    const formData = new FormData();
+    formData.append('data', jsonData);
+    formData.append('action', action);
+    fetch(configurationsApiUrl, {
+        method: 'POST',
+        body: formData
+    })
+    .then((response) => {
+        return response.ok ? response.text() : null;
+    })
+    .then((res) => {
+        if(Number(res) === 1 && reload){
+            location.reload();
         }
-    };
-    http.send(params);
+    });
 }
 
 function showPassword(id){
