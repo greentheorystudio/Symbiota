@@ -14,7 +14,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
     </div>
     <div id="topNavigation">
         <q-toolbar class="q-pa-md horizontalDropDown">
-            <template v-if="windowWidth < 1440">
+            <template v-if="windowWidth < 1100">
                 <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu">
                     <q-menu>
                         <q-list dense>
@@ -43,7 +43,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     </q-menu>
                 </q-btn>
             </template>
-            <template v-if="windowWidth >= 1440">
+            <template v-if="windowWidth >= 1100">
                 <template v-for="item in navBarData">
                     <template v-if="item.subItems && item.subItems.length">
                         <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap>
@@ -84,7 +84,6 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             {url: CLIENT_ROOT + '/collections/list.php', label: 'Search Collections'},
             {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true},
             {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
-            {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'},
             {
                 label: 'Interactive Tools',
                 subItems: [
