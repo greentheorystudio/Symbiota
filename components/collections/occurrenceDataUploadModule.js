@@ -2461,6 +2461,9 @@ const occurrenceDataUploadModule = {
                     }
                     else{
                         processErrorResponse('The source data archive could not be transferred.');
+                        currentProcess.value = null;
+                        currentTab.value = 'configuration';
+                        adjustUIEnd();
                     }
                 });
             }
