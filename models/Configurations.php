@@ -159,7 +159,7 @@ class Configurations{
         if(count($configArr) > 0){
             foreach($configArr as $key => $value){
                 if($key && $returnVal === 1){
-                    $returnVal = $this->addConfiguration($key,$value);
+                    $returnVal = $this->addConfiguration($key, $value);
                 }
             }
         }
@@ -211,13 +211,19 @@ class Configurations{
         return $retArr;
     }
 
-    public function getConfigurationsArr(): array
+    public function getCssVersion(): int
     {
-        $retArr = array();
-        $retArr['core'] = array();
-        $retArr['additional'] = array();
+        $year = date('Y');
+        $month = date('m');
+        $day = date('d');
+        return $year . $month . $day;
+    }
+
+    public function getConfigurationData(): array
+    {
+        $returnArr = array();
         $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
-        if($result = $this->conn->query($sql)){
+        if(($result = $this->conn->query($sql)) && $result->num_rows) {
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
@@ -225,25 +231,23 @@ class Configurations{
                 if(strpos($row['configurationname'], 'PASSWORD') !== false || strpos($row['configurationname'], 'USERNAME') !== false){
                     $value = EncryptionService::decrypt($value);
                 }
-                $retArr[$row['configurationname']] = $value;
+                elseif(substr_compare($row['configurationname'], '_JSON', -5) === 0){
+                    $value = json_decode($value, true);
+                }
                 if(in_array($row['configurationname'], $this->coreConfigurations, true)){
-                    $retArr['core'][$row['configurationname']] = $value;
+                    $returnArr['core'][$row['configurationname']] = $value;
                 }
                 else{
-                    $retArr['additional'][$row['configurationname']] = $value;
+                    $returnArr['additional'][$row['configurationname']] = $value;
                 }
                 unset($rows[$index]);
             }
         }
-        return $retArr;
-    }
-
-    public function getCssVersion(): int
-    {
-        $year = date('Y');
-        $month = date('m');
-        $day = date('d');
-        return $year . $month . $day;
+        $returnArr['server']['SERVER_MAX_POST_SIZE'] = FileSystemService::getServerMaxPostSize();
+        $returnArr['server']['SERVER_MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxUploadFilesize();
+        $returnArr['server']['SERVER_DB_PROPS'] = $this->getDatabasePropArr();
+        $returnArr['server']['SERVER_PHP_VERSION'] = $this->getPhpVersion();
+        return $returnArr;
     }
 
     public function getDatabasePropArr(): array
@@ -370,7 +374,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20250130';
-        $GLOBALS['JS_VERSION'] = '20250514';
+        $GLOBALS['JS_VERSION'] = '20250514111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -448,7 +452,7 @@ class Configurations{
         if(count($configArr) > 0){
             foreach($configArr as $key => $value){
                 if($key && $returnVal === 1){
-                    $returnVal = $this->updateConfigurationValue($key,$value);
+                    $returnVal = $this->updateConfigurationValue($key, $value);
                 }
             }
         }
@@ -535,7 +539,7 @@ class Configurations{
     {
         $testURL = $_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://';
         $testURL .= $_SERVER['HTTP_HOST'];
-        $testURL .= $path . '/sitemap.php';
+        $testURL .= ($path ?: '') . '/sitemap.php';
         $headers = @get_headers($testURL);
         $firstHeader = ($headers ? $headers[0] : '');
         return stripos($firstHeader, '200 OK') ? 1 : 0;

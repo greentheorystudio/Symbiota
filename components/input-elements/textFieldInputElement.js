@@ -159,8 +159,21 @@ const textFieldInputElement = {
     `,
     setup(props, context) {
         const { showNotification } = useCore();
+
         const displayDefinitionPopup = Vue.ref(false);
-        const inputType = Vue.ref('text');
+        const inputType = Vue.computed(() => {
+            let returnVal;
+            if(props.dataType === 'int'){
+                returnVal = 'number';
+            }
+            else if(props.dataType === 'text' || props.dataType === 'number'){
+                returnVal = 'text';
+            }
+            else{
+                returnVal = props.dataType;
+            }
+            return returnVal;
+        });
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
@@ -191,15 +204,6 @@ const textFieldInputElement = {
                 context.emit('update:value', val);
             }
         }
-
-        Vue.onMounted(() => {
-            if(props.dataType === 'int'){
-                inputType.value = 'number';
-            }
-            else if(props.dataType !== 'text' && props.dataType !== 'number'){
-                inputType.value = props.dataType;
-            }
-        });
 
         return {
             displayDefinitionPopup,
