@@ -155,7 +155,7 @@ class Configurations{
 
     public function addConfigurationArr($configArr): int
     {
-        $returnVal = 0;
+        $returnVal = 1;
         if(count($configArr) > 0){
             foreach($configArr as $key => $value){
                 if($key && $returnVal === 1){
@@ -373,8 +373,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '202501301';
-        $GLOBALS['JS_VERSION'] = '202505141111111111';
+        $GLOBALS['CSS_VERSION'] = '20250201';
+        $GLOBALS['JS_VERSION'] = '202505141111111111111111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -448,7 +448,7 @@ class Configurations{
 
     public function updateConfigurationValueArr($configArr): int
     {
-        $returnVal = 0;
+        $returnVal = 1;
         if(count($configArr) > 0){
             foreach($configArr as $key => $value){
                 if($key && $returnVal === 1){

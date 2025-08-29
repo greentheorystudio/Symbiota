@@ -18,7 +18,8 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
     },
     actions: {
         addConfigurationValue(configName, value, callback) {
-            const newData = {configName: value};
+            const newData = {};
+            newData[configName] = value;
             const formData = new FormData();
             formData.append('data', JSON.stringify(newData));
             formData.append('action', 'addConfigurationArr');
@@ -37,7 +38,8 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
             });
         },
         deleteConfigurationValue(configName, callback) {
-            const newData = {configName: null};
+            const newData = {};
+            newData[configName] = null;
             const formData = new FormData();
             formData.append('data', JSON.stringify(newData));
             formData.append('action', 'deleteConfigurationArr');
@@ -67,11 +69,11 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
             })
             .then((resData) => {
                 this.configurationData = Object.assign({}, resData);
-                console.log(this.configurationData);
             });
         },
         updateConfigurationValue(configName, value, callback) {
-            const newData = {configName: value};
+            const newData = {};
+            newData[configName] = value;
             const formData = new FormData();
             formData.append('data', JSON.stringify(newData));
             formData.append('action', 'updateConfigurationValueArr');
@@ -144,12 +146,12 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    callback(Number(res));
-                });
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
         }
     }
 });
