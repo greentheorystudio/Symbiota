@@ -3,11 +3,11 @@ const taxonomyConfigurationsTab = {
         <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
                 <div class="text-grey-8 text-h6 text-weight-bolder">
-                    Recognized Taxonomic Ranks
+                    Default Taxonomic Ranks
                 </div>
                 <template v-for="rank in taxonRankOptionsArr">
                     <div class="q-pl-lg text-body1 text-bold no-wrap">
-                        <checkbox-input-element :label="rank['name']" :value="recognizedTaxonRankArr.includes(rank['id'])" @update:value="(value) => processTaxonomyRankCheckboxChange(rank['id'], value)" :disabled="rank['id'] === 10"></checkbox-input-element>
+                        <checkbox-input-element :label="rank['name']" :value="defaultTaxonRankArr.includes(rank['id'])" @update:value="(value) => processTaxonomyRankCheckboxChange(rank['id'], value)" :disabled="rank['id'] === 10"></checkbox-input-element>
                     </div>
                 </template>
             </q-card-section>
@@ -21,7 +21,7 @@ const taxonomyConfigurationsTab = {
         const configurationStore = useConfigurationStore();
 
         const coreData = Vue.computed(() => configurationStore.getCoreConfigurationData);
-        const recognizedTaxonRankArr = Vue.computed(() => {
+        const defaultTaxonRankArr = Vue.computed(() => {
             return coreData.value.hasOwnProperty('TAXONOMIC_RANKS') ? JSON.parse(coreData.value['TAXONOMIC_RANKS']) : [10];
         });
         const taxonRankData = Vue.ref({});
@@ -56,7 +56,7 @@ const taxonomyConfigurationsTab = {
         }
 
         function processTaxonomyRankCheckboxChange(rankid, value){
-            const newRankArr = recognizedTaxonRankArr.value.slice();
+            const newRankArr = defaultTaxonRankArr.value.slice();
             if(value){
                 newRankArr.push(rankid);
             }
@@ -94,7 +94,7 @@ const taxonomyConfigurationsTab = {
         });
 
         return {
-            recognizedTaxonRankArr,
+            defaultTaxonRankArr,
             taxonRankOptionsArr,
             capitalizeFirstLetter,
             processTaxonomyRankCheckboxChange
