@@ -2460,7 +2460,7 @@ const occurrenceDataUploadModule = {
                         processSourceDataUnpacking(data['targetPath'], data['archivePath']);
                     }
                     else{
-                        processErrorResponse('The source data archive could not be transferred.');
+                        processErrorResponse('No data was transferred');
                         currentProcess.value = null;
                         currentTab.value = 'configuration';
                         adjustUIEnd();
