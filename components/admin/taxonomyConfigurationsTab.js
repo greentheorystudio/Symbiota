@@ -1,15 +1,17 @@
 const taxonomyConfigurationsTab = {
     template: `
-        <div class="q-pa-sm column q-col-gutter-sm">
-            <div class="text-grey-8 text-h6 text-weight-bolder">
-                Recognized Taxonomic Ranks
-            </div>
-            <template v-for="rankName in taxonRankNameArr">
-                <div class="q-pl-lg text-body1 text-bold no-wrap">
-                    <checkbox-input-element :label="capitalizeFirstLetter(rankName.toString())" :value="recognizedTaxonRankArr.includes(taxonRankData[rankName])" @update:value="(value) => processTaxonomyRankCheckboxChange(taxonRankData[rankName], value)"></checkbox-input-element>
+        <q-card flat bordered>
+            <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                <div class="text-grey-8 text-h6 text-weight-bolder">
+                    Recognized Taxonomic Ranks
                 </div>
-            </template>
-        </div>
+                <template v-for="rank in taxonRankOptionsArr">
+                    <div class="q-pl-lg text-body1 text-bold no-wrap">
+                        <checkbox-input-element :label="rank['name']" :value="recognizedTaxonRankArr.includes(rank['id'])" @update:value="(value) => processTaxonomyRankCheckboxChange(rank['id'], value)" :disabled="rank['id'] === 10"></checkbox-input-element>
+                    </div>
+                </template>
+            </q-card-section>
+        </q-card>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement
@@ -20,11 +22,28 @@ const taxonomyConfigurationsTab = {
 
         const coreData = Vue.computed(() => configurationStore.getCoreConfigurationData);
         const recognizedTaxonRankArr = Vue.computed(() => {
-            return coreData.value.hasOwnProperty('TAXONOMIC_RANKS') ? JSON.parse(coreData.value['TAXONOMIC_RANKS']) : [];
+            return coreData.value.hasOwnProperty('TAXONOMIC_RANKS') ? JSON.parse(coreData.value['TAXONOMIC_RANKS']) : [10];
         });
         const taxonRankData = Vue.ref({});
         const taxonRankNameArr = Vue.computed(() => {
             return Object.keys(taxonRankData.value).length > 0 ? Object.keys(taxonRankData.value) : [];
+        });
+        const taxonRankOptionsArr = Vue.computed(() => {
+            const returnArr = [];
+            taxonRankNameArr.value.forEach((rankName) => {
+                const rankId = taxonRankData.value[rankName];
+                const optionObj = returnArr.find(rank => rank['id'] === rankId);
+                if(optionObj){
+                    optionObj['name'] = optionObj['name'] + ', ' + capitalizeFirstLetter(rankName.toString());
+                }
+                else{
+                    returnArr.push({
+                        name: capitalizeFirstLetter(rankName.toString()),
+                        id: rankId
+                    });
+                }
+            });
+            return returnArr;
         });
 
         function processCallbackResponse(res){
@@ -76,8 +95,7 @@ const taxonomyConfigurationsTab = {
 
         return {
             recognizedTaxonRankArr,
-            taxonRankData,
-            taxonRankNameArr,
+            taxonRankOptionsArr,
             capitalizeFirstLetter,
             processTaxonomyRankCheckboxChange
         }
