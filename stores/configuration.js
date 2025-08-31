@@ -123,6 +123,36 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
                 callback(Number(res));
             });
         },
+        validateNameCore(value, callback) {
+            const formData = new FormData();
+            formData.append('value', value);
+            formData.append('action', 'validateNameCore');
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
+        validateNameExisting(value, callback) {
+            const formData = new FormData();
+            formData.append('value', value);
+            formData.append('action', 'validateNameExisting');
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         validateServerPath(value, callback) {
             const formData = new FormData();
             formData.append('value', value);
