@@ -8,6 +8,10 @@ const textFieldInputElement = {
             type: String,
             default: 'text'
         },
+        debounce: {
+            type: Number,
+            default: 700
+        },
         definition: {
             type: Object,
             default: null
@@ -44,6 +48,10 @@ const textFieldInputElement = {
             type: Boolean,
             default: false
         },
+        step: {
+            type: Number,
+            default: 1
+        },
         tabindex: {
             type: Number,
             default: 1
@@ -56,7 +64,7 @@ const textFieldInputElement = {
     template: `
         <template v-if="fieldHint">
             <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-                <q-input outlined v-model="value" :type="inputType" :label="label" debounce="2000" bg-color="white" :counter="(showCounter && dataType !== 'int' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" :hint="fieldHint" :tabindex="tabindex" :autocomplete="field" dense>
+                <q-input outlined v-model="value" :type="inputType" :step="step" :label="label" :debounce="debounce" bg-color="white" :counter="(showCounter && dataType !== 'int' && dataType !== 'increment' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" :hint="fieldHint" :tabindex="tabindex" :autocomplete="field" dense>
                     <template v-if="(value && clearable) || definition" v-slot:append>
                         <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -72,7 +80,7 @@ const textFieldInputElement = {
                 </q-input>
             </template>
             <template v-else>
-                <q-input outlined v-model="value" :type="inputType" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" :hint="fieldHint" :tabindex="tabindex" :autocomplete="field" dense>
+                <q-input outlined v-model="value" :type="inputType" :step="step" :label="label" :debounce="debounce" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" :hint="fieldHint" :tabindex="tabindex" :autocomplete="field" dense>
                     <template v-if="!disabled && ((value && clearable) || definition)" v-slot:append>
                         <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -90,7 +98,7 @@ const textFieldInputElement = {
         </template>
         <template v-else>
             <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-                <q-input outlined v-model="value" :type="inputType" :label="label" debounce="2000" bg-color="white" :counter="(showCounter && dataType !== 'int' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" :tabindex="tabindex" :autocomplete="field" dense>
+                <q-input outlined v-model="value" :type="inputType" :step="step" :label="label" :debounce="debounce" bg-color="white" :counter="(showCounter && dataType !== 'int' && dataType !== 'increment' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="inputType === 'textarea'" :tabindex="tabindex" :autocomplete="field" dense>
                     <template v-if="(value && clearable) || definition" v-slot:append>
                         <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -106,7 +114,7 @@ const textFieldInputElement = {
                 </q-input>
             </template>
             <template v-else>
-                <q-input outlined v-model="value" :type="inputType" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" :tabindex="tabindex" :autocomplete="field" dense>
+                <q-input outlined v-model="value" :type="inputType" :step="step" :label="label" :debounce="debounce" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :autogrow="inputType === 'textarea'" :tabindex="tabindex" :autocomplete="field" dense>
                     <template v-if="!disabled && ((value && clearable) || definition)" v-slot:append>
                         <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -163,7 +171,7 @@ const textFieldInputElement = {
         const displayDefinitionPopup = Vue.ref(false);
         const inputType = Vue.computed(() => {
             let returnVal;
-            if(props.dataType === 'int'){
+            if(props.dataType === 'int' || props.dataType === 'increment'){
                 returnVal = 'number';
             }
             else if(props.dataType === 'text' || props.dataType === 'number'){
@@ -180,19 +188,19 @@ const textFieldInputElement = {
         }
 
         function processValueChange(val) {
-            if(props.dataType === 'int' || props.dataType === 'number'){
+            if(props.dataType === 'int' || props.dataType === 'number' || props.dataType === 'increment'){
                 if(val && isNaN(val)){
                     showNotification('negative', (props.label + ' must be a number.'));
                 }
                 else if(val && props.minValue && Number(props.minValue) > Number(val)){
                     showNotification('negative', (props.label + ' cannot be less than ' + props.minValue + '.'));
-                    if(props.dataType === 'int'){
+                    if(props.dataType === 'int' || props.dataType === 'increment'){
                         context.emit('update:value', props.minValue);
                     }
                 }
                 else if(val && props.maxValue && Number(props.maxValue) < Number(val)){
                     showNotification('negative', (props.label + ' cannot be greater than ' + props.maxValue + '.'));
-                    if(props.dataType === 'int'){
+                    if(props.dataType === 'int' || props.dataType === 'increment'){
                         context.emit('update:value', props.maxValue);
                     }
                 }

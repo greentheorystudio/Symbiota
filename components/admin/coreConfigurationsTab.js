@@ -14,7 +14,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="editField !== 'MAX_UPLOAD_FILESIZE'" :value="coreData.hasOwnProperty('MAX_UPLOAD_FILESIZE') ? coreData['MAX_UPLOAD_FILESIZE'] : null" @update:value="(value) => processUploadFilesizeChange(value)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="editField !== 'MAX_UPLOAD_FILESIZE'" :value="coreData.hasOwnProperty('MAX_UPLOAD_FILESIZE') ? coreData['MAX_UPLOAD_FILESIZE'] : null" @update:value="(value) => processUploadFilesizeChange(value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -25,7 +25,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="editField !== 'SERVER_ROOT'" :value="coreData.hasOwnProperty('SERVER_ROOT') ? coreData['SERVER_ROOT'] : null" @update:value="(value) => processServerRootChange(value)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="editField !== 'SERVER_ROOT'" :value="coreData.hasOwnProperty('SERVER_ROOT') ? coreData['SERVER_ROOT'] : null" @update:value="(value) => processServerRootChange(value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -36,7 +36,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="editField !== 'CLIENT_ROOT'" :value="coreData.hasOwnProperty('CLIENT_ROOT') ? coreData['CLIENT_ROOT'] : null" @update:value="(value) => processClientRootChange(value)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="editField !== 'CLIENT_ROOT'" :value="coreData.hasOwnProperty('CLIENT_ROOT') ? coreData['CLIENT_ROOT'] : null" @update:value="(value) => processClientRootChange(value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -47,7 +47,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="editField !== 'TEMP_DIR_ROOT'" :value="coreData.hasOwnProperty('TEMP_DIR_ROOT') ? coreData['TEMP_DIR_ROOT'] : null" @update:value="(value) => processServerWritePathChange('TEMP_DIR_ROOT', value)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="editField !== 'TEMP_DIR_ROOT'" :value="coreData.hasOwnProperty('TEMP_DIR_ROOT') ? coreData['TEMP_DIR_ROOT'] : null" @update:value="(value) => processServerWritePathChange('TEMP_DIR_ROOT', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -58,7 +58,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="editField !== 'IMAGE_ROOT_PATH'" :value="coreData.hasOwnProperty('IMAGE_ROOT_PATH') ? coreData['IMAGE_ROOT_PATH'] : null" @update:value="(value) => processServerWritePathChange('IMAGE_ROOT_PATH', value)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="editField !== 'IMAGE_ROOT_PATH'" :value="coreData.hasOwnProperty('IMAGE_ROOT_PATH') ? coreData['IMAGE_ROOT_PATH'] : null" @update:value="(value) => processServerWritePathChange('IMAGE_ROOT_PATH', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -69,7 +69,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="editField !== 'IMAGE_ROOT_URL'" :value="coreData.hasOwnProperty('IMAGE_ROOT_URL') ? coreData['IMAGE_ROOT_URL'] : null" @update:value="(value) => processConfigurationChange('IMAGE_ROOT_URL', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="editField !== 'IMAGE_ROOT_URL'" :value="coreData.hasOwnProperty('IMAGE_ROOT_URL') ? coreData['IMAGE_ROOT_URL'] : null" @update:value="(value) => processConfigurationChange('IMAGE_ROOT_URL', value, false)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -80,7 +80,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="editField !== 'PORTAL_GUID'" :value="coreData.hasOwnProperty('PORTAL_GUID') ? coreData['PORTAL_GUID'] : null" @update:value="(value) => processConfigurationChange('PORTAL_GUID', value, true)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="editField !== 'PORTAL_GUID'" :value="coreData.hasOwnProperty('PORTAL_GUID') ? coreData['PORTAL_GUID'] : null" @update:value="(value) => processConfigurationChange('PORTAL_GUID', value, true)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -91,7 +91,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="editField !== 'SECURITY_KEY'" :value="coreData.hasOwnProperty('SECURITY_KEY') ? coreData['SECURITY_KEY'] : null" @update:value="(value) => processConfigurationChange('SECURITY_KEY', value, true)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="editField !== 'SECURITY_KEY'" :value="coreData.hasOwnProperty('SECURITY_KEY') ? coreData['SECURITY_KEY'] : null" @update:value="(value) => processConfigurationChange('SECURITY_KEY', value, true)"></text-field-input-element>
                         </div>
                     </div>
                 </q-card-section>
@@ -108,7 +108,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('DEFAULT_TITLE') ? coreData['DEFAULT_TITLE'] : null" @update:value="(value) => processConfigurationChange('DEFAULT_TITLE', value, true)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('DEFAULT_TITLE') ? coreData['DEFAULT_TITLE'] : null" @update:value="(value) => processConfigurationChange('DEFAULT_TITLE', value, true)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -128,7 +128,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('ADMIN_EMAIL') ? coreData['ADMIN_EMAIL'] : null" @update:value="(value) => processConfigurationChange('ADMIN_EMAIL', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('ADMIN_EMAIL') ? coreData['ADMIN_EMAIL'] : null" @update:value="(value) => processConfigurationChange('ADMIN_EMAIL', value, false)"></text-field-input-element>
                         </div>
                     </div>
                     <div v-if="collectionCategoryOptionArr.length > 0" class="q-pl-md row justify-between q-col-gutter-sm">
@@ -149,7 +149,7 @@ const coreConfigurationsTab = {
                             </div>   
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :disabled="true" :value="coreData.hasOwnProperty('CSS_VERSION_LOCAL') ? coreData['CSS_VERSION_LOCAL'] : null"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :disabled="true" :value="coreData.hasOwnProperty('CSS_VERSION_LOCAL') ? coreData['CSS_VERSION_LOCAL'] : null"></text-field-input-element>
                         </div>
                     </div>
                 </q-card-section>
@@ -169,7 +169,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('PORTAL_EMAIL_ADDRESS') ? coreData['PORTAL_EMAIL_ADDRESS'] : null" @update:value="(value) => processConfigurationChange('PORTAL_EMAIL_ADDRESS', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('PORTAL_EMAIL_ADDRESS') ? coreData['PORTAL_EMAIL_ADDRESS'] : null" @update:value="(value) => processConfigurationChange('PORTAL_EMAIL_ADDRESS', value, false)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -179,7 +179,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('SMTP_HOST') ? coreData['SMTP_HOST'] : null" @update:value="(value) => processConfigurationChange('SMTP_HOST', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('SMTP_HOST') ? coreData['SMTP_HOST'] : null" @update:value="(value) => processConfigurationChange('SMTP_HOST', value, false)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -189,7 +189,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('SMTP_PORT') ? coreData['SMTP_PORT'] : null" @update:value="(value) => processConfigurationChange('SMTP_PORT', value, false, true)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('SMTP_PORT') ? coreData['SMTP_PORT'] : null" @update:value="(value) => processConfigurationChange('SMTP_PORT', value, false, true)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -209,7 +209,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('SMTP_USERNAME') ? coreData['SMTP_USERNAME'] : null" @update:value="(value) => processConfigurationChange('SMTP_USERNAME', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('SMTP_USERNAME') ? coreData['SMTP_USERNAME'] : null" @update:value="(value) => processConfigurationChange('SMTP_USERNAME', value, false)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -220,7 +220,7 @@ const coreConfigurationsTab = {
                             </div>   
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :data-type="smtpPasswordDataType" :value="coreData.hasOwnProperty('SMTP_PASSWORD') ? coreData['SMTP_PASSWORD'] : null" @update:value="(value) => processConfigurationChange('SMTP_PASSWORD', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :data-type="smtpPasswordDataType" :value="coreData.hasOwnProperty('SMTP_PASSWORD') ? coreData['SMTP_PASSWORD'] : null" @update:value="(value) => processConfigurationChange('SMTP_PASSWORD', value, false)"></text-field-input-element>
                         </div>
                     </div>
                 </q-card-section>
@@ -237,7 +237,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('IMG_WEB_WIDTH') ? coreData['IMG_WEB_WIDTH'] : null" @update:value="(value) => processConfigurationChange('IMG_WEB_WIDTH', value, true, true)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('IMG_WEB_WIDTH') ? coreData['IMG_WEB_WIDTH'] : null" @update:value="(value) => processConfigurationChange('IMG_WEB_WIDTH', value, true, true)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -247,7 +247,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('IMG_TN_WIDTH') ? coreData['IMG_TN_WIDTH'] : null" @update:value="(value) => processConfigurationChange('IMG_TN_WIDTH', value, true, true)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('IMG_TN_WIDTH') ? coreData['IMG_TN_WIDTH'] : null" @update:value="(value) => processConfigurationChange('IMG_TN_WIDTH', value, true, true)"></text-field-input-element>
                         </div>
                     </div>
                 </q-card-section>
@@ -264,7 +264,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('SOLR_URL') ? coreData['SOLR_URL'] : null" @update:value="(value) => processConfigurationChange('SOLR_URL', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('SOLR_URL') ? coreData['SOLR_URL'] : null" @update:value="(value) => processConfigurationChange('SOLR_URL', value, false)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -274,7 +274,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('SOLR_FULL_IMPORT_INTERVAL') ? coreData['SOLR_FULL_IMPORT_INTERVAL'] : null" @update:value="(value) => processConfigurationChange('SOLR_FULL_IMPORT_INTERVAL', value, false, true)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('SOLR_FULL_IMPORT_INTERVAL') ? coreData['SOLR_FULL_IMPORT_INTERVAL'] : null" @update:value="(value) => processConfigurationChange('SOLR_FULL_IMPORT_INTERVAL', value, false, true)"></text-field-input-element>
                         </div>
                     </div>
                 </q-card-section>
@@ -291,7 +291,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('GBIF_ORG_KEY') ? coreData['GBIF_ORG_KEY'] : null" @update:value="(value) => processConfigurationChange('GBIF_ORG_KEY', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('GBIF_ORG_KEY') ? coreData['GBIF_ORG_KEY'] : null" @update:value="(value) => processConfigurationChange('GBIF_ORG_KEY', value, false)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -301,7 +301,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :value="coreData.hasOwnProperty('GBIF_USERNAME') ? coreData['GBIF_USERNAME'] : null" @update:value="(value) => processConfigurationChange('GBIF_USERNAME', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :value="coreData.hasOwnProperty('GBIF_USERNAME') ? coreData['GBIF_USERNAME'] : null" @update:value="(value) => processConfigurationChange('GBIF_USERNAME', value, false)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="q-pl-md row justify-between q-col-gutter-sm">
@@ -312,7 +312,7 @@ const coreConfigurationsTab = {
                             </div>
                         </div>
                         <div class="col-6 self-center">
-                            <text-field-input-element :data-type="gbifPasswordDataType" :value="coreData.hasOwnProperty('GBIF_PASSWORD') ? coreData['GBIF_PASSWORD'] : null" @update:value="(value) => processConfigurationChange('GBIF_PASSWORD', value, false)"></text-field-input-element>
+                            <text-field-input-element debounce="2000" :data-type="gbifPasswordDataType" :value="coreData.hasOwnProperty('GBIF_PASSWORD') ? coreData['GBIF_PASSWORD'] : null" @update:value="(value) => processConfigurationChange('GBIF_PASSWORD', value, false)"></text-field-input-element>
                         </div>
                     </div>
                 </q-card-section>

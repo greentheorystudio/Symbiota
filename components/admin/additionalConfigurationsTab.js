@@ -20,7 +20,7 @@ const additionalConfigurationsTab = {
                                 </div>
                             </div>
                             <div class="col-6 self-center">
-                                <text-field-input-element :value="additionalData[config]" @update:value="(value) => processConfigurationUpdate(config, value, false)"></text-field-input-element>
+                                <text-field-input-element debounce="2000" :value="additionalData[config]" @update:value="(value) => processConfigurationUpdate(config, value, false)"></text-field-input-element>
                             </div>
                         </div>
                     </template>
@@ -42,10 +42,10 @@ const additionalConfigurationsTab = {
                         Add Configuration
                     </div>
                     <div>
-                        <text-field-input-element label="New Configuration Name" :value="addConfigNameValue" @update:value="(value) => addConfigNameValue = value"></text-field-input-element>
+                        <text-field-input-element debounce="2000" label="New Configuration Name" :value="addConfigNameValue" @update:value="(value) => addConfigNameValue = value"></text-field-input-element>
                     </div>
                     <div>
-                        <text-field-input-element label="New Configuration Value" :value="addConfigValueValue" @update:value="(value) => addConfigValueValue = value"></text-field-input-element>
+                        <text-field-input-element debounce="2000" label="New Configuration Value" :value="addConfigValueValue" @update:value="(value) => addConfigValueValue = value"></text-field-input-element>
                     </div>
                     <div class="row justify-end">
                         <div>
