@@ -196,21 +196,6 @@ class Configurations{
         return true;
     }
 
-    public function getCollectionCategoryArr(): array
-    {
-        $retArr = array();
-        $sql = 'SELECT ccpk, category FROM omcollcategories ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $retArr[$row['ccpk']] = $row['category'];
-                unset($rows[$index]);
-            }
-        }
-        return $retArr;
-    }
-
     public function getCssVersion(): int
     {
         $year = date('Y');
@@ -625,7 +610,7 @@ class Configurations{
             $GLOBALS['LOG_PATH'] = FileSystemService::getServerLogFilePath();
             $GLOBALS['IMAGE_ROOT_PATH'] = FileSystemService::getServerMediaBaseUploadPath();
         }
-        if(isset($GLOBALS['SERVER_ROOT']) && substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
+        if(substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
             $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
         }
         if((!isset($GLOBALS['SMTP_USERNAME']) || $GLOBALS['SMTP_USERNAME'] === '') && (!isset($GLOBALS['SMTP_PASSWORD']) || $GLOBALS['SMTP_PASSWORD'] === '')){
