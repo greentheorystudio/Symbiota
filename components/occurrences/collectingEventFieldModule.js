@@ -80,10 +80,10 @@ const collectingEventFieldModule = {
                 </div>
             </div>
             <div class="row justify-between q-col-gutter-sm">
-                <div class="col-10 col-sm-6">
+                <div class="col-10 col-sm-7">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimeventdate']" label="Verbatim Date" :maxlength="fields['verbatimeventdate'] ? fields['verbatimeventdate']['length'] : 0" :value="data.verbatimeventdate" @update:value="(value) => updateData('verbatimeventdate', value)"></text-field-input-element>
                 </div>
-                <div class="col-6 row justify-end q-col-gutter-sm self-center">
+                <div class="col-5 row justify-end q-col-gutter-sm self-center">
                     <div v-if="eventMode">
                         <template v-if="showLocationForm">
                             <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showLocationForm = false" icon="fas fa-globe" icon-right="fas fa-minus" dense></q-btn>
