@@ -55,7 +55,7 @@ class TaxonRanks{
     public function getRankNameArr(): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ';
+        $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ORDER BY rankid ';
         //echo $sql;
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
