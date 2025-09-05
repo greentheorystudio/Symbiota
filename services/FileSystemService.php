@@ -100,6 +100,11 @@ class FileSystemService {
         }
     }
 
+    public static function fileExists($filePath): bool
+    {
+        return file_exists($filePath);
+    }
+
     public static function getClientMediaRootPath(): string
     {
         $clientPath = self::getClientRootPath();
@@ -375,11 +380,12 @@ class FileSystemService {
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
             curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
-            if(curl_exec($ch)) {
-                $returnVal = true;
-            }
+            curl_exec($ch);
             curl_close($ch);
             fclose($fp);
+            if(filesize($targetPath) > 0){
+                $returnVal = true;
+            }
         }
         return $returnVal;
     }
@@ -418,11 +424,12 @@ class FileSystemService {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
             curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
-            if(curl_exec($ch)) {
-                $returnVal = true;
-            }
+            curl_exec($ch);
             curl_close($ch);
             fclose($fp);
+            if(filesize($targetPath) > 0){
+                $returnVal = true;
+            }
         }
         return $returnVal;
     }
