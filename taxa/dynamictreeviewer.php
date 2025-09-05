@@ -167,7 +167,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         formData.append('includeimage', '1');
                         formData.append('limittoaccepted', '1');
                         formData.append('action', 'getTaxonomicTreeChildNodes');
-                        fetch(taxaApiUrl, {
+                        fetch(taxonHierarchyApiUrl, {
                             method: 'POST',
                             body: formData
                         })
