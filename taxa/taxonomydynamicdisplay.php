@@ -123,7 +123,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         const formData = new FormData();
                         formData.append('tid', key);
                         formData.append('action', 'getTaxonomicTreeChildNodes');
-                        fetch(taxaApiUrl, {
+                        fetch(taxonHierarchyApiUrl, {
                             method: 'POST',
                             body: formData
                         })
@@ -208,7 +208,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     function setKingdomNodes() {
                         const formData = new FormData();
                         formData.append('action', 'getTaxonomicTreeKingdomNodes');
-                        fetch(taxaApiUrl, {
+                        fetch(taxonHierarchyApiUrl, {
                             method: 'POST',
                             body: formData
                         })

@@ -15,22 +15,22 @@ const imageRecordInfoBlock = {
                 <div class="full-width row justify-between q-col-gutter-sm">
                     <div class="col-3 column">
                         <div class="full-width row justify-center">
-                            <q-img :src="imageData.url" :fit="contain" class="media-thumbnail"></q-img>
+                            <q-img :src="(imageData.url.startsWith('/') ? (clientRoot + imageData.url) : imageData.url)" :fit="contain" class="media-thumbnail"></q-img>
                         </div>
                         <div class="q-mt-xs full-width row justify-center q-gutter-sm text-bold">
                             <span v-if="imageData.thumbnailurl">
-                                <a :href="imageData.thumbnailurl" target="_blank">Thumbnail</a>
+                                <a :href="(imageData.thumbnailurl.startsWith('/') ? (clientRoot + imageData.thumbnailurl) : imageData.thumbnailurl)" target="_blank">Thumbnail</a>
                             </span>
                             <span v-if="imageData.url">
-                                <a :href="imageData.url" target="_blank">Web</a>
+                                <a :href="(imageData.url.startsWith('/') ? (clientRoot + imageData.url) : imageData.url)" target="_blank">Web</a>
                             </span>
                         </div>
                         <div class="full-width row justify-center q-gutter-sm text-bold">
                             <span v-if="imageData.originalurl">
-                                <a :href="imageData.originalurl" target="_blank">Original</a>
+                                <a :href="(imageData.originalurl.startsWith('/') ? (clientRoot + imageData.originalurl) : imageData.originalurl)" target="_blank">Original</a>
                             </span>
                             <span v-if="imageData.sourceurl">
-                                <a :href="imageData.sourceurl" target="_blank">Source</a>
+                                <a :href="(imageData.sourceurl.startsWith('/') ? (clientRoot + imageData.sourceurl) : imageData.sourceurl)" target="_blank">Source</a>
                             </span>
                         </div>
                     </div>
@@ -103,11 +103,16 @@ const imageRecordInfoBlock = {
         </q-card>
     `,
     setup(_, context) {
+        const baseStore = useBaseStore();
+
+        const clientRoot = baseStore.getClientRoot;
+
         function openEditorPopup(id) {
             context.emit('open:image-editor', id);
         }
 
         return {
+            clientRoot,
             openEditorPopup
         }
     }

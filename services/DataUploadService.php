@@ -401,7 +401,7 @@ class DataUploadService {
         $returnArr = array();
         $coreId = '';
         $coreEventId = '';
-        if(file_exists($metaPath)){
+        if(FileSystemService::fileExists($metaPath)){
             $metaDoc = new DOMDocument();
             $metaDoc->load($metaPath);
             if($coreElements = $metaDoc->getElementsByTagName('core')){
@@ -527,6 +527,9 @@ class DataUploadService {
             if($transferSuccess){
                 $returnArr['targetPath'] = $targetPath;
                 $returnArr['archivePath'] = $fullTargetPath;
+            }
+            else{
+                FileSystemService::deleteDirectory($targetPath);
             }
         }
         return $returnArr;
