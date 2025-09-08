@@ -126,7 +126,9 @@ const multipleScientificCommonNameAutoComplete = {
             if(val.target.value){
                 const optionObj = autocompleteOptions.value.find(option => option['sciname'] === val.target.value);
                 if(optionObj){
-                    processChange(optionObj);
+                    const currentScinameArr = props.scinameArr.slice();
+                    currentScinameArr.push(optionObj);
+                    processChange(currentScinameArr);
                 }
                 else if(!props.limitToOptions){
                     const currentScinameArr = props.scinameArr.slice();
