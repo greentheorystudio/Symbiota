@@ -387,7 +387,7 @@ class ImageShared{
 			[$this->sourceWidth, $this->sourceHeight] = self::getImgDim(str_replace(' ', '%20', $this->sourcePath));
 		}
 		if($this->sourceWidth){
-			$newHeight = round($this->sourceHeight*($newWidth/$this->sourceWidth));
+			$newHeight = round(($this->sourceHeight*($newWidth/$this->sourceWidth)), 0, PHP_ROUND_HALF_UP);
 			if($newWidth > $this->sourceWidth){
 				$newWidth = $this->sourceWidth;
 				$newHeight = $this->sourceHeight;

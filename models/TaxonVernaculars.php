@@ -200,7 +200,7 @@ class TaxonVernaculars{
         $sql = 'SELECT DISTINCT t.tid, t.sciname ' .
             'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid ';
         foreach($vernaculars as $name){
-            $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, $name) . "' ";
+            $whereStr .= "OR v.vernacularname LIKE '%" . SanitizerService::cleanInStr($this->conn, $name) . "%' ";
         }
         $sql .= 'WHERE ' . substr($whereStr,3) . ' ';
         //echo "<div>sql: ".$sql."</div>";
