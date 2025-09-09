@@ -16,7 +16,7 @@ if($action && SanitizerService::validateInternalRequest()){
     $taxa = new Taxa();
     if($action === 'getTid' && array_key_exists('sciname',$_POST) && array_key_exists('kingdomid',$_POST)){
         $rankid = array_key_exists('rankid', $_POST) ? (int)$_POST['rankid'] : null;
-        $author = array_key_exists('author', $_POST) ? $_POST['author'] : null;
+        $author = $_POST['author'] ?? null;
         echo $taxa->getTid(htmlspecialchars($_POST['sciname']), (int)$_POST['kingdomid'], $rankid, $author);
     }
     elseif($isEditor && $action === 'addTaxon' && array_key_exists('taxon', $_POST)){
@@ -45,14 +45,6 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($isEditor && $action === 'addTaxonIdentifier' && $tId && array_key_exists('idname', $_POST) && array_key_exists('id', $_POST)){
         echo $taxa->addTaxonIdentifier($tId, $_POST['idname'], $_POST['id']);
-    }
-    elseif($action === 'getTaxonomicTreeKingdomNodes'){
-        echo json_encode($taxa->getTaxonomicTreeKingdomNodes());
-    }
-    elseif($action === 'getTaxonomicTreeChildNodes' && $tId){
-        $includeImage = array_key_exists('includeimage', $_POST) && (int)$_POST['includeimage'] === 1;
-        $limitToAccepted = array_key_exists('limittoaccepted', $_POST) && (int)$_POST['limittoaccepted'] === 1;
-        echo json_encode($taxa->getTaxonomicTreeChildNodes($tId, $limitToAccepted, $includeImage));
     }
     elseif($action === 'getTaxaIdDataFromNameArr' && array_key_exists('taxa', $_POST)){
         echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], true)));

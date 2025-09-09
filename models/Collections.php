@@ -67,12 +67,10 @@ class Collections {
         $solrWhere = 'q=(collid:(' . $collidStr . '))';
         $solrURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere;
         $solrURL .= '&rows=1&start=1&wt=json';
-        //echo str_replace(' ','%20',$solrURL);
         $solrArrJson = file_get_contents(str_replace(' ','%20',$solrURL));
         $solrArr = json_decode($solrArrJson, true);
         $cnt = $solrArr['response']['numFound'];
         $occURL = $GLOBALS['SOLR_URL'].'/select?'.$solrWhere.'&rows='.$cnt.'&start=1&fl=occid&wt=json';
-        //echo str_replace(' ','%20',$occURL);
         $solrOccArrJson = file_get_contents(str_replace(' ','%20',$occURL));
         $solrOccArr = json_decode($solrOccArrJson, true);
         $recArr = $solrOccArr['response']['docs'];

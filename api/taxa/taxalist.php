@@ -41,17 +41,17 @@ if(SanitizerService::validateInternalRequest()){
             }
         }
         else{
-            $sql = 'SELECT DISTINCT t.tidaccepted, t.SciName, v.VernacularName '.
+            $sql = 'SELECT DISTINCT t.tidaccepted, t.sciname, v.vernacularname '.
                 'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.TID = v.TID '.
-                'WHERE (t.SciName LIKE "'.$queryString.'%" OR v.VernacularName LIKE "'.$queryString.'%") AND t.RankId < 185 '.
+                'WHERE (t.SciName LIKE "'.$queryString.'%" OR v.vernacularname LIKE "'.$queryString.'%") AND t.RankId < 185 '.
                 'LIMIT 10 ';
         }
         $result = $con->query($sql);
         if($type === 'single'){
             while ($row = $result->fetch_object()) {
-                $sciName = $row->SciName;
-                if($row->VernacularName){
-                    $sciName .= ' ('.$row->VernacularName.')';
+                $sciName = $row->sciname;
+                if($row->vernacularname){
+                    $sciName .= ' ('.$row->vernacularname.')';
                 }
                 $retArrRow['label'] = htmlentities($sciName);
                 $retArrRow['value'] = $row->tidaccepted;
@@ -61,9 +61,9 @@ if(SanitizerService::validateInternalRequest()){
         elseif($type === 'batch'){
             $i = 0;
             while ($row = $result->fetch_object()) {
-                $sciName = $row->SciName;
-                if($row->VernacularName){
-                    $sciName .= ' ('.$row->VernacularName.')';
+                $sciName = $row->sciname;
+                if($row->vernacularname){
+                    $sciName .= ' ('.$row->vernacularname.')';
                 }
                 $returnArr[$i]['name'] = htmlentities($sciName);
                 $returnArr[$i]['id'] = htmlentities($row->tidaccepted);

@@ -17,21 +17,21 @@ const mediaRecordInfoBlock = {
                         <div v-if="mediaData.format.startsWith('audio') || mediaData.format.startsWith('video')" class="full-width row justify-center">
                             <template v-if="mediaData.format.startsWith('audio')">
                                 <audio class="media-thumbnail" controls>
-                                    <source :src="mediaData.accessuri" :type="mediaData.format">
+                                    <source :src="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" :type="mediaData.format">
                                 </audio>
                             </template>
                             <template v-else>
                                 <video class="media-thumbnail" controls>
-                                    <source :src="mediaData.accessuri" :type="mediaData.format">
+                                    <source :src="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" :type="mediaData.format">
                                 </video>
                             </template>
                         </div>
                         <div class="q-mt-xs full-width row justify-center q-gutter-sm text-bold">
                             <span v-if="mediaData.format.startsWith('video')">
-                                <a :href="mediaData.accessuri" target="_blank">Full Size</a>
+                                <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank">Full Size</a>
                             </span>
                             <span v-else-if="!mediaData.format.startsWith('audio')">
-                                <a :href="mediaData.accessuri" target="_blank">Download File</a>
+                                <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank">Download File</a>
                             </span>
                         </div>
                     </div>
@@ -98,11 +98,16 @@ const mediaRecordInfoBlock = {
         </q-card>
     `,
     setup(_, context) {
+        const baseStore = useBaseStore();
+
+        const clientRoot = baseStore.getClientRoot;
+
         function openEditorPopup(id) {
             context.emit('open:media-editor', id);
         }
 
         return {
+            clientRoot,
             openEditorPopup
         }
     }

@@ -24,7 +24,7 @@ const searchCriteriaBlock = {
                     <selector-input-element label="Taxon Type" :options="taxonTypeOptions" :value="searchTerms.taxontype" @update:value="updateTaxonType"></selector-input-element>
                 </div>
                 <div class="col-12 col-sm-8 col-md-9">
-                    <multiple-scientific-common-name-auto-complete :label="scinameFieldLabel" :sciname-arr="scinameArr" :taxon-type="searchTerms.taxontype" @update:sciname="processScientificNameChange"></multiple-scientific-common-name-auto-complete>
+                    <multiple-scientific-common-name-auto-complete :label="scinameFieldLabel" :sciname-arr="scinameArr" :taxon-type="searchTerms.taxontype" @update:sciname="processScientificNameChange" @click:enter="processEnterClick"></multiple-scientific-common-name-auto-complete>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
@@ -223,6 +223,10 @@ const searchCriteriaBlock = {
             context.emit('open:spatial-popup', type);
         }
 
+        function processEnterClick() {
+            context.emit('click:enter');
+        }
+
         function processScientificNameChange(taxonArr) {
             scinameArr.value = taxonArr;
             if(scinameArr.value.length > 0){
@@ -253,7 +257,9 @@ const searchCriteriaBlock = {
         }
 
         function updateDateData(prop, dateData) {
-            searchStore.updateSearchTerms(prop, dateData['date']);
+            if(dateData){
+                searchStore.updateSearchTerms(prop, dateData['date']);
+            }
         }
 
         function updatePointRadiusCriteria(prop, value) {
@@ -298,6 +304,7 @@ const searchCriteriaBlock = {
             searchTerms,
             taxonTypeOptions,
             openSpatialPopup,
+            processEnterClick,
             processScientificNameChange,
             resetCriteria,
             updateDateData,
