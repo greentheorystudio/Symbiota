@@ -208,9 +208,6 @@ const collectionCheckboxSelector = {
                 }
                 processSelectionChange();
             }
-            else{
-                showNotification('negative', 'At least one collection must be selected');
-            }
         }
 
         function processSelectAllChange(val) {
