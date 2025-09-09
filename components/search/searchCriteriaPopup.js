@@ -38,7 +38,7 @@ const searchCriteriaPopup = {
                             <q-tab-panel class="q-pa-none" name="criteria">
                                 <div class="column q-pa-sm q-col-gutter-sm">
                                     <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
-                                    <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup"></search-criteria-block>
+                                    <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup" @click:enter="processEnterClick"></search-criteria-block>
                                 </div>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" v-if="!collectionId" name="collections">
@@ -72,6 +72,7 @@ const searchCriteriaPopup = {
         'search-criteria-popup-tab-controls': searchCriteriaPopupTabControls
     },
     setup(props, context) {
+        const { showNotification } = useCore();
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
@@ -80,6 +81,7 @@ const searchCriteriaPopup = {
         const contentStyle = Vue.ref(null);
         const mofExtensionFieldsArr = Vue.reactive([]);
         const searchCriteriaBlockRef = Vue.ref(null);
+        const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
         const tab = Vue.ref('criteria');
 
         Vue.watch(contentRef, () => {
@@ -100,6 +102,27 @@ const searchCriteriaPopup = {
 
         function openSpatialPopup(type) {
             context.emit('open:spatial-popup', type);
+        }
+
+        function processEnterClick() {
+            setTimeout(() => {
+                if(searchTermsValid.value){
+                    if(props.popupType === 'checklist'){
+                        buildChecklist();
+                    }
+                    else{
+                        loadRecords();
+                    }
+                }
+                else{
+                    if(props.popupType === 'checklist'){
+                        showNotification('negative','Please enter search criteria to build a checklist');
+                    }
+                    else{
+                        showNotification('negative','Please enter search criteria to run a search');
+                    }
+                }
+            }, 200);
         }
 
         function resetCriteria() {
@@ -172,6 +195,11 @@ const searchCriteriaPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
+            window.addEventListener('keydown', (event) => {
+                if(event.key === 'Enter'){
+                    processEnterClick();
+                }
+            });
             if(Number(props.collectionId) > 0){
                 setMoFExtensionFieldArrFromCollectionId();
             }
@@ -191,6 +219,7 @@ const searchCriteriaPopup = {
             closePopup,
             loadRecords,
             openSpatialPopup,
+            processEnterClick,
             resetCriteria
         }
     }
