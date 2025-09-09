@@ -764,14 +764,13 @@ class OccurrenceLabel{
     private function setCollMetadata(): void
     {
         if($this->collid){
-            $sql = 'SELECT institutioncode, collectioncode, collectionname, colltype, dynamicProperties FROM omcollections WHERE collid = '.$this->collid;
+            $sql = 'SELECT institutioncode, collectioncode, collectionname, colltype FROM omcollections WHERE collid = '.$this->collid;
             if($rs = $this->conn->query($sql)){
                 while($r = $rs->fetch_object()){
                     $this->collArr['instcode'] = $r->institutioncode;
                     $this->collArr['collcode'] = $r->collectioncode;
                     $this->collArr['collname'] = $r->collectionname;
                     $this->collArr['colltype'] = $r->colltype;
-                    $this->collArr['dynprops'] = $r->dynamicProperties;
                 }
                 $rs->free();
             }

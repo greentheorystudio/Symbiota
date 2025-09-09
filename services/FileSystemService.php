@@ -318,7 +318,7 @@ class FileSystemService {
         if((int)$imageData['width'] > 0 && (int)$imageData['height'] > 0){
             if((int)$imageData['width'] > (int)$GLOBALS['IMG_WEB_WIDTH']){
                 $webFilename = self::getServerUploadFilename($targetPath, $origFilename);
-                if($webFilename && self::createNewImageFromFile(($targetPath . '/' . $targetFilename), $targetPath, $webFilename, $GLOBALS['IMG_WEB_WIDTH'], round($GLOBALS['IMG_WEB_WIDTH'] * ($imageData['height'] / $imageData['width'])), $imageData['width'], $imageData['height'])){
+                if($webFilename && self::createNewImageFromFile(($targetPath . '/' . $targetFilename), $targetPath, $webFilename, $GLOBALS['IMG_WEB_WIDTH'], round(($GLOBALS['IMG_WEB_WIDTH'] * ($imageData['height'] / $imageData['width'])), 0, PHP_ROUND_HALF_UP), $imageData['width'], $imageData['height'])){
                     $imageData['url'] = self::getUrlPathFromServerPath($targetPath . '/' . $webFilename);
                 }
             }
@@ -327,7 +327,7 @@ class FileSystemService {
             }
             if((int)$imageData['width'] > (int)$GLOBALS['IMG_TN_WIDTH']){
                 $tnFilename = self::getServerUploadFilename($targetPath, $origFilename, '_tn');
-                if($tnFilename && self::createNewImageFromFile(($targetPath . '/' . $targetFilename), $targetPath, $tnFilename, $GLOBALS['IMG_TN_WIDTH'], round($GLOBALS['IMG_TN_WIDTH'] * ($imageData['height'] / $imageData['width'])), $imageData['width'], $imageData['height'])){
+                if($tnFilename && self::createNewImageFromFile(($targetPath . '/' . $targetFilename), $targetPath, $tnFilename, $GLOBALS['IMG_TN_WIDTH'], round(($GLOBALS['IMG_TN_WIDTH'] * ($imageData['height'] / $imageData['width'])), 0, PHP_ROUND_HALF_UP), $imageData['width'], $imageData['height'])){
                     $imageData['thumbnailurl'] = self::getUrlPathFromServerPath($targetPath . '/' . $tnFilename);
                 }
             }
@@ -373,19 +373,17 @@ class FileSystemService {
     public static function transferDwcaToLocalTarget($targetPath, $dwcaPath): bool
     {
         $returnVal = false;
-        if(file_exists($dwcaPath)){
-            $fp = fopen($targetPath, 'wb+');
-            $ch = curl_init(str_replace(' ','%20', $dwcaPath));
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
-            curl_exec($ch);
-            curl_close($ch);
-            fclose($fp);
-            if(filesize($targetPath) > 0){
-                $returnVal = true;
-            }
+        $fp = fopen($targetPath, 'wb+');
+        $ch = curl_init(str_replace(' ','%20', $dwcaPath));
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3600);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3600);
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($fp);
+        if(filesize($targetPath) > 0){
+            $returnVal = true;
         }
         return $returnVal;
     }
