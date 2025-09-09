@@ -251,30 +251,31 @@ function createLayerGroup(){
 function deleteLayer() {
     const layerId = Number(document.getElementById('editLayerId').value);
     if(confirm("Are you sure you want to delete this layer? This will delete the layer data file from the server and cannot be undone.")){
-        const http = new XMLHttpRequest();
-        const url = "../../api/configurations/mapServerConfigurationController.php";
-        const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
-        const params = 'action=deleteMapDataFile&filename='+filename;
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                if(Number(http.responseText) !== 1){
-                    document.getElementById("statusStr").innerHTML = 'Error deleting data file';
-                    setTimeout(function () {
-                        document.getElementById("statusStr").innerHTML = '';
-                    }, 5000);
-                }
-                else{
-                    const layerElementId = 'layer-' + layerId;
-                    document.getElementById(layerElementId).remove();
-                    $('#layereditwindow').popup('hide');
-                    clearEditWindows();
-                    saveLayerConfigChanges();
-                }
+        const formData = new FormData();
+        formData.append('filename', layerData[layerId]['file']);
+        formData.append('action', 'deleteMapDataFile');
+        fetch(configurationsApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            if(Number(res) === 1){
+                const layerElementId = 'layer-' + layerId;
+                document.getElementById(layerElementId).remove();
+                $('#layereditwindow').popup('hide');
+                clearEditWindows();
+                saveLayerConfigChanges();
             }
-        };
-        http.send(params);
+            else{
+                document.getElementById("statusStr").innerHTML = 'Error deleting data file';
+                setTimeout(function () {
+                    document.getElementById("statusStr").innerHTML = '';
+                }, 5000);
+            }
+        });
     }
 }
 
@@ -484,21 +485,24 @@ function processSaveDisplaySettings(){
     data['SPATIAL_INITIAL_ZOOM'] = zoomValue;
     data['SPATIAL_INITIAL_CENTER'] = centerPointValue;
     const jsonData = JSON.stringify(data);
-    const http = new XMLHttpRequest();
-    const url = "../../api/configurations/configurationModelController.php";
-    let params = 'action=update&data='+jsonData;
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function () {
-        if (http.readyState === 4 && http.status === 200) {
+    const formData = new FormData();
+    formData.append('data', jsonData);
+    formData.append('action', 'update');
+    fetch(configurationsApiUrl, {
+        method: 'POST',
+        body: formData
+    })
+    .then((response) => {
+        return response.ok ? response.text() : null;
+    })
+    .then((res) => {
+        if(Number(res) === 1){
             document.getElementById("statusStr").innerHTML = 'Settings saved!';
             setTimeout(function () {
                 document.getElementById("statusStr").innerHTML = '';
             }, 5000);
         }
-    };
-    http.send(params);
+    });
 }
 
 function processSaveSymbologySettings(){
@@ -556,14 +560,18 @@ function processSaveSymbologySettings(){
     data['SPATIAL_DRAGDROP_OPACITY'] = '';
     data['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = '';
     const deleteJsonData = JSON.stringify(data);
-    const http = new XMLHttpRequest();
-    const url = "../../api/configurations/configurationModelController.php";
-    let params = 'action=delete&data='+deleteJsonData;
-    //console.log(url+'?'+params);
-    http.open("POST", url, true);
-    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    http.onreadystatechange = function() {
-        if(http.readyState === 4 && http.status === 200) {
+    const formData = new FormData();
+    formData.append('data', deleteJsonData);
+    formData.append('action', 'delete');
+    fetch(configurationsApiUrl, {
+        method: 'POST',
+        body: formData
+    })
+    .then((response) => {
+        return response.ok ? response.text() : null;
+    })
+    .then((res) => {
+        if(Number(res) === 1){
             data['SPATIAL_POINT_CLUSTER'] = pointsClusterValue;
             data['SPATIAL_POINT_CLUSTER_DISTANCE'] = pointsClusterDistanceValue;
             data['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = pointsDisplayHeatMapValue;
@@ -591,22 +599,26 @@ function processSaveSymbologySettings(){
             data['SPATIAL_DRAGDROP_OPACITY'] = dragDropOpacityValue;
             data['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'] = dragDropRasterColorScaleValue;
             const addJsonData = JSON.stringify(data);
-            let params = 'action=add&data=' + addJsonData;
-            //console.log(url+'?'+params);
-            http.open("POST", url, true);
-            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            http.onreadystatechange = function () {
-                if (http.readyState === 4 && http.status === 200) {
+            const formData = new FormData();
+            formData.append('data', addJsonData);
+            formData.append('action', 'add');
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
                     document.getElementById("statusStr").innerHTML = 'Settings saved!';
                     setTimeout(function () {
                         document.getElementById("statusStr").innerHTML = '';
                     }, 5000);
                 }
-            };
-            http.send(params);
+            });
         }
-    };
-    http.send(params);
+    });
 }
 
 function processSetDefaultSettings() {
@@ -644,30 +656,32 @@ function saveLayerConfigChanges(){
     if(newLayerConfigArr.length > 0){
         const newLayerConfig = {};
         newLayerConfig['spatialLayerConfig'] = newLayerConfigArr;
-        const http = new XMLHttpRequest();
-        const url = "../../api/configurations/mapServerConfigurationController.php";
-        const jsonData = JSON.stringify(newLayerConfig).replaceAll('&','%<amp>%');
-        const params = 'action=saveMapServerConfig&data='+jsonData;
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                if(Number(http.responseText) !== 1){
-                    document.getElementById("statusStr").innerHTML = 'Error saving changes';
-                    setTimeout(function () {
-                        document.getElementById("statusStr").innerHTML = '';
-                    }, 5000);
-                }
-                else{
-                    document.getElementById("statusStr").innerHTML = 'Configuration saved';
-                    setTimeout(function () {
-                        document.getElementById("statusStr").innerHTML = '';
-                    }, 5000);
-                    setLayersList();
-                }
+        const jsonData = JSON.stringify(newLayerConfig);
+        const formData = new FormData();
+        formData.append('data', jsonData);
+        formData.append('action', 'saveMapServerConfig');
+        fetch(configurationsApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            if(Number(res) === 1){
+                document.getElementById("statusStr").innerHTML = 'Configuration saved';
+                setTimeout(function () {
+                    document.getElementById("statusStr").innerHTML = '';
+                }, 5000);
+                setLayersList();
             }
-        };
-        http.send(params);
+            else{
+                document.getElementById("statusStr").innerHTML = 'Error saving changes';
+                setTimeout(function () {
+                    document.getElementById("statusStr").innerHTML = '';
+                }, 5000);
+            }
+        });
     }
 }
 
@@ -809,21 +823,22 @@ function uploadLayerFile(){
     const file = document.getElementById('addLayerFile').files[0];
     const layerName = document.getElementById('addLayerName').value;
     if(file && layerName !== ''){
-        const http = new XMLHttpRequest();
-        const url = "../../api/configurations/mapServerConfigurationController.php";
         const formData = new FormData();
         formData.append('addLayerFile', file);
         formData.append('action', 'uploadMapDataFile');
-        http.open("POST", url, true);
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                if(http.responseText && http.responseText !== ''){
-                    createLayer(layerName,http.responseText);
-                }
+        fetch(configurationsApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            if(res && res !== ''){
+                createLayer(layerName,res);
             }
             hideWorking();
-        };
-        http.send(formData);
+        });
     }
     else{
         hideWorking();
@@ -836,49 +851,53 @@ function uploadLayerUpdateFile() {
     const file = document.getElementById('layerFileUpdate').files[0];
     if(layerId && file){
         showWorking();
-        const http = new XMLHttpRequest();
-        const url = "../../api/configurations/mapServerConfigurationController.php";
-        const filename = layerData[layerId]['file'].replaceAll('&','%<amp>%');
-        const params = 'action=deleteMapDataFile&filename='+filename;
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-            if(http.readyState === 4 && http.status === 200) {
-                if(Number(http.responseText) !== 1){
-                    hideWorking();
-                    document.getElementById("statusStr").innerHTML = 'Error deleting original data file';
-                    setTimeout(function () {
-                        document.getElementById("statusStr").innerHTML = '';
-                    }, 5000);
-                }
-                else{
-                    const formData = new FormData();
-                    formData.append('addLayerFile', file);
-                    formData.append('action', 'uploadMapDataFile');
-                    http.open("POST", url, true);
-                    http.onreadystatechange = function() {
-                        if(http.readyState === 4 && http.status === 200) {
-                            if(http.responseText && http.responseText !== ''){
-                                const date = new Date();
-                                let fileType = http.responseText.split('.').pop();
-                                if(fileType === 'tiff'){
-                                    fileType = 'tif';
-                                }
-                                layerData[layerId]['file'] = http.responseText;
-                                layerData[layerId]['fileType'] = fileType;
-                                layerData[layerId]['dateUploaded'] = date.toISOString().split('T')[0];
-                                $('#layereditwindow').popup('hide');
-                                clearEditWindows();
-                                saveLayerConfigChanges();
-                            }
+        const formData = new FormData();
+        formData.append('filename', layerData[layerId]['file']);
+        formData.append('action', 'deleteMapDataFile');
+        fetch(configurationsApiUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then((response) => {
+            return response.ok ? response.text() : null;
+        })
+        .then((res) => {
+            if(Number(res) === 1){
+                const formData = new FormData();
+                formData.append('addLayerFile', file);
+                formData.append('action', 'uploadMapDataFile');
+                fetch(configurationsApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(res && res !== ''){
+                        const date = new Date();
+                        let fileType = res.split('.').pop();
+                        if(fileType === 'tiff'){
+                            fileType = 'tif';
                         }
-                        hideWorking();
-                    };
-                    http.send(formData);
-                }
+                        layerData[layerId]['file'] = res;
+                        layerData[layerId]['fileType'] = fileType;
+                        layerData[layerId]['dateUploaded'] = date.toISOString().split('T')[0];
+                        $('#layereditwindow').popup('hide');
+                        clearEditWindows();
+                        saveLayerConfigChanges();
+                    }
+                    hideWorking();
+                });
             }
-        };
-        http.send(params);
+            else{
+                hideWorking();
+                document.getElementById("statusStr").innerHTML = 'Error deleting original data file';
+                setTimeout(function () {
+                    document.getElementById("statusStr").innerHTML = '';
+                }, 5000);
+            }
+        });
     }
     else{
         alert("You must choose a valid file to use for the update first.");
