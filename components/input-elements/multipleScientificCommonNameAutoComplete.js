@@ -66,7 +66,7 @@ const multipleScientificCommonNameAutoComplete = {
         }
     },
     template: `
-        <q-select ref="autocompleteRef" v-model="scinameArr" use-input fill-input outlined dense options-dense hide-dropdown-icon multiple use-chips popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :tabindex="tabindex" :disable="disabled">
+        <q-select ref="autocompleteRef" v-model="scinameArr" use-input fill-input outlined dense options-dense hide-dropdown-icon multiple use-chips popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" @keyup.enter="processEnterClick" :label="label" :tabindex="tabindex" :disable="disabled">
             <template v-if="!disabled && (scinameArr.length > 0 || definition)" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -197,6 +197,11 @@ const multipleScientificCommonNameAutoComplete = {
             autocompleteRef.value.updateInputValue('');
         }
 
+        function processEnterClick() {
+            autocompleteRef.value.blur();
+            context.emit('click:enter');
+        }
+
         function setOptionsFromFetch(val) {
             let action = 'getAutocompleteSciNameList';
             let rankLimit, rankLow, rankHigh;
@@ -265,7 +270,8 @@ const multipleScientificCommonNameAutoComplete = {
             createValue,
             getOptions,
             openDefinitionPopup,
-            processChange
+            processChange,
+            processEnterClick
         }
     }
 };

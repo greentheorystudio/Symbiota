@@ -101,6 +101,7 @@ const selectorInputElement = {
         const propsRefs = Vue.toRefs(props);
         const selectedOption = Vue.ref(null);
         const selectorOptions = Vue.shallowReactive([]);
+        const selectorRef = Vue.ref(null);
 
         Vue.watch(propsRefs.value, () => {
             setSelectedOption();
@@ -168,6 +169,7 @@ const selectorInputElement = {
             displayDefinitionPopup,
             selectedOption,
             selectorOptions,
+            selectorRef,
             checkFilter,
             clearValue,
             openDefinitionPopup,
