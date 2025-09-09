@@ -239,6 +239,11 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                         if(Number(uid) > 0 && confirmationCode !== ''){
                             processConfirmationCode();
                         }
+                        window.addEventListener('keydown', (event) => {
+                            if(event.key === 'Enter'){
+                                processLogin();
+                            }
+                        });
                     });
                     
                     return {
