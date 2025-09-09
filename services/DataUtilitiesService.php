@@ -195,7 +195,7 @@ class DataUtilitiesService {
                 if(isset($occData['latsec']) && $occData['latsec'] && is_numeric($occData['latsec'])) {
                     $latDec += $occData['latsec'] / 3600;
                 }
-                if($latDec > 0 && strncasecmp($occData['latns'], 's', 1) === 0) {
+                if($latDec > 0 && isset($occData['latns']) && strncasecmp($occData['latns'], 's', 1) === 0) {
                     $latDec *= -1;
                 }
                 $lngDec = $occData['lngdeg'];
@@ -211,8 +211,8 @@ class DataUtilitiesService {
                 if(($lngDec > 0) && in_array(strtolower($occData['country']), array('usa', 'united states', 'canada', 'mexico', 'panama'))) {
                     $lngDec *= -1;
                 }
-                $occData['decimallatitude'] = round($latDec,6);
-                $occData['decimallongitude'] = round($lngDec,6);
+                $occData['decimallatitude'] = round($latDec,6, PHP_ROUND_HALF_UP);
+                $occData['decimallongitude'] = round($lngDec,6, PHP_ROUND_HALF_UP);
             }
             $vCoord = $occData['verbatimcoordinates'] ?? '';
             if($vCoord) {
@@ -467,8 +467,8 @@ class DataUtilitiesService {
             $lat = count($latLongArr) === 2 ? $latLongArr[0] : null;
             $lng = count($latLongArr) === 2 ? $latLongArr[1] : null;
             if($lat && $lng){
-                $retArr['lat'] = round($lat,6);
-                $retArr['lng'] = round($lng,6);
+                $retArr['lat'] = round($lat,6, PHP_ROUND_HALF_UP);
+                $retArr['lng'] = round($lng,6, PHP_ROUND_HALF_UP);
             }
         }
         return $retArr;
@@ -658,8 +658,8 @@ class DataUtilitiesService {
                             if($lngEW === 'W'){
                                 $lngDec = -$lngDec;
                             }
-                            $retArr['lat'] = round($latDec,6);
-                            $retArr['lng'] = round($lngDec,6);
+                            $retArr['lat'] = round($latDec,6, PHP_ROUND_HALF_UP);
+                            $retArr['lng'] = round($lngDec,6, PHP_ROUND_HALF_UP);
                         }
                     }
                 }
@@ -771,11 +771,11 @@ class DataUtilitiesService {
             $retArr['minelev'] = $m[1];
         }
         elseif(preg_match('/([.\d]+)[fet\']{,4}\s*-\s*([.\d]+)\s?[f\']/i', $inStr,$m)){
-            $retArr['minelev'] = round($m[1] * .3048);
-            $retArr['maxelev'] = round($m[2] * .3048);
+            $retArr['minelev'] = round(($m[1] * .3048), 0, PHP_ROUND_HALF_UP);
+            $retArr['maxelev'] = round(($m[2] * .3048), 0, PHP_ROUND_HALF_UP);
         }
         elseif(preg_match('/([.\d]+)\s*[f\']/i', $inStr,$m)){
-            $retArr['minelev'] = round($m[1] * .3048);
+            $retArr['minelev'] = round(($m[1] * .3048), 0, PHP_ROUND_HALF_UP);
         }
         if($retArr){
             if(array_key_exists('minelev', $retArr) && ($retArr['minelev'] > 8000 || $retArr['minelev'] < 0)) {
