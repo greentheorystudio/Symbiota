@@ -70,7 +70,7 @@ class UploadDeterminationTemp{
                 foreach($this->fields as $field => $fieldArr){
                     if(!in_array($field, $skipFields)){
                         $dataValue = $detData[$field] ?? null;
-                        $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $dataValue, $fieldArr);
+                        $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $dataValue), $fieldArr);
                     }
                 }
                 $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
