@@ -29,7 +29,7 @@ const taxaQuickSearch = {
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autoCompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" @keyup.enter="processSearch" :label="autoCompleteLabel">
+                        <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autoCompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" @keyup.enter="processEnterClick" :label="autoCompleteLabel">
                             <template v-slot:append>
                                 <q-icon name="search" class="cursor-pointer" @click="processSearch();">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -59,7 +59,7 @@ const taxaQuickSearch = {
 
         function blurAction(val) {
             if(val && selectedTaxon.value && val.target.value !== selectedTaxon.value.label){
-                const optionObj = autoCompleteOptions.value.find(option => option['sciname'] === val.target.value);
+                const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.value.trim().toLowerCase());
                 if(optionObj){
                     processChange(optionObj);
                 }
@@ -77,7 +77,7 @@ const taxaQuickSearch = {
 
         function createValue(val, done) {
             if(val.length > 0) {
-                const optionObj = autoCompleteOptions.value.find(option => option['sciname'] === val);
+                const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
                 if(optionObj){
                     done(optionObj, 'add');
                 }
@@ -127,6 +127,10 @@ const taxaQuickSearch = {
             selectedTaxon.value = Object.assign({}, taxonObj);
         }
 
+        function processEnterClick() {
+            processSearch();
+        }
+
         function processSearch() {
             if(selectedTaxonType.value === 'common'){
                 const formData = new FormData();
@@ -150,9 +154,8 @@ const taxaQuickSearch = {
                 });
             }
             else{
-                console.log(selectedTaxon.value);
                 if(selectedTaxon.value.hasOwnProperty('tid') && Number(selectedTaxon.value['tid']) > 0){
-                    //window.location.href = (clientRoot + '/taxa/index.php?taxon=' + selectedTaxon.value['tid']);
+                    window.location.href = (clientRoot + '/taxa/index.php?taxon=' + selectedTaxon.value['tid']);
                 }
                 else{
                     showNotification('negative', 'That scientific name was not found in the database');
@@ -187,6 +190,7 @@ const taxaQuickSearch = {
             createValue,
             getOptions,
             processChange,
+            processEnterClick,
             processSearch,
             processTaxonTypeChange
         };
