@@ -257,9 +257,7 @@ const searchCriteriaBlock = {
         }
 
         function updateDateData(prop, dateData) {
-            if(dateData){
-                searchStore.updateSearchTerms(prop, dateData['date']);
-            }
+            searchStore.updateSearchTerms(prop, (dateData ? dateData['date'] : null));
         }
 
         function updatePointRadiusCriteria(prop, value) {
