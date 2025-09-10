@@ -1197,12 +1197,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.collectingEventStore.updateCollectingEventEditData(key, value);
         },
         updateCollectingEventEditDataDate(dateData) {
-            this.collectingEventStore.updateCollectingEventEditData('eventdate', dateData['date']);
-            this.collectingEventStore.updateCollectingEventEditData('year', dateData['year']);
-            this.collectingEventStore.updateCollectingEventEditData('month', dateData['month']);
-            this.collectingEventStore.updateCollectingEventEditData('day', dateData['day']);
-            this.collectingEventStore.updateCollectingEventEditData('startdayofyear', dateData['startDayOfYear']);
-            this.collectingEventStore.updateCollectingEventEditData('enddayofyear', dateData['endDayOfYear']);
+            this.collectingEventStore.updateCollectingEventEditData('eventdate', (dateData ? dateData['date'] : null));
+            this.collectingEventStore.updateCollectingEventEditData('year', (dateData ? dateData['year'] : null));
+            this.collectingEventStore.updateCollectingEventEditData('month', (dateData ? dateData['month'] : null));
+            this.collectingEventStore.updateCollectingEventEditData('day', (dateData ? dateData['day'] : null));
+            this.collectingEventStore.updateCollectingEventEditData('startdayofyear', (dateData ? dateData['startDayOfYear'] : null));
+            this.collectingEventStore.updateCollectingEventEditData('enddayofyear', (dateData ? dateData['endDayOfYear'] : null));
         },
         updateCollectingEventLocation(locationid, callback) {
             this.collectingEventStore.updateCollectingEventLocation(this.getCollId, locationid, (res) => {
@@ -1251,12 +1251,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             }
         },
         updateOccurrenceEditDataDate(dateData) {
-            this.occurrenceEditData['eventdate'] = dateData['date'];
-            this.occurrenceEditData['year'] = dateData['year'];
-            this.occurrenceEditData['month'] = dateData['month'];
-            this.occurrenceEditData['day'] = dateData['day'];
-            this.occurrenceEditData['startdayofyear'] = dateData['startDayOfYear'];
-            this.occurrenceEditData['enddayofyear'] = dateData['endDayOfYear'];
+            this.occurrenceEditData['eventdate'] = dateData ? dateData['date'] : null;
+            this.occurrenceEditData['year'] = dateData ? dateData['year'] : null;
+            this.occurrenceEditData['month'] = dateData ? dateData['month'] : null;
+            this.occurrenceEditData['day'] = dateData ? dateData['day'] : null;
+            this.occurrenceEditData['startdayofyear'] = dateData ? dateData['startDayOfYear'] : null;
+            this.occurrenceEditData['enddayofyear'] = dateData ? dateData['endDayOfYear'] : null;
 
         },
         updateOccurrenceEditDataTaxon(taxon) {

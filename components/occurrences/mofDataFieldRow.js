@@ -45,7 +45,7 @@ const mofDataFieldRow = {
                                 :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
                                 :label="configuredDataFields[field.fieldName]['label']" 
                                 :value="configuredData[field.fieldName]" 
-                                @update:value="(value) => updateConfiguredEditData(field.fieldName, value.date)"
+                                @update:value="(value) => updateConfiguredEditData(field.fieldName, (value ? value.date : null))"
                             ></date-input-element>
                         </template>
                         <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'int' || configuredDataFields[field.fieldName]['dataType'] === 'number' || configuredDataFields[field.fieldName]['dataType'] === 'string'">
