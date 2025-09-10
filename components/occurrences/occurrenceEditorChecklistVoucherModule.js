@@ -16,7 +16,7 @@ const occurrenceEditorChecklistVoucherModule = {
                                     <selector-input-element :options="checklistOptions" label="Checklist" :value="selectedChecklist" option-label="name" option-value="clid" :clearable="true" @update:value="(value) => selectedChecklist = value"></selector-input-element>
                                 </div>
                                 <div>
-                                    <q-btn color="primary" @click="linkVoucher();" label="Link Voucher" :disabled="!selectedChecklist" dense />
+                                    <q-btn color="primary" @click="linkVoucher();" label="Link Voucher" :disabled="!selectedChecklist || Number(occurrenceData['tid']) === 0" dense />
                                 </div>
                             </div>
                             <div class="col-2">
@@ -160,6 +160,7 @@ const occurrenceEditorChecklistVoucherModule = {
             checklistOptions,
             confirmationPopupRef,
             clientRoot,
+            occurrenceData,
             selectedChecklist,
             userChecklistArr,
             voucherChecklistArr,
