@@ -29,7 +29,7 @@ const searchCriteriaPopup = {
                     <div :style="contentStyle" class="overflow-auto">
                         <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                             <q-tab name="criteria" label="Criteria" no-caps></q-tab>
-                            <q-tab v-if="!collectionId && collectionArr.length > 0" name="collections" label="Collections" no-caps></q-tab>
+                            <q-tab v-if="!collectionId && collectionArr.length > 1" name="collections" label="Collections" no-caps></q-tab>
                             <q-tab name="advanced" label="Advanced" no-caps></q-tab>
                             <q-tab v-if="mofExtensionFieldsArr.length > 0" name="mofextension" label="Data Extension" no-caps></q-tab>
                         </q-tabs>
@@ -41,7 +41,7 @@ const searchCriteriaPopup = {
                                     <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup" @click:enter="processEnterClick"></search-criteria-block>
                                 </div>
                             </q-tab-panel>
-                            <q-tab-panel class="q-pa-none" v-if="!collectionId && collectionArr.length > 0" name="collections">
+                            <q-tab-panel class="q-pa-none" v-if="!collectionId && collectionArr.length > 1" name="collections">
                                 <div class="column q-pa-sm q-col-gutter-sm">
                                     <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
                                     <search-collections-block :collection-arr="collectionArr"></search-collections-block>
