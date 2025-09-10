@@ -1,7 +1,13 @@
 const searchCollectionsBlock = {
+    props: {
+        collectionArr: {
+            type: Array,
+            default: []
+        }
+    },
     template: `
         <div class="q-pa-md">
-            <collection-checkbox-selector :value-arr="searchTerms.db" @update:value="(value) => updateSearchTerms('db', value)"></collection-checkbox-selector>
+            <collection-checkbox-selector :collection-arr="collectionArr" :value-arr="searchTerms.db" @update:value="(value) => updateSearchTerms('db', value)"></collection-checkbox-selector>
         </div>
     `,
     components: {
