@@ -1,5 +1,9 @@
 const collectionCheckboxSelector = {
     props: {
+        collectionArr: {
+            type: Array,
+            default: []
+        },
         valueArr: {
             type: Array,
             default: []
@@ -86,7 +90,6 @@ const collectionCheckboxSelector = {
             collections: []
         });
         const clientRoot = baseStore.getClientRoot;
-        const collectionArr = Vue.ref([]);
         const collectionIdArr = Vue.ref([]);
         const collectionCategoryArr = Vue.ref([]);
         const defaultCategoryId = baseStore.getDefaultCollectionCategoryId;
@@ -143,7 +146,7 @@ const collectionCheckboxSelector = {
         }
 
         function prepareCollectionData() {
-            collectionArr.value.forEach((col) => {
+            props.collectionArr.forEach((col) => {
                 let colCodeStr = '';
                 if(col['institutioncode']){
                     colCodeStr += col['institutioncode'];
@@ -257,20 +260,6 @@ const collectionCheckboxSelector = {
             .then((result) => {
                 collectionCategoryArr.value = result;
                 prepareCollectionCategoryData();
-                setCollections();
-            });
-        }
-
-        function setCollections() {
-            const formData = new FormData();
-            formData.append('action', 'getCollectionArr');
-            fetch(collectionApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => response.json())
-            .then((result) => {
-                collectionArr.value = result;
                 prepareCollectionData();
             });
         }
