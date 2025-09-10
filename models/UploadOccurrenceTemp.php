@@ -592,13 +592,13 @@ class UploadOccurrenceTemp{
 
     public function linkUploadToExistingOccurrenceData($collid): int
     {
-        $returnVal = 0;
+        $returnVal = 1;
         if($collid){
             $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
                 'SET u.occid = o.occid '.
                 'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
             }
         }
         return $returnVal;
@@ -606,13 +606,13 @@ class UploadOccurrenceTemp{
 
     public function linkUploadToExistingOccurrenceDataByCatalogNumber($collid, $linkField): int
     {
-        $returnVal = 0;
+        $returnVal = 1;
         if($collid && ($linkField === 'catalognumber' || $linkField === 'othercatalognumbers')){
             $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' AND u.collid = o.collid '.
                 'SET u.occid = o.occid, o.dbpk = u.dbpk '.
                 'WHERE u.collid  = ' . $collid . ' AND u.' . $linkField . ' IS NOT NULL AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
             }
         }
         return $returnVal;

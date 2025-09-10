@@ -84,7 +84,7 @@ class Media{
     public function createMediaRecordsFromUploadData($collId): int
     {
         $skipFields = array('mediaid', 'creatoruid', 'initialtimestamp');
-        $retVal = 0;
+        $retVal = 1;
         $fieldNameArr = array();
         if($collId){
             foreach($this->fields as $field => $fieldArr){
@@ -102,8 +102,8 @@ class Media{
                     'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
                     'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND accessuri IS NOT NULL AND format IS NOT NULL ';
                 //echo "<div>".$sql."</div>";
-                if($this->conn->query($sql)){
-                    $retVal = 1;
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
                 }
             }
         }
@@ -131,7 +131,7 @@ class Media{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                if(strpos($row['accessuri'], '/') === 0){
+                if(strncmp($row['accessuri'], '/', 1) === 0){
                     FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['accessuri']), true);
                 }
                 unset($rows[$index]);
@@ -169,7 +169,7 @@ class Media{
     {
         $retVal = 1;
         $data = $this->getMediaData($mediaid);
-        if($data['accessuri'] && strpos($data['accessuri'], '/') === 0){
+        if($data['accessuri'] && strncmp($data['accessuri'], '/', 1) === 0){
             $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['accessuri']);
             FileSystemService::deleteFile($urlServerPath, true);
         }

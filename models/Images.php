@@ -178,7 +178,7 @@ class Images{
     public function createImageRecordsFromUploadData($collId): int
     {
         $skipFields = array('imgid', 'photographeruid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
-        $retVal = 0;
+        $retVal = 1;
         $fieldNameArr = array();
         if($collId){
             foreach($this->fields as $field => $fieldArr){
@@ -196,8 +196,8 @@ class Images{
                     'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
                     'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND url IS NOT NULL AND format IS NOT NULL ';
                 //echo "<div>".$sql."</div>";
-                if($this->conn->query($sql)){
-                    $retVal = 1;
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
                 }
             }
         }
