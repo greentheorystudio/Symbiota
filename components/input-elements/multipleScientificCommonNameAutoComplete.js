@@ -124,7 +124,7 @@ const multipleScientificCommonNameAutoComplete = {
 
         function blurAction(val) {
             if(val.target.value){
-                const optionObj = autocompleteOptions.value.find(option => option['sciname'] === val.target.value);
+                const optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.value.trim().toLowerCase());
                 if(optionObj){
                     const currentScinameArr = props.scinameArr.slice();
                     currentScinameArr.push(optionObj);
@@ -153,7 +153,7 @@ const multipleScientificCommonNameAutoComplete = {
 
         function createValue(val, done) {
             if(val.length > 0) {
-                const optionObj = autocompleteOptions.value.find(option => option['sciname'] === val);
+                const optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
                 if(optionObj){
                     done(optionObj, 'add');
                 }
