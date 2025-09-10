@@ -154,9 +154,8 @@ const taxaQuickSearch = {
                 });
             }
             else{
-                console.log(selectedTaxon.value);
                 if(selectedTaxon.value.hasOwnProperty('tid') && Number(selectedTaxon.value['tid']) > 0){
-                    //window.location.href = (clientRoot + '/taxa/index.php?taxon=' + selectedTaxon.value['tid']);
+                    window.location.href = (clientRoot + '/taxa/index.php?taxon=' + selectedTaxon.value['tid']);
                 }
                 else{
                     showNotification('negative', 'That scientific name was not found in the database');
