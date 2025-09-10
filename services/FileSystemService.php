@@ -282,7 +282,7 @@ class FileSystemService {
 
     public static function getUrlPathFromServerPath($path): string
     {
-        return str_replace($GLOBALS['SERVER_ROOT'], '', $path);
+        return str_replace($GLOBALS['IMAGE_ROOT_PATH'], $GLOBALS['IMAGE_ROOT_URL'], $path);
     }
 
     public static function initializeNewDomDocument(): DOMDocument

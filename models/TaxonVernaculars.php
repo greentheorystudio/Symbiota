@@ -201,6 +201,9 @@ class TaxonVernaculars{
             'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid ';
         foreach($vernaculars as $name){
             $whereStr .= "OR v.vernacularname LIKE '%" . SanitizerService::cleanInStr($this->conn, $name) . "%' ";
+            if(strpos($name, '-') !== false){
+                $whereStr .= "OR v.vernacularname LIKE '%" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $name)) . "%' ";
+            }
         }
         $sql .= 'WHERE ' . substr($whereStr,3) . ' ';
         //echo "<div>sql: ".$sql."</div>";
