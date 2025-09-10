@@ -371,12 +371,7 @@ const occurrenceLinkageToolPopup = {
         }
 
         function updateDateValue(value) {
-            if(value){
-                updateSearchTerms('eventdate1', value['date']);
-            }
-            else{
-                updateSearchTerms('eventdate1', null);
-            }
+            updateSearchTerms('eventdate1', (value ? value['date'] : null));
         }
 
         function updateSearchTerms(prop, value) {

@@ -48,10 +48,7 @@ const useOccurrenceDeterminationStore = Pinia.defineStore('occurrence-determinat
         },
         getDeterminationValid(state) {
             return (
-                state.determinationEditData['sciname'] &&
-                state.determinationEditData['identifiedby'] &&
-                state.determinationEditData['dateidentified'] &&
-                Number(state.determinationEditData['sortsequence']) > 0
+                !!state.determinationEditData['sciname']
             );
         }
     },
