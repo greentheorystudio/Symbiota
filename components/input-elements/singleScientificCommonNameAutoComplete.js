@@ -70,7 +70,7 @@ const singleScientificCommonNameAutoComplete = {
         }
     },
     template: `
-        <q-select v-model="sciname" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-top" behavior="menu" input-class="z-top" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :tabindex="tabindex" :disable="disabled">
+        <q-select ref="autocompleteRef" v-model="sciname" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-top" behavior="menu" input-class="z-top" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" @keyup.enter="processEnterClick" :label="label" :tabindex="tabindex" :disable="disabled">
             <template v-if="!disabled && (sciname || definition)" v-slot:append>
                 <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -123,11 +123,12 @@ const singleScientificCommonNameAutoComplete = {
         const { showNotification } = useCore();
 
         const autocompleteOptions = Vue.ref([]);
+        const autocompleteRef = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
 
         function blurAction(val) {
             if(val.target.value && val.target.value !== props.sciname){
-                const optionObj = autocompleteOptions.value.find(option => option['sciname'] === val.target.value);
+                const optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.value.trim().toLowerCase());
                 if(optionObj){
                     processChange(optionObj);
                 }
@@ -155,7 +156,7 @@ const singleScientificCommonNameAutoComplete = {
 
         function createValue(val, done) {
             if(val.length > 0) {
-                const optionObj = autocompleteOptions.value.find(option => option['sciname'] === val);
+                const optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
                 if(optionObj){
                     done(optionObj, 'add');
                 }
@@ -199,6 +200,11 @@ const singleScientificCommonNameAutoComplete = {
 
         function processChange(taxonObj) {
             context.emit('update:sciname', taxonObj);
+        }
+
+        function processEnterClick() {
+            autocompleteRef.value.blur();
+            context.emit('click:enter');
         }
 
         function setOptionsFromFetch(val) {
@@ -262,13 +268,15 @@ const singleScientificCommonNameAutoComplete = {
 
         return {
             autocompleteOptions,
+            autocompleteRef,
             displayDefinitionPopup,
             blurAction,
             clearAction,
             createValue,
             getOptions,
             openDefinitionPopup,
-            processChange
+            processChange,
+            processEnterClick
         }
     }
 };
