@@ -74,12 +74,12 @@ const occurrenceDeterminationEditorPopup = {
                                     <checkbox-input-element label="Add to Annotation Queue" :value="determinationData['printqueue']" @update:value="(value) => updateDeterminationData('printqueue', (value ? 1 : 0))"></checkbox-input-element>
                                 </div>
                             </div>
-                            <div v-if="Number(determinationId) > 0 && Number(determinationData['iscurrent']) !== 1" class="row justify-end q-gutter-md">
+                            <div v-if="Number(determinationId) > 0" class="row justify-end q-gutter-md">
                                 <div>
-                                    <q-btn color="primary" @click="makeDeterminationCurrent();" label="Make Determination Current" />
+                                    <q-btn color="primary" @click="makeDeterminationCurrent();" label="Make Determination Current" :disabled="Number(determinationData['iscurrent']) === 1" />
                                 </div>
                                 <div>
-                                    <q-btn color="negative" @click="deleteDetermination();" label="Delete Determination" />
+                                    <q-btn color="negative" @click="deleteDetermination();" label="Delete Determination" :disabled="Number(determinationData['iscurrent']) === 1" />
                                 </div>
                             </div>
                         </div>
