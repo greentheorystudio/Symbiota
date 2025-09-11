@@ -251,6 +251,7 @@ const spatialControlPanel = {
         const selectInteraction = Vue.inject('selectInteraction');
         const windowWidth = Vue.inject('windowWidth');
 
+        const processInputSelections = Vue.inject('processInputSelections');
         const processInputSubmit = Vue.inject('processInputSubmit');
         const processInputPointUncertaintyChange = Vue.inject('processInputPointUncertaintyChange');
         const setQueryPopupDisplay = Vue.inject('setQueryPopupDisplay');
@@ -360,6 +361,7 @@ const spatialControlPanel = {
             else if(inputWindowToolsArr.includes('radius')){
                 updateRadius();
             }
+            processInputSelections();
         }
 
         function exportMapPNG(){

@@ -262,10 +262,10 @@ const occurrenceCoordinateToolPopup = {
                         let decimalLat = parseInt(latDDMDegreeValue.value) + (parseFloat(latDDMMinuteValue.value) / 60);
                         let decimalLong = parseInt(longDDMDegreeValue.value) + (parseFloat(longDDMMinuteValue.value) / 60);
                         if(latDDMNorthSouthValue.value === 'S') {
-                            decimalLat = decimalLat * -1;
+                            decimalLat *= -1;
                         }
                         if(longDDMWestEastValue.value === 'W') {
-                            decimalLong = decimalLong * -1;
+                            decimalLong *= -1;
                         }
                         returnData['decimalLatitude'] = decimalLat;
                         returnData['decimalLongitude'] = decimalLong;
@@ -310,10 +310,10 @@ const occurrenceCoordinateToolPopup = {
                         let decimalLat = parseInt(latDegreeValue.value) + (parseFloat(latMinuteValue.value) / 60) + (parseFloat(latSecondValue.value) / 3600);
                         let decimalLong = parseInt(longDegreeValue.value) + (parseFloat(longMinuteValue.value) / 60) + (parseFloat(longSecondValue.value) / 3600);
                         if(latNorthSouthValue.value === 'S') {
-                            decimalLat = decimalLat * -1;
+                            decimalLat *= -1;
                         }
                         if(longWestEastValue.value === 'W') {
-                            decimalLong = decimalLong * -1;
+                            decimalLong *= -1;
                         }
                         returnData['decimalLatitude'] = decimalLat;
                         returnData['decimalLongitude'] = decimalLong;
