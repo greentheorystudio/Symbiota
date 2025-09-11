@@ -798,6 +798,9 @@ body.processing .loadingModal {
 	background-color: #3c668d;
 	color: white;
 }
+.input-tool-popup {
+    width: 450px;
+}
 .sm-popup {
 	width: 45%;
 	border: 1px solid black;
