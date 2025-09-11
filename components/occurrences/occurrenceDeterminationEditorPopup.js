@@ -40,7 +40,7 @@ const occurrenceDeterminationEditorPopup = {
                                     <single-scientific-common-name-auto-complete :sciname="determinationData['sciname']" label="Scientific Name" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                                 </div>
                                 <div class="col-12 col-sm-4">
-                                    <text-field-input-element :disabled="Number(determinationData['tid']) > 0" label="Author" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
+                                    <text-field-input-element label="Author" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
                                 </div>
                                 <div class="col-12 col-sm-3">
                                     <text-field-input-element label="ID Qualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
