@@ -56,8 +56,8 @@ const occurrenceCoordinateToolPopup = {
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
-                        <q-btn color="grey-4" text-color="black" class="black-border" @click="closePopup();" label="Close" dense></q-btn>
-                        <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeDMSData();" label="Process DMS Values" dense></q-btn>
+                        <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
+                        <q-btn color="primary" @click="transcribeDMSData();" label="Process DMS Values" dense></q-btn>
                     </div>
                 </q-tab-panel>
                 <q-tab-panel name="ddm" class="q-pa-sm column q-col-gutter-xs">
@@ -91,8 +91,8 @@ const occurrenceCoordinateToolPopup = {
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
-                        <q-btn color="grey-4" text-color="black" class="black-border" @click="closePopup();" label="Close" dense></q-btn>
-                        <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeDDMData();" label="Process DDM Values" dense></q-btn>
+                        <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
+                        <q-btn color="primary" @click="transcribeDDMData();" label="Process DDM Values" dense></q-btn>
                     </div>
                 </q-tab-panel>
                 <q-tab-panel name="utm" class="q-pa-sm column q-col-gutter-xs">
@@ -110,8 +110,8 @@ const occurrenceCoordinateToolPopup = {
                         <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-max" behavior="menu" dense options-dense />
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
-                        <q-btn color="grey-4" text-color="black" class="black-border" @click="closePopup();" label="Close" dense></q-btn>
-                        <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeUTMData();" label="Process UTM Values" dense></q-btn>
+                        <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
+                        <q-btn color="primary" @click="transcribeUTMData();" label="Process UTM Values" dense></q-btn>
                     </div>
                 </q-tab-panel>
                 <q-tab-panel name="trs" class="q-pa-sm column q-col-gutter-xs">
@@ -144,8 +144,8 @@ const occurrenceCoordinateToolPopup = {
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
-                        <q-btn color="grey-4" text-color="black" class="black-border" @click="closePopup();" label="Close" dense></q-btn>
-                        <q-btn color="grey-4" text-color="black" class="black-border" @click="transcribeTRSData();" label="Process TRS Values" dense></q-btn>
+                        <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
+                        <q-btn color="primary" @click="transcribeTRSData();" label="Process TRS Values" dense></q-btn>
                     </div>
                 </q-tab-panel>
             </q-tab-panels>
