@@ -49,7 +49,7 @@ const occurrenceVerbatimElevationInputElement = {
                     </q-icon>
                     <q-icon v-if="value" name="calculate" class="cursor-pointer" @click="parseElevationValues();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Recalculate decimal coordinates
+                            Recalculate minimum and maximum elevation values
                         </q-tooltip>
                     </q-icon>
                 </template>
