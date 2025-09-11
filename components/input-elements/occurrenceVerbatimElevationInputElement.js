@@ -132,12 +132,12 @@ const occurrenceVerbatimElevationInputElement = {
                 let verbElevStr = props.value.replaceAll(/,/g ,"");
                 if(regEx1.exec(verbElevStr)){
                     extractArr = regEx1.exec(verbElevStr);
-                    min = Math.round(extractArr[1] * .3048);
-                    max = Math.round(extractArr[2] * .3048);
+                    min = Math.round(extractArr[1] * 0.3048);
+                    max = Math.round(extractArr[2] * 0.3048);
                 }
                 else if(regEx2.exec(verbElevStr)){
                     extractArr = regEx2.exec(verbElevStr);
-                    min = Math.round(extractArr[1] * .3048);
+                    min = Math.round(extractArr[1] * 0.3048);
                 }
                 else if(regEx3.exec(verbElevStr)){
                     extractArr = regEx3.exec(verbElevStr);
