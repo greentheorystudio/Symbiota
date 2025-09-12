@@ -754,10 +754,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['maximumelevationinmeters'] = locationData['maximumelevationinmeters'];
             this.occurrenceEditData['verbatimelevation'] = locationData['verbatimelevation'];
         },
-        mergeSelectedEventOccurrenceData(data, overwrite) {
+        mergeSelectedEventOccurrenceData(data, missingOnly) {
             const dataProps = Object.keys(data);
             dataProps.forEach((prop) => {
-                if(data[prop] && (!this.occurrenceEditData[prop] || overwrite)){
+                if(data[prop] && (this.getBlankCollectingEventRecord.hasOwnProperty(prop) || this.getBlankLocationRecord.hasOwnProperty(prop)) && (!this.occurrenceEditData[prop] || !missingOnly)){
                     this.occurrenceEditData[prop] = data[prop];
                 }
             });
