@@ -533,12 +533,12 @@ const occurrenceDataUploadModule = {
             const returnArr = [];
             Object.keys(fieldMappingDataOccurrence.value).forEach((field) => {
                 if(fieldMappingDataOccurrence.value[field] !== 'unmapped' && !returnArr.includes(field.toLowerCase())) {
-                    returnArr.push(field.toLowerCase());
+                    returnArr.push(fieldMappingDataOccurrence.value[field].toLowerCase());
                 }
             });
             Object.keys(fieldMappingDataSecondary.value).forEach((field) => {
                 if(fieldMappingDataSecondary.value[field] !== 'unmapped' && !returnArr.includes(field.toLowerCase())) {
-                    returnArr.push(field.toLowerCase());
+                    returnArr.push(fieldMappingDataSecondary.value[field].toLowerCase());
                 }
             });
             console.log(returnArr);
