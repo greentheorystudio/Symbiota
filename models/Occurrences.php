@@ -504,7 +504,7 @@ class Occurrences{
         $collId = array_key_exists('collid', $data) ? (int)$data['collid'] : 0;
         if($collId){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'occid' && array_key_exists($field, $data)){
+                if($field !== 'occid' && $field !== 'dateentered' && $field !== 'recordenteredby' && array_key_exists($field, $data)){
                     if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
                         $fieldNameArr[] = '`' . $field . '`';
                     }
