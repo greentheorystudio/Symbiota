@@ -618,6 +618,20 @@ class UploadOccurrenceTemp{
         return $returnVal;
     }
 
+    public function linkUploadToExistingOccurrenceDataByRecordId($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid AND u.collid = o.collid '.
+                'SET u.occid = o.occid, o.dbpk = u.dbpk '.
+                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+        }
+        return $returnVal;
+    }
+
     public function processCleaningScriptData($collid, $scriptData): int
     {
         $returnVal = 0;
