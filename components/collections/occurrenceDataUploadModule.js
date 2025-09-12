@@ -529,6 +529,21 @@ const occurrenceDataUploadModule = {
         });
         const localDwcaFileArr = Vue.ref([]);
         const localDwcaServerPath = Vue.ref(null);
+        const mappedOccurrenceFields = Vue.computed(() => {
+            const returnArr = [];
+            Object.keys(fieldMappingDataOccurrence.value).forEach((field) => {
+                if(fieldMappingDataOccurrence.value[field] !== 'unmapped' && !returnArr.includes(field.toLowerCase())) {
+                    returnArr.push(field.toLowerCase());
+                }
+            });
+            Object.keys(fieldMappingDataSecondary.value).forEach((field) => {
+                if(fieldMappingDataSecondary.value[field] !== 'unmapped' && !returnArr.includes(field.toLowerCase())) {
+                    returnArr.push(field.toLowerCase());
+                }
+            });
+            console.log(returnArr);
+            return returnArr;
+        });
         const mappingValid = Vue.computed(() => {
             let valid = false;
             if((collectionData.value['datarecordingmethod'] === 'lot' || collectionData.value['datarecordingmethod'] === 'benthic' || Object.keys(eventMofDataFields.value).length > 0) && occurrenceSourcePrimaryKeyField.value && occurrenceSourceEventPrimaryKeyField.value){
@@ -1392,6 +1407,7 @@ const occurrenceDataUploadModule = {
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
+            formData.append('mappedFields', JSON.stringify(mappedOccurrenceFields.value));
             formData.append('action', 'finalTransferUpdateExistingOccurrences');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -1666,7 +1682,6 @@ const occurrenceDataUploadModule = {
             const text = 'Processing data for upload';
             currentProcess.value = 'transferSourceData';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            console.log(fieldMappingDataOccurrence.value);
             const idField = Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field.toLowerCase()] === 'dbpk');
             sourceDataFlatFile.value.forEach((dataRow) => {
                 const occurrenceData = {};

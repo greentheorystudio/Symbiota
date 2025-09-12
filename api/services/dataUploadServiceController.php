@@ -78,8 +78,8 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'processUploadDataDownload' && array_key_exists('filename', $_POST) && array_key_exists('dataType', $_POST)){
         $dataUploadService->processUploadDataDownload($collid, $_POST['filename'], $_POST['dataType']);
     }
-    elseif($action === 'finalTransferUpdateExistingOccurrences'){
-        echo $dataUploadService->finalTransferUpdateExistingOccurrences($collid);
+    elseif($action === 'finalTransferUpdateExistingOccurrences' && array_key_exists('mappedFields', $_POST)){
+        echo $dataUploadService->finalTransferUpdateExistingOccurrences($collid, json_decode($_POST['mappedFields'], false));
     }
     elseif($action === 'finalTransferRemoveUnmatchedOccurrences'){
         echo $dataUploadService->finalTransferRemoveUnmatchedOccurrences($collid);
