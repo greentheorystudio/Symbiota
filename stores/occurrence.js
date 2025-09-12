@@ -757,7 +757,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         mergeSelectedEventOccurrenceData(data, missingOnly) {
             const dataProps = Object.keys(data);
             dataProps.forEach((prop) => {
-                if(data[prop] && (!this.occurrenceEditData[prop] || !missingOnly)){
+                if(data[prop] &&this.occurrenceEditData.hasOwnProperty(prop) && (!this.occurrenceEditData[prop] || !missingOnly)){
                     this.occurrenceEditData[prop] = data[prop];
                 }
             });
