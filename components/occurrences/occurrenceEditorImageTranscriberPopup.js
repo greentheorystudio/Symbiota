@@ -178,7 +178,7 @@ const occurrenceEditorImageTranscriberPopup = {
                                     <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['locationremarks']" label="Location Remarks" :value="occurrenceData.locationremarks" @update:value="(value) => updateOccurrenceData('locationremarks', value)"></text-field-input-element>
                                 </div>
                                 <div>
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></text-field-input-element>
+                                    <occurrence-associated-taxa-input-element :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></occurrence-associated-taxa-input-element>
                                 </div>
                                 <div>
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
@@ -243,6 +243,7 @@ const occurrenceEditorImageTranscriberPopup = {
     components: {
         'checkbox-input-element': checkboxInputElement,
         'date-input-element': dateInputElement,
+        'occurrence-associated-taxa-input-element': occurrenceAssociatedTaxaInputElement,
         'occurrence-verbatim-coordinates-input-element': occurrenceVerbatimCoordinatesInputElement,
         'occurrence-verbatim-elevation-input-element': occurrenceVerbatimElevationInputElement,
         'single-country-auto-complete': singleCountryAutoComplete,

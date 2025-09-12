@@ -54,7 +54,12 @@ const collectionDataUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <checkbox-input-element :disabled="disabled" label="Match by Catalog or Other Catalog Number" :value="configurationData.matchOnCatalogNumber" @update:value="(value) => updateConfigurationData('matchOnCatalogNumber', value)"></checkbox-input-element>
+                    <checkbox-input-element :disabled="disabled" label="Match by Record ID" :value="configurationData.matchOnRecordId" @update:value="processMatchRecordIdChange"></checkbox-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
+                    <checkbox-input-element :disabled="disabled" label="Match by Catalog or Other Catalog Number" :value="configurationData.matchOnCatalogNumber" @update:value="processMatchCatalogNumberChange"></checkbox-input-element>
                 </div>
             </div>
             <div v-if="configurationData.matchOnCatalogNumber" class="row q-col-gutter-sm">
@@ -103,6 +108,16 @@ const collectionDataUploadParametersFieldModule = {
         const profileData = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersData);
         const uploadTypeOptions = Vue.computed(() => collectionDataUploadParametersStore.getUploadTypeOptions);
 
+        function processMatchCatalogNumberChange(value) {
+            updateConfigurationData('matchOnRecordId', false);
+            updateConfigurationData('matchOnCatalogNumber', value);
+        }
+
+        function processMatchRecordIdChange(value) {
+            updateConfigurationData('matchOnCatalogNumber', false);
+            updateConfigurationData('matchOnRecordId', value);
+        }
+
         function updateConfigurationData(key, value) {
             const config = Object.assign({}, configurationData.value);
             config[key] = value;
@@ -122,6 +137,8 @@ const collectionDataUploadParametersFieldModule = {
             existingRecordOptions,
             profileData,
             uploadTypeOptions,
+            processMatchCatalogNumberChange,
+            processMatchRecordIdChange,
             updateConfigurationData,
             updateData
         }
