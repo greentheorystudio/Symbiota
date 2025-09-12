@@ -267,11 +267,11 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function finalTransferUpdateExistingOccurrences($collid): int
+    public function finalTransferUpdateExistingOccurrences($collid, $mappedFields): int
     {
         $retVal = 1;
         if($collid){
-            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid);
+            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid, $mappedFields);
         }
         return $retVal;
     }
@@ -333,12 +333,15 @@ class DataUploadService {
         return $retArr;
     }
 
-    public function linkExistingOccurrencesToUpload($collid, $updateAssociatedData, $matchByCatalogNumber, $linkField): int
+    public function linkExistingOccurrencesToUpload($collid, $updateAssociatedData, $matchByRecordId, $matchByCatalogNumber, $linkField): int
     {
         $retVal = 0;
         if($collid){
             if($matchByCatalogNumber){
                 $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceDataByCatalogNumber($collid, $linkField);
+            }
+            elseif($matchByRecordId){
+                $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceDataByRecordId($collid);
             }
             else{
                 $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceData($collid);

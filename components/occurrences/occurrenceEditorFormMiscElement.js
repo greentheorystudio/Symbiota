@@ -5,18 +5,9 @@ const occurrenceEditorFormMiscElement = {
                 <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
                     Occurrence
                 </div>
-                <div class="row justify-between q-col-gutter-sm">
-                    <div class="col-11">
-                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></text-field-input-element>
-                    </div>
-                    <div class="col-1 row justify-end self-center">
-                        <div>
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="showAssociatedTaxaToolPopup = true" icon="fas fa-tools" dense>
-                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                    Open Associated Taxa Entry Tool
-                                </q-tooltip>
-                            </q-btn>
-                        </div>
+                <div class="row justify-between">
+                    <div class="col-grow">
+                        <occurrence-associated-taxa-input-element :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></occurrence-associated-taxa-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
@@ -98,17 +89,10 @@ const occurrenceEditorFormMiscElement = {
                 </template>
             </q-card-section>
         </q-card>
-        <template v-if="showAssociatedTaxaToolPopup">
-            <occurrence-editor-associated-taxa-tool-popup
-                :associated-taxa-value="occurrenceData.associatedtaxa"
-                :show-popup="showAssociatedTaxaToolPopup"
-                @close:popup="showAssociatedTaxaToolPopup = false"
-            ></occurrence-editor-associated-taxa-tool-popup>
-        </template>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
-        'occurrence-editor-associated-taxa-tool-popup': occurrenceEditorAssociatedTaxaToolPopup,
+        'occurrence-associated-taxa-input-element': occurrenceAssociatedTaxaInputElement,
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement
     },
@@ -124,7 +108,6 @@ const occurrenceEditorFormMiscElement = {
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
-        const showAssociatedTaxaToolPopup = Vue.ref(false);
         const showExtendedForm = Vue.ref(false);
 
         function processConfirmation(confirmed) {
@@ -174,7 +157,6 @@ const occurrenceEditorFormMiscElement = {
             occurrenceEntryFormat,
             occurrenceFields,
             occurrenceFieldDefinitions,
-            showAssociatedTaxaToolPopup,
             showExtendedForm,
             processConfirmation,
             updateCultivationStatusSetting,

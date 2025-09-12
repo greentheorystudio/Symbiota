@@ -163,7 +163,7 @@ const spatialAnalysisPopup = {
             if(props.circleArr && inputWindowToolsArr.length === 0){
                 processInputParentCircleArrParams();
             }
-            if(props.decimalLatitude && props.decimalLongitude && inputWindowToolsArr.includes('point')){
+            if((props.coordinateUncertaintyInMeters && inputWindowToolsArr.includes('uncertainty')) || (props.decimalLatitude && props.decimalLongitude && inputWindowToolsArr.includes('point'))){
                 processInputParentPointParams();
             }
             if(props.footprintWkt && inputWindowToolsArr.includes('polygon') && inputWindowToolsArr.includes('wkt')){
@@ -190,13 +190,13 @@ const spatialAnalysisPopup = {
         }
 
         function processInputParentPointParams() {
+            let openerRadius = 0;
+            if(props.coordinateUncertaintyInMeters && inputWindowToolsArr.includes('uncertainty')){
+                openerRadius = props.coordinateUncertaintyInMeters;
+                spatialModuleRef.value.updateMapSettings('uncertaintyRadiusValue', openerRadius);
+            }
             if(props.decimalLatitude && props.decimalLongitude){
-                let openerRadius = 0;
-                if(props.coordinateUncertaintyInMeters && inputWindowToolsArr.includes('uncertainty')){
-                    openerRadius = props.coordinateUncertaintyInMeters;
-                }
                 if(openerRadius > 0){
-                    spatialModuleRef.value.updateMapSettings('uncertaintyRadiusValue', openerRadius);
                     const pointRadius = {};
                     pointRadius.pointlat = Number(props.decimalLatitude);
                     pointRadius.pointlong = Number(props.decimalLongitude);

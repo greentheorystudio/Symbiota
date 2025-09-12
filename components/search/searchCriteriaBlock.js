@@ -164,19 +164,22 @@ const searchCriteriaBlock = {
                     </div>
                 </div>
             </template>
-            <div class="row q-col-gutter-md">
+            <div class="q-mb-md row q-col-gutter-md">
                 <div class="col-12 col-sm-6 column q-gutter-sm">
-                    <div>
-                        <checkbox-input-element label="Limit to records without images" :value="searchTerms.withoutimages" @update:value="(value) => updateSearchTerms('withoutimages', value)"></checkbox-input-element>
-                    </div>
                     <div>
                         <checkbox-input-element label="Limit to type specimens" :value="searchTerms.typestatus" @update:value="(value) => updateSearchTerms('typestatus', value)"></checkbox-input-element>
                     </div>
                     <div>
                         <checkbox-input-element label="Limit to records with genetic data" :value="searchTerms.hasgenetic" @update:value="(value) => updateSearchTerms('hasgenetic', value)"></checkbox-input-element>
                     </div>
+                    <div>
+                        <checkbox-input-element label="Limit to records with images, audio, or video" :value="searchTerms.hasmedia" @update:value="(value) => updateSearchTerms('hasmedia', value)"></checkbox-input-element>
+                    </div>
                 </div>
                 <div class="col-12 col-sm-6 column q-gutter-sm">
+                    <div>
+                        <checkbox-input-element label="Limit to records without images" :value="searchTerms.withoutimages" @update:value="(value) => updateSearchTerms('withoutimages', value)"></checkbox-input-element>
+                    </div>
                     <div>
                         <checkbox-input-element label="Limit to records with audio" :value="searchTerms.hasaudio" @update:value="(value) => updateSearchTerms('hasaudio', value)"></checkbox-input-element>
                     </div>
@@ -185,9 +188,6 @@ const searchCriteriaBlock = {
                     </div>
                     <div>
                         <checkbox-input-element label="Limit to records with video" :value="searchTerms.hasvideo" @update:value="(value) => updateSearchTerms('hasvideo', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Limit to records with images, audio, or video" :value="searchTerms.hasmedia" @update:value="(value) => updateSearchTerms('hasmedia', value)"></checkbox-input-element>
                     </div>
                 </div>
             </div>
