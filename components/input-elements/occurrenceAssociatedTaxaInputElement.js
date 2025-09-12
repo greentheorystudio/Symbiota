@@ -1,4 +1,83 @@
-const occurrenceVerbatimElevationInputElement = {
+const occurrenceEditorAssociatedTaxaToolPopup = {
+    props: {
+        associatedTaxaValue: {
+            type: String,
+            default: null
+        }
+    },
+    template: `
+        <q-card class="input-tool-popup">
+            <q-card-section class="column q-col-gutter-sm input-tool-popup z-max">
+                <div>
+                    <single-scientific-common-name-auto-complete :sciname="scientificNameStr" label="Scientific Name" @update:sciname="updateScientificNameValue" @click:enter="addTaxon"></single-scientific-common-name-auto-complete>
+                </div>
+                <div class="q-mt-md row justify-end q-gutter-sm">
+                    <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
+                    <q-btn color="primary" @click="addTaxon();" label="Add Taxon" dense />
+                </div>
+            </q-card-section>
+        </q-card>
+    `,
+    components: {
+        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
+    },
+    setup(props, context) {
+        const occurrenceStore = useOccurrenceStore();
+
+        const associatedTaxaStr = Vue.ref(null);
+        const propsRefs = Vue.toRefs(props);
+        const scientificNameStr = Vue.ref(null);
+
+        Vue.watch(propsRefs.associatedTaxaValue, () => {
+            if(associatedTaxaStr.value !== props.associatedTaxaValue){
+                associatedTaxaStr.value = props.associatedTaxaValue;
+            }
+        });
+
+        function addTaxon() {
+            if(scientificNameStr.value){
+                let tempValue = associatedTaxaStr.value ? associatedTaxaStr.value : '';
+                if(tempValue.length > 0){
+                    tempValue += ', ';
+                }
+                tempValue += scientificNameStr.value;
+                occurrenceStore.updateOccurrenceEditData('associatedtaxa', tempValue);
+                scientificNameStr.value = null;
+            }
+        }
+
+        function closePopup() {
+            context.emit('close:popup');
+        }
+
+        function processStrValueChange(value) {
+            occurrenceStore.updateOccurrenceEditData('associatedtaxa', value);
+        }
+
+        function updateScientificNameValue(taxon) {
+            if(taxon){
+                scientificNameStr.value = taxon.sciname;
+            }
+            else{
+                scientificNameStr.value = null
+            }
+        }
+
+        Vue.onMounted(() => {
+            associatedTaxaStr.value = props.associatedTaxaValue;
+        });
+
+        return {
+            associatedTaxaStr,
+            scientificNameStr,
+            addTaxon,
+            closePopup,
+            processStrValueChange,
+            updateScientificNameValue
+        }
+    }
+};
+const occurrenceAssociatedTaxaInputElement = {
     props: {
         definition: {
             type: Object,
@@ -13,10 +92,6 @@ const occurrenceVerbatimElevationInputElement = {
             default: ''
         },
         maxlength: {
-            type: Number,
-            default: null
-        },
-        minimumElevationInMeters: {
             type: Number,
             default: null
         },
@@ -35,7 +110,7 @@ const occurrenceVerbatimElevationInputElement = {
     },
     template: `
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
-            <q-input outlined v-model="value" :label="label" :maxlength="maxlength" bg-color="white" @update:model-value="processValueChange" :tabindex="tabindex" dense>
+            <q-input outlined v-model="value" type="textarea" :label="label" bg-color="white" :maxlength="maxlength" @update:model-value="processValueChange" :autogrow="true" :tabindex="tabindex" autocomplete="associatedtaxa" dense>
                 <template v-if="value || definition" v-slot:append>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -47,16 +122,22 @@ const occurrenceVerbatimElevationInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="calculate" class="cursor-pointer" @click="parseElevationValues();">
+                    <q-icon name="construction" class="cursor-pointer">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Recalculate minimum and maximum elevation values
+                            Open Associated Taxa Entry Tool
                         </q-tooltip>
+                        <q-menu v-model="showAssociatedTaxaToolPopup" anchor="top middle" self="bottom middle" max-width="700px" cover transition-show="scale" transition-hide="scale" class="z-max">
+                            <occurrence-editor-associated-taxa-tool-popup
+                                :associated-taxa-value="value"
+                                @close:popup="showAssociatedTaxaToolPopup = false"
+                            ></occurrence-editor-associated-taxa-tool-popup>
+                        </q-menu>
                     </q-icon>
                 </template>
             </q-input>
         </template>
         <template v-else>
-            <q-input outlined v-model="value" :label="label" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :tabindex="tabindex" dense>
+            <q-input outlined v-model="value" type="textarea" :label="label" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :autogrow="true" :tabindex="tabindex" autocomplete="associatedtaxa" dense>
                 <template v-if="!disabled && (value || definition)" v-slot:append>
                     <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -68,10 +149,16 @@ const occurrenceVerbatimElevationInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="calculate" class="cursor-pointer" @click="parseElevationValues();">
+                    <q-icon name="construction" class="cursor-pointer">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Recalculate minimum and maximum elevation values
+                            Open Associated Taxa Entry Tool
                         </q-tooltip>
+                        <q-menu v-model="showAssociatedTaxaToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-max">
+                            <occurrence-editor-associated-taxa-tool-popup
+                                :associated-taxa-value="value"
+                                @close:popup="showAssociatedTaxaToolPopup = false"
+                            ></occurrence-editor-associated-taxa-tool-popup>
+                        </q-menu>
                     </q-icon>
                 </template>
             </q-input>
@@ -111,75 +198,27 @@ const occurrenceVerbatimElevationInputElement = {
             </q-dialog>
         </template>
     `,
+    components: {
+        'occurrence-editor-associated-taxa-tool-popup': occurrenceEditorAssociatedTaxaToolPopup
+    },
     setup(props, context) {
-        const { showNotification } = useCore();
-
+        const displayCoordinateToolPopup = Vue.ref(false);
         const displayDefinitionPopup = Vue.ref(false);
+        const showAssociatedTaxaToolPopup = Vue.ref(false);
 
         function openDefinitionPopup() {
             displayDefinitionPopup.value = true;
         }
 
-        function parseElevationValues(verbose = true){
-            if(props.value){
-                const regEx1 = /(\d+)\s*-\s*(\d+)\s*[fte|']/i;
-                const regEx2 = /(\d+)\s*[fte|']/i;
-                const regEx3 = /(\d+)\s*-\s*(\d+)\s?m/i;
-                const regEx4 = /(\d+)\s?-\s?(\d+)\s?m/i;
-                const regEx5 = /(\d+)\s?m/i;
-                let min, max;
-                let extractArr = [];
-                let verbElevStr = props.value.replaceAll(/,/g ,"");
-                if(regEx1.exec(verbElevStr)){
-                    extractArr = regEx1.exec(verbElevStr);
-                    min = Math.round(extractArr[1] * 0.3048);
-                    max = Math.round(extractArr[2] * 0.3048);
-                }
-                else if(regEx2.exec(verbElevStr)){
-                    extractArr = regEx2.exec(verbElevStr);
-                    min = Math.round(extractArr[1] * 0.3048);
-                }
-                else if(regEx3.exec(verbElevStr)){
-                    extractArr = regEx3.exec(verbElevStr);
-                    min = extractArr[1];
-                    max = extractArr[2];
-                }
-                else if(regEx4.exec(verbElevStr)){
-                    extractArr = regEx4.exec(verbElevStr);
-                    min = extractArr[1];
-                    max = extractArr[2];
-                }
-                else if(regEx5.exec(verbElevStr)){
-                    extractArr = regEx5.exec(verbElevStr);
-                    min = extractArr[1];
-                }
-                if(min){
-                    const returnData = {};
-                    returnData['minimumElevationInMeters'] = min;
-                    if(max){
-                        returnData['maximumElevationInMeters'] = max;
-                    }
-                    context.emit('update:elevation-values', returnData);
-                }
-            }
-            else{
-                if(verbose){
-                    showNotification('negative', 'Verbatim Elevation must have a value to recalculate.');
-                }
-            }
-        }
-
         function processValueChange(val) {
             context.emit('update:value', val);
-            if(val && !props.minimumElevationInMeters){
-                parseElevationValues(false);
-            }
         }
 
         return {
+            displayCoordinateToolPopup,
             displayDefinitionPopup,
+            showAssociatedTaxaToolPopup,
             openDefinitionPopup,
-            parseElevationValues,
             processValueChange
         }
     }
