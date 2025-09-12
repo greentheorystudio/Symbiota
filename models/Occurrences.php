@@ -1267,14 +1267,14 @@ class Occurrences{
         return $retVal;
     }
 
-    public function updateOccurrenceRecordsFromUploadData($collId): int
+    public function updateOccurrenceRecordsFromUploadData($collId, $mappedFields): int
     {
         $skipFields = array('occid', 'collid', 'dbpk', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
         $retVal = 0;
         $sqlPartArr = array();
         if($collId){
             foreach($this->fields as $field => $fieldArr){
-                if(!in_array($field, $skipFields)){
+                if(!in_array($field, $skipFields) && in_array($field, $mappedFields, true)){
                     if($field === 'year' || $field === 'month' || $field === 'day' || $field === 'language'){
                         $fieldStr = '`' . $field . '`';
                     }

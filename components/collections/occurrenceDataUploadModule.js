@@ -360,6 +360,8 @@ const occurrenceDataUploadModule = {
         const collectionData = Vue.computed(() => collectionStore.getCollectionData);
         const collectionDataUploadParametersArr = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersArr);
         const collectionDataUploadParametersId = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersID);
+        const coreIdField = Vue.ref('coreid');
+        const coreEventIdField = Vue.ref('coreeventid');
         const currentProcess = Vue.ref(null);
         const currentTab = Vue.ref('configuration');
         const determinationDataIncluded = Vue.ref(false);
@@ -527,6 +529,20 @@ const occurrenceDataUploadModule = {
         });
         const localDwcaFileArr = Vue.ref([]);
         const localDwcaServerPath = Vue.ref(null);
+        const mappedOccurrenceFields = Vue.computed(() => {
+            const returnArr = [];
+            Object.keys(fieldMappingDataOccurrence.value).forEach((field) => {
+                if(fieldMappingDataOccurrence.value[field] !== 'unmapped' && !returnArr.includes(field.toLowerCase())) {
+                    returnArr.push(fieldMappingDataOccurrence.value[field].toLowerCase());
+                }
+            });
+            Object.keys(fieldMappingDataSecondary.value).forEach((field) => {
+                if(fieldMappingDataSecondary.value[field] !== 'unmapped' && !returnArr.includes(field.toLowerCase())) {
+                    returnArr.push(fieldMappingDataSecondary.value[field].toLowerCase());
+                }
+            });
+            return returnArr;
+        });
         const mappingValid = Vue.computed(() => {
             let valid = false;
             if((collectionData.value['datarecordingmethod'] === 'lot' || collectionData.value['datarecordingmethod'] === 'benthic' || Object.keys(eventMofDataFields.value).length > 0) && occurrenceSourcePrimaryKeyField.value && occurrenceSourceEventPrimaryKeyField.value){
@@ -1390,6 +1406,7 @@ const occurrenceDataUploadModule = {
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
+            formData.append('mappedFields', JSON.stringify(mappedOccurrenceFields.value));
             formData.append('action', 'finalTransferUpdateExistingOccurrences');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -1806,14 +1823,12 @@ const occurrenceDataUploadModule = {
                             }
                             Object.keys(dataObj).forEach((key) => {
                                 if(key.toLowerCase() === 'id' || key.toLowerCase() === 'coreid'){
-                                    sourceDataFieldsFlatFile.value[key.toLowerCase()] = 'coreid';
+                                    coreIdField.value = key.toLowerCase();
                                 }
                                 else if(key.toLowerCase() === 'eventid'){
-                                    sourceDataFieldsFlatFile.value[key.toLowerCase()] = 'coreeventid';
+                                    coreEventIdField.value = key.toLowerCase();
                                 }
-                                else{
-                                    sourceDataFieldsFlatFile.value[key.toLowerCase()] = key;
-                                }
+                                sourceDataFieldsFlatFile.value[key.toLowerCase()] = key;
                             });
                         }
                         if(generateCoreIds){
@@ -1849,14 +1864,12 @@ const occurrenceDataUploadModule = {
                     Object.keys(featureProps).forEach((prop) => {
                         if(prop !== 'geometry'){
                             if(prop.toLowerCase() === 'id' || prop.toLowerCase() === 'coreid'){
-                                sourceDataFieldsFlatFile.value[prop.toLowerCase()] = 'coreid';
+                                coreIdField.value = prop.toLowerCase();
                             }
                             else if(prop.toLowerCase() === 'eventid'){
-                                sourceDataFieldsFlatFile.value[prop.toLowerCase()] = 'coreeventid';
+                                coreEventIdField.value = prop.toLowerCase();
                             }
-                            else{
-                                sourceDataFieldsFlatFile.value[prop.toLowerCase()] = prop;
-                            }
+                            sourceDataFieldsFlatFile.value[prop.toLowerCase()] = prop;
                             if(featureProps[prop]){
                                 let value = isNaN(featureProps[prop]) ? featureProps[prop].trim() : featureProps[prop].toString();
                                 value = value.replaceAll('\r', '');
@@ -2193,6 +2206,9 @@ const occurrenceDataUploadModule = {
                 if(Number(profileConfigurationData.value['matchOnCatalogNumber']) === 1){
                     formData.append('matchByCatalogNumber', '1');
                     formData.append('linkField', profileConfigurationData.value['catalogNumberMatchField']);
+                }
+                else if(Number(profileConfigurationData.value['matchOnRecordId']) === 1){
+                    formData.append('matchByRecordId', '1');
                 }
             }
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
@@ -2732,7 +2748,7 @@ const occurrenceDataUploadModule = {
                     Object.keys(sourceDataFieldsDetermination.value).forEach((field) => {
                         const fieldName = sourceDataFieldsDetermination.value[field];
                         const primaryKey = Object.keys(fieldMappingDataDetermiation.value).find(key => fieldMappingDataDetermiation.value[key] === 'dbpk');
-                        if(fieldName === 'coreid' && !primaryKey){
+                        if(fieldName.toLowerCase() === coreIdField.value && !primaryKey){
                             fieldMappingDataDetermiation.value[fieldName.toLowerCase()] = 'dbpk';
                         }
                         else if(!fieldMappingDataDetermiation.value.hasOwnProperty(fieldName.toLowerCase())){
@@ -2752,7 +2768,7 @@ const occurrenceDataUploadModule = {
                     Object.keys(sourceDataFieldsMultimedia.value).forEach((field) => {
                         const fieldName = sourceDataFieldsMultimedia.value[field];
                         const primaryKey = Object.keys(fieldMappingDataMedia.value).find(key => fieldMappingDataMedia.value[key] === 'dbpk');
-                        if(fieldName === 'coreid' && !primaryKey){
+                        if(fieldName.toLowerCase() === coreIdField.value && !primaryKey){
                             fieldMappingDataMedia.value[fieldName.toLowerCase()] = 'dbpk';
                         }
                         else if(!fieldMappingDataMedia.value.hasOwnProperty(fieldName.toLowerCase())){
@@ -2775,10 +2791,10 @@ const occurrenceDataUploadModule = {
                         const eventPrimaryKey = Object.keys(fieldMappingDataMof.value).find(key => fieldMappingDataMof.value[key] === 'eventdbpk');
                         const fieldKey = Object.keys(fieldMappingDataMof.value).find(key => fieldMappingDataMof.value[key] === 'field');
                         const dataKey = Object.keys(fieldMappingDataMof.value).find(key => fieldMappingDataMof.value[key] === 'datavalue');
-                        if(fieldName === 'coreid' && !primaryKey){
+                        if(fieldName.toLowerCase() === coreIdField.value && !primaryKey){
                             fieldMappingDataMof.value[fieldName.toLowerCase()] = 'dbpk';
                         }
-                        else if(fieldName === 'coreeventid' && !eventPrimaryKey){
+                        else if(fieldName.toLowerCase() === coreEventIdField.value && !eventPrimaryKey){
                             fieldMappingDataMof.value[fieldName.toLowerCase()] = 'eventdbpk';
                         }
                         else if(fieldName === 'measurementtype' && !fieldKey){
@@ -2816,10 +2832,10 @@ const occurrenceDataUploadModule = {
         }
 
         function validateOccurrenceFieldMappingData(fieldName) {
-            if(fieldName === 'coreid' && !occurrenceSourcePrimaryKeyField.value){
+            if(fieldName.toLowerCase() === coreIdField.value && !occurrenceSourcePrimaryKeyField.value){
                 fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'dbpk';
             }
-            else if(fieldName === 'coreeventid' && !occurrenceSourceEventPrimaryKeyField.value){
+            else if(fieldName.toLowerCase() === coreEventIdField.value && !occurrenceSourceEventPrimaryKeyField.value){
                 fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'eventdbpk';
             }
             else if(!fieldMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
