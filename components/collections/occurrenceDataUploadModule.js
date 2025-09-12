@@ -2723,13 +2723,13 @@ const occurrenceDataUploadModule = {
             if(flatFileMode.value && sourceDataFlatFile.value.length > 0 && Object.keys(sourceDataFieldsFlatFile.value).length > 0){
                 Object.keys(sourceDataFieldsFlatFile.value).forEach((field) => {
                     const fieldName = sourceDataFieldsFlatFile.value[field];
-                    validateOccurrenceFieldMappingData(fieldName);
+                    validateOccurrenceFieldMappingData(fieldName, field);
                 });
             }
             else if(sourceDataFilesOccurrence.value.length > 0 && Object.keys(sourceDataFieldsOccurrence.value).length > 0){
                 Object.keys(sourceDataFieldsOccurrence.value).forEach((field) => {
                     const fieldName = sourceDataFieldsOccurrence.value[field];
-                    validateOccurrenceFieldMappingData(fieldName);
+                    validateOccurrenceFieldMappingData(fieldName, field);
                 });
                 if(sourceDataFilesDetermination.value.length > 0 && Object.keys(sourceDataFieldsDetermination.value).length > 0){
                     Object.keys(sourceDataFieldsDetermination.value).forEach((field) => {
@@ -2818,12 +2818,12 @@ const occurrenceDataUploadModule = {
             }
         }
 
-        function validateOccurrenceFieldMappingData(fieldName) {
+        function validateOccurrenceFieldMappingData(fieldName, sourceField) {
             if(fieldName === 'coreid' && !occurrenceSourcePrimaryKeyField.value){
-                fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'dbpk';
+                fieldMappingDataOccurrence.value[sourceField.toLowerCase()] = 'dbpk';
             }
             else if(fieldName === 'coreeventid' && !occurrenceSourceEventPrimaryKeyField.value){
-                fieldMappingDataOccurrence.value[fieldName.toLowerCase()] = 'eventdbpk';
+                fieldMappingDataOccurrence.value[sourceField.toLowerCase()] = 'eventdbpk';
             }
             else if(!fieldMappingDataOccurrence.value.hasOwnProperty(fieldName.toLowerCase())){
                 const fieldOption = getOccurrenceFieldMappingOption(fieldName, savedMappingDataOccurrence.value);
