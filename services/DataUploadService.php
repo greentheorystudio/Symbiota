@@ -267,11 +267,11 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function finalTransferUpdateExistingOccurrences($collid): int
+    public function finalTransferUpdateExistingOccurrences($collid, $mappedFields): int
     {
         $retVal = 1;
         if($collid){
-            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid);
+            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid, $mappedFields);
         }
         return $retVal;
     }
