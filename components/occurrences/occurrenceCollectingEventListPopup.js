@@ -206,8 +206,6 @@ const occurrenceCollectingEventListPopup = {
         </q-dialog>
     `,
     setup(props, context) {
-        const occurrenceStore = useOccurrenceStore();
-
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         
@@ -225,7 +223,7 @@ const occurrenceCollectingEventListPopup = {
         }
 
         function processMergeEventData(data, missingOnly = true) {
-            context.emit('merge:event', {event: data, missing: !missingOnly});
+            context.emit('merge:event', {event: data, missing: missingOnly});
             context.emit('close:popup');
         }
 
