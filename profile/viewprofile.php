@@ -41,8 +41,8 @@ header('X-Frame-Options: SAMEORIGIN');
                 <q-card class="q-mt-lg">
                     <q-tabs v-model="tab" class="q-px-sm q-pt-sm" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
                         <template v-if="validUser">
-                            <q-tab name="checklists" label="Checklists and Projects" no-caps></q-tab>
                             <q-tab name="occurrence" label="Occurrence Management" no-caps></q-tab>
+                            <q-tab name="checklists" label="Checklists and Projects" no-caps></q-tab>
                         </template>
                         <q-tab name="account" label="Account Information" no-caps></q-tab>
                     </q-tabs>
@@ -202,7 +202,7 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     Vue.onMounted(() => {
                         if(validUser){
-                            tab.value = 'checklists';
+                            tab.value = 'occurrence';
                         }
                         if(Number(uid) > 0){
                             userStore.setUser(uid);

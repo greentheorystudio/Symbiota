@@ -1234,8 +1234,10 @@ const spatialAnalysisModule = {
                     if(geoPointArr.value.length === 1){
                         inputResponseData.value['decimalLatitude'] = geoPointArr.value[0]['decimalLatitude'];
                         inputResponseData.value['decimalLongitude'] = geoPointArr.value[0]['decimalLongitude'];
-                        inputResponseData.value['coordinateUncertaintyInMeters'] = mapSettings.uncertaintyRadiusValue;
                     }
+                }
+                if(mapSettings.uncertaintyRadiusValue){
+                    inputResponseData.value['coordinateUncertaintyInMeters'] = mapSettings.uncertaintyRadiusValue;
                 }
             }
             updateMapSettings('submitButtonDisabled', !submitReady);
@@ -2673,6 +2675,7 @@ const spatialAnalysisModule = {
         Vue.provide('map', Vue.computed(() => map));
         Vue.provide('mapSettings', mapSettings);
         Vue.provide('openRecordInfoWindow', openRecordInfoWindow);
+        Vue.provide('processInputSelections', processInputSelections);
         Vue.provide('processInputSubmit', processInputSubmit);
         Vue.provide('processInputPointUncertaintyChange', processInputPointUncertaintyChange);
         Vue.provide('processSymbologyKeyColorChange', processSymbologyKeyColorChange);

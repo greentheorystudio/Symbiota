@@ -79,13 +79,6 @@ const locationFieldModule = {
                         </q-tooltip>
                     </q-btn>
                 </div>
-                <div class="self-center">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="showCoordinateToolPopup = true" icon="fas fa-tools" dense>
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Tools for converting additional formats
-                        </q-tooltip>
-                    </q-btn>
-                </div>
             </div>
         </div>
         <div v-if="!eventMode" class="row justify-between q-col-gutter-sm">
@@ -219,20 +212,10 @@ const locationFieldModule = {
                 @close:popup="showGeoLocatePopup = false"
             ></geo-locate-popup>
         </template>
-        <template v-if="showCoordinateToolPopup">
-            <occurrence-coordinate-tool-popup
-                :geodetic-datum="data.geodeticdatum"
-                :show-popup="showCoordinateToolPopup"
-                :verbatim-coordinates="data.verbatimcoordinates"
-                @update:coordinate-tool-data="processCoordinateToolData"
-                @close:popup="showCoordinateToolPopup = false"
-            ></occurrence-coordinate-tool-popup>
-        </template>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
         'geo-locate-popup': geoLocatePopup,
-        'occurrence-coordinate-tool-popup': occurrenceCoordinateToolPopup,
         'occurrence-footprint-wkt-input-element': occurrenceFootprintWktInputElement,
         'occurrence-verbatim-coordinates-input-element': occurrenceVerbatimCoordinatesInputElement,
         'occurrence-verbatim-elevation-input-element': occurrenceVerbatimElevationInputElement,
@@ -253,7 +236,6 @@ const locationFieldModule = {
         const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
         const popupWindowType = Vue.ref(null);
         const propsRefs = Vue.toRefs(props);
-        const showCoordinateToolPopup = Vue.ref(false);
         const showExtendedForm = Vue.ref(false);
         const showGeoLocatePopup = Vue.ref(false);
         const showSpatialPopup = Vue.ref(false);
@@ -292,17 +274,6 @@ const locationFieldModule = {
             setSpatialInputValues();
             popupWindowType.value = type;
             showSpatialPopup.value = true;
-        }
-
-        function processCoordinateToolData(data) {
-            if(data.decimalLatitude && data.decimalLongitude){
-                updateData('decimallatitude', data['decimalLatitude']);
-                updateData('decimallongitude', data['decimalLongitude']);
-            }
-            if(data.verbatimCoordinates){
-                updateData('verbatimcoordinates', data['verbatimCoordinates']);
-            }
-            showCoordinateToolPopup.value = false;
         }
 
         function processGeolocateData(data) {
@@ -416,14 +387,12 @@ const locationFieldModule = {
             decimalLongitudeValue,
             footprintWktValue,
             popupWindowType,
-            showCoordinateToolPopup,
             showExtendedForm,
             showGeoLocatePopup,
             showSpatialPopup,
             closeSpatialPopup,
             openGeolocatePopup,
             openSpatialPopup,
-            processCoordinateToolData,
             processGeolocateData,
             processRecalculatedDecimalCoordinates,
             processRecalculatedElevationValues,

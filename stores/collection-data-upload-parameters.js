@@ -19,6 +19,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             cleanImageDerivatives: false,
             saveSourcePrimaryIdentifier: true,
             createPolygonCentroidCoordinates: false,
+            matchOnRecordId: false,
             matchOnCatalogNumber: false,
             removeUnmatchedRecords: false
         },

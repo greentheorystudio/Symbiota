@@ -2194,6 +2194,9 @@ const occurrenceDataUploadModule = {
                     formData.append('matchByCatalogNumber', '1');
                     formData.append('linkField', profileConfigurationData.value['catalogNumberMatchField']);
                 }
+                else if(Number(profileConfigurationData.value['matchOnRecordId']) === 1){
+                    formData.append('matchByRecordId', '1');
+                }
             }
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             fetch(dataUploadServiceApiUrl, {
