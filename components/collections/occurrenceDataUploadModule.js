@@ -541,7 +541,6 @@ const occurrenceDataUploadModule = {
                     returnArr.push(fieldMappingDataSecondary.value[field].toLowerCase());
                 }
             });
-            console.log(returnArr);
             return returnArr;
         });
         const mappingValid = Vue.computed(() => {
