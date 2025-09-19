@@ -94,12 +94,13 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                 body: formData
             })
             .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                    if(Number(res) > 0){
-                        this.setCollectionDataUploadParametersArr(collid, Number(res));
-                    }
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(Number(res) > 0){
+                    this.setCollectionDataUploadParametersArr(collid, Number(res));
+                }
             });
         },
         deleteCollectionDataUploadParametersRecord(collid, callback) {
@@ -112,13 +113,14 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                 body: formData
             })
             .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                    if(Number(val) === 1){
-                        this.setCollectionDataUploadParametersArr(collid);
-                        this.setCurrentCollectionDataUploadParametersRecord(0);
-                    }
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((val) => {
+                callback(Number(val));
+                if(Number(val) === 1){
+                    this.setCollectionDataUploadParametersArr(collid);
+                    this.setCurrentCollectionDataUploadParametersRecord(0);
+                }
             });
         },
         getCurrentCollectionDataUploadParametersData() {
@@ -169,13 +171,14 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                 body: formData
             })
             .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                    if(res && Number(res) === 1){
-                        this.setCollectionDataUploadParametersArr(collid);
-                        this.collectionDataUploadParametersData = Object.assign({}, this.collectionDataUploadParametersEditData);
-                    }
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) === 1){
+                    this.setCollectionDataUploadParametersArr(collid);
+                    this.collectionDataUploadParametersData = Object.assign({}, this.collectionDataUploadParametersEditData);
+                }
             });
         }
     }
