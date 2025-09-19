@@ -137,7 +137,7 @@ const mediaFileUploadInputElement = {
                                                         {{ getFileErrorMessage(file) }}
                                                     </div>
                                                     <div v-else class="text-bold text-green">
-                                                        Ready to upload
+                                                        {{ getFileUploadMessage(file) }}
                                                     </div>
                                                 </div>
                                                 <div class="col-2 row justify-end">
@@ -293,6 +293,19 @@ const mediaFileUploadInputElement = {
             return errorMessage;
         }
 
+        function getFileUploadMessage(file) {
+            let message = 'Ready to upload';
+            if(Number(props.occId) === 0 && Number(props.taxonId) === 0 && collId.value > 0){
+                if(Number(file['uploadMetadata']['occid']) > 0){
+                    message = 'Ready to upload - will associate with existing occurrence (occid# ' + file['uploadMetadata']['occid'] + ')';
+                }
+                else if(props.createOccurrence){
+                    message = 'Ready to upload - will associate with new occurrence record';
+                }
+            }
+            return message;
+        }
+
         function openDataEditor(data) {
             editFile.value = data['filename'];
             setEditData();
@@ -428,11 +441,8 @@ const mediaFileUploadInputElement = {
         }
 
         function setFileData() {
-            if(fileArr.length > 0 && csvFileData.length > 0){
+            if(fileArr.length > 0){
                 fileArr.forEach((file) => {
-                    if(!file['recordIdentifier'] && file['filenameRecordIdentifier']){
-                        file['recordIdentifier'] = file['filenameRecordIdentifier'];
-                    }
                     let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                     if(!csvData){
                         csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
@@ -440,7 +450,7 @@ const mediaFileUploadInputElement = {
                     if(csvData){
                         const dataKeys = Object.keys(csvData);
                         if(dataKeys.includes(props.identifierField)){
-                            file['recordIdentifier'] = csvData[props.identifierField];
+                            file['filenameRecordIdentifier'] = csvData[props.identifierField];
                             file['occurrenceData'] = csvData;
                         }
                         dataKeys.forEach((key) => {
@@ -457,16 +467,10 @@ const mediaFileUploadInputElement = {
                     if(!file['uploadMetadata']['tid'] && file['uploadMetadata']['sciname'] && taxaData.value.hasOwnProperty(file['uploadMetadata']['sciname'].toLowerCase())){
                         file['uploadMetadata']['tid'] = taxaData.value[file['uploadMetadata']['sciname'].toLowerCase()]['tid'];
                     }
-                    if(!file['uploadMetadata']['occid'] && file['recordIdentifier'] && identifierData.value.hasOwnProperty(file['recordIdentifier'].toLowerCase())){
-                        file['uploadMetadata']['occid'] = identifierData.value[file['recordIdentifier'].toLowerCase()]['occid'];
-                        if(!file['uploadMetadata']['tid'] && identifierData.value[file['recordIdentifier'].toLowerCase()]['tid']){
-                            file['uploadMetadata']['tid'] = identifierData.value[file['recordIdentifier'].toLowerCase()]['tid'];
-                        }
-                    }
-                    else if(!file['uploadMetadata']['occid'] && file['filenameRecordIdentifier'] && identifierData.value.hasOwnProperty(file['filenameRecordIdentifier'].toLowerCase())){
-                        file['uploadMetadata']['occid'] = identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['occid'];
-                        if(!file['uploadMetadata']['tid'] && identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['tid']){
-                            file['uploadMetadata']['tid'] = identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['tid'];
+                    if(!file['uploadMetadata']['occid'] && file['filenameRecordIdentifier'] && identifierData.value.hasOwnProperty(file['filenameRecordIdentifier'])){
+                        file['uploadMetadata']['occid'] = identifierData.value[file['filenameRecordIdentifier']]['occid'];
+                        if(!file['uploadMetadata']['tid'] && identifierData.value[file['filenameRecordIdentifier']]['tid']){
+                            file['uploadMetadata']['tid'] = identifierData.value[file['filenameRecordIdentifier']]['tid'];
                         }
                     }
                 });
@@ -582,7 +586,7 @@ const mediaFileUploadInputElement = {
                     if(collId.value > 0 && props.createOccurrence && !file['uploadMetadata']['occid']){
                         const occurrenceData = {};
                         occurrenceData['collid'] = collId.value.toString();
-                        occurrenceData[props.identifierField] = file['recordIdentifier'];
+                        occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
                         occurrenceData['sciname'] = file['uploadMetadata']['sciname'];
                         occurrenceData['tid'] = file['uploadMetadata']['tid'];
                         const formData = new FormData();
@@ -694,7 +698,6 @@ const mediaFileUploadInputElement = {
                             if(file['filenameRecordIdentifier'] && !identifierArr.value.includes(file['filenameRecordIdentifier'])){
                                 identifierArr.value.push(file['filenameRecordIdentifier']);
                             }
-                            file['recordIdentifier'] = null;
                             file['uploadMetadata']['sciname'] = null;
                             if(Number(props.occId) > 0){
                                 file['uploadMetadata']['occid'] = props.occId;
@@ -760,6 +763,7 @@ const mediaFileUploadInputElement = {
             urlMethodUrl,
             cancelUpload,
             getFileErrorMessage,
+            getFileUploadMessage,
             openDataEditor,
             processExternalUrl,
             removePickedFile,
