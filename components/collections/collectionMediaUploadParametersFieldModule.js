@@ -8,7 +8,7 @@ const collectionMediaUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <selector-input-element label="Filename Identifier Field" :options="patternMatchFieldOptions" :value="profileData.patternmatchfield" @update:value="(value) => updateConfigurationData('patternmatchfield', value)"></selector-input-element>
+                    <selector-input-element label="Filename Identifier Field" :options="patternMatchFieldOptions" :value="profileData.patternmatchfield" @update:value="(value) => updateData('patternmatchfield', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">

@@ -132,6 +132,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             else{
                 this.collectionDataUploadParametersId = null;
                 this.collectionDataUploadParametersData = Object.assign({}, this.blankCollectionDataUploadParameterRecord);
+                this.collectionDataUploadParametersData['configjson'] = Object.assign({}, this.blankConfigurations);
             }
             this.collectionDataUploadParametersEditData = Object.assign({}, this.collectionDataUploadParametersData);
         },
