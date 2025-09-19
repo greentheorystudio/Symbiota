@@ -546,6 +546,14 @@ const mediaFileUploadInputElement = {
             }, 400 );
         }
 
+        function updateFileArrWithNewOccid(identifier, occid) {
+            fileArr.forEach((file) => {
+                if(file['filenameRecordIdentifier'] === identifier){
+                    file['uploadMetadata']['occid'] = occid;
+                }
+            });
+        }
+
         function updateFileMetadata(data) {
             const file = fileArr.find((obj) => obj['uploadMetadata']['filename'] === editFile.value);
             if(file){
@@ -603,6 +611,7 @@ const mediaFileUploadInputElement = {
                         .then((res) => {
                             if(res && Number(res) > 0){
                                 file['uploadMetadata']['occid'] = res;
+                                updateFileArrWithNewOccid(file['filenameRecordIdentifier'], res);
                                 processUpload(file);
                             }
                         });
