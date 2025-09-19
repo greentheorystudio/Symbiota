@@ -94,6 +94,7 @@ const useCollectionMediaUploadParametersStore = Pinia.defineStore('collection-me
             }
             else{
                 this.collectionMediaUploadParametersData = Object.assign({}, this.blankCollectionMediaUploadParameterRecord);
+                this.collectionMediaUploadParametersData['configjson'] = Object.assign({}, this.blankConfigurations);
             }
             this.collectionMediaUploadParametersEditData = Object.assign({}, this.collectionMediaUploadParametersData);
         },

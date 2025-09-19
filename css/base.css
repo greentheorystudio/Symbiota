@@ -523,10 +523,6 @@ body.processing .loadingModal {
 	margin-bottom: 5px;
 	font-weight: bold;
 }
-.fuzzy-match-row {
-	display: flex;
-	justify-content: space-between;
-}
 
 /* Taxon Profile page styles */
 .taxon-profile{
