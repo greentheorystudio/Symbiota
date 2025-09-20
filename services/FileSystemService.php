@@ -337,6 +337,7 @@ class FileSystemService {
 
     public static function processUploadImageFromFile($imageData, $uploadPath): array
     {
+        $returnArr = array();
         $origFilename = $_FILES['imgfile']['name'];
         if(strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png'){
             $targetPath = self::getServerMediaUploadPath($uploadPath);
@@ -344,11 +345,11 @@ class FileSystemService {
                 $targetFilename = self::getServerUploadFilename($targetPath, $origFilename, '_lg');
                 if($targetFilename && self::moveUploadedFileToServer($_FILES['imgfile'], $targetPath, $targetFilename)){
                     $imageData['originalurl'] = self::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
-                    $imageData = self::processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename);
+                    $returnArr = self::processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename);
                 }
             }
         }
-        return $imageData;
+        return $returnArr;
     }
 
     public static function processUploadImageFromExternalUrl($imageData, $uploadPath): array
