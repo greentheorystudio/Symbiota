@@ -397,6 +397,7 @@ const coreConfigurationsTab = {
         function processCallbackResponse(res){
             if(res === 1){
                 showNotification('positive','Saved and activated');
+                editField.value = null;
             }
             else{
                 showNotification('negative', 'There was an error saving and activating the change');

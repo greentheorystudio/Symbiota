@@ -89,10 +89,13 @@ const mediaFileUploadInputElement = {
                                     <div class="q-uploader__subtitle text-bold">Total upload size: {{ queueSizeLabel }}</div>
                                     <q-uploader-add-trigger></q-uploader-add-trigger>
                                 </div>
-                                <div class="row justify-end">
+                                <div class="row no-wrap justify-end q-pa-sm q-gutter-xs">
                                     <span v-if="csvFileDataUploaded" class="text-bold text-red">
                                         CSV Data Uploaded
                                     </span>
+                                    <div class="q-uploader__subtitle text-bold">
+                                        Queued {{ filesQueued }}/Uploaded {{ filesUploaded }}
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -124,6 +127,11 @@ const mediaFileUploadInputElement = {
                                                     </div>
                                                     <div>
                                                         <div caption>
+                                                            <template v-if="file['filenameRecordIdentifier']">
+                                                                <span class="q-mr-xs">
+                                                                    <span class="text-bold">{{ identifierField }}:</span> {{ file['filenameRecordIdentifier'] }}
+                                                                </span>
+                                                            </template>
                                                             <template v-for="key in Object.keys(file['uploadMetadata'])">
                                                                 <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== ''">
                                                                     <span class="q-mr-xs">
@@ -211,6 +219,10 @@ const mediaFileUploadInputElement = {
         const editFile = Vue.ref(null);
         const fileArr = Vue.reactive([]);
         const fileListRef = Vue.ref(null);
+        const filesQueued = Vue.computed(() => {
+            return fileArr.length;
+        });
+        const filesUploaded = Vue.ref(0);
         const identifierArr = Vue.ref([]);
         const identifierData = Vue.ref({});
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
@@ -297,7 +309,7 @@ const mediaFileUploadInputElement = {
             let message = 'Ready to upload';
             if(Number(props.occId) === 0 && Number(props.taxonId) === 0 && collId.value > 0){
                 if(Number(file['uploadMetadata']['occid']) > 0){
-                    message = 'Ready to upload - will associate with existing occurrence (occid# ' + file['uploadMetadata']['occid'] + ')';
+                    message = 'Ready to upload - will associate with existing occurrence record';
                 }
                 else if(props.createOccurrence){
                     message = 'Ready to upload - will associate with new occurrence record';
@@ -639,6 +651,7 @@ const mediaFileUploadInputElement = {
             })
             .then((res) => {
                 callback(res, file);
+                filesUploaded.value++;
             });
         }
 
@@ -658,6 +671,7 @@ const mediaFileUploadInputElement = {
             })
             .then((res) => {
                 callback(res, file);
+                filesUploaded.value++;
             });
         }
 
@@ -686,7 +700,7 @@ const mediaFileUploadInputElement = {
                     });
                 }
                 else if(!existingData){
-                    const fileSizeMb = Number(file.size) > 0 ? Math.round((file.size / 1000000) * 10) / 100 : 0;
+                    const fileSizeMb = Number(file.size) > 0 ? (file.size / 1000000).toFixed(2) : 0;
                     if(fileSizeMb <= Number(maxUploadFilesize)){
                         const mediaTypeInfo = acceptedMediaTypes.find((mType) => mType.extension === file.name.split('.').pop().toLowerCase());
                         if(mediaTypeInfo){
@@ -760,6 +774,8 @@ const mediaFileUploadInputElement = {
             editData,
             fileArr,
             fileListRef,
+            filesQueued,
+            filesUploaded,
             queueSize,
             queueSizeLabel,
             selectedUploadMethod,
