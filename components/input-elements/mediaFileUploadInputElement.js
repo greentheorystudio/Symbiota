@@ -94,7 +94,7 @@ const mediaFileUploadInputElement = {
                                         CSV Data Uploaded
                                     </span>
                                     <div class="q-uploader__subtitle text-bold">
-                                        Queued {{ filesQueued }}/Uploaded {{ filesUploaded }}
+                                        <span class="text-bold">Queued: {{ filesQueued }}</span>/<span class="text-bold text-green">Uploaded: {{ filesUploaded }}</span>/<span class="text-bold text-red">Errors: {{ filesError }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -141,12 +141,19 @@ const mediaFileUploadInputElement = {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div v-if="getFileErrorMessage(file)" class="text-bold text-red">
-                                                        {{ getFileErrorMessage(file) }}
-                                                    </div>
-                                                    <div v-else class="text-bold text-green">
-                                                        {{ getFileUploadMessage(file) }}
-                                                    </div>
+                                                    <template v-if="!file['uploadErrorMessage']">
+                                                        <div v-if="getFileErrorMessage(file)" class="text-bold text-red">
+                                                            {{ getFileErrorMessage(file) }}
+                                                        </div>
+                                                        <div v-else class="text-bold text-green">
+                                                            {{ getFileUploadMessage(file) }}
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        <div class="text-bold text-red">
+                                                            {{ file['uploadErrorMessage'] }}
+                                                        </div>
+                                                    </template>
                                                 </div>
                                                 <div class="col-2 row justify-end">
                                                     <div class="column q-gutter-xs">
@@ -219,6 +226,7 @@ const mediaFileUploadInputElement = {
         const editFile = Vue.ref(null);
         const fileArr = Vue.reactive([]);
         const fileListRef = Vue.ref(null);
+        const filesError = Vue.ref(0);
         const filesQueued = Vue.computed(() => {
             return fileArr.length;
         });
@@ -290,11 +298,12 @@ const mediaFileUploadInputElement = {
             if(Number(props.occId) === 0 && Number(props.taxonId) === 0){
                 if(collId.value > 0){
                     if(!file['uploadMetadata']['occid'] && !props.createOccurrence){
-                        if(file['catalognumber']){
-                            errorMessage = 'Catalog number was not found in the database';
+                        const idField = props.identifierField === 'catalognumber' ? 'Catalog number' : 'Other catalog number';
+                        if(file['filenameRecordIdentifier']){
+                            errorMessage = idField + ' could not be matched to a record in the database';
                         }
                         else{
-                            errorMessage = 'Catalog number required';
+                            errorMessage = idField + ' value required';
                         }
                     }
                 }
@@ -423,6 +432,14 @@ const mediaFileUploadInputElement = {
                     file['uploadMetadata']['originalurl'] = file['uploadMetadata']['sourceurl'];
                 }
                 uploadImageFile(file, action, (id, file) => {
+                    if(Number(id) > 0){
+                        filesUploaded.value++;
+                    }
+                    else{
+                        filesError.value++;
+                        showNotification('negative', ('An error occurred uploading ' + file.name));
+                        file['uploadErrorMessage'] = 'An error occurred uploading this file';
+                    }
                     uploadPostProcess(id, file);
                 });
             }
@@ -431,6 +448,14 @@ const mediaFileUploadInputElement = {
                     file['uploadMetadata']['accessuri'] = file['uploadMetadata']['sourceurl'];
                 }
                 uploadMediaFile(file, action, (id, file) => {
+                    if(Number(id) > 0){
+                        filesUploaded.value++;
+                    }
+                    else{
+                        filesError.value++;
+                        showNotification('negative', ('An error occurred uploading ' + file.name));
+                        file['uploadErrorMessage'] = 'An error occurred uploading this file';
+                    }
                     uploadPostProcess(id, file);
                 });
             }
@@ -651,7 +676,6 @@ const mediaFileUploadInputElement = {
             })
             .then((res) => {
                 callback(res, file);
-                filesUploaded.value++;
             });
         }
 
@@ -671,7 +695,6 @@ const mediaFileUploadInputElement = {
             })
             .then((res) => {
                 callback(res, file);
-                filesUploaded.value++;
             });
         }
 
@@ -717,6 +740,7 @@ const mediaFileUploadInputElement = {
                             file['uploadMetadata']['filename'] = file.name;
                             file['uploadMetadata']['type'] = mediaTypeInfo.type;
                             file['uploadMetadata']['format'] = mediaTypeInfo.mimetype;
+                            file['uploadErrorMessage'] = null;
                             file['filenameRecordIdentifier'] = (collId.value > 0 && props.identifierRegEx) ? getSubstringByRegEx(props.identifierRegEx, file.name) : null;
                             if(file['filenameRecordIdentifier'] && !identifierArr.value.includes(file['filenameRecordIdentifier'])){
                                 identifierArr.value.push(file['filenameRecordIdentifier']);
@@ -774,6 +798,7 @@ const mediaFileUploadInputElement = {
             editData,
             fileArr,
             fileListRef,
+            filesError,
             filesQueued,
             filesUploaded,
             queueSize,

@@ -169,7 +169,6 @@ const occurrenceLinkageToolPopup = {
                 return editorCollectionArr.value;
             }
             else{
-                console.log(fullCollectionArr.value);
                 return fullCollectionArr.value;
             }
         });
