@@ -359,7 +359,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20250203';
-        $GLOBALS['JS_VERSION'] = '2025052011';
+        $GLOBALS['JS_VERSION'] = '202505201111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -590,9 +590,6 @@ class Configurations{
         if(!isset($GLOBALS['LOG_PATH']) || $GLOBALS['LOG_PATH'] === ''){
             $GLOBALS['LOG_PATH'] = FileSystemService::getServerLogFilePath();
         }
-        if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE'] || (int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxFilesize()){
-            $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxFilesize();
-        }
         if((!isset($GLOBALS['PORTAL_EMAIL_ADDRESS']) || !$GLOBALS['PORTAL_EMAIL_ADDRESS']) && isset($GLOBALS['ADMIN_EMAIL'])){
             $GLOBALS['PORTAL_EMAIL_ADDRESS'] = $GLOBALS['ADMIN_EMAIL'];
         }
@@ -768,6 +765,12 @@ class Configurations{
             array('rankid' => 220, 'rankname' => 'Species', 'dirparentrankid' => 190, 'reqparentrankid' => 180),
             array('rankid' => 230, 'rankname' => 'Subspecies', 'dirparentrankid' => 220, 'reqparentrankid' => 180)
         );
+        if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE'] || (int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxFilesize()){
+            $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxFilesize();
+        }
+        if((int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxPostSize()){
+            $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxPostSize();
+        }
     }
 
     public function validateNewConfNameCore($name): int
