@@ -359,7 +359,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20250203';
-        $GLOBALS['JS_VERSION'] = '202505201111111';
+        $GLOBALS['JS_VERSION'] = '20250521';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -765,8 +765,8 @@ class Configurations{
             array('rankid' => 220, 'rankname' => 'Species', 'dirparentrankid' => 190, 'reqparentrankid' => 180),
             array('rankid' => 230, 'rankname' => 'Subspecies', 'dirparentrankid' => 220, 'reqparentrankid' => 180)
         );
-        if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE'] || (int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxFilesize()){
-            $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxFilesize();
+        if(!isset($GLOBALS['MAX_UPLOAD_FILESIZE']) || !(int)$GLOBALS['MAX_UPLOAD_FILESIZE'] || (int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxUploadFilesize()){
+            $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxUploadFilesize();
         }
         if((int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxPostSize()){
             $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxPostSize();
