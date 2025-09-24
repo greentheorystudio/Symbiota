@@ -615,7 +615,7 @@ const mediaFileUploadInputElement = {
             if(fileArr.length > 0){
                 showWorking();
                 processingArr.value.length = 0;
-                fileArr.forEach((file) => {
+                fileArr.forEach((file, index) => {
                     if(!file.hasOwnProperty('height')){
                         file['uploadMetadata']['height'] = file.hasOwnProperty('__img') ? file['__img']['height'] : null;
                     }
@@ -655,6 +655,9 @@ const mediaFileUploadInputElement = {
                     }
                     else if((collId.value > 0 && Number(file['uploadMetadata']['occid']) > 0) || (collId.value === 0 && Number(file['uploadMetadata']['tid']) > 0)){
                         processUpload(file);
+                    }
+                    else if((index + 1) === fileArr.length){
+                        uploadPostProcess(0, file);
                     }
                 });
             }
@@ -703,11 +706,15 @@ const mediaFileUploadInputElement = {
                 removePickedFile(file);
             }
             const fileProcess = processingArr.value.find(proc => proc['file'] === file['uploadMetadata']['filename']);
-            fileProcess['status'] = 'complete';
+            if(fileProcess){
+                fileProcess['status'] = 'complete';
+            }
             const currentProcess = processingArr.value.find(proc => proc['status'] === 'processing');
             if(!currentProcess){
                 hideWorking();
-                context.emit('upload:complete');
+                if(filesUploaded.value > 0){
+                    context.emit('upload:complete');
+                }
             }
         }
 

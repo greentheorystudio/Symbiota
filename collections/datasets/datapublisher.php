@@ -136,7 +136,7 @@ include(__DIR__ . '/../../header.php');
         <?php
         if($collId){
             ?>
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collId; ?>">Collection Control Panel</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collId; ?>">Collection Control Panel</a> &gt;&gt;
             <?php
         }
         else{
