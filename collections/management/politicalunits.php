@@ -135,7 +135,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
         <div id="breadcrumbs">
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/collprofiles.php?collid=<?php echo $collid; ?>">Collection Control Panel</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collid; ?>">Collection Control Panel</a> &gt;&gt;
             <b>Geography Cleaning Module</b>
             <?php
             if($mode) {
