@@ -125,7 +125,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 						<b>Use the checkboxes to select the records you would like to merge, and the radio buttons to select which target record to merge into.</b>
 					</div>
 					<form name="mergeform" action="duplicatesearch.php" method="post" onsubmit="return validateMergeForm();">
-						<?php
+                        <div style="margin:15px;">
+                            <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+                            <input name="action" type="submit" value="Merge Duplicate Records" />
+                        </div>
+                        <?php
 						if($recCnt > $limit){
 							$href = 'duplicatesearch.php?collid='.$collid.'&action='.$action.'&start='.($start+$limit);
 							echo '<div style="float:right;"><a href="'.$href.'"><b>NEXT '.$limit.' RECORDS &gt;&gt;</b></a></div>';
