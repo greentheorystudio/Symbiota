@@ -560,7 +560,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const editChecklistTaxaId = Vue.ref(0);
                     const isEditor = Vue.ref(false);
                     const keyActive = Vue.computed(() => {
-                        return (!!displayKeyVal.value && !!keyModuleIsActive);
+                        return ((!!displayKeyVal.value || temporaryChecklist.value) && !!keyModuleIsActive);
                     });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const mapViewUrl = Vue.computed(() => {
