@@ -830,6 +830,11 @@ body.processing .loadingModal {
 	height: 95% !important;
 	border: 1px solid black;
 }
+.side-popup-right {
+	width: 350px !important;
+	height: 75% !important;
+	margin-right: 25px;
+}
 .search-criteria-popup {
 	max-width: 90% !important;
 	width: 90% !important;

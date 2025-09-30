@@ -18,27 +18,27 @@ const checklistTaxaAddEditModule = {
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <single-scientific-common-name-auto-complete :sciname="checklistTaxaData['sciname']" :disabled="Number(checklistTaxaData['tid']) > 0" label="Taxon" rank-low="180" limit-to-options="true" @update:sciname="processTaxonValChange"></single-scientific-common-name-auto-complete>
+                    <single-scientific-common-name-auto-complete :sciname="checklistTaxaData['sciname']" :clearable="true" label="Taxon" rank-low="180" limit-to-options="true" @update:sciname="processTaxonValChange" @click:enter="processEnterClick"></single-scientific-common-name-auto-complete>
                 </div>
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="Habitat" :value="checklistTaxaData['habitat']" maxlength="250" @update:value="(value) => updateChecklistTaxonData('habitat', value)"></text-field-input-element>
+                    <text-field-input-element label="Habitat" :value="checklistTaxaData['habitat']" maxlength="250" @update:value="(value) => updateChecklistTaxonData('habitat', value)" @click:enter="processEnterClick"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="Abundance" :value="checklistTaxaData['abundance']" maxlength="50" @update:value="(value) => updateChecklistTaxonData('abundance', value)"></text-field-input-element>
+                    <text-field-input-element label="Abundance" :value="checklistTaxaData['abundance']" maxlength="50" @update:value="(value) => updateChecklistTaxonData('abundance', value)" @click:enter="processEnterClick"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element data-type="textarea" label="Notes" :value="checklistTaxaData['notes']" maxlength="2000" @update:value="(value) => updateChecklistTaxonData('notes', value)"></text-field-input-element>
+                    <text-field-input-element data-type="textarea" label="Notes" :value="checklistTaxaData['notes']" maxlength="2000" @update:value="(value) => updateChecklistTaxonData('notes', value)" @click:enter="processEnterClick"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="Source" :value="checklistTaxaData['source']" maxlength="250" @update:value="(value) => updateChecklistTaxonData('source', value)"></text-field-input-element>
+                    <text-field-input-element label="Source" :value="checklistTaxaData['source']" maxlength="250" @update:value="(value) => updateChecklistTaxonData('source', value)" @click:enter="processEnterClick"></text-field-input-element>
                 </div>
             </div>
             <div v-if="Number(checklistTaxaId) > 0" class="row justify-end q-gutter-md">
@@ -71,7 +71,6 @@ const checklistTaxaAddEditModule = {
                 checklistStore.createChecklistTaxaRecord((newChecklistTaxaId) => {
                     if(newChecklistTaxaId > 0){
                         showNotification('positive','Taxon added successfully.');
-                        context.emit('close:popup');
                     }
                     else{
                         showNotification('negative', 'There was an error adding the taxon to the checklist');
@@ -98,6 +97,17 @@ const checklistTaxaAddEditModule = {
                     });
                 }
             }});
+        }
+
+        function processEnterClick() {
+            if(editsExist.value){
+                if(checklistTaxaId.value > 0){
+                    saveChecklistTaxaEdits();
+                }
+                else{
+                    addChecklistTaxon();
+                }
+            }
         }
 
         function processTaxonValChange(taxon) {
@@ -131,6 +141,7 @@ const checklistTaxaAddEditModule = {
             editsExist,
             addChecklistTaxon,
             deleteChecklistTaxon,
+            processEnterClick,
             processTaxonValChange,
             saveChecklistTaxaEdits,
             updateChecklistTaxonData
