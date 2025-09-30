@@ -203,7 +203,6 @@ const singleScientificCommonNameAutoComplete = {
         }
 
         function processEnterClick() {
-            autocompleteRef.value.blur();
             context.emit('click:enter');
         }
 
