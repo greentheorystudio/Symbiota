@@ -512,6 +512,7 @@ const mediaFileUploadInputElement = {
                     }
                 });
             }
+            hideWorking();
         }
 
         function setFileIdentifierData() {
@@ -719,6 +720,7 @@ const mediaFileUploadInputElement = {
         }
 
         function validateFiles(files) {
+            showWorking();
             files.forEach((file) => {
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){
