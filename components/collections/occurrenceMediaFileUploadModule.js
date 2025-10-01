@@ -21,7 +21,7 @@ const occurrenceMediaFileUploadModule = {
             </div>
             <collection-media-upload-parameters-field-module></collection-media-upload-parameters-field-module>
             <div class="q-mt-sm">
-                <media-file-upload-input-element :collection="collectionData" :create-occurrence="configurationData.createOccurrence" :identifier-field="profileData.patternmatchfield" :identifier-reg-ex="profileData.filenamepatternmatch" @upload:complete="processMediaUpdate"></media-file-upload-input-element>
+                <media-file-upload-input-element :collection="collectionData" :create-occurrence="configurationData.createOccurrence" :identifier-field="profileData.patternmatchfield" :identifier-reg-ex="profileData.filenamepatternmatch"></media-file-upload-input-element>
             </div>
         </div>
         <template v-if="showCollectionMediaUploadParametersEditorPopup">
@@ -49,10 +49,6 @@ const occurrenceMediaFileUploadModule = {
         const profileData = Vue.computed(() => collectionMediaUploadParametersStore.getCollectionMediaUploadParametersData);
         const showCollectionMediaUploadParametersEditorPopup = Vue.ref(false);
 
-        function processMediaUpdate() {
-            showNotification('positive','Upload successful.');
-        }
-
         function processParameterProfileSelection(spprid) {
             collectionMediaUploadParametersStore.setCurrentCollectionMediaUploadParametersRecord(spprid);
         }
@@ -70,7 +66,6 @@ const occurrenceMediaFileUploadModule = {
             configurationData,
             profileData,
             showCollectionMediaUploadParametersEditorPopup,
-            processMediaUpdate,
             processParameterProfileSelection
         }
     }
