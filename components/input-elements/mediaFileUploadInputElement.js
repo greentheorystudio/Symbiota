@@ -713,8 +713,8 @@ const mediaFileUploadInputElement = {
             const currentProcess = processingArr.value.find(proc => proc['status'] === 'processing');
             if(!currentProcess){
                 hideWorking();
+                showNotification('positive','Upload complete');
                 if(filesUploaded.value > 0){
-                    showNotification('positive','Upload complete');
                     context.emit('upload:complete');
                 }
             }
