@@ -714,6 +714,7 @@ const mediaFileUploadInputElement = {
             if(!currentProcess){
                 hideWorking();
                 if(filesUploaded.value > 0){
+                    showNotification('positive','Upload complete');
                     context.emit('upload:complete');
                 }
             }
