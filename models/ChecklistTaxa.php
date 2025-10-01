@@ -111,7 +111,7 @@ class ChecklistTaxa{
             $fieldNameArr[] = 't.family';
             $fieldNameArr[] = 't.rankid';
             $fieldNameArr[] = 't.tidaccepted';
-            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
                 'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
             if($taxonSort === 'family'){
