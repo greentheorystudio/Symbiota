@@ -478,6 +478,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
                 if(Number(res) === 1){
                     this.setCurrentCollectingEventRecord(0);
+                    if(this.getLocationID > 0){
+                        this.collectingEventStore.getLocationCollectingEvents(this.getCollId, this.getLocationID);
+                    }
                 }
             });
         },
@@ -755,9 +758,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['verbatimelevation'] = locationData['verbatimelevation'];
         },
         mergeSelectedEventOccurrenceData(data, missingOnly) {
+            const skipFields = ['occid','collid','dbpk','occurrenceid','catalognumber','othercatalognumbers','ownerinstitutioncode',
+                'institutionid','collectionid','datasetid','institutioncode','collectioncode','disposition','storagelocation',
+                'processingstatus','recordenteredby','dateentered','datelastmodified'];
             const dataProps = Object.keys(data);
             dataProps.forEach((prop) => {
-                if(data[prop] &&this.occurrenceEditData.hasOwnProperty(prop) && (!this.occurrenceEditData[prop] || !missingOnly)){
+                if(data[prop] && this.occurrenceEditData.hasOwnProperty(prop) && !skipFields.includes(prop) && (!this.occurrenceEditData[prop] || !missingOnly)){
                     this.occurrenceEditData[prop] = data[prop];
                 }
             });

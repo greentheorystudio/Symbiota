@@ -898,8 +898,8 @@ class Occurrences{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    $retArr[strtolower($row[$identifierField])]['occid'] = $row['occid'];
-                    $retArr[strtolower($row[$identifierField])]['tid'] = $row['tid'];
+                    $retArr[$row[$identifierField]]['occid'] = $row['occid'];
+                    $retArr[$row[$identifierField]]['tid'] = $row['tid'];
                     unset($rows[$index]);
                 }
             }

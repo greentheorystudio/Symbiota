@@ -49,7 +49,7 @@ if($action && SanitizerService::validateInternalRequest()){
         elseif($action === 'addImageFromUrl'){
             $imageData = FileSystemService::processUploadImageFromExternalUrl($imageData, $_POST['uploadpath']);
         }
-        echo $imageData['url'] ? $images->createImageRecord($imageData) : 0;
+        echo $imageData ? $images->createImageRecord($imageData) : 0;
     }
     elseif($action === 'deleteImageRecord' && $imgid && $isEditor){
         echo $images->deleteImageRecord($imgid);

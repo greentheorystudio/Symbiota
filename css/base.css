@@ -523,10 +523,6 @@ body.processing .loadingModal {
 	margin-bottom: 5px;
 	font-weight: bold;
 }
-.fuzzy-match-row {
-	display: flex;
-	justify-content: space-between;
-}
 
 /* Taxon Profile page styles */
 .taxon-profile{
@@ -833,6 +829,11 @@ body.processing .loadingModal {
 	width: 98% !important;
 	height: 95% !important;
 	border: 1px solid black;
+}
+.side-popup-right {
+	width: 350px !important;
+	height: 75% !important;
+	margin-right: 25px;
 }
 .search-criteria-popup {
 	max-width: 90% !important;

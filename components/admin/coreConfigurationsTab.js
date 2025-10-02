@@ -336,6 +336,8 @@ const coreConfigurationsTab = {
             <div class="q-mt-md column text-body1">
                 <div><span class="text-bold">php version:</span> {{ phpVersion }}</div>
                 <div><span class="text-bold">Database server:</span> {{ dbServerText }}</div>
+                <div><span class="text-bold">Server max post size:</span> {{ maxPostSize }}MB</div>
+                <div><span class="text-bold">Server max upload size:</span> {{ maxUploadSize }}MB</div>
             </div>
         </div>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
@@ -395,6 +397,7 @@ const coreConfigurationsTab = {
         function processCallbackResponse(res){
             if(res === 1){
                 showNotification('positive','Saved and activated');
+                editField.value = null;
             }
             else{
                 showNotification('negative', 'There was an error saving and activating the change');
@@ -556,6 +559,8 @@ const coreConfigurationsTab = {
             editField,
             gbifPasswordDataType,
             languageOptionArr,
+            maxPostSize,
+            maxUploadSize,
             phpVersion,
             showGbifPassword,
             showSmtpPassword,
