@@ -13,7 +13,7 @@ const taxaProfileImageCarousel = {
         <div v-if="!showOccurrenceInfoPopup && !showMediaInfoPopup">
             <q-carousel swipeable animated v-model="imageIndex" thumbnails arrows infinite class="taxon-profile-image-carousel" height="94vh" @update:model-value="updateCurrentImage">
                 <template v-for="image in imageArr" :key="image">
-                    <q-carousel-slide :name="image.url" :img-src="image.url" class="image-carousel-image">
+                    <q-carousel-slide :name="image.url" :img-src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" class="image-carousel-image">
                         <div class="absolute-top-left q-pa-md">
                             <div class="text-black rounded-borders taxon-profile-image-carousel-info-box">
                                 <template v-if="image.sciname"><span class="text-italic">{{ image.sciname }}</span>. </template>
