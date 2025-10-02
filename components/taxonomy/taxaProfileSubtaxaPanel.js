@@ -4,6 +4,10 @@ const taxaProfileSubtaxaPanel = {
             type: Boolean,
             default: true
         },
+        expanded: {
+            type: Boolean,
+            default: false
+        },
         isEditor: {
             type: Boolean,
             default: false
@@ -28,7 +32,7 @@ const taxaProfileSubtaxaPanel = {
                                     <div>
                                         <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
                                             <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
-                                                <q-img class="spp-image-container" :src="subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] ? subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] : subtaxaImageData[spptaxon.tid][0]['url']" fit="scale-down" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
+                                                <q-img class="spp-image-container" :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" fit="scale-down" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
@@ -45,7 +49,7 @@ const taxaProfileSubtaxaPanel = {
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
                                             <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
-                                                <q-img class="spp-map-container" :src="taxaMapData[spptaxon.tid]['url']" fit="scale-down" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
+                                                <q-img class="spp-map-container" :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" fit="scale-down" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">
@@ -60,7 +64,7 @@ const taxaProfileSubtaxaPanel = {
                     </q-card>
                 </template>
                 <template v-else>
-                    <q-expansion-item class="shadow-1 overflow-hidden expansion-element" label="View All Subtaxa" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
+                    <q-expansion-item v-model="panelExpanded" class="shadow-1 overflow-hidden expansion-element" label="View All Subtaxa" header-class="bg-grey-3 text-bold text-center" expand-icon-class="text-bold">
                         <div class="row">
                             <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
                                 <q-card class="q-ma-md overflow-hidden">
@@ -72,7 +76,7 @@ const taxaProfileSubtaxaPanel = {
                                     <div class="spp-image-container">
                                         <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
                                             <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
-                                                <q-img :src="subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] ? subtaxaImageData[spptaxon.tid][0]['thumbnailurl'] : subtaxaImageData[spptaxon.tid][0]['url']" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
+                                                <q-img :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
@@ -89,7 +93,7 @@ const taxaProfileSubtaxaPanel = {
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
                                             <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
-                                                <q-img :src="taxaMapData[spptaxon.tid]['url']" :fit="contain" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
+                                                <q-img :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" :fit="contain" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">
@@ -106,20 +110,36 @@ const taxaProfileSubtaxaPanel = {
             </div>
         </template>
     `,
-    setup() {
+    setup(props) {
         const baseStore = useBaseStore();
         const taxaStore = useTaxaStore();
 
         const clientRoot = baseStore.getClientRoot;
+        const panelExpanded = Vue.ref(false);
         const subtaxaArr = Vue.computed(() => taxaStore.getTaxaChildren);
         const subtaxaImageData = Vue.computed(() => taxaStore.getSubtaxaImageData);
         const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
 
+        function getSubtaxaImageUrlFromData(imageData) {
+            if(imageData['thumbnailurl']){
+                return (imageData['thumbnailurl'].startsWith('/') ? (clientRoot + imageData['thumbnailurl']) : imageData['thumbnailurl']);
+            }
+            else{
+                return (imageData['url'].startsWith('/') ? (clientRoot + imageData['url']) : imageData['url']);
+            }
+        }
+
+        Vue.onMounted(() => {
+            panelExpanded.value = props.expanded;
+        });
+
         return {
             clientRoot,
+            panelExpanded,
             subtaxaArr,
             subtaxaImageData,
-            taxaMapData
+            taxaMapData,
+            getSubtaxaImageUrlFromData
         }
     }
 };
