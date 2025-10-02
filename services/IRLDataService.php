@@ -62,17 +62,19 @@ class IRLDataService {
         $taxaNameArr = array();
         $targetTidArr = array();
         $parentTaxonArr = array();
-        $sql = 'SELECT DISTINCT l.locationCode, o.`year`, o.`month`, o.rep '.
-            'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
-            'WHERE o.collid = ' . (int)$collid . ' ORDER BY l.locationCode, o.`year`, o.`month`, o.rep ';
+        $sql = 'SELECT DISTINCT l.locationcode, c.`year`, c.`month`, o.rep '.
+            'FROM omoccurlocations AS l LEFT JOIN omoccurcollectingevents AS c ON l.locationid = c.locationid '.
+            'LEFT JOIN omoccurrences AS o ON c.eventid = o.eventid '.
+            'WHERE c.collid = ' . (int)$collid . ' ORDER BY l.locationcode, c.`year`, c.`month`, o.rep ';
         //echo $sql;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
-            $headerCode = $row->locationCode . '.' . $row->year . '.' . ((int)$row->month < 10 ? ('0' . $row->month) : $row->month);
-            $keyCode = $headerCode . '-' . $row->rep;
+            $repVal = $row->rep ?: 1;
+            $headerCode = $row->locationcode . '.' . $row->year . '.' . ((int)$row->month < 10 ? ('0' . $row->month) : $row->month);
+            $keyCode = $headerCode . '-' . $repVal;
             $keyArr[] = $keyCode;
             $headerCodeArr[] = $headerCode;
-            $headerRepArr[] = $alphaArr[((int)$row->rep - 1)];
+            $headerRepArr[] = $alphaArr[($repVal - 1)];
         }
         $result->free();
 
@@ -82,7 +84,7 @@ class IRLDataService {
         $sql = 'SELECT l.locationCode, o.sciname, t.tid, t.rankid, o.`year`, o.`month`, o.rep, o.individualCount '.
             'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
             'LEFT JOIN taxa AS t ON o.tid = t.tid '.
-            'WHERE o.collid = ' . (int)$collid . ' ORDER BY o.sciname ';
+            'WHERE l.collid = ' . (int)$collid . ' ORDER BY o.sciname ';
         //echo $sql;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
