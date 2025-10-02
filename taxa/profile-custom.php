@@ -272,8 +272,8 @@
                 .then((resObj) => {
                     if(resObj.hasOwnProperty(taxon.value['tid'])){
                         imageArr.value = imageArr.value.concat(resObj[taxon.value['tid']]);
-                        processImages();
                     }
+                    processImages();
                 });
             }
 
