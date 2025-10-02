@@ -478,6 +478,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
                 if(Number(res) === 1){
                     this.setCurrentCollectingEventRecord(0);
+                    if(this.getLocationID > 0){
+                        this.collectingEventStore.getLocationCollectingEvents(this.getCollId, this.getLocationID);
+                    }
                 }
             });
         },

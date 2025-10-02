@@ -635,6 +635,7 @@ const mediaFileUploadInputElement = {
                         occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
                         occurrenceData['sciname'] = file['uploadMetadata']['sciname'];
                         occurrenceData['tid'] = file['uploadMetadata']['tid'];
+                        occurrenceData['processingstatus'] = 'unprocessed';
                         const formData = new FormData();
                         formData.append('collid', collId.value.toString());
                         formData.append('occurrence', JSON.stringify(occurrenceData));
