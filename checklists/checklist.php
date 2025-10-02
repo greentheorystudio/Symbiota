@@ -560,7 +560,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const editChecklistTaxaId = Vue.ref(0);
                     const isEditor = Vue.ref(false);
                     const keyActive = Vue.computed(() => {
-                        return (!!displayKeyVal.value && !!keyModuleIsActive);
+                        return ((!!displayKeyVal.value || temporaryChecklist.value) && !!keyModuleIsActive);
                     });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const mapViewUrl = Vue.computed(() => {
@@ -614,7 +614,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 if(selectedSortByOption.value === 'family'){
                                     const familyObj = newDataArr.find(family => family['familyName'] === taxon['family']);
                                     if(familyObj){
-                                        familyObj['taxa'].push(taxon);
+                                        const taxonObj = familyObj['taxa'].find(fTaxon => Number(fTaxon['tid']) === Number(taxon['tid']));
+                                        if(taxonObj){
+                                            if(Number(taxon['clid']) === Number(clId.value)){
+                                                const index = familyObj['taxa'].indexOf(taxonObj);
+                                                familyObj['taxa'].splice(index, 1, taxon);
+                                            }
+                                        }
+                                        else{
+                                            familyObj['taxa'].push(taxon);
+                                        }
                                     }
                                     else{
                                         const taxaArr = [taxon];
@@ -625,7 +634,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     }
                                 }
                                 else{
-                                    newDataArr.push(taxon);
+                                    const taxonObj = newDataArr.find(fTaxon => Number(fTaxon['tid']) === Number(taxon['tid']));
+                                    if(taxonObj){
+                                        if(Number(taxon['clid']) === Number(clId.value)){
+                                            const index = newDataArr.indexOf(taxonObj);
+                                            newDataArr.splice(index, 1, taxon);
+                                        }
+                                    }
+                                    else{
+                                        newDataArr.push(taxon);
+                                    }
                                 }
                             });
                             if(selectedSortByOption.value === 'family'){

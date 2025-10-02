@@ -211,7 +211,7 @@ const taxonomicThesaurusMaintenanceModule = {
                                                 </template>
                                                 <template v-if="subproc.type === 'fuzzy'">
                                                     <template v-if="subproc.procText === 'skip'">
-                                                        <div class="q-mx-xl q-my-sm fuzzy-match-row">
+                                                        <div class="q-mx-xl q-my-sm row justify-between">
                                                             <div></div>
                                                             <div>
                                                                 <q-btn :disabled="!(currentTaxon.sciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense />
@@ -219,7 +219,7 @@ const taxonomicThesaurusMaintenanceModule = {
                                                         </div>
                                                     </template>
                                                     <template v-else>
-                                                        <div class="q-mx-xl q-my-sm fuzzy-match-row">
+                                                        <div class="q-mx-xl q-my-sm row justify-between">
                                                             <div class="text-weight-bold">
                                                                 {{ subproc.procText }}
                                                             </div>

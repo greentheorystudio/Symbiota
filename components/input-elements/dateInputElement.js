@@ -154,6 +154,9 @@ const dateInputElement = {
                         emitValue();
                     }
                 }
+                else{
+                    emitValue();
+                }
             }
             else{
                 dateData.value = null;

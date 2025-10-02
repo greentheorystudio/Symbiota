@@ -14,7 +14,7 @@ const taxaProfileCentralImage = {
             <template v-if="centralImage">
                 <div class="taxon-profile-central-image">
                     <a @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer">
-                        <q-img :src="centralImage.url" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
+                        <q-img :src="(centralImage.url.startsWith('/') ? (clientRoot + centralImage.url) : centralImage.url)" :fit="contain" :title="centralImage.caption" :alt="centralImage.sciname"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
                                 <template v-if="taxon.sciname !== centralImage.sciname">

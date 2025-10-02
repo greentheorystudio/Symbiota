@@ -13,14 +13,14 @@ const taxaProfileMediaPanel = {
                                     <template v-if="media.format.startsWith('video')">
                                         <div class="video-player-container">
                                             <video class="video-player" controls>
-                                                <source :src="media.accessuri" :type="media.format">
+                                                <source :src="(media.accessuri.startsWith('/') ? (clientRoot + media.accessuri) : media.accessuri)" :type="media.format">
                                             </video>
                                         </div>
                                     </template>
                                     <template v-else-if="media.format.startsWith('audio')">
                                         <div class="audio-player-container">
                                             <audio class="audio-player" controls>
-                                                <source :src="media.accessuri" :type="media.format">
+                                                <source :src="(media.accessuri.startsWith('/') ? (clientRoot + media.accessuri) : media.accessuri)" :type="media.format">
                                             </audio>
                                         </div>
                                     </template>
@@ -46,14 +46,14 @@ const taxaProfileMediaPanel = {
                                     <template v-if="media.format.startsWith('video')">
                                         <div class="video-player-container">
                                             <video class="video-player" controls>
-                                                <source :src="media.accessuri" :type="media.format">
+                                                <source :src="(media.accessuri.startsWith('/') ? (clientRoot + media.accessuri) : media.accessuri)" :type="media.format">
                                             </video>
                                         </div>
                                     </template>
                                     <template v-else-if="media.format.startsWith('audio')">
                                         <div class="audio-player-container">
                                             <audio class="audio-player" controls>
-                                                <source :src="media.accessuri" :type="media.format">
+                                                <source :src="(media.accessuri.startsWith('/') ? (clientRoot + media.accessuri) : media.accessuri)" :type="media.format">
                                             </audio>
                                         </div>
                                     </template>

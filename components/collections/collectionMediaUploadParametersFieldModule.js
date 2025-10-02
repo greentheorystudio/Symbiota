@@ -8,12 +8,12 @@ const collectionMediaUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <selector-input-element label="Filename Identifier Field" :options="patternMatchFieldOptions" :value="profileData.patternmatchfield" @update:value="(value) => updateConfigurationData('patternmatchfield', value)"></selector-input-element>
+                    <selector-input-element label="Filename Identifier Field" :options="patternMatchFieldOptions" :value="profileData.patternmatchfield" @update:value="(value) => updateData('patternmatchfield', value)"></selector-input-element>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <checkbox-input-element label="Create New Occurrence Record" :value="configurationData.createOccurrence" @update:value="(value) => updateConfigurationData('createOccurrence', value)"></checkbox-input-element>
+                    <checkbox-input-element label="Create New Occurrence Record For Unlinked Images" :value="configurationData.createOccurrence" @update:value="(value) => updateConfigurationData('createOccurrence', value)"></checkbox-input-element>
                 </div>
             </div>
         </div>
