@@ -130,7 +130,7 @@
                     </div>
                 </template>
                 <div class="row justify-center q-mt-md">
-                    <taxa-profile-subtaxa-panel :is-editor="isTaxonProfileEditor"></taxa-profile-subtaxa-panel>
+                    <taxa-profile-subtaxa-panel :expanded="true" :is-editor="isTaxonProfileEditor"></taxa-profile-subtaxa-panel>
                 </div>
             </template>
             <template v-else>
