@@ -202,7 +202,7 @@ class OccurrenceCollectingEvents{
         $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' FROM omoccurcollectingevents AS e '.
             'LEFT JOIN omoccurlocations AS l ON e.locationid = l.locationid '.
             'WHERE e.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
-            'ORDER BY e.eventdate, e.recordnumber ';
+            'ORDER BY e.eventdate DESC, e.recordnumber ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
