@@ -268,7 +268,7 @@ class Checklists{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $retArr[] = $row['clidchild'];
+                $retArr[] = $row['clid'];
                 unset($rows[$index]);
             }
         }

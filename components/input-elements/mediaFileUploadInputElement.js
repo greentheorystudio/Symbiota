@@ -89,10 +89,13 @@ const mediaFileUploadInputElement = {
                                     <div class="q-uploader__subtitle text-bold">Total upload size: {{ queueSizeLabel }}</div>
                                     <q-uploader-add-trigger></q-uploader-add-trigger>
                                 </div>
-                                <div class="row justify-end">
+                                <div class="row no-wrap justify-end q-pa-sm q-gutter-xs">
                                     <span v-if="csvFileDataUploaded" class="text-bold text-red">
                                         CSV Data Uploaded
                                     </span>
+                                    <div class="q-uploader__subtitle text-bold">
+                                        <span class="text-bold">Queued: {{ filesQueued }}</span>/<span class="text-bold text-green">Uploaded: {{ filesUploaded }}</span>/<span class="text-bold text-red">Errors: {{ filesError }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -124,6 +127,11 @@ const mediaFileUploadInputElement = {
                                                     </div>
                                                     <div>
                                                         <div caption>
+                                                            <template v-if="file['filenameRecordIdentifier']">
+                                                                <span class="q-mr-xs">
+                                                                    <span class="text-bold">{{ identifierField }}:</span> {{ file['filenameRecordIdentifier'] }}
+                                                                </span>
+                                                            </template>
                                                             <template v-for="key in Object.keys(file['uploadMetadata'])">
                                                                 <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== ''">
                                                                     <span class="q-mr-xs">
@@ -133,12 +141,19 @@ const mediaFileUploadInputElement = {
                                                             </template>
                                                         </div>
                                                     </div>
-                                                    <div v-if="getFileErrorMessage(file)" class="text-bold text-red">
-                                                        {{ getFileErrorMessage(file) }}
-                                                    </div>
-                                                    <div v-else class="text-bold text-green">
-                                                        Ready to upload
-                                                    </div>
+                                                    <template v-if="!file['uploadErrorMessage']">
+                                                        <div v-if="getFileErrorMessage(file)" class="text-bold text-red">
+                                                            {{ getFileErrorMessage(file) }}
+                                                        </div>
+                                                        <div v-else class="text-bold text-green">
+                                                            {{ getFileUploadMessage(file) }}
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        <div class="text-bold text-red">
+                                                            {{ file['uploadErrorMessage'] }}
+                                                        </div>
+                                                    </template>
                                                 </div>
                                                 <div class="col-2 row justify-end">
                                                     <div class="column q-gutter-xs">
@@ -211,6 +226,11 @@ const mediaFileUploadInputElement = {
         const editFile = Vue.ref(null);
         const fileArr = Vue.reactive([]);
         const fileListRef = Vue.ref(null);
+        const filesError = Vue.ref(0);
+        const filesQueued = Vue.computed(() => {
+            return fileArr.length;
+        });
+        const filesUploaded = Vue.ref(0);
         const identifierArr = Vue.ref([]);
         const identifierData = Vue.ref({});
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
@@ -278,11 +298,12 @@ const mediaFileUploadInputElement = {
             if(Number(props.occId) === 0 && Number(props.taxonId) === 0){
                 if(collId.value > 0){
                     if(!file['uploadMetadata']['occid'] && !props.createOccurrence){
-                        if(file['catalognumber']){
-                            errorMessage = 'Catalog number was not found in the database';
+                        const idField = props.identifierField === 'catalognumber' ? 'Catalog number' : 'Other catalog number';
+                        if(file['filenameRecordIdentifier']){
+                            errorMessage = idField + ' could not be matched to a record in the database';
                         }
                         else{
-                            errorMessage = 'Catalog number required';
+                            errorMessage = idField + ' value required';
                         }
                     }
                 }
@@ -291,6 +312,19 @@ const mediaFileUploadInputElement = {
                 }
             }
             return errorMessage;
+        }
+
+        function getFileUploadMessage(file) {
+            let message = 'Ready to upload';
+            if(Number(props.occId) === 0 && Number(props.taxonId) === 0 && collId.value > 0){
+                if(Number(file['uploadMetadata']['occid']) > 0){
+                    message = 'Ready to upload - will associate with existing occurrence record';
+                }
+                else if(props.createOccurrence){
+                    message = 'Ready to upload - will associate with new occurrence record';
+                }
+            }
+            return message;
         }
 
         function openDataEditor(data) {
@@ -398,6 +432,14 @@ const mediaFileUploadInputElement = {
                     file['uploadMetadata']['originalurl'] = file['uploadMetadata']['sourceurl'];
                 }
                 uploadImageFile(file, action, (id, file) => {
+                    if(Number(id) > 0){
+                        filesUploaded.value++;
+                    }
+                    else{
+                        filesError.value++;
+                        showNotification('negative', ('An error occurred uploading ' + file.name));
+                        file['uploadErrorMessage'] = 'An error occurred uploading this file';
+                    }
                     uploadPostProcess(id, file);
                 });
             }
@@ -406,6 +448,14 @@ const mediaFileUploadInputElement = {
                     file['uploadMetadata']['accessuri'] = file['uploadMetadata']['sourceurl'];
                 }
                 uploadMediaFile(file, action, (id, file) => {
+                    if(Number(id) > 0){
+                        filesUploaded.value++;
+                    }
+                    else{
+                        filesError.value++;
+                        showNotification('negative', ('An error occurred uploading ' + file.name));
+                        file['uploadErrorMessage'] = 'An error occurred uploading this file';
+                    }
                     uploadPostProcess(id, file);
                 });
             }
@@ -428,11 +478,8 @@ const mediaFileUploadInputElement = {
         }
 
         function setFileData() {
-            if(fileArr.length > 0 && csvFileData.length > 0){
+            if(fileArr.length > 0){
                 fileArr.forEach((file) => {
-                    if(!file['recordIdentifier'] && file['filenameRecordIdentifier']){
-                        file['recordIdentifier'] = file['filenameRecordIdentifier'];
-                    }
                     let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                     if(!csvData){
                         csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
@@ -440,7 +487,7 @@ const mediaFileUploadInputElement = {
                     if(csvData){
                         const dataKeys = Object.keys(csvData);
                         if(dataKeys.includes(props.identifierField)){
-                            file['recordIdentifier'] = csvData[props.identifierField];
+                            file['filenameRecordIdentifier'] = csvData[props.identifierField];
                             file['occurrenceData'] = csvData;
                         }
                         dataKeys.forEach((key) => {
@@ -457,20 +504,15 @@ const mediaFileUploadInputElement = {
                     if(!file['uploadMetadata']['tid'] && file['uploadMetadata']['sciname'] && taxaData.value.hasOwnProperty(file['uploadMetadata']['sciname'].toLowerCase())){
                         file['uploadMetadata']['tid'] = taxaData.value[file['uploadMetadata']['sciname'].toLowerCase()]['tid'];
                     }
-                    if(!file['uploadMetadata']['occid'] && file['recordIdentifier'] && identifierData.value.hasOwnProperty(file['recordIdentifier'].toLowerCase())){
-                        file['uploadMetadata']['occid'] = identifierData.value[file['recordIdentifier'].toLowerCase()]['occid'];
-                        if(!file['uploadMetadata']['tid'] && identifierData.value[file['recordIdentifier'].toLowerCase()]['tid']){
-                            file['uploadMetadata']['tid'] = identifierData.value[file['recordIdentifier'].toLowerCase()]['tid'];
-                        }
-                    }
-                    else if(!file['uploadMetadata']['occid'] && file['filenameRecordIdentifier'] && identifierData.value.hasOwnProperty(file['filenameRecordIdentifier'].toLowerCase())){
-                        file['uploadMetadata']['occid'] = identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['occid'];
-                        if(!file['uploadMetadata']['tid'] && identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['tid']){
-                            file['uploadMetadata']['tid'] = identifierData.value[file['filenameRecordIdentifier'].toLowerCase()]['tid'];
+                    if(!file['uploadMetadata']['occid'] && file['filenameRecordIdentifier'] && identifierData.value.hasOwnProperty(file['filenameRecordIdentifier'])){
+                        file['uploadMetadata']['occid'] = identifierData.value[file['filenameRecordIdentifier']]['occid'];
+                        if(!file['uploadMetadata']['tid'] && identifierData.value[file['filenameRecordIdentifier']]['tid']){
+                            file['uploadMetadata']['tid'] = identifierData.value[file['filenameRecordIdentifier']]['tid'];
                         }
                     }
                 });
             }
+            hideWorking();
         }
 
         function setFileIdentifierData() {
@@ -542,6 +584,14 @@ const mediaFileUploadInputElement = {
             }, 400 );
         }
 
+        function updateFileArrWithNewOccid(identifier, occid) {
+            fileArr.forEach((file) => {
+                if(file['filenameRecordIdentifier'] === identifier){
+                    file['uploadMetadata']['occid'] = occid;
+                }
+            });
+        }
+
         function updateFileMetadata(data) {
             const file = fileArr.find((obj) => obj['uploadMetadata']['filename'] === editFile.value);
             if(file){
@@ -566,7 +616,7 @@ const mediaFileUploadInputElement = {
             if(fileArr.length > 0){
                 showWorking();
                 processingArr.value.length = 0;
-                fileArr.forEach((file) => {
+                fileArr.forEach((file, index) => {
                     if(!file.hasOwnProperty('height')){
                         file['uploadMetadata']['height'] = file.hasOwnProperty('__img') ? file['__img']['height'] : null;
                     }
@@ -582,7 +632,7 @@ const mediaFileUploadInputElement = {
                     if(collId.value > 0 && props.createOccurrence && !file['uploadMetadata']['occid']){
                         const occurrenceData = {};
                         occurrenceData['collid'] = collId.value.toString();
-                        occurrenceData[props.identifierField] = file['recordIdentifier'];
+                        occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
                         occurrenceData['sciname'] = file['uploadMetadata']['sciname'];
                         occurrenceData['tid'] = file['uploadMetadata']['tid'];
                         const formData = new FormData();
@@ -599,12 +649,16 @@ const mediaFileUploadInputElement = {
                         .then((res) => {
                             if(res && Number(res) > 0){
                                 file['uploadMetadata']['occid'] = res;
+                                updateFileArrWithNewOccid(file['filenameRecordIdentifier'], res);
                                 processUpload(file);
                             }
                         });
                     }
                     else if((collId.value > 0 && Number(file['uploadMetadata']['occid']) > 0) || (collId.value === 0 && Number(file['uploadMetadata']['tid']) > 0)){
                         processUpload(file);
+                    }
+                    else if((index + 1) === fileArr.length){
+                        uploadPostProcess(0, file);
                     }
                 });
             }
@@ -653,15 +707,21 @@ const mediaFileUploadInputElement = {
                 removePickedFile(file);
             }
             const fileProcess = processingArr.value.find(proc => proc['file'] === file['uploadMetadata']['filename']);
-            fileProcess['status'] = 'complete';
+            if(fileProcess){
+                fileProcess['status'] = 'complete';
+            }
             const currentProcess = processingArr.value.find(proc => proc['status'] === 'processing');
             if(!currentProcess){
                 hideWorking();
-                context.emit('upload:complete');
+                showNotification('positive','Upload complete');
+                if(filesUploaded.value > 0){
+                    context.emit('upload:complete');
+                }
             }
         }
 
         function validateFiles(files) {
+            showWorking();
             files.forEach((file) => {
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){
@@ -673,7 +733,7 @@ const mediaFileUploadInputElement = {
                     });
                 }
                 else if(!existingData){
-                    const fileSizeMb = Number(file.size) > 0 ? Math.round((file.size / 1000000) * 10) / 100 : 0;
+                    const fileSizeMb = Number(file.size) > 0 ? (file.size / 1000000).toFixed(2) : 0;
                     if(fileSizeMb <= Number(maxUploadFilesize)){
                         const mediaTypeInfo = acceptedMediaTypes.find((mType) => mType.extension === file.name.split('.').pop().toLowerCase());
                         if(mediaTypeInfo){
@@ -690,11 +750,11 @@ const mediaFileUploadInputElement = {
                             file['uploadMetadata']['filename'] = file.name;
                             file['uploadMetadata']['type'] = mediaTypeInfo.type;
                             file['uploadMetadata']['format'] = mediaTypeInfo.mimetype;
+                            file['uploadErrorMessage'] = null;
                             file['filenameRecordIdentifier'] = (collId.value > 0 && props.identifierRegEx) ? getSubstringByRegEx(props.identifierRegEx, file.name) : null;
                             if(file['filenameRecordIdentifier'] && !identifierArr.value.includes(file['filenameRecordIdentifier'])){
                                 identifierArr.value.push(file['filenameRecordIdentifier']);
                             }
-                            file['recordIdentifier'] = null;
                             file['uploadMetadata']['sciname'] = null;
                             if(Number(props.occId) > 0){
                                 file['uploadMetadata']['occid'] = props.occId;
@@ -748,6 +808,9 @@ const mediaFileUploadInputElement = {
             editData,
             fileArr,
             fileListRef,
+            filesError,
+            filesQueued,
+            filesUploaded,
             queueSize,
             queueSizeLabel,
             selectedUploadMethod,
@@ -760,6 +823,7 @@ const mediaFileUploadInputElement = {
             urlMethodUrl,
             cancelUpload,
             getFileErrorMessage,
+            getFileUploadMessage,
             openDataEditor,
             processExternalUrl,
             removePickedFile,

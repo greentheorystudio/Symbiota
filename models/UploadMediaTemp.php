@@ -91,6 +91,7 @@ class UploadMediaTemp{
                 foreach($mappedFields as $field => $key){
                     $mediaData[$field] = ($key || (string)$key === '0') ? $dataArr[$key] : null;
                 }
+                $mediaData['sortsequence'] = 50;
                 foreach($this->fields as $field => $fieldArr){
                     if(!in_array($field, $skipFields)){
                         $dataValue = $mediaData[$field] ?? null;
