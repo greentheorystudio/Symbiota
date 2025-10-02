@@ -6,7 +6,7 @@ const taxaProfileTaxonMap = {
                     <template v-if="taxonMap">
                         <div class="map-thumb-image">
                             <a @click="openMapPopup(true);" class="cursor-pointer">
-                                <q-img :src="taxonMap['url']" :fit="contain" :title="taxon.sciname" :alt="taxon.sciname"></q-img>
+                                <q-img :src="(taxonMap['url'].startsWith('/') ? (clientRoot + taxonMap['url']) : taxonMap['url'])" :fit="contain" :title="taxon.sciname" :alt="taxon.sciname"></q-img>
                             </a>
                         </div>
                     </template>
@@ -42,6 +42,7 @@ const taxaProfileTaxonMap = {
         }
 
         return {
+            clientRoot,
             taxon,
             taxonMap,
             openMapPopup
