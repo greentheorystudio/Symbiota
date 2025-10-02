@@ -512,6 +512,7 @@ const mediaFileUploadInputElement = {
                     }
                 });
             }
+            hideWorking();
         }
 
         function setFileIdentifierData() {
@@ -634,6 +635,7 @@ const mediaFileUploadInputElement = {
                         occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
                         occurrenceData['sciname'] = file['uploadMetadata']['sciname'];
                         occurrenceData['tid'] = file['uploadMetadata']['tid'];
+                        occurrenceData['processingstatus'] = 'unprocessed';
                         const formData = new FormData();
                         formData.append('collid', collId.value.toString());
                         formData.append('occurrence', JSON.stringify(occurrenceData));
@@ -712,6 +714,7 @@ const mediaFileUploadInputElement = {
             const currentProcess = processingArr.value.find(proc => proc['status'] === 'processing');
             if(!currentProcess){
                 hideWorking();
+                showNotification('positive','Upload complete');
                 if(filesUploaded.value > 0){
                     context.emit('upload:complete');
                 }
@@ -719,6 +722,7 @@ const mediaFileUploadInputElement = {
         }
 
         function validateFiles(files) {
+            showWorking();
             files.forEach((file) => {
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){

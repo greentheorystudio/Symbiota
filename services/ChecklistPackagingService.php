@@ -388,10 +388,23 @@ class ChecklistPackagingService {
                     PhpWordService::addText($textrun, ']', 'textFont');
                 }
             }
-            if((int)$options['notes'] === 1 && ($taxon['notes'] || (array_key_exists($taxon['tid'], $dataArr['vouchers']) && count($dataArr['vouchers'][$taxon['tid']]) > 0))){
+            if((int)$options['notes'] === 1){
                 $textrun = PhpWordService::getTextRun($section, 'notesvouchersPara');
-                if($taxon['notes']){
-                    PhpWordService::addText($textrun, $taxon['notes'], 'textFont');
+                if($taxon['habitat'] || $taxon['notes'] || $taxon['abundance'] || $taxon['source']){
+                    $notesStr = '';
+                    if($taxon['habitat']){
+                        $notesStr .= $taxon['habitat'] . (($taxon['notes'] || $taxon['abundance'] || $taxon['source']) ? ', ' : '');
+                    }
+                    if($taxon['abundance']){
+                        $notesStr .= $taxon['abundance'] . (($taxon['notes'] || $taxon['source']) ? ', ' : '');
+                    }
+                    if($taxon['notes']){
+                        $notesStr .= $taxon['notes'] . ($taxon['source'] ? ', ' : '');
+                    }
+                    if($taxon['source']){
+                        $notesStr .= 'Source: ' . $taxon['source'];
+                    }
+                    PhpWordService::addText($textrun, $notesStr, 'textFont');
                 }
                 if(array_key_exists($taxon['tid'], $dataArr['vouchers']) && count($dataArr['vouchers'][$taxon['tid']]) > 0){
                     $voucherStrArr = array();

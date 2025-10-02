@@ -231,6 +231,8 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             this.checklistTaxaStore.createChecklistTaxaRecord(this.checklistId, (newChecklistTaxaId) => {
                 callback(Number(newChecklistTaxaId));
                 if(newChecklistTaxaId && Number(newChecklistTaxaId) > 0){
+                    this.checklistTaxaStore.setCurrentChecklistTaxonRecord(0);
+                    this.checklistTaxaStore.clearChecklistTaxaArr();
                     this.checklistTaxaStore.setChecklistTaxaArr(this.clidArr, this.loadKeyData, this.loadSynonymyData, this.loadVernacularData);
                 }
             });
@@ -272,6 +274,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     callback(Number(res));
                 }
                 if(Number(res) === 1){
+                    this.checklistTaxaStore.clearChecklistTaxaArr();
                     this.checklistTaxaStore.setChecklistTaxaArr(this.clidArr, this.loadKeyData, this.loadSynonymyData, this.loadVernacularData);
                 }
             });

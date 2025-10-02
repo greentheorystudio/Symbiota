@@ -13,7 +13,7 @@ const collectionMediaUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
-                    <checkbox-input-element label="Create New Occurrence Record" :value="configurationData.createOccurrence" @update:value="(value) => updateConfigurationData('createOccurrence', value)"></checkbox-input-element>
+                    <checkbox-input-element label="Create New Occurrence Record For Unlinked Images" :value="configurationData.createOccurrence" @update:value="(value) => updateConfigurationData('createOccurrence', value)"></checkbox-input-element>
                 </div>
             </div>
         </div>
