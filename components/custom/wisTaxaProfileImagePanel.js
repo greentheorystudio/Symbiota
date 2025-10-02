@@ -15,7 +15,7 @@ const wisTaxaProfileImagePanel = {
                             <q-intersection v-for="image in taxon.images" :key="image" class="img-thumb q-mb-sm">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <a @click="toggleImageCarousel(image.url);" class="cursor-pointer">
-                                        <q-img :src="image.url" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
+                                        <q-img :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
                                     </a>
                                     <div class="photographer">
                                         <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)">
@@ -33,7 +33,7 @@ const wisTaxaProfileImagePanel = {
                             <q-intersection v-for="image in taxon.images" :key="image" class="img-thumb q-mb-sm">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <a @click="toggleImageCarousel(image.url);" class="cursor-pointer">
-                                        <q-img :src="image.url" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
+                                        <q-img :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="image.sciname"></q-img>
                                     </a>
                                     <div class="photographer">
                                         <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)">
