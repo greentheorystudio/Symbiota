@@ -68,7 +68,7 @@ class SearchService {
         return $returnArr;
     }
 
-    public function getSearchOccidArr($searchTermsArr, $options): array
+    public function getSearchOccidArr($searchTermsArr, $options, $index = null, $recCnt = null): array
     {
         $returnArr = array();
         if($searchTermsArr && $options){
@@ -101,13 +101,17 @@ class SearchService {
                 else{
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
+                if((int)$recCnt > 0){
+                    $startIndex = (int)$index + ((int)$index * (int)$recCnt);
+                    $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
+                }
                 //echo '<div>Occid sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
-                    foreach($rows as $index => $row){
+                    foreach($rows as $rIndex => $row){
                         $returnArr[] = $row['occid'];
-                        unset($rows[$index]);
+                        unset($rows[$rIndex]);
                     }
                 }
             }

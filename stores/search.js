@@ -31,6 +31,7 @@ const useSearchStore = Pinia.defineStore('search', {
             upperLatitude: null
         },
         dateId: null,
+        occidLoadingIndex: 0,
         queryBuilderFieldOptions: [
             {field: 'associatedcollectors', label: 'Associated Collectors'},
             {field: 'associatedtaxa', label: 'Associated Taxa'},
@@ -270,6 +271,10 @@ const useSearchStore = Pinia.defineStore('search', {
         clearLocalStorageSearchTerms() {
             localStorage.removeItem('searchTermsArr');
         },
+        clearQueryOccidArr() {
+            this.queryOccidArr.length = 0;
+            this.occidLoadingIndex = 0;
+        },
         clearSearchTerms() {
             this.searchTerms = Object.assign({}, this.blankSearchTerms);
             this.updateLocalStorageSearchTerms();
@@ -491,7 +496,7 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
         },
         setSearchOccidArr(options, callback){
-            this.queryOccidArr.length = 0;
+            const loadingCnt = 250000;
             const formData = new FormData();
             formData.append('starr', this.getSearchTermsJson);
             if(this.baseStore.getSolrMode){
@@ -512,6 +517,8 @@ const useSearchStore = Pinia.defineStore('search', {
             }
             else{
                 formData.append('options', JSON.stringify(options));
+                formData.append('index', this.occidLoadingIndex.toString());
+                formData.append('reccnt', loadingCnt.toString());
                 formData.append('action', 'getSearchOccidArr');
                 fetch(searchServiceApiUrl, {
                     method: 'POST',
@@ -521,8 +528,16 @@ const useSearchStore = Pinia.defineStore('search', {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    this.queryOccidArr = data;
-                    callback();
+                    this.queryOccidArr = this.queryOccidArr.concat(data);
+                    if(data.length < loadingCnt){
+                        if(callback){
+                            callback();
+                        }
+                    }
+                    else{
+                        this.occidLoadingIndex++;
+                        this.setSearchOccidArr(options, callback);
+                    }
                 });
             }
         },

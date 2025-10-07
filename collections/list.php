@@ -475,6 +475,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         if(searchStore.getSearchTermsValid){
                             taxaCnt.value = 0;
                             taxaDataArr.length = 0;
+                            searchStore.clearQueryOccidArr();
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
