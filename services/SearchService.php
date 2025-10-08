@@ -68,7 +68,7 @@ class SearchService {
         return $returnArr;
     }
 
-    public function getSearchOccidArr($searchTermsArr, $options): array
+    public function getSearchOccidArr($searchTermsArr, $options, $index = null, $recCnt = null): array
     {
         $returnArr = array();
         if($searchTermsArr && $options){
@@ -101,13 +101,17 @@ class SearchService {
                 else{
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
+                if((int)$recCnt > 0){
+                    $startIndex = 1 + ((int)$index * (int)$recCnt);
+                    $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
+                }
                 //echo '<div>Occid sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
-                    foreach($rows as $index => $row){
+                    foreach($rows as $rIndex => $row){
                         $returnArr[] = $row['occid'];
-                        unset($rows[$index]);
+                        unset($rows[$rIndex]);
                     }
                 }
             }
@@ -966,7 +970,10 @@ class SearchService {
                     $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
                 }
                 $sql = $selectStr . $fromStr . $whereStr;
-                //echo '<div>Search sql: ' . $sql . '</div>';
+                if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
+                    $startIndex = 1 + ((int)$options['index'] * (int)$options['reccnt']);
+                    $sql .= ' LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'] . ' ';
+                }
                 if($options['output'] === 'geojson'){
                     $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
                 }
