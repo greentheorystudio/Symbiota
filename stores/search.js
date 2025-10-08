@@ -31,6 +31,7 @@ const useSearchStore = Pinia.defineStore('search', {
             upperLatitude: null
         },
         dateId: null,
+        occidLoadingIndex: 0,
         queryBuilderFieldOptions: [
             {field: 'associatedcollectors', label: 'Associated Collectors'},
             {field: 'associatedtaxa', label: 'Associated Taxa'},
@@ -115,6 +116,7 @@ const useSearchStore = Pinia.defineStore('search', {
         ],
         queryId: 0,
         queryOccidArr: [],
+        queryTaxaArr: [],
         radiusUnitOptions: [
             {value: 'km', label: 'Kilometers'},
             {value: 'mi', label: 'Miles'}
@@ -128,7 +130,8 @@ const useSearchStore = Pinia.defineStore('search', {
             'dateIdentified,typeStatus,recordedBy,recordNumber,eventDate,displayDate,coll_year,coll_month,coll_day,habitat,associatedTaxa,' +
             'cultivationStatus,country,StateProvince,county,municipality,locality,localitySecurity,localitySecurityReason,geo,minimumElevationInMeters,' +
             'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily',
-        spatialInputValues: {}
+        spatialInputValues: {},
+        tidLoadingIndex: 0,
     }),
     getters: {
         getDateId(state) {
@@ -182,6 +185,9 @@ const useSearchStore = Pinia.defineStore('search', {
             return state.searchRecordData.filter((record) => {
                 return record.selected === true;
             }).length;
+        },
+        getSearchTaxaArr(state) {
+            return state.queryTaxaArr;
         },
         getSearchTerms(state) {
             return state.searchTerms;
@@ -269,6 +275,12 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         clearLocalStorageSearchTerms() {
             localStorage.removeItem('searchTermsArr');
+        },
+        clearQueryOccidArr() {
+            this.queryOccidArr.length = 0;
+            this.queryTaxaArr.length = 0;
+            this.occidLoadingIndex = 0;
+            this.tidLoadingIndex = 0;
         },
         clearSearchTerms() {
             this.searchTerms = Object.assign({}, this.blankSearchTerms);
@@ -491,40 +503,54 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
         },
         setSearchOccidArr(options, callback){
-            this.queryOccidArr.length = 0;
+            const loadingCnt = 250000;
             const formData = new FormData();
             formData.append('starr', this.getSearchTermsJson);
-            if(this.baseStore.getSolrMode){
-                formData.append('rows', '0');
-                formData.append('start', '0');
-                formData.append('wt', 'json');
-                fetch(solrConnectorUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((data) => {
-                    this.queryRecCnt = Number(data['response']['numFound']);
-                    callback();
-                });
-            }
-            else{
-                formData.append('options', JSON.stringify(options));
-                formData.append('action', 'getSearchOccidArr');
-                fetch(searchServiceApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((data) => {
-                    this.queryOccidArr = data;
-                    callback();
-                });
-            }
+            formData.append('options', JSON.stringify(options));
+            formData.append('index', this.occidLoadingIndex.toString());
+            formData.append('reccnt', loadingCnt.toString());
+            formData.append('action', 'getSearchOccidArr');
+            fetch(searchServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.queryOccidArr = this.queryOccidArr.concat(data);
+                if(data.length < loadingCnt){
+                    if(callback){
+                        callback();
+                    }
+                }
+                else{
+                    this.occidLoadingIndex++;
+                    this.setSearchOccidArr(options, callback);
+                }
+            });
+        },
+        setSearchTaxaArr(callback){
+            const loadingCnt = 5000;
+            const options = {
+                schema: 'taxa',
+                spatial: 0,
+                index: this.tidLoadingIndex.toString(),
+                reccnt: loadingCnt.toString(),
+                output: 'json'
+            };
+            this.processSimpleSearch(this.getSearchTerms, options, (data) => {
+                this.queryTaxaArr = this.queryTaxaArr.concat(data);
+                if(data.length < loadingCnt){
+                    if(callback){
+                        callback()
+                    }
+                }
+                else{
+                    this.tidLoadingIndex++;
+                    this.setSearchTaxaArr(callback);
+                }
+            });
         },
         setSearchRecordData(options, callback = null) {
             this.processSearch(options, (res) => {
