@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 include_once(__DIR__ . '/../../services/SearchService.php');
+ini_set('max_execution_time', 3600);
 
 $action = array_key_exists('action', $_POST) ? $_POST['action'] : '';
 $options = array_key_exists('options', $_POST) ? json_decode($_POST['options'], true) : null;
