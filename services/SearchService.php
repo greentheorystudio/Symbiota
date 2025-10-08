@@ -102,7 +102,7 @@ class SearchService {
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
                 if((int)$recCnt > 0){
-                    $startIndex = (int)$index + ((int)$index * (int)$recCnt);
+                    $startIndex = 1 + ((int)$index * (int)$recCnt);
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
                 }
                 //echo '<div>Occid sql: ' . $sql . '</div>';
@@ -970,7 +970,10 @@ class SearchService {
                     $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
                 }
                 $sql = $selectStr . $fromStr . $whereStr;
-                //echo '<div>Search sql: ' . $sql . '</div>';
+                if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
+                    $startIndex = 1 + ((int)$options['index'] * (int)$options['reccnt']);
+                    $sql .= ' LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'] . ' ';
+                }
                 if($options['output'] === 'geojson'){
                     $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
                 }
