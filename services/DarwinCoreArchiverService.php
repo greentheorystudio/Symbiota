@@ -227,7 +227,8 @@ class DarwinCoreArchiverService {
         return $archiveFilePath;
     }
 
-    public function createEmlFile($targetPath, $collectionData){
+    public function createEmlFile($targetPath, $collectionData): string
+    {
         $outputFilename = 'eml.xml';
         $outputPath = $targetPath . '/' . $outputFilename;
         $emlArr = $this->getEmlArr($collectionData);
