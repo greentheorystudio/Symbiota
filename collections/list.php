@@ -435,6 +435,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const queryId = QUERYID;
                     const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
                     const recordInfoWindowId = Vue.ref(null);
+                    const searchTaxaArr = Vue.computed(() => searchStore.getSearchTaxaArr);
                     const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
                     const searchTermsPageNumber = Vue.computed(() => searchStore.getSearchTermsPageNumber);
                     const showRecordInfoWindow = Vue.ref(false);
@@ -460,21 +461,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.clearSpatialInputValues();
                     }
 
-                    function getTaxaData() {
-                        const options = {
-                            schema: 'taxa',
-                            spatial: 0,
-                            output: 'json'
-                        };
-                        searchStore.processSearch(options, (res) => {
-                            processTaxaData(res);
-                        });
-                    }
-
                     function loadRecords(){
                         if(searchStore.getSearchTermsValid){
                             taxaCnt.value = 0;
                             taxaDataArr.length = 0;
+                            searchStore.clearQueryOccidArr();
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
@@ -484,7 +475,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 if(Number(searchStore.getSearchRecCnt) > 0){
                                     displayQueryPopup.value = false;
                                     setTableRecordData(pagination.value.page);
-                                    getTaxaData();
+                                    searchStore.setSearchTaxaArr(() => {
+                                        processTaxaData();
+                                    });
                                 }
                                 else{
                                     hideWorking();
@@ -512,8 +505,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.processSpatialPopupData(popupWindowType.value, data);
                     }
 
-                    function processTaxaData(data) {
-                        data.forEach((taxon) => {
+                    function processTaxaData() {
+                        searchTaxaArr.value.forEach((taxon) => {
                             if(taxon['sciname']){
                                 const familyName = (taxon['family'] && taxon['family'] !== '') ? taxon['family'] : '[Family Unknown]';
                                 let familyData = taxaDataArr.find((family) => family.name === familyName);
@@ -546,7 +539,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 return a['sciname'].toLowerCase().localeCompare(b['sciname'].toLowerCase());
                             });
                         });
-                        taxaCnt.value = data.length;
+                        taxaCnt.value = searchTaxaArr.value.length;
                     }
 
                     function setCurrentUserPermissions() {
