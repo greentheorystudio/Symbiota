@@ -509,6 +509,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             this.loadKeyData = includeKeyData;
             this.loadSynonymyData = includeSynonymyData;
             this.loadVernacularData = includeVernacularData;
+            this.checklistTaxaStore.clearChecklistTaxaArr();
             this.checklistTaxaStore.setChecklistTaxaArr(this.clidArr, includeKeyData, includeSynonymyData, includeVernacularData, callback);
         },
         setChecklistVoucherData() {
@@ -586,6 +587,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             this.checklistTaxaStore.updateChecklistTaxonRecord(this.checklistId, (res) => {
                 callback(Number(res));
                 if(Number(res) === 1){
+                    this.checklistTaxaStore.clearChecklistTaxaArr();
                     this.checklistTaxaStore.setChecklistTaxaArr(this.clidArr, this.loadKeyData, this.loadSynonymyData, this.loadVernacularData);
                 }
             });
