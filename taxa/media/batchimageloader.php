@@ -46,7 +46,7 @@ if(!$GLOBALS['SYMB_UID']) {
                             row in the spreadsheet, the value in the filename column must match the filename of the associated file being uploaded.
                         </div>
                         <div class="q-mt-md">
-                            <media-file-upload-input-element @upload:complete="processMediaUpdate"></media-file-upload-input-element>
+                            <media-file-upload-input-element></media-file-upload-input-element>
                         </div>
                     </div>
                 </template>
@@ -83,10 +83,6 @@ if(!$GLOBALS['SYMB_UID']) {
                     const clientRoot = baseStore.getClientRoot;
                     const isEditor = Vue.ref(false);
 
-                    function processMediaUpdate() {
-                        showNotification('positive','Upload successful.');
-                    }
-
                     function setEditor() {
                         const formData = new FormData();
                         formData.append('permission', 'TaxonProfile');
@@ -108,8 +104,7 @@ if(!$GLOBALS['SYMB_UID']) {
 
                     return {
                         clientRoot,
-                        isEditor,
-                        processMediaUpdate
+                        isEditor
                     }
                 }
             });

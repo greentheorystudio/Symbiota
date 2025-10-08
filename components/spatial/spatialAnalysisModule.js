@@ -934,6 +934,7 @@ const spatialAnalysisModule = {
                     symbologyArr['sciname'] = [];
                     symbologyArr['taxonomy'] = [];
                     searchStore.clearSelections();
+                    searchStore.clearQueryOccidArr();
                     showWorking('Loading...');
                     const options = {
                         schema: 'map',
