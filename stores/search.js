@@ -2,6 +2,7 @@ const useSearchStore = Pinia.defineStore('search', {
     state: () => ({
         baseStore: useBaseStore(),
         blankSearchTerms: {
+            collid: 0,
             db: [],
             taxontype: '1',
             usethes: true,
@@ -97,6 +98,7 @@ const useSearchStore = Pinia.defineStore('search', {
             {field: 'othercatalognumbers', label: 'Other Catalog Numbers'},
             {field: 'ownerinstitutioncode', label: 'Owner Code'},
             {field: 'preparations', label: 'Preparations'},
+            {field: 'processingstatus', label: 'Processing Status'},
             {field: 'reproductivecondition', label: 'Reproductive Condition'},
             {field: 'samplingeffort', label: 'Sampling Effort'},
             {field: 'samplingprotocol', label: 'Sampling Protocol'},

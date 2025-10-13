@@ -963,7 +963,7 @@ class SearchService {
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
                 if(!array_key_exists('occidArr', $searchTermsArr)){
-                    $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+                    $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                 }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
@@ -1010,10 +1010,10 @@ class SearchService {
                 }
                 else{
                     $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-                    $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
-                    $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
-                    $sqlFrom = (new SearchService)->setFromSql($options['schema']);
-                    $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+                    $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
+                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
+                    $sqlFrom = $this->setFromSql($options['schema']);
+                    $sqlFrom .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                     $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
                     $outputFile = $outputFileData['outputPath'];
                 }

@@ -11,6 +11,7 @@ include_once(__DIR__ . '/Permissions.php');
 include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/SearchService.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 
 class Occurrences{
@@ -163,6 +164,31 @@ class Occurrences{
             if($returnVal && count($valueArr) > 0){
                 $sql2 = $insertPrefix . implode(',', $valueArr);
                 $this->conn->query($sql2);
+            }
+        }
+        return $returnVal;
+    }
+
+    public function batchUpdateOccurrenceData($searchTermsArr, $field, $oldValue, $newValue, $matchType): int
+    {
+        $returnVal = 0;
+        if($searchTermsArr && $field && $oldValue && $newValue){
+            $sqlWhere = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
+            if($sqlWhere){
+                $fromStr = (new SearchService)->setFromSql('occurrence');
+                $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+                $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence', false);
+                $sql = str_replace('FROM', 'UPDATE', $fromStr);
+                $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ' ';
+                if($matchType === 'part'){
+                    $sql .= $whereStr . ' AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
+                }
+                else{
+                    $sql .= $whereStr . ' AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ';
+                }
+                if($this->conn->query($sql)){
+                    $returnVal = 1;
+                }
             }
         }
         return $returnVal;
@@ -713,6 +739,32 @@ class Occurrences{
         return $retCnt;
     }
 
+    public function getBatchUpdateCount($searchTermsArr, $field, $oldValue, $matchType): int
+    {
+        $returnVal = 0;
+        if($searchTermsArr && $field && $oldValue){
+            $sqlWhere = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
+            if($sqlWhere){
+                $fromStr = (new SearchService)->setFromSql('occurrence');
+                $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+                $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence', false);
+                $sql = 'SELECT COUNT(DISTINCT occid) AS cnt ' . $fromStr . $whereStr . ' ';
+                if($matchType === 'part'){
+                    $sql .= 'AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
+                }
+                else{
+                    $sql .= 'AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ';
+                }
+                $result = $this->conn->query($sql);
+                if($row = $result->fetch_array(MYSQLI_ASSOC)){
+                    $returnVal = (int)$row['cnt'];
+                }
+                $result->free();
+            }
+        }
+        return $returnVal;
+    }
+
     public function getLock($occid): int
     {
         $isLocked = 0;
@@ -720,13 +772,13 @@ class Occurrences{
         if($this->conn->query($delSql)) {
             $sqlFind = 'SELECT * FROM omoccureditlocks WHERE occid = ' . (int)$occid . ' ';
             $frs = $this->conn->query($sqlFind);
-            if(!$frs->num_rows){
+            if($frs->num_rows) {
+                $isLocked = true;
+            }
+            else {
                 $sql = 'INSERT INTO omoccureditlocks(occid, uid, ts) '.
                     'VALUES (' . (int)$occid . ',' . $GLOBALS['SYMB_UID'] . ',' . time() . ')';
                 $this->conn->query($sql);
-            }
-            else{
-                $isLocked = true;
             }
             $frs->free();
         }

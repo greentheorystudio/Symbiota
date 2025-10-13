@@ -5,12 +5,12 @@ header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ini_set('max_execution_time', 600);
 
-$occId = array_key_exists('occid',$_REQUEST) ? (int)$_REQUEST['occid'] : 0;
-$collId = array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0;
-$displayMode = array_key_exists('mode',$_REQUEST) ? (int)$_REQUEST['mode'] : 1;
-$goToMode = array_key_exists('gotomode',$_REQUEST)?(int)$_REQUEST['gotomode']:0;
-$occIndex = array_key_exists('occindex',$_REQUEST)?(int)$_REQUEST['occindex']:null;
-$ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
+$occId = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
+$collId = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$displayMode = array_key_exists('mode', $_REQUEST) ? (int)$_REQUEST['mode'] : 1;
+$goToMode = array_key_exists('gotomode', $_REQUEST) ? (int)$_REQUEST['gotomode'] : 0;
+$occIndex = array_key_exists('occindex', $_REQUEST) ? (int)$_REQUEST['occindex'] : null;
+$ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -44,12 +44,7 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
     </head>
     <body class="full-window-mode">
         <div id="mainContainer" class="q-mt-lg">
-            <template v-if="displayMode !== 3">
-                <occurrence-editor-single-display></occurrence-editor-single-display>
-            </template>
-            <template v-else>
-                <occurrence-editor-table-display></occurrence-editor-table-display>
-            </template>
+            <occurrence-editor-single-display></occurrence-editor-single-display>
             <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup"></occurrence-editor-batch-update-popup>
             <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
         </div>
@@ -172,19 +167,18 @@ $ouid = array_key_exists('ouid',$_REQUEST)?(int)$_REQUEST['ouid']:0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorBatchUpdatePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorImageTranscriberPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorSingleDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorTableDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const occurrenceEditorControllerModule = Vue.createApp({
                 components: {
                     'confirmation-popup': confirmationPopup,
                     'occurrence-editor-batch-update-popup': occurrenceEditorBatchUpdatePopup,
-                    'occurrence-editor-single-display': occurrenceEditorSingleDisplay,
-                    'occurrence-editor-table-display': occurrenceEditorTableDisplay
+                    'occurrence-editor-single-display': occurrenceEditorSingleDisplay
                 },
                 setup() {
                     const { showNotification } = useCore();
                     const baseStore = useBaseStore();
                     const occurrenceStore = useOccurrenceStore();
+                    const searchStore = useSearchStore();
 
                     const clientRoot = baseStore.getClientRoot;
                     const confirmationPopupRef = Vue.ref(null);

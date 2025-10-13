@@ -12,8 +12,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Search List Display</title>
-        <meta name="description" content="Collection search list display for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence List Display</title>
+        <meta name="description" content="Occurrence list display for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
@@ -364,7 +364,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
-            const searchListDisplayModule = Vue.createApp({
+            const occurrenceListDisplayModule = Vue.createApp({
                 components: {
                     'checklist-display-button': checklistDisplayButton,
                     'copy-url-button': copyURLButton,
@@ -577,9 +577,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         if(Number(queryId) === 0 && !stArrJson){
                             displayQueryPopup.value = true;
                         }
-                        if(queryId || stArrJson){
-                            showWorking('Loading...');
-                        }
                         searchStore.initializeSearchStorage(queryId);
                         if(Number(queryId) > 0 || stArrJson){
                             if(stArrJson){
@@ -622,9 +619,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
                 }
             });
-            searchListDisplayModule.use(Quasar, { config: {} });
-            searchListDisplayModule.use(Pinia.createPinia());
-            searchListDisplayModule.mount('#mainContainer');
+            occurrenceListDisplayModule.use(Quasar, { config: {} });
+            occurrenceListDisplayModule.use(Pinia.createPinia());
+            occurrenceListDisplayModule.mount('#mainContainer');
         </script>
     </body>
 </html>
