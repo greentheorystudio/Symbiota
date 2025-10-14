@@ -563,11 +563,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             index: (index - 1),
                             output: 'json'
                         };
-                        searchStore.setSearchRecordData(options, (retCnt) => {
+                        searchStore.setSearchRecordData(options, () => {
                             hideWorking();
-                            if(retCnt === 0){
-                                //showNotification('negative', 'An error occurred while loading the occurrence records.');
-                            }
                         });
                         pageNumber.value = Number(index);
                     }

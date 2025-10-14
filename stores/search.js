@@ -126,6 +126,8 @@ const useSearchStore = Pinia.defineStore('search', {
         searchRecordData: [],
         searchTerms: {},
         searchTermsPageNumber: 0,
+        searchTermsRecordSortDirection: 'ASC',
+        searchTermsRecordSortField: null,
         selections: [],
         selectionsIds: [],
         solrFields: 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tid,scientificNameAuthorship,identifiedBy,' +
@@ -199,6 +201,12 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getSearchTermsPageNumber(state) {
             return state.searchTermsPageNumber;
+        },
+        getSearchTermsRecordSortDirection(state) {
+            return state.searchTermsRecordSortDirection;
+        },
+        getSearchTermsRecordSortField(state) {
+            return state.searchTermsRecordSortField;
         },
         getSearchTermsValid(state) {
             let populated = false;
@@ -359,6 +367,12 @@ const useSearchStore = Pinia.defineStore('search', {
             if(newSearchTerms.hasOwnProperty('recordPage')){
                 this.searchTermsPageNumber = newSearchTerms.recordPage;
                 delete newSearchTerms['recordPage'];
+            }
+            if(newSearchTerms.hasOwnProperty('sortField')){
+                this.searchTermsRecordSortField = newSearchTerms.sortField;
+                this.searchTermsRecordSortDirection = newSearchTerms.sortDirection;
+                delete newSearchTerms['sortField'];
+                delete newSearchTerms['sortDirection'];
             }
             this.searchTerms = Object.assign({}, newSearchTerms);
             searchTermsArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, newSearchTerms);

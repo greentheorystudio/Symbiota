@@ -970,9 +970,12 @@ class SearchService {
                     $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
                 }
                 $sql = $selectStr . $fromStr . $whereStr;
+                if(array_key_exists('sortField', $options) && $options['sortField']){
+                    $sql .= ' ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField ']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '');
+                }
                 if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
                     $startIndex = 1 + ((int)$options['index'] * (int)$options['reccnt']);
-                    $sql .= ' LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'] . ' ';
+                    $sql .= ' LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
                 }
                 if($options['output'] === 'geojson'){
                     $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));

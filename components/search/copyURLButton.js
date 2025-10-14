@@ -19,6 +19,8 @@ const copyURLButton = {
         const searchStore = useSearchStore();
 
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
+        const searchTermsRecordSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
+        const searchTermsRecordSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const secureOrigin = Vue.computed(() => {
             return (window.location.host === 'localhost' || window.location.protocol === 'https:');
         });
@@ -26,6 +28,10 @@ const copyURLButton = {
         function copySearchUrlToClipboard(index) {
             const currentSearchTerms = Object.assign({}, searchTerms.value);
             currentSearchTerms.recordPage = index;
+            if(searchTermsRecordSortField.value){
+                currentSearchTerms.sortDirection = searchTermsRecordSortDirection.value;
+                currentSearchTerms.sortField = searchTermsRecordSortField.value;
+            }
             const searchTermsJson = JSON.stringify(currentSearchTerms);
             let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');
             navigator.clipboard.writeText(copyUrl)
