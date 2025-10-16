@@ -41,7 +41,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <div id="mainContainer">
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
-                <span class="text-bold">Search Collections</span>
+                <span class="text-bold">Search Collections List Display</span>
             </div>
             <div class="q-pa-md">
                 <div class="fit">
@@ -395,7 +395,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const paginationFirstRecordNumber = Vue.computed(() => {
                         let recordNumber = 1;
                         if(Number(pageNumber.value) > 1){
-                            recordNumber = recordNumber + ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
+                            recordNumber += ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
                         }
                         return recordNumber;
                     });

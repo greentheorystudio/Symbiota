@@ -19,6 +19,7 @@ const copyURLButton = {
         const searchStore = useSearchStore();
 
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
+        const searchTermsCollId = Vue.computed(() => searchStore.getSearchTermsCollId);
         const searchTermsRecordSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
         const searchTermsRecordSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const secureOrigin = Vue.computed(() => {
@@ -31,6 +32,9 @@ const copyURLButton = {
             if(searchTermsRecordSortField.value){
                 currentSearchTerms.sortDirection = searchTermsRecordSortDirection.value;
                 currentSearchTerms.sortField = searchTermsRecordSortField.value;
+            }
+            if(Number(searchTermsCollId.value) > 0){
+                currentSearchTerms.collId = searchTermsCollId.value;
             }
             const searchTermsJson = JSON.stringify(currentSearchTerms);
             let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');

@@ -45,7 +45,9 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
     <body class="full-window-mode">
         <div id="mainContainer" class="q-mt-lg">
             <occurrence-editor-single-display></occurrence-editor-single-display>
-            <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup"></occurrence-editor-batch-update-popup>
+            <template v-if="displayBatchUpdatePopup">
+                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup"></occurrence-editor-batch-update-popup>
+            </template>
             <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
         </div>
         <?php
