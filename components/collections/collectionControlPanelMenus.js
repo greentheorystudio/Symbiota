@@ -112,7 +112,7 @@ const collectionControlPanelMenus = {
                                     </a>
                                 </div>
                                 <div>
-                                    <a :href="(clientRoot + '/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=' + collectionId)">
+                                    <a :href="(clientRoot + '/collections/table.php?collid=' + collectionId)">
                                         View/Edit Existing Records
                                     </a>
                                 </div>

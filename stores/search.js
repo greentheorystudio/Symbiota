@@ -284,7 +284,7 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchRecordDataFieldArr(state) {
             const returnArr = [];
             state.searchRecordData.forEach((record) => {
-                Object.keys(record).forEach((field) => {
+                Object.keys(state.occurrenceFieldLabels).forEach((field) => {
                     if(record[field] && !state.hiddenFieldArr.includes(field) && !returnArr.includes(field)){
                         returnArr.push(field);
                     }

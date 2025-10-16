@@ -42,7 +42,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         </script>
     </head>
     <body class="full-window-mode">
-        <div>
+        <div id="mainContainer" class="q-mt-lg">
             <div v-if="Number(searchTermsCollId) > 0 && collInfo" class="row justify-start text-h6 text-weight-bold">
                 <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
                 <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
@@ -70,11 +70,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             </div>
             <div class="row justify-start q-gutter-md">
                 <div>
-                    <search-data-downloader :spatial="false"></search-data-downloader>
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
                 </div>
-                <div class="row justify-start q-gutter-sm">
+                <div v-if="recordDataArr.length > 0" class="row justify-start q-gutter-sm">
                     <div>
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                        <search-data-downloader :spatial="false"></search-data-downloader>
                     </div>
                     <div v-if="Number(searchTermsCollId) > 0 && isEditor" class="self-center">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense>
@@ -84,7 +84,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         </q-btn>
                     </div>
                 </div>
-                <div class="row justify-start q-gutter-sm">
+                <div v-if="recordDataArr.length > 0" class="row justify-start q-gutter-sm">
                     <list-display-button></list-display-button>
                     <spatial-display-button></spatial-display-button>
                     <image-display-button></image-display-button>
@@ -92,7 +92,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         <copy-url-button :page-number="pagination.page"></copy-url-button>
                     </template>
                 </div>
-                <div class="row justify-start">
+                <div v-if="recordDataArr.length > 0" class="row justify-start">
                     <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
                     <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
@@ -104,61 +104,48 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
                 </div>
             </div>
-            <?php
-            if(($isEditor || $crowdSourceMode)){
-                if($recArr){
-                    ?>
-                    <table class="styledtable" style="font-family:Arial,serif;">
+            <template v-if="">
+                <div class="q-mx-md">
+                    <table class="styledtable">
                         <tr>
-                            <th>ID</th>
-                            <?php
-                            foreach($headerMap as $k => $v){
-                                echo '<th>'.$v.'</th>';
-                            }
-                            ?>
+                            <template v-for="field in recordDataFieldArr">
+                                <th>{{ occurrenceFieldLabels[field] }}</th>
+                            </template>
                         </tr>
-                        <?php
-                        $recCnt = 0;
-                        foreach($recArr as $id => $occArr){
-                            if($occArr['sciname']){
-                                $occArr['sciname'] = '<i>'.$occArr['sciname'].'</i> ';
-                            }
-                            echo '<tr ' .(($recCnt%2)?'class="alt"':'').">\n";
-                            echo '<td>';
-                            echo '<a href="occurrenceeditor.php?csmode='.$crowdSourceMode.'&occindex='.($recCnt+$occIndex).'&occid='.$id.'&collid='.$collId.'" target="_blank" title="open in new window">';
-                            echo $id . '<i style="margin-left:4px;height:15px;width:15px;" class="fas fa-external-link-alt"></i>';
-                            echo '</a>';
-                            echo '</td>'."\n";
-                            foreach($headerMap as $k => $v){
-                                $displayStr = $occArr[$k];
-                                if(strlen($displayStr) > 60){
-                                    $displayStr = substr($displayStr,0,60).'...';
-                                }
-                                if(!$displayStr) {
-                                    $displayStr = '&nbsp;';
-                                }
-                                echo '<td>'.$displayStr.'</td>'."\n";
-                            }
-                            echo "</tr>\n";
-                            $recCnt++;
-                        }
-                        ?>
+                        <template v-for="record in recordDataArr">
+                            <tr>
+                                <template v-for="field in recordDataFieldArr">
+                                    <td :class="field === 'sciname' ? 'text-italic' : ''">
+                                        <template v-if="field === 'occid'">
+                                            <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(record[field]);">{{ record[field] }}</span>
+                                            <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + props.row.occid + '&collid=' + props.row.collid)" target="_blank" icon="fas fa-edit" dense>
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Edit occurrence record
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </template>
+                                        <template v-else>
+                                            {{ record[field].length > 60 ? (record[field].substring(0, 60) + '...') : record[field] }}
+                                        </template>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
                     </table>
-                    <div style="width:790px;">
-                        <?php echo $navStr; ?>
-                    </div>
-                    *Click on the identifier in the first column to open the editor.
-                    <?php
-                }
-            }
-            ?>
-            <div class="row justify-start q-gutter-md">
+                </div>
+            </template>
+            <template v-else>
+                <div class="q-pa-md row justify-center text-h6 text-bold">
+                    There are no records to display. Click the Search button to enter search criteria.
+                </div>
+            </template>
+            <div v-if="recordDataArr.length > 0" class="row justify-start q-gutter-md">
                 <div>
-                    <search-data-downloader :spatial="false"></search-data-downloader>
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
                 </div>
                 <div class="row justify-start q-gutter-sm">
                     <div>
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                        <search-data-downloader :spatial="false"></search-data-downloader>
                     </div>
                     <div v-if="Number(searchTermsCollId) > 0 && isEditor" class="self-center">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense>
@@ -240,10 +227,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDataDownloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/keyDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/checklistDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/imageDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
