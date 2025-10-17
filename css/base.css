@@ -109,11 +109,12 @@ table.styledtable{
 	font-family: Arial,serif;
 }
 table.styledtable th {
-	text-align: left;
+	text-align: center;
 	padding: 4px;
 	border: 1px solid gray;
 	background-color: #dbe5f1;
 	color: black;
+	white-space: nowrap;
 }
 table.styledtable td {
 	padding: 3px;
