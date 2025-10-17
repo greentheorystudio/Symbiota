@@ -46,7 +46,7 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
         <div id="mainContainer" class="q-mt-lg">
             <occurrence-editor-single-display></occurrence-editor-single-display>
             <template v-if="displayBatchUpdatePopup">
-                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup"></occurrence-editor-batch-update-popup>
+                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
             </template>
             <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
         </div>
@@ -191,10 +191,6 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
                     const initialDisplayMode = DISPLAY_MODE;
                     const initialOccId = OCCID;
 
-                    function changeBatchUpdatePopupDisplay(value) {
-                        displayBatchUpdatePopup.value = value;
-                    }
-
                     function validateCoordinates() {
                         occurrenceStore.getCoordinateVerificationData((data) => {
                             if(data.address){
@@ -213,7 +209,6 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
                         });
                     }
 
-                    Vue.provide('changeBatchUpdatePopupDisplay', changeBatchUpdatePopupDisplay);
                     Vue.provide('displayQueryPopupButton', displayQueryPopupButton);
                     Vue.provide('validateCoordinates', validateCoordinates);
 
