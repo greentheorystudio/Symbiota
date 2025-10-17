@@ -411,6 +411,10 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         clearSearchTerms() {
             this.searchTerms = Object.assign({}, this.blankSearchTerms);
+            if(Number(this.searchTermsCollId) > 0){
+                this.searchTerms['collid'] = this.searchTermsCollId;
+                this.searchTerms['db'] = [this.searchTermsCollId];
+            }
             this.updateLocalStorageSearchTerms();
         },
         clearSelections() {
@@ -492,7 +496,7 @@ const useSearchStore = Pinia.defineStore('search', {
                 delete newSearchTerms['sortDirection'];
             }
             if(newSearchTerms.hasOwnProperty('collId')){
-                this.searchTermsCollId = newSearchTerms.collId;
+                this.setSearchCollId(newSearchTerms.collId);
                 delete newSearchTerms['collId'];
             }
             this.searchTerms = Object.assign({}, newSearchTerms);
