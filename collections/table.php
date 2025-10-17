@@ -117,12 +117,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 <template v-for="field in recordDataFieldArr">
                                     <td :class="field === 'sciname' ? 'text-italic' : ''">
                                         <template v-if="field === 'occid'">
-                                            <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(record[field]);">{{ record[field] }}</span>
-                                            <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + record[field] + '&collid=' + searchTermsCollId)" target="_blank" icon="fas fa-edit" dense>
-                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    Edit occurrence record
-                                                </q-tooltip>
-                                            </q-btn>
+                                            <span class="cursor-pointer text-bold" @click="openRecordInfoWindow(record[field]);">{{ record[field] }}</span>
+                                            <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(record['collid'])))">
+                                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + record[field] + '&collid=' + searchTermsCollId)" target="_blank" icon="fas fa-edit" dense>
+                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                        Edit occurrence record
+                                                    </q-tooltip>
+                                                </q-btn>
+                                            </template>
                                         </template>
                                         <template v-else>
                                             {{ (record[field] && record[field].length > 60) ? (record[field].substring(0, 60) + '...') : record[field] }}
@@ -300,6 +302,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const displayQueryPopup = Vue.ref(false);
                     const fieldOptions = Vue.computed(() => searchStore.getQueryBuilderFieldOptions);
                     const initialCollId = COLLID;
+                    const isAdmin = Vue.computed(() => {
+                        return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
+                    });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const lazyLoadCnt = 200;
                     const occurrenceFieldLabels = Vue.computed(() => searchStore.getOccurrenceFieldLabels);
@@ -504,6 +509,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         displayBatchUpdatePopup,
                         displayQueryPopup,
                         fieldOptions,
+                        isAdmin,
                         isEditor,
                         occurrenceFieldLabels,
                         pageNumber,
