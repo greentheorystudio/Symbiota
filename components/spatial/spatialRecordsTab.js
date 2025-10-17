@@ -119,7 +119,7 @@ const spatialRecordsTab = {
         const layersObj = Vue.inject('layersObj');
         const lazyLoadCnt = 100;
         const pageNumber = Vue.ref(1);
-        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecCnt);
+        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         const paginationFirstRecordNumber = Vue.computed(() => {
             let recordNumber = 1;
             if(Number(pageNumber.value) > 1){

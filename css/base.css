@@ -121,7 +121,7 @@ table.styledtable td {
 	border: 1px solid gray;
 	background-color: #efefef;
 }
-table.styledtable tr:nth-child(odd) {
+table.styledtable tr:nth-child(even) td {
 	color: #000000;
 	background-color: #dfdfdf;
 }

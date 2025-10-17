@@ -275,7 +275,7 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchOccidArr(state) {
             return state.queryOccidArr;
         },
-        getSearchRecCnt(state) {
+        getSearchRecordCount(state) {
             return state.queryOccidArr.length;
         },
         getSearchRecordData(state) {
@@ -285,7 +285,7 @@ const useSearchStore = Pinia.defineStore('search', {
             const returnArr = [];
             state.searchRecordData.forEach((record) => {
                 Object.keys(state.occurrenceFieldLabels).forEach((field) => {
-                    if(record[field] && !state.hiddenFieldArr.includes(field) && !returnArr.includes(field)){
+                    if(state.searchTermsRecordSortField === field || (record[field] && !state.hiddenFieldArr.includes(field) && !returnArr.includes(field))){
                         returnArr.push(field);
                     }
                 });
@@ -670,6 +670,7 @@ const useSearchStore = Pinia.defineStore('search', {
         setSearchCollId(collid) {
             this.searchTerms['collid'] = collid;
             this.searchTerms['db'] = [collid];
+            this.searchTermsCollId = collid;
         },
         setSearchRecordData(options, callback = null) {
             this.processSearch(options, (res) => {
@@ -700,6 +701,12 @@ const useSearchStore = Pinia.defineStore('search', {
                     this.setSearchTaxaArr(callback);
                 }
             });
+        },
+        setSearchTermsRecordSortDirection(value) {
+            this.searchTermsRecordSortDirection = value;
+        },
+        setSearchTermsRecordSortField(value) {
+            this.searchTermsRecordSortField = value;
         },
         setSelectedRecords(recordArr) {
             recordArr.forEach((record) => {

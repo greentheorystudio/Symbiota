@@ -391,7 +391,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const lazyLoadCnt = 100;
                     const pageNumber = Vue.ref(1);
-                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecCnt);
+                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const paginationFirstRecordNumber = Vue.computed(() => {
                         let recordNumber = 1;
                         if(Number(pageNumber.value) > 1){
@@ -472,7 +472,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 spatial: 0
                             };
                             searchStore.setSearchOccidArr(options, () => {
-                                if(Number(searchStore.getSearchRecCnt) > 0){
+                                if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
                                     setTableRecordData(pagination.value.page);
                                     searchStore.setSearchTaxaArr(() => {

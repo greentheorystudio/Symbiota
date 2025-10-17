@@ -42,22 +42,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         </script>
     </head>
     <body class="full-window-mode">
-        <div id="mainContainer" class="q-mt-lg">
-            <div v-if="Number(searchTermsCollId) > 0 && collInfo" class="row justify-start text-h6 text-weight-bold">
-                <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
-                <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
-            </div>
-            <div class="row justify-start q-gutter-sm">
-                <div class="col-2">
-                    <selector-input-element label="Sort by" :options="fieldOptions" option-value="field" option-label="label" :value="sortField" @update:value="(value) => sortField = value"></selector-input-element>
-                </div>
-                <div class="col-1">
-                    <selector-input-element :options="sortDirectionOptions" option-value="field" option-label="label" :value="sortDirection" @update:value="(value) => sortDirection = value"></selector-input-element>
-                </div>
-                <div>
-                    <q-btn color="secondary" @click="loadRecords()" label="Sort" />
-                </div>
-            </div>
+        <div id="mainContainer">
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="Number(searchTermsCollId) > 0 && isEditor">
@@ -68,15 +53,30 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <span class="text-bold">Search Collections Table Display</span>
                 </template>
             </div>
-            <div class="row justify-start q-gutter-md">
-                <div>
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+            <div v-if="Number(searchTermsCollId) > 0 && collInfo" class="row justify-start text-h6 text-weight-bold">
+                <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
+                <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
+            </div>
+            <div class="q-mb-sm row justify-start q-col-gutter-sm">
+                <div class="col-3">
+                    <selector-input-element label="Sort by" :options="fieldOptions" option-value="field" option-label="label" :value="sortField" @update:value="processSortFieldChange"></selector-input-element>
                 </div>
-                <div v-if="recordDataArr.length > 0" class="row justify-start q-gutter-sm">
-                    <div>
+                <div class="col-2">
+                    <selector-input-element :options="sortDirectionOptions" :value="sortDirection" @update:value="processSortDirectionChange"></selector-input-element>
+                </div>
+                <div>
+                    <q-btn color="secondary" @click="loadRecords()" label="Sort" />
+                </div>
+            </div>
+            <div class="q-mb-sm row justify-start q-col-gutter-md self-center">
+                <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
+                    <div class="row justify-start self-center q-mr-lg">
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                    </div>
+                    <div v-if="recordDataArr.length > 0">
                         <search-data-downloader :spatial="false"></search-data-downloader>
                     </div>
-                    <div v-if="Number(searchTermsCollId) > 0 && isEditor" class="self-center">
+                    <div v-if="recordDataArr.length > 0 && Number(searchTermsCollId) > 0 && isEditor" class="self-center">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense>
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Batch Update Tool
@@ -84,7 +84,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         </q-btn>
                     </div>
                 </div>
-                <div v-if="recordDataArr.length > 0" class="row justify-start q-gutter-sm">
+                <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
                     <list-display-button></list-display-button>
                     <spatial-display-button></spatial-display-button>
                     <image-display-button></image-display-button>
@@ -92,24 +92,24 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         <copy-url-button :page-number="pagination.page"></copy-url-button>
                     </template>
                 </div>
-                <div v-if="recordDataArr.length > 0" class="row justify-start">
-                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                <div class="row justify-start">
+                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
 
-                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                    <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);"></q-btn>
 
-                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                    <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);"></q-btn>
 
-                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                    <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);"></q-btn>
 
-                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                    <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);"></q-btn>
                 </div>
             </div>
-            <template v-if="">
-                <div class="q-mx-md">
+            <template v-if="recordDataArr.length > 0">
+                <div>
                     <table class="styledtable">
                         <tr>
                             <template v-for="field in recordDataFieldArr">
-                                <th>{{ occurrenceFieldLabels[field] }}</th>
+                                <th class="no-wrap">{{ occurrenceFieldLabels[field] }}</th>
                             </template>
                         </tr>
                         <template v-for="record in recordDataArr">
@@ -118,14 +118,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     <td :class="field === 'sciname' ? 'text-italic' : ''">
                                         <template v-if="field === 'occid'">
                                             <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(record[field]);">{{ record[field] }}</span>
-                                            <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + props.row.occid + '&collid=' + props.row.collid)" target="_blank" icon="fas fa-edit" dense>
+                                            <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + record[field] + '&collid=' + searchTermsCollId)" target="_blank" icon="fas fa-edit" dense>
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Edit occurrence record
                                                 </q-tooltip>
                                             </q-btn>
                                         </template>
                                         <template v-else>
-                                            {{ record[field].length > 60 ? (record[field].substring(0, 60) + '...') : record[field] }}
+                                            {{ (record[field] && record[field].length > 60) ? (record[field].substring(0, 60) + '...') : record[field] }}
                                         </template>
                                     </td>
                                 </template>
@@ -139,11 +139,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     There are no records to display. Click the Search button to enter search criteria.
                 </div>
             </template>
-            <div v-if="recordDataArr.length > 0" class="row justify-start q-gutter-md">
-                <div>
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
-                </div>
-                <div class="row justify-start q-gutter-sm">
+            <div v-if="recordDataArr.length > 0" class="q-mt-xs row justify-start q-col-gutter-md self-center">
+                <div class="q-mr-lg row justify-start q-gutter-sm">
+                    <div class="row justify-start self-center q-mr-lg">
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                    </div>
                     <div>
                         <search-data-downloader :spatial="false"></search-data-downloader>
                     </div>
@@ -155,7 +155,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         </q-btn>
                     </div>
                 </div>
-                <div class="row justify-start q-gutter-sm">
+                <div class="q-mr-lg row justify-start q-gutter-sm">
                     <list-display-button></list-display-button>
                     <spatial-display-button></spatial-display-button>
                     <image-display-button></image-display-button>
@@ -164,15 +164,15 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     </template>
                 </div>
                 <div class="row justify-start">
-                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
 
-                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                    <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);"></q-btn>
 
-                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                    <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);"></q-btn>
 
-                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                    <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);"></q-btn>
 
-                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                    <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);"></q-btn>
                 </div>
             </div>
             <template v-if="displayBatchUpdatePopup">
@@ -301,10 +301,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const fieldOptions = Vue.computed(() => searchStore.getQueryBuilderFieldOptions);
                     const initialCollId = COLLID;
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
-                    const lazyLoadCnt = 100;
+                    const lazyLoadCnt = 200;
                     const occurrenceFieldLabels = Vue.computed(() => searchStore.getOccurrenceFieldLabels);
                     const pageNumber = Vue.ref(1);
-                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecCnt);
+                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const paginationFirstRecordNumber = Vue.computed(() => {
                         let recordNumber = 1;
                         if(Number(pageNumber.value) > 1){
@@ -365,23 +365,19 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const stArrJson = STARRJSON;
 
-                    Vue.watch(searchTermsCollId.value, () => {
+                    Vue.watch(searchTermsCollId, () => {
                         if(Number(searchTermsCollId.value) > 0){
                             occurrenceStore.setCollection(searchTermsCollId.value);
                         }
                     });
 
-                    Vue.watch(searchTermsSortDirection.value, () => {
+                    Vue.watch(searchTermsSortDirection, () => {
                         sortDirection.value = searchTermsSortDirection.value;
                     });
 
-                    Vue.watch(searchTermsSortField.value, () => {
+                    Vue.watch(searchTermsSortField, () => {
                         sortField.value = searchTermsSortField.value;
                     });
-
-                    function changeRecordPage(props) {
-                        setTableRecordData(props.pagination.page);
-                    }
 
                     function closeRecordInfoWindow(){
                         recordInfoWindowId.value = null;
@@ -407,9 +403,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 sortDirection: sortDirection.value
                             };
                             searchStore.setSearchOccidArr(options, () => {
-                                if(Number(searchStore.getSearchRecCnt) > 0){
-                                    displayQueryPopup.value = false;
-                                    setTableRecordData(pagination.value.page);
+                                if(Number(searchStore.getSearchRecordCount) > 0){
+                                    if(!silent){
+                                        displayQueryPopup.value = false;
+                                    }
+                                    setTableRecordData(pageNumber.value);
                                 }
                                 else if(!silent){
                                     hideWorking();
@@ -431,6 +429,16 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processSortDirectionChange(value) {
+                        sortDirection.value = value;
+                        searchStore.setSearchTermsRecordSortDirection(value);
+                    }
+
+                    function processSortFieldChange(value) {
+                        sortField.value = value;
+                        searchStore.setSearchTermsRecordSortField(value);
                     }
 
                     function processSpatialData(data) {
@@ -456,6 +464,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             spatial: 0,
                             numRows: lazyLoadCnt,
                             index: (index - 1),
+                            sortField: sortField.value,
+                            sortDirection: sortDirection.value,
                             output: 'json'
                         };
                         searchStore.setSearchRecordData(options, () => {
@@ -496,6 +506,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         fieldOptions,
                         isEditor,
                         occurrenceFieldLabels,
+                        pageNumber,
                         pagination,
                         popupWindowType,
                         recordDataArr,
@@ -507,16 +518,20 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchTermsSortField,
                         showRecordInfoWindow,
                         showSpatialPopup,
+                        sortDirection,
                         sortDirectionOptions,
+                        sortField,
                         spatialInputValues,
-                        changeRecordPage,
                         closeRecordInfoWindow,
                         closeSpatialPopup,
                         loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
+                        processSortDirectionChange,
+                        processSortFieldChange,
                         processSpatialData,
-                        setQueryPopupDisplay
+                        setQueryPopupDisplay,
+                        setTableRecordData
                     }
                 }
             });

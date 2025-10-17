@@ -98,6 +98,9 @@ class SearchService {
                 elseif($spatial){
                     $sql .= 'ORDER BY o.sciname, o.eventdate ';
                 }
+                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                }
                 else{
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
@@ -971,7 +974,7 @@ class SearchService {
                 }
                 $sql = $selectStr . $fromStr . $whereStr;
                 if(array_key_exists('sortField', $options) && $options['sortField']){
-                    $sql .= ' ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField ']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '');
+                    $sql .= ' ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '');
                 }
                 if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
                     $startIndex = 1 + ((int)$options['index'] * (int)$options['reccnt']);
