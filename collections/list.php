@@ -69,7 +69,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                 <spatial-display-button></spatial-display-button>
                                                 <image-display-button></image-display-button>
                                                 <template v-if="searchTermsJson.length <= 1800">
-                                                    <copy-url-button :page-number="pagination.page"></copy-url-button>
+                                                    <copy-url-button></copy-url-button>
                                                 </template>
                                             </div>
                                         </div>
@@ -436,8 +436,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
                     const recordInfoWindowId = Vue.ref(null);
                     const searchTaxaArr = Vue.computed(() => searchStore.getSearchTaxaArr);
+                    const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
-                    const searchTermsPageNumber = Vue.computed(() => searchStore.getSearchTermsPageNumber);
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
@@ -556,6 +556,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function setTableRecordData(index) {
+                        searchStore.updateSearchTerms('listIndex', index);
                         const options = {
                             schema: 'occurrence',
                             spatial: 0,
@@ -580,8 +581,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
                             if(searchStore.getSearchTermsValid){
-                                if(Number(searchTermsPageNumber.value) > Number(pageNumber.value)){
-                                    pageNumber.value = searchTermsPageNumber.value;
+                                if(searchTerms.value.hasOwnProperty('listIndex')){
+                                    pageNumber.value = Number(searchTerms.value['listIndex']);
                                 }
                                 loadRecords();
                             }

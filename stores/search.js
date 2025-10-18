@@ -222,7 +222,6 @@ const useSearchStore = Pinia.defineStore('search', {
         searchRecordData: [],
         searchTerms: {},
         searchTermsCollId: 0,
-        searchTermsPageNumber: 0,
         searchTermsRecordSortDirection: 'ASC',
         searchTermsRecordSortField: null,
         selections: [],
@@ -315,9 +314,6 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getSearchTermsJson(state) {
             return JSON.stringify(state.searchTerms);
-        },
-        getSearchTermsPageNumber(state) {
-            return state.searchTermsPageNumber;
         },
         getSearchTermsRecordSortDirection(state) {
             return state.searchTermsRecordSortDirection;
@@ -480,15 +476,17 @@ const useSearchStore = Pinia.defineStore('search', {
             }
             else{
                 this.searchTerms = Object.assign({}, stArr[this.dateId.toString()][this.queryId.toString()]);
+                if(this.searchTerms.hasOwnProperty('sortDirection')){
+                    this.searchTermsRecordSortDirection = this.searchTerms['sortDirection'];
+                }
+                if(this.searchTerms.hasOwnProperty('sortField')){
+                    this.searchTermsRecordSortField = this.searchTerms['sortField'];
+                }
             }
         },
         loadSearchTermsArrFromJson(json) {
             const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
             const newSearchTerms = JSON.parse(json);
-            if(newSearchTerms.hasOwnProperty('recordPage')){
-                this.searchTermsPageNumber = newSearchTerms.recordPage;
-                delete newSearchTerms['recordPage'];
-            }
             if(newSearchTerms.hasOwnProperty('sortField')){
                 this.searchTermsRecordSortField = newSearchTerms.sortField;
                 this.searchTermsRecordSortDirection = newSearchTerms.sortDirection;
@@ -643,6 +641,11 @@ const useSearchStore = Pinia.defineStore('search', {
             stArr[this.dateId.toString()][queryId.toString()] = {};
             localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
         },
+        setSearchCollId(collid) {
+            this.searchTerms['collid'] = collid;
+            this.searchTerms['db'] = [collid];
+            this.searchTermsCollId = collid;
+        },
         setSearchOccidArr(options, callback){
             const loadingCnt = 250000;
             const formData = new FormData();
@@ -670,11 +673,6 @@ const useSearchStore = Pinia.defineStore('search', {
                     this.setSearchOccidArr(options, callback);
                 }
             });
-        },
-        setSearchCollId(collid) {
-            this.searchTerms['collid'] = collid;
-            this.searchTerms['db'] = [collid];
-            this.searchTermsCollId = collid;
         },
         setSearchRecordData(options, callback = null) {
             this.processSearch(options, (res) => {

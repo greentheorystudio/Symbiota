@@ -89,7 +89,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <spatial-display-button></spatial-display-button>
                     <image-display-button></image-display-button>
                     <template v-if="searchTermsJson.length <= 1800">
-                        <copy-url-button :page-number="pagination.page"></copy-url-button>
+                        <copy-url-button></copy-url-button>
                     </template>
                 </div>
                 <div class="row justify-start">
@@ -162,7 +162,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <spatial-display-button></spatial-display-button>
                     <image-display-button></image-display-button>
                     <template v-if="searchTermsJson.length <= 1800">
-                        <copy-url-button :page-number="pagination.page"></copy-url-button>
+                        <copy-url-button></copy-url-button>
                     </template>
                 </div>
                 <div class="row justify-start">
@@ -354,9 +354,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
                     const recordDataFieldArr = Vue.computed(() => searchStore.getSearchRecordDataFieldArr);
                     const recordInfoWindowId = Vue.ref(null);
+                    const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsCollId = Vue.computed(() => searchStore.getSearchTermsCollId);
                     const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
-                    const searchTermsPageNumber = Vue.computed(() => searchStore.getSearchTermsPageNumber);
                     const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
                     const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
                     const showRecordInfoWindow = Vue.ref(false);
@@ -439,11 +439,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     function processSortDirectionChange(value) {
                         sortDirection.value = value;
                         searchStore.setSearchTermsRecordSortDirection(value);
+                        searchStore.updateSearchTerms('sortDirection', value);
                     }
 
                     function processSortFieldChange(value) {
                         sortField.value = value;
                         searchStore.setSearchTermsRecordSortField(value);
+                        searchStore.updateSearchTerms('sortField', value);
                     }
 
                     function processSpatialData(data) {
@@ -464,6 +466,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function setTableRecordData(index) {
+                        searchStore.updateSearchTerms('tableIndex', index);
                         const options = {
                             schema: 'occurrence',
                             spatial: 0,
@@ -490,8 +493,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
                             if(searchStore.getSearchTermsValid){
-                                if(Number(searchTermsPageNumber.value) > Number(pageNumber.value)){
-                                    pageNumber.value = searchTermsPageNumber.value;
+                                if(searchTerms.value.hasOwnProperty('tableIndex')){
+                                    pageNumber.value = Number(searchTerms.value['tableIndex']);
                                 }
                                 loadRecords();
                             }
