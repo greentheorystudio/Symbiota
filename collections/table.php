@@ -117,7 +117,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 <template v-for="field in recordDataFieldArr">
                                     <td :class="field === 'sciname' ? 'text-italic' : ''">
                                         <template v-if="field === 'occid'">
-                                            <span class="cursor-pointer text-bold" @click="openRecordInfoWindow(record[field]);">{{ record[field] }}</span>
+                                            <span class="cursor-pointer" @click="openRecordInfoWindow(record[field]);">{{ record[field] }}</span>
                                             <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(record['collid'])))">
                                                 <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + record[field] + '&collid=' + searchTermsCollId)" target="_blank" icon="fas fa-edit" dense>
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
