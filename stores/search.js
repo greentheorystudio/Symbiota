@@ -281,13 +281,19 @@ const useSearchStore = Pinia.defineStore('search', {
             return state.searchRecordData;
         },
         getSearchRecordDataFieldArr(state) {
+            const fieldArr = [];
             const returnArr = [];
             state.searchRecordData.forEach((record) => {
                 Object.keys(state.occurrenceFieldLabels).forEach((field) => {
-                    if(!returnArr.includes(field) && !state.hiddenFieldArr.includes(field) && (state.searchTermsRecordSortField === field || record[field])){
-                        returnArr.push(field);
+                    if(!fieldArr.includes(field) && !state.hiddenFieldArr.includes(field) && (state.searchTermsRecordSortField === field || record[field])){
+                        fieldArr.push(field);
                     }
                 });
+            });
+            Object.keys(state.occurrenceFieldLabels).forEach((field) => {
+                if(fieldArr.includes(field)){
+                    returnArr.push(field);
+                }
             });
             return returnArr;
         },
