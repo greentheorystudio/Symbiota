@@ -908,7 +908,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setCollectingEventFields() {
             this.collectingEventStore.setCollectingEventFields();
         },
-        setCollection(collid, callback = null) {
+        setCollection(collid, forceEditor = true, callback = null) {
             this.collectionStore.setCollection(collid, () => {
                 if(this.getIsEditor){
                     this.occurrenceEntryFormat = this.getCollectionData['datarecordingmethod'];
@@ -927,7 +927,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         callback();
                     }
                 }
-                else{
+                else if(forceEditor){
                     window.location.href = this.getClientRoot + '/index.php';
                 }
             });
@@ -1083,7 +1083,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             this.setChecklistArr();
                             this.geneticLinkStore.setGeneticLinkArr(this.occId);
                             if(this.getCollId !== Number(this.occurrenceData.collid)){
-                                this.setCollection(this.occurrenceData.collid, callback);
+                                this.setCollection(this.occurrenceData.collid, true, callback);
                             }
                             else{
                                 this.occurrenceEditData = Object.assign({}, this.occurrenceData);

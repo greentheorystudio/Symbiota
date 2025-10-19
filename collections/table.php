@@ -370,12 +370,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const stArrJson = STARRJSON;
 
-                    Vue.watch(searchTermsCollId, () => {
-                        if(Number(searchTermsCollId.value) > 0){
-                            occurrenceStore.setCollection(searchTermsCollId.value);
-                        }
-                    });
-
                     Vue.watch(searchTermsSortDirection, () => {
                         sortDirection.value = searchTermsSortDirection.value;
                     });
@@ -396,7 +390,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function loadRecords(silent = false) {
-                        if(searchStore.getSearchTermsValid){
+                        if(silent || searchStore.getSearchTermsValid){
                             searchStore.clearQueryOccidArr();
                             if(!silent){
                                 showWorking('Loading...');
@@ -500,8 +494,16 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             }
                         }
                         if(Number(initialCollId) > 0){
-                            searchStore.setSearchCollId(initialCollId);
-                            loadRecords(true);
+                            occurrenceStore.setCollection(initialCollId, false, () => {
+                                if(isEditor.value){
+                                    searchStore.setSearchCollId(initialCollId);
+                                    loadRecords(true);
+                                }
+                                else{
+                                    searchStore.updateSearchTerms('db', [initialCollId]);
+                                    displayQueryPopup.value = true;
+                                }
+                            });
                         }
                     });
 
