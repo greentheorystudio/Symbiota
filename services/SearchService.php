@@ -343,7 +343,10 @@ class SearchService {
     public function prepareOccurrenceCollectionWhereSql($searchTermsArr): string
     {
         $collSqlWhereStr = '';
-        if(array_key_exists('db', $searchTermsArr) && is_array($searchTermsArr['db']) && count($searchTermsArr['db']) > 0) {
+        if(array_key_exists('collid', $searchTermsArr) && (int)$searchTermsArr['collid'] > 0){
+            $collSqlWhereStr .= '(o.collid = ' . (int)$searchTermsArr['collid'] . ')';
+        }
+        elseif(array_key_exists('db', $searchTermsArr) && is_array($searchTermsArr['db']) && count($searchTermsArr['db']) > 0) {
             if($GLOBALS['IS_ADMIN']) {
                 $collIdStr = implode(',', $searchTermsArr['db']);
             }

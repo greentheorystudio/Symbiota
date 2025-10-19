@@ -499,9 +499,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 delete newSearchTerms['sortField'];
                 delete newSearchTerms['sortDirection'];
             }
-            if(newSearchTerms.hasOwnProperty('collId')){
-                this.setSearchCollId(newSearchTerms.collId);
-                delete newSearchTerms['collId'];
+            if(newSearchTerms.hasOwnProperty('collid')){
+                this.setSearchCollId(newSearchTerms.collid);
             }
             this.searchTerms = Object.assign({}, newSearchTerms);
             searchTermsArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, newSearchTerms);
@@ -649,7 +648,6 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         setSearchCollId(collid) {
             this.searchTerms['collid'] = collid;
-            this.searchTerms['db'] = [collid];
             this.searchTermsCollId = collid;
         },
         setSearchOccidArr(options, callback){

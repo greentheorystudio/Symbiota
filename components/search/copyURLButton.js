@@ -13,16 +13,12 @@ const copyURLButton = {
         const searchStore = useSearchStore();
 
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
-        const searchTermsCollId = Vue.computed(() => searchStore.getSearchTermsCollId);
         const secureOrigin = Vue.computed(() => {
             return (window.location.host === 'localhost' || window.location.protocol === 'https:');
         });
 
         function copySearchUrlToClipboard() {
             const currentSearchTerms = Object.assign({}, searchTerms.value);
-            if(Number(searchTermsCollId.value) > 0){
-                currentSearchTerms.collId = searchTermsCollId.value;
-            }
             const searchTermsJson = JSON.stringify(currentSearchTerms);
             let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');
             navigator.clipboard.writeText(copyUrl)
