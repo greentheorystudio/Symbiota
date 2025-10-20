@@ -99,6 +99,7 @@ const occurrenceEditorFormMiscElement = {
     setup() {
         const { showNotification } = useCore();
         const occurrenceStore = useOccurrenceStore();
+        const searchStore = useSearchStore();
 
         const basisOfRecordOptions = Vue.computed(() => occurrenceStore.getBasisOfRecordOptions);
         const controlledVocabularies = Vue.computed(() => occurrenceStore.getOccurrenceFieldControlledVocabularies);
@@ -119,6 +120,7 @@ const occurrenceEditorFormMiscElement = {
                                 showNotification('negative', ('An error occurred while deleting this record.'));
                             }
                             else{
+                                searchStore.removeOccidFromOccidArrs(occId.value);
                                 occurrenceStore.setCollectingEventBenthicData();
                             }
                         });

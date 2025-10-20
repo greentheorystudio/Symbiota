@@ -142,7 +142,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         locationStore: useOccurrenceLocationStore(),
         mediaStore: useMediaStore(),
         occId: null,
-        occidArr: [],
         occurrenceData: {},
         occurrenceEditData: {},
         occurrenceEntryFormat: 'specimen',
@@ -208,9 +207,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getCrowdSourceQueryFieldOptions(state) {
             return state.crowdSourceQueryFieldOptions;
-        },
-        getCurrentRecordIndex(state) {
-            return (state.occidArr.indexOf(state.occId) + 1);
         },
         getDeterminationArr(state) {
             return state.determinationStore.getDeterminationArr;
@@ -307,12 +303,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getMediaArr(state) {
             return state.mediaStore.getMediaArr;
-        },
-        getNewRecordExisting(state) {
-            return state.occidArr.includes(0);
-        },
-        getRecordCount(state) {
-            return state.occidArr.length;
         },
         getOccId(state) {
             return state.occId;
@@ -475,10 +465,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             .then((res) => {
                 callback(Number(res));
                 if(res && Number(res) > 0){
-                    if(this.occidArr[(this.occidArr.length - 1)] === 0){
-                        this.occidArr.splice((this.occidArr.length - 1), 1);
-                    }
-                    this.occidArr.push(Number(res));
                     if(this.getOccurrenceMofEditsExist){
                         this.processMofEditData('occurrence', null, Number(res));
                     }
@@ -547,17 +533,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 return response.ok ? response.text() : null;
             })
             .then((val) => {
-                if(this.occidArr.includes(Number(occid))){
-                    const index = this.occidArr.indexOf(Number(occid));
-                    this.occidArr.splice(index, 1);
-                }
                 if(this.occId === Number(occid)){
-                    if(this.occidArr.length > 0){
-                        this.setCurrentOccurrenceRecord(this.occidArr[(this.occidArr.length - 1)]);
-                    }
-                    else{
-                        this.setCurrentOccurrenceRecord(0);
-                    }
+                    this.setCurrentOccurrenceRecord(0);
                 }
                 callback(Number(val));
             });
@@ -670,15 +647,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 callback(data);
             });
         },
-        goToFirstRecord() {
-            this.setCurrentOccurrenceRecord(this.occidArr[0]);
-        },
-        goToLastRecord() {
-            this.setCurrentOccurrenceRecord(this.occidArr[(this.occidArr.length - 1)]);
-        },
-        goToNextRecord() {
-            this.setCurrentOccurrenceRecord(this.occidArr[this.getCurrentRecordIndex]);
-        },
         goToNewOccurrenceRecord(carryLocation = false, carryEvent = false) {
             this.setCurrentOccurrenceRecord(0);
             if(carryLocation){
@@ -694,9 +662,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             else{
                 this.setCurrentCollectingEventRecord(0);
             }
-        },
-        goToPreviousRecord() {
-            this.setCurrentOccurrenceRecord(this.occidArr[(this.getCurrentRecordIndex - 2)]);
         },
         makeDeterminationCurrent(callback = null) {
             this.determinationStore.makeDeterminationCurrent(this.getCollId, (res) => {
@@ -952,9 +917,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         setCurrentOccurrenceRecord(occid, callback = null) {
             this.occId = Number(occid);
-            if(!this.occidArr.includes(this.occId)){
-                this.occidArr.push(this.occId);
-            }
             this.clearOccurrenceData();
             if(this.occId > 0){
                 this.occurrenceEditData = Object.assign({}, {});

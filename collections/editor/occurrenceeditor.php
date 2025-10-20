@@ -11,6 +11,7 @@ $displayMode = array_key_exists('mode', $_REQUEST) ? (int)$_REQUEST['mode'] : 1;
 $goToMode = array_key_exists('gotomode', $_REQUEST) ? (int)$_REQUEST['gotomode'] : 0;
 $occIndex = array_key_exists('occindex', $_REQUEST) ? (int)$_REQUEST['occindex'] : null;
 $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
+$queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -40,13 +41,135 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
             const COLLID = <?php echo $collId; ?>;
             const DISPLAY_MODE = <?php echo $displayMode; ?>;
             const OCCID = <?php echo $occId; ?>;
+            const QUERYID = <?php echo $queryId; ?>;
         </script>
     </head>
     <body class="full-window-mode">
         <div id="mainContainer" class="q-mt-lg">
-            <occurrence-editor-single-display></occurrence-editor-single-display>
+            <div class="row justify-center">
+                <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center bg-white">
+                    <div class="row justify-between">
+                        <div class="row justify-start">
+                            <a :href="clientRoot + '/index.php'">Home</a> &gt;&gt;
+                            <template v-if="displayMode === 4">
+                                <a :href="clientRoot + '/collections/management/crowdsource/index.php'">Crowd Sourcing Central</a> &gt;&gt;
+                            </template>
+                            <template v-else-if="isEditor">
+                                <a :href="clientRoot + '/collections/misc/collprofiles.php?collid=' + collId">Collection Control Panel</a> &gt;&gt;
+                            </template>
+                            <span class="text-bold">Occurrence Editor</span>
+                        </div>
+                        <div class="row justify-end q-gutter-xl">
+                            <div class="row justify-end q-gutter-sm self-center">
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search"></q-btn>
+                                <table-display-button></table-display-button>
+                                <list-display-button></list-display-button>
+                                <spatial-display-button></spatial-display-button>
+                                <image-display-button></image-display-button>
+                            </div>
+                            <div class="row justify-end self-center">
+                                <q-btn v-if="recordCount > 1 && currentRecordIndex !== 1" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord"></q-btn>
+                                <q-btn v-if="currentRecordIndex !== 1" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord"></q-btn>
+                                <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
+                                <q-btn v-if="currentRecordIndex !== recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord"></q-btn>
+                                <q-btn v-if="recordCount > 1 && currentRecordIndex !== recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord"></q-btn>
+                                <q-btn v-if="occurrenceEntryFormat !== 'benthic' && occId > 0" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord">
+                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                        Create new occurrence record
+                                    </q-tooltip>
+                                </q-btn>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-between">
+                        <div class="row justify-start text-h6 text-weight-bold">
+                            <template v-if="collInfo">
+                                <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
+                                <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
+                            </template>
+                        </div>
+                        <div class="row justify-end q-gutter-sm self-center">
+                            <template v-if="Number(occId) === 0">
+                                <div>
+                                    <occurrence-entry-format-selector :selected-format="occurrenceEntryFormat" @change-occurrence-entry-format="changeOccurrenceEntryFormat"></occurrence-entry-format-selector>
+                                </div>
+                            </template>
+                            <template v-if="recordCount > 1">
+                                <div class="self-center">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="find_replace" dense>
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Batch Update Tool
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                            </template>
+                            <template v-if="(occurrenceEntryFormat === 'specimen' || occurrenceEntryFormat === 'skeletal') && imageCount > 0">
+                                <div class="self-center">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayImageTranscriberPopup = true" icon="image_search" dense>
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Display image transcription window
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <template v-if="Number(occId) > 0">
+                        <q-card flat bordered class="q-mt-sm black-border">
+                            <q-card-section class="q-pa-none">
+                                <occurrence-editor-tab-module></occurrence-editor-tab-module>
+                            </q-card-section>
+                        </q-card>
+                    </template>
+                    <template v-else-if="Number(occId) === 0">
+                        <q-card flat>
+                            <q-card-section class="q-pa-sm">
+                                <template v-if="occurrenceEntryFormat === 'observation'">
+                                    <occurrence-entry-observation-form-module></occurrence-entry-observation-form-module>
+                                </template>
+                                <template v-else-if="occurrenceEntryFormat === 'skeletal'">
+                                    <occurrence-entry-skeletal-form-module></occurrence-entry-skeletal-form-module>
+                                </template>
+                                <template v-else>
+                                    <occurrence-editor-occurrence-data-module></occurrence-editor-occurrence-data-module>
+                                </template>
+                            </q-card-section>
+                        </q-card>
+                    </template>
+                </div>
+            </div>
             <template v-if="displayBatchUpdatePopup">
                 <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
+            </template>
+            <template v-if="displayImageTranscriberPopup">
+                <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup" @close:popup="displayImageTranscriberPopup = false"></occurrence-editor-image-transcriber-popup>
+            </template>
+            <template v-if="displayQueryPopup">
+                <search-criteria-popup
+                    :show-popup="(displayQueryPopup && !showSpatialPopup)"
+                    :show-spatial="true"
+                    @open:spatial-popup="openSpatialPopup"
+                    @process:search-load-records="loadRecords"
+                    @close:popup="displayQueryPopup = false"
+                ></search-criteria-popup>
+            </template>
+            <template v-if="showSpatialPopup">
+                <spatial-analysis-popup
+                    :bottom-lat="spatialInputValues['bottomLatitude']"
+                    :circle-arr="spatialInputValues['circleArr']"
+                    :left-long="spatialInputValues['leftLongitude']"
+                    :point-lat="spatialInputValues['pointLatitude']"
+                    :point-long="spatialInputValues['pointLongitude']"
+                    :poly-arr="spatialInputValues['polyArr']"
+                    :radius="spatialInputValues['radius']"
+                    :radius-units="spatialInputValues['radiusUnit']"
+                    :right-long="spatialInputValues['rightLongitude']"
+                    :upper-lat="spatialInputValues['upperLatitude']"
+                    :show-popup="showSpatialPopup"
+                    :window-type="popupWindowType"
+                    @update:spatial-data="processSpatialData"
+                    @close:popup="closeSpatialPopup();"
+                ></spatial-analysis-popup>
             </template>
             <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
         </div>
@@ -69,6 +192,7 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDataDownloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/imageDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/advancedQueryBuilder.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCollectionsBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -168,28 +292,134 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorTabModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorBatchUpdatePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorImageTranscriberPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorSingleDisplay.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const occurrenceEditorControllerModule = Vue.createApp({
                 components: {
                     'confirmation-popup': confirmationPopup,
+                    'image-display-button': imageDisplayButton,
+                    'list-display-button': listDisplayButton,
                     'occurrence-editor-batch-update-popup': occurrenceEditorBatchUpdatePopup,
-                    'occurrence-editor-single-display': occurrenceEditorSingleDisplay
+                    'occurrence-editor-image-transcriber-popup': occurrenceEditorImageTranscriberPopup,
+                    'occurrence-editor-occurrence-data-module': occurrenceEditorOccurrenceDataModule,
+                    'occurrence-editor-tab-module': occurrenceEditorTabModule,
+                    'occurrence-entry-format-selector': occurrenceEntryFormatSelector,
+                    'occurrence-entry-observation-form-module': occurrenceEntryObservationFormModule,
+                    'occurrence-entry-skeletal-form-module': occurrenceEntrySkeletalFormModule,
+                    'search-criteria-popup': searchCriteriaPopup,
+                    'spatial-analysis-popup': spatialAnalysisPopup,
+                    'spatial-display-button': spatialDisplayButton,
+                    'table-display-button': tableDisplayButton
                 },
                 setup() {
-                    const { showNotification } = useCore();
+                    const { hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
                     const occurrenceStore = useOccurrenceStore();
                     const searchStore = useSearchStore();
 
                     const clientRoot = baseStore.getClientRoot;
+                    const collId = Vue.computed(() => occurrenceStore.getCollId);
+                    const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
                     const confirmationPopupRef = Vue.ref(null);
+                    const containerWidth = Vue.ref(0);
+                    const currentRecordIndex = Vue.computed(() => searchStore.getCurrentOccIdIndex);
                     const displayBatchUpdatePopup = Vue.ref(false);
-                    const displayQueryPopupButton = Vue.ref(true);
+                    const displayImageTranscriberPopup = Vue.ref(false);
                     const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
+                    const displayQueryPopup = Vue.ref(false);
+                    const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
                     const initialCollId = COLLID;
                     const initialDisplayMode = DISPLAY_MODE;
                     const initialOccId = OCCID;
+                    const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
+                    const moduleContainerRef = Vue.ref(null);
+                    const occId = Vue.computed(() => occurrenceStore.getOccId);
+                    const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
+                    const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+                    const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
+                    const popupWindowType = Vue.ref(null);
+                    const queryId = QUERYID;
+                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
+                    const recordCount = Vue.computed(() => {
+                        return Number(occId.value) === 0 ? searchRecordCount.value + 1 : searchRecordCount.value;
+                    });
+                    const showSpatialPopup = Vue.ref(false);
+                    const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
+
+                    Vue.watch(collId, () => {
+                        searchStore.setSearchCollId(collId.value);
+                    });
+
+                    Vue.watch(occId, () => {
+                        searchStore.setCurrentOccId(occId.value);
+                    });
+
+                    function changeOccurrenceEntryFormat(value) {
+                        occurrenceStore.setOccurrenceEntryFormat(value);
+                    }
+
+                    function closeSpatialPopup() {
+                        popupWindowType.value = null;
+                        showSpatialPopup.value = false;
+                        searchStore.clearSpatialInputValues();
+                    }
+
+                    function goToFirstRecord() {
+                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getFirstOccidInOccidArr);
+                    }
+
+                    function goToLastRecord() {
+                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getLastOccidInOccidArr);
+                    }
+
+                    function goToNextRecord() {
+                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getNextOccidInOccidArr);
+                    }
+
+                    function goToNewRecord() {
+                        occurrenceStore.goToNewOccurrenceRecord();
+                    }
+
+                    function goToPreviousRecord() {
+                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getPreviousOccidInOccidArr);
+                    }
+
+                    function loadRecords() {
+                        if(searchStore.getSearchTermsValid){
+                            searchStore.clearQueryOccidArr();
+                            showWorking('Loading...');
+                            const options = {
+                                schema: 'occurrence',
+                                spatial: 0
+                            };
+                            searchStore.setSearchOccidArr(options, () => {
+                                if(Number(searchStore.getSearchRecordCount) > 0){
+                                    displayQueryPopup.value = false;
+                                    goToFirstRecord();
+                                }
+                                else{
+                                    showNotification('negative','There were no records matching your query.');
+                                }
+                                hideWorking();
+                            });
+                        }
+                        else{
+                            showNotification('negative','Please enter search criteria.');
+                        }
+                    }
+
+                    function openSpatialPopup(type) {
+                        searchStore.setSpatialInputValues();
+                        popupWindowType.value = type;
+                        showSpatialPopup.value = true;
+                    }
+
+                    function processSpatialData(data) {
+                        searchStore.processSpatialPopupData(popupWindowType.value, data);
+                    }
+
+                    function setContainerWidth() {
+                        containerWidth.value = moduleContainerRef.value.clientWidth;
+                    }
 
                     function validateCoordinates() {
                         occurrenceStore.getCoordinateVerificationData((data) => {
@@ -209,10 +439,15 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
                         });
                     }
 
-                    Vue.provide('displayQueryPopupButton', displayQueryPopupButton);
+                    Vue.provide('containerWidth', containerWidth);
+                    Vue.provide('occurrenceFields', occurrenceFields);
+                    Vue.provide('occurrenceFieldDefinitions', occurrenceFieldDefinitions);
                     Vue.provide('validateCoordinates', validateCoordinates);
 
                     Vue.onMounted(() => {
+                        setContainerWidth();
+                        window.addEventListener('resize', setContainerWidth);
+                        occurrenceStore.setOccurrenceFields();
                         if(Number(initialCollId) > 0 || Number(initialOccId) > 0){
                             if(Number(initialCollId) > 0 && Number(initialOccId) === 0){
                                 occurrenceStore.setCollection(initialCollId);
@@ -221,8 +456,9 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
                                 occurrenceStore.setDisplayMode(initialDisplayMode);
                             }
                             occurrenceStore.setCurrentOccurrenceRecord(initialOccId);
-                            if(Number(initialOccId) > 0){
-                                displayQueryPopupButton.value = false;
+                            searchStore.initializeSearchStorage(queryId);
+                            if(Number(queryId) > 0 && searchStore.getSearchTermsValid){
+                                loadRecords();
                             }
                         }
                         else{
@@ -231,9 +467,34 @@ $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
                     });
 
                     return {
+                        clientRoot,
+                        collId,
+                        collInfo,
                         confirmationPopupRef,
+                        currentRecordIndex,
                         displayBatchUpdatePopup,
-                        displayMode
+                        displayImageTranscriberPopup,
+                        displayMode,
+                        displayQueryPopup,
+                        imageCount,
+                        isEditor,
+                        moduleContainerRef,
+                        occId,
+                        occurrenceEntryFormat,
+                        popupWindowType,
+                        recordCount,
+                        showSpatialPopup,
+                        spatialInputValues,
+                        changeOccurrenceEntryFormat,
+                        closeSpatialPopup,
+                        goToFirstRecord,
+                        goToLastRecord,
+                        goToNextRecord,
+                        goToNewRecord,
+                        goToPreviousRecord,
+                        loadRecords,
+                        openSpatialPopup,
+                        processSpatialData
                     }
                 }
             });

@@ -88,6 +88,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = useOccurrenceStore();
+        const searchStore = useSearchStore();
 
         const benthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
         const confirmationPopupRef = Vue.ref(null);
@@ -247,8 +248,9 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                 occurrenceStore.updateOccurrenceEditData('identificationremarks', taxonIdRemarks.value);
                 occurrenceStore.updateOccurrenceEditData('rep', recordToAdd.rep);
                 occurrenceStore.updateOccurrenceEditData('individualcount', recordToAdd.cnt);
-                occurrenceStore.createOccurrenceRecord(() => {
+                occurrenceStore.createOccurrenceRecord((occid) => {
                     processEnteredData();
+                    searchStore.addNewOccidToOccidArrs(occid);
                 });
             }
             else if(processingDeleteArr.length > 0){
@@ -261,6 +263,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                                 showNotification('negative', ('An error occurred while deleting occurrence record ' + recordToDelete + '.'));
                             }
                             processEnteredData();
+                            searchStore.removeOccidFromOccidArrs(recordToDelete);
                         });
                     }
                     else{

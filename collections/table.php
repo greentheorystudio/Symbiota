@@ -71,7 +71,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             <div class="q-mb-sm row justify-start q-col-gutter-md self-center">
                 <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
                     <div class="row justify-start self-center q-mr-lg">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" />
                     </div>
                     <div v-if="recordDataArr.length > 0">
                         <search-data-downloader :spatial="false"></search-data-downloader>
@@ -144,7 +144,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             <div v-if="recordDataArr.length > 0" class="q-mt-xs row justify-start q-col-gutter-md self-center">
                 <div class="q-mr-lg row justify-start q-gutter-sm">
                     <div class="row justify-start self-center q-mr-lg">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" />
                     </div>
                     <div>
                         <search-data-downloader :spatial="false"></search-data-downloader>
@@ -189,7 +189,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     :show-spatial="true"
                     @open:spatial-popup="openSpatialPopup"
                     @process:search-load-records="loadRecords"
-                    @close:popup="setQueryPopupDisplay(false)"
+                    @close:popup="displayQueryPopup = false"
                 ></search-criteria-popup>
             </template>
             <template v-if="showSpatialPopup">
@@ -233,8 +233,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDataDownloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/keyDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/checklistDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/imageDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/advancedQueryBuilder.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCollectionsBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -276,10 +274,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script type="text/javascript">
             const occurrenceTableDisplayModule = Vue.createApp({
                 components: {
-                    'checklist-display-button': checklistDisplayButton,
                     'copy-url-button': copyURLButton,
                     'image-display-button': imageDisplayButton,
-                    'key-display-button': keyDisplayButton,
                     'list-display-button': listDisplayButton,
                     'occurrence-editor-batch-update-popup': occurrenceEditorBatchUpdatePopup,
                     'occurrence-info-window-popup': occurrenceInfoWindowPopup,
@@ -455,10 +451,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         });
                     }
 
-                    function setQueryPopupDisplay(val) {
-                        displayQueryPopup.value = val;
-                    }
-
                     function setTableRecordData(index) {
                         searchStore.updateSearchTerms('tableIndex', index);
                         const options = {
@@ -541,7 +533,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         processSortDirectionChange,
                         processSortFieldChange,
                         processSpatialData,
-                        setQueryPopupDisplay,
                         setTableRecordData
                     }
                 }
