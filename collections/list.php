@@ -462,7 +462,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function loadRecords(){
-                        if(searchStore.getSearchTermsValid){
+                        if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
                             taxaCnt.value = 0;
                             taxaDataArr.length = 0;
                             searchStore.clearQueryOccidArr();
@@ -580,7 +580,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             if(stArrJson){
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
-                            if(searchStore.getSearchTermsValid){
+                            if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
                                 if(searchTerms.value.hasOwnProperty('listIndex')){
                                     pageNumber.value = Number(searchTerms.value['listIndex']);
                                 }

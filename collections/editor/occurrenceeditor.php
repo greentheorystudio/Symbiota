@@ -48,37 +48,35 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
         <div id="mainContainer" class="q-mt-lg">
             <div class="row justify-center">
                 <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center bg-white">
+                    <div class="row justify-start">
+                        <div><a :href="clientRoot + '/index.php'">Home</a> &gt;&gt;</div>
+                        <template v-if="displayMode === 4">
+                            <a :href="clientRoot + '/collections/management/crowdsource/index.php'">Crowd Sourcing Central</a> &gt;&gt;
+                        </template>
+                        <template v-else-if="isEditor">
+                            <div><a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)">Collection Control Panel</a> &gt;&gt;</div>
+                        </template>
+                        <span class="text-bold">Occurrence Editor</span>
+                    </div>
                     <div class="row justify-between">
-                        <div class="row justify-start">
-                            <a :href="clientRoot + '/index.php'">Home</a> &gt;&gt;
-                            <template v-if="displayMode === 4">
-                                <a :href="clientRoot + '/collections/management/crowdsource/index.php'">Crowd Sourcing Central</a> &gt;&gt;
-                            </template>
-                            <template v-else-if="isEditor">
-                                <a :href="clientRoot + '/collections/misc/collprofiles.php?collid=' + collId">Collection Control Panel</a> &gt;&gt;
-                            </template>
-                            <span class="text-bold">Occurrence Editor</span>
+                        <div class="row justify-start q-gutter-sm self-center">
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search"></q-btn>
+                            <table-display-button></table-display-button>
+                            <list-display-button></list-display-button>
+                            <spatial-display-button></spatial-display-button>
+                            <image-display-button></image-display-button>
                         </div>
-                        <div class="row justify-end q-gutter-xl">
-                            <div class="row justify-end q-gutter-sm self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search"></q-btn>
-                                <table-display-button></table-display-button>
-                                <list-display-button></list-display-button>
-                                <spatial-display-button></spatial-display-button>
-                                <image-display-button></image-display-button>
-                            </div>
-                            <div class="row justify-end self-center">
-                                <q-btn v-if="recordCount > 1 && currentRecordIndex !== 1" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord"></q-btn>
-                                <q-btn v-if="currentRecordIndex !== 1" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord"></q-btn>
-                                <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
-                                <q-btn v-if="currentRecordIndex !== recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord"></q-btn>
-                                <q-btn v-if="recordCount > 1 && currentRecordIndex !== recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord"></q-btn>
-                                <q-btn v-if="occurrenceEntryFormat !== 'benthic' && occId > 0" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord">
-                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                        Create new occurrence record
-                                    </q-tooltip>
-                                </q-btn>
-                            </div>
+                        <div class="row justify-end self-center">
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex !== 1" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord"></q-btn>
+                            <q-btn v-if="currentRecordIndex !== 1" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord"></q-btn>
+                            <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
+                            <q-btn v-if="currentRecordIndex !== recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord"></q-btn>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex !== recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord"></q-btn>
+                            <q-btn v-if="occurrenceEntryFormat !== 'benthic' && occId > 0" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord">
+                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                    Create new occurrence record
+                                </q-tooltip>
+                            </q-btn>
                         </div>
                     </div>
                     <div class="row justify-between">
@@ -339,6 +337,7 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
+                    const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const recordCount = Vue.computed(() => {
                         return Number(occId.value) === 0 ? searchRecordCount.value + 1 : searchRecordCount.value;
                     });
@@ -384,7 +383,7 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
                     }
 
                     function loadRecords() {
-                        if(searchStore.getSearchTermsValid){
+                        if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
                             searchStore.clearQueryOccidArr();
                             showWorking('Loading...');
                             const options = {
@@ -394,7 +393,9 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
                             searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
-                                    goToFirstRecord();
+                                    if(Number(occId.value) === 0 || currentRecordIndex.value < 0){
+                                        goToFirstRecord();
+                                    }
                                 }
                                 else{
                                     showNotification('negative','There were no records matching your query.');
@@ -457,7 +458,7 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
                             }
                             occurrenceStore.setCurrentOccurrenceRecord(initialOccId);
                             searchStore.initializeSearchStorage(queryId);
-                            if(Number(queryId) > 0 && searchStore.getSearchTermsValid){
+                            if(Number(queryId) > 0 && (searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0)))){
                                 loadRecords();
                             }
                         }

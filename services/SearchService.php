@@ -976,8 +976,22 @@ class SearchService {
                     $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
                 }
                 $sql = $selectStr . $fromStr . $whereStr;
-                if(array_key_exists('sortField', $options) && $options['sortField']){
-                    $sql .= ' ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '');
+                if($options['schema'] === 'image'){
+                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
+                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
+                    }
+                    else{
+                        $sql .= 'ORDER BY t.sciname ';
+                    }
+                }
+                elseif($spatial){
+                    $sql .= 'ORDER BY o.sciname, o.eventdate ';
+                }
+                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                }
+                else{
+                    $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
                 if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
                     $startIndex = 1 + ((int)$options['index'] * (int)$options['reccnt']);

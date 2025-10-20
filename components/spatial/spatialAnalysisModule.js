@@ -112,6 +112,7 @@ const spatialAnalysisModule = {
         const rasterLayersArr = Vue.shallowReactive([
             {value: 'none', label: 'None'}
         ]);
+        const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const selectedPolyError = Vue.ref(false);
         const selectInteraction = Vue.computed(() => setSelectInteraction());
         const spatialModuleInitialising = Vue.ref(false);
@@ -474,45 +475,44 @@ const spatialAnalysisModule = {
         }
 
         function createShapesFromSearchTermsArr() {
-            const searchTerms = searchStore.getSearchTerms;
-            if(searchTerms.hasOwnProperty('upperlat')){
+            if(searchTerms.value.hasOwnProperty('upperlat')){
                 const boundingBox = {};
-                boundingBox.upperlat = searchTerms['upperlat'];
-                boundingBox.bottomlat = searchTerms['bottomlat'];
-                boundingBox.leftlong = searchTerms['leftlong'];
-                boundingBox.rightlong = searchTerms['rightlong'];
+                boundingBox.upperlat = searchTerms.value['upperlat'];
+                boundingBox.bottomlat = searchTerms.value['bottomlat'];
+                boundingBox.leftlong = searchTerms.value['leftlong'];
+                boundingBox.rightlong = searchTerms.value['rightlong'];
                 if(boundingBox.upperlat && boundingBox.bottomlat && boundingBox.leftlong && boundingBox.rightlong){
                     createPolygonFromBoundingBox(boundingBox, true);
                 }
             }
-            if(searchTerms.hasOwnProperty('pointlat')){
+            if(searchTerms.value.hasOwnProperty('pointlat')){
                 const pointRadius = {};
-                pointRadius.pointlat = searchTerms['pointlat'];
-                pointRadius.pointlong = searchTerms['pointlong'];
-                pointRadius.radius = searchTerms['radius'];
+                pointRadius.pointlat = searchTerms.value['pointlat'];
+                pointRadius.pointlong = searchTerms.value['pointlong'];
+                pointRadius.radius = searchTerms.value['radius'];
                 if(pointRadius.pointlat && pointRadius.pointlong && pointRadius.radius){
                     createCircleFromPointRadius(pointRadius, true);
                 }
             }
-            if(searchTerms.hasOwnProperty('circleArr')){
+            if(searchTerms.value.hasOwnProperty('circleArr')){
                 let circleArr;
-                if(JSON.parse(searchTerms['circleArr'])){
-                    circleArr = JSON.parse(searchTerms['circleArr']);
+                if(JSON.parse(searchTerms.value['circleArr'])){
+                    circleArr = JSON.parse(searchTerms.value['circleArr']);
                 }
                 else{
-                    circleArr = searchTerms['circleArr'];
+                    circleArr = searchTerms.value['circleArr'];
                 }
                 if(Array.isArray(circleArr)){
                     createCirclesFromCircleArr(circleArr, true);
                 }
             }
-            if(searchTerms.hasOwnProperty('polyArr')){
+            if(searchTerms.value.hasOwnProperty('polyArr')){
                 let polyArr;
-                if(JSON.parse(searchTerms['polyArr'])){
-                    polyArr = JSON.parse(searchTerms['polyArr']);
+                if(JSON.parse(searchTerms.value['polyArr'])){
+                    polyArr = JSON.parse(searchTerms.value['polyArr']);
                 }
                 else{
-                    polyArr = searchTerms['polyArr'];
+                    polyArr = searchTerms.value['polyArr'];
                 }
                 if(Array.isArray(polyArr)){
                     createPolysFromPolyArr(polyArr, true);
@@ -927,7 +927,7 @@ const spatialAnalysisModule = {
         function loadRecords(){
             if(!selectedPolyError.value){
                 clearSelections(false);
-                if(searchStore.getSearchTermsValid){
+                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
                     for(const key in symbologyArr){
                         delete symbologyArr[key];
                     }
@@ -974,7 +974,7 @@ const spatialAnalysisModule = {
                 if(props.stArrJson){
                     searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
                 }
-                if(searchStore.getSearchTermsValid){
+                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
                     updateMapSettings('loadPointsEvent', true);
                     createShapesFromSearchTermsArr();
                     loadRecords();

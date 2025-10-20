@@ -119,7 +119,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                         <template v-if="field === 'occid'">
                                             <span class="cursor-pointer" @click="openRecordInfoWindow(record[field]);">{{ record[field] }}</span>
                                             <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(record['collid'])))">
-                                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + record[field] + '&collid=' + searchTermsCollId)" target="_blank" icon="fas fa-edit" dense>
+                                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" @click="redirectToOccurrenceEditorWithQueryId(record[field], searchTermsCollId);" icon="fas fa-edit" dense>
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Edit occurrence record
                                                     </q-tooltip>
@@ -386,7 +386,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function loadRecords(silent = false) {
-                        if(silent || searchStore.getSearchTermsValid){
+                        if(silent || searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
                             searchStore.clearQueryOccidArr();
                             if(!silent){
                                 showWorking('Loading...');
@@ -478,7 +478,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             if(stArrJson){
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
-                            if(searchStore.getSearchTermsValid){
+                            if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
                                 if(searchTerms.value.hasOwnProperty('tableIndex')){
                                     pageNumber.value = Number(searchTerms.value['tableIndex']);
                                 }
@@ -533,6 +533,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         processSortDirectionChange,
                         processSortFieldChange,
                         processSpatialData,
+                        redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId,
                         setTableRecordData
                     }
                 }

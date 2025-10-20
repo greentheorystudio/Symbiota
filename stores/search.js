@@ -645,6 +645,10 @@ const useSearchStore = Pinia.defineStore('search', {
                 }
             }
         },
+        redirectToOccurrenceEditorWithQueryId(occid, collid) {
+            const baseStore = useBaseStore();
+            window.location.href = baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php' + '?queryId=' + this.queryId + '&occid=' + occid + '&collid=' + collid;
+        },
         redirectWithQueryId(url, addlProp = null, newTab = false) {
             const baseStore = useBaseStore();
             if(newTab){
@@ -700,7 +704,7 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
         },
         setSearchCollId(collid) {
-            this.searchTerms['collid'] = collid;
+            this.updateSearchTerms('collid', collid);
             this.searchTermsCollId = collid;
         },
         setSearchOccidArr(options, callback){
