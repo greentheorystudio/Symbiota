@@ -393,6 +393,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             }
                             const options = {
                                 schema: 'occurrence',
+                                display: 'table',
                                 spatial: 0,
                                 sortField: sortField.value,
                                 sortDirection: sortDirection.value
@@ -455,6 +456,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.updateSearchTerms('tableIndex', index);
                         const options = {
                             schema: 'occurrence',
+                            display: 'table',
                             spatial: 0,
                             numRows: lazyLoadCnt,
                             index: (index - 1),

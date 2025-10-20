@@ -647,7 +647,12 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         redirectToOccurrenceEditorWithQueryId(occid, collid) {
             const baseStore = useBaseStore();
-            window.location.href = baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php' + '?queryId=' + this.queryId + '&occid=' + occid + '&collid=' + collid;
+            if(this.getOccurrenceEditorModeActive){
+                window.location.href = baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php?queryId=' + this.queryId + '&occid=' + occid + '&collid=' + collid;
+            }
+            else{
+                window.open((baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php?occid=' + occid + '&collid=' + collid), '_blank');
+            }
         },
         redirectWithQueryId(url, addlProp = null, newTab = false) {
             const baseStore = useBaseStore();

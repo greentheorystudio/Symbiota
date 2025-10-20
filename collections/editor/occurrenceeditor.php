@@ -12,6 +12,7 @@ $goToMode = array_key_exists('gotomode', $_REQUEST) ? (int)$_REQUEST['gotomode']
 $occIndex = array_key_exists('occindex', $_REQUEST) ? (int)$_REQUEST['occindex'] : null;
 $ouid = array_key_exists('ouid', $_REQUEST) ? (int)$_REQUEST['ouid'] : 0;
 $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
+$stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
@@ -42,6 +43,7 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
             const DISPLAY_MODE = <?php echo $displayMode; ?>;
             const OCCID = <?php echo $occId; ?>;
             const QUERYID = <?php echo $queryId; ?>;
+            const STARRJSON = '<?php echo $stArrJson; ?>';
         </script>
     </head>
     <body class="full-window-mode">
@@ -343,6 +345,7 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
                     });
                     const showSpatialPopup = Vue.ref(false);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
+                    const stArrJson = STARRJSON;
 
                     Vue.watch(collId, () => {
                         searchStore.setSearchCollId(collId.value);
@@ -388,6 +391,7 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
+                                display: 'table',
                                 spatial: 0
                             };
                             searchStore.setSearchOccidArr(options, () => {
@@ -458,8 +462,13 @@ $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 
                             }
                             occurrenceStore.setCurrentOccurrenceRecord(initialOccId);
                             searchStore.initializeSearchStorage(queryId);
-                            if(Number(queryId) > 0 && (searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0)))){
-                                loadRecords();
+                            if(Number(queryId) > 0 || stArrJson){
+                                if(stArrJson){
+                                    searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
+                                }
+                                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
+                                    loadRecords();
+                                }
                             }
                         }
                         else{

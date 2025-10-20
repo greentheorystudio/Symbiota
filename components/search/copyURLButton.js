@@ -12,15 +12,14 @@ const copyURLButton = {
         const { showNotification } = useCore();
         const searchStore = useSearchStore();
 
-        const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
+        const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
         const secureOrigin = Vue.computed(() => {
             return (window.location.host === 'localhost' || window.location.protocol === 'https:');
         });
 
         function copySearchUrlToClipboard() {
-            const currentSearchTerms = Object.assign({}, searchTerms.value);
-            const searchTermsJson = JSON.stringify(currentSearchTerms);
-            let copyUrl = window.location.href + '?starr=' + searchTermsJson.replaceAll("'", '%squot;');
+            const urlPrefix = window.location.href.substring(0, window.location.href.indexOf('?'));
+            const copyUrl = urlPrefix + '?starr=' + searchTermsJson.value;
             navigator.clipboard.writeText(copyUrl)
             .then(() => {
                 showNotification('positive','URL copied successfully');

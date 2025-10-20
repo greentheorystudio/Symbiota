@@ -101,6 +101,9 @@ class SearchService {
                 elseif(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
+                elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
+                    $sql .= 'ORDER BY o.occid ';
+                }
                 else{
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
@@ -108,7 +111,7 @@ class SearchService {
                     $startIndex = 1 + ((int)$index * (int)$recCnt);
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
                 }
-                //echo '<div>Occid sql: ' . $sql . '</div>';
+                //error_log($sql);
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -976,26 +979,15 @@ class SearchService {
                     $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
                 }
                 $sql = $selectStr . $fromStr . $whereStr;
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif($spatial){
-                    $sql .= 'ORDER BY o.sciname, o.eventdate ';
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                if(array_key_exists('sortField', $options) && $options['sortField']){
                     $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
                 }
-                else{
-                    $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
+                elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
+                    $sql .= 'ORDER BY o.occid ';
                 }
                 if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
                     $startIndex = 1 + ((int)$options['index'] * (int)$options['reccnt']);
-                    $sql .= ' LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
+                    $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
                 }
                 if($options['output'] === 'geojson'){
                     $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
@@ -1106,6 +1098,7 @@ class SearchService {
         $returnArr = array();
         $returnData = array();
         $idArr = array();
+        //error_log($sql);
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             while($row = $result->fetch_assoc()){
@@ -1285,7 +1278,7 @@ class SearchService {
             }
         }
         if(array_key_exists('newOccidArr', $searchTermsArr) && count($searchTermsArr['newOccidArr']) > 0){
-            $returnStr .= 'OR (o.occid IN(' . implode(',', $searchTermsArr['newOccidArr']) . ')))';
+            $returnStr .= 'OR (o.occid IN(' . implode(',', $searchTermsArr['newOccidArr']) . '))) ';
         }
         return $returnStr;
     }
