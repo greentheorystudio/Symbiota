@@ -78,8 +78,7 @@ class SearchService {
                 $sql = 'SELECT DISTINCT o.occid ';
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
-                //error_log($sqlWhere);
-                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial, $searchTermsArr);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
                     if($searchTermsArr['imagecount'] === 'taxon'){
                         $sql .= 'GROUP BY t.tidaccepted ';
@@ -136,7 +135,7 @@ class SearchService {
                 $sql = 'SELECT DISTINCT t.tidaccepted ';
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
-                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial, $searchTermsArr);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 $sql .= 'AND t.tidaccepted IS NOT NULL ';
                 if(array_key_exists('checklist', $options) && (int)$options['checklist'] === 1){
                     $sql .= 'AND t.rankid > 140 ';
@@ -792,6 +791,9 @@ class SearchService {
         if(array_key_exists('occidArr', $searchTermsArr) && count($searchTermsArr['occidArr']) > 0){
             $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['occidArr']) . '))';
         }
+        if(array_key_exists('newOccidArr', $searchTermsArr) && count($searchTermsArr['newOccidArr']) > 0){
+            $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['newOccidArr']) . '))';
+        }
         if(array_key_exists('clid', $searchTermsArr) && $searchTermsArr['clid']){
             $sqlStr = '(v.clid = ' . (int)$searchTermsArr['clid'];
             if(!$GLOBALS['IS_ADMIN']) {
@@ -975,7 +977,7 @@ class SearchService {
                 if(!array_key_exists('occidArr', $searchTermsArr)){
                     $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                 }
-                $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial, $searchTermsArr);
+                $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
                     $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
                 }
@@ -1027,7 +1029,7 @@ class SearchService {
                 else{
                     $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
                     $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
-                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial'], $searchTermsArr);
+                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
                     $sqlFrom = $this->setFromSql($options['schema']);
                     $sqlFrom .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                     $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
@@ -1262,9 +1264,9 @@ class SearchService {
         return $returnStr;
     }
 
-    public function setWhereSql($sqlWhere, $schema, $spatial, $searchTermsArr): string
+    public function setWhereSql($sqlWhere, $schema, $spatial): string
     {
-        $returnStr = 'WHERE ' . ((array_key_exists('newOccidArr', $searchTermsArr) && count($searchTermsArr['newOccidArr']) > 0) ? '(' : '') . $sqlWhere . ' ';
+        $returnStr = 'WHERE ' . $sqlWhere;
         if($spatial || $schema === 'image'){
             if($spatial){
                 $returnStr .= ' AND (o.sciname IS NOT NULL AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
@@ -1277,9 +1279,6 @@ class SearchService {
                     $returnStr .= ' AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
                 }
             }
-        }
-        if(array_key_exists('newOccidArr', $searchTermsArr) && count($searchTermsArr['newOccidArr']) > 0){
-            $returnStr .= 'OR (o.occid IN(' . implode(',', $searchTermsArr['newOccidArr']) . '))) ';
         }
         return $returnStr;
     }
