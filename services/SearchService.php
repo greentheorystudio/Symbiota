@@ -78,6 +78,7 @@ class SearchService {
                 $sql = 'SELECT DISTINCT o.occid ';
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
+                //error_log($sqlWhere);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial, $searchTermsArr);
                 if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
                     if($searchTermsArr['imagecount'] === 'taxon'){
@@ -108,7 +109,7 @@ class SearchService {
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
                 if((int)$recCnt > 0){
-                    $startIndex = 1 + ((int)$index * (int)$recCnt);
+                    $startIndex = (int)$index * (int)$recCnt;
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
                 }
                 //error_log($sql);
@@ -986,7 +987,7 @@ class SearchService {
                     $sql .= 'ORDER BY o.occid ';
                 }
                 if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
-                    $startIndex = 1 + ((int)$options['index'] * (int)$options['reccnt']);
+                    $startIndex = (int)$options['index'] * (int)$options['reccnt'];
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
                 }
                 if($options['output'] === 'geojson'){
@@ -1263,7 +1264,7 @@ class SearchService {
 
     public function setWhereSql($sqlWhere, $schema, $spatial, $searchTermsArr): string
     {
-        $returnStr = 'WHERE ' . ((array_key_exists('newOccidArr', $searchTermsArr) && count($searchTermsArr['newOccidArr']) > 0) ? '(' : '') . $sqlWhere;
+        $returnStr = 'WHERE ' . ((array_key_exists('newOccidArr', $searchTermsArr) && count($searchTermsArr['newOccidArr']) > 0) ? '(' : '') . $sqlWhere . ' ';
         if($spatial || $schema === 'image'){
             if($spatial){
                 $returnStr .= ' AND (o.sciname IS NOT NULL AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
