@@ -11,7 +11,7 @@ const spatialRecordsTab = {
                         <table-display-button></table-display-button>
                         <image-display-button></image-display-button>
                         <template v-if="searchTermsJson.length <= 1800">
-                            <copy-url-button :page-number="pagination.page"></copy-url-button>
+                            <copy-url-button></copy-url-button>
                         </template>
                     </div>
                 </div>
@@ -119,7 +119,7 @@ const spatialRecordsTab = {
         const layersObj = Vue.inject('layersObj');
         const lazyLoadCnt = 100;
         const pageNumber = Vue.ref(1);
-        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecCnt);
+        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         const paginationFirstRecordNumber = Vue.computed(() => {
             let recordNumber = 1;
             if(Number(pageNumber.value) > 1){
@@ -160,8 +160,8 @@ const spatialRecordsTab = {
             };
         });
         const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
+        const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
-        const searchTermsPageNumber = Vue.computed(() => searchStore.getSearchTermsPageNumber);
         const selectedRecordCount = Vue.computed(() => searchStore.getSearchRecordSelectedCount);
         const selectedRecordSelectAllVal = Vue.computed(() => {
             return (selectedRecordCount.value > 0 && selectedRecordCount.value < 100) ? null : selectedRecordCount.value !== 0;
@@ -204,6 +204,7 @@ const spatialRecordsTab = {
         }
 
         function setTableRecordData(index) {
+            searchStore.updateSearchTerms('mapIndex', index);
             const options = {
                 schema: 'map',
                 spatial: 1,
@@ -216,8 +217,8 @@ const spatialRecordsTab = {
         }
 
         Vue.onMounted(() => {
-            if(Number(searchTermsPageNumber.value) > Number(pageNumber.value)){
-                pageNumber.value = searchTermsPageNumber.value;
+            if(searchTerms.value.hasOwnProperty('mapIndex')){
+                pageNumber.value = Number(searchTerms.value['mapIndex']);
             }
             setTableRecordData(pagination.value.page);
         });

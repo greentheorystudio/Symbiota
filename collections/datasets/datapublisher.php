@@ -291,7 +291,8 @@ include(__DIR__ . '/../../header.php');
 				$blockSubmitMsg = 'Archive cannot be published until occurrenceID GUID source is set<br/>';
 			}
 			if($recFlagArr['nullBasisRec']){
-				echo '<div style="margin:10px;font-weight:bold;color:red;">There are '.$recFlagArr['nullBasisRec'].' records missing basisOfRecord and will not be published. Please go to <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_eventdate=&q_catalognumber=&q_othercatalognumbers=&q_observeruid=&q_recordenteredby=&q_dateentered=&q_datelastmodified=&q_processingstatus=&q_customfield1=basisOfRecord&q_customtype1=NULL&q_customvalue1=Something&q_customfield2=&q_customtype2=EQUALS&q_customvalue2=&q_customfield3=&q_customtype3=EQUALS&q_customvalue3=&collid='.$collId.'&csmode=0&occid=&occindex=0&orderby=&orderbydir=ASC">Edit Existing Occurrence Records</a> to correct this.</div>';
+				$linkUrl = '../table.php?starr={"collid":' . $collId . ',"advanced":[{"concatenator":null,"openParens":null,"field":"basisofrecord","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}]}';
+                echo '<div style="margin:10px;font-weight:bold;color:red;">There are '.$recFlagArr['nullBasisRec']." records missing basisOfRecord and will not be published. Please go to <a href='" . $linkUrl . "'>Edit Existing Occurrence Records</a> to correct this.</div>";
 			}
 			if($dwcUri && isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && ($publishGBIF || $publishIDIGBIO)){
 				if($publishGBIF && !$datasetKey) {

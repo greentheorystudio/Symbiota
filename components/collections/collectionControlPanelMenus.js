@@ -108,12 +108,12 @@ const collectionControlPanelMenus = {
                                 </div>
                                 <div class="q-mt-sm">
                                     <a :href="(clientRoot + '/collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collectionId)">
-                                        Create A New Occurrence Record
+                                        Occurrence Editor
                                     </a>
                                 </div>
                                 <div>
-                                    <a :href="(clientRoot + '/collections/editor/occurrencetabledisplay.php?displayquery=1&collid=' + collectionId)">
-                                        View/Edit Existing Records
+                                    <a :href="(clientRoot + '/collections/table.php?collid=' + collectionId)">
+                                        Occurrence Table Viewer
                                     </a>
                                 </div>
                                 <div>
