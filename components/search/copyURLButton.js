@@ -18,7 +18,7 @@ const copyURLButton = {
         });
 
         function copySearchUrlToClipboard() {
-            const urlPrefix = window.location.href.substring(0, window.location.href.indexOf('?'));
+            const urlPrefix = window.location.href.includes('?') ? window.location.href.substring(0, window.location.href.indexOf('?')) : window.location.href;
             const copyUrl = urlPrefix + '?starr=' + searchTermsJson.value;
             navigator.clipboard.writeText(copyUrl)
             .then(() => {
