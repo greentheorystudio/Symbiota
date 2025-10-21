@@ -37,7 +37,7 @@ const occurrenceDeterminationEditorPopup = {
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
                                 <div class="col-12 col-sm-5">
-                                    <single-scientific-common-name-auto-complete :sciname="determinationData['sciname']" label="Scientific Name" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
+                                    <single-scientific-common-name-auto-complete :sciname="determinationData['sciname']" label="Scientific Name" :limit-to-options="limitIdsToThesaurus" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                                 </div>
                                 <div class="col-12 col-sm-4">
                                     <text-field-input-element label="Author" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
@@ -105,6 +105,7 @@ const occurrenceDeterminationEditorPopup = {
         const determinationData = Vue.computed(() => occurrenceStore.getDeterminationData);
         const determinationValid = Vue.computed(() => occurrenceStore.getDeterminationValid);
         const editsExist = Vue.computed(() => occurrenceStore.getDeterminationEditsExist);
+        const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -201,6 +202,7 @@ const occurrenceDeterminationEditorPopup = {
             determinationData,
             determinationValid,
             editsExist,
+            limitIdsToThesaurus,
             addDetermination,
             closePopup,
             deleteDetermination,
