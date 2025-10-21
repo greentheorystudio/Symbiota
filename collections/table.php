@@ -179,7 +179,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 </div>
             </div>
             <template v-if="displayBatchUpdatePopup">
-                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @complete:batch-update="loadRecords(true);" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
+                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @complete:batch-update="loadRecords();" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
             </template>
             <template v-if="recordInfoWindowId">
                 <occurrence-info-window-popup :occurrence-id="recordInfoWindowId" :show-popup="showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
@@ -388,12 +388,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.clearSpatialInputValues();
                     }
 
-                    function loadRecords(silent = false) {
-                        if(silent || searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                    function loadRecords(initial = false) {
+                        if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             searchStore.clearQueryOccidArr();
-                            if(!silent){
-                                showWorking('Loading...');
-                            }
+                            showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
                                 display: 'table',
@@ -403,12 +401,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             };
                             searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
-                                    if(!silent){
+                                    if(!initial){
                                         displayQueryPopup.value = false;
                                     }
                                     setTableRecordData(pageNumber.value);
                                 }
-                                else if(!silent){
+                                else{
                                     hideWorking();
                                     showNotification('negative','There were no records matching your query.');
                                 }
@@ -432,7 +430,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function processResetCriteria() {
                         if(occurrenceEditorModeActive.value){
-                            loadRecords(true);
+                            loadRecords();
                         }
                     }
 
