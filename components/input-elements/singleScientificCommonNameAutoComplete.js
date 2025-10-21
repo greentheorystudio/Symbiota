@@ -141,7 +141,7 @@ const singleScientificCommonNameAutoComplete = {
                         author: null
                     });
                 }
-                else if(props.options.length > 0){
+                else if(props.options && props.options.length > 0){
                     showNotification('negative', 'That name was not found in the taxa list');
                 }
                 else{
