@@ -508,8 +508,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 if(searchTerms.value.hasOwnProperty('tableIndex')){
                                     pageNumber.value = Number(searchTerms.value['tableIndex']);
                                 }
-                                if(Number(initialCollId) === 0){
+                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
                                     setCollection(searchTerms.value['collid']);
+                                }
+                                else{
+                                    loadRecords();
                                 }
                             }
                         }
