@@ -152,6 +152,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     :show-spatial="true"
                     @open:spatial-popup="openSpatialPopup"
                     @process:search-load-records="loadRecords"
+                    @reset:search-criteria="processResetCriteria"
                     @close:popup="displayQueryPopup = false"
                 ></search-criteria-popup>
             </template>
@@ -357,12 +358,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setCurrentOccId(occId.value);
                     });
 
-                    Vue.watch(searchTerms, () => {
-                        if(searchRecordCount.value === 0){
-                            occurrenceStore.setCurrentOccurrenceRecord(0);
-                        }
-                    });
-
                     function changeOccurrenceEntryFormat(value) {
                         occurrenceStore.setOccurrenceEntryFormat(value);
                     }
@@ -424,6 +419,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processResetCriteria() {
+                        occurrenceStore.setCurrentOccurrenceRecord(0);
                     }
 
                     function processSpatialData(data) {
@@ -512,6 +511,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         goToPreviousRecord,
                         loadRecords,
                         openSpatialPopup,
+                        processResetCriteria,
                         processSpatialData
                     }
                 }

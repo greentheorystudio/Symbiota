@@ -279,6 +279,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         :show-spatial="true"
                         @open:spatial-popup="openSpatialPopup"
                         @process:search-load-records="loadRecords"
+                        @reset:search-criteria="processResetCriteria"
                         @close:popup="setQueryPopupDisplay(false)"
                     ></search-criteria-popup>
                 </template>
@@ -447,12 +448,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const taxaCnt = Vue.ref(0);
                     const taxaDataArr = Vue.reactive([]);
 
-                    Vue.watch(searchTerms, () => {
-                        if(occurrenceEditorModeActive.value){
-                            loadRecords();
-                        }
-                    });
-
                     function changeRecordPage(props) {
                         setTableRecordData(props.pagination.page);
                     }
@@ -506,6 +501,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processResetCriteria() {
+                        if(occurrenceEditorModeActive.value){
+                            loadRecords();
+                        }
                     }
 
                     function processSpatialData(data) {
@@ -619,6 +620,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
+                        processResetCriteria,
                         processSpatialData,
                         redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId,
                         setQueryPopupDisplay

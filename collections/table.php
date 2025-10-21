@@ -190,6 +190,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     :show-spatial="true"
                     @open:spatial-popup="openSpatialPopup"
                     @process:search-load-records="loadRecords"
+                    @reset:search-criteria="processResetCriteria"
                     @close:popup="displayQueryPopup = false"
                 ></search-criteria-popup>
             </template>
@@ -368,12 +369,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const stArrJson = STARRJSON;
 
-                    Vue.watch(searchTerms, () => {
-                        if(occurrenceEditorModeActive.value){
-                            loadRecords(true);
-                        }
-                    });
-
                     Vue.watch(searchTermsSortDirection, () => {
                         sortDirection.value = searchTermsSortDirection.value;
                     });
@@ -433,6 +428,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processResetCriteria() {
+                        if(occurrenceEditorModeActive.value){
+                            loadRecords(true);
+                        }
                     }
 
                     function processSortDirectionChange(value) {
@@ -541,6 +542,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
+                        processResetCriteria,
                         processSortDirectionChange,
                         processSortFieldChange,
                         processSpatialData,

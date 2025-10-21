@@ -27,7 +27,7 @@ const spatialAnalysisModule = {
         <template v-if="mapSettings.recordInfoWindowId">
             <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
         </template>
-        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @reset:search-criteria="processResetCriteria" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
 
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
             <spatial-side-panel :show-panel="mapSettings.showSidePanel" :expanded-element="mapSettings.sidePanelExpandedElement"></spatial-side-panel>
@@ -130,15 +130,6 @@ const spatialAnalysisModule = {
             units: 'degrees'
         });
         const windowWidth = Vue.ref(0);
-
-        Vue.watch(searchTerms, () => {
-            if(Number(searchRecordCnt.value) === 0){
-                removeUserLayer('pointv');
-            }
-            if(occurrenceEditorModeActive.value){
-                loadRecords();
-            }
-        });
 
         updateMapSettings('blankDragDropSource', new ol.source.Vector({
             wrapX: true
@@ -1273,6 +1264,15 @@ const spatialAnalysisModule = {
                 }
             }
             updatePointStyle(id);
+        }
+
+        function processResetCriteria() {
+            if(Number(searchRecordCnt.value) === 0){
+                removeUserLayer('pointv');
+            }
+            if(occurrenceEditorModeActive.value){
+                loadRecords();
+            }
         }
 
         function processSymbologyKeyColorChange(color, keyValue) {
@@ -2752,6 +2752,7 @@ const spatialAnalysisModule = {
             createUncertaintyCircleFromPointRadius,
             emitClosePopup,
             loadRecords,
+            processResetCriteria,
             setQueryPopupDisplay,
             updateMapSettings,
             zoomToShapesLayer
