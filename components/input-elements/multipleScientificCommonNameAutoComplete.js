@@ -141,8 +141,11 @@ const multipleScientificCommonNameAutoComplete = {
                     });
                     processChange(currentScinameArr);
                 }
+                else if(props.options && props.options.length > 0){
+                    showNotification('negative', 'That name was not found in the taxa list');
+                }
                 else{
-                    showNotification('negative', 'That name was not found in the Taxonomic Thesaurus.');
+                    showNotification('negative', 'That name was not found in the Taxonomic Thesaurus');
                 }
             }
         }
