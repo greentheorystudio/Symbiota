@@ -929,7 +929,7 @@ const spatialAnalysisModule = {
         function loadRecords(){
             if(!selectedPolyError.value){
                 clearSelections(false);
-                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
+                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                     for(const key in symbologyArr){
                         delete symbologyArr[key];
                     }
@@ -976,7 +976,7 @@ const spatialAnalysisModule = {
                 if(props.stArrJson){
                     searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
                 }
-                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
+                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                     updateMapSettings('loadPointsEvent', true);
                     createShapesFromSearchTermsArr();
                     loadRecords();

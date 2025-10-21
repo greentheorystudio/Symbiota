@@ -389,7 +389,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function loadRecords(silent = false) {
-                        if(silent || searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
+                        if(silent || searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             searchStore.clearQueryOccidArr();
                             if(!silent){
                                 showWorking('Loading...');
@@ -452,6 +452,23 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.processSpatialPopupData(popupWindowType.value, data);
                     }
 
+                    function setCollection(collid) {
+                        if(Number(collid) > 0){
+                            occurrenceStore.setCollection(collid, false, () => {
+                                if(isEditor.value){
+                                    if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(searchTermsCollId.value)){
+                                        searchStore.updateSearchTerms('collid', collid);
+                                    }
+                                    loadRecords(true);
+                                }
+                                else{
+                                    searchStore.updateSearchTerms('db', [collid]);
+                                    displayQueryPopup.value = true;
+                                }
+                            });
+                        }
+                    }
+
                     function setCurrentUserPermissions() {
                         baseStore.getGlobalConfigValue('USER_RIGHTS', (dataStr) => {
                             const data = dataStr ? JSON.parse(dataStr) : null;
@@ -489,25 +506,17 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             if(stArrJson){
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
-                            if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid'] > 0))){
+                            if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                                 if(searchTerms.value.hasOwnProperty('tableIndex')){
                                     pageNumber.value = Number(searchTerms.value['tableIndex']);
                                 }
-                                loadRecords();
+                                if(Number(initialCollId) === 0){
+                                    setCollection(searchTerms.value['collid']);
+                                }
                             }
                         }
                         if(Number(initialCollId) > 0){
-                            occurrenceStore.setCollection(initialCollId, false, () => {
-                                if(isEditor.value){
-                                    searchStore.updateSearchTerms('collid', initialCollId);
-                                    loadRecords(true);
-                                }
-                                else{
-                                    console.log('nope');
-                                    searchStore.updateSearchTerms('db', [initialCollId]);
-                                    displayQueryPopup.value = true;
-                                }
-                            });
+                            setCollection(initialCollId);
                         }
                     });
 

@@ -136,7 +136,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $stArr = json_decode($_POST['starr'], true);
         $field = $_POST['field'];
         $oldValue = $_POST['oldValue'];
-        $newValue = $_POST['$newValue'];
+        $newValue = $_POST['newValue'];
         $matchType = $_POST['matchType'];
         echo $occurrences->batchUpdateOccurrenceData($stArr, $field, $oldValue, $newValue, $matchType);
     }
