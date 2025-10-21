@@ -378,7 +378,9 @@ class OccurrenceCleaner extends Manager{
 				'LEFT JOIN lkupcounty AS co ON s.stateid = co.stateid ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$retArr[strtoupper($r->countryname)][ucwords(strtolower($r->statename))][] = str_replace(array(' county',' co.',' co'),'',strtolower($r->countyname));
+				if($r->countryname && $r->statename && $r->countyname){
+                    $retArr[strtoupper($r->countryname)][ucwords(strtolower($r->statename))][] = str_replace(array(' county',' co.',' co'),'',strtolower($r->countyname));
+                }
 			}
 			$rs->free();
 		}

@@ -2,6 +2,7 @@ const useSearchStore = Pinia.defineStore('search', {
     state: () => ({
         baseStore: useBaseStore(),
         blankSearchTerms: {
+            collid: 0,
             db: [],
             taxontype: '1',
             usethes: true,
@@ -30,8 +31,105 @@ const useSearchStore = Pinia.defineStore('search', {
             rightLongitude: null,
             upperLatitude: null
         },
+        currentOccId: 0,
         dateId: null,
+        hiddenFieldArr: ['collid', 'institutionid', 'collectionid', 'datasetid', 'tid', 'genus', 'specificepithet', 'taxonrank', 'infraspecificepithet', 'recordedbyid', 'latestdatecollected', 'eventid', 'locationid', 'associatedoccurrences', 'collectionname', 'icon', 'tidaccepted'],
         occidLoadingIndex: 0,
+        occurrenceFieldLabels: {
+            occid: 'ID',
+            dbpk: 'dbpk',
+            basisofrecord: 'Basis Of Record',
+            occurrenceid: 'Occurrence ID',
+            catalognumber: 'Catalog Number',
+            othercatalognumbers: 'Other Catalog Numbers',
+            ownerinstitutioncode: 'Owner Code',
+            institutioncode: 'Institution Code',
+            collectioncode: 'Collection Code',
+            family: 'Family',
+            verbatimscientificname: 'Verbatim Scientific Name',
+            sciname: 'Scientific Name',
+            scientificnameauthorship: 'Author',
+            taxonremarks: 'Taxon Remarks',
+            identifiedby: 'Identified By',
+            dateidentified: 'Date Identified',
+            identificationreferences: 'Identification References',
+            identificationremarks: 'Identification Remarks',
+            identificationqualifier: 'Identification Qualifier',
+            typestatus: 'Type Status',
+            recordedby: 'Collector',
+            recordnumber: 'Collection Number',
+            associatedcollectors: 'Associated Collectors',
+            eventdate: 'Date',
+            eventtime: 'Time',
+            year: 'Year',
+            month: 'Month',
+            day: 'Day',
+            startdayofyear: 'Start Day Of Year',
+            enddayofyear: 'End Day Of Year',
+            verbatimeventdate: 'Verbatim Date',
+            habitat: 'Habitat',
+            substrate: 'Substrate',
+            fieldnotes: 'Field Notes',
+            fieldnumber: 'Field Number',
+            eventremarks: 'Event Remarks',
+            occurrenceremarks: 'Occurrence Remarks',
+            informationwithheld: 'Information Withheld',
+            datageneralizations: 'Data Generalizations',
+            associatedtaxa: 'Associated Taxa',
+            dynamicproperties: 'Dynamic Properties',
+            verbatimattributes: 'Description',
+            behavior: 'Behavior',
+            reproductivecondition: 'Reproductive Condition',
+            cultivationstatus: 'Cultivation Status',
+            establishmentmeans: 'Establishment Means',
+            lifestage: 'Life Stage',
+            sex: 'Sex',
+            individualcount: 'Individual Count',
+            samplingprotocol: 'Sampling Protocol',
+            samplingeffort: 'Sampling Effort',
+            rep: 'Rep Number',
+            preparations: 'Preparations',
+            island: 'Island',
+            islandgroup: 'Island Group',
+            waterbody: 'Water Body',
+            continent: 'Continent',
+            country: 'Country',
+            stateprovince: 'State/Province',
+            county: 'County',
+            municipality: 'Municipality',
+            locality: 'Locality',
+            localitysecurity: 'Locality Security',
+            localitysecurityreason: 'Locality Security Reason',
+            decimallatitude: 'Decimal Latitude',
+            decimallongitude: 'Decimal Longitude',
+            geodeticdatum: 'Geodetic Datum',
+            coordinateuncertaintyinmeters: 'Coordinate Uncertainty (m)',
+            footprintwkt: 'Footprint WKT',
+            coordinateprecision: 'Coordinate Precision',
+            locationremarks: 'Location Remarks',
+            verbatimcoordinates: 'Verbatim Coordinates',
+            verbatimcoordinatesystem: 'Verbatim Coordinate System',
+            georeferencedby: 'Georeferenced By',
+            georeferenceprotocol: 'Georeference Protocol',
+            georeferencesources: 'Georeference Sources',
+            georeferenceverificationstatus: 'Georeference Verification Status',
+            georeferenceremarks: 'Georeference Remarks',
+            minimumelevationinmeters: 'Elevation Minimum (m)',
+            maximumelevationinmeters: 'Elevation Maximum (m)',
+            verbatimelevation: 'Verbatim Elevation',
+            minimumdepthinmeters: 'Depth Minimum (m)',
+            maximumdepthinmeters: 'Depth Maximum (m)',
+            verbatimdepth: 'Verbatim Depth',
+            disposition: 'Disposition',
+            storagelocation: 'Storage Location',
+            language: 'Language',
+            processingstatus: 'Processing Status',
+            duplicatequantity: 'Duplicate Quantity',
+            labelproject: 'Label Project',
+            recordenteredby: 'Entered By',
+            dateentered: 'Date Entered',
+            datelastmodified: 'Date Last Modified'
+        },
         queryBuilderFieldOptions: [
             {field: 'associatedcollectors', label: 'Associated Collectors'},
             {field: 'associatedtaxa', label: 'Associated Taxa'},
@@ -97,6 +195,7 @@ const useSearchStore = Pinia.defineStore('search', {
             {field: 'othercatalognumbers', label: 'Other Catalog Numbers'},
             {field: 'ownerinstitutioncode', label: 'Owner Code'},
             {field: 'preparations', label: 'Preparations'},
+            {field: 'processingstatus', label: 'Processing Status'},
             {field: 'reproductivecondition', label: 'Reproductive Condition'},
             {field: 'samplingeffort', label: 'Sampling Effort'},
             {field: 'samplingprotocol', label: 'Sampling Protocol'},
@@ -123,7 +222,9 @@ const useSearchStore = Pinia.defineStore('search', {
         ],
         searchRecordData: [],
         searchTerms: {},
-        searchTermsPageNumber: 0,
+        searchTermsCollId: 0,
+        searchTermsRecordSortDirection: 'ASC',
+        searchTermsRecordSortField: null,
         selections: [],
         selectionsIds: [],
         solrFields: 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tid,scientificNameAuthorship,identifiedBy,' +
@@ -134,6 +235,9 @@ const useSearchStore = Pinia.defineStore('search', {
         tidLoadingIndex: 0,
     }),
     getters: {
+        getCurrentOccIdIndex(state) {
+            return Number(state.currentOccId) > 0 ? (state.queryOccidArr.indexOf(state.currentOccId.toString()) + 1) : (state.queryOccidArr.length + 1);
+        },
         getDateId(state) {
             return state.dateId;
         },
@@ -153,6 +257,37 @@ const useSearchStore = Pinia.defineStore('search', {
             dateTimeString += ((now.getSeconds() < 10)?'0':'')+now.getSeconds().toString();
             return dateTimeString;
         },
+        getFirstOccidInOccidArr(state) {
+            return state.queryOccidArr.length > 0 ? state.queryOccidArr[0] : 0;
+        },
+        getHiddenFieldArr(state) {
+            return state.hiddenFieldArr;
+        },
+        getLastOccidInOccidArr(state) {
+            return state.queryOccidArr.length > 0 ? state.queryOccidArr[(state.queryOccidArr.length - 1)] : 0;
+        },
+        getNextOccidInOccidArr(state) {
+            if(state.queryOccidArr.length > 0){
+                return (Number(state.currentOccId) > 0 && (state.queryOccidArr.indexOf(state.currentOccId.toString()) + 1) <= state.queryOccidArr.length) ? state.queryOccidArr[(state.queryOccidArr.indexOf(state.currentOccId.toString()) + 1)] : state.queryOccidArr[(state.queryOccidArr.length - 1)];
+            }
+            else{
+                return 0;
+            }
+        },
+        getOccurrenceEditorModeActive(state) {
+            return state.searchTerms.hasOwnProperty('collid') && Number(state.searchTerms.collid) > 0;
+        },
+        getOccurrenceFieldLabels(state) {
+            return state.occurrenceFieldLabels;
+        },
+        getPreviousOccidInOccidArr(state) {
+            if(state.queryOccidArr.length > 0){
+                return (Number(state.currentOccId) > 0 && (state.queryOccidArr.indexOf(state.currentOccId.toString()) - 1) <= 0) ? state.queryOccidArr[(state.queryOccidArr.indexOf(state.currentOccId.toString()) - 1)] : state.queryOccidArr[0];
+            }
+            else{
+                return 0;
+            }
+        },
         getQueryBuilderFieldOptions(state) {
             return state.queryBuilderFieldOptions;
         },
@@ -168,11 +303,28 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchOccidArr(state) {
             return state.queryOccidArr;
         },
-        getSearchRecCnt(state) {
+        getSearchRecordCount(state) {
             return state.queryOccidArr.length;
         },
         getSearchRecordData(state) {
             return state.searchRecordData;
+        },
+        getSearchRecordDataFieldArr(state) {
+            const fieldArr = [];
+            const returnArr = [];
+            state.searchRecordData.forEach((record) => {
+                Object.keys(state.occurrenceFieldLabels).forEach((field) => {
+                    if(!fieldArr.includes(field) && !state.hiddenFieldArr.includes(field) && (state.searchTermsRecordSortField === field || record[field])){
+                        fieldArr.push(field);
+                    }
+                });
+            });
+            Object.keys(state.occurrenceFieldLabels).forEach((field) => {
+                if(fieldArr.includes(field)){
+                    returnArr.push(field);
+                }
+            });
+            return returnArr;
         },
         getSearchRecordDataIdArr(state) {
             const returnArr = [];
@@ -192,15 +344,22 @@ const useSearchStore = Pinia.defineStore('search', {
         getSearchTerms(state) {
             return state.searchTerms;
         },
+        getSearchTermsCollId(state) {
+            return state.searchTermsCollId;
+        },
         getSearchTermsJson(state) {
             return JSON.stringify(state.searchTerms);
         },
-        getSearchTermsPageNumber(state) {
-            return state.searchTermsPageNumber;
+        getSearchTermsRecordSortDirection(state) {
+            return state.searchTermsRecordSortDirection;
+        },
+        getSearchTermsRecordSortField(state) {
+            return state.searchTermsRecordSortField;
         },
         getSearchTermsValid(state) {
             let populated = false;
             if(
+                (state.searchTerms.hasOwnProperty('newOccidArr') && state.searchTerms['newOccidArr'].length > 0) ||
                 (state.searchTerms.hasOwnProperty('db') && state.searchTerms['db'].length > 0) ||
                 (state.searchTerms.hasOwnProperty('clid') && state.searchTerms['clid']) ||
                 (state.searchTerms.hasOwnProperty('taxa') && state.searchTerms['taxa']) ||
@@ -265,6 +424,12 @@ const useSearchStore = Pinia.defineStore('search', {
         }
     },
     actions: {
+        addNewOccidToOccidArrs(occid) {
+            const newArr = (this.searchTerms.hasOwnProperty('newOccidArr') && this.searchTerms['newOccidArr'].length > 0) ? this.searchTerms['newOccidArr'].slice() : [];
+            this.queryOccidArr.push(occid.toString());
+            newArr.push(occid);
+            this.updateSearchTerms('newOccidArr', newArr);
+        },
         addRecordToSelections(record) {
             this.selections.push(record);
             this.selectionsIds.push(Number(record.occid));
@@ -279,11 +444,16 @@ const useSearchStore = Pinia.defineStore('search', {
         clearQueryOccidArr() {
             this.queryOccidArr.length = 0;
             this.queryTaxaArr.length = 0;
+            this.searchRecordData.length = 0;
             this.occidLoadingIndex = 0;
             this.tidLoadingIndex = 0;
         },
         clearSearchTerms() {
+            this.clearQueryOccidArr();
             this.searchTerms = Object.assign({}, this.blankSearchTerms);
+            if(Number(this.searchTermsCollId) > 0){
+                this.searchTerms['collid'] = this.searchTermsCollId;
+            }
             this.updateLocalStorageSearchTerms();
         },
         clearSelections() {
@@ -349,14 +519,28 @@ const useSearchStore = Pinia.defineStore('search', {
             }
             else{
                 this.searchTerms = Object.assign({}, stArr[this.dateId.toString()][this.queryId.toString()]);
+                if(this.searchTerms.hasOwnProperty('sortDirection')){
+                    this.searchTermsRecordSortDirection = this.searchTerms['sortDirection'];
+                }
+                if(this.searchTerms.hasOwnProperty('sortField')){
+                    this.searchTermsRecordSortField = this.searchTerms['sortField'];
+                }
+                if(this.searchTerms.hasOwnProperty('collid') && Number(this.searchTerms['collid']) > 0){
+                    this.searchTermsCollId = Number(this.searchTerms['collid']);
+                }
             }
         },
         loadSearchTermsArrFromJson(json) {
             const searchTermsArr = JSON.parse(localStorage['searchTermsArr']);
             const newSearchTerms = JSON.parse(json);
-            if(newSearchTerms.hasOwnProperty('recordPage')){
-                this.searchTermsPageNumber = newSearchTerms.recordPage;
-                delete newSearchTerms['recordPage'];
+            if(newSearchTerms.hasOwnProperty('sortField')){
+                this.searchTermsRecordSortField = newSearchTerms.sortField;
+                this.searchTermsRecordSortDirection = newSearchTerms.sortDirection;
+                delete newSearchTerms['sortField'];
+                delete newSearchTerms['sortDirection'];
+            }
+            if(newSearchTerms.hasOwnProperty('collid')){
+                this.searchTermsCollId = Number(newSearchTerms.collid);
             }
             this.searchTerms = Object.assign({}, newSearchTerms);
             searchTermsArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, newSearchTerms);
@@ -465,6 +649,15 @@ const useSearchStore = Pinia.defineStore('search', {
                 }
             }
         },
+        redirectToOccurrenceEditorWithQueryId(occid, collid) {
+            const baseStore = useBaseStore();
+            if(this.getOccurrenceEditorModeActive){
+                window.location.href = baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php?queryId=' + this.queryId + '&occid=' + occid + '&collid=' + collid;
+            }
+            else{
+                window.open((baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php?occid=' + occid + '&collid=' + collid), '_blank');
+            }
+        },
         redirectWithQueryId(url, addlProp = null, newTab = false) {
             const baseStore = useBaseStore();
             if(newTab){
@@ -472,6 +665,20 @@ const useSearchStore = Pinia.defineStore('search', {
             }
             else{
                 window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+            }
+        },
+        removeOccidFromOccidArrs(occid) {
+            const queryIndex = this.queryOccidArr.indexOf(occid.toString());
+            if(queryIndex > -1){
+                this.queryOccidArr.splice(queryIndex, 1);
+            }
+            if(this.searchTerms.hasOwnProperty('newOccidArr') && this.searchTerms['newOccidArr'].length > 0){
+                const newArr = this.searchTerms['newOccidArr'].slice();
+                const starrIndex = newArr.indexOf(occid);
+                if(starrIndex > -1){
+                    newArr.splice(starrIndex, 1);
+                }
+                this.updateSearchTerms('newOccidArr', newArr);
             }
         },
         removeRecordFromSelections(id) {
@@ -491,6 +698,9 @@ const useSearchStore = Pinia.defineStore('search', {
                     this.addRecordToSelections(record);
                 }
             });
+        },
+        setCurrentOccId(value) {
+            this.currentOccId = value;
         },
         setLocalStorageSearchTerms() {
             const newBlankSearchTerms = {};
@@ -530,6 +740,14 @@ const useSearchStore = Pinia.defineStore('search', {
                 }
             });
         },
+        setSearchRecordData(options, callback = null) {
+            this.processSearch(options, (res) => {
+                this.searchRecordData = this.setSelectedRecords(res);
+                if(callback){
+                    callback(res.length);
+                }
+            });
+        },
         setSearchTaxaArr(callback){
             const loadingCnt = 5000;
             const options = {
@@ -552,13 +770,11 @@ const useSearchStore = Pinia.defineStore('search', {
                 }
             });
         },
-        setSearchRecordData(options, callback = null) {
-            this.processSearch(options, (res) => {
-                this.searchRecordData = this.setSelectedRecords(res);
-                if(callback){
-                    callback(res.length);
-                }
-            });
+        setSearchTermsRecordSortDirection(value) {
+            this.searchTermsRecordSortDirection = value;
+        },
+        setSearchTermsRecordSortField(value) {
+            this.searchTermsRecordSortField = value;
         },
         setSelectedRecords(recordArr) {
             recordArr.forEach((record) => {
@@ -586,6 +802,9 @@ const useSearchStore = Pinia.defineStore('search', {
         updateSearchTerms(prop, value) {
             if(value && value !== ''){
                 this.searchTerms[prop] = value;
+                if(prop === 'collid'){
+                    this.searchTermsCollId = Number(value);
+                }
             }
             else{
                 delete this.searchTerms[prop];
