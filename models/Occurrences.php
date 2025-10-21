@@ -179,7 +179,12 @@ class Occurrences{
                 $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
                 $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence', false);
                 $sql = str_replace('FROM', 'UPDATE', $fromStr);
-                $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ' ';
+                if($matchType === 'part'){
+                    $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = REPLACE(' . SanitizerService::cleanInStr($this->conn, $field) . ', "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '", ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ') ';
+                }
+                else{
+                    $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ' ';
+                }
                 if($matchType === 'part'){
                     $sql .= $whereStr . ' AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
                 }
