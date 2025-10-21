@@ -142,7 +142,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         locationStore: useOccurrenceLocationStore(),
         mediaStore: useMediaStore(),
         occId: null,
-        occidArr: [],
         occurrenceData: {},
         occurrenceEditData: {},
         occurrenceEntryFormat: 'specimen',
@@ -208,9 +207,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getCrowdSourceQueryFieldOptions(state) {
             return state.crowdSourceQueryFieldOptions;
-        },
-        getCurrentRecordIndex(state) {
-            return (state.occidArr.indexOf(state.occId) + 1);
         },
         getDeterminationArr(state) {
             return state.determinationStore.getDeterminationArr;
@@ -308,12 +304,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getMediaArr(state) {
             return state.mediaStore.getMediaArr;
         },
-        getNewRecordExisting(state) {
-            return state.occidArr.includes(0);
-        },
-        getRecordCount(state) {
-            return state.occidArr.length;
-        },
         getOccId(state) {
             return state.occId;
         },
@@ -390,6 +380,26 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         }
     },
     actions: {
+        batchUpdateOccurrenceData(starr, field, oldValue, newValue, matchType, callback) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollId.toString());
+            formData.append('starr', JSON.stringify(starr));
+            formData.append('field', field);
+            formData.append('oldValue', oldValue.toString());
+            formData.append('newValue', newValue.toString());
+            formData.append('matchType', matchType.toString());
+            formData.append('action', 'batchUpdateOccurrenceData');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         clearOccurrenceData() {
             this.occurrenceData = Object.assign({}, this.blankOccurrenceRecord);
             this.isLocked = false;
@@ -455,10 +465,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             .then((res) => {
                 callback(Number(res));
                 if(res && Number(res) > 0){
-                    if(this.occidArr[(this.occidArr.length - 1)] === 0){
-                        this.occidArr.splice((this.occidArr.length - 1), 1);
-                    }
-                    this.occidArr.push(Number(res));
                     if(this.getOccurrenceMofEditsExist){
                         this.processMofEditData('occurrence', null, Number(res));
                     }
@@ -524,21 +530,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 body: formData
             })
             .then((response) => {
-                response.text().then((val) => {
-                    if(this.occidArr.includes(Number(occid))){
-                        const index = this.occidArr.indexOf(Number(occid));
-                        this.occidArr.splice(index, 1);
-                    }
-                    if(this.occId === Number(occid)){
-                        if(this.occidArr.length > 0){
-                            this.setCurrentOccurrenceRecord(this.occidArr[(this.occidArr.length - 1)]);
-                        }
-                        else{
-                            this.setCurrentOccurrenceRecord(0);
-                        }
-                    }
-                    callback(Number(val));
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((val) => {
+                if(this.occId === Number(occid)){
+                    this.setCurrentOccurrenceRecord(0);
+                }
+                callback(Number(val));
             });
         },
         evaluateOccurrenceForDeletion(occid, callback) {
@@ -551,61 +549,81 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 body: formData
             })
             .then((response) => {
-                response.json().then((data) => {
-                    callback(data);
-                });
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                callback(data);
+            });
+        },
+        getBatchUpdateCount(starr, field, oldValue, matchType, callback) {
+            const formData = new FormData();
+            formData.append('collid', this.getCollId.toString());
+            formData.append('starr', JSON.stringify(starr));
+            formData.append('field', field);
+            formData.append('oldValue', oldValue.toString());
+            formData.append('matchType', matchType.toString());
+            formData.append('action', 'getBatchUpdateCount');
+            fetch(occurrenceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
             });
         },
         getCoordinateVerificationData(callback) {
             if(this.occurrenceEditData['decimallatitude'] && this.occurrenceEditData['decimallongitude']){
                 const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.occurrenceEditData['decimallatitude'].toString() + '&lon=' + this.occurrenceEditData['decimallongitude'].toString() + '&format=json';
                 fetch(url)
-                    .then((response) => {
-                        return response.ok ? response.json() : null;
-                    })
-                    .then((data) => {
-                        const returnData = {
-                            valid: false,
-                            address: false,
-                            country: null,
-                            state: null,
-                            county: null
-                        };
-                        if(data.hasOwnProperty('address')){
-                            returnData.address = true;
-                            returnData.country = data.address.country;
-                            returnData.state = data.address.state;
-                            returnData.valid = true;
-                            if((!this.occurrenceEditData['country'] || this.occurrenceEditData['country'] === '') && returnData.country && returnData.country !== ''){
-                                this.updateOccurrenceEditData('country', returnData.country);
-                            }
-                            if(this.occurrenceEditData['country'] && returnData.country && this.occurrenceEditData['country'] !== '' && this.occurrenceEditData['country'].toLowerCase() !== returnData.country.toLowerCase()){
-                                if(this.occurrenceEditData['country'].toLowerCase() !== 'usa' && this.occurrenceEditData['country'].toLowerCase() !== 'united states of america' && returnData.country.toLowerCase() !== 'united states'){
-                                    returnData.valid = false;
-                                }
-                            }
-                            if(returnData.state && returnData.state !== ''){
-                                if(this.occurrenceEditData['stateprovince'] && this.occurrenceEditData['stateprovince'] !== '' && this.occurrenceEditData['stateprovince'].toLowerCase() !== returnData.state.toLowerCase()){
-                                    returnData.valid = false;
-                                }
-                                else{
-                                    this.updateOccurrenceEditData('stateprovince', returnData.state);
-                                }
-                            }
-                            if(data.address.county && data.address.county !== ''){
-                                let coordCountyIn = data.address.county.replace(' County', '');
-                                coordCountyIn = coordCountyIn.replace(' Parish', '');
-                                returnData.county = coordCountyIn;
-                                if(this.occurrenceEditData['county'] && this.occurrenceEditData['county'] !== '' && this.occurrenceEditData['county'].toLowerCase() !== coordCountyIn.toLowerCase()){
-                                    returnData.valid = false;
-                                }
-                                else{
-                                    this.updateOccurrenceEditData('county', coordCountyIn);
-                                }
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    const returnData = {
+                        valid: false,
+                        address: false,
+                        country: null,
+                        state: null,
+                        county: null
+                    };
+                    if(data.hasOwnProperty('address')){
+                        returnData.address = true;
+                        returnData.country = data.address.country;
+                        returnData.state = data.address.state;
+                        returnData.valid = true;
+                        if((!this.occurrenceEditData['country'] || this.occurrenceEditData['country'] === '') && returnData.country && returnData.country !== ''){
+                            this.updateOccurrenceEditData('country', returnData.country);
+                        }
+                        if(this.occurrenceEditData['country'] && returnData.country && this.occurrenceEditData['country'] !== '' && this.occurrenceEditData['country'].toLowerCase() !== returnData.country.toLowerCase()){
+                            if(this.occurrenceEditData['country'].toLowerCase() !== 'usa' && this.occurrenceEditData['country'].toLowerCase() !== 'united states of america' && returnData.country.toLowerCase() !== 'united states'){
+                                returnData.valid = false;
                             }
                         }
-                        callback(returnData);
-                    });
+                        if(returnData.state && returnData.state !== ''){
+                            if(this.occurrenceEditData['stateprovince'] && this.occurrenceEditData['stateprovince'] !== '' && this.occurrenceEditData['stateprovince'].toLowerCase() !== returnData.state.toLowerCase()){
+                                returnData.valid = false;
+                            }
+                            else{
+                                this.updateOccurrenceEditData('stateprovince', returnData.state);
+                            }
+                        }
+                        if(data.address.county && data.address.county !== ''){
+                            let coordCountyIn = data.address.county.replace(' County', '');
+                            coordCountyIn = coordCountyIn.replace(' Parish', '');
+                            returnData.county = coordCountyIn;
+                            if(this.occurrenceEditData['county'] && this.occurrenceEditData['county'] !== '' && this.occurrenceEditData['county'].toLowerCase() !== coordCountyIn.toLowerCase()){
+                                returnData.valid = false;
+                            }
+                            else{
+                                this.updateOccurrenceEditData('county', coordCountyIn);
+                            }
+                        }
+                    }
+                    callback(returnData);
+                });
             }
         },
         getNearbyLocations(callback) {
@@ -629,15 +647,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 callback(data);
             });
         },
-        goToFirstRecord() {
-            this.setCurrentOccurrenceRecord(this.occidArr[0]);
-        },
-        goToLastRecord() {
-            this.setCurrentOccurrenceRecord(this.occidArr[(this.occidArr.length - 1)]);
-        },
-        goToNextRecord() {
-            this.setCurrentOccurrenceRecord(this.occidArr[this.getCurrentRecordIndex]);
-        },
         goToNewOccurrenceRecord(carryLocation = false, carryEvent = false) {
             this.setCurrentOccurrenceRecord(0);
             if(carryLocation){
@@ -653,9 +662,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             else{
                 this.setCurrentCollectingEventRecord(0);
             }
-        },
-        goToPreviousRecord() {
-            this.setCurrentOccurrenceRecord(this.occidArr[(this.getCurrentRecordIndex - 2)]);
         },
         makeDeterminationCurrent(callback = null) {
             this.determinationStore.makeDeterminationCurrent(this.getCollId, (res) => {
@@ -867,7 +873,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setCollectingEventFields() {
             this.collectingEventStore.setCollectingEventFields();
         },
-        setCollection(collid, callback = null) {
+        setCollection(collid, forceEditor = true, callback = null) {
             this.collectionStore.setCollection(collid, () => {
                 if(this.getIsEditor){
                     this.occurrenceEntryFormat = this.getCollectionData['datarecordingmethod'];
@@ -886,7 +892,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         callback();
                     }
                 }
-                else{
+                else if(forceEditor){
                     window.location.href = this.getClientRoot + '/index.php';
                 }
             });
@@ -911,9 +917,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         setCurrentOccurrenceRecord(occid, callback = null) {
             this.occId = Number(occid);
-            if(!this.occidArr.includes(this.occId)){
-                this.occidArr.push(this.occId);
-            }
             this.clearOccurrenceData();
             if(this.occId > 0){
                 this.occurrenceEditData = Object.assign({}, {});
@@ -1021,7 +1024,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             })
             .then((res) => {
                 this.isLocked = Number(res) === 1;
-                if(!this.isLocked){
+                if(!this.isLocked && Number(this.occId) > 0){
                     const formData = new FormData();
                     formData.append('occid', this.occId.toString());
                     formData.append('action', 'getOccurrenceDataArr');
@@ -1042,7 +1045,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             this.setChecklistArr();
                             this.geneticLinkStore.setGeneticLinkArr(this.occId);
                             if(this.getCollId !== Number(this.occurrenceData.collid)){
-                                this.setCollection(this.occurrenceData.collid, callback);
+                                this.setCollection(this.occurrenceData.collid, true, callback);
                             }
                             else{
                                 this.occurrenceEditData = Object.assign({}, this.occurrenceData);

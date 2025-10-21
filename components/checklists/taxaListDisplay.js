@@ -184,7 +184,6 @@ const taxaListDisplay = {
         }
 
         function getTaxonNotesStr(taxon) {
-            console.log(taxon);
             return taxon['notes'];
         }
 

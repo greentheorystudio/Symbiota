@@ -1,9 +1,5 @@
 const searchCriteriaPopup = {
     props: {
-        collectionId: {
-            type: Number,
-            default: null
-        },
         popupType: {
             type: String,
             default: 'search'
@@ -29,7 +25,7 @@ const searchCriteriaPopup = {
                     <div :style="contentStyle" class="overflow-auto">
                         <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                             <q-tab name="criteria" label="Criteria" no-caps></q-tab>
-                            <q-tab v-if="!collectionId && collectionArr.length > 1" name="collections" label="Collections" no-caps></q-tab>
+                            <q-tab v-if="(!searchTerms.hasOwnProperty('collid') || Number(searchTerms['collid']) === 0) && collectionArr.length > 1" name="collections" label="Collections" no-caps></q-tab>
                             <q-tab name="advanced" label="Advanced" no-caps></q-tab>
                             <q-tab v-if="mofExtensionFieldsArr.length > 0" name="mofextension" label="Data Extension" no-caps></q-tab>
                         </q-tabs>
@@ -38,10 +34,10 @@ const searchCriteriaPopup = {
                             <q-tab-panel class="q-pa-none" name="criteria">
                                 <div class="column q-pa-sm q-col-gutter-sm">
                                     <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
-                                    <search-criteria-block ref="searchCriteriaBlockRef" :collection-id="collectionId" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup" @click:enter="processEnterClick"></search-criteria-block>
+                                    <search-criteria-block ref="searchCriteriaBlockRef" :show-spatial="showSpatial" @open:spatial-popup="openSpatialPopup" @click:enter="processEnterClick"></search-criteria-block>
                                 </div>
                             </q-tab-panel>
-                            <q-tab-panel class="q-pa-none" v-if="!collectionId && collectionArr.length > 1" name="collections">
+                            <q-tab-panel class="q-pa-none" v-if="(!searchTerms.hasOwnProperty('collid') || Number(searchTerms['collid']) === 0) && collectionArr.length > 1" name="collections">
                                 <div class="column q-pa-sm q-col-gutter-sm">
                                     <search-criteria-popup-tab-controls :popup-type="popupType" @reset:search-criteria="resetCriteria" @process:search-load-records="loadRecords" @process:build-checklist="buildChecklist"></search-criteria-popup-tab-controls>
                                     <search-collections-block :collection-arr="collectionArr"></search-collections-block>
@@ -82,11 +78,21 @@ const searchCriteriaPopup = {
         const contentStyle = Vue.ref(null);
         const mofExtensionFieldsArr = Vue.reactive([]);
         const searchCriteriaBlockRef = Vue.ref(null);
+        const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
         const tab = Vue.ref('criteria');
 
         Vue.watch(contentRef, () => {
             setContentStyle();
+        });
+
+        Vue.watch(searchTerms, () => {
+            if(searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0){
+                setMoFExtensionFieldArrFromCollectionId();
+            }
+            else{
+                setMoFExtensionFieldArrFromGlobalArr();
+            }
         });
 
         function buildChecklist() {
@@ -156,8 +162,9 @@ const searchCriteriaPopup = {
         }
 
         function setMoFExtensionFieldArrFromCollectionId() {
+            mofExtensionFieldsArr.length = 0;
             const formData = new FormData();
-            formData.append('collid', props.collectionId.toString());
+            formData.append('collid', searchTerms.value['collid'].toString());
             formData.append('action', 'getCollectionInfoArr');
             fetch(collectionApiUrl, {
                 method: 'POST',
@@ -190,6 +197,7 @@ const searchCriteriaPopup = {
         }
 
         function setMoFExtensionFieldArrFromGlobalArr() {
+            mofExtensionFieldsArr.length = 0;
             baseStore.getGlobalConfigValue('MOF_SEARCH_FIELD_JSON', (dataStr) => {
                 const data = dataStr ? JSON.parse(dataStr) : null;
                 if(data && data.length > 0){
@@ -214,7 +222,7 @@ const searchCriteriaPopup = {
                     processEnterClick();
                 }
             });
-            if(Number(props.collectionId) > 0){
+            if(searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0){
                 setMoFExtensionFieldArrFromCollectionId();
             }
             else{
@@ -230,6 +238,7 @@ const searchCriteriaPopup = {
             contentStyle,
             mofExtensionFieldsArr,
             searchCriteriaBlockRef,
+            searchTerms,
             tab,
             buildChecklist,
             closePopup,

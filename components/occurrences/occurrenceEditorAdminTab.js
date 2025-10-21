@@ -101,6 +101,7 @@ const occurrenceEditorAdminTab = {
         const baseStore = useBaseStore();
         const collectionStore = useCollectionStore();
         const occurrenceStore = useOccurrenceStore();
+        const searchStore = useSearchStore();
 
         const checklistArr = Vue.computed(() => occurrenceStore.getChecklistArr);
         const clientRoot = baseStore.getClientRoot;
@@ -144,7 +145,8 @@ const occurrenceEditorAdminTab = {
                             showNotification('negative', ('An error occurred while deleting this record.'));
                         }
                         else{
-                            window.location.href = (clientRoot + '/collections/misc/collprofiles.php?collid=' + collId.value);
+                            searchStore.removeOccidFromOccidArrs(occId.value);
+                            occurrenceStore.setCurrentOccurrenceRecord(searchStore.getPreviousOccidInOccidArr);
                         }
                     });
                 }

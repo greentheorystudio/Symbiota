@@ -27,10 +27,6 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS'
                 <div style="float:left;">
                     Data Set:
                 </div>
-                <div style="float:left;height:50px">
-                    <input type="radio" name="cset" value="iso-8859-1" <?php echo (!$cSet || $cSet === 'iso88591'?'checked':''); ?> /> ISO-8859-1 (western)<br/>
-                    <input type="radio" name="cset" value="utf-8" <?php echo ($cSet === 'utf8'?'checked':''); ?> /> UTF-8 (unicode)
-                </div>
                 <div style="clear:both;">
                     <div style="float:left">
                         <input type="hidden" name="collid" value="<?php echo $collid; ?>" />
