@@ -1687,7 +1687,7 @@ function getPointStyle(feature) {
     return style;
 }
 
-function getSearchRecCnt(callback){
+function getSearchRecordCount(callback){
     let params;
     let url;
     let http;

@@ -183,7 +183,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 										<form name="countrycleanform" method="post" action="politicalunits.php" onsubmit="return verifyCountryCleanForm(this)">
 											<b><?php echo $countryName; ?></b>
 											<?php echo ' <span title="Number of Occurrences">('.$countryCnt.')</span>'; ?>
-											<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=country&q_customtype1=EQUALS&q_customvalue1=<?php echo urlencode($countryName).'&collid='.$collid; ?>" target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
+											<a href='../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>&starr={"collid":<?php echo $collid; ?>,"country":"<?php echo $countryName; ?>"}' target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 											<select name="newcountry" style="width:200px;">
 												<option value="">Replace with...</option>
                                                 <option value="">-------------------------</option>
@@ -223,7 +223,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 										<form name="nullcountryform" method="post" action="politicalunits.php" onsubmit="return verifyNullCountryForm(this)">
 											<b><?php echo $stateName; ?></b>
 											<?php echo ' <span title="Number of Occurrences">('.$stateCnt.')</span>'; ?>
-											<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=country&q_customtype1=NULL&q_customfield2=stateProvince&q_customtype2=EQUALS&q_customvalue2=<?php echo urlencode($stateName).'&collid='.$collid; ?>" target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
+											<a href='../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>&starr={"collid":<?php echo $collid; ?>,"advanced":[{"concatenator":null,"openParens":null,"field":"country","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}],"state":"<?php echo $stateName; ?>"}' target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 											<select name="country" style="width:200px;">
 												<option value="">Assign Country...</option>
 												<option value="">-------------------------</option>
@@ -265,7 +265,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 											<form name="statecleanform" method="post" action="politicalunits.php" onsubmit="return verifyStateCleanForm(this)">
 												<b><?php echo $stateName; ?></b>
 												<?php echo ' <span title="Number of Occurrences">('.$stateCnt.')</span>'; ?>
-												<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=stateProvince&q_customtype1=EQUALS&q_customvalue1=<?php echo urlencode($stateName).'&collid='.$collid; ?>" target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
+												<a href='../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>&starr={"collid":<?php echo $collid; ?>,"state":"<?php echo $stateName; ?>"}' target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 												<?php 
 												if(array_key_exists($countryValue,$goodStateArr)){
 													?>
@@ -316,7 +316,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 											<form name="nullstateform" method="post" action="politicalunits.php" onsubmit="return verifyNullStateForm(this)">
 												<b><?php echo $countyName; ?></b>
 												<?php echo ' <span title="Number of Occurrences">('.$countyCnt.')</span>'; ?>
-												<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=county&q_customtype2=EQUALS&q_customvalue2=<?php echo urlencode($countyName).'&collid='.$collid; ?>" target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
+												<a href='../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>&starr={"collid":<?php echo $collid; ?>,"advanced":[{"concatenator":null,"openParens":null,"field":"stateprovince","dataType":null,"operator":"IS NULL","value":null,"closeParens":null},{"concatenator":"AND","openParens":null,"field":"county","dataType":null,"operator":"EQUALS","value":"<?php echo $countyName; ?>","closeParens":null}]}' target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 												<?php 
 												if(array_key_exists($countryName,$goodStateArr)){
 													?>
@@ -372,7 +372,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 												<form name="countycleanform" method="post" action="politicalunits.php" onsubmit="return verifyCountyCleanForm(this)">
 													<b><?php echo $countyName; ?></b>
 													<?php echo ' <span title="Number of Occurrences">('.$countyCnt.')</span>'; ?>
-													<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=county&q_customtype1=EQUALS&q_customvalue1=<?php echo urlencode($countyName).'&collid='.$collid; ?>" target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
+													<a href='../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>&starr={"collid":<?php echo $collid; ?>,"county":"<?php echo $countyName; ?>"}' target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 													<?php 
 													if(array_key_exists($stateTestStr,$goodCountyArr)){
 														?>
@@ -428,7 +428,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 												<form name="nullstateform" method="post" action="politicalunits.php" onsubmit="return verifyNullCountyForm(this)">
 													<b><?php echo $localityName; ?></b>
 													<?php echo ' <span title="Number of Occurrences">('.$localityCnt.')</span>'; ?>
-													<a href="../editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=county&q_customtype1=NULL&q_customfield2=locality&q_customtype2=EQUALS&q_customvalue2=<?php echo urlencode($localityName).'&collid='.$collid; ?>" target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
+													<a href='../editor/occurrenceeditor.php?collid=<?php echo $collid; ?>&starr={"collid":<?php echo $collid; ?>,"advanced":[{"concatenator":null,"openParens":null,"field":"county","dataType":null,"operator":"IS NULL","value":null,"closeParens":null},{"concatenator":"AND","openParens":null,"field":"locality","dataType":null,"operator":"EQUALS","value":"<?php echo urlencode($localityName); ?>","closeParens":null}]}' target="_blank"><i style="height:15px;width:15px;" class="far fa-edit"></i></a>
 													<?php 
 													if(array_key_exists($stateTestStr,$goodCountyArr)){
 														?>

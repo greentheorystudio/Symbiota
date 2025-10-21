@@ -58,7 +58,7 @@ const spatialPointVectorToolsTab = {
 
         const searchStore = useSearchStore();
 
-        const searchRecordCnt = Vue.computed(() => searchStore.getSearchRecCnt);
+        const searchRecordCnt = Vue.computed(() => searchStore.getSearchRecordCount);
         const selectedScope = Vue.ref({value: 'all', label: 'All Points'});
         const selections = searchStore.getSelections;
         const wgs84Projection = new ol.proj.Projection({

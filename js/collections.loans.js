@@ -345,7 +345,6 @@ function inIdentCheck(collid){
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if(http.readyState === 4 && http.status === 200) {
-			console.log(http.responseText);
 			if(http.responseText){
 				loaninidentelement.value="";
 				alert("There is already a loan with that identifier, please enter a different one.");
@@ -369,7 +368,6 @@ function exIdentCheck(collid){
 	http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	http.onreadystatechange = function() {
 		if(http.readyState === 4 && http.status === 200) {
-			console.log(http.responseText);
 			if(http.responseText){
 				exidentelement.value="";
 				alert("There is already a transaction with that identifier, please enter a different one.");
