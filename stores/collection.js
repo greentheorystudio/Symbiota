@@ -35,6 +35,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             bibliographiccitation: null,
             accessrights: null,
             configjson: null,
+            configuredData: null,
             ispublic: null
         },
         collectionArr: [],
@@ -127,6 +128,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getInstallationKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('installationKey')) ? state.collectionData['aggkeysstr']['installationKey'] : null);
+        },
+        getLimitIdsToThesaurus(state) {
+            return (state.collectionData['configuredData'] && state.collectionData['configuredData'].hasOwnProperty('limitIdsToThesaurus') && Number(state.collectionData['configuredData']['limitIdsToThesaurus']) === 1);
         },
         getOccurrenceFieldControlledVocabularies(state) {
             return state.occurrenceFieldControlledVocabularies;
