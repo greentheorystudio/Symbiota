@@ -390,6 +390,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const lazyLoadCnt = 100;
+                    const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
                     const pageNumber = Vue.ref(1);
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const paginationFirstRecordNumber = Vue.computed(() => {
@@ -445,6 +446,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const tab = Vue.ref('occurrence');
                     const taxaCnt = Vue.ref(0);
                     const taxaDataArr = Vue.reactive([]);
+
+                    Vue.watch(searchTerms, () => {
+                        if(occurrenceEditorModeActive.value){
+                            loadRecords();
+                        }
+                    });
 
                     function changeRecordPage(props) {
                         setTableRecordData(props.pagination.page);

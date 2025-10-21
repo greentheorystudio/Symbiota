@@ -100,6 +100,7 @@ const spatialAnalysisModule = {
         });
         const mapSettings = Vue.shallowReactive(Object.assign({}, spatialStore.getMapSettings));
         let mapView = null;
+        const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
         const pointInteraction = Vue.computed(() => setPointInteraction());
         let popupCloser = Vue.ref(false);
         let popupContent = Vue.ref('');
@@ -112,6 +113,7 @@ const spatialAnalysisModule = {
         const rasterLayersArr = Vue.shallowReactive([
             {value: 'none', label: 'None'}
         ]);
+        const searchRecordCnt = Vue.computed(() => searchStore.getSearchRecordCount);
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const selectedPolyError = Vue.ref(false);
         const selectInteraction = Vue.computed(() => setSelectInteraction());
@@ -128,6 +130,15 @@ const spatialAnalysisModule = {
             units: 'degrees'
         });
         const windowWidth = Vue.ref(0);
+
+        Vue.watch(searchTerms, () => {
+            if(Number(searchRecordCnt.value) === 0){
+                removeUserLayer('pointv');
+            }
+            if(occurrenceEditorModeActive.value){
+                loadRecords();
+            }
+        });
 
         updateMapSettings('blankDragDropSource', new ol.source.Vector({
             wrapX: true

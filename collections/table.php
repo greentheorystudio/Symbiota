@@ -69,7 +69,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 </div>
             </div>
             <div class="q-mb-sm row justify-start q-col-gutter-md self-center">
-                <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
+                <div class="q-mr-lg row justify-start q-gutter-sm">
                     <div class="row justify-start self-center q-mr-lg">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" />
                     </div>
@@ -92,7 +92,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         <copy-url-button></copy-url-button>
                     </template>
                 </div>
-                <div class="row justify-start">
+                <div v-if="recordDataArr.length > 0" class="row justify-start">
                     <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
 
                     <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);"></q-btn>
@@ -137,6 +137,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 </div>
             </template>
             <template v-else>
+                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                 <div class="q-pa-md row justify-center text-h6 text-bold">
                     There are no records to display. Click the Search button to enter search criteria.
                 </div>
@@ -303,6 +304,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const lazyLoadCnt = 200;
+                    const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
                     const occurrenceFieldLabels = Vue.computed(() => searchStore.getOccurrenceFieldLabels);
                     const pageNumber = Vue.ref(1);
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
@@ -365,6 +367,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const sortField = Vue.ref(null);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const stArrJson = STARRJSON;
+
+                    Vue.watch(searchTerms, () => {
+                        if(occurrenceEditorModeActive.value){
+                            loadRecords(true);
+                        }
+                    });
 
                     Vue.watch(searchTermsSortDirection, () => {
                         sortDirection.value = searchTermsSortDirection.value;
@@ -490,10 +498,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         if(Number(initialCollId) > 0){
                             occurrenceStore.setCollection(initialCollId, false, () => {
                                 if(isEditor.value){
-                                    searchStore.setSearchCollId(initialCollId);
+                                    searchStore.updateSearchTerms('collid', initialCollId);
                                     loadRecords(true);
                                 }
                                 else{
+                                    console.log('nope');
                                     searchStore.updateSearchTerms('db', [initialCollId]);
                                     displayQueryPopup.value = true;
                                 }

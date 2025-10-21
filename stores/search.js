@@ -426,7 +426,7 @@ const useSearchStore = Pinia.defineStore('search', {
     actions: {
         addNewOccidToOccidArrs(occid) {
             const newArr = (this.searchTerms.hasOwnProperty('newOccidArr') && this.searchTerms['newOccidArr'].length > 0) ? this.searchTerms['newOccidArr'].slice() : [];
-            this.queryOccidArr.push(occid);
+            this.queryOccidArr.push(occid.toString());
             newArr.push(occid);
             this.updateSearchTerms('newOccidArr', newArr);
         },
@@ -444,14 +444,15 @@ const useSearchStore = Pinia.defineStore('search', {
         clearQueryOccidArr() {
             this.queryOccidArr.length = 0;
             this.queryTaxaArr.length = 0;
+            this.searchRecordData.length = 0;
             this.occidLoadingIndex = 0;
             this.tidLoadingIndex = 0;
         },
         clearSearchTerms() {
+            this.clearQueryOccidArr();
             this.searchTerms = Object.assign({}, this.blankSearchTerms);
             if(Number(this.searchTermsCollId) > 0){
                 this.searchTerms['collid'] = this.searchTermsCollId;
-                this.searchTerms['db'] = [this.searchTermsCollId];
             }
             this.updateLocalStorageSearchTerms();
         },
@@ -524,6 +525,9 @@ const useSearchStore = Pinia.defineStore('search', {
                 if(this.searchTerms.hasOwnProperty('sortField')){
                     this.searchTermsRecordSortField = this.searchTerms['sortField'];
                 }
+                if(this.searchTerms.hasOwnProperty('collid') && Number(this.searchTerms['collid']) > 0){
+                    this.searchTermsCollId = Number(this.searchTerms['collid']);
+                }
             }
         },
         loadSearchTermsArrFromJson(json) {
@@ -536,7 +540,7 @@ const useSearchStore = Pinia.defineStore('search', {
                 delete newSearchTerms['sortDirection'];
             }
             if(newSearchTerms.hasOwnProperty('collid')){
-                this.setSearchCollId(newSearchTerms.collid);
+                this.searchTermsCollId = Number(newSearchTerms.collid);
             }
             this.searchTerms = Object.assign({}, newSearchTerms);
             searchTermsArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, newSearchTerms);
@@ -664,7 +668,7 @@ const useSearchStore = Pinia.defineStore('search', {
             }
         },
         removeOccidFromOccidArrs(occid) {
-            const queryIndex = this.queryOccidArr.indexOf(occid);
+            const queryIndex = this.queryOccidArr.indexOf(occid.toString());
             if(queryIndex > -1){
                 this.queryOccidArr.splice(queryIndex, 1);
             }
@@ -707,10 +711,6 @@ const useSearchStore = Pinia.defineStore('search', {
             const stArr = JSON.parse(localStorage['searchTermsArr']);
             stArr[this.dateId.toString()][queryId.toString()] = {};
             localStorage.setItem('searchTermsArr', JSON.stringify(stArr));
-        },
-        setSearchCollId(collid) {
-            this.updateSearchTerms('collid', collid);
-            this.searchTermsCollId = collid;
         },
         setSearchOccidArr(options, callback){
             const loadingCnt = 250000;
@@ -802,6 +802,9 @@ const useSearchStore = Pinia.defineStore('search', {
         updateSearchTerms(prop, value) {
             if(value && value !== ''){
                 this.searchTerms[prop] = value;
+                if(prop === 'collid'){
+                    this.searchTermsCollId = Number(value);
+                }
             }
             else{
                 delete this.searchTerms[prop];

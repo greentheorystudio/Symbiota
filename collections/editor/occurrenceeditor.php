@@ -63,17 +63,19 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <div class="row justify-between">
                         <div class="row justify-start q-gutter-sm self-center">
                             <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search"></q-btn>
-                            <table-display-button></table-display-button>
-                            <list-display-button></list-display-button>
-                            <spatial-display-button></spatial-display-button>
-                            <image-display-button></image-display-button>
+                            <template v-if="recordCount > 1">
+                                <table-display-button></table-display-button>
+                                <list-display-button></list-display-button>
+                                <spatial-display-button></spatial-display-button>
+                                <image-display-button></image-display-button>
+                            </template>
                         </div>
                         <div class="row justify-end self-center">
-                            <q-btn v-if="recordCount > 1 && currentRecordIndex !== 1" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord"></q-btn>
-                            <q-btn v-if="currentRecordIndex !== 1" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord"></q-btn>
                             <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
-                            <q-btn v-if="currentRecordIndex !== recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord"></q-btn>
-                            <q-btn v-if="recordCount > 1 && currentRecordIndex !== recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord"></q-btn>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex > 1" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord"></q-btn>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex > 1" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord"></q-btn>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord"></q-btn>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord"></q-btn>
                             <q-btn v-if="occurrenceEntryFormat !== 'benthic' && occId > 0" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Create new occurrence record
@@ -348,11 +350,17 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const stArrJson = STARRJSON;
 
                     Vue.watch(collId, () => {
-                        searchStore.setSearchCollId(collId.value);
+                        searchStore.updateSearchTerms('collid', collId.value);
                     });
 
                     Vue.watch(occId, () => {
                         searchStore.setCurrentOccId(occId.value);
+                    });
+
+                    Vue.watch(searchTerms, () => {
+                        if(searchRecordCount.value === 0){
+                            occurrenceStore.setCurrentOccurrenceRecord(0);
+                        }
                     });
 
                     function changeOccurrenceEntryFormat(value) {
