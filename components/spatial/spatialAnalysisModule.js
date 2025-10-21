@@ -27,7 +27,7 @@ const spatialAnalysisModule = {
         <template v-if="mapSettings.recordInfoWindowId">
             <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
         </template>
-        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @reset:search-criteria="processResetCriteria" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
 
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
             <spatial-side-panel :show-panel="mapSettings.showSidePanel" :expanded-element="mapSettings.sidePanelExpandedElement"></spatial-side-panel>
@@ -100,6 +100,7 @@ const spatialAnalysisModule = {
         });
         const mapSettings = Vue.shallowReactive(Object.assign({}, spatialStore.getMapSettings));
         let mapView = null;
+        const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
         const pointInteraction = Vue.computed(() => setPointInteraction());
         let popupCloser = Vue.ref(false);
         let popupContent = Vue.ref('');
@@ -112,6 +113,8 @@ const spatialAnalysisModule = {
         const rasterLayersArr = Vue.shallowReactive([
             {value: 'none', label: 'None'}
         ]);
+        const searchRecordCnt = Vue.computed(() => searchStore.getSearchRecordCount);
+        const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const selectedPolyError = Vue.ref(false);
         const selectInteraction = Vue.computed(() => setSelectInteraction());
         const spatialModuleInitialising = Vue.ref(false);
@@ -474,45 +477,44 @@ const spatialAnalysisModule = {
         }
 
         function createShapesFromSearchTermsArr() {
-            const searchTerms = searchStore.getSearchTerms;
-            if(searchTerms.hasOwnProperty('upperlat')){
+            if(searchTerms.value.hasOwnProperty('upperlat')){
                 const boundingBox = {};
-                boundingBox.upperlat = searchTerms['upperlat'];
-                boundingBox.bottomlat = searchTerms['bottomlat'];
-                boundingBox.leftlong = searchTerms['leftlong'];
-                boundingBox.rightlong = searchTerms['rightlong'];
+                boundingBox.upperlat = searchTerms.value['upperlat'];
+                boundingBox.bottomlat = searchTerms.value['bottomlat'];
+                boundingBox.leftlong = searchTerms.value['leftlong'];
+                boundingBox.rightlong = searchTerms.value['rightlong'];
                 if(boundingBox.upperlat && boundingBox.bottomlat && boundingBox.leftlong && boundingBox.rightlong){
                     createPolygonFromBoundingBox(boundingBox, true);
                 }
             }
-            if(searchTerms.hasOwnProperty('pointlat')){
+            if(searchTerms.value.hasOwnProperty('pointlat')){
                 const pointRadius = {};
-                pointRadius.pointlat = searchTerms['pointlat'];
-                pointRadius.pointlong = searchTerms['pointlong'];
-                pointRadius.radius = searchTerms['radius'];
+                pointRadius.pointlat = searchTerms.value['pointlat'];
+                pointRadius.pointlong = searchTerms.value['pointlong'];
+                pointRadius.radius = searchTerms.value['radius'];
                 if(pointRadius.pointlat && pointRadius.pointlong && pointRadius.radius){
                     createCircleFromPointRadius(pointRadius, true);
                 }
             }
-            if(searchTerms.hasOwnProperty('circleArr')){
+            if(searchTerms.value.hasOwnProperty('circleArr')){
                 let circleArr;
-                if(JSON.parse(searchTerms['circleArr'])){
-                    circleArr = JSON.parse(searchTerms['circleArr']);
+                if(JSON.parse(searchTerms.value['circleArr'])){
+                    circleArr = JSON.parse(searchTerms.value['circleArr']);
                 }
                 else{
-                    circleArr = searchTerms['circleArr'];
+                    circleArr = searchTerms.value['circleArr'];
                 }
                 if(Array.isArray(circleArr)){
                     createCirclesFromCircleArr(circleArr, true);
                 }
             }
-            if(searchTerms.hasOwnProperty('polyArr')){
+            if(searchTerms.value.hasOwnProperty('polyArr')){
                 let polyArr;
-                if(JSON.parse(searchTerms['polyArr'])){
-                    polyArr = JSON.parse(searchTerms['polyArr']);
+                if(JSON.parse(searchTerms.value['polyArr'])){
+                    polyArr = JSON.parse(searchTerms.value['polyArr']);
                 }
                 else{
-                    polyArr = searchTerms['polyArr'];
+                    polyArr = searchTerms.value['polyArr'];
                 }
                 if(Array.isArray(polyArr)){
                     createPolysFromPolyArr(polyArr, true);
@@ -854,7 +856,7 @@ const spatialAnalysisModule = {
                 };
                 searchStore.processSearch(options, (res, index) => {
                     if(res){
-                        const finalIndex = searchStore.getSearchRecCnt > lazyLoadCnt ? (Math.ceil(searchStore.getSearchRecCnt / lazyLoadCnt) - 1) : 0;
+                        const finalIndex = searchStore.getSearchRecordCount > lazyLoadCnt ? (Math.ceil(searchStore.getSearchRecordCount / lazyLoadCnt) - 1) : 0;
                         const format = new ol.format.GeoJSON();
                         let features = format.readFeatures(res, {
                             featureProjection: 'EPSG:3857'
@@ -883,7 +885,7 @@ const spatialAnalysisModule = {
                 processed += lazyLoadCnt;
                 index++;
             }
-            while(processed < searchStore.getSearchRecCnt && !mapSettings.loadPointsError);
+            while(processed < searchStore.getSearchRecordCount && !mapSettings.loadPointsError);
             updateMapSettings('clusterSource', new ol.source.PropertyCluster({
                 distance: mapSettings.clusterDistance,
                 source: mapSettings.pointVectorSource,
@@ -927,7 +929,7 @@ const spatialAnalysisModule = {
         function loadRecords(){
             if(!selectedPolyError.value){
                 clearSelections(false);
-                if(searchStore.getSearchTermsValid){
+                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                     for(const key in symbologyArr){
                         delete symbologyArr[key];
                     }
@@ -941,7 +943,7 @@ const spatialAnalysisModule = {
                         spatial: 1
                     };
                     searchStore.setSearchOccidArr(options, () => {
-                        if(Number(searchStore.getSearchRecCnt) > 0){
+                        if(Number(searchStore.getSearchRecordCount) > 0){
                             displayQueryPopup.value = false;
                             updateMapSettings('showControlPanelLeft', false);
                             loadPointsLayer();
@@ -974,7 +976,7 @@ const spatialAnalysisModule = {
                 if(props.stArrJson){
                     searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
                 }
-                if(searchStore.getSearchTermsValid){
+                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                     updateMapSettings('loadPointsEvent', true);
                     createShapesFromSearchTermsArr();
                     loadRecords();
@@ -1262,6 +1264,15 @@ const spatialAnalysisModule = {
                 }
             }
             updatePointStyle(id);
+        }
+
+        function processResetCriteria() {
+            if(Number(searchRecordCnt.value) === 0){
+                removeUserLayer('pointv');
+            }
+            if(occurrenceEditorModeActive.value){
+                loadRecords();
+            }
         }
 
         function processSymbologyKeyColorChange(color, keyValue) {
@@ -1917,12 +1928,12 @@ const spatialAnalysisModule = {
                 }
             });
             layersObj['pointv'].on('postrender', () => {
-                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
+                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecordCount)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
                     loadPointsPostrender();
                 }
             });
             layersObj['heat'].on('postrender', () => {
-                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecCnt)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
+                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecordCount)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
                     loadPointsPostrender();
                 }
             });
@@ -2741,6 +2752,7 @@ const spatialAnalysisModule = {
             createUncertaintyCircleFromPointRadius,
             emitClosePopup,
             loadRecords,
+            processResetCriteria,
             setQueryPopupDisplay,
             updateMapSettings,
             zoomToShapesLayer

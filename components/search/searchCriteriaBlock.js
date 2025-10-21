@@ -1,9 +1,5 @@
 const searchCriteriaBlock = {
     props: {
-        collectionId: {
-            type: Number,
-            default: null
-        },
         showSpatial: {
             type: Boolean,
             default: true
@@ -148,7 +144,7 @@ const searchCriteriaBlock = {
                     <checkbox-input-element label="Include other catalog numbers" :value="searchTerms.usethes" @update:value="(value) => updateSearchTerms('othercatnum', value)"></checkbox-input-element>
                 </div>
             </div>
-            <template v-if="Number(collectionId) > 0">
+            <template v-if="searchTerms.hasOwnProperty('collid') && Number(searchTerms['collid']) > 0">
                 <div class="row q-col-gutter-sm">
                     <div class="col-12 col-sm-6 col-md-3">
                         <text-field-input-element label="Entered by" :value="searchTerms.enteredby" @update:value="(value) => updateSearchTerms('enteredby', value)"></text-field-input-element>

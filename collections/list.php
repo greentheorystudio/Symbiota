@@ -12,8 +12,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     include_once(__DIR__ . '/../config/header-includes.php');
     ?>
     <head>
-        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Collection Search List Display</title>
-        <meta name="description" content="Collection search list display for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence List Display</title>
+        <meta name="description" content="Occurrence list display for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=20240115" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
@@ -41,7 +41,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <div id="mainContainer">
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
-                <span class="text-bold">Search Collections</span>
+                <span class="text-bold">Search Collections List Display</span>
             </div>
             <div class="q-pa-md">
                 <div class="fit">
@@ -69,7 +69,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                 <spatial-display-button></spatial-display-button>
                                                 <image-display-button></image-display-button>
                                                 <template v-if="searchTermsJson.length <= 1800">
-                                                    <copy-url-button :page-number="pagination.page"></copy-url-button>
+                                                    <copy-url-button></copy-url-button>
                                                 </template>
                                             </div>
                                         </div>
@@ -175,7 +175,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                 <div v-if="isAdmin || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))" class="col-1">
                                                                     <div class="row justify-end vertical-top">
                                                                         <div>
-                                                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + props.row.occid + '&collid=' + props.row.collid)" target="_blank" icon="fas fa-edit" dense>
+                                                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="redirectToOccurrenceEditorWithQueryId(props.row.occid, props.row.collid);" icon="fas fa-edit" dense>
                                                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                                                     Edit occurrence record
                                                                                 </q-tooltip>
@@ -279,6 +279,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         :show-spatial="true"
                         @open:spatial-popup="openSpatialPopup"
                         @process:search-load-records="loadRecords"
+                        @reset:search-criteria="processResetCriteria"
                         @close:popup="setQueryPopupDisplay(false)"
                     ></search-criteria-popup>
                 </template>
@@ -364,7 +365,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
-            const searchListDisplayModule = Vue.createApp({
+            const occurrenceListDisplayModule = Vue.createApp({
                 components: {
                     'checklist-display-button': checklistDisplayButton,
                     'copy-url-button': copyURLButton,
@@ -390,12 +391,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const lazyLoadCnt = 100;
+                    const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
                     const pageNumber = Vue.ref(1);
-                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecCnt);
+                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const paginationFirstRecordNumber = Vue.computed(() => {
                         let recordNumber = 1;
                         if(Number(pageNumber.value) > 1){
-                            recordNumber = recordNumber + ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
+                            recordNumber += ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
                         }
                         return recordNumber;
                     });
@@ -436,8 +438,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
                     const recordInfoWindowId = Vue.ref(null);
                     const searchTaxaArr = Vue.computed(() => searchStore.getSearchTaxaArr);
+                    const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
-                    const searchTermsPageNumber = Vue.computed(() => searchStore.getSearchTermsPageNumber);
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
@@ -462,7 +464,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function loadRecords(){
-                        if(searchStore.getSearchTermsValid){
+                        if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             taxaCnt.value = 0;
                             taxaDataArr.length = 0;
                             searchStore.clearQueryOccidArr();
@@ -472,7 +474,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 spatial: 0
                             };
                             searchStore.setSearchOccidArr(options, () => {
-                                if(Number(searchStore.getSearchRecCnt) > 0){
+                                if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
                                     setTableRecordData(pagination.value.page);
                                     searchStore.setSearchTaxaArr(() => {
@@ -499,6 +501,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processResetCriteria() {
+                        if(occurrenceEditorModeActive.value){
+                            loadRecords();
+                        }
                     }
 
                     function processSpatialData(data) {
@@ -556,6 +564,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function setTableRecordData(index) {
+                        searchStore.updateSearchTerms('listIndex', index);
                         const options = {
                             schema: 'occurrence',
                             spatial: 0,
@@ -563,11 +572,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             index: (index - 1),
                             output: 'json'
                         };
-                        searchStore.setSearchRecordData(options, (retCnt) => {
+                        searchStore.setSearchRecordData(options, () => {
                             hideWorking();
-                            if(retCnt === 0){
-                                //showNotification('negative', 'An error occurred while loading the occurrence records.');
-                            }
                         });
                         pageNumber.value = Number(index);
                     }
@@ -577,17 +583,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         if(Number(queryId) === 0 && !stArrJson){
                             displayQueryPopup.value = true;
                         }
-                        if(queryId || stArrJson){
-                            showWorking('Loading...');
-                        }
                         searchStore.initializeSearchStorage(queryId);
                         if(Number(queryId) > 0 || stArrJson){
                             if(stArrJson){
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
-                            if(searchStore.getSearchTermsValid){
-                                if(Number(searchTermsPageNumber.value) > Number(pageNumber.value)){
-                                    pageNumber.value = searchTermsPageNumber.value;
+                            if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                                if(searchTerms.value.hasOwnProperty('listIndex')){
+                                    pageNumber.value = Number(searchTerms.value['listIndex']);
                                 }
                                 loadRecords();
                             }
@@ -617,14 +620,16 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
+                        processResetCriteria,
                         processSpatialData,
+                        redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId,
                         setQueryPopupDisplay
                     }
                 }
             });
-            searchListDisplayModule.use(Quasar, { config: {} });
-            searchListDisplayModule.use(Pinia.createPinia());
-            searchListDisplayModule.mount('#mainContainer');
+            occurrenceListDisplayModule.use(Quasar, { config: {} });
+            occurrenceListDisplayModule.use(Pinia.createPinia());
+            occurrenceListDisplayModule.mount('#mainContainer');
         </script>
     </body>
 </html>

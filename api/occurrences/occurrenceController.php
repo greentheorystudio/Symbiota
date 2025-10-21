@@ -125,4 +125,19 @@ if($action && SanitizerService::validateInternalRequest()){
         $updateData = array_key_exists('updateData', $_POST) && (int)$_POST['updateData'] === 1;
         echo $occurrences->updateOccurrenceEventId($occid, $eventid, $updateData);
     }
+    elseif($action === 'getBatchUpdateCount' && $isEditor && array_key_exists('starr', $_POST) && array_key_exists('field', $_POST) && array_key_exists('oldValue', $_POST) && array_key_exists('matchType', $_POST)){
+        $stArr = json_decode($_POST['starr'], true);
+        $field = $_POST['field'];
+        $oldValue = $_POST['oldValue'];
+        $matchType = $_POST['matchType'];
+        echo $occurrences->getBatchUpdateCount($stArr, $field, $oldValue, $matchType);
+    }
+    elseif($action === 'batchUpdateOccurrenceData' && $isEditor && array_key_exists('starr', $_POST) && array_key_exists('field', $_POST) && array_key_exists('oldValue', $_POST) && array_key_exists('newValue', $_POST) && array_key_exists('matchType', $_POST)){
+        $stArr = json_decode($_POST['starr'], true);
+        $field = $_POST['field'];
+        $oldValue = $_POST['oldValue'];
+        $newValue = $_POST['newValue'];
+        $matchType = $_POST['matchType'];
+        echo $occurrences->batchUpdateOccurrenceData($stArr, $field, $oldValue, $newValue, $matchType);
+    }
 }
