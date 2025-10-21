@@ -1024,7 +1024,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             })
             .then((res) => {
                 this.isLocked = Number(res) === 1;
-                if(!this.isLocked){
+                if(!this.isLocked && Number(this.occId) > 0){
                     const formData = new FormData();
                     formData.append('occid', this.occId.toString());
                     formData.append('action', 'getOccurrenceDataArr');
