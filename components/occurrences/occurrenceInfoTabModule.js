@@ -224,7 +224,7 @@ const occurrenceInfoTabModule = {
                                 For additional information about this specimen, please contact: {{ collectionData['contact'] }} (<a :href="('mailto:' + collectionData['email'])">{{ collectionData['email'] }}</a>)
                             </div>
                             <div v-if="isEditor">
-                                You can edit this record using the <a :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + occurrenceId)" target="_blank">Occurrence Editor</a>.
+                                You can edit this record using the <a class="cursor-pointer" @click="redirectToOccurrenceEditorWithQueryId(occurrenceId, collectionData['collid']);">Occurrence Editor</a>.
                             </div>
                         </div>
                     </q-tab-panel>
@@ -339,6 +339,7 @@ const occurrenceInfoTabModule = {
     },
     setup(props) {
         const baseStore = useBaseStore();
+        const searchStore = useSearchStore();
 
         const checklistArr = Vue.ref([]);
         const clientRoot = baseStore.getClientRoot;
@@ -757,7 +758,8 @@ const occurrenceInfoTabModule = {
             selectedTab,
             tabCardStyle,
             tabMapPanelStyle,
-            tabPanelStyle
+            tabPanelStyle,
+            redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId,
         }
     }
 };

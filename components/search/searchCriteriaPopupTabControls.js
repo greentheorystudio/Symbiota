@@ -14,7 +14,7 @@ const searchCriteriaPopupTabControls = {
             </div>
             <div class="row justify-end q-col-gutter-sm">
                 <div>
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Reset" dense />
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Clear" dense />
                 </div>
                 <div>
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processSearchButtonClick();" :label="searchButtonLabel" :disabled="!searchTermsValid" dense>
