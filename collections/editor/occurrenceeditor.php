@@ -388,12 +388,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         occurrenceStore.setCurrentOccurrenceRecord(searchStore.getPreviousOccidInOccidArr);
                     }
 
-                    function loadRecords(silent = false) {
+                    function loadRecords() {
                         if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             searchStore.clearQueryOccidArr();
-                            if(!silent){
-                                showWorking('Loading...');
-                            }
+                            showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
                                 display: 'table',
@@ -406,12 +404,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                         goToFirstRecord();
                                     }
                                 }
-                                else if(!silent){
+                                else{
                                     showNotification('negative','There were no records matching your query.');
                                 }
-                                if(!silent){
-                                    hideWorking();
-                                }
+                                hideWorking();
                             });
                         }
                         else{
@@ -427,7 +423,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function processBatchUpdate() {
                         occurrenceStore.setCurrentOccurrenceRecord(occId.value);
-                        loadRecords(true);
+                        loadRecords();
                     }
 
                     function processResetCriteria() {

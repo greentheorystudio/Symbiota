@@ -282,7 +282,7 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getPreviousOccidInOccidArr(state) {
             if(state.queryOccidArr.length > 0){
-                return (Number(state.currentOccId) > 0 && (state.queryOccidArr.indexOf(state.currentOccId.toString()) - 1) <= 0) ? state.queryOccidArr[(state.queryOccidArr.indexOf(state.currentOccId.toString()) - 1)] : state.queryOccidArr[0];
+                return (Number(state.currentOccId) > 0 && (state.queryOccidArr.indexOf(state.currentOccId.toString()) - 1) >= 0) ? state.queryOccidArr[(state.queryOccidArr.indexOf(state.currentOccId.toString()) - 1)] : state.queryOccidArr[0];
             }
             else{
                 return 0;
