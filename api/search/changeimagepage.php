@@ -36,7 +36,7 @@ if(SanitizerService::validateInternalRequest()){
         $recordListHtml .= '<textarea id="urlFullBox" style="position:absolute;left:-9999px;top:-9999px">'.$copyURL.'</textarea>';
         $recordListHtml .= '<div style="height:20px;width:100%;display:flex;justify-content:flex-end;align-items:center;">';
         $recordListHtml .= '<div><a href="../collections/list.php?queryId='.$queryId.'"><button class="icon-button" title="List Display"><i style="height:15px;width:15px;" class="fas fa-list"></i></button></a></div>';
-        $recordListHtml .= '<div><a href="../collections/listtabledisplay.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
+        $recordListHtml .= '<div><a href="../collections/table.php?queryId='.$queryId.'"><button class="icon-button" title="Table Display"><i style="width:15px;height:15px;" class="fas fa-table"></i></button></a></div>';
         $recordListHtml .= '<div><a href="../spatial/index.php?queryId='.$queryId.'"><button class="icon-button" title="Spatial Module"><i style="width:15px;height:15px;" class="fas fa-globe"></i></button></a></div>';
         if(strlen($stArrJson) <= 1800){
             $recordListHtml .= '<div><button class="icon-button" title="Copy Search URL" onclick="copySearchUrl();"><i style="width:15px;height:15px;" class="fas fa-link"></i></button></div>';

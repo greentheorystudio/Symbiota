@@ -98,14 +98,20 @@ class SearchService {
                 elseif($spatial){
                     $sql .= 'ORDER BY o.sciname, o.eventdate ';
                 }
+                elseif(array_key_exists('sortField', $options) && $options['sortField']){
+                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                }
+                elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
+                    $sql .= 'ORDER BY o.occid ';
+                }
                 else{
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
                 if((int)$recCnt > 0){
-                    $startIndex = 1 + ((int)$index * (int)$recCnt);
+                    $startIndex = (int)$index * (int)$recCnt;
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
                 }
-                //echo '<div>Occid sql: ' . $sql . '</div>';
+                //error_log($sql);
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -340,7 +346,10 @@ class SearchService {
     public function prepareOccurrenceCollectionWhereSql($searchTermsArr): string
     {
         $collSqlWhereStr = '';
-        if(array_key_exists('db', $searchTermsArr) && is_array($searchTermsArr['db']) && count($searchTermsArr['db']) > 0) {
+        if(array_key_exists('collid', $searchTermsArr) && (int)$searchTermsArr['collid'] > 0){
+            $collSqlWhereStr .= '(o.collid = ' . (int)$searchTermsArr['collid'] . ')';
+        }
+        elseif(array_key_exists('db', $searchTermsArr) && is_array($searchTermsArr['db']) && count($searchTermsArr['db']) > 0) {
             if($GLOBALS['IS_ADMIN']) {
                 $collIdStr = implode(',', $searchTermsArr['db']);
             }
@@ -782,6 +791,9 @@ class SearchService {
         if(array_key_exists('occidArr', $searchTermsArr) && count($searchTermsArr['occidArr']) > 0){
             $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['occidArr']) . '))';
         }
+        if(array_key_exists('newOccidArr', $searchTermsArr) && count($searchTermsArr['newOccidArr']) > 0){
+            $sqlWherePartsArr[] = '(o.occid IN(' . implode(',', $searchTermsArr['newOccidArr']) . '))';
+        }
         if(array_key_exists('clid', $searchTermsArr) && $searchTermsArr['clid']){
             $sqlStr = '(v.clid = ' . (int)$searchTermsArr['clid'];
             if(!$GLOBALS['IS_ADMIN']) {
@@ -963,16 +975,22 @@ class SearchService {
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
                 if(!array_key_exists('occidArr', $searchTermsArr)){
-                    $fromStr .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+                    $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                 }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
                     $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
                 }
                 $sql = $selectStr . $fromStr . $whereStr;
+                if(array_key_exists('sortField', $options) && $options['sortField']){
+                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                }
+                elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
+                    $sql .= 'ORDER BY o.occid ';
+                }
                 if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
-                    $startIndex = 1 + ((int)$options['index'] * (int)$options['reccnt']);
-                    $sql .= ' LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'] . ' ';
+                    $startIndex = (int)$options['index'] * (int)$options['reccnt'];
+                    $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
                 }
                 if($options['output'] === 'geojson'){
                     $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
@@ -1010,10 +1028,10 @@ class SearchService {
                 }
                 else{
                     $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
-                    $sqlWhereCriteria = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
-                    $sqlWhere = (new SearchService)->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
-                    $sqlFrom = (new SearchService)->setFromSql($options['schema']);
-                    $sqlFrom .= ' ' . (new SearchService)->setTableJoinsSql($searchTermsArr);
+                    $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
+                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
+                    $sqlFrom = $this->setFromSql($options['schema']);
+                    $sqlFrom .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                     $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
                     $outputFile = $outputFileData['outputPath'];
                 }
@@ -1083,6 +1101,7 @@ class SearchService {
         $returnArr = array();
         $returnData = array();
         $idArr = array();
+        //error_log($sql);
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             while($row = $result->fetch_assoc()){

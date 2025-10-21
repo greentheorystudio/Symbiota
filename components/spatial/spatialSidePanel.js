@@ -72,7 +72,7 @@ const spatialSidePanel = {
         const propsRefs = Vue.toRefs(props);
         const rasterExpanded = Vue.ref(false);
         const recordsExpanded = Vue.ref(false);
-        const searchRecordCnt = Vue.computed(() => searchStore.getSearchRecCnt);
+        const searchRecordCnt = Vue.computed(() => searchStore.getSearchRecordCount);
         const vectorExpanded = Vue.ref(false);
 
         const updateMapSettings = Vue.inject('updateMapSettings');
