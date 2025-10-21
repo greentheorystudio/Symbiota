@@ -98,7 +98,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             </template>
                             <template v-if="recordCount > 1">
                                 <div class="self-center">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="changeBatchUpdatePopupDisplay(true);" icon="find_replace" dense>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense>
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Batch Update Tool
                                         </q-tooltip>
@@ -141,7 +141,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 </div>
             </div>
             <template v-if="displayBatchUpdatePopup">
-                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
+                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @complete:batch-update="processBatchUpdate" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
             </template>
             <template v-if="displayImageTranscriberPopup">
                 <occurrence-editor-image-transcriber-popup :show-popup="displayImageTranscriberPopup" @close:popup="displayImageTranscriberPopup = false"></occurrence-editor-image-transcriber-popup>
@@ -388,10 +388,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         occurrenceStore.setCurrentOccurrenceRecord(searchStore.getPreviousOccidInOccidArr);
                     }
 
-                    function loadRecords() {
+                    function loadRecords(silent = false) {
                         if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             searchStore.clearQueryOccidArr();
-                            showWorking('Loading...');
+                            if(!silent){
+                                showWorking('Loading...');
+                            }
                             const options = {
                                 schema: 'occurrence',
                                 display: 'table',
@@ -404,10 +406,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                         goToFirstRecord();
                                     }
                                 }
-                                else{
+                                else if(!silent){
                                     showNotification('negative','There were no records matching your query.');
                                 }
-                                hideWorking();
+                                if(!silent){
+                                    hideWorking();
+                                }
                             });
                         }
                         else{
@@ -419,6 +423,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processBatchUpdate() {
+                        occurrenceStore.setCurrentOccurrenceRecord(occId.value);
+                        loadRecords(true);
                     }
 
                     function processResetCriteria() {
@@ -511,6 +520,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         goToPreviousRecord,
                         loadRecords,
                         openSpatialPopup,
+                        processBatchUpdate,
                         processResetCriteria,
                         processSpatialData
                     }

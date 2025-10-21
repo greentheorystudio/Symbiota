@@ -179,7 +179,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 </div>
             </div>
             <template v-if="displayBatchUpdatePopup">
-                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
+                <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @complete:batch-update="loadRecords(true);" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
             </template>
             <template v-if="recordInfoWindowId">
                 <occurrence-info-window-popup :occurrence-id="recordInfoWindowId" :show-popup="showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>

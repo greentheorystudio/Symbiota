@@ -90,6 +90,7 @@ const occurrenceEditorBatchUpdatePopup = {
                                 hideWorking();
                                 if(res === 1){
                                     showNotification('positive','Batch update successful');
+                                    context.emit('complete:batch-update');
                                     closePopup();
                                 }
                                 else{
