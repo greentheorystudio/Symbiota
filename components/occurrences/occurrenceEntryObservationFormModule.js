@@ -34,7 +34,7 @@ const occurrenceEntryObservationFormModule = {
                         </div>
                         <div class="row justify-between q-col-gutter-sm">
                             <div class="col-12 col-sm-4">
-                                <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="occurrenceData.sciname" label="Scientific Name" @update:sciname="updateScientificNameValue"></single-scientific-common-name-auto-complete>
+                                <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="occurrenceData.sciname" label="Scientific Name" :limit-to-options="limitIdsToThesaurus" @update:sciname="updateScientificNameValue"></single-scientific-common-name-auto-complete>
                             </div>
                             <div class="col-12 col-sm-3">
                                 <text-field-input-element :disabled="Number(occurrenceData.tid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFields['scientificnameauthorship'] ? occurrenceFields['scientificnameauthorship']['length'] : 0" :value="((Number(occurrenceData.tid) > 0 && occurrenceData.hasOwnProperty('taxonData')) ? occurrenceData['taxonData'].author : occurrenceData.scientificnameauthorship)" @update:value="(value) => updateOccurrenceData('scientificnameauthorship', value)"></text-field-input-element>
@@ -81,6 +81,7 @@ const occurrenceEntryObservationFormModule = {
 
         const collectionData = Vue.computed(() => occurrenceStore.getCollectionData);
         const entryFollowUpAction = Vue.computed(() => occurrenceStore.getEntryFollowUpAction);
+        const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
         const mediaUploaderRef = Vue.ref(null);
         const newOccid = Vue.ref(0);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
@@ -117,6 +118,7 @@ const occurrenceEntryObservationFormModule = {
 
         return {
             collectionData,
+            limitIdsToThesaurus,
             mediaUploaderRef,
             newOccid,
             occurrenceData,

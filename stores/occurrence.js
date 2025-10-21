@@ -283,6 +283,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getIsLocked(state) {
             return state.isLocked;
         },
+        getLimitIdsToThesaurus(state) {
+            return state.collectionStore.getLimitIdsToThesaurus;
+        },
         getLocationCollectingEventArr(state) {
             return state.collectingEventStore.getLocationCollectingEventArr;
         },

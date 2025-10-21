@@ -29,7 +29,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                             <div class="column q-col-gutter-sm">
                                 <div class="row justify-between q-col-gutter-sm">
                                     <div class="col-12 col-sm-4">
-                                        <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="taxonSciName" label="Scientific Name" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
+                                        <single-scientific-common-name-auto-complete :definition="occurrenceFieldDefinitions['sciname']" :sciname="taxonSciName" label="Scientific Name" :limit-to-options="limitIdsToThesaurus" @update:sciname="processScientificNameChange"></single-scientific-common-name-auto-complete>
                                     </div>
                                     <div class="col-12 col-sm-3">
                                         <text-field-input-element :disabled="Number(taxonTid) > 0" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFields['scientificnameauthorship'] ? occurrenceFields['scientificnameauthorship']['length'] : 0" :value="taxonAuthor" @update:value="processTaxonAuthorChange"></text-field-input-element>
@@ -110,6 +110,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
         const editTaxon = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const existingData = Vue.ref({});
+        const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
         const occurrenceFields = Vue.inject('occurrenceFields');
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
         const processingAddArr = [];
@@ -428,6 +429,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             contentStyle,
             editMode,
             editsExist,
+            limitIdsToThesaurus,
             occurrenceFields,
             occurrenceFieldDefinitions,
             repData,
