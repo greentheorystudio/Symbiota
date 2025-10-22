@@ -359,7 +359,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20251004';
-        $GLOBALS['JS_VERSION'] = '20251007';
+        $GLOBALS['JS_VERSION'] = '202510071';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -462,10 +462,11 @@ class Configurations{
             if(strpos($currentCssVersion, '-') !== false){
                 $versionParts = explode('-', $currentCssVersion);
                 if($versionParts){
+                    $currentCssVersion = (int)$versionParts[0];
                     $subVersion = (int)$versionParts[1];
                 }
             }
-            if($currentCssVersion === (string)$newCssVersion || $subVersion){
+            if((string)$currentCssVersion === (string)$newCssVersion){
                 if(!$subVersion){
                     $subVersion = 1;
                 }

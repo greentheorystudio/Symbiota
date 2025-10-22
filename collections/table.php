@@ -42,7 +42,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         </script>
     </head>
     <body class="full-window-mode">
-        <div id="mainContainer">
+        <div id="tableContainer">
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
                 <template v-if="Number(searchTermsCollId) > 0 && isEditor">
@@ -563,7 +563,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             });
             occurrenceTableDisplayModule.use(Quasar, { config: {} });
             occurrenceTableDisplayModule.use(Pinia.createPinia());
-            occurrenceTableDisplayModule.mount('#mainContainer');
+            occurrenceTableDisplayModule.mount('#tableContainer');
         </script>
     </body>
 </html>
