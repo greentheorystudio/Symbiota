@@ -359,7 +359,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20251004';
-        $GLOBALS['JS_VERSION'] = '20251007';
+        $GLOBALS['JS_VERSION'] = '202510071';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -448,6 +448,7 @@ class Configurations{
     {
         $returnVal = 0;
         $currentCssVersion = '';
+        $version = '';
         $subVersion = 0;
         $sql = 'SELECT configurationvalue FROM configurations WHERE configurationname = "CSS_VERSION_LOCAL" ';
         if($result = $this->conn->query($sql)){
@@ -462,11 +463,15 @@ class Configurations{
             if(strpos($currentCssVersion, '-') !== false){
                 $versionParts = explode('-', $currentCssVersion);
                 if($versionParts){
+                    $version = (int)$versionParts[0];
                     $subVersion = (int)$versionParts[1];
                 }
             }
-            if($currentCssVersion === (string)$newCssVersion || $subVersion){
-                if(!$subVersion){
+            else{
+                $version = $currentCssVersion;
+            }
+            if((string)$version === (string)$newCssVersion){
+                if($subVersion === 0){
                     $subVersion = 1;
                 }
                 do {
@@ -478,7 +483,7 @@ class Configurations{
                         $newCssVersion .= '-' . $subVersion;
                     }
                     $subVersion++;
-                } while($currentCssVersion === $newCssVersion);
+                } while((string)$currentCssVersion === $newCssVersion);
             }
             $sql = 'UPDATE configurations '.
                 'SET configurationvalue = "' . $newCssVersion . '" WHERE configurationname = "CSS_VERSION_LOCAL" ';
