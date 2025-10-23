@@ -195,18 +195,23 @@ class SearchService {
             $fields = (new Occurrences)->getOccurrenceFields();
             foreach($searchTermsArr['advanced'] as $criteriaArr){
                 $advSqlWhereStr = '';
-                if($criteriaArr['field'] && $criteriaArr['operator'] && array_key_exists($criteriaArr['field'], $fields)){
-                    if($criteriaArr['field'] === 'year' || $criteriaArr['field'] === 'month' || $criteriaArr['field'] === 'day'){
-                        $field = 'o.`' . $criteriaArr['field'] . '`';
-                    }
-                    else{
-                        $field = 'o.' . $criteriaArr['field'];
-                    }
+                if($criteriaArr['field'] && $criteriaArr['operator'] && ($criteriaArr['field'] === 'username' || array_key_exists($criteriaArr['field'], $fields))){
                     if(array_key_exists('concatenator', $criteriaArr) && $criteriaArr['concatenator']){
                         $advSqlWhereStr .= ' ' . SanitizerService::cleanInStr($this->conn, $criteriaArr['concatenator']) . ' ';
                     }
                     if(array_key_exists('openParens', $criteriaArr) && $criteriaArr['openParens']){
                         $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['openParens']);
+                    }
+                    if($criteriaArr['field'] !== 'username'){
+                        if($criteriaArr['field'] === 'year' || $criteriaArr['field'] === 'month' || $criteriaArr['field'] === 'day'){
+                            $field = 'o.`' . $criteriaArr['field'] . '`';
+                        }
+                        else{
+                            $field = 'o.' . $criteriaArr['field'];
+                        }
+                    }
+                    else{
+                        $field = 'u.username';
                     }
                     if($criteriaArr['operator'] === 'IS NULL'){
                         $advSqlWhereStr .= 'ISNULL(' . $field . ')';
@@ -215,7 +220,7 @@ class SearchService {
                         $advSqlWhereStr .= $field . ' IS NOT NULL';
                     }
                     else{
-                        $advSqlWhereStr .= $field;
+                        $advSqlWhereStr .= $criteriaArr['field'] === 'username' ? ('o.occid IN(SELECT DISTINCT e.occid FROM omoccuredits AS e LEFT JOIN users AS u ON e.uid = u.uid WHERE ' . $field) : $field;
                         if($criteriaArr['operator'] === 'EQUALS' || $criteriaArr['operator'] === 'NOT EQUALS' || $criteriaArr['operator'] === 'GREATER THAN' || $criteriaArr['operator'] === 'LESS THAN'){
                             if($criteriaArr['operator'] === 'EQUALS'){
                                 $advSqlWhereStr .= ' = ';
@@ -248,6 +253,9 @@ class SearchService {
                         elseif($criteriaArr['operator'] === 'DOES NOT CONTAIN'){
                             $advSqlWhereStr .= ' NOT REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
                         }
+                    }
+                    if($criteriaArr['field'] === 'username'){
+                        $advSqlWhereStr .= ')';
                     }
                     if(array_key_exists('closeParens', $criteriaArr) && $criteriaArr['closeParens']){
                         $advSqlWhereStr .= SanitizerService::cleanInStr($this->conn, $criteriaArr['closeParens']);
@@ -1266,17 +1274,17 @@ class SearchService {
 
     public function setWhereSql($sqlWhere, $schema, $spatial): string
     {
-        $returnStr = 'WHERE ' . $sqlWhere;
+        $returnStr = 'WHERE ' . $sqlWhere . ' ';
         if($spatial || $schema === 'image'){
             if($spatial){
-                $returnStr .= ' AND (o.sciname IS NOT NULL AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
+                $returnStr .= 'AND (o.sciname IS NOT NULL AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
             }
             if(!array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
                 if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
-                    $returnStr .= ' AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';
+                    $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';
                 }
                 else{
-                    $returnStr .= ' AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
+                    $returnStr .= 'AND (o.localitysecurity = 0 OR ISNULL(o.localitysecurity)) ';
                 }
             }
         }
