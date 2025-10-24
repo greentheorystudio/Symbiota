@@ -139,30 +139,6 @@ class Configurations{
         $this->conn->close();
     }
 
-    public function getConfigurationsArr(): array
-    {
-        $retArr = array();
-        $retArr['core'] = array();
-        $retArr['additional'] = array();
-        $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $value = $r->configurationvalue;
-            if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
-                $value = EncryptionService::decrypt($value);
-            }
-            $retArr[$r->configurationname] = $value;
-            if(in_array($r->configurationname, $this->coreConfigurations, true)){
-                $retArr['core'][$r->configurationname] = $value;
-            }
-            else{
-                $retArr['additional'][$r->configurationname] = $value;
-            }
-        }
-        $rs->free();
-        return $retArr;
-    }
-
     public function addConfiguration($name, $value): int
     {
         $returnVal = 0;
