@@ -80,13 +80,13 @@ const spatialLayerControllerLayerElement = {
                                     </div>
                                 </div>
                                 <div :class="windowWidth < 875 ? 'col-4(wider)' : ''">
-                                    <q-input type="number" outlined v-model="layer.borderWidth" label="Border width (px) [0-9]" min="0" @update:model-value="(value) => changeElementStyling(layer.id, 'borderWidth', value)" dense />
+                                    <text-field-input-element :clearable="false" data-type="int" label="Border width (px) [0-9]" :value="layer.borderWidth" min-value="0" @update:value="(value) => changeElementStyling(layer.id, 'borderWidth', value)"></text-field-input-element>
                                 </div>
                                 <div :class="windowWidth < 875 ? 'col-4(wider)' : ''">
-                                    <q-input type="number" outlined v-model="layer.pointRadius" label="Point radius (px)" min="0" @update:model-value="(value) => changeElementStyling(layer.id, 'pointRadius', value)" dense />
+                                    <text-field-input-element :clearable="false" data-type="int" label="Point radius (px)" :value="layer.pointRadius" min-value="0" @update:value="(value) => changeElementStyling(layer.id, 'pointRadius', value)"></text-field-input-element>
                                 </div>
                                 <div :class="windowWidth < 875 ? 'col-4(wider)' : ''">
-                                    <q-input type="number" outlined v-model="layer.opacity" label="Fill opacity" min="0" step=".1" @update:model-value="(value) => changeElementStyling(layer.id, 'opacity', value)" dense />
+                                    <text-field-input-element :clearable="false" data-type="increment" label="Fill opacity" :value="layer.opacity" min-value="0" max-value="1" step=".1" @update:value="(value) => changeElementStyling(layer.id, 'opacity', value)"></text-field-input-element>
                                 </div>
                             </div>
                         </template>
@@ -103,8 +103,8 @@ const spatialLayerControllerLayerElement = {
                             </div>
                             <div class="row justify-end items-center self-center q-mt-xs q-gutter-sm">
                                 <template v-if="layer.active && sortable">
-                                    <div>
-                                        <q-input type="number" outlined v-model="layer.layerOrder" class="col-3" label="Order" min="1" :max="(layerOrderArr.length > 0 ? layerOrderArr.length : 1)" @update:model-value="(value) => changeLayerOrder(layer.id, value)" dense />
+                                    <div class="col-3">
+                                        <text-field-input-element :clearable="false" data-type="int" label="Order" :value="layer.layerOrder" min-value="1" :max-value="(layerOrderArr.length > 0 ? layerOrderArr.length : 1)" @update:value="(value) => changeLayerOrder(layer.id, value)"></text-field-input-element>
                                     </div>
                                 </template>
                                 <template v-if="layer.active && query && !layer.raster">
@@ -140,7 +140,7 @@ const spatialLayerControllerLayerElement = {
                                 </template>
                                 <template v-if="sortable">
                                     <div class="self-center col-3">
-                                        <q-input type="number" outlined v-model="layer.layerOrder" label="Order" min="1" :max="(layerOrderArr.length > 0 ? layerOrderArr.length : 1)" @update:model-value="(value) => changeLayerOrder(layer.id, value)" dense />
+                                        <text-field-input-element :clearable="false" data-type="int" label="Order" :value="layer.layerOrder" min-value="1" :max-value="(layerOrderArr.length > 0 ? layerOrderArr.length : 1)" @update:value="(value) => changeLayerOrder(layer.id, value)"></text-field-input-element>
                                     </div>
                                 </template>
                             </div>
@@ -179,7 +179,8 @@ const spatialLayerControllerLayerElement = {
     `,
     components: {
         'color-picker': colorPicker,
-        'spatial-raster-color-scale-select': spatialRasterColorScaleSelect
+        'spatial-raster-color-scale-select': spatialRasterColorScaleSelect,
+        'text-field-input-element': textFieldInputElement
     },
     setup() {
         const coreLayers = Vue.inject('coreLayers');

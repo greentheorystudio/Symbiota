@@ -1,6 +1,6 @@
 const mapWindowConfigurationsTab = {
     template: `
-        <div class="fit column overflow-hidden">
+        <div class="fit column">
             <div class="col-1 q-mb-md full-width column">
                 <div class="full-width row justify-between">
                     <div class="col-11">

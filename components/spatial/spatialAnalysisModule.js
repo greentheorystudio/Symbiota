@@ -109,7 +109,6 @@ const spatialAnalysisModule = {
         const propsRefs = Vue.toRefs(props);
         const rasterAnalysisInteraction = Vue.computed(() => setRasterAnalysisInteraction());
         const rasterAnalysisTranslate = Vue.computed(() => setRasterAnalysisTranslate());
-        const rasterColorScales = spatialStore.getRasterColorScales;
         const rasterLayersArr = Vue.shallowReactive([
             {value: 'none', label: 'None'}
         ]);
@@ -2693,7 +2692,6 @@ const spatialAnalysisModule = {
         Vue.provide('processSymbologyKeyColorChange', processSymbologyKeyColorChange);
         Vue.provide('processToggleSelectedChange', processToggleSelectedChange);
         Vue.provide('rasterAnalysisInteraction', rasterAnalysisInteraction);
-        Vue.provide('rasterColorScales', Vue.computed(() => rasterColorScales));
         Vue.provide('rasterLayersArr', rasterLayersArr);
         Vue.provide('removeLayerFromActiveLayerOptions', removeLayerFromActiveLayerOptions);
         Vue.provide('removeLayerFromLayersObj', removeLayerFromLayersObj);
