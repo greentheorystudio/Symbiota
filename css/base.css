@@ -774,8 +774,7 @@ body.processing .loadingModal {
 	height: 100%;
 }
 #viewer-map {
-	width: 100%;
-	height: 100%;
+	position: relative;
 }
 .map-control-panel-inner-container-wide {
 	width: 75%;

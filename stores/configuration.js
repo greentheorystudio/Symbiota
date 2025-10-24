@@ -91,6 +91,24 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
                 }
             });
         },
+        updateConfigurationValueDataObj(dataObj, callback) {
+            const formData = new FormData();
+            formData.append('data', JSON.stringify(dataObj));
+            formData.append('action', 'updateConfigurationValueArr');
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) === 1){
+                    this.setConfigurationData();
+                }
+            });
+        },
         updateCssVersion(callback) {
             const formData = new FormData();
             formData.append('action', 'updateCss');

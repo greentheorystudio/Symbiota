@@ -7,10 +7,18 @@ const spatialViewerElement = {
         footprintWkt: {
             type: String,
             default: null
+        },
+        height: {
+            type: Number,
+            default: null
+        },
+        width: {
+            type: Number,
+            default: null
         }
     },
     template: `
-        <div id="viewer-map" class="fit">
+        <div ref="mapRef" id="viewer-map" :class="(!height && !width) ? 'fit' : null" :style="mapStyle">
             <div id="viewer-popup" class="ol-popup">
                 <template v-if="popupCloser">
                     <a class="ol-popup-closer cursor-pointer" @click="closePopup();"></a>
@@ -34,7 +42,7 @@ const spatialViewerElement = {
     components: {
         'spatial-base-layer-selector': spatialBaseLayerSelector
     },
-    setup(props) {
+    setup(props, context) {
         const { getArrayBuffer, getCorrectedPolygonCoordArr, getRgbaStrFromHexOpacity, hideWorking, showNotification, showWorking, validatePolygonCoordArr } = useCore();
         const spatialStore = useSpatialStore();
 
@@ -50,7 +58,9 @@ const spatialViewerElement = {
         const layersArr = Vue.shallowReactive([]);
         const layersObj = Vue.shallowReactive({});
         let map = null;
+        const mapRef = Vue.ref(null);
         const mapSettings = Vue.shallowReactive(Object.assign({}, spatialStore.getMapSettings));
+        const mapStyle = Vue.ref(null);
         let mapView = null;
         let popupCloser = Vue.ref(false);
         let popupContent = Vue.ref('');
@@ -189,6 +199,7 @@ const spatialViewerElement = {
                 });
             }
             baseLayer.setSource(blsource);
+            processMapChange();
         }
 
         function closePopup() {
@@ -310,6 +321,18 @@ const spatialViewerElement = {
             }
         }
 
+        function processMapChange() {
+            const data = {};
+            const zoomValue = map.getView().getZoom();
+            const centerPoint = map.getView().getCenter();
+            const centerPointFixed = ol.proj.transform(centerPoint, 'EPSG:3857', 'EPSG:4326');
+            const centerPointValue = '[' + centerPointFixed.toString() + ']';
+            data['baseLayer'] = mapSettings.selectedBaseLayer;
+            data['zoom'] = zoomValue;
+            data['mapCenter'] = centerPointValue;
+            context.emit('change:map-settings', data);
+        }
+
         function setDragDropTarget() {
             updateMapSettings('dragDropTarget', '');
             if(!mapSettings.dragDrop1){
@@ -348,6 +371,9 @@ const spatialViewerElement = {
                 overlays: [popupOverlay]
             });
             map.addControl(new ol.control.FullScreen());
+            map.getView().on('change', () => {
+                processMapChange();
+            });
             map.getViewport().addEventListener('drop', () => {
                 showWorking('Loading...');
             });
@@ -583,6 +609,25 @@ const spatialViewerElement = {
             });
         }
 
+        function setMapStyle() {
+            if(mapRef.value && ((props.height && Number(props.height) > 0) || (props.width && Number(props.width) > 0))){
+                let styleStr = '';
+                if(props.height && Number(props.height) > 0){
+                    styleStr += 'height:' + props.height + 'px;';
+                    if(!props.width || Number(props.width) === 0){
+                        mapRef.value.classList.add('full-width');
+                    }
+                }
+                if(props.width && Number(props.width) > 0){
+                    styleStr += 'width:' + props.width + 'px;';
+                    if(!props.height || Number(props.height) === 0){
+                        mapRef.value.classList.add('full-height');
+                    }
+                }
+                mapStyle.value = styleStr;
+            }
+        }
+
         function setRasterDragDropTarget() {
             updateMapSettings('dragDropTarget', '');
             if(!mapSettings.dragDrop4){
@@ -630,6 +675,7 @@ const spatialViewerElement = {
         Vue.provide('mapSettings', mapSettings);
 
         Vue.onMounted(() => {
+            setMapStyle();
             setMapLayersInteractions();
             setMapOverlays();
             setMap();
@@ -640,7 +686,9 @@ const spatialViewerElement = {
         });
 
         return {
+            mapRef,
             mapSettings,
+            mapStyle,
             popupCloser,
             popupContent,
             closePopup,
