@@ -9,7 +9,7 @@ const layersConfigurationsLayerElement = {
         <q-card flat bordered class="q-pa-sm map-configurations-layer-element">
             <div class="bg-white q-pa-sm">
                 <div class="row justify-between">
-                    <div class="text-bold">
+                    <div class="text-subtitle1 text-bold">
                         {{ layer['layerName'] }}
                     </div>
                     <div>
