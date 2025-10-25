@@ -6,7 +6,7 @@ const layersConfigurationsLayerElement = {
         }
     },
     template: `
-        <q-card flat bordered class="q-pa-sm map-configurations-layer-element">
+        <q-card flat bordered class="full-width q-pa-sm map-configurations-layer-element">
             <div class="bg-white q-pa-sm">
                 <div class="row justify-between">
                     <div class="text-subtitle1 text-bold">

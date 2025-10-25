@@ -19,13 +19,13 @@ const layersConfigurationsTab = {
                 </div>
             </div>
             <template v-if="layerConfigArr.length > 0">
-                <draggable v-model="layerConfigArr" v-bind="dragOptions" class="q-gutter-sm items-center" group="layer" item-key="id">
+                <draggable v-model="layerConfigArr" v-bind="dragOptions" class="q-gutter-sm items-center" group="configItem" item-key="id" :move="validateDragDrop">
                     <template #item="{ element: configData }">
                         <template v-if="configData['type'] === 'layer'">
-                            <layers-configurations-layer-element :layer="configData"></layers-configurations-layer-element>
+                            <layers-configurations-layer-element :id="configData['id']" :layer="configData"></layers-configurations-layer-element>
                         </template>
                         <template v-else-if="configData['type'] === 'layerGroup'">
-                            <layers-configurations-layer-group-element :layer-group="configData" :expanded-group-arr="expandedGroupArr" @show:layer-group="expandLayerGroup" @hide:layer-group="hideLayerGroup"></layers-configurations-layer-group-element>
+                            <layers-configurations-layer-group-element :id="configData['id']" :layer-group="configData" :expanded-group-arr="expandedGroupArr" @show:layer-group="expandLayerGroup" @hide:layer-group="hideLayerGroup"></layers-configurations-layer-group-element>
                         </template>
                     </template>
                 </draggable>
@@ -71,6 +71,11 @@ const layersConfigurationsTab = {
             });
         }
 
+        function validateDragDrop(evt){
+            const draggedObj = evt.dragged.id ? layerConfigArr.value.find(item => item['id'].toString() === evt.dragged.id.toString()) : null;
+            return !(!draggedObj || (draggedObj['type'] === 'layerGroup' && evt.to.id.startsWith('group-')));
+        }
+
         Vue.onMounted(() => {
             setLayersController();
         });
@@ -80,7 +85,8 @@ const layersConfigurationsTab = {
             layerConfigArr,
             dragOptions,
             expandLayerGroup,
-            hideLayerGroup
+            hideLayerGroup,
+            validateDragDrop
         }
     }
 };

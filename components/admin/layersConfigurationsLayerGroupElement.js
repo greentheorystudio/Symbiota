@@ -42,7 +42,7 @@ const layersConfigurationsLayerGroupElement = {
                 </div>
             </div>
             <template v-if="layerGroup.hasOwnProperty('layers') && layerGroup['layers'].length > 0 && expandedGroupArr.includes(layerGroup['id'].toString())">
-                <draggable v-model="layerGroup['layers']" v-bind="dragOptions" class="q-pa-sm bg-white q-gutter-y-sm" group="layerGroup" item-key="id">
+                <draggable v-model="layerGroup['layers']" :id="('group-' + layerGroup['id'])" v-bind="dragOptions" class="q-pa-sm bg-white q-gutter-y-sm" group="configItem" item-key="id">
                     <template #item="{ element: layer }">
                         <layers-configurations-layer-element :layer="layer"></layers-configurations-layer-element>
                     </template>
