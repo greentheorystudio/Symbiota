@@ -738,27 +738,23 @@ function setLayersList() {
         if (http.readyState == 4 && http.status == 200) {
             if (http.responseText) {
                 serverayerArrObject = JSON.parse(http.responseText);
-                if (serverayerArrObject.hasOwnProperty('layerConfig')) {
-                    layerArr = serverayerArrObject['layerConfig'];
-                    for (let i in layerArr) {
-                        if(layerArr.hasOwnProperty(i)){
-                            const layerId = layerArr[i]['id'];
-                            const layerType = layerArr[i]['type'];
-                            if(!layerData.hasOwnProperty(layerId)){
-                                layerData[layerId] = {};
-                            }
-                            layerData[layerId]['type'] = layerType;
-                            if(layerType === 'layer'){
-                                processLayerDataFromLayerArr(layerArr[i],layerId);
-                                processAddLayerListElement(layerArr[i],document.getElementById("layerList"));
-                            }
-                            else if(layerType === 'layerGroup'){
-                                layerData[layerId]['name'] = layerArr[i]['name'];
-                                processAddLayerListGroup(layerArr[i],document.getElementById("layerList"));
-                            }
-                        }
+                serverayerArrObject.forEach((layer) => {
+                    console.log(layer);
+                    const layerId = layer['id'];
+                    const layerType = layer['type'];
+                    if(!layerData.hasOwnProperty(layerId)){
+                        layerData[layerId] = {};
                     }
-                }
+                    layerData[layerId]['type'] = layerType;
+                    if(layerType === 'layer'){
+                        processLayerDataFromLayerArr(layer,layerId);
+                        processAddLayerListElement(layer,document.getElementById("layerList"));
+                    }
+                    else if(layerType === 'layerGroup'){
+                        layerData[layerId]['name'] = layer['name'];
+                        processAddLayerListGroup(layer,document.getElementById("layerList"));
+                    }
+                });
             }
         }
     };

@@ -1153,6 +1153,10 @@ body.processing .loadingModal {
 .error-border {
     border: 3px solid #C10015;
 }
+.map-configurations-layer-element {
+	border: 1px solid #d4d4d4;
+	background: #EBEBEB;
+}
 .ootd-balloon {
     height: 125px;
     width: 105px;
