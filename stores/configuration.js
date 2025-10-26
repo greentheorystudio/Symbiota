@@ -146,47 +146,41 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
             });
         },
         setDefaultSymbologyData(callback) {
-            this.configurationAddData = Object.assign({}, {});
-            this.configurationUpdateData = Object.assign({}, {});
             Object.keys(this.defaultMapSymbology).forEach((prop) => {
                 this.updateConfigurationEditData(prop, this.defaultMapSymbology[prop]);
-                if(this.configurationData['core'].hasOwnProperty(prop)){
-                    this.configurationUpdateData[prop] = this.defaultMapSymbology[prop];
-                }
-                else{
-                    this.configurationAddData[prop] = this.defaultMapSymbology[prop];
-                }
             });
             this.updateConfigurationData((res) => {
                 callback(Number(res));
             });
         },
         updateConfigurationData(callback) {
-            if(Object.keys(this.configurationAddData).length > 0){
-                this.addConfigurationValueDataObj(this.configurationAddData, (res) => {
-                    if(Object.keys(this.configurationUpdateData).length === 0 || Number(res) === 0){
-                        callback(Number(res));
-                        if(Number(res) === 1){
-                            this.configurationData['core'] = Object.assign({}, this.configurationEditData);
-                        }
-                    }
-                    else{
-                        this.updateConfigurationValueDataObj(this.configurationUpdateData, (res) => {
+            if(this.getConfigurationEditsExist){
+                if(Object.keys(this.configurationAddData).length > 0){
+                    this.addConfigurationValueDataObj(this.configurationAddData, (res) => {
+                        if(Object.keys(this.configurationUpdateData).length === 0 || Number(res) === 0){
                             callback(Number(res));
                             if(Number(res) === 1){
                                 this.configurationData['core'] = Object.assign({}, this.configurationEditData);
                             }
-                        });
-                    }
-                });
-            }
-            else{
-                this.updateConfigurationValueDataObj(this.configurationUpdateData, (res) => {
-                    callback(Number(res));
-                    if(Number(res) === 1){
-                        this.configurationData['core'] = Object.assign({}, this.configurationEditData);
-                    }
-                });
+                        }
+                        else{
+                            this.updateConfigurationValueDataObj(this.configurationUpdateData, (res) => {
+                                callback(Number(res));
+                                if(Number(res) === 1){
+                                    this.configurationData['core'] = Object.assign({}, this.configurationEditData);
+                                }
+                            });
+                        }
+                    });
+                }
+                else{
+                    this.updateConfigurationValueDataObj(this.configurationUpdateData, (res) => {
+                        callback(Number(res));
+                        if(Number(res) === 1){
+                            this.configurationData['core'] = Object.assign({}, this.configurationEditData);
+                        }
+                    });
+                }
             }
         },
         updateConfigurationEditData(key, value) {

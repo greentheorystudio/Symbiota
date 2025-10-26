@@ -1,7 +1,7 @@
 const mapWindowConfigurationsTab = {
     template: `
         <div class="fit column">
-            <div class="col-1 q-mb-md full-width column">
+            <div class="fit col-1 q-mb-md full-width column">
                 <div class="full-width row justify-between">
                     <div class="col-11">
                         Adjust the Base Layer and zoom level, and move the map below to how you would like map windows to open within the portal.
@@ -20,7 +20,7 @@ const mapWindowConfigurationsTab = {
                 </div>
             </div>
             <div class="col-grow">
-                <div class="fit">
+                <div>
                     <spatial-viewer-element height="625" @change:map-settings="processMapChange"></spatial-viewer-element>
                 </div>
             </q-card>
@@ -44,11 +44,10 @@ const mapWindowConfigurationsTab = {
         }
 
         function updateConfigurations(){
-            configurationStore.updateConfigurationValueDataObj({
-                'SPATIAL_INITIAL_BASE_LAYER': mapBaseLayerValue.value,
-                'SPATIAL_INITIAL_ZOOM': mapZoomValue.value.toString(),
-                'SPATIAL_INITIAL_CENTER': mapCenterValue.value
-            }, (res) => {
+            configurationStore.updateConfigurationEditData('SPATIAL_INITIAL_BASE_LAYER', mapBaseLayerValue.value);
+            configurationStore.updateConfigurationEditData('SPATIAL_INITIAL_ZOOM', mapZoomValue.value.toString());
+            configurationStore.updateConfigurationEditData('SPATIAL_INITIAL_CENTER', mapCenterValue.value);
+            configurationStore.updateConfigurationData((res) => {
                 if(res === 1){
                     showNotification('positive','Settings saved');
                 }
