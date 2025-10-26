@@ -96,7 +96,7 @@ const layersConfigurationsTab = {
         }
 
         function openLayerGroupEditPopup(layerGroup = null) {
-            editLayerGroup.value = layerGroup ? Object.assign({}, layerGroup) : null;
+            editLayerGroup.value = layerGroup ? Object.assign({}, layerGroup) : {id: 0, type: 'layerGroup', name: null, layers: []};
             showLayerGroupEditorPopup.value = true;
         }
 

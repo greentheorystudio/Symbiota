@@ -28,23 +28,19 @@ const layerConfigurationsLayerGroupEditorPopup = {
                                 <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                             </template>
                         </div>
-                        <div class="row justify-end">
+                        <div class="row justify-end q-gutter-sm">
                             <template v-if="Number(layerGroup.id) > 0">
                                 <q-btn color="secondary" @click="updateLayerGroup();" label="Save Edits" :disabled="!editsExist || !editDataValid" />
+                                <q-btn v-if="layerGroup.layers.length === 0" color="negative" @click="deleteLayerGroup();" label="Remove" />
                             </template>
                             <template v-else>
-                                <q-btn color="secondary" @click="addLayerGroup();" label="Add Taxon" :disabled="!editDataValid" />
+                                <q-btn color="secondary" @click="addLayerGroup();" label="Add Layer Group" :disabled="!editDataValid" />
                             </template>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-grow">
                             <text-field-input-element label="Group Name" :value="editData['name']" @update:value="(value) => editData['name'] = value"></text-field-input-element>
-                        </div>
-                    </div>
-                    <div v-if="Number(layerGroup.id) > 0 && layerGroup.layers.length === 0" class="row justify-end q-gutter-md">
-                        <div>
-                            <q-btn color="negative" @click="deleteLayerGroup();" label="Remove" />
                         </div>
                     </div>
                 </div>
@@ -64,7 +60,7 @@ const layerConfigurationsLayerGroupEditorPopup = {
         });
 
         function addLayerGroup() {
-            editData['id'] = Date.now();
+            editData.value['id'] = Date.now();
             context.emit('add:layer-group', editData.value);
         }
 
