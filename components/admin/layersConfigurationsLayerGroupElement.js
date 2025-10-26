@@ -11,7 +11,7 @@ const layersConfigurationsLayerGroupElement = {
     },
     template: `
         <q-card flat bordered class="full-width q-pa-sm map-configurations-layer-element">
-            <div class="q-pt-xs row justify-between self-center" :class="(layerGroup.hasOwnProperty('layers') && layerGroup['layers'].length > 0 && expandedGroupArr.includes(layerGroup['id'].toString())) ? 'q-pb-lg' : 'q-pb-xs'">
+            <div class="q-pt-xs row justify-between self-center" :class="(layerGroup.hasOwnProperty('layers') && (layerGroup['layers'].length === 0 || (layerGroup['layers'].length > 0 && expandedGroupArr.includes(layerGroup['id'].toString())))) ? 'q-pb-lg' : 'q-pb-xs'">
                 <div class="text-bold row justify-start q-gutter-md">
                     <div>
                         {{ layerGroup['name'] }}
@@ -34,14 +34,14 @@ const layersConfigurationsLayerGroupElement = {
                     </template>
                 </div>
                 <div>
-                    <q-btn color="grey-4" text-color="black" size="sm" @click="openLayerGroupEditPopup(layerGroup['id']);" icon="fas fa-edit" dense>
+                    <q-btn color="grey-4" text-color="black" size="sm" @click="openLayerGroupEditPopup(layerGroup);" icon="fas fa-edit" dense>
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Edit layer group
                         </q-tooltip>
                     </q-btn>
                 </div>
             </div>
-            <template v-if="layerGroup.hasOwnProperty('layers') && layerGroup['layers'].length > 0 && expandedGroupArr.includes(layerGroup['id'].toString())">
+            <template v-if="layerGroup.hasOwnProperty('layers') && (layerGroup['layers'].length === 0 || (layerGroup['layers'].length > 0 && expandedGroupArr.includes(layerGroup['id'].toString())))">
                 <draggable v-model="layerGroup['layers']" :id="('group-' + layerGroup['id'])" v-bind="dragOptions" class="q-pa-sm bg-white q-gutter-y-sm" group="configItem" item-key="id">
                     <template #item="{ element: layer }">
                         <layers-configurations-layer-element :layer="layer"></layers-configurations-layer-element>
@@ -70,8 +70,8 @@ const layersConfigurationsLayerGroupElement = {
             context.emit('hide:layer-group', layergroupid);
         }
 
-        function openLayerGroupEditPopup(layergroupid) {
-            context.emit('edit:layer-group', layergroupid);
+        function openLayerGroupEditPopup(layerGroup) {
+            context.emit('edit:layer-group', layerGroup);
         }
 
         function showLayerGroup(layergroupid) {
