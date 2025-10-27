@@ -10,22 +10,19 @@ const layersConfigurationsTab = {
                     <div>
                         <q-btn color="primary" @click="openLayerGroupEditPopup();" label="Add Layer Group" />
                     </div>
-                    <div>
-                        <q-btn color="primary" @click="saveLayersConfigurations();" label="Save Settings" />
-                    </div>
                     <div onclick="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
                         <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                     </div>
                 </div>
             </div>
             <template v-if="layerConfigArr.length > 0">
-                <draggable v-model="layerConfigArr" v-bind="dragOptions" class="q-gutter-sm items-center" group="configItem" item-key="id" :move="validateDragDrop">
+                <draggable v-model="layerConfigArr" v-bind="dragOptions" class="q-gutter-sm items-center" group="configItem" item-key="id" :move="validateDragDrop" @add="processDragDrop" @update="processDragDrop">
                     <template #item="{ element: configData }">
                         <template v-if="configData['type'] === 'layer'">
                             <layers-configurations-layer-element :id="configData['id']" :layer="configData"></layers-configurations-layer-element>
                         </template>
                         <template v-else-if="configData['type'] === 'layerGroup'">
-                            <layers-configurations-layer-group-element :id="configData['id']" :layer-group="configData" :expanded-group-arr="expandedGroupArr" @show:layer-group="expandLayerGroup" @hide:layer-group="hideLayerGroup" @edit:layer-group="openLayerGroupEditPopup"></layers-configurations-layer-group-element>
+                            <layers-configurations-layer-group-element :id="configData['id']" :layer-group="configData" :expanded-group-arr="expandedGroupArr" @show:layer-group="expandLayerGroup" @hide:layer-group="hideLayerGroup" @edit:layer-group="openLayerGroupEditPopup" @update:layers-arr="processDragDrop"></layers-configurations-layer-group-element>
                         </template>
                     </template>
                 </draggable>
@@ -75,6 +72,7 @@ const layersConfigurationsTab = {
         function addLayerGroup(layerGroup) {
             layerConfigArr.value.push(layerGroup);
             showLayerGroupEditorPopup.value = false;
+            saveLayersConfigurations();
         }
 
         function deleteLayerGroup(layerGroup) {
@@ -82,6 +80,7 @@ const layersConfigurationsTab = {
             if(groupObj) {
                 const index = layerConfigArr.value.indexOf(groupObj);
                 layerConfigArr.value.splice(index, 1);
+                saveLayersConfigurations();
             }
             showLayerGroupEditorPopup.value = false;
         }
@@ -100,13 +99,14 @@ const layersConfigurationsTab = {
             showLayerGroupEditorPopup.value = true;
         }
 
+        function processDragDrop() {
+            saveLayersConfigurations();
+        }
+
         function saveLayersConfigurations(){
             configurationStore.updateConfigurationEditData('SPATIAL_LAYER_CONFIG_JSON', JSON.stringify(layerConfigArr.value));
             configurationStore.updateConfigurationData((res) => {
-                if(res === 1){
-                    showNotification('positive','Settings saved');
-                }
-                else{
+                if(res === 0){
                     showNotification('negative', 'There was an error saving the settings');
                 }
             });
@@ -128,6 +128,7 @@ const layersConfigurationsTab = {
             if(groupObj) {
                 groupObj['name'] = layerGroup['name'];
                 updateLayerConfigArr();
+                saveLayersConfigurations();
             }
             showLayerGroupEditorPopup.value = false;
         }
@@ -154,7 +155,7 @@ const layersConfigurationsTab = {
             expandLayerGroup,
             hideLayerGroup,
             openLayerGroupEditPopup,
-            saveLayersConfigurations,
+            processDragDrop,
             updateLayerGroup,
             validateDragDrop
         }
