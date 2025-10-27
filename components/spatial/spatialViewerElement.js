@@ -424,6 +424,15 @@ const spatialViewerElement = {
                 style: getVectorLayerStyle(mapSettings.dragDropFillColor, mapSettings.dragDropBorderColor, mapSettings.dragDropBorderWidth, mapSettings.dragDropPointRadius, mapSettings.dragDropOpacity)
             });
             layersArr.push(layersObj['dragDrop3']);
+            layersObj['dragDrop4'] = new ol.layer.Image({
+                zIndex: 4,
+            });
+            layersObj['dragDrop5'] = new ol.layer.Image({
+                zIndex: 5,
+            });
+            layersObj['dragDrop6'] = new ol.layer.Image({
+                zIndex: 6,
+            });
             layersObj['radius'] = new ol.layer.Vector({
                 zIndex: 4,
                 source: mapSettings.radiusCircleSource,
