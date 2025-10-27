@@ -161,12 +161,6 @@ class FileSystemService {
         return getimagesize($imageUrl);
     }
 
-    public static function getMapDataFileUploadPath(): string
-    {
-        $serverPath = self::getServerRootPath();
-        return $serverPath . '/content/spatial';
-    }
-
     public static function getServerLogFilePath(): string
     {
         $serverPath = self::getServerRootPath();

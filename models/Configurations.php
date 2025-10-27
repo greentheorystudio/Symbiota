@@ -190,9 +190,9 @@ class Configurations{
         return $returnVal;
     }
 
-    public function deleteMapDataFile($filePath): int
+    public function deleteMapDataFile($fileName): int
     {
-        $fullPath = $GLOBALS['SERVER_ROOT'] . '/' . $filePath;
+        $fullPath = $GLOBALS['SERVER_ROOT'] . '/content/spatial/' . $fileName;
         FileSystemService::deleteFile($fullPath);
         return FileSystemService::fileExists($fullPath) ? 0 : 1;
     }
@@ -360,7 +360,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20251008';
-        $GLOBALS['JS_VERSION'] = '20251011';
+        $GLOBALS['JS_VERSION'] = '202510111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -503,9 +503,9 @@ class Configurations{
     {
         $returnStr = '';
         if(strtolower(substr($mapFile['name'], -4)) === '.zip' || strtolower(substr($mapFile['name'], -8)) === '.geojson' || strtolower(substr($mapFile['name'], -4)) === '.kml' || strtolower(substr($mapFile['name'], -4)) === '.tif' || strtolower(substr($mapFile['name'], -5)) === '.tiff' || strtolower(substr($mapFile['name'], -5)) === '.json'){
-            $targetPath = FileSystemService::getMapDataFileUploadPath();
+            $targetPath = $GLOBALS['SERVER_ROOT'] . '/content/spatial';
             if($targetPath && $mapFile['name'] && FileSystemService::moveUploadedFileToServer($mapFile, $targetPath, $mapFile['name'])) {
-                $returnStr = '/content/spatial/' . $mapFile['name'];
+                $returnStr = $mapFile['name'];
             }
         }
         return $returnStr;

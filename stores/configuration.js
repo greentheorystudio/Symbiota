@@ -130,9 +130,9 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
                 }
             });
         },
-        deleteMapDataFile(filePath, callback) {
+        deleteMapDataFile(filename, callback) {
             const formData = new FormData();
-            formData.append('path', filePath);
+            formData.append('filename', filename);
             formData.append('action', 'deleteMapFile');
             fetch(configurationsApiUrl, {
                 method: 'POST',

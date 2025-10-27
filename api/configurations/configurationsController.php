@@ -61,7 +61,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'uploadMapFile' && $isEditor && array_key_exists('mapFile', $_FILES)){
         echo $configurations->uploadMapDataFile($_FILES['mapFile']);
     }
-    elseif($action === 'deleteMapFile' && $isEditor && array_key_exists('path', $_FILES)){
-        echo $configurations->deleteMapDataFile($_FILES['path']);
+    elseif($action === 'deleteMapFile' && $isEditor && array_key_exists('filename', $_POST)){
+        echo $configurations->deleteMapDataFile($_POST['filename']);
     }
 }
