@@ -2,7 +2,7 @@ const spatialLayerControllerLayerElement = {
     props: {
         layer: {
             type: Object,
-            default: {}
+            default: null
         },
         query: {
             type: Boolean,
@@ -36,26 +36,26 @@ const spatialLayerControllerLayerElement = {
                     <template v-if="layer.providedBy || layer.sourceURL">
                         <div>
                             <template v-if="layer.providedBy">
-                                <span class="text-bold">Provided by: </span> {{ layer.providedBy }}
+                                <span class="text-bold">Provided by: </span> {{ layer.providedBy + (layer.sourceURL ? ' ' : '') }}
                             </template>
                             <template v-if="layer.sourceURL">
-                                <span class="text-bold q-ml-md"><a :href="layer.sourceURL" target="_blank">(Go to source)</a></span>
+                                <span class="text-bold"><a :href="layer.sourceURL" target="_blank">(Go to source)</a></span>
                             </template>
                         </div>
                     </template>
                     <template v-if="layer.dateAquired || layer.dateUploaded">
                         <div>
                             <template v-if="layer.dateAquired">
-                                <span class="text-bold">Date aquired: </span> {{ layer.dateAquired }}
+                                <span class="text-bold">Date aquired: </span> {{ layer.dateAquired + (layer.dateUploaded ? ' ' : '') }}
                             </template>
                             <template v-if="layer.dateUploaded">
-                                <span class="text-bold q-ml-md">Date uploaded: </span> {{ layer.dateUploaded }}
+                                <span class="text-bold">Date uploaded: </span> {{ layer.dateUploaded }}
                             </template>
                         </div>
                     </template>
                     <template v-if="layer.active && symbology">
-                        <template v-if="layer.raster">
-                            <div class="row justify-center q-mt-xs">
+                        <template v-if="mapDataType === 'raster'">
+                            <div class="row justify-start q-mt-xs">
                                 <div class="col-4">
                                     <spatial-raster-color-scale-select :selected-color-scale="layer.colorScale" @raster-color-scale-change="(value) => changeRasterColorScale(layer.id, value)"></spatial-raster-color-scale-select>
                                 </div>
@@ -94,7 +94,7 @@ const spatialLayerControllerLayerElement = {
                     <template v-if="windowWidth >= 875">
                         <div class="row justify-between q-mt-sm">
                             <div class="self-center">
-                                <template v-if="layer.raster">
+                                <template v-if="mapDataType === 'raster'">
                                     <q-icon name="fas fa-border-all" color="black" class="layer-type-icon"></q-icon>
                                 </template>
                                 <template v-else>
@@ -107,7 +107,7 @@ const spatialLayerControllerLayerElement = {
                                         <text-field-input-element :clearable="false" data-type="int" label="Order" :value="layer.layerOrder" min-value="1" :max-value="(layerOrderArr.length > 0 ? layerOrderArr.length : 1)" @update:value="(value) => changeLayerOrder(layer.id, value)"></text-field-input-element>
                                     </div>
                                 </template>
-                                <template v-if="layer.active && query && !layer.raster">
+                                <template v-if="layer.active && query && mapDataType === 'vector'">
                                     <div>
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="toggleLayerQuerySelector(layer.id);" label="Query Selector" />
                                     </div>
@@ -131,9 +131,9 @@ const spatialLayerControllerLayerElement = {
                         </div>
                     </template>
                     <template v-else>
-                        <template v-if="layer.active && ((query && !layer.raster) || sortable)">
+                        <template v-if="layer.active && ((query && mapDataType === 'vector') || sortable)">
                             <div class="row justify-between q-mt-sm">
-                                <template v-if="query && !layer.raster">
+                                <template v-if="query && mapDataType === 'vector'">
                                     <div class="self-center">
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="toggleLayerQuerySelector(layer.id);" label="Query Selector" />
                                     </div>
@@ -147,7 +147,7 @@ const spatialLayerControllerLayerElement = {
                         </template>
                         <div class="row justify-between  q-mt-sm">
                             <div class="self-center">
-                                <template v-if="layer.raster">
+                                <template v-if="mapDataType === 'raster'">
                                     <q-icon name="fas fa-border-all" color="black" class="layer-type-icon"></q-icon>
                                 </template>
                                 <template v-else>
@@ -182,12 +182,19 @@ const spatialLayerControllerLayerElement = {
         'spatial-raster-color-scale-select': spatialRasterColorScaleSelect,
         'text-field-input-element': textFieldInputElement
     },
-    setup() {
+    setup(props) {
         const coreLayers = Vue.inject('coreLayers');
         const layerOrderArr = Vue.inject('layerOrderArr');
         const layersInfoObj = Vue.inject('layersInfoObj');
         const layersObj = Vue.inject('layersObj');
         const map = Vue.inject('map');
+        const mapDataType = Vue.computed(() => {
+            let returnVal = '';
+            if(props.layer){
+                returnVal = (props.layer.file.endsWith('.tif') || props.layer.file.endsWith('.tiff')) ? 'raster' : 'vector';
+            }
+            return returnVal;
+        });
         const mapSettings = Vue.inject('mapSettings');
         const windowWidth = Vue.inject('windowWidth');
 
@@ -462,6 +469,7 @@ const spatialLayerControllerLayerElement = {
         
         return {
             layerOrderArr,
+            mapDataType,
             windowWidth,
             changeElementStyling,
             changeLayerOrder,
