@@ -55,10 +55,13 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'uploadMapDataFile' && $isEditor && array_key_exists('addLayerFile', $_FILES)){
         echo $configurations->uploadMapDataFile();
     }
-    elseif($action === 'deleteMapDataFile' && $isEditor && array_key_exists('filename', $_POST)){
-        echo $configurations->deleteMapDataFile($_POST['filename']);
-    }
     elseif($action === 'getConfigurationData' && $isEditor){
         echo json_encode($configurations->getConfigurationData());
+    }
+    elseif($action === 'uploadMapFile' && $isEditor && array_key_exists('mapFile', $_FILES)){
+        echo $configurations->uploadMapDataFile($_FILES['mapFile']);
+    }
+    elseif($action === 'deleteMapFile' && $isEditor && array_key_exists('filename', $_POST)){
+        echo $configurations->deleteMapDataFile($_POST['filename']);
     }
 }

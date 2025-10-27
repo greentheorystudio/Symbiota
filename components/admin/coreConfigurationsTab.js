@@ -506,6 +506,7 @@ const coreConfigurationsTab = {
             configurationStore.updateCssVersion((res) => {
                 if(res === 1){
                     showNotification('positive','CSS version updated');
+                    configurationStore.setConfigurationData();
                 }
                 else{
                     showNotification('negative', 'There was an error updating the CSS version');
