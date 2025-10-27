@@ -109,8 +109,7 @@ const spatialAnalysisModule = {
         const propsRefs = Vue.toRefs(props);
         const rasterAnalysisInteraction = Vue.computed(() => setRasterAnalysisInteraction());
         const rasterAnalysisTranslate = Vue.computed(() => setRasterAnalysisTranslate());
-        const rasterColorScales = spatialStore.getRasterColorScales;
-        const rasterLayersArr = Vue.shallowReactive([
+        const rasterLayersArr = Vue.ref([
             {value: 'none', label: 'None'}
         ]);
         const searchRecordCnt = Vue.computed(() => searchStore.getSearchRecordCount);
@@ -1337,11 +1336,11 @@ const spatialAnalysisModule = {
         }
 
         function removeLayerFromRasterLayersArr(id) {
-            const copyArr = rasterLayersArr.slice();
-            rasterLayersArr.length = 0;
+            const copyArr = rasterLayersArr.value.slice();
+            rasterLayersArr.value.length = 0;
             copyArr.forEach(option => {
                 if(option.value !== id){
-                    rasterLayersArr.push(option);
+                    rasterLayersArr.value.push(option);
                 }
             });
         }
@@ -2693,7 +2692,6 @@ const spatialAnalysisModule = {
         Vue.provide('processSymbologyKeyColorChange', processSymbologyKeyColorChange);
         Vue.provide('processToggleSelectedChange', processToggleSelectedChange);
         Vue.provide('rasterAnalysisInteraction', rasterAnalysisInteraction);
-        Vue.provide('rasterColorScales', Vue.computed(() => rasterColorScales));
         Vue.provide('rasterLayersArr', rasterLayersArr);
         Vue.provide('removeLayerFromActiveLayerOptions', removeLayerFromActiveLayerOptions);
         Vue.provide('removeLayerFromLayersObj', removeLayerFromLayersObj);
