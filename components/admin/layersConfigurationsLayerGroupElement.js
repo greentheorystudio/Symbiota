@@ -44,7 +44,7 @@ const layersConfigurationsLayerGroupElement = {
             <template v-if="layerGroup.hasOwnProperty('layers') && (layerGroup['layers'].length === 0 || (layerGroup['layers'].length > 0 && expandedGroupArr.includes(layerGroup['id'].toString())))">
                 <draggable v-model="layerGroup['layers']" :id="('group-' + layerGroup['id'])" v-bind="dragOptions" class="q-pa-sm bg-white q-gutter-y-sm" group="configItem" item-key="id" @add="processDragDrop" @update="processDragDrop">
                     <template #item="{ element: layer }">
-                        <layers-configurations-layer-element :layer="layer"></layers-configurations-layer-element>
+                        <layers-configurations-layer-element :layer="layer" @edit:layer="openLayerEditPopup"></layers-configurations-layer-element>
                     </template>
                 </draggable>
             </template>
@@ -70,6 +70,10 @@ const layersConfigurationsLayerGroupElement = {
             context.emit('hide:layer-group', layergroupid);
         }
 
+        function openLayerEditPopup(layer) {
+            context.emit('edit:layer', layer);
+        }
+
         function openLayerGroupEditPopup(layerGroup) {
             context.emit('edit:layer-group', layerGroup);
         }
@@ -85,6 +89,7 @@ const layersConfigurationsLayerGroupElement = {
         return {
             dragOptions,
             hideLayerGroup,
+            openLayerEditPopup,
             openLayerGroupEditPopup,
             processDragDrop,
             showLayerGroup

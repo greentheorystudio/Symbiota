@@ -167,7 +167,7 @@ const symbologyConfigurationsTab = {
                                         Border color
                                     </div>
                                     <div class="q-ml-sm">
-                                        <color-picker :color-value="configurationData['SPATIALDRAGDROPBORDERCOLOR']" @update:color-picker="(value) => updateConfigurationData('SPATIAL_DRAGDROP_BORDER_COLOR', value)"></color-picker>
+                                        <color-picker :color-value="configurationData['SPATIAL_DRAGDROP_BORDER_COLOR']" @update:color-picker="(value) => updateConfigurationData('SPATIAL_DRAGDROP_BORDER_COLOR', value)"></color-picker>
                                     </div>
                                 </div>
                             </div>

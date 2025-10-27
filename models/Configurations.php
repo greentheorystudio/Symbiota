@@ -139,30 +139,6 @@ class Configurations{
         $this->conn->close();
     }
 
-    public function getConfigurationsArr(): array
-    {
-        $retArr = array();
-        $retArr['core'] = array();
-        $retArr['additional'] = array();
-        $sql = 'SELECT configurationname, configurationvalue FROM configurations ';
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $value = $r->configurationvalue;
-            if(strpos($r->configurationname, 'PASSWORD') !== false || strpos($r->configurationname, 'USERNAME') !== false){
-                $value = EncryptionService::decrypt($value);
-            }
-            $retArr[$r->configurationname] = $value;
-            if(in_array($r->configurationname, $this->coreConfigurations, true)){
-                $retArr['core'][$r->configurationname] = $value;
-            }
-            else{
-                $retArr['additional'][$r->configurationname] = $value;
-            }
-        }
-        $rs->free();
-        return $retArr;
-    }
-
     public function addConfiguration($name, $value): int
     {
         $returnVal = 0;
@@ -214,10 +190,11 @@ class Configurations{
         return $returnVal;
     }
 
-    public function deleteMapDataFile($fileName): bool
+    public function deleteMapDataFile($filePath): int
     {
-        FileSystemService::deleteFile($GLOBALS['SERVER_ROOT'] . '/content/spatial/' . $fileName);
-        return true;
+        $fullPath = $GLOBALS['SERVER_ROOT'] . '/' . $filePath;
+        FileSystemService::deleteFile($fullPath);
+        return FileSystemService::fileExists($fullPath) ? 0 : 1;
     }
 
     public function getCssVersion(): int
@@ -383,7 +360,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20251008';
-        $GLOBALS['JS_VERSION'] = '202510101111';
+        $GLOBALS['JS_VERSION'] = '20251011';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -522,28 +499,13 @@ class Configurations{
         return $returnVal;
     }
 
-    public function uploadMapDataFile(): string
+    public function uploadMapDataFile($mapFile): string
     {
         $returnStr = '';
-        if(strtolower(substr($_FILES['addLayerFile']['name'], -4)) === '.zip' || strtolower(substr($_FILES['addLayerFile']['name'], -8)) === '.geojson' || strtolower(substr($_FILES['addLayerFile']['name'], -4)) === '.kml' || strtolower(substr($_FILES['addLayerFile']['name'], -4)) === '.tif' || strtolower(substr($_FILES['addLayerFile']['name'], -5)) === '.tiff' || strtolower(substr($_FILES['addLayerFile']['name'], -5)) === '.json'){
-            $targetPath = $GLOBALS['SERVER_ROOT'].'/content/spatial';
-            if(file_exists($targetPath) || (mkdir($targetPath, 0775) && is_dir($targetPath))) {
-                $uploadFileName = basename($_FILES['addLayerFile']['name']);
-                $uploadFileName = str_replace(array(',','&',' '), array('','',''), urldecode($uploadFileName));
-                $fileExtension =  substr(strrchr($uploadFileName, '.'), 1);
-                $fileNameOnly =  substr($uploadFileName, 0, ((strlen($fileExtension) + 1) * -1));
-                $tempFileName = $fileNameOnly;
-                $cnt = 0;
-                while(file_exists($targetPath.'/'.$tempFileName.'.'.$fileExtension)){
-                    $tempFileName = $fileNameOnly.'_'.$cnt;
-                    $cnt++;
-                }
-                if($cnt) {
-                    $fileNameOnly = $tempFileName;
-                }
-                if(move_uploaded_file($_FILES['addLayerFile']['tmp_name'], $targetPath.'/'.$fileNameOnly.'.'.$fileExtension)){
-                    $returnStr = $fileNameOnly.'.'.$fileExtension;
-                }
+        if(strtolower(substr($mapFile['name'], -4)) === '.zip' || strtolower(substr($mapFile['name'], -8)) === '.geojson' || strtolower(substr($mapFile['name'], -4)) === '.kml' || strtolower(substr($mapFile['name'], -4)) === '.tif' || strtolower(substr($mapFile['name'], -5)) === '.tiff' || strtolower(substr($mapFile['name'], -5)) === '.json'){
+            $targetPath = FileSystemService::getMapDataFileUploadPath();
+            if($targetPath && $mapFile['name'] && FileSystemService::moveUploadedFileToServer($mapFile, $targetPath, $mapFile['name'])) {
+                $returnStr = '/content/spatial/' . $mapFile['name'];
             }
         }
         return $returnStr;

@@ -69,8 +69,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                     <div class="q-mt-md text-body1 text-bold">Administrative Tools</div>
                                     <ul>
                                         <li><a :href="(clientRoot + '/admin/core.php')">Portal Configurations</a></li>
-                                        <li><a :href="(clientRoot + '/admin/mapping/index.php')">Mapping Configurations</a></li>
-                                        <li><a :href="(clientRoot + '/admin/mapping.php')">New Mapping Configurations</a></li>
+                                        <li><a :href="(clientRoot + '/admin/mapping.php')">Mapping Configurations</a></li>
                                         <li><a :href="(clientRoot + '/profile/usermanagement.php')">User Management</a></li>
                                         <li><a :href="(clientRoot + '/collections/misc/collmetadata.php')">Create New Collection</a></li>
                                         <li><a :href="(clientRoot + '/collections/management/thumbnailbuilder.php')">Build Image Thumbnails</a></li>

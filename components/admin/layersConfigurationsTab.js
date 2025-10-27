@@ -5,7 +5,7 @@ const layersConfigurationsTab = {
                 <div></div>
                 <div class="row justify-end q-gutter-sm">
                     <div>
-                        <q-btn color="primary" @click="setDefaultSymbologySettings();" label="Add Layer" />
+                        <q-btn color="primary" @click="openLayerEditPopup();" label="Add Layer" />
                     </div>
                     <div>
                         <q-btn color="primary" @click="openLayerGroupEditPopup();" label="Add Layer Group" />
@@ -19,10 +19,10 @@ const layersConfigurationsTab = {
                 <draggable v-model="layerConfigArr" v-bind="dragOptions" class="q-gutter-sm items-center" group="configItem" item-key="id" :move="validateDragDrop" @add="processDragDrop" @update="processDragDrop">
                     <template #item="{ element: configData }">
                         <template v-if="configData['type'] === 'layer'">
-                            <layers-configurations-layer-element :id="configData['id']" :layer="configData"></layers-configurations-layer-element>
+                            <layers-configurations-layer-element :id="configData['id']" :layer="configData" @edit:layer="openLayerEditPopup"></layers-configurations-layer-element>
                         </template>
                         <template v-else-if="configData['type'] === 'layerGroup'">
-                            <layers-configurations-layer-group-element :id="configData['id']" :layer-group="configData" :expanded-group-arr="expandedGroupArr" @show:layer-group="expandLayerGroup" @hide:layer-group="hideLayerGroup" @edit:layer-group="openLayerGroupEditPopup" @update:layers-arr="processDragDrop"></layers-configurations-layer-group-element>
+                            <layers-configurations-layer-group-element :id="configData['id']" :layer-group="configData" :expanded-group-arr="expandedGroupArr" @show:layer-group="expandLayerGroup" @hide:layer-group="hideLayerGroup" @edit:layer-group="openLayerGroupEditPopup" @edit:layer="openLayerEditPopup" @update:layers-arr="processDragDrop"></layers-configurations-layer-group-element>
                         </template>
                     </template>
                 </draggable>
@@ -43,6 +43,16 @@ const layersConfigurationsTab = {
                 @close:popup="showLayerGroupEditorPopup = false"
             ></layer-configurations-layer-group-editor-popup>
         </template>
+        <template v-if="showLayerEditorPopup">
+            <layer-configurations-layer-editor-popup
+                :layer="editLayer"
+                :show-popup="showLayerEditorPopup"
+                @add:layer="addLayer"
+                @delete:layer="deleteLayer"
+                @update:layer="updateLayer"
+                @close:popup="showLayerEditorPopup = false"
+            ></layer-configurations-layer-editor-popup>
+        </template>
     `,
     components: {
         'draggable': draggable,
@@ -56,6 +66,30 @@ const layersConfigurationsTab = {
         const baseStore = useBaseStore();
         const configurationStore = useConfigurationStore();
 
+        const configurationData = Vue.computed(() => configurationStore.getMapSymbologyData);
+        const blankLayer = {
+            id: 0,
+            type: 'layer',
+            layerName: null,
+            layerDescription: null,
+            providedBy: null,
+            sourceURL: null,
+            dateAquired: null,
+            dateUploaded: null,
+            colorScale: configurationData.value['SPATIAL_DRAGDROP_RASTER_COLOR_SCALE'],
+            borderColor: configurationData.value['SPATIAL_DRAGDROP_BORDER_COLOR'],
+            fillColor: configurationData.value['SPATIAL_DRAGDROP_FILL_COLOR'],
+            borderWidth: configurationData.value['SPATIAL_DRAGDROP_BORDER_WIDTH'],
+            pointRadius: configurationData.value['SPATIAL_DRAGDROP_POINT_RADIUS'],
+            opacity: configurationData.value['SPATIAL_DRAGDROP_OPACITY'],
+            file: null
+        };
+        const blankLayerGroup = {
+            id: 0,
+            type: 'layerGroup',
+            name: null,
+            layers: []
+        };
         const dragOptions = Vue.computed(() => {
             return {
                 animation: 200,
@@ -69,10 +103,44 @@ const layersConfigurationsTab = {
         const showLayerEditorPopup = Vue.ref(false);
         const showLayerGroupEditorPopup = Vue.ref(false);
 
+        function addLayer(layer) {
+            layerConfigArr.value.push(layer);
+            showLayerEditorPopup.value = false;
+            saveLayersConfigurations();
+        }
+
         function addLayerGroup(layerGroup) {
             layerConfigArr.value.push(layerGroup);
             showLayerGroupEditorPopup.value = false;
             saveLayersConfigurations();
+        }
+
+        function deleteLayer(layer) {
+            let layerObj = layerConfigArr.value.find(item => item['id'].toString() === layer.id.toString());
+            if(layerObj) {
+                const index = layerConfigArr.value.indexOf(layerObj);
+                layerConfigArr.value.splice(index, 1);
+                saveLayersConfigurations();
+            }
+            else{
+                let found = false;
+                do{
+                    layerConfigArr.value.forEach((item) => {
+                        if(item.type === 'layerGroup' && item.layers.length > 0) {
+                            layerObj = item.layers.find(item => item['id'].toString() === layer.id.toString());
+                            if(layerObj) {
+                                const index = item.layers.indexOf(layerObj);
+                                item.layers.splice(index, 1);
+                                updateLayerConfigArr();
+                                saveLayersConfigurations();
+                                found = true;
+                            }
+                        }
+                    });
+                }
+                while(!found);
+            }
+            showLayerEditorPopup.value = false;
         }
 
         function deleteLayerGroup(layerGroup) {
@@ -94,8 +162,13 @@ const layersConfigurationsTab = {
             expandedGroupArr.value.splice(index, 1);
         }
 
+        function openLayerEditPopup(layer = null) {
+            editLayer.value = layer ? Object.assign({}, layer) : Object.assign({}, blankLayer);
+            showLayerEditorPopup.value = true;
+        }
+
         function openLayerGroupEditPopup(layerGroup = null) {
-            editLayerGroup.value = layerGroup ? Object.assign({}, layerGroup) : {id: 0, type: 'layerGroup', name: null, layers: []};
+            editLayerGroup.value = layerGroup ? Object.assign({}, layerGroup) : Object.assign({}, blankLayerGroup);
             showLayerGroupEditorPopup.value = true;
         }
 
@@ -118,6 +191,33 @@ const layersConfigurationsTab = {
             });
         }
 
+        function updateLayer(layer) {
+            let layerObj = layerConfigArr.value.find(item => item['id'].toString() === layer.id.toString());
+            if(layerObj) {
+                updateLayerValues(layerObj, layer);
+                updateLayerConfigArr();
+                saveLayersConfigurations();
+            }
+            else{
+                let found = false;
+                do{
+                    layerConfigArr.value.forEach((item) => {
+                        if(item.type === 'layerGroup' && item.layers.length > 0) {
+                            layerObj = item.layers.find(item => item['id'].toString() === layer.id.toString());
+                            if(layerObj) {
+                                updateLayerValues(layerObj, layer);
+                                updateLayerConfigArr();
+                                saveLayersConfigurations();
+                                found = true;
+                            }
+                        }
+                    });
+                }
+                while(!found);
+            }
+            showLayerEditorPopup.value = false;
+        }
+
         function updateLayerConfigArr() {
             const data = layerConfigArr.value.slice();
             layerConfigArr.value = data.slice();
@@ -131,6 +231,14 @@ const layersConfigurationsTab = {
                 saveLayersConfigurations();
             }
             showLayerGroupEditorPopup.value = false;
+        }
+
+        function updateLayerValues(layer, newValues) {
+            Object.keys(layer).forEach((key) => {
+                if(key !== 'id' && key !== 'type' && key !== 'file') {
+                    layer[key] = newValues[key];
+                }
+            });
         }
 
         function validateDragDrop(evt){
@@ -150,12 +258,16 @@ const layersConfigurationsTab = {
             layerConfigArr,
             showLayerEditorPopup,
             showLayerGroupEditorPopup,
+            addLayer,
             addLayerGroup,
+            deleteLayer,
             deleteLayerGroup,
             expandLayerGroup,
             hideLayerGroup,
+            openLayerEditPopup,
             openLayerGroupEditPopup,
             processDragDrop,
+            updateLayer,
             updateLayerGroup,
             validateDragDrop
         }

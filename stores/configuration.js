@@ -130,6 +130,21 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
                 }
             });
         },
+        deleteMapDataFile(filePath, callback) {
+            const formData = new FormData();
+            formData.append('path', filePath);
+            formData.append('action', 'deleteMapFile');
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res);
+            });
+        },
         setConfigurationData() {
             const formData = new FormData();
             formData.append('action', 'getConfigurationData');
@@ -239,6 +254,21 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
                 if(res && Number(res) === 1){
                     this.setConfigurationData();
                 }
+            });
+        },
+        uploadMapDataFile(file, callback) {
+            const formData = new FormData();
+            formData.append('mapFile', file);
+            formData.append('action', 'uploadMapFile');
+            fetch(configurationsApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res);
             });
         },
         validateClientPath(value, callback) {

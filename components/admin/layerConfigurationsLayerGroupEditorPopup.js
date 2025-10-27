@@ -2,11 +2,7 @@ const layerConfigurationsLayerGroupEditorPopup = {
     props: {
         layerGroup: {
             type: Object,
-            default: {
-                id: 0,
-                name: null,
-                layers: []
-            }
+            default: null
         },
         showPopup: {
             type: Boolean,
@@ -14,7 +10,7 @@ const layerConfigurationsLayerGroupEditorPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" persistent>
+        <q-dialog v-if="layerGroup" class="z-top" v-model="showPopup" persistent>
             <q-card class="sm-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
