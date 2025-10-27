@@ -178,7 +178,7 @@ const spatialRasterToolsExpansion = {
         }
 
         function setSelectedOption() {
-            selectedTarget.value = rasterLayersArr.find(opt => opt['value'] === props.selectedTargetRaster);
+            selectedTarget.value = rasterLayersArr.value.find(opt => opt['value'] === props.selectedTargetRaster);
         }
 
         function vectorizeRasterByData() {

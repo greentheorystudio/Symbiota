@@ -218,6 +218,20 @@ function useCore() {
         return returnArr;
     }
 
+    function getCurrentDateStr() {
+        const today = new Date();
+        const year = today.getFullYear();
+        let month = today.getMonth() + 1;
+        let day = today.getDate();
+        if(month < 10){
+            month = '0' + month;
+        }
+        if(day < 10){
+            day = '0' + day;
+        }
+        return `${year}-${month}-${day}`;
+    }
+
     function getErrorResponseText(status, statusText){
         let text;
         if(status === 0){
@@ -516,6 +530,7 @@ function useCore() {
         generateRandHexColor,
         getArrayBuffer,
         getCorrectedPolygonCoordArr,
+        getCurrentDateStr,
         getErrorResponseText,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,
