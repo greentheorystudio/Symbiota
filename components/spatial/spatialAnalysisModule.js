@@ -1044,7 +1044,6 @@ const spatialAnalysisModule = {
 
         function processAddedLayer(layerData,active) {
             if(!layersInfoObj.hasOwnProperty(layerData['id'].toString())){
-                layerData['raster'] = (layerData['fileType'] === 'tif' || layerData['fileType'] === 'tiff');
                 layerData['active'] = (active || layerData['id'] === 'select');
                 layerData['layerOrder'] = 0;
                 layersInfoObj[layerData['id'].toString()] = Object.assign({}, layerData);
