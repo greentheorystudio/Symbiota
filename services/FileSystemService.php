@@ -13,7 +13,7 @@ class FileSystemService {
         'glossary',
         'hooks',
         'ident',
-        'imagelib',
+        'media',
         'misc',
         'models',
         'profile',
