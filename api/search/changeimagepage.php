@@ -26,7 +26,7 @@ if(SanitizerService::validateInternalRequest()){
 
     if($collManager->validateSearchTermsArr($stArr)){
         if(strlen($stArrJson) <= 1800){
-            $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/imagelib/search.php';
+            $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/media/search.php';
             $urlArgs = '?starr='.str_replace("'", '%squot;',$stArrJson).'&page='.$pageNumber.'&imagedisplay='.$view.'&taxon='.$taxon;
             $copyURL = $urlPrefix.$urlArgs;
         }
