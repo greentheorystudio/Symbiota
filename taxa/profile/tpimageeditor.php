@@ -222,7 +222,7 @@ if($tid){
                                     $tnUrl = $webUrl;
                                 }
                                 ?>
-                                <a href="../../imagelib/imgdetails.php?imgid=<?php echo $imgArr['imgid']; ?>">
+                                <a href="../../media/imgdetails.php?imgid=<?php echo $imgArr['imgid']; ?>">
                                     <img src="<?php echo $tnUrl;?>" style="width:200px;"/>
                                 </a>
                                 <?php
@@ -248,7 +248,7 @@ if($tid){
                             else{
                                 ?>
                                 <div style='float:right;margin-right:10px;'>
-                                    <a href="../../imagelib/imgdetails.php?imgid=<?php echo $imgArr['imgid'];?>&emode=1" target="_blank">
+                                    <a href="../../media/imgdetails.php?imgid=<?php echo $imgArr['imgid'];?>&emode=1" target="_blank">
                                         <i style="height:15px;width:15px;" class="far fa-edit"></i>
                                     </a>
                                 </div>
