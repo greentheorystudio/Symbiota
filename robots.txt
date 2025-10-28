@@ -10,7 +10,7 @@ Allow: /portal/collections/exsiccati/index.php
 Allow: /portal/collections/misc/collprofiles.php  
 Allow: /portal/games/index.php  
 Allow: /portal/ident/index.php  
-Allow: /portal/imagelib/index.php  
+Allow: /portal/media/index.php
 Allow: /portal/projects/index.php  
 Allow: /portal/sitemap.php    
   
