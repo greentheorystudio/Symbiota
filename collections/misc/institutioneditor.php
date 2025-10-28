@@ -119,16 +119,16 @@ include(__DIR__ . '/../../header.php');
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
-        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="1">Home</a> &gt;&gt;
         <?php
         if(!$targetCollid && count($collList) === 1){
             $targetCollid = key($collList);
         }
         if($targetCollid){
-            echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
+            echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'" tabindex="1">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
         }
         else{
-            echo '<a href="institutioneditor.php">Full Address List</a> &gt;&gt;';
+            echo '<a href="institutioneditor.php" tabindex="1">Full Address List</a> &gt;&gt;';
         }
         ?>
         <b>Institution Editor</b>

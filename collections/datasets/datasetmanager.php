@@ -282,11 +282,11 @@ include(__DIR__ . '/../../header.php');
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
-        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="1">Home</a> &gt;&gt;
         <?php
-        echo '<a href="../../profile/viewprofile.php?tabindex=1">My Profile</a> &gt;&gt; ';
+        echo '<a href="../../profile/viewprofile.php?tabindex=1" tabindex="1">My Profile</a> &gt;&gt; ';
         ?>
-        <a href="index.php">
+        <a href="index.php" tabindex="1">
             Return to Dataset Listing
         </a> &gt;&gt;
         <b>Dataset Manager</b>

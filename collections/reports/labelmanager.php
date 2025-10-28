@@ -187,13 +187,13 @@ include(__DIR__ . '/../../header.php');
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
-        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="1">Home</a> &gt;&gt;
         <?php
         if(stripos(strtolower($labelManager->getMetaDataTerm('colltype')), 'observation') !== false){
-            echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
+            echo '<a href="../../profile/viewprofile.php?tabindex=1" tabindex="1">Personal Management Menu</a> &gt;&gt; ';
         }
         else{
-            echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'" tabindex="1">Collection Control Panel</a> &gt;&gt; ';
         }
         ?>
         <b>Print Labels</b>

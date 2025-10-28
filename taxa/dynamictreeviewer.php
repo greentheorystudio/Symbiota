@@ -28,7 +28,7 @@ header('X-Frame-Options: SAMEORIGIN');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="1">Home</a> &gt;&gt;
                 <span class="text-bold">Interactive Taxonomic Tree</span>
             </div>
             <div class="q-pa-md fit">

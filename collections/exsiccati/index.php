@@ -249,13 +249,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	?>
 	<div id="mainContainer" style="padding: 10px 15px 15px;width:95%;">
         <div id="breadcrumbs">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="1">Home</a> &gt;&gt;
             <?php
             if($ometId || $omenId){
-                echo '<a href="index.php"><b>Return to main Exsiccati Index</b></a>';
+                echo '<a href="index.php" tabindex="1"><b>Return to main Exsiccati Index</b></a>';
             }
             else{
-                echo '<a href="index.php"><b>Exsiccati Index</b></a>';
+                echo '<a href="index.php" tabindex="1"><b>Exsiccati Index</b></a>';
             }
             ?>
         </div>

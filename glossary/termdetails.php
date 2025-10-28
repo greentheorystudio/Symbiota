@@ -177,8 +177,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <body>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
         <div id="breadcrumbs">
-            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
-            <a href='index.php?language=<?php echo $glosManager->getTermLanguage(); ?>'> <b>Glossary Management</b></a>
+            <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="1">Home</a> &gt;&gt;
+            <a href='index.php?language=<?php echo $glosManager->getTermLanguage(); ?>' tabindex="1"> <b>Glossary Management</b></a>
         </div>
         <?php
 		if($glossId && $isEditor){

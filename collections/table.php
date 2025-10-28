@@ -44,9 +44,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     <body class="full-window-mode">
         <div id="tableContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="1">Home</a> &gt;&gt;
                 <template v-if="Number(searchTermsCollId) > 0 && isEditor">
-                    <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + searchTermsCollId)">Collection Control Panel</a> &gt;&gt;
+                    <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + searchTermsCollId)" tabindex="1">Collection Control Panel</a> &gt;&gt;
                     <span class="text-bold">View/Edit Existing Records</span>
                 </template>
                 <template v-else>

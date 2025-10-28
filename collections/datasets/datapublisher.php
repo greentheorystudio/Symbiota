@@ -132,16 +132,16 @@ include(__DIR__ . '/../../header.php');
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="1">Home</a> &gt;&gt;
         <?php
         if($collId){
             ?>
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collId; ?>">Collection Control Panel</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collId; ?>" tabindex="1">Collection Control Panel</a> &gt;&gt;
             <?php
         }
         else{
             ?>
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php">Sitemap</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" tabindex="1">Sitemap</a> &gt;&gt;
             <?php
         }
         ?>

@@ -239,9 +239,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
         <?php
         echo '<div id="breadcrumbs">';
-        echo '<a href="../../index.php">Home</a> &gt;&gt; ';
+        echo '<a href="../../index.php" tabindex="1">Home</a> &gt;&gt; ';
         if($collid){
-            echo '<a href="collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
+            echo '<a href="collprofiles.php?collid='.$collid.'" tabindex="1">Collection Control Panel</a> &gt;&gt; ';
             echo '<b>Edit Collection Metadata</b>';
         }
         else{

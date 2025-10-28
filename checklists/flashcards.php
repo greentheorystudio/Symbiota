@@ -28,21 +28,21 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="1">Home</a> &gt;&gt;
                 <template v-if="!temporaryChecklist">
                     <template v-if="Number(pId) > 0">
-                        <a :href="(clientRoot + '/projects/index.php')">Biotic Inventory Projects</a> &gt;&gt;
-                        <a :href="(clientRoot + '/projects/project.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
+                        <a :href="(clientRoot + '/projects/index.php')" tabindex="1">Biotic Inventory Projects</a> &gt;&gt;
+                        <a :href="(clientRoot + '/projects/project.php?pid=' + pId)" tabindex="1">{{ projectName }}</a> &gt;&gt;
                     </template>
                     <template v-else-if="Number(clId) > 0">
-                        <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
+                        <a :href="(clientRoot + '/checklists/index.php')" tabindex="1">Checklists</a> &gt;&gt;
                     </template>
                     <template v-if="Number(clId) > 0">
-                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Checklist: {{ checklistName }}</a> &gt;&gt;
+                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)" tabindex="1">Checklist: {{ checklistName }}</a> &gt;&gt;
                     </template>
                 </template>
                 <template v-else>
-                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)">Dynamic Checklist</a> &gt;&gt;
+                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)" tabindex="1">Dynamic Checklist</a> &gt;&gt;
                 </template>
                 <span class="text-bold">Flashcards</span>
             </div>

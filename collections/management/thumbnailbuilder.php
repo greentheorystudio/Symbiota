@@ -52,13 +52,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	?>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
         <div id="breadcrumbs">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="1">Home</a> &gt;&gt;
             <?php
             if($collid){
-                echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt;';
+                echo '<a href="../../collections/misc/collprofiles.php?collid='.$collid.'" tabindex="1">Collection Control Panel</a> &gt;&gt;';
             }
             else{
-                echo '<a href="../../sitemap.php">Sitemap</a> &gt;&gt;';
+                echo '<a href="../../sitemap.php" tabindex="1">Sitemap</a> &gt;&gt;';
             }
             ?>
             <b>Thumbnail Builder</b>
