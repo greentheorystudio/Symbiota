@@ -201,7 +201,7 @@
                         }
                     }
                     else{
-                        image['anchorUrl'] = clientRoot + '/imagelib/imgdetails.php?imgid=' + image['id'];
+                        image['anchorUrl'] = clientRoot + '/media/imgdetails.php?imgid=' + image['id'];
                         fieldImageArr.value.push(image);
                     }
                 });
