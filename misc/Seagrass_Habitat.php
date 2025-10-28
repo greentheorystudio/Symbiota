@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Close-up of underwater seagrass with overlapping green and brown blades."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -124,7 +125,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_CorapiP2.jpg" alt="Credit: P. Corapi" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_CorapiP2.jpg" alt="Reddish egret with wings spread, bending forward to catch prey in shallow water." />
                     <figcaption>
                         <i>Credit: P. Corapi</i>
                     </figcaption>
@@ -153,19 +154,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_PriceN1.jpg" alt="Credit: N. Price" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_PriceN1.jpg" alt="Speckled brown and white bird standing in shallow water with a fish in its beak, surrounded by grassy vegetation." />
                     <figcaption>
                         <i>Credit: N. Price</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Bursatella_leachii_plei_L_Holly_Sweat.jpg" alt="Credit: L. Sweat" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Bursatella_leachii_plei_L_Holly_Sweat.jpg" alt="Sea slug with ragged hair-like projections crawling on a seagrass blade underwater." />
                     <figcaption>
                         <i>Credit: L. Sweat</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/06DineenJ1.jpg" alt="Credit: J. Dineen" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/06DineenJ1.jpg" alt="Sea hare with mottled brown and white coloration partially buried in sand among seagrass in shallow water." />
                     <figcaption>
                         <i>Credit: J. Dineen</i>
                     </figcaption>
@@ -206,7 +207,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/syringodium_filiforme_rhizome_FWSRI.jpg" alt="S. filiforme rhizome creeping into an area denuded by propeller scarring." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/syringodium_filiforme_rhizome_FWSRI.jpg" alt="Underwater scene with sandy seabed, green aquatic plants, and murky water." />
                     <figcaption style="width:500px;">
                         <i>S. filiforme</i> rhizome creeping into an area denuded by propeller scarring. <i>Credit: Florida
                         Fish and Wildlife Research Institute</i>
@@ -224,19 +225,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/turtle_in_seagrass_clifton_beard_flickr.jpg" alt="Credit: C. Beard (Flickr)" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/turtle_in_seagrass_clifton_beard_flickr.jpg" alt="Sea turtle swimming over seagrass, stirring sediment in slightly murky water." />
                     <figcaption>
                         <i>Credit: C. Beard (Flickr)</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Mr_Ray.jpg" alt="Credit: L. Hall" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Mr_Ray.jpg" alt="Stingray resting on sandy seabed, camouflaged among patches of seagrass in clear water." />
                     <figcaption>
                         <i>Credit: L. Hall</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18SprattR3.jpg" alt="Credit: R. Spratt" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18SprattR3.jpg" alt="Manatee and calf swimming in shallow, clear water with heads partially above the surface." />
                     <figcaption>
                         <i>Credit: R. Spratt</i>
                     </figcaption>
@@ -287,8 +288,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Prop_Scars_on_Shallows_in_Florida_Bay_NPSPhoto.jpg" alt="Propeller scarring in seagrass beds in Florida Bay." />
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/prop_scar_FL_DEP.png" alt="Propeller scarring in seagrass beds in Florida Bay." />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Prop_Scars_on_Shallows_in_Florida_Bay_NPSPhoto.jpg" alt="Prop scars on a clear, shallow ocean with gentle waves and distant land on the horizon under a partly cloudy sky." />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/prop_scar_FL_DEP.png" alt="Prop scar through dense aquatic plants, with sunlight filtering through murky green water." />
                     <figcaption>
                         Propeller scarring in seagrass beds in Florida Bay. <i>Credit: National Park Service, Florida DEP</i>
                     </figcaption>

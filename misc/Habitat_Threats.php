@@ -22,6 +22,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Storm clouds over water with a docked boat and distant red lighthouse."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -75,6 +76,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/impoundments.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/12_PowellD2_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Aerial view of coastal islands and water channels under a partly cloudy sky."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Mosquito Impoundments</div>
@@ -85,6 +87,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/development.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/stuart_shore_KRoark_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Beach with waves, high-rises, palm trees, and a pool under a partly cloudy sky."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Shoreline Development</div>
@@ -95,6 +98,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/muck-nutrients.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/muck_LHS_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Close-up of two hands holding Indian River Lagoon muck."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Muck & Nutrients</div>
@@ -107,6 +111,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/invasives.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/lionfish_FWS_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Lionfish with striped pattern and long spines swimming above gravel bottom."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Invasive Species</div>
@@ -117,6 +122,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/weather.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/17AdamsN1_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Lightning storm over water with city lights in the distance."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Extreme Weather</div>
@@ -127,6 +133,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/climate-change.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/dorian_NOAA_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Satellite view of a hurricane with a visible eye approaching Florida."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Climate Change</div>

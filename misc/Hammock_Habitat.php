@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Dirt path winding through a dense, mossy forest with lush greenery."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -120,7 +121,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_hammock_landscape_LHS.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_hammock_landscape_LHS.jpg" alt="Dirt path leading into a forest with trees and bushes on a sunny day." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -171,7 +172,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_FSP_prescribed_burn.jpg" alt="A prescribed burn underway in St. Sebastian River State Park." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_FSP_prescribed_burn.jpg" alt="Forest fire with thick smoke and flames among trees." />
                     <figcaption>
                         A prescribed burn underway in St. Sebastian River State Park. <i>Credit: Florida State Parks</i>
                     </figcaption>
@@ -204,7 +205,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_view_from_St_S_River_MZD.jpg" alt="Credit: M. Donahue" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_view_from_St_S_River_MZD.jpg" alt="Dense palm trees and vegetation by a body of water." />
                     <figcaption>
                         <i>Credit: M. Donahue</i>
                     </figcaption>
@@ -242,7 +243,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_bulldozer_LHS.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_bulldozer_LHS.jpg" alt="Caterpillar bulldozer labeled 'FIRE CREW' in a forest with tall pine trees and shrubs." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -288,19 +289,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_21ShirahD2.jpg" alt="Credit: D. Shirah" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_21ShirahD2.jpg" alt="Armadillo standing on hind legs in grassy area with blurred green background." />
                     <figcaption>
                         <i>Credit: D. Shirah</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_16_CorteseM1.jpg" alt="Credit: M. Cortese" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_16_CorteseM1.jpg" alt="Two ospreys perched on a twig nest in a tree against a clear blue sky." />
                     <figcaption>
                         <i>Credit: M. Cortese</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/8_Odocoileus_virginianus_B_Cozza.jpg" alt="Credit: B. Cozza" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/8_Odocoileus_virginianus_B_Cozza.jpg" alt="Adult deer and fawn in a grassy area with green foliage." />
                     <figcaption>
                         <i>Credit: B. Cozza</i>
                     </figcaption>

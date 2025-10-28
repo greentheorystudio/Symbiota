@@ -43,6 +43,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Calm river surrounded by lush trees with sunlight reflecting on the water."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -114,7 +115,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/msites_map.jpg" alt="A map of the Smithsonian’s long-term benthic monitoring sites on the Indian River Lagoon. (Credit: Holly Sweat)" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/msites_map.jpg" alt="Map of the Indian River Lagoon and St. Lucie Estuary with markers indicating the Smithsonian Marine Station's long-term infaunal invertebrate monitoring sites." />
                     <figcaption style="width:500px;font-size: 17px;font-style: italic;margin-left:10px;margin-top:-10px;">
                         A map of the Smithsonian’s long-term benthic monitoring sites on the Indian River Lagoon. (Credit: Holly Sweat)
                     </figcaption>
@@ -126,8 +127,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin: 15px;">
                     <div style="display:flex;gap:20px;">
-                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/pristine.jpg" alt="Pristine" />
-                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impacted.jpg" alt="Impacted" />
+                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/pristine.jpg" alt="Ocean view with gentle waves, distant shoreline, and a mostly clear sky with scattered clouds." />
+                        <img style="border:0;height:250px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/impacted.jpg" alt="Boardwalk over water with trees in the background." />
                     </div>
                     <figcaption style="width:800px;font-size: 17px;font-style: italic;">
                         The image on the left depicts an area of the lagoon with relatively pristine, healthy water conditions; at right, an area of the lagoon with highly impacted, degraded water conditions.  (Photos: Holly Sweat)
@@ -141,7 +142,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/jess_with_jars.jpg" alt="Program Coordinator Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon." />
+                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/jess_with_jars.jpg" alt="Person in lab holding a sample jar in front of a cabinet filled with more sample jars." />
                     <figcaption style="width:600px;font-size: 17px;font-style: italic;">
                         Program Coordinator Jess Glanz examines a sample jar from a collection site on the Indian River Lagoon.  (Photo: Holly Sweat)
                     </figcaption>
@@ -158,7 +159,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/infauna.jpg" alt="A sampling of benthic infauna." />
+                    <img style="border:0;width:600px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/infauna.jpg" alt="Various marine organisms, including amphipods and bivalves." />
                     <figcaption style="width:600px;font-size: 17px;font-style: italic;">
                         A sampling of benthic infauna. (Credit: Holly Sweat)
                     </figcaption>
@@ -188,7 +189,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure>
-                    <img style="border:0;width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Team_BEL.jpg" alt="From left, Program Coordinator Jess Glanz, Principal Investigator Dr. Holly Sweat and Technician Garrett O’Donnell sample for benthic infauna on the Indian River Lagoon." />
+                    <img style="border:0;width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Team_BEL.jpg" alt="Three people on a Smithsonian Marine Station boat, working on calm water under a partly cloudy sky." />
                     <figcaption style="width:100%;font-size: 17px;font-style: italic;">
                         From left, Program Coordinator Jess Glanz, Principal Investigator Dr. Holly Sweat and Technician Garrett O’Donnell sample for
                         benthic infauna on the Indian River Lagoon. (Photo: Scott Jones)
@@ -206,7 +207,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/odonnell_garret_fabricinuda_trilobata.jpg" alt="Thousands of these Fabricinuda trilobata worms were found in a sample of Indian River Lagoon sediment." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/odonnell_garret_fabricinuda_trilobata.jpg" alt="Close-up image of numerous small, pink, thread-like marine worms on a black background with a scale bar." />
                     <figcaption style="width:500px;font-size: 17px;font-style: italic;">
                         Thousands of these <i>Fabricinuda trilobata</i> worms were found in a sample of Indian River Lagoon sediment.  (Photo: Holly Sweat)
                     </figcaption>
@@ -226,9 +227,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;display:flex;flex-direction:column;justify-content: center;align-content: center;">
                     <div style="width:100%;display:flex;justify-content: center;align-content: center;gap:30px;">
-                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap1-historic-trim.jpg" alt="Historic flow map" />
-                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap2-current-trim.jpg" alt="Current flow map" />
-                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap3-cerp-trim.jpg" alt="CERP flow map" />
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap1-historic-trim.jpg" alt="Map of southern Florida showing high water flow from Lake Okeechobee through the Everglades to Florida Bay." />
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap2-current-trim.jpg" alt="Map of southern Florida showing water flow from Lake Okeechobee to the east and west coasts of Florida, and through the Everglades to Florida Bay." />
+                        <img style="border:0;height:375px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/flowmap3-cerp-trim.jpg" alt="Map of southern Florida showing some water flow from Lake Okeechobee through the Everglades to Florida Bay." />
                     </div>
                     <figcaption style="width:80%;margin: 0 auto;font-size: 17px;font-style: italic;">
                         These maps show the historic, current and projected future water flow in southern Florida. A decades-long
@@ -291,6 +292,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
 </div>
 <div class="bottom-hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Silhouetted palm trees against a colorful sunset over calm water."> </span>
     <div style="width: 70%;padding: 0 20px;background-color: rgba(226, 232, 236, 0.58);">
         <h3 style="display:flex;align-content: center;flex-direction:column;justify-content: center;align-items:center;">
             <i>“It is a wonderful river… immensely deep and very fine sweet water. The beauties of nature are here very manifest, in fact it is a wonderland.”</i><br />

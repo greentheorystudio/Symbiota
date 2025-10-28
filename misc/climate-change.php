@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Satellite view of a hurricane approaching Florida, with a visible eye and city lights on land."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -106,7 +107,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/florida_flooding_susceptibility_NASA.jpg" alt="Left, a standard topographical view of Florida from space. At right, areas of the state most susceptible to inundation during storm surge and other flooding events show the extent to which much of the Florida peninsula is subject to effects of rising seas." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/florida_flooding_susceptibility_NASA.jpg" alt="Side-by-side maps of Florida showing current land and projected sea level rise impact." />
                     <figcaption style="width:500px;">
                         Left, a standard topographical view of Florida from space. At right, areas of the state most susceptible
                         to inundation during storm surge and other flooding events show the extent to which much of the Florida
@@ -136,7 +137,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Miami_tidal_flooding_16_wikimedia.jpg" alt="A flooded street during high tide in Miami in 2016." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Miami_tidal_flooding_16_wikimedia.jpg" alt="White Jeep driving through a flooded urban street with palm trees and buildings." />
                     <figcaption style="width:500px;">
                         A flooded street during high tide in Miami in 2016. <i>Credit: Wikimedia Commons</i>
                     </figcaption>

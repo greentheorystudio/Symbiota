@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Cracked earth of a dried riverbed at sunset, with grasses along the edges and a clear sky."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -127,7 +128,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_05LawrenceL3.jpg" alt="Credit: L. Lawrence" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_05LawrenceL3.jpg" alt="Wooden boardwalk with railings crossing a marsh, with people walking and a tree with hanging moss in the foreground." />
                     <figcaption>
                         <i>Credit: L. Lawrence</i>
                     </figcaption>
@@ -152,7 +153,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_20WestM2_N.jpg" alt="Credit: M. West" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_20WestM2_N.jpg" alt="Person standing in shallow water with a net, facing the horizon under a cloudy sky near a grassy shoreline." />
                     <figcaption>
                         <i>Credit: M. West</i>
                     </figcaption>
@@ -197,7 +198,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_2011_Calendar_Lola_Lawrence.jpg" alt="Credit: L. Lawrence" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_2011_Calendar_Lola_Lawrence.jpg" alt="Flock of birds flying over a wetland with water, grass patches, and birds standing in the foreground under a clear blue sky." />
                     <figcaption>
                         <i>Credit: L. Lawrence</i>
                     </figcaption>
@@ -221,7 +222,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <h5>Salt Marsh-Mangrove Transition</h5>
             <div style="clear:both;">
                 <figure style="float: left;margin-right: 30px;">
-                    <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_mangrove_salt_marsh_transition.jpg" alt="Credit: Florida Fish and Wildlife Service Research Institute" />
+                    <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_mangrove_salt_marsh_transition.jpg" alt="Winding stream flowing through lush vegetation with grasses, shrubs, and a partly cloudy sky." />
                     <figcaption>
                         <i>Credit: Florida Fish and Wildlife Service Research Institute</i>
                     </figcaption>
@@ -247,7 +248,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <h5>Oligohaline Marsh</h5>
             <div style="clear:both;">
                 <figure style="float: left;margin-right: 30px;">
-                    <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_salt_marsh_creek.jpg" alt="Salt Marsh Creek" />
+                    <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_salt_marsh_creek.jpg" alt="Marshland with winding water channels, tall grasses, and a clear blue sky on a sunny day." />
                     <figcaption>
                         <a href="https://www.flickr.com/photos/ryanregister/2454522021/sizes/l/" target="_blank"><i>Credit: Ryan Register, Flickr</i></a>
                     </figcaption>
@@ -280,19 +281,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_06CohenG2.jpg" alt="Credit: G. Cohen" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_06CohenG2.jpg" alt="Bobcat with reddish-brown coat walking near water's edge, looking at the camera with mouth slightly open." />
                     <figcaption>
                         <i>Credit: G. Cohen</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/8_06LilienthalP1.jpg" alt="Credit: P. Lilienthal" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/8_06LilienthalP1.jpg" alt="Group of alligators on grassy bank near water, with a white egret standing nearby in a wetland setting." />
                     <figcaption>
                         <i>Credit: P. Lilienthal</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/9_SpoonbillMarsh_WaltersLinda.jpg" alt="Credit: L. Walters" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/9_SpoonbillMarsh_WaltersLinda.jpg" alt="Roseate spoonbill with pink feathers standing in shallow water, with green vegetation." />
                     <figcaption>
                         <i>Credit: L. Walters</i>
                     </figcaption>

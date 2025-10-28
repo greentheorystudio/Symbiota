@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Person holding a large clump of muck with both hands near a boat."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -120,7 +121,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/14_BolonM2.jpg" alt="Credit: M. Bolon" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/14_BolonM2.jpg" alt="Marina with docked boats under a dark, stormy sky." />
                     <figcaption style="width:500px;">
                         <i>Credit: M. Bolon</i>
                     </figcaption>
@@ -140,7 +141,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2algae_on_lake_O_Jackie_Thurlow_Lippisch.jpg" alt="Streaks of algae bloom on Lake Okeechobee in 2021." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2algae_on_lake_O_Jackie_Thurlow_Lippisch.jpg" alt="Aerial view of dark blue water with green algae streaks and part of an airplane wing." />
                     <figcaption style="width:500px;">
                         Streaks of algae bloom on Lake Okeechobee in 2021. <i>Credit: E. Lippisch, J. Thurlow-Lippisch</i>
                     </figcaption>
@@ -158,7 +159,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/cyanobacteria_Paul_Gray.jpg" alt="An algae bloom proliferates in a marina in Fort Pierce, Florida." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/cyanobacteria_Paul_Gray.jpg" alt="Boats docked at a marina with cyanobacteria and debris in the water." />
                     <figcaption style="width:500px;">
                         An algae bloom proliferates in a marina in Fort Pierce, Florida. <i>Credit: P. Gray</i>
                     </figcaption>

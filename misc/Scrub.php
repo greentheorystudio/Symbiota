@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Sunset over a landscape with palm trees and vegetation, with clouds lit by the setting sun."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -119,7 +120,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_Jonathan_Dickinson_State_Park_Overlook.jpg" alt="Jonathan Dickinson State Park overlook." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_Jonathan_Dickinson_State_Park_Overlook.jpg" alt="Overlook of Johnathan Dickenson State Park at sunset." />
                     <figcaption>
                         Jonathan Dickinson State Park overlook. <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -147,7 +148,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_Merritt_Island_prescribed_burn_USFWS.jpg" alt="Prescribed burn on Merritt Island." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_Merritt_Island_prescribed_burn_USFWS.jpg" alt="Firefighter standing before a prescribed burn on Merritt Island." />
                     <figcaption>
                         Prescribed burn on Merritt Island. <i>Credit: US Fish and Wildlife Service</i>
                     </figcaption>
@@ -185,19 +186,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Coccoloba_Seagrape_Sweat.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Coccoloba_Seagrape_Sweat.jpg" alt="Cluster of seagrape leaves with red veins and a glossy texture." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Zanthoxylum_Hercules_Sweat.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Zanthoxylum_Hercules_Sweat.jpg" alt="Close-up of Hercules club plant with small green berries and purple thorns." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Serenoa_repens_L_Holly_Sweat.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Serenoa_repens_L_Holly_Sweat.jpg" alt="Cluster of green palmetto plants with fan-shaped leaves in a forested area." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -217,13 +218,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_RogersJ1.jpg" alt="Credit: J. Rogers" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_RogersJ1.jpg" alt="Blue Florida scrub jay perched on a branch with green foliage in the background." />
                     <figcaption>
                         <i>Credit: J. Rogers</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_PichonK1.jpg" alt="Credit: K. Pichon" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_PichonK1.jpg" alt="Close-up of a tortoise with a patterned shell in grassy surroundings." />
                     <figcaption>
                         <i>Credit: K. Pichon</i>
                     </figcaption>

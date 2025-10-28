@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Oyster shells on a muddy shore with mangroves and water in the background."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -128,7 +129,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/1_Linda_Walters_Oysters_Mosquito_Lagoon.jpg" alt="Credit: L. Walters" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/1_Linda_Walters_Oysters_Mosquito_Lagoon.jpg" alt="Cluster of oysters on rocks in clear, shallow shoreline water." />
                     <figcaption>
                         <i>Credit: L. Walters</i>
                     </figcaption>
@@ -145,7 +146,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/19TweedieD1_S.jpg" alt="Credit: D. Tweedie" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/19TweedieD1_S.jpg" alt="Close-up of weathered wood with oysters, barnacles, and algae growth." />
                     <figcaption>
                         <i>Credit: D. Tweedie</i>
                     </figcaption>
@@ -162,19 +163,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_BlueCrabOysters_WaltersLinda.jpg" alt="Credit: L. Walters" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_BlueCrabOysters_WaltersLinda.jpg" alt="Blue crab underwater with extended claws near rocks in murky water." />
                     <figcaption>
                         <i>Credit: L. Walters</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_RaccoonInOysters_WaltersLinda.jpg" alt="Credit: L. Walters" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/3_RaccoonInOysters_WaltersLinda.jpg" alt="Raccoon standing in shallow water with rocks, vegetation, and mangrove roots in the background." />
                     <figcaption>
                         <i>Credit: L. Walters</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Ibis_WaltersLinda.jpg" alt="Credit: L. Walters" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Ibis_WaltersLinda.jpg" alt="White ibis with a curved pink beak standing in shallow water among rocks and vegetation." />
                     <figcaption>
                         <i>Credit: L. Walters</i>
                     </figcaption>
@@ -215,7 +216,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_Oyster_Reef_Monitoring_LW.jpg" alt="Credit: L. Walters" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_Oyster_Reef_Monitoring_LW.jpg" alt="Group of people monitoring a oyster reef restoration project with green vegetation and a partly cloudy sky." />
                     <figcaption>
                         <i>Credit: L. Walters</i>
                     </figcaption>
@@ -245,7 +246,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_Biodegradable_Restoration_Materials_LW.jpg" alt="Credit: L. Walters" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_Biodegradable_Restoration_Materials_LW.jpg" alt="Square metal frames filled with oyster shells and black tires arranged on a muddy surface near water." />
                     <figcaption>
                         <i>Credit: L. Walters</i>
                     </figcaption>

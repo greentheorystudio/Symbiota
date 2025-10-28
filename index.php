@@ -65,11 +65,33 @@ include_once(__DIR__ . '/config/header-includes.php');
             "L. Phipps",
             "T. Simons",
             "J. Mandeville"];
+        var altTextArray = [
+            "Red boat hull reflected in calm marina water with wooden posts and dock elements.",
+            "",
+            "Sunset over calm water with clouds and sky reflected in the surface.",
+            "Blue scrub jay flying over green trees under a cloudy sky.",
+            "Dragonfly on a multicolored leaf with transparent wings and a long body.",
+            "Cracked, dry riverbed with a muddy path leading to green vegetation under an orange sunrise or sunset.",
+            "Lightning strikes over a large body of water under dramatic purple storm clouds, viewed from a rocky shoreline.",
+            "Wooden hut on stilts over water, with a pier, palm trees, and a rainbow in the background.",
+            "A large flock of ibises flying over green trees and foliage.",
+            "Dolphin catching a mullet mid-air with splashing water.",
+            "Person kayaking on a calm river, wearing an orange life jacket and red cap, with tree reflections on the water.",
+            "Four stingrays swimming in dark green water.",
+            "Under a lit bridge at night with glowing columns and water reflections.",
+            "Sunset over calm water with clouds, a tree silhouette, and shoreline reflections.",
+            "Close-up of a blue and brown land crab on sand.",
+            "Sea turtle swimming in clear turquoise water with sunlight reflecting off the surface and rocks below.",
+            "Dolphins swimming near shore with land in the background.",
+            "Calm water reflecting a partly cloudy sky with scattered small mangrove trees in the foreground and buildings on the horizon.",
+            "Starry night sky with Milky Way over water and illuminated trees.",
+            "Storm clouds over water with a docked boat and distant red lighthouse."];
 
         $(document).ready(function() {
             const imgIndex = Math.floor(Math.random() * 20);
             document.getElementById('hero-container').style.backgroundImage = imgArray[imgIndex];
             document.getElementById('photographerName').innerHTML = photographerArray[imgIndex];
+            document.getElementById('hero-container-alt').setAttribute('aria-label', altTextArray[imgIndex]);
         });
     </script>
 </head>
@@ -80,6 +102,7 @@ include_once(__DIR__ . '/config/header-includes.php');
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
     <div class="hero-container" id="hero-container">
+        <span id="hero-container-alt" class="screen-reader-only" role="img" aria-label=""> </span>
         <div class="top-shade-container"></div>
         <div class="logo-container">
             <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >

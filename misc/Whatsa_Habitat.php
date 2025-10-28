@@ -22,6 +22,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Flock of birds flying over a wetland with water patches, grassy vegetation, and a tree-lined horizon."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -76,6 +77,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Barrierislnd.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/2_09_RichardsR1_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Misty landscape with leafless trees, perched birds, dense foliage, and distant water."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Barrier Islands</div>
@@ -86,6 +88,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Beaches.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/3_vero_beach_aerial_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Aerial view of a beach with turquoise water, white sand, a pier, and nearby parking lot surrounded by greenery."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Beaches</div>
@@ -98,6 +101,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Dunes.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/4_18PastorR1_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Red lighthouse on a sandy dune with birds flying and resting under a clear blue sky."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Dunes</div>
@@ -108,6 +112,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Mangroves.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/5_09_WhiticarJ2_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Mangrove trees with aerial roots in shallow water under a partly cloudy sky."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Mangroves</div>
@@ -120,6 +125,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Hammock_Habitat.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/6_Rasmussen-KP-Woods_4638_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Forest path winding through tall trees draped in Spanish moss and dense green foliage."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Maritime Hammocks</div>
@@ -130,6 +136,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Oyster_reef.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/7_20SacksP1_N_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Coastal scene with oyster beds and mangroves under a calm blue sky."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Oyster Reefs</div>
@@ -142,6 +149,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Saltmarsh.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/8_11_SmithA1_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Cracked earth of a dried riverbed at sunset, with grasses along the edges and a clear sky."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Salt Marshes</div>
@@ -152,6 +160,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Scrub.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/9_Dune_Westward_Canaveral_National_Seashore_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Sunset over a landscape with spiky plants, palm trees, and a partly cloudy sky."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Scrub</div>
@@ -164,6 +173,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Seagrass_Habitat.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/10_t_testudinum_wikimedia_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Close-up of underwater seagrass with overlapping green and brown blades."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Seagrass Beds</div>
@@ -174,6 +184,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/Tidal_Flats.php">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/11_13_FischerD1_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
+                <span class="screen-reader-only" role="img" aria-label="Sandy beach with wind-formed patterns, calm water, and a small island under a clear sky."> </span>
                 <div style="background-color: rgba(226, 232, 236, 0.64);width:100%;height:50px;">
                     <div style="padding:10px;width:300px;">
                         <div style="font-family: 'Fira Sans';font-size: 16pt;font-weight: bold;">Tidal Flats</div>

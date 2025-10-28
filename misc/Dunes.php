@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Flock of birds flying over a beach with a red lighthouse on a dune under a clear blue sky."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -148,7 +149,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_dune_transition_LHS.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_dune_transition_LHS.jpg" alt="Coastal scene with sand dunes, tall grasses, ocean, and a cloudy sky." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -177,7 +178,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Dune_Eastward_Avalon_State_Park_Fort_Pierce.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Dune_Eastward_Avalon_State_Park_Fort_Pierce.jpg" alt="Coastal landscape with tall grass, ocean in the distance, and a mostly clear sky." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -216,7 +217,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_foredune_LHS.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_foredune_LHS.jpg" alt="Coastal scene with sand dunes, tall grasses, and an overcast sky above the ocean." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -238,7 +239,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_Seagrape_Georgia_Schroeder.jpg" alt="Seagrape, Coccoloba uvifera." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_Seagrape_Georgia_Schroeder.jpg" alt="Close-up of a plant with round green leaves, red veins, and clusters of small green fruits." />
                     <figcaption>
                         Seagrape, <i>Coccoloba uvifera</i>. <i>Credit: G. Schroeder</i>
                     </figcaption>
@@ -254,7 +255,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_backdune_LHS.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/7_backdune_LHS.jpg" alt="Dense cluster of palmetto plants with fan-shaped leaves and palm trees in the background." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
@@ -280,19 +281,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="display:flex;justify-content: center;align-content: center;">
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/08_CorapiP1.jpg" alt="Credit: P. Corapi" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/08_CorapiP1.jpg" alt="Black snake with a white underbelly coiled on the ground among grass and plants." />
                     <figcaption>
                         <i>Credit: P. Corapi</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/9_crab_burrow_LHS.jpg" alt="Credit: H. Sweat" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/9_crab_burrow_LHS.jpg" alt="Sandy beach with a small burrow, scattered seaweed and shells, and ocean waves in the background." />
                     <figcaption>
                         <i>Credit: H. Sweat</i>
                     </figcaption>
                 </figure>
                 <figure style="margin:0;">
-                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/10_beach_mouse_burrow.jpg" alt="Credit: NASA" />
+                    <img style="border:0;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/10_beach_mouse_burrow.jpg" alt="Small mouse peeking out from a hole in sandy ground with nearby vegetation and twigs." />
                     <figcaption>
                         <i>Credit: NASA</i>
                     </figcaption>

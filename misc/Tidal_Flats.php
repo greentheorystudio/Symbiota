@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Sandy beach with wind-formed patterns, calm water, and a small island under a clear sky."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -133,7 +134,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/foltz_on_flats_MZD.jpg" alt="Credit: M. Donahue" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/foltz_on_flats_MZD.jpg" alt="Person walking on a muddy shore with a shovel at sunrise." />
                     <figcaption>
                         <i>Credit: M. Donahue</i>
                     </figcaption>
@@ -158,7 +159,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Fort_Pierce_Inlet_D_Ramey_Logan-2.jpg" alt="Fort Pierce Inlet." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Fort_Pierce_Inlet_D_Ramey_Logan-2.jpg" alt="Aerial view of Fort Pierce Inlet with vegetation on one side and developed waterfront on the other." />
                     <figcaption>
                         Fort Pierce Inlet. <i>Credit: D. Ramey Logan, Wikimedia Commons</i>
                     </figcaption>
@@ -188,7 +189,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/black_necked_stilt_Ursula_Dubrick.jpg" alt="Black-necked stilt with chick." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/black_necked_stilt_Ursula_Dubrick.jpg" alt="Black-necked stilt with a chick nestled between its legs on muddy ground near water." />
                     <figcaption>
                         Black-necked stilt with chick. <i>Credit: U. Dubrick</i>
                     </figcaption>
@@ -211,7 +212,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/luidia_senegalensis_MZD.jpg" alt="Nine-armed seastar." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/luidia_senegalensis_MZD.jpg" alt="Person holding a multi-armed starfish over a sandy beach with shallow water." />
                     <figcaption>
                         Nine-armed seastar. <i>Credit: M. Donahue</i>
                     </figcaption>
@@ -238,7 +239,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/man_o_war_MZD.jpg" alt="Man o’ war jellyfish during low tide on the IRL." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/man_o_war_MZD.jpg" alt="Portuguese Man O' War on a muddy shore with trees and a cloudy sky in the background." />
                     <figcaption>
                         Man o’ war jellyfish during low tide on the IRL. <i>Credit: M. Donahue</i>
                     </figcaption>

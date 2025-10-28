@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Four stingrays swimming in dark green water, illuminated to show their smooth bodies and long tails."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -155,7 +156,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/HAB_2014_P_Shindel.jpg" alt="A harmful bloom of blue-green algae near Lake Okeechobee in 2014." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/HAB_2014_P_Shindel.jpg" alt="Body of water with swirling green algal bloom near a concrete structure." />
                     <figcaption style="width:500px;">
                         A harmful bloom of blue-green algae near Lake Okeechobee in 2014. <i>Credit: P. Shindel</i>
                     </figcaption>
@@ -279,7 +280,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18WhiticarJ3.jpg" alt="Credit: J. Whiticar" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/18WhiticarJ3.jpg" alt="Person kayaking with four small dogs in life jackets on calm water." />
                     <figcaption style="width:500px;">
                         <i>Credit: J. Whiticar</i>
                     </figcaption>
@@ -340,7 +341,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_ReynoldsJ1.jpg" alt="A swallowtail butterfly visits native milkweed flowers (Asclepias incarnata)." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/11_ReynoldsJ1.jpg" alt="Black and yellow butterfly perched on bright yellow flowers with blurred green foliage in the background." />
                     <figcaption style="width:500px;">
                         A swallowtail butterfly visits native milkweed flowers (<i>Asclepias incarnata</i>). <i>Credit: J. Reynolds</i>
                     </figcaption>
@@ -419,7 +420,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/20WestM2_N.jpg" alt="Credit: M. West" />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/20WestM2_N.jpg" alt="Person standing in shallow water with a net, facing the horizon under a cloudy sky near a grassy shoreline." />
                     <figcaption style="width:500px;">
                         <i>Credit: M. West</i>
                     </figcaption>
@@ -468,7 +469,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Volunteers_Restoration_Mosquito_Lagoon_Linda_Walters.jpg" alt="Volunteers help restore oyster reefs in the Mosquito Lagoon." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Volunteers_Restoration_Mosquito_Lagoon_Linda_Walters.jpg" alt="Group of volunteers working on a restoration project at Mosquito Lagoon." />
                     <figcaption style="width:500px;">
                         Volunteers help restore oyster reefs in the Mosquito Lagoon. <i>Credit: L. Walters</i>
                     </figcaption>

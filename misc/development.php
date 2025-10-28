@@ -28,6 +28,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
  </head>
 <body>
 <div class="hero-container">
+    <span class="screen-reader-only" role="img" aria-label="Coastal scene with ocean, sandy beach, tall buildings, and a person walking at sunset."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
         <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
@@ -125,7 +126,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Lake_O_release_mixing_with_ocean_JTL.jpg" alt="Freshwater released from Lake Okeechobee creates a distinct boundary as it meets salty ocean water at the St. Lucie River inlet." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/Lake_O_release_mixing_with_ocean_JTL.jpg" alt="Aerial view of a coastal area with shoreline, ocean, and part of an airplane wing visible." />
                     <figcaption style="width:500px;">
                         Freshwater released from Lake Okeechobee creates a distinct boundary as it meets salty ocean water
                         at the St. Lucie River inlet. <i>Credit: E. Lippisch</i>
@@ -148,7 +149,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/drainage_canal_JTL.jpg" alt="A drainage canal in south Florida." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/drainage_canal_JTL.jpg" alt="View of a canal lined with trees under a partly cloudy sky, seen from a bridge." />
                     <figcaption>
                         A drainage canal in south Florida. <i>Credit: J. Thurlow-Lippisch</i>
                     </figcaption>
@@ -171,7 +172,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
-                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/07_OwenP1.jpg" alt="Jupiter Inlet from above. Many of the lagoon’s water-adjacent areas are heavily developed, though the region has many parks and natural preserve areas." />
+                    <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/07_OwenP1.jpg" alt="Aerial view of Jupiter Inlet with a marina with boats, docks, shoreline buildings, and a red lighthouse." />
                     <figcaption style="width:500px;">
                         Jupiter Inlet from above. Many of the lagoon’s water-adjacent areas are heavily developed, though the
                         region has many parks and natural preserve areas. <i>Credit: P. Owen</i>
