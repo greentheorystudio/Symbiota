@@ -17,7 +17,7 @@ const taxaProfileTaxonImageLink = {
         const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
 
         function openImageSearch() {
-            const url = clientRoot + '/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"4","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}';
+            const url = clientRoot + '/media/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"4","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}';
             window.open(url, '_blank');
         }
 
