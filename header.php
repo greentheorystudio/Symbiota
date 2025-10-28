@@ -89,8 +89,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 {
                     label: 'Images',
                     subItems: [
-                        {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
-                        {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'}
+                        {url: CLIENT_ROOT + '/media/search.php', label: 'Image Search'},
+                        {url: CLIENT_ROOT + '/media/index.php', label: 'Browse Images'}
                     ]
                 },
                 {url: CLIENT_ROOT + '/collections/misc/collprofiles.php?collid=8&emode=1', label: 'Collection Management'},
@@ -111,8 +111,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 {
                     label: 'Images',
                     subItems: [
-                        {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
-                        {url: CLIENT_ROOT + '/imagelib/index.php', label: 'Browse Images'}
+                        {url: CLIENT_ROOT + '/media/search.php', label: 'Image Search'},
+                        {url: CLIENT_ROOT + '/media/index.php', label: 'Browse Images'}
                     ]
                 }
             ];
