@@ -117,7 +117,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="col-8 column q-col-gutter-sm q-pl-lg">
                             <div class="column">
                                 <div class="full-width row justify-end text-h5 text-bold">
-                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&proj=' + pId)">{{ checklistName }}</a>
+                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&proj=' + pId)" tabindex="1">{{ checklistName }}</a>
                                 </div>
                                 <div class="full-width row justify-end text-body1">
                                     Taxa Count: {{ taxaCount }}
@@ -151,7 +151,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="q-pa-sm column q-col-gutter-xs">
                             <div class="row justify-start">
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" tabindex="1" />
                                 </div>
                             </div>
                         </div>

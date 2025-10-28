@@ -76,21 +76,21 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             </div>
                             <div class="row q-gutter-sm">
                                 <div v-if="keyActive && taxaDataArr.length > 0">
-                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-key" dense unelevated :ripple="false">
+                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-key" dense unelevated :ripple="false" tabindex="1">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Interactive Key
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
                                 <div v-if="taxaDataArr.length > 0">
-                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/checklists/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false">
+                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/checklists/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false" tabindex="1">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Flashcard Game
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
                                 <div v-if="Object.keys(checklistVoucherData).length > 0">
-                                    <q-btn text-color="black" size="sm" :href="mapViewUrl" icon="fas fa-globe" dense unelevated :ripple="false">
+                                    <q-btn text-color="black" size="sm" :href="mapViewUrl" icon="fas fa-globe" dense unelevated :ripple="false" tabindex="1">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             View Vouchers in Interactive Map
                                         </q-tooltip>
@@ -102,14 +102,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <template v-if="Number(clId) > 0">
                                 <template v-if="taxaDataArr.length > 0">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('csv');" icon="fas fa-download" dense>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('csv');" icon="fas fa-download" dense tabindex="1">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Download Checklist as CSV
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('docx');" icon="far fa-file-word" dense>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('docx');" icon="far fa-file-word" dense tabindex="1">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Download Checklist as Word Document
                                             </q-tooltip>
@@ -119,7 +119,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <template v-if="validUser">
                                     <template v-if="temporaryChecklist">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="saveTemporaryChecklist();" icon="fas fa-save" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="saveTemporaryChecklist();" icon="fas fa-save" dense tabindex="1">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Save Checklist
                                                 </q-tooltip>
@@ -128,21 +128,21 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     </template>
                                     <template v-else-if="isEditor">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showChecklistEditorPopup = true" icon="fas fa-cog" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showChecklistEditorPopup = true" icon="fas fa-cog" dense tabindex="1">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Open Checklist Administration
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/voucheradmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-link" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/voucheradmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-link" dense tabindex="1">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Open Voucher Administration
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openChecklistTaxaEditorPopup(0)" icon="add_circle" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openChecklistTaxaEditorPopup(0)" icon="add_circle" dense tabindex="1">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Add Taxon
                                                 </q-tooltip>
@@ -150,14 +150,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                         </div>
                                         <div>
                                             <template v-if="taxaEditingActive">
-                                                <q-btn color="grey-4" text-color="red" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense>
+                                                <q-btn color="grey-4" text-color="red" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense tabindex="1">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Toggle Taxa Editing Off
                                                     </q-tooltip>
                                                 </q-btn>
                                             </template>
                                             <template v-else>
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense tabindex="1">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Toggle Taxa Editing On
                                                     </q-tooltip>
@@ -304,7 +304,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="q-pa-sm column q-col-gutter-xs">
                             <div class="row justify-start">
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" tabindex="1" />
                                 </div>
                             </div>
                         </div>
