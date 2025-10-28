@@ -41,9 +41,9 @@ header('Content-Type: text/html; charset=UTF-8' );
                     </ul>
                     <div class="q-mt-md text-h6 text-bold">Image Library</div>
                     <ul>
-                        <li><a :href="(clientRoot + '/imagelib/index.php')">Image Library</a></li>
-                        <li><a :href="(clientRoot + '/imagelib/search.php')">Image Search</a></li>
-                        <li><a :href="(clientRoot + '/imagelib/contributors.php')">Image Contributors</a></li>
+                        <li><a :href="(clientRoot + '/media/index.php')">Image Library</a></li>
+                        <li><a :href="(clientRoot + '/media/search.php')">Image Search</a></li>
+                        <li><a :href="(clientRoot + '/media/contributors.php')">Image Contributors</a></li>
                         <li><a :href="usagePolicyUrl">Terms of Use</a></li>
                     </ul>
                     <div class="q-mt-md text-h6 text-bold">Additional Resources</div>
