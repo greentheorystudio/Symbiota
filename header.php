@@ -83,7 +83,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             {url: CLIENT_ROOT + '/index.php', label: 'Home'},
             {url: CLIENT_ROOT + '/collections/list.php', label: 'Search Collections'},
             {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true},
-            {url: CLIENT_ROOT + '/imagelib/search.php', label: 'Image Search'},
+            {url: CLIENT_ROOT + '/media/search.php', label: 'Image Search'},
             {
                 label: 'Interactive Tools',
                 subItems: [
