@@ -87,7 +87,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                             label: 'Advanced Searches',
                             subItems: [
                                 {url: clientRoot + '/collections/list.php', label: 'SEARCH for Species & Specimen Records'},
-                                {url: clientRoot + '/imagelib/index.php', label: 'BROWSE the Flora & Image Library'},
+                                {url: clientRoot + '/media/index.php', label: 'BROWSE the Flora & Image Library'},
                                 {url: clientRoot + '/spatial/index.php', label: 'Map Search', newTab: true}
                             ]
                         },

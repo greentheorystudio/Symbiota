@@ -9,7 +9,7 @@ Allow: /collections/misc/collprofiles.php
 Allow: /collections/misc/collectionindex.php  
 Allow: /games/index.php  
 Allow: /ident/index.php  
-Allow: /imagelib/index.php  
+Allow: /media/index.php
 Allow: /projects/index.php  
 Allow: /sitemap.php    
 
