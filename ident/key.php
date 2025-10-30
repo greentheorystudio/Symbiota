@@ -42,22 +42,22 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')" tabindex="1">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <template v-if="!temporaryChecklist">
                     <template v-if="Number(pId) > 0">
-                        <a :href="(clientRoot + '/projects/index.php')" tabindex="1">Biotic Inventory Projects</a> &gt;&gt;
-                        <a :href="(clientRoot + '/projects/project.php?pid=' + pId)" tabindex="1">{{ projectName }}</a> &gt;&gt;
+                        <a :href="(clientRoot + '/projects/index.php')" tabindex="0">Biotic Inventory Projects</a> &gt;&gt;
+                        <a :href="(clientRoot + '/projects/project.php?pid=' + pId)" tabindex="0">{{ projectName }}</a> &gt;&gt;
                     </template>
                     <template v-else-if="Number(clId) > 0">
-                        <a :href="(clientRoot + '/checklists/index.php')" tabindex="1">Checklists</a> &gt;&gt;
+                        <a :href="(clientRoot + '/checklists/index.php')" tabindex="0">Checklists</a> &gt;&gt;
                     </template>
                     <template v-if="Number(clId) > 0">
-                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)" tabindex="1">Checklist: {{ checklistName }}</a> &gt;&gt;
+                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)" tabindex="0">Checklist: {{ checklistName }}</a> &gt;&gt;
                     </template>
                     <span class="text-bold">Key</span>
                 </template>
                 <template v-else>
-                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)" tabindex="1">Dynamic Checklist</a> &gt;&gt;
+                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&pid=' + pId)" tabindex="0">Dynamic Checklist</a> &gt;&gt;
                     <span class="text-bold">Dynamic Key</span>
                 </template>
             </div>
@@ -117,7 +117,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="col-8 column q-col-gutter-sm q-pl-lg">
                             <div class="column">
                                 <div class="full-width row justify-end text-h5 text-bold">
-                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&proj=' + pId)" tabindex="1">{{ checklistName }}</a>
+                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + clId + '&proj=' + pId)" tabindex="0">{{ checklistName }}</a>
                                 </div>
                                 <div class="full-width row justify-end text-body1">
                                     Taxa Count: {{ taxaCount }}
@@ -151,7 +151,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="q-pa-sm column q-col-gutter-xs">
                             <div class="row justify-start">
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" tabindex="1" />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" tabindex="0" />
                                 </div>
                             </div>
                         </div>

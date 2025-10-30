@@ -26,7 +26,7 @@ const singleCountyAutoComplete = {
         },
         tabindex: {
             type: Number,
-            default: 1
+            default: 0
         },
         value: {
             type: String,

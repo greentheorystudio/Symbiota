@@ -109,9 +109,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <body style="background-color:white;margin-left:0;margin-right:0;border: 0;">
 	<div id="mainContainer" style="padding: 10px 15px 15px;background-color:white;">
         <div id="breadcrumbs">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="1">Home</a> &gt;&gt;
-            <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>" tabindex="1">Collection Management</a> &gt;&gt;
-            <a href="index.php?collid=<?php echo $collid; ?>" tabindex="1">Data Cleaning Tools</a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+            <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>" tabindex="0">Collection Management</a> &gt;&gt;
+            <a href="index.php?collid=<?php echo $collid; ?>" tabindex="0">Data Cleaning Tools</a> &gt;&gt;
             <b>Duplicate Merging Module</b>
         </div>
         <?php

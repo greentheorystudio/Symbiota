@@ -43,8 +43,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')" tabindex="1">Home</a> &gt;&gt;
-                <a :href="(clientRoot + '/projects/index.php')" tabindex="1">Biotic Inventory Projects</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/projects/index.php')" tabindex="0">Biotic Inventory Projects</a> &gt;&gt;
                 <span class="text-bold">{{ projectData['projname'] }}</span>
             </div>
             <div class="q-pa-md column">

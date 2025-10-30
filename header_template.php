@@ -8,17 +8,17 @@ include_once(__DIR__ . '/services/SanitizerService.php');
     <div id="topNavigation">
         <q-toolbar class="q-pa-md horizontalDropDown">
             <template v-if="windowWidth < 1440">
-                <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Open Menu" tabindex="1">
+                <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Open Menu" tabindex="0">
                     <q-menu>
                         <q-list dense>
                             <template v-for="item in navBarData">
                                 <template v-if="item.subItems && item.subItems.length">
-                                    <q-item clickable tabindex="1">
+                                    <q-item clickable tabindex="0">
                                         <q-item-section>{{ item.label }}</q-item-section>
                                         <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start">
                                             <q-list dense>
                                                 <template v-for="subitem in item.subItems">
-                                                    <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" tabindex="1">
+                                                    <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" tabindex="0">
                                                         <q-item-section>{{ subitem.label }}</q-item-section>
                                                     </q-item>
                                                 </template>
@@ -27,7 +27,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                                     </q-item>
                                 </template>
                                 <template v-else>
-                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" tabindex="1">
+                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" tabindex="0">
                                         <q-item-section>{{ item.label }}</q-item-section>
                                     </q-item>
                                 </template>
@@ -39,11 +39,11 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             <template v-if="windowWidth >= 1440">
                 <template v-for="item in navBarData">
                     <template v-if="item.subItems && item.subItems.length">
-                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap tabindex="1">
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap tabindex="0">
                             <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="bottom start" self="top start" square>
                                 <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                     <template v-for="subitem in item.subItems">
-                                        <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" clickable v-close-popup tabindex="1">
+                                        <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" clickable v-close-popup tabindex="0">
                                             <q-item-section>
                                                 <q-item-label>{{ subitem.label }}</q-item-label>
                                             </q-item-section>
@@ -54,21 +54,21 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         </q-btn>
                     </template>
                     <template v-else>
-                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" stretch flat no-wrap tabindex="1"></q-btn>
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" stretch flat no-wrap tabindex="0"></q-btn>
                     </template>
                 </template>
             </template>
             <q-space></q-space>
             <template v-if="userDisplayName">
                 <q-breadcrumbs-el class="header-username-text">Welcome {{ userDisplayName }}!</q-breadcrumbs-el>
-                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/viewprofile.php'" label="My Profile" stretch flat no-wrap tabindex="1"></q-btn>
-                <q-btn class="horizontalDropDownButton text-capitalize" @click="logout();" label="Logout" stretch flat no-wrap tabindex="1"></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/viewprofile.php'" label="My Profile" stretch flat no-wrap tabindex="0"></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" @click="logout();" label="Logout" stretch flat no-wrap tabindex="0"></q-btn>
             </template>
             <template v-else>
-                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/index.php?refurl=' + requestPath" label="Log In" stretch flat no-wrap tabindex="1"></q-btn>
-                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/newprofile.php'" label="New Account" stretch flat no-wrap tabindex="1"></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/index.php?refurl=' + requestPath" label="Log In" stretch flat no-wrap tabindex="0"></q-btn>
+                <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/newprofile.php'" label="New Account" stretch flat no-wrap tabindex="0"></q-btn>
             </template>
-            <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/sitemap.php'" label="Sitemap" stretch flat no-wrap tabindex="1"></q-btn>
+            <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/sitemap.php'" label="Sitemap" stretch flat no-wrap tabindex="0"></q-btn>
         </q-toolbar>
     </div>
     <script type="text/javascript">

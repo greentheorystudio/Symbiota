@@ -195,12 +195,12 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <div id="mainContainer" style="padding: 10px 15px 15px;min-width:1100px">
         <?php
         echo '<div id="breadcrumbs">';
-        echo '<a href="../../index.php" tabindex="1">Home</a> &gt;&gt; ';
+        echo '<a href="../../index.php" tabindex="0">Home</a> &gt;&gt; ';
         if($reviewManager->getObsUid()){
-            echo '<a href="../../profile/viewprofile.php?tabindex=1" tabindex="1">Personal Occurrence Management</a> &gt;&gt; ';
+            echo '<a href="../../profile/viewprofile.php?tabindex=1" tabindex="0">Personal Occurrence Management</a> &gt;&gt; ';
         }
         else{
-            echo '<a href="../misc/collprofiles.php?collid='.$collid.'" tabindex="1">Collection Control Panel</a> &gt;&gt; ';
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'" tabindex="0">Collection Control Panel</a> &gt;&gt; ';
         }
         echo '<b>Review/Verify Occurrence Edits</b>';
         echo '</div>';

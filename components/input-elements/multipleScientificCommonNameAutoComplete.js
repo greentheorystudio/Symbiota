@@ -58,7 +58,7 @@ const multipleScientificCommonNameAutoComplete = {
         },
         tabindex: {
             type: Number,
-            default: 1
+            default: 0
         },
         taxonType: {
             type: Number,

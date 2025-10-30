@@ -398,8 +398,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
         <?php
         echo '<div id="breadcrumbs">';
-        echo '<a href="../index.php" tabindex="1">Home</a> &gt;&gt; ';
-        echo '<a href="contributors.php" tabindex="1">Image Contributors</a> &gt;&gt; ';
+        echo '<a href="../index.php" tabindex="0">Home</a> &gt;&gt; ';
+        echo '<a href="contributors.php" tabindex="0">Image Contributors</a> &gt;&gt; ';
         echo '<b>Image Search</b>';
         echo '</div>';
         ?>

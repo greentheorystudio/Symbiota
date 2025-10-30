@@ -88,8 +88,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="1">Home</a> &gt;&gt;
-        <a href="index.php" tabindex="1">Taxonomy Editor</a> &gt;&gt;
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+        <a href="index.php" tabindex="0">Taxonomy Editor</a> &gt;&gt;
         <b>Editing: <?php echo '<i>' .$taxonEditorObj->getSciName(). '</i> ' .$taxonEditorObj->getAuthor(). ' [' .$taxonEditorObj->getTid(). ']'; ?></b>
     </div>
     <?php

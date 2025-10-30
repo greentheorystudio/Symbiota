@@ -131,8 +131,8 @@ if($isEditor){
 	?>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
         <div id="breadcrumbs">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="1">Home</a> &gt;&gt;
-            <a href="index.php" tabindex="1"><b>Glossary Management</b></a> &gt;&gt;
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+            <a href="index.php" tabindex="0"><b>Glossary Management</b></a> &gt;&gt;
             <b>Glossary Batch Loader</b>
         </div>
         <h1>Glossary Term Batch Loader</h1>

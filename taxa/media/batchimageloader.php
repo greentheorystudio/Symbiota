@@ -30,7 +30,7 @@ if(!$GLOBALS['SYMB_UID']) {
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')" tabindex="1">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Taxa Media Batch Uploader</span>
             </div>
             <div class="q-pa-md">
