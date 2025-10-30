@@ -187,6 +187,7 @@ const mediaFileUploadInputElement = {
             <media-editor-popup
                 :new-media-data="editData"
                 :show-popup="showMediaEditorPopup"
+                :upload-path="uploadPath"
                 @update:media-data="updateFileMetadata"
                 @close:popup="showMediaEditorPopup = false"
             ></media-editor-popup>
@@ -820,6 +821,7 @@ const mediaFileUploadInputElement = {
             uploaderRef,
             uploaderStyle,
             uploadMethodOptions,
+            uploadPath,
             urlMethodCopyFile,
             urlMethodUrl,
             cancelUpload,

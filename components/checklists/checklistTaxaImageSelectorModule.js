@@ -5,7 +5,7 @@ const checklistTaxaImageSelectorModule = {
                 <q-scroll-area class="q-px-md" :style="scrollerStyle">
                     <div class="row no-wrap q-gutter-md q-pt-md">
                         <q-card v-for="image in displayArr" :key="image" class="q-ma-md" :style="cardStyle">
-                            <q-img :src="image.url" :height="imageHeight" fit="scale-down" :title="image.caption" :alt="image.imgid"></q-img>
+                            <q-img :src="image.url" :height="imageHeight" fit="scale-down" :title="image.caption" :alt="(image.alttext ? image.alttext : image.imgid)"></q-img>
                             <div class="q-pa-sm">
                                 <checkbox-input-element :value="taggedImageIdArr.includes(Number(image.imgid))" @update:value="(value) => processImageSelectionChange(image.imgid, value)"></checkbox-input-element>
                             </div>

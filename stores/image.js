@@ -11,6 +11,7 @@ const useImageStore = Pinia.defineStore('image', {
             photographeruid: null,
             format: null,
             caption: null,
+            alttext: null,
             owner: null,
             sourceurl: null,
             referenceurl: null,

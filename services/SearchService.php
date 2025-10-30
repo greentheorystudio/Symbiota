@@ -1189,7 +1189,7 @@ class SearchService {
 
     public function setResultsImageData($returnData, $idArr): array
     {
-        $sql = 'SELECT o.collid, o.occid, i.thumbnailurl, i.url FROM omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
+        $sql = 'SELECT o.collid, o.occid, i.thumbnailurl, i.url, i.alttext FROM omoccurrences AS o LEFT JOIN images AS i ON o.occid = i.occid '.
             'WHERE o.occid IN(' . implode(',', $idArr) . ') ORDER BY o.occid, i.sortsequence ';
         if($result = $this->conn->query($sql)){
             $previousOccid = 0;
@@ -1201,6 +1201,7 @@ class SearchService {
                     if($row['thumbnailurl']){
                         $returnData[$row['occid']]['img'] = $row['thumbnailurl'];
                     }
+                    $returnData[$row['occid']]['img-alt'] = $row['alttext'];
                 }
                 $previousOccid = $row['occid'];
                 unset($rows[$index]);

@@ -32,7 +32,7 @@ const taxaProfileSubtaxaPanel = {
                                     <div>
                                         <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
                                             <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
-                                                <q-img class="spp-image-container" :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" fit="scale-down" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
+                                                <q-img class="spp-image-container" :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" fit="scale-down" :title="subtaxaImageData[spptaxon.tid][0]['caption']" :alt="(subtaxaImageData[spptaxon.tid][0]['alttext'] ? subtaxaImageData[spptaxon.tid][0]['alttext'] : spptaxon.sciname)"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
@@ -49,7 +49,7 @@ const taxaProfileSubtaxaPanel = {
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
                                             <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
-                                                <q-img class="spp-map-container" :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" fit="scale-down" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
+                                                <q-img class="spp-map-container" :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" fit="scale-down" :title="spptaxon.sciname" :alt="('Map displaying the range of ' + spptaxon.sciname)"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">
@@ -76,7 +76,7 @@ const taxaProfileSubtaxaPanel = {
                                     <div class="spp-image-container">
                                         <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
                                             <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
-                                                <q-img :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
+                                                <q-img :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" :fit="contain" :title="subtaxaImageData[spptaxon.tid][0]['caption']" :alt="(subtaxaImageData[spptaxon.tid][0]['alttext'] ? subtaxaImageData[spptaxon.tid][0]['alttext'] : spptaxon.sciname)"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
@@ -93,7 +93,7 @@ const taxaProfileSubtaxaPanel = {
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
                                             <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
-                                                <q-img :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" :fit="contain" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
+                                                <q-img :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" :fit="contain" :title="spptaxon.sciname" :alt="('Map displaying the range of ' + spptaxon.sciname)"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">
@@ -121,6 +121,7 @@ const taxaProfileSubtaxaPanel = {
         const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
 
         function getSubtaxaImageUrlFromData(imageData) {
+            console.log(subtaxaImageData.value);
             if(imageData['thumbnailurl']){
                 return (imageData['thumbnailurl'].startsWith('/') ? (clientRoot + imageData['thumbnailurl']) : imageData['thumbnailurl']);
             }
@@ -130,6 +131,7 @@ const taxaProfileSubtaxaPanel = {
         }
 
         Vue.onMounted(() => {
+            console.log(subtaxaImageData.value);
             panelExpanded.value = props.expanded;
         });
 

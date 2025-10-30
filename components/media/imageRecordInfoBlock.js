@@ -58,6 +58,9 @@ const imageRecordInfoBlock = {
                         <div v-if="imageData.caption">
                             <span class="text-bold">Caption: </span>{{ imageData.caption }}
                         </div>
+                        <div v-if="imageData.alttext">
+                            <span class="text-bold">Image Alt-Text: </span>{{ imageData.alttext }}
+                        </div>
                         <div v-if="imageData.owner">
                             <span class="text-bold">Owner: </span>{{ imageData.owner }}
                         </div>

@@ -8,7 +8,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
     <div id="topNavigation">
         <q-toolbar class="q-pa-md horizontalDropDown">
             <template v-if="windowWidth < 1440">
-                <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Menu" tabindex="1">
+                <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Open Menu" tabindex="1">
                     <q-menu>
                         <q-list dense>
                             <template v-for="item in navBarData">

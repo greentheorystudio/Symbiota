@@ -34,6 +34,9 @@ const mediaRecordInfoBlock = {
                                 <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank">Download File</a>
                             </span>
                         </div>
+                        <div v-if="mediaData.descriptivetranscripturi" class="q-mt-xs full-width row justify-center q-gutter-sm text-bold">
+                            <a :href="(mediaData.descriptivetranscripturi.startsWith('/') ? (clientRoot + mediaData.descriptivetranscripturi) : mediaData.descriptivetranscripturi)" target="_blank">Descriptive Transcript</a>
+                        </div>
                     </div>
                     <div class="col-8 column">
                         <template v-if="editor">

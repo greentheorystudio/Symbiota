@@ -29,9 +29,12 @@ const taxaProfileMediaPanel = {
                                             <a :href="(clientRoot + '/taxa/index.php?taxon=' + media.tid)"><span class="text-italic">{{ media.sciname }}</span>. </a>
                                         </template>
                                         <span v-if="media.title">{{ media.title }} - </span>
-                                        {{ media.description }}
+                                        {{ media.description + ' ' }}
                                         <span v-if="media.creator">Created by: {{ media.creator }}. </span>
-                                        <span v-if="media.owner">Provided by: {{ media.owner }}.</span>
+                                        <span v-if="media.owner">Provided by: {{ media.owner }}. </span>
+                                        <template v-if="media.descriptivetranscripturi">
+                                            <a :href="(media.descriptivetranscripturi.startsWith('/') ? (clientRoot + media.descriptivetranscripturi) : media.descriptivetranscripturi)"><span class="text-bold">Descriptive Transcript</span></a>
+                                        </template>
                                     </div>
                                 </q-card>
                             </q-intersection>
@@ -62,9 +65,12 @@ const taxaProfileMediaPanel = {
                                             <a :href="(clientRoot + '/taxa/index.php?taxon=' + media.tid)"><span class="text-italic">{{ media.sciname }}</span>. </a>
                                         </template>
                                         <span v-if="media.title">{{ media.title }} - </span>
-                                        {{ media.description }}
+                                        {{ media.description + ' ' }}
                                         <span v-if="media.creator">Created by: {{ media.creator }}. </span>
-                                        <span v-if="media.owner">Provided by: {{ media.owner }}.</span>
+                                        <span v-if="media.owner">Provided by: {{ media.owner }}. </span>
+                                        <template v-if="media.descriptivetranscripturi">
+                                            <a :href="(media.descriptivetranscripturi.startsWith('/') ? (clientRoot + media.descriptivetranscripturi) : media.descriptivetranscripturi)"><span class="text-bold">Descriptive Transcript</span></a>
+                                        </template>
                                     </div>
                                 </q-card>
                             </q-intersection>

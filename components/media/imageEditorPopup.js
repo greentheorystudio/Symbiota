@@ -60,6 +60,11 @@ const imageEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Alt-Text" :value="imageData.alttext" @update:value="(value) => updateData('alttext', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
                                     <text-field-input-element data-type="textarea" label="Locality" :value="imageData.locality" @update:value="(value) => updateData('locality', value)"></text-field-input-element>
                                 </div>
                             </div>

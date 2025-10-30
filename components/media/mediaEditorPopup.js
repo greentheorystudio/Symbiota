@@ -15,6 +15,10 @@ const mediaEditorPopup = {
         showPopup: {
             type: Boolean,
             default: false
+        },
+        uploadPath: {
+            type: String,
+            default: null
         }
     },
     template: `
@@ -115,6 +119,36 @@ const mediaEditorPopup = {
                                         <text-field-input-element :disabled="true" data-type="textarea" label="Source URL" :value="mediaData.sourceurl"></text-field-input-element>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-grow">
+                                        <text-field-input-element :disabled="true" data-type="textarea" label="Descriptive Transcript URL" :value="mediaData.descriptivetranscripturi"></text-field-input-element>
+                                    </div>
+                                </div>
+                                <div>
+                                    <q-card flat bordered class="black-border bg-grey-4">
+                                        <q-card-section class="q-pa-sm column q-col-gutter-sm">
+                                            <div class="row justify-between">
+                                                <div class="text-subtitle1 text-bold">{{ descriptiveTranscriptUploadLabel + ' Descriptive Transcript' }}</div>
+                                                <div>
+                                                    <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary"></q-btn-toggle>
+                                                </div>
+                                            </div>
+                                            <div class="q-mt-xs row justify-between">
+                                                <div class="col-9">
+                                                    <template v-if="selectedUploadMethod === 'upload'">
+                                                        <file-picker-input-element :label="(descriptiveTranscriptUploadLabel + ' File')" :accepted-types="acceptedFileTypes" :value="uploadedTranscriptFile" :validate-file-size="true" @update:file="(value) => uploadedTranscriptFile = value[0]"></file-picker-input-element>
+                                                    </template>
+                                                    <template v-else>
+                                                        <text-field-input-element data-type="textarea" label="Transcript URL" :value="transcriptUrl" @update:value="(value) => processTranscriptUrlChange"></text-field-input-element>
+                                                    </template>
+                                                </div>
+                                                <div class="col-3 row justify-end">
+                                                    <q-btn color="secondary" @click="preProcessUpdateUploadTranscriptFile();" :label="descriptiveTranscriptUploadLabel" :disabled="((selectedUploadMethod === 'upload' && !uploadedTranscriptFile) || (selectedUploadMethod === 'url' && !transcriptUrl))" />
+                                                </div>
+                                            </div>
+                                        </q-card-section>
+                                    </q-card>
+                                </div>
                                 <div class="row justify-between">
                                     <div class="row justify-start q-gutter-sm">
                                         <div>
@@ -133,6 +167,11 @@ const mediaEditorPopup = {
                                         </div>
                                     </div>
                                     <div class="row justify-end q-gutter-sm">
+                                        <template v-if="mediaData.descriptivetranscripturi">
+                                            <div>
+                                                <q-btn color="negative" @click="processDeleteTranscript();" label="Delete Transcript" />
+                                            </div>
+                                        </template>
                                         <div>
                                             <q-btn color="negative" @click="processDeleteMediaRecord();" label="Delete Media" />
                                         </div>
@@ -156,6 +195,7 @@ const mediaEditorPopup = {
     `,
     components: {
         'confirmation-popup': confirmationPopup,
+        'file-picker-input-element': filePickerInputElement,
         'occurrence-linkage-tool-popup': occurrenceLinkageToolPopup,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'text-field-input-element': textFieldInputElement
@@ -164,9 +204,13 @@ const mediaEditorPopup = {
         const { showNotification } = useCore();
         const mediaStore = useMediaStore();
 
+        const acceptedFileTypes = ['doc', 'docx', 'pdf', 'txt'];
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const descriptiveTranscriptUploadLabel = Vue.computed(() => {
+            return (mediaData.value.hasOwnProperty('descriptivetranscripturi') && mediaData.value.descriptivetranscripturi) ? 'Update' : 'Upload';
+        });
         const editsExist = Vue.computed(() => mediaStore.getMediaEditsExist);
         const mediaData = Vue.computed(() => {
             if(Number(props.mediaId) > 0){
@@ -176,7 +220,14 @@ const mediaEditorPopup = {
                 return props.newMediaData['uploadMetadata'];
             }
         });
+        const selectedUploadMethod = Vue.ref('upload');
         const showOccurrenceLinkageToolPopup = Vue.ref(false);
+        const transcriptUrl = Vue.ref(null);
+        const uploadedTranscriptFile = Vue.ref(null);
+        const uploadMethodOptions = [
+            {label: 'Local File', value: 'upload'},
+            {label: 'From URL', value: 'url'}
+        ];
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -184,6 +235,22 @@ const mediaEditorPopup = {
 
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function preProcessUpdateUploadTranscriptFile() {
+            if(mediaData.value.descriptivetranscripturi && mediaData.value.descriptivetranscripturi.startsWith('/')){
+                mediaStore.deleteMediaTranscriptFile(props.collId, mediaData.value.descriptivetranscripturi, (res) => {
+                    if(res === 0){
+                        showNotification('negative', ('An error occurred while deleting the previous descriptive transcript file.'));
+                    }
+                    updateData('descriptivetranscripturi', null);
+                    processUpdateUploadTranscriptFile();
+                });
+            }
+            else{
+                updateData('descriptivetranscripturi', null);
+                processUpdateUploadTranscriptFile();
+            }
         }
 
         function processDeleteMediaRecord() {
@@ -204,9 +271,58 @@ const mediaEditorPopup = {
             }});
         }
 
+        function processDeleteTranscript() {
+            const confirmText = 'Are you sure you want to delete the descriptive transcript file? This action cannot be undone.';
+            confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                if(val){
+                    if(mediaData.value.descriptivetranscripturi.startsWith('/')){
+                        mediaStore.deleteMediaTranscriptFile(props.collId, mediaData.value.descriptivetranscripturi, (res) => {
+                            if(res === 0){
+                                showNotification('negative', ('An error occurred while deleting the descriptive transcript file.'));
+                            }
+                            else{
+                                updateData('descriptivetranscripturi', null);
+                                if(Number(props.mediaId) > 0){
+                                    saveMediaEdits();
+                                    context.emit('media:updated');
+                                }
+                            }
+                        });
+                    }
+                    else{
+                        updateData('descriptivetranscripturi', null);
+                        if(Number(props.mediaId) > 0){
+                            saveMediaEdits();
+                            context.emit('media:updated');
+                        }
+                    }
+                }
+            }});
+        }
+
         function processScientificNameChange(taxon) {
             updateData('sciname', taxon.sciname);
             updateData('tid', taxon.tid);
+        }
+
+        function processTranscriptUrlChange(value) {
+            if(value.name.endsWith('.doc') || value.name.endsWith('.docx') || value.name.endsWith('.pdf') || value.name.endsWith('.txt')){
+                transcriptUrl.value = value;
+            }
+            else{
+                showNotification('negative', ('Transcripts can only be in .doc, .docx, .pdf, or .txt file formats.'));
+            }
+        }
+
+        function processUpdateUploadTranscriptFile() {
+            if(selectedUploadMethod.value === 'upload' || !mediaData.value.accessuri || mediaData.value.accessuri.startsWith('/')){
+                updateUploadTranscriptFile();
+            }
+            else{
+                updateData('descriptivetranscripturi', transcriptUrl.value);
+                saveMediaEdits();
+                context.emit('media:updated');
+            }
         }
 
         function removeOccurrenceLinkage() {
@@ -258,6 +374,37 @@ const mediaEditorPopup = {
             }, 100);
         }
 
+        function updateUploadTranscriptFile() {
+            if(selectedUploadMethod.value === 'upload' && uploadedTranscriptFile.value){
+                mediaStore.uploadDescriptiveTranscriptFromFile(props.collId, uploadedTranscriptFile.value, props.uploadPath, (res) => {
+                    if(res.toString() === ''){
+                        showNotification('negative', ('An error occurred while uploading the descriptive transcript file.'));
+                    }
+                    else{
+                        updateData('descriptivetranscripturi', res.toString());
+                        if(Number(props.mediaId) > 0){
+                            saveMediaEdits();
+                            context.emit('media:updated');
+                        }
+                    }
+                });
+            }
+            else if(transcriptUrl.value){
+                mediaStore.uploadDescriptiveTranscriptFromUrl(props.collId, transcriptUrl.value, props.uploadPath, (res) => {
+                    if(res.toString() === ''){
+                        showNotification('negative', ('An error occurred while copying the descriptive transcript file.'));
+                    }
+                    else{
+                        updateData('descriptivetranscripturi', res.toString());
+                        if(Number(props.mediaId) > 0){
+                            saveMediaEdits();
+                            context.emit('media:updated');
+                        }
+                    }
+                });
+            }
+        }
+
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
@@ -267,15 +414,24 @@ const mediaEditorPopup = {
         });
 
         return {
+            acceptedFileTypes,
             confirmationPopupRef,
             contentRef,
             contentStyle,
+            descriptiveTranscriptUploadLabel,
             editsExist,
             mediaData,
+            selectedUploadMethod,
             showOccurrenceLinkageToolPopup,
+            transcriptUrl,
+            uploadedTranscriptFile,
+            uploadMethodOptions,
             closePopup,
             processDeleteMediaRecord,
+            processDeleteTranscript,
             processScientificNameChange,
+            processTranscriptUrlChange,
+            preProcessUpdateUploadTranscriptFile,
             removeOccurrenceLinkage,
             saveMediaEdits,
             updateData,
