@@ -1,13 +1,11 @@
 const taxaProfileTaxonMap = {
     template: `
         <div class="map-thumb-frame">
-            <q-card class="taxon-profile-taxon-map-card cursor-pointer" @click="openMapPopup(true);">
+            <q-card role="link" class="taxon-profile-taxon-map-card cursor-pointer" @click="openMapPopup(true);" aria-label="Open map window - opens in separate tab" tabindex="0">
                 <div class="map-thumb-container">
                     <template v-if="taxonMap">
                         <div class="map-thumb-image">
-                            <a @click="openMapPopup(true);" class="cursor-pointer">
-                                <q-img :src="(taxonMap['url'].startsWith('/') ? (clientRoot + taxonMap['url']) : taxonMap['url'])" :fit="contain" :title="taxon.sciname" :alt="('Map displaying the range of ' + taxon.sciname)"></q-img>
-                            </a>
+                            <q-img :src="(taxonMap['url'].startsWith('/') ? (clientRoot + taxonMap['url']) : taxonMap['url'])" :fit="contain" :title="taxon.sciname" :alt="('Map displaying the range of ' + taxon.sciname)"></q-img>
                         </div>
                     </template>
                     <div class="map-thumb-spatial-link">

@@ -28,14 +28,14 @@ const mediaRecordInfoBlock = {
                         </div>
                         <div class="q-mt-xs full-width row justify-center q-gutter-sm text-bold">
                             <span v-if="mediaData.format.startsWith('video')">
-                                <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank">Full Size</a>
+                                <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank" aria-label="View full size - Opens in separate tab" tabindex="0">Full Size</a>
                             </span>
                             <span v-else-if="!mediaData.format.startsWith('audio')">
-                                <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank">Download File</a>
+                                <a :href="(mediaData.accessuri.startsWith('/') ? (clientRoot + mediaData.accessuri) : mediaData.accessuri)" target="_blank" aria-label="Download file - Opens in separate tab" tabindex="0">Download File</a>
                             </span>
                         </div>
                         <div v-if="mediaData.descriptivetranscripturi" class="q-mt-xs full-width row justify-center q-gutter-sm text-bold">
-                            <a :href="(mediaData.descriptivetranscripturi.startsWith('/') ? (clientRoot + mediaData.descriptivetranscripturi) : mediaData.descriptivetranscripturi)" target="_blank">Descriptive Transcript</a>
+                            <a :href="(mediaData.descriptivetranscripturi.startsWith('/') ? (clientRoot + mediaData.descriptivetranscripturi) : mediaData.descriptivetranscripturi)" target="_blank" aria-label="View descriptive transcript - Opens in separate tab" tabindex="0">Descriptive Transcript</a>
                         </div>
                     </div>
                     <div class="col-8 column">
@@ -89,7 +89,7 @@ const mediaRecordInfoBlock = {
                     </div>
                     <div v-if="editor" class="col-1 row justify-end">
                         <div>
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(mediaData['mediaid']);" icon="fas fa-edit" dense>
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(mediaData['mediaid']);" icon="fas fa-edit" dense aria-label="Edit media record" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Edit media record
                                 </q-tooltip>

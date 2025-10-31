@@ -28,10 +28,10 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                                 </div>
                                 <div class="row justify-end">
                                     <template v-if="geneticLinkageId > 0">
-                                        <q-btn color="secondary" @click="saveGeneticLinkageEdits();" label="Save Edits" :disabled="!editsExist || !geneticLinkageValid" />
+                                        <q-btn color="secondary" @click="saveGeneticLinkageEdits();" label="Save Edits" :disabled="!editsExist || !geneticLinkageValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addGeneticLinkage();" label="Add Genetic Record Linkage" :disabled="!geneticLinkageValid" />
+                                        <q-btn color="secondary" @click="addGeneticLinkage();" label="Add Genetic Record Linkage" :disabled="!geneticLinkageValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
@@ -62,7 +62,7 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                             </div>
                             <div v-if="Number(geneticLinkageId) > 0" class="row justify-end q-gutter-md">
                                 <div>
-                                    <q-btn color="negative" @click="deleteGeneticLinkage();" label="Delete Genetic Record Linkage" />
+                                    <q-btn color="negative" @click="deleteGeneticLinkage();" label="Delete Genetic Record Linkage" tabindex="0" />
                                 </div>
                             </div>
                         </div>

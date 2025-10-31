@@ -41,7 +41,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             <template v-if="collInfo && collInfo.collectionname">{{ collInfo.collectionname }}</template>
                             <template v-if="collInfo && (collInfo.institutioncode || collInfo.collectioncode)"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
                         </div>
-                        <div onclick="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" title="Open Tutorial Window">
+                        <div role="button" @click="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" title="Open Tutorial" tabindex="0">
                             <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                         </div>
                     </div>
@@ -51,10 +51,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                 <taxa-kingdom-selector :disable="uppercontrolsdisabled" :selected-kingdom="selectedKingdom" label="Target Kingdom" class="col-4" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
                             </div>
                             <div class="row q-mt-xs">
-                                <q-input outlined v-model="processingStartIndex" label="Processing Start Index" class="col-4" :readonly="uppercontrolsdisabled" dense></q-input>
+                                <q-input outlined v-model="processingStartIndex" label="Processing Start Index" class="col-4" :readonly="uppercontrolsdisabled" dense tabindex="0"></q-input>
                             </div>
                             <div class="row q-mt-xs">
-                                <q-input type="number" outlined v-model="processingLimit" label="Processing Batch Limit" class="col-4" @update:model-value="processingBatchLimitChange" :readonly="uppercontrolsdisabled" dense></q-input>
+                                <q-input type="number" outlined v-model="processingLimit" label="Processing Batch Limit" class="col-4" @update:model-value="processingBatchLimitChange" :readonly="uppercontrolsdisabled" dense tabindex="0"></q-input>
                             </div>
                         </div>
                         <div class="row text-weight-bold justify-end col-4">
@@ -117,7 +117,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                 </div>
                                                 Set occurrence record linkages to the Taxonomic Thesaurus.
                                                 <div class="q-mt-xs">
-                                                    <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="uppercontrolsdisabled" />
+                                                    <q-checkbox v-model="updatedet" label="Include associated determination records" :disable="uppercontrolsdisabled" tabindex="0" />
                                                 </div>
                                                 <div class="processor-tool-control-container">
                                                     <div class="processor-cancel-message-container text-negative text-bold">
@@ -194,7 +194,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                 Get fuzzy matches to occurrence record scientific names that are not yet linked to the Taxonomic Thesaurus
                                                 with taxa currently in the Taxonomic Thesaurus.
                                                 <div class="row q-mt-xs">
-                                                    <q-input type="number" outlined v-model="levValue" class="col-5" label="Character difference tolerance" :readonly="uppercontrolsdisabled" dense></q-input>
+                                                    <q-input type="number" outlined v-model="levValue" class="col-5" label="Character difference tolerance" :readonly="uppercontrolsdisabled" dense tabindex="0"></q-input>
                                                 </div>
                                                 <div class="processor-tool-control-container">
                                                     <div class="processor-cancel-message-container text-negative text-bold">
@@ -226,7 +226,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
                                             <q-item>
                                                 <q-item-section>
-                                                    <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                                    <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" tabindex="0">Show previous 100 entries</a></div>
                                                 </q-item-section>
                                             </q-item>
                                         </template>
@@ -286,7 +286,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
                                             <q-item>
                                                 <q-item-section>
-                                                    <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                                    <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" tabindex="0">Show next 100 entries</a></div>
                                                 </q-item-section>
                                             </q-item>
                                         </template>

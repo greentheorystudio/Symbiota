@@ -187,12 +187,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <span class="text-bold">Notes: </span>{{ checklistData['notes'] }}
                             </div>
                             <div class="text-body1 text-bold text-blue cursor-pointer">
-                                <a @click="processDisplayDetailsChange(false);" class="text-primary">Less Details</a>
+                                <a @click="processDisplayDetailsChange(false);" class="text-primary" tabindex="0">Less Details</a>
                             </div>
                         </template>
                         <template v-else>
                             <div class="text-body1 text-bold text-blue cursor-pointer">
-                                <a @click="processDisplayDetailsChange(true);" class="text-primary">More Details</a>
+                                <a @click="processDisplayDetailsChange(true);" class="text-primary" tabindex="0">More Details</a>
                             </div>
                         </template>
                     </template>

@@ -51,12 +51,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             <div class="row justify-center">
                 <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center bg-white">
                     <div class="row justify-start">
-                        <div><a :href="clientRoot + '/index.php'">Home</a> &gt;&gt;</div>
+                        <div><a :href="clientRoot + '/index.php'" tabindex="0">Home</a> &gt;&gt;</div>
                         <template v-if="displayMode === 4">
-                            <a :href="clientRoot + '/collections/management/crowdsource/index.php'">Crowd Sourcing Central</a> &gt;&gt;
+                            <a :href="clientRoot + '/collections/management/crowdsource/index.php'" tabindex="0">Crowd Sourcing Central</a> &gt;&gt;
                         </template>
                         <template v-else-if="isEditor">
-                            <div><a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)">Collection Control Panel</a> &gt;&gt;</div>
+                            <div><a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collId)" tabindex="0">Collection Control Panel</a> &gt;&gt;</div>
                         </template>
                         <span class="text-bold">Occurrence Editor</span>
                     </div>

@@ -1,7 +1,7 @@
 const spatialDisplayButton = {
     template: `
         <div class="self-center">
-            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="redirectWithQueryId('/spatial/index.php');" icon="fas fa-globe" dense>
+            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="redirectWithQueryId('/spatial/index.php');" icon="fas fa-globe" dense aria-label="Open in Map Display" tabindex="0">
                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                     Map Display
                 </q-tooltip>

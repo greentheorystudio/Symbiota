@@ -47,7 +47,7 @@ const mediaFileUploadInputElement = {
                 <div class="full-width row justify-between">
                     <div class="text-h6 text-bold">{{ label }}</div>
                     <div>
-                        <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary"></q-btn-toggle>
+                        <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
                     </div>
                 </div>
                 <template v-if="selectedUploadMethod === 'upload'">

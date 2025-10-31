@@ -473,14 +473,14 @@ const occurrenceVerbatimCoordinatesInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();">
+                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();" aria-label="Recalculate decimal coordinates" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Recalculate decimal coordinates
                         </q-tooltip>
                     </q-icon>
-                    <q-icon name="construction" class="cursor-pointer">
+                    <q-icon role="button" name="construction" class="cursor-pointer" aria-label="Open Tools for converting additional formats" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Tools for converting additional formats
+                            Open Tools for converting additional formats
                         </q-tooltip>
                         <q-menu v-model="displayCoordinateToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-max">
                             <occurrence-coordinate-tool-popup
@@ -507,14 +507,14 @@ const occurrenceVerbatimCoordinatesInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();">
+                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();" aria-label="Recalculate decimal coordinates" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Recalculate decimal coordinates
                         </q-tooltip>
                     </q-icon>
-                    <q-icon name="construction" class="cursor-pointer">
+                    <q-icon role="button" name="construction" class="cursor-pointer" aria-label="Open Tools for converting additional formats" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Tools for converting additional formats
+                            Open Tools for converting additional formats
                         </q-tooltip>
                         <q-menu v-model="displayCoordinateToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-max">
                             <occurrence-coordinate-tool-popup
@@ -555,7 +555,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
+                                <a :href="definition.source" target="_blank" aria-label="External link: Go to source - Opens in separate tab" :tabindex="tabindex"><span class="text-bold">Go to source</span></a>
                             </div>
                         </template>
                     </div>

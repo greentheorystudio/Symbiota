@@ -36,7 +36,7 @@ const occurrenceFootprintWktInputElement = {
                                 Clear value
                             </q-tooltip>
                         </q-icon>
-                        <q-icon name="hide_source" class="cursor-pointer" @click="showFootprintWktText = false">
+                        <q-icon role="button" name="hide_source" class="cursor-pointer" @click="showFootprintWktText = false" aria-label="Hide text display" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Hide text display
                             </q-tooltip>
@@ -116,7 +116,7 @@ const occurrenceFootprintWktInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
+                                <a :href="definition.source" target="_blank" aria-label="External link: Go to source - Opens in separate tab" :tabindex="tabindex"><span class="text-bold">Go to source</span></a>
                             </div>
                         </template>
                     </div>

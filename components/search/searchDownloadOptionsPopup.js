@@ -17,7 +17,7 @@ const searchDownloadOptionsPopup = {
                     <div class="text-h6 text-bold">Download Occurrence Data</div>
                     <div class="text-body1">
                         By downloading data, the user confirms that he/she has read and agrees with the 
-                        <a :href="(clientRoot + '/misc/usagepolicy.php')" target="_blank">general data usage terms</a>.
+                        <a :href="(clientRoot + '/misc/usagepolicy.php')" target="_blank" aria-label="View usage terms - Opens in separate tab" tabindex="0">general data usage terms</a>.
                         Note that additional terms of use specific to the individual collections may be distributed with the 
                         data download. When present, the terms supplied by the owning institution should take precedence over 
                         the general terms posted on the website.
@@ -27,7 +27,7 @@ const searchDownloadOptionsPopup = {
                             <div class="text-body1 text-bold">Download Type</div>
                         </div>
                         <div class="col-7">
-                            <q-option-group v-model="selectedDownloadType" :options="downloadTypeOptions" color="primary" dense></q-option-group>
+                            <q-option-group v-model="selectedDownloadType" :options="downloadTypeOptions" color="primary" dense aria-label="Download Type options" tabindex="0"></q-option-group>
                         </div>
                     </div>
                     <div class="row">
@@ -36,7 +36,7 @@ const searchDownloadOptionsPopup = {
                             <a class="q-pa-none" href="https://www.tdwg.org/standards/dwc/" target="_blank">What is Darwin Core?</a>
                         </div>
                         <div class="col-7">
-                            <q-option-group v-model="selectedDataStructure" :options="dataStructureOptions" color="primary" dense></q-option-group>
+                            <q-option-group v-model="selectedDataStructure" :options="dataStructureOptions" color="primary" dense aria-label="Data Structure options" tabindex="0"></q-option-group>
                         </div>
                     </div>
                     <div class="row">
@@ -51,7 +51,7 @@ const searchDownloadOptionsPopup = {
                     </div>
                     <div class="row justify-end">
                         <div>
-                            <q-btn color="primary" size="md" @click="downloadData();" label="Download Data" dense />
+                            <q-btn color="primary" size="md" @click="downloadData();" label="Download Data" dense tabindex="0" />
                         </div>
                     </div>
                 </div>

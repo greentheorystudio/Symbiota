@@ -110,7 +110,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                     <div class="col-11 column text-body1 wrap">
                                                                         <div v-if="props.row.sciname">
                                                                             <template v-if="Number(props.row.tid) > 0">
-                                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">
+                                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank" :aria-label="(props.row.sciname + ' taxon profile page - Opens in separate tab')" tabindex="0">
                                                                                     <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
                                                                                 </a>
                                                                             </template>
@@ -161,7 +161,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                             {{ props.row.informationwithheld }}
                                                                         </div>
                                                                         <div>
-                                                                            <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);">Full Record Details</span>
+                                                                            <span role="button" class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);" tabindex="0">Full Record Details</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -251,7 +251,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                         <template v-for="taxon in family['taxa']">
                                                             <div>
                                                                 <template v-if="Number(taxon.tid) > 0">
-                                                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon.tid)" target="_blank">
+                                                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon.tid)" target="_blank" :aria-label="(taxon.sciname + ' taxon profile page - Opens in separate tab')" tabindex="0">
                                                                         <span class="text-italic">{{ taxon.sciname }}</span><span class="q-ml-sm">{{ taxon.author }}</span>
                                                                     </a>
                                                                 </template>

@@ -50,7 +50,7 @@ const spatialSidePanel = {
                     </template>
                 </div>
             </div>
-            <div class="col-grow column justify-center items-center cursor-pointer map-side-panel-close-bar" @click="updateMapSettings('showSidePanel', false);">
+            <div role="button" class="col-grow column justify-center items-center cursor-pointer map-side-panel-close-bar" @click="updateMapSettings('showSidePanel', false);" aria-role="Toggle side panel" tabindex="0">
                 <q-icon color="white" size="sm" name="fas fa-caret-left"></q-icon>
             </div>
         </div>

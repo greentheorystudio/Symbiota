@@ -10,11 +10,11 @@ const taxaProfileImagePanel = {
                         <div class="row">
                             <q-intersection v-for="image in taxaImageArr" :key="image" class="img-thumb q-mb-sm">
                                 <q-card class="q-ma-md overflow-hidden">
-                                    <a @click="toggleImageCarousel(image.url);" class="cursor-pointer">
+                                    <a role="button" @click="toggleImageCarousel(image.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
                                         <q-img :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="(image.alttext ? image.alttext : image.sciname)"></q-img>
                                     </a>
                                     <div class="photographer">
-                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)">
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)" aria-label="Go to taxon" tabindex="0">
                                             <span class="text-italic">{{ image.sciname }}</span>
                                         </a>
                                     </div>
@@ -28,11 +28,11 @@ const taxaProfileImagePanel = {
                         <div class="row">
                             <q-intersection v-for="image in taxaImageArr" :key="image" class="img-thumb q-mb-sm">
                                 <q-card class="q-ma-md overflow-hidden">
-                                    <a @click="toggleImageCarousel(image.url);" class="cursor-pointer">
+                                    <a role="button" @click="toggleImageCarousel(image.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
                                         <q-img :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="(image.alttext ? image.alttext : image.sciname)"></q-img>
                                     </a>
                                     <div class="photographer">
-                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)">
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + image.tid)" aria-label="Go to taxon" tabindex="0">
                                             <span class="text-italic">{{ image.sciname }}</span>
                                         </a>
                                     </div>

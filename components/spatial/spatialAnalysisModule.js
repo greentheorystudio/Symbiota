@@ -35,12 +35,12 @@ const spatialAnalysisModule = {
             <spatial-side-button-tray></spatial-side-button-tray>
             <div id="popup" class="ol-popup">
                 <template v-if="popupCloser">
-                    <a class="ol-popup-closer cursor-pointer" @click="closePopup();"></a>
+                    <a role="button" class="ol-popup-closer cursor-pointer" @click="closePopup();" aria-label="Close pop up" tabindex="0"></a>
                 </template>
                 <div id="popup-content" v-html="popupContent"></div>
             </div>
             <template v-if="inputWindowMode">
-                <q-btn dense class="z-max map-popup-close-button" size="md" color="red" text-color="white" icon="fas fa-times" @click="emitClosePopup();"></q-btn>
+                <q-btn dense class="z-max map-popup-close-button" size="md" color="red" text-color="white" icon="fas fa-times" @click="emitClosePopup();" aria-label="Close window" tabindex="0"></q-btn>
             </template>
 
             <div id="mapinfo">

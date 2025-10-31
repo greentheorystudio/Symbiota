@@ -61,33 +61,33 @@ const occurrenceDataUploadModule = {
                                             </template>
                                             <div class="q-mb-sm row q-gutter-sm">
                                                 <div class="text-body1 text-bold">Occurrence records</div> 
-                                                <div class="cursor-pointer" @click="openFieldMapperPopup('flat-file');">(view mapping)</div>
+                                                <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('flat-file');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                             </div>
                                         </template>
                                         <template v-else>
                                             <div class="q-mb-sm row q-gutter-sm">
                                                 <div class="text-body1 text-bold">Occurrence Records</div>
-                                                <div class="cursor-pointer" @click="openFieldMapperPopup('occurrence');">(view mapping)</div>
+                                                <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('occurrence');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                             </div>
                                             <template v-if="determinationDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeDeterminationData" @update:value="(value) => includeDeterminationData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Identification History</div>
-                                                    <div class="cursor-pointer" @click="openFieldMapperPopup('determination');">(view mapping)</div>
+                                                    <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('determination');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                                 </div>
                                             </template>
                                             <template v-if="multimediaDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeMultimediaData" @update:value="(value) => includeMultimediaData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Media Records</div>
-                                                    <div class="cursor-pointer" @click="openFieldMapperPopup('multimedia');">(view mapping)</div>
+                                                    <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('multimedia');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                                 </div>
                                             </template>
                                             <template v-if="mofDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeMofData" @update:value="(value) => includeMofData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Measurement or Fact Records</div>
-                                                    <div class="cursor-pointer" @click="openFieldMapperPopup('mof');">(view mapping)</div>
+                                                    <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('mof');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                                 </div>
                                             </template>
                                         </template>
@@ -263,7 +263,7 @@ const occurrenceDataUploadModule = {
                             <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
                                 <q-item>
                                     <q-item-section>
-                                        <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                        <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" aria-label="Show previous 100 entries" tabindex="0">Show previous 100 entries</a></div>
                                     </q-item-section>
                                 </q-item>
                             </template>
@@ -300,7 +300,7 @@ const occurrenceDataUploadModule = {
                             <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
                                 <q-item>
                                     <q-item-section>
-                                        <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                        <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" aria-label="Show next 100 entries" tabindex="0">Show next 100 entries</a></div>
                                     </q-item-section>
                                 </q-item>
                             </template>

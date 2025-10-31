@@ -41,7 +41,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                     <q-card class="q-my-sm" flat bordered>
                                         <q-card-section>
                                             <div class="text-subtitle1 text-weight-bold">Select Media Type</div>
-                                            <q-option-group :options="mediaTypeOptions" type="radio" v-model="selectedMediaType" :disable="loading" @update:model-value="processMediaTypeChange" dense />
+                                            <q-option-group :options="mediaTypeOptions" type="radio" v-model="selectedMediaType" :disable="loading" @update:model-value="processMediaTypeChange" dense aria-label="Media type options" tabindex="0" />
                                         </q-card-section>
                                     </q-card>
                                     <q-card class="q-my-sm" flat bordered>
@@ -51,7 +51,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     <single-language-auto-complete :language="descriptionLanguage" :disable="loading" label="Description Language" @update:language="updateDescriptionLanguage"></single-language-auto-complete>
                                                 </div>
                                                 <div class="q-my-sm">
-                                                    <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense />
+                                                    <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense aria-label="Description save options" tabindex="0" />
                                                 </div>
                                             </template>
                                             <div class="row q-my-sm">

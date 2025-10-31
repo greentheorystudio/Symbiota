@@ -13,12 +13,12 @@ const taxaProfileCentralImage = {
         <q-card class="overflow-hidden full-width">
             <template v-if="centralImage">
                 <div class="taxon-profile-central-image">
-                    <a @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer">
+                    <a role="button" @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
                         <q-img :src="(centralImage.url.startsWith('/') ? (clientRoot + centralImage.url) : centralImage.url)" :fit="contain" :title="centralImage.caption" :alt="(centralImage.alttext ? centralImage.alttext : centralImage.sciname)"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
                                 <template v-if="taxon.sciname !== centralImage.sciname">
-                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + centralImage.tid)"><span class="text-italic">{{ centralImage.sciname }}</span>. </a>
+                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + centralImage.tid)" aria-label="Go to taxon" tabindex="0"><span class="text-italic">{{ centralImage.sciname }}</span>. </a>
                                 </template>
                                 <span v-if="centralImage.photographer">Photo by: {{ centralImage.photographer }}. </span><span v-html="centralImage.caption"></span>
                             </div>
@@ -29,7 +29,7 @@ const taxaProfileCentralImage = {
             <template v-else>
                 <div class="no-central-image">
                     <template v-if="isEditor">
-                        <div><a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + taxon.tid)"><span class="text-weight-bold">Add an Image</span></a></div>
+                        <div><a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + taxon.tid)" aria-label="Add an Image" tabindex="0"><span class="text-weight-bold">Add an Image</span></a></div>
                     </template>
                     <template v-else>
                         <div>Image not available</div>

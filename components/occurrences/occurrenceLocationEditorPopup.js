@@ -23,8 +23,8 @@ const occurrenceLocationEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end q-gutter-xs">
-                                    <q-btn color="negative" @click="deleteLocation();" label="Delete Location" :disabled="locationId === 0 || collectingEventArr.length > 0" />
-                                    <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" />
+                                    <q-btn color="negative" @click="deleteLocation();" label="Delete Location" :disabled="locationId === 0 || collectingEventArr.length > 0" tabindex="0" />
+                                    <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" tabindex="0" />
                                 </div>
                             </div>
                             <div class="q-mb-xs row justify-between q-col-gutter-sm">

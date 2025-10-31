@@ -31,7 +31,7 @@ const occurrenceCollectionListPopup = {
                             <q-card v-for="collection in collectionArr">
                                 <q-card-section class="q-pa-md column">
                                     <div v-if="duplicateDisplay" class="q-mb-xs row justify-end">
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + collection.occid + '&collid=' + collection.collid)" target="_blank" icon="fas fa-edit" dense>
+                                        <q-btn role="link" color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + collection.occid + '&collid=' + collection.collid)" target="_blank" icon="fas fa-edit" dense aria-label="View in occurrence editor - Opens in separate tab" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 View in occurrence editor
                                             </q-tooltip>
@@ -219,7 +219,7 @@ const occurrenceCollectionListPopup = {
                                         {{ collection.basisofrecord }}
                                     </div>
                                     <div v-if="!duplicateDisplay" class="q-mt-md q-pl-md row justify-start q-gutter-md">
-                                        <q-btn color="primary" @click="processCollectionSelection(collection.occid);" label="Select Collection" dense />
+                                        <q-btn color="primary" @click="processCollectionSelection(collection.occid);" label="Select Collection" dense tabindex="0" />
                                     </div>
                                 </q-card-section>
                             </q-card>

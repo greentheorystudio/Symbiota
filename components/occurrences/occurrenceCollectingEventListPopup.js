@@ -190,11 +190,11 @@ const occurrenceCollectingEventListPopup = {
                                     </div>
                                     <div class="q-mt-md q-pl-md row justify-start q-gutter-md">
                                         <template v-if="popupType === 'occurrence'">
-                                            <q-btn color="primary" @click="processMergeEventData(event, false);" label="Import All Data" dense />
-                                            <q-btn color="primary" @click="processMergeEventData(event);" label="Import Missing Data Only" dense />
+                                            <q-btn color="primary" @click="processMergeEventData(event, false);" label="Import All Data" dense tabindex="0" />
+                                            <q-btn color="primary" @click="processMergeEventData(event);" label="Import Missing Data Only" dense tabindex="0" />
                                         </template>
                                         <template v-else-if="popupType === 'location'">
-                                            <q-btn color="primary" @click="processEventSelection(event);" label="Select Event" dense />
+                                            <q-btn color="primary" @click="processEventSelection(event);" label="Select Event" dense tabindex="0" />
                                         </template>
                                     </div>
                                 </q-card-section>

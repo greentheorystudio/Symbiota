@@ -9,10 +9,10 @@ const occurrenceEditorFormCollectingEventElement = {
                         </div>
                         <div class="row justify-end q-gutter-sm">
                             <div v-if="occId > 0 && Object.keys(configuredDataFields).length > 0">
-                                <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
+                                <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" tabindex="0" />
                             </div>
                             <div v-if="!collectionEventAutoSearch">
-                                <q-btn color="secondary" size="md" @click="processCollectingEventSearch(false);" label="Search for Event" />
+                                <q-btn color="secondary" size="md" @click="processCollectingEventSearch(false);" label="Search for Event" tabindex="0" />
                             </div>
                         </div>
                     </div>

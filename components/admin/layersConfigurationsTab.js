@@ -10,8 +10,8 @@ const layersConfigurationsTab = {
                     <div>
                         <q-btn color="primary" @click="openLayerGroupEditPopup();" label="Add Layer Group" tabindex="0" />
                     </div>
-                    <div onclick="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
-                        <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
+                    <div role="button" class="cursor-pointer" @click="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" aria-label="Open Tutorial" tabindex="0">
+                        <q-icon name="far fa-question-circle" size="20px" />
                     </div>
                 </div>
             </div>

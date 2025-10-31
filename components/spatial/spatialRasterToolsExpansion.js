@@ -8,7 +8,7 @@ const spatialRasterToolsExpansion = {
     template: `
         <div class="q-pa-sm column">
             <div class="q-mb-sm">
-                <q-select bg-color="white" outlined v-model="selectedTarget" :options="rasterLayersArr" :option-value="value" :option-label="label" label="Target Raster Layer" popup-content-class="z-max" @update:model-value="changeTargetRaster" behavior="menu" dense options-dense />
+                <q-select bg-color="white" outlined v-model="selectedTarget" :options="rasterLayersArr" :option-value="value" :option-label="label" label="Target Raster Layer" popup-content-class="z-max" @update:model-value="changeTargetRaster" behavior="menu" dense options-dense tabindex="0" />
             </div>
             <q-separator ></q-separator>
             <div class="q-my-sm column">
@@ -23,14 +23,14 @@ const spatialRasterToolsExpansion = {
                 </div>
                 <div class="q-mt-xs row justify-between q-gutter-sm">
                     <div>
-                        <q-input type="number" outlined v-model="dataVectorizeLowValue" class="col-3" label="Low Value" dense />
+                        <q-input type="number" outlined v-model="dataVectorizeLowValue" class="col-3" label="Low Value" dense tabindex="0" />
                     </div>
                     <div>
-                        <q-input type="number" outlined v-model="dataVectorizeHighValue" class="col-3" label="High Value" dense />
+                        <q-input type="number" outlined v-model="dataVectorizeHighValue" class="col-3" label="High Value" dense tabindex="0" />
                     </div>
                 </div>
                 <div class="q-mt-xs row justify-end">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="vectorizeRasterByData();" label="Start Process" :disabled="selectedTargetRaster === 'none' || mapSettings.polyCount !== 1" dense />
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="vectorizeRasterByData();" label="Start Process" :disabled="selectedTargetRaster === 'none' || mapSettings.polyCount !== 1" dense tabindex="0" />
                 </div>
             </div>
             <q-separator ></q-separator>
@@ -46,28 +46,28 @@ const spatialRasterToolsExpansion = {
                 </div>
                 <div class="q-mt-xs row justify-between q-gutter-sm">
                     <div>
-                        <q-input type="number" outlined v-model="gridVectorizeLowValue" label="Low Value" dense />
+                        <q-input type="number" outlined v-model="gridVectorizeLowValue" label="Low Value" dense tabindex="0" />
                     </div>
                     <div>
-                        <q-input type="number" outlined v-model="gridVectorizeHighValue" label="High Value" dense />
+                        <q-input type="number" outlined v-model="gridVectorizeHighValue" label="High Value" dense tabindex="0" />
                     </div>
                 </div>
                 <div class="q-mt-xs row justify-center">
                     <div class="col-6">
-                        <q-select bg-color="white" outlined v-model="selectedResolution" :options="gridResolutionOptions" :option-value="value" :option-label="label" label="Grid Analysis Resolution (m)" popup-content-class="z-max" @update:model-value="processVectorizeRasterByGridResolutionChange" behavior="menu" dense options-dense />
+                        <q-select bg-color="white" outlined v-model="selectedResolution" :options="gridResolutionOptions" :option-value="value" :option-label="label" label="Grid Analysis Resolution (m)" popup-content-class="z-max" @update:model-value="processVectorizeRasterByGridResolutionChange" behavior="menu" dense options-dense tabindex="0" />
                     </div>
                 </div>
                 <div class="q-mt-xs row justify-between q-gutter-sm">
                     <div>
                         <template v-if="!targetBoxDisplayed">
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayVectorizeRasterByGridTargetPolygon();" label="Display Target Box" :disabled="selectedTargetRaster === 'none'" dense />
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayVectorizeRasterByGridTargetPolygon();" label="Display Target Box" :disabled="selectedTargetRaster === 'none'" dense tabindex="0" />
                         </template>
                         <template v-else>
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="hideVectorizeRasterByGridTargetPolygon();" label="Hide Target Box" dense />
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="hideVectorizeRasterByGridTargetPolygon();" label="Hide Target Box" dense tabindex="0" />
                         </template>
                     </div>
                     <div>
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="vectorizeRasterByGrid();" label="Start Process" :disabled="selectedTargetRaster === 'none' || !targetBoxDisplayed" dense />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="vectorizeRasterByGrid();" label="Start Process" :disabled="selectedTargetRaster === 'none' || !targetBoxDisplayed" dense tabindex="0" />
                     </div>
                 </div>
             </div>

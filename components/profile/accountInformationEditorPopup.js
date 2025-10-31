@@ -23,7 +23,7 @@ const accountInformationEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="editAccount();" label="Save Edits" :disabled="!editsExist || !userValid" dense />
+                                    <q-btn color="secondary" @click="editAccount();" label="Save Edits" :disabled="!editsExist || !userValid" dense tabindex="0" />
                                 </div>
                             </div>
                             <account-information-form ref="accountInformationFormRef" @update:account-information="updateAccountData"></account-information-form>

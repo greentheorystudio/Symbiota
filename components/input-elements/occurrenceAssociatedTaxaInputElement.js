@@ -126,7 +126,7 @@ const occurrenceAssociatedTaxaInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon name="construction" class="cursor-pointer">
+                    <q-icon role="button" name="construction" class="cursor-pointer" aria-label="Open Associated Taxa Entry Tool" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Associated Taxa Entry Tool
                         </q-tooltip>
@@ -153,7 +153,7 @@ const occurrenceAssociatedTaxaInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon name="construction" class="cursor-pointer">
+                    <q-icon role="button" name="construction" class="cursor-pointer" aria-label="Open Associated Taxa Entry Tool" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Associated Taxa Entry Tool
                         </q-tooltip>
@@ -194,7 +194,7 @@ const occurrenceAssociatedTaxaInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
+                                <a :href="definition.source" target="_blank" aria-label="External link: Go to source - Opens in separate tab" :tabindex="tabindex"><span class="text-bold">Go to source</span></a>
                             </div>
                         </template>
                     </div>

@@ -17,18 +17,18 @@ const spatialControlPanel = {
                                 </div>
                                 <template v-if="!inputWindowMode">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense tabindex="0" />
                                     </div>
                                 </template>
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense tabindex="0" />
                                 </div>
                                 <template v-if="!inputWindowMode">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();">
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();" aria-label="Go to homepage" tabindex="0">
                                             <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Go to homepage
                                             </q-tooltip>
@@ -36,17 +36,17 @@ const spatialControlPanel = {
                                     </div>
                                 </template>
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();" aria-label="Download Map PNG Image" tabindex="0">
                                         <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                            Download Map Image
+                                            Download Map PNG Image
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
                                 <template v-if="!inputWindowMode">
                                     <div>
-                                        <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');">
+                                        <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');" aria-label="Open Tutorial" tabindex="0">
                                             <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Open Tutorial Window
+                                                Open Tutorial
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
@@ -55,14 +55,14 @@ const spatialControlPanel = {
                             <template v-if="inputWindowMode">
                                 <div class="q-mt-xs row justify-around items-center q-gutter-sm">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showInfoWindow', true);" label="Info" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showInfoWindow', true);" label="Info" dense tabindex="0" />
                                     </div>
                                     <div>
-                                        <q-btn :disabled="mapSettings.submitButtonDisabled" color="grey-4" text-color="black" class="black-border" size="md" @click="processInputSubmit();" :label="mapSettings.submitButtonText" dense />
+                                        <q-btn :disabled="mapSettings.submitButtonDisabled" color="grey-4" text-color="black" class="black-border" size="md" @click="processInputSubmit();" :label="mapSettings.submitButtonText" dense tabindex="0" />
                                     </div>
                                     <template v-if="inputWindowToolsArr.includes('uncertainty') || inputWindowToolsArr.includes('radius')">
                                         <div>
-                                            <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" />
+                                            <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" tabindex="0" />
                                         </div>
                                         <div v-if="inputWindowToolsArr.includes('radius')">
                                             <selector-input-element :options="radiusUnitOptions" :value="mapSettings.radiusUnits" @update:value="(value) => updateRadiusUnits(value)"></selector-input-element>
@@ -71,7 +71,7 @@ const spatialControlPanel = {
                                 </div>
                             </template>
                         </div>
-                        <div class="row justify-center cursor-pointer" @click="updateMapSettings('showControlPanelTop', false);">
+                        <div role="button" class="row justify-center cursor-pointer" @click="updateMapSettings('showControlPanelTop', false);" aria-role="Toggle control panel" tabindex="0">
                             <q-icon color="white" size="sm" name="fas fa-caret-up"></q-icon>
                         </div>
                     </div>
@@ -87,16 +87,16 @@ const spatialControlPanel = {
                                         <spatial-draw-tool-selector></spatial-draw-tool-selector>
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showInfoWindow', true);" label="Info" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showInfoWindow', true);" label="Info" dense tabindex="0" />
                                     </div>
                                     <div>
-                                        <q-btn :disabled="mapSettings.submitButtonDisabled" color="grey-4" text-color="black" class="black-border" size="md" @click="processInputSubmit();" :label="mapSettings.submitButtonText" dense />
+                                        <q-btn :disabled="mapSettings.submitButtonDisabled" color="grey-4" text-color="black" class="black-border" size="md" @click="processInputSubmit();" :label="mapSettings.submitButtonText" dense tabindex="0" />
                                     </div>
                                 </div>
                                 <template v-if="inputWindowToolsArr.includes('uncertainty') || inputWindowToolsArr.includes('radius')">
                                     <div class="q-mt-xs row justify-center items-center q-gutter-sm">
                                         <div>
-                                            <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" />
+                                            <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" tabindex="0" />
                                         </div>
                                         <div v-if="inputWindowToolsArr.includes('radius')">
                                             <selector-input-element :options="radiusUnitOptions" :value="mapSettings.radiusUnits" label="Radius units" @update:value="(value) => updateRadiusUnits(value)"></selector-input-element>
@@ -118,17 +118,17 @@ const spatialControlPanel = {
                                 </div>
                                 <div class="q-mt-xs row justify-between items-center q-gutter-sm">
                                     <div v-if="!inputWindowMode">
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense tabindex="0" />
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense tabindex="0" />
                                     </div>
                                     <template v-if="!inputWindowMode">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
                                         </div>
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();">
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();" aria-label="Go to homepage" tabindex="0">
                                                 <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Go to homepage
                                                 </q-tooltip>
@@ -136,19 +136,19 @@ const spatialControlPanel = {
                                         </div>
                                     </template>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();">
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="photo_camera" dense @click="exportMapPNG();" aria-label="Download Map PNG Image" tabindex="0">
                                             <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Download Map Image
+                                                Download Map PNG Image
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
                                     <div>
-                                        <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');"></q-btn>
+                                        <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');" aria-label="Open Tutorial" tabindex="0"></q-btn>
                                     </div>
                                 </div>
                             </template>
                         </div>
-                        <div class="row justify-center cursor-pointer" @click="updateMapSettings('showControlPanelTop', false);">
+                        <div role="button" class="row justify-center cursor-pointer" @click="updateMapSettings('showControlPanelTop', false);" aria-role="Toggle control panel" tabindex="0">
                             <q-icon color="white" size="sm" name="fas fa-caret-up"></q-icon>
                         </div>
                     </div>
@@ -174,40 +174,40 @@ const spatialControlPanel = {
                             </div>
                             <template v-if="!inputWindowMode">
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
                                 </div>
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();" aria-label="Go to homepage" tabindex="0">
                                         <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Go to homepage
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showMapSettings', true);" label="Settings" dense tabindex="0" />
                                 </div>
                             </template>
                             <div>
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense />
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showLayerController', true);" label="Layers" dense tabindex="0" />
                             </div>
                             <div>
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="exportMapPNG();" label="Download Map Image" dense />
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="exportMapPNG();" label="Download Map PNG Image" dense tabindex="0" />
                             </div>
                             <template v-if="!inputWindowMode">
                                 <div>
-                                    <q-btn class="control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');"></q-btn>
+                                    <q-btn class="control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');" aria-label="Open Tutorial" tabindex="0"></q-btn>
                                 </div>
                             </template>
                             <template v-if="inputWindowMode && windowWidth < 600">
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showInfoWindow', true);" label="Info" dense />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="updateMapSettings('showInfoWindow', true);" label="Info" dense tabindex="0" />
                                 </div>
                                 <div>
-                                    <q-btn :disabled="mapSettings.submitButtonDisabled" color="grey-4" text-color="black" class="black-border" size="md" @click="processInputSubmit();" :label="mapSettings.submitButtonText" dense />
+                                    <q-btn :disabled="mapSettings.submitButtonDisabled" color="grey-4" text-color="black" class="black-border" size="md" @click="processInputSubmit();" :label="mapSettings.submitButtonText" dense tabindex="0" />
                                 </div>
                                 <template v-if="inputWindowToolsArr.includes('uncertainty') || inputWindowToolsArr.includes('radius')">
                                     <div>
-                                        <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" />
+                                        <q-input type="number" bg-color="white" outlined v-model="mapSettings.uncertaintyRadiusValue" class="col-5" :label="mapSettings.uncertaintyRadiusText" min="0" dense @update:model-value="changeInputPointUncertainty" tabindex="0" />
                                     </div>
                                     <div v-if="inputWindowToolsArr.includes('radius')">
                                         <selector-input-element :options="radiusUnitOptions" :value="mapSettings.radiusUnits" label="Radius units" @update:value="(value) => updateRadiusUnits(value)"></selector-input-element>
@@ -217,7 +217,7 @@ const spatialControlPanel = {
                         </div>
                     </div>
                 </div>
-                <div class="col-grow column justify-center items-center cursor-pointer map-side-panel-close-bar" @click="updateMapSettings('showControlPanelLeft', false);">
+                <div role="button" class="col-grow column justify-center items-center cursor-pointer map-side-panel-close-bar" @click="updateMapSettings('showControlPanelLeft', false);" aria-role="Toggle control panel" tabindex="0">
                     <q-icon color="white" size="sm" name="fas fa-caret-left"></q-icon>
                 </div>
             </div>

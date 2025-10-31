@@ -1,6 +1,6 @@
 const spatialSidePanelShowButton = {
     template: `
-        <div class="z-top map-side-panel-link-container map-info-window-container control-panel column justify-center items-center cursor-pointer animate__animated animate__slow" :class="(!mapSettings.showSidePanel && !mapSettings.showControlPanelLeft) ? 'animate__slideInRight' : 'animate__slideOutLeft'" @click="updateMapSettings('showSidePanel', true);">
+        <div role="button" class="z-top map-side-panel-link-container map-info-window-container control-panel column justify-center items-center cursor-pointer animate__animated animate__slow" :class="(!mapSettings.showSidePanel && !mapSettings.showControlPanelLeft) ? 'animate__slideInRight' : 'animate__slideOutLeft'" @click="updateMapSettings('showSidePanel', true);" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" aria-role="Toggle side panel" tabindex="0">
             <q-icon color="white" size="sm" name="fas fa-caret-right"></q-icon>
         </div>
     `,

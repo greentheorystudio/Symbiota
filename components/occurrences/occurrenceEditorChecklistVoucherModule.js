@@ -16,7 +16,7 @@ const occurrenceEditorChecklistVoucherModule = {
                                     <selector-input-element :options="checklistOptions" label="Checklist" :value="selectedChecklist" option-label="name" option-value="clid" :clearable="true" @update:value="(value) => selectedChecklist = value"></selector-input-element>
                                 </div>
                                 <div>
-                                    <q-btn color="primary" @click="linkVoucher();" label="Link Voucher" :disabled="!selectedChecklist || Number(occurrenceData['tid']) === 0" dense />
+                                    <q-btn color="primary" @click="linkVoucher();" label="Link Voucher" :disabled="!selectedChecklist || Number(occurrenceData['tid']) === 0" dense tabindex="0" />
                                 </div>
                             </div>
                             <div class="col-2">
@@ -34,12 +34,12 @@ const occurrenceEditorChecklistVoucherModule = {
                                         <q-item-section>
                                             <div class="row justify-start q-gutter-md items-center">
                                                 <div class="text-body1">
-                                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)" target="_blank">
+                                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)" target="_blank" :aria-label="('Go to ' + checklist.name + ' - Opens in separate tab')" tabindex="0">
                                                         {{ checklist.name }}
                                                     </a>
                                                 </div>
                                                 <div>
-                                                    <q-btn color="white" text-color="black" size=".6rem" @click="deleteChecklistVoucherRecord(checklist.clid);" icon="far fa-trash-alt" dense>
+                                                    <q-btn color="white" text-color="black" size=".6rem" @click="deleteChecklistVoucherRecord(checklist.clid);" icon="far fa-trash-alt" dense aria-label="Remove voucher linkage" tabindex="0">
                                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                             Remove voucher linkage
                                                         </q-tooltip>

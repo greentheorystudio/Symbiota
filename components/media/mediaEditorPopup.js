@@ -39,7 +39,7 @@ const mediaEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="saveMediaEdits();" label="Save Media Edits" :disabled="!editsExist" />
+                                    <q-btn color="secondary" @click="saveMediaEdits();" label="Save Media Edits" :disabled="!editsExist" tabindex="0" />
                                 </div>
                             </div>
                             <template v-if="Number(mediaData.occid) === 0">
@@ -130,7 +130,7 @@ const mediaEditorPopup = {
                                             <div class="row justify-between">
                                                 <div class="text-subtitle1 text-bold">{{ descriptiveTranscriptUploadLabel + ' Descriptive Transcript' }}</div>
                                                 <div>
-                                                    <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary"></q-btn-toggle>
+                                                    <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
                                                 </div>
                                             </div>
                                             <div class="q-mt-xs row justify-between">
@@ -143,7 +143,7 @@ const mediaEditorPopup = {
                                                     </template>
                                                 </div>
                                                 <div class="col-3 row justify-end">
-                                                    <q-btn color="secondary" @click="preProcessUpdateUploadTranscriptFile();" :label="descriptiveTranscriptUploadLabel" :disabled="((selectedUploadMethod === 'upload' && !uploadedTranscriptFile) || (selectedUploadMethod === 'url' && !transcriptUrl))" />
+                                                    <q-btn color="secondary" @click="preProcessUpdateUploadTranscriptFile();" :label="descriptiveTranscriptUploadLabel" :disabled="((selectedUploadMethod === 'upload' && !uploadedTranscriptFile) || (selectedUploadMethod === 'url' && !transcriptUrl))" tabindex="0" />
                                                 </div>
                                             </div>
                                         </q-card-section>
@@ -152,14 +152,14 @@ const mediaEditorPopup = {
                                 <div class="row justify-between">
                                     <div class="row justify-start q-gutter-sm">
                                         <div>
-                                            <q-btn color="primary" @click="showOccurrenceLinkageToolPopup = true" label="Set Occurrence Linkage" dense>
+                                            <q-btn color="primary" @click="showOccurrenceLinkageToolPopup = true" label="Set Occurrence Linkage" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Link, or change linkage, to an occurrence record
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
                                         <div>
-                                            <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense>
+                                            <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Remove occurrence linkage so that media only displays on Taxon Profile page
                                                 </q-tooltip>
@@ -169,11 +169,11 @@ const mediaEditorPopup = {
                                     <div class="row justify-end q-gutter-sm">
                                         <template v-if="mediaData.descriptivetranscripturi">
                                             <div>
-                                                <q-btn color="negative" @click="processDeleteTranscript();" label="Delete Transcript" />
+                                                <q-btn color="negative" @click="processDeleteTranscript();" label="Delete Transcript" tabindex="0" />
                                             </div>
                                         </template>
                                         <div>
-                                            <q-btn color="negative" @click="processDeleteMediaRecord();" label="Delete Media" />
+                                            <q-btn color="negative" @click="processDeleteMediaRecord();" label="Delete Media" tabindex="0" />
                                         </div>
                                     </div>
                                 </div>

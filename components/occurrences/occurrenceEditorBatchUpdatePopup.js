@@ -36,12 +36,12 @@ const occurrenceEditorBatchUpdatePopup = {
                     </div>
                     <div class="row">
                         <div class="col-grow">
-                            <q-option-group :options="matchOptions" type="radio" v-model="selectedMatchOption" dense />
+                            <q-option-group :options="matchOptions" type="radio" v-model="selectedMatchOption" dense aria-label="Match options" tabindex="0" />
                         </div>
                     </div>
                     <div class="row justify-end q-gutter-md">
                         <div>
-                            <q-btn color="primary" @click="processBatchUpdateData();" label="Batch Update Field" :disabled="!selectedField || !currentValueValue" />
+                            <q-btn color="primary" @click="processBatchUpdateData();" label="Batch Update Field" :disabled="!selectedField || !currentValueValue" tabindex="0" />
                         </div>
                     </div>
                 </div>

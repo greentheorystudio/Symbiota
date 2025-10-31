@@ -59,7 +59,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                                         </template>
                                         <template v-slot:body-cell="props">
                                             <q-td :props="props">
-                                                <q-input v-model.number="props.row[ props.col.name ]['cnt']" input-class="text-center" type="number" @update:model-value="(value) => validateRepDataCnt(props.col.name, value)" :readonly="!taxonDataKey" dense borderless></q-input>
+                                                <q-input v-model.number="props.row[ props.col.name ]['cnt']" input-class="text-center" type="number" @update:model-value="(value) => validateRepDataCnt(props.col.name, value)" :readonly="!taxonDataKey" dense borderless aria-label="Rep count" tabindex="0"></q-input>
                                             </q-td>
                                         </template>
                                     </q-table>
@@ -67,10 +67,10 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
                             </div>
                             <div class="row justify-end full-width q-pr-lg q-gutter-sm">
                                 <div v-if="editMode">
-                                    <q-btn color="negative" @click="deleteTaxon();" label="Delete Taxon" />
+                                    <q-btn color="negative" @click="deleteTaxon();" label="Delete Taxon" tabindex="0" />
                                 </div>
                                 <div>
-                                    <q-btn color="secondary" @click="preProcessEnteredData();" :label="(editMode ? 'Apply Edits' : 'Add Taxon')" :disabled="!editsExist && !taxonEditsExist" />
+                                    <q-btn color="secondary" @click="preProcessEnteredData();" :label="(editMode ? 'Apply Edits' : 'Add Taxon')" :disabled="!editsExist && !taxonEditsExist" tabindex="0" />
                                 </div>
                             </div>
                         </div>

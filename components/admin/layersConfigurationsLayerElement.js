@@ -31,7 +31,7 @@ const layersConfigurationsLayerElement = {
                             <span class="text-bold">Provided by: </span>{{ layer['providedBy'] + ' ' }}
                         </template>
                         <template v-if="layer.hasOwnProperty('sourceURL') && layer['sourceURL']">
-                            <a class="text-bold" :href="layer['sourceURL']" target="_blank">(Go to source)</a>
+                            <a class="text-bold" :href="layer['sourceURL']" target="_blank" aria-label="External link: Go to source - Opens in separate tab" tabindex="0">(Go to source)</a>
                         </template>
                     </div>
                 </template>

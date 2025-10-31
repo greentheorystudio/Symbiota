@@ -44,7 +44,7 @@ const taxaListDisplay = {
                         <template v-for="taxon in family['taxa']">
                             <div class="q-pl-sm q-mb-xs full-width column">
                                 <div class="text-body1">
-                                    <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank" tabindex="0">
+                                    <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
                                         <span class="text-bold text-italic">
                                             {{ taxon['sciname'] }}
                                         </span>
@@ -77,13 +77,13 @@ const taxaListDisplay = {
                                     </div>
                                     <div v-if="voucherData.hasOwnProperty(taxon['tid']) && voucherData[taxon['tid']].length > 0" class="q-ml-md">
                                         <template v-for="voucher in getAdjustedVoucherArr(taxon['tid'], voucherData[taxon['tid']])">
-                                            <span class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);" tabindex="0">{{ voucher['label'] + '; ' }}</span>
+                                            <span role="button" class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);" aria-label="See record details" tabindex="0">{{ voucher['label'] + '; ' }}</span>
                                         </template>
                                         <template v-if="voucherData[taxon['tid']].length > 10 && !expandedVouchers.includes(taxon['tid'])">
-                                            <span class="cursor-pointer" @click="addExpandedVoucher(taxon['tid']);" tabindex="0">more...</span>
+                                            <span role="button" class="cursor-pointer" @click="addExpandedVoucher(taxon['tid']);" aria-label="Show more" tabindex="0">more...</span>
                                         </template>
                                         <template v-else-if="voucherData[taxon['tid']].length > 10 && expandedVouchers.includes(taxon['tid'])">
-                                            <span class="cursor-pointer" @click="removeExpandedVoucher(taxon['tid']);" tabindex="0">less...</span>
+                                            <span role="button" class="cursor-pointer" @click="removeExpandedVoucher(taxon['tid']);" aria-label="Show less" tabindex="0">less...</span>
                                         </template>
                                     </div>
                                 </template>
@@ -96,7 +96,7 @@ const taxaListDisplay = {
                 <template v-for="taxon in taxaArr">
                     <div class="q-pl-sm q-mb-xs full-width column">
                         <div class="text-body1">
-                            <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank" tabindex="0">
+                            <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
                                 <span class="text-bold text-italic">
                                     {{ taxon['sciname'] }}
                                 </span>
@@ -126,13 +126,13 @@ const taxaListDisplay = {
                             </div>
                             <div v-if="voucherData.hasOwnProperty(taxon['tid']) && voucherData[taxon['tid']].length > 0" class="q-ml-md">
                                 <template v-for="voucher in getAdjustedVoucherArr(taxon['tid'], voucherData[taxon['tid']])">
-                                    <span class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);" tabindex="0">{{ voucher['label'] + '; ' }}</span>
+                                    <span role="button" class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);" aria-label="See record details" tabindex="0">{{ voucher['label'] + '; ' }}</span>
                                 </template>
                                 <template v-if="voucherData[taxon['tid']].length > 10 && !expandedVouchers.includes(taxon['tid'])">
-                                    <span class="cursor-pointer" @click="addExpandedVoucher(taxon['tid']);" tabindex="0">more...</span>
+                                    <span role="button" class="cursor-pointer" @click="addExpandedVoucher(taxon['tid']);" aria-label="Show more" tabindex="0">more...</span>
                                 </template>
                                 <template v-else-if="voucherData[taxon['tid']].length > 10 && expandedVouchers.includes(taxon['tid'])">
-                                    <span class="cursor-pointer" @click="removeExpandedVoucher(taxon['tid']);" tabindex="0">less...</span>
+                                    <span role="button" class="cursor-pointer" @click="removeExpandedVoucher(taxon['tid']);" aria-label="Show less" tabindex="0">less...</span>
                                 </template>
                             </div>
                         </template>

@@ -8,7 +8,7 @@ const accountChecklistProjectList = {
                             <q-list bordered separator>
                                 <template v-for="checklist in checklistArr">
                                     <template v-if="checklist.name">
-                                        <q-item class="cursor-pointer" :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)">
+                                        <q-item role="link" class="cursor-pointer" :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)" :aria-label="('Go to ' + checklist.name)" tabindex="0">
                                             <q-item-section>
                                                 <div class="row justify-start q-gutter-md items-center">
                                                     <div class="text-h6">
@@ -39,7 +39,7 @@ const accountChecklistProjectList = {
                         <q-card-section>
                             <q-list bordered separator>
                                 <template v-for="project in projectArr">
-                                    <q-item class="cursor-pointer" :href="(clientRoot + '/projects/project.php?pid=' + project.pid)">
+                                    <q-item role="link" class="cursor-pointer" :href="(clientRoot + '/projects/project.php?pid=' + project.pid)" :aria-label="('Go to ' + project.projname)" tabindex="0">
                                         <q-item-section>
                                             <div class="row justify-start q-gutter-md items-center">
                                                 <div class="text-h6">

@@ -34,7 +34,7 @@ const timeInputElement = {
                         Clear value
                     </q-tooltip>
                 </q-icon>
-                <q-icon name="access_time" class="cursor-pointer" aria-label="Open time picker" :tabindex="tabindex">
+                <q-icon role="button" name="access_time" class="cursor-pointer" aria-label="Open time picker" :tabindex="tabindex">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
                         <q-time v-model="displayValue" @update:model-value="processValueChange" format24h>
                             <div class="row items-center justify-end">
@@ -72,7 +72,7 @@ const timeInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
+                                <a :href="definition.source" target="_blank" aria-label="External link: Go to source - Opens in separate tab" :tabindex="tabindex"><span class="text-bold">Go to source</span></a>
                             </div>
                         </template>
                     </div>

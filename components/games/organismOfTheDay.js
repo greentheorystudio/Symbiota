@@ -15,7 +15,7 @@ const organismOfTheDay = {
     },
     template: `
         <div ref="cardContainerRef" class="full-width row justify-center">
-            <q-card class="cursor-pointer" @click="showPopup = true">
+            <q-card role="button" class="cursor-pointer" @click="showPopup = true" :aria-label="('Show ' + {{ title }})" tabindex="0">
                 <q-card-section v-if="imageData && taxonData && imageData.hasOwnProperty(taxonData['tidaccepted']) && imageData[taxonData['tidaccepted']].length > 0" class="q-pa-md column">
                     <div class="full-width text-h5 text-bold row justify-center">
                         {{ title }}
@@ -36,7 +36,7 @@ const organismOfTheDay = {
                     <q-spinner color="primary" size="3em" :thickness="10"></q-spinner>
                 </q-inner-loading>
                 <q-inner-loading :showing="error">
-                    <q-icon name="warning" color="negative" size="3em"></q-icon>
+                    <q-icon name="warning" color="negative" size="3em" aria-label="Error occurred loading game"></q-icon>
                 </q-inner-loading>
             </q-card>
         </div>
@@ -117,7 +117,7 @@ const organismOfTheDay = {
                                                 <div v-if="answerCorrect !== 'complete'" class="text-h5 text-bold text-center">
                                                     {{ taxonData['family'] }}
                                                 </div>
-                                                <div class="q-my-md text-h6 text-bold text-blue cursor-pointer text-center" @click="showTaxonProfile">
+                                                <div role="link" class="q-my-md text-h6 text-bold text-blue cursor-pointer text-center" @click="showTaxonProfile" aria-label="Go to taxon profile page - Opens in separate tab" tabindex="0">
                                                     Click here to learn more about this {{ type }}
                                                 </div>
                                                 <div class="text-h6 text-bold text-center">
@@ -153,13 +153,13 @@ const organismOfTheDay = {
                                                         On the bright side, <span class="text-bold">you did get the genus and family right</span>, but the scientific name is not {{ scinameAnswer['sciname'] }}
                                                     </div>
                                                 </template>
-                                                <div class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showAnswerResponse = false">
+                                                <div role="button" class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showAnswerResponse = false" aria-label="Click here to try again" tabindex="0">
                                                     Click here to try again
                                                 </div>
                                                 <div class="text-h5 text-bold text-center">
                                                     OR
                                                 </div>
-                                                <div class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showCorrectAnswer = true">
+                                                <div role="button" class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showCorrectAnswer = true" aria-label="Click here reveal what the answer is" tabindex="0">
                                                     Click here reveal what the answer is
                                                 </div>
                                             </template>

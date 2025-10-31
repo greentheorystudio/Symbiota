@@ -28,10 +28,10 @@ const occurrenceDeterminationEditorPopup = {
                                 </div>
                                 <div class="row justify-end">
                                     <template v-if="determinationId > 0">
-                                        <q-btn color="secondary" @click="saveDeterminationEdits();" label="Save Determination Edits" :disabled="!editsExist || !determinationValid" />
+                                        <q-btn color="secondary" @click="saveDeterminationEdits();" label="Save Determination Edits" :disabled="!editsExist || !determinationValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addDetermination();" label="Add Determination" :disabled="!determinationValid" />
+                                        <q-btn color="secondary" @click="addDetermination();" label="Add Determination" :disabled="!determinationValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
@@ -76,10 +76,10 @@ const occurrenceDeterminationEditorPopup = {
                             </div>
                             <div v-if="Number(determinationId) > 0" class="row justify-end q-gutter-md">
                                 <div>
-                                    <q-btn color="primary" @click="makeDeterminationCurrent();" label="Make Determination Current" :disabled="Number(determinationData['iscurrent']) === 1" />
+                                    <q-btn color="primary" @click="makeDeterminationCurrent();" label="Make Determination Current" :disabled="Number(determinationData['iscurrent']) === 1" tabindex="0" />
                                 </div>
                                 <div>
-                                    <q-btn color="negative" @click="deleteDetermination();" label="Delete Determination" :disabled="Number(determinationData['iscurrent']) === 1" />
+                                    <q-btn color="negative" @click="deleteDetermination();" label="Delete Determination" :disabled="Number(determinationData['iscurrent']) === 1" tabindex="0" />
                                 </div>
                             </div>
                         </div>

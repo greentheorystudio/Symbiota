@@ -30,9 +30,9 @@ const filePickerInputElement = {
         }
     },
     template: `
-        <q-file ref="pickerRef" outlined bg-color="white" v-model="value" :label="label" :disable="disabled" :filter="validateFiles" dense>
+        <q-file ref="pickerRef" outlined bg-color="white" v-model="value" :label="label" :disable="disabled" :filter="validateFiles" dense :tabindex="tabindex">
             <template v-slot:prepend>
-                <q-icon name="upload_file" class="cursor-pointer" @click="pickerRef.pickFiles();"></q-icon>
+                <q-icon role="button" name="upload_file" class="cursor-pointer" @click="pickerRef.pickFiles();" aria-label="Select files" :tabindex="tabindex"></q-icon>
             </template>
             <template v-if="!disabled" v-slot:append>
                 <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
@@ -40,7 +40,7 @@ const filePickerInputElement = {
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon role="button" v-if="value" name="cancel" class="cursor-pointer" @click="clearValue();">
+                <q-icon role="button" v-if="value" name="cancel" class="cursor-pointer" @click="clearValue();" aria-label="Clear files" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear File
                     </q-tooltip>
@@ -74,7 +74,7 @@ const filePickerInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
+                                <a :href="definition.source" target="_blank" aria-label="External link: Go to source - Opens in separate tab" :tabindex="tabindex"><span class="text-bold">Go to source</span></a>
                             </div>
                         </template>
                     </div>

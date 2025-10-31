@@ -208,7 +208,7 @@ const occurrenceInfoTabModule = {
                                 </div>
                                 <div v-if="collectionData['rights']">
                                     <span class="text-bold">Usage Rights:</span>
-                                    <span class="q-ml-sm"><a :href="collectionData['rights']" target="_blank">{{ collectionData['rights'] }}</a></span>
+                                    <span class="q-ml-sm"><a :href="collectionData['rights']" target="_blank" aria-label="View usage rights - Opens in separate tab" tabindex="0">{{ collectionData['rights'] }}</a></span>
                                 </div>
                                 <div v-if="occurrenceData['guid']">
                                     <span class="text-bold">Record ID:</span>
@@ -221,10 +221,10 @@ const occurrenceInfoTabModule = {
                         </div>
                         <div v-if="(collectionData['contact'] && collectionData['email']) || isEditor" class="column q-gutter-xs text-body1 q-pb-md">
                             <div v-if="collectionData['contact'] && collectionData['email']">
-                                For additional information about this specimen, please contact: {{ collectionData['contact'] }} (<a :href="('mailto:' + collectionData['email'])">{{ collectionData['email'] }}</a>)
+                                For additional information about this specimen, please contact: {{ collectionData['contact'] }} (<a :href="('mailto:' + collectionData['email'])" tabindex="0">{{ collectionData['email'] }}</a>)
                             </div>
                             <div v-if="isEditor">
-                                You can edit this record using the <a class="cursor-pointer" @click="redirectToOccurrenceEditorWithQueryId(occurrenceId, collectionData['collid']);">Occurrence Editor</a>.
+                                You can edit this record using the <a class="cursor-pointer" @click="redirectToOccurrenceEditorWithQueryId(occurrenceId, collectionData['collid']);" aria-label="Edit occurrence record" tabindex="0">Occurrence Editor</a>.
                             </div>
                         </div>
                     </q-tab-panel>
@@ -274,7 +274,7 @@ const occurrenceInfoTabModule = {
                                                 <q-item-section>
                                                     <div class="row justify-start q-gutter-md items-center">
                                                         <div class="text-body1">
-                                                            <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)" target="_blank">
+                                                            <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)" target="_blank" :aria-label="('Go to ' + checklist.name + ' - Opens in separate tab')" tabindex="0">
                                                                 {{ checklist.name }}
                                                             </a>
                                                         </div>

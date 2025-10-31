@@ -17,7 +17,7 @@ const taxonomyDataSourceBulletSelector = {
         <q-card flat bordered>
             <q-card-section>
                 <div class="text-subtitle1 text-weight-bold">Select Taxonomic Data Source</div>
-                <q-option-group :options="dataSourceOptions" type="radio" v-model="selectedOption" :disable="disable" @update:model-value="processChange" dense />
+                <q-option-group :options="dataSourceOptions" type="radio" v-model="selectedOption" :disable="disable" @update:model-value="processChange" dense aria-label="Taxonomic Data Source options" tabindex="0" />
             </q-card-section>
         </q-card>
     `,
