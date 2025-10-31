@@ -217,11 +217,6 @@ const searchCriteriaPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            window.addEventListener('keydown', (event) => {
-                if(event.key === 'Enter'){
-                    processEnterClick();
-                }
-            });
             if(searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0){
                 setMoFExtensionFieldArrFromCollectionId();
             }
