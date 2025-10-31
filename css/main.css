@@ -807,8 +807,12 @@ ol.report-caterories li p.heading {
 	position: absolute;
 	top: 225px;
 	left: 30px;
-	width: 100%;
+	padding: 3px;
 	background-color: rgba(226, 232, 236, 0.58);
+}
+
+div.breadcrumb-container div.navpath a{
+	color: black;
 }
 
 .page-title-container {
