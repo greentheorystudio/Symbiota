@@ -11,7 +11,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 <div class="col-6">
                     <q-card flat bordered class="full-width black-border bg-white">
                         <q-card-section class="q-pa-xs">
-                            <a href="https://naturalhistory.si.edu/research/smithsonian-marine-station" target="_blank">
+                            <a href="https://naturalhistory.si.edu/research/smithsonian-marine-station" target="_blank" aria-label="External link: Smithsonian home - Opens in separate tab" tabindex="0">
                                 <q-img height="100px" fit="contain" :src="(clientRoot + '/content/imglib/layout/Smithsonian-Logo.png')" alt="Smithsonian home"></q-img>
                             </a>
                         </q-card-section>
@@ -20,7 +20,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 <div class="col-6">
                     <q-card flat bordered class="full-width black-border bg-white">
                         <q-card-section class="q-pa-xs">
-                            <a href="https://onelagoon.org/" target="_blank">
+                            <a href="https://onelagoon.org/" target="_blank" aria-label="External link: One Lagoon home - Opens in separate tab" tabindex="0">
                                 <q-img height="100px" fit="contain" :src="(clientRoot + '/content/imglib/layout/one_lagoon_logo.png')" alt="One Lagoon home"></q-img>
                             </a>
                         </q-card-section>
@@ -31,81 +31,81 @@ include_once(__DIR__ . '/services/SanitizerService.php');
         <div class="col-12 col-sm-6 row justify-end q-col-gutter-md">
             <div class="col-12 col-sm-4 column q-gutter-md">
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Maps.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Maps.php')" tabindex="0">
                         The Indian River Lagoon
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Whatsa_Habitat.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Whatsa_Habitat.php')" tabindex="0">
                         Habitats
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Habitat_Threats.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Habitat_Threats.php')" tabindex="0">
                         Threats
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Total_Biodiv.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Total_Biodiv.php')" tabindex="0">
                         Biodiversity
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Protect-IRL.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/Protect-IRL.php')" tabindex="0">
                         Stewardship
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/tour.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/tour.php')" tabindex="0">
                         Take a Tour
                     </a>
                 </div>
             </div>
             <div class="col-12 col-sm-4 column q-gutter-md">
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/index.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/index.php')" tabindex="0">
                         Home
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/contact.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/misc/contact.php')" tabindex="0">
                         Contact Us
                     </a>
                 </div>
                 <div v-if="userDisplayName">
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/profile/viewprofile.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/profile/viewprofile.php')" tabindex="0">
                         My Profile
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" :href="(clientRoot + '/sitemap.php')">
+                    <a class="text-white login-link text-h6" :href="(clientRoot + '/sitemap.php')" tabindex="0">
                         Sitemap
                     </a>
                 </div>
                 <div v-if="userDisplayName" class="cursor-pointer">
-                    <a class="text-white login-link text-h6" @click="logout();">
+                    <a role="button" class="text-white login-link text-h6" @click="logout();" tabindex="0">
                         Logout
                     </a>
                 </div>
                 <div v-else>
-                    <a class="text-white login-link text-h6" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true); ?>">
+                    <a class="text-white login-link text-h6" href="<?php echo $GLOBALS['CLIENT_ROOT']. '/profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true); ?>" tabindex="0">
                         Login
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" href="https://www.si.edu/termsofuse">
+                    <a class="text-white login-link text-h6" href="https://www.si.edu/termsofuse" tabindex="0">
                         Terms of Use
                     </a>
                 </div>
                 <div>
-                    <a class="text-white login-link text-h6" href="https://www.si.edu/privacy">
+                    <a class="text-white login-link text-h6" href="https://www.si.edu/privacy" tabindex="0">
                         Privacy Statement
                     </a>
                 </div>
             </div>
             <div class="col-2">
                 <div>
-                    <q-btn class="horizontalDropDownDonateButton" text-color="white" label="Donate" @click="donateConfirm = true" glossy></q-btn>
+                    <q-btn class="horizontalDropDownDonateButton" text-color="white" label="Donate" @click="donateConfirm = true" glossy tabindex="0"></q-btn>
                 </div>
             </div>
         </div>
@@ -118,8 +118,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 Inventory" in the "Apply my donation to" box. Thank you for your support!
             </q-card-section>
             <q-card-actions align="right">
-                <q-btn flat label="OK" color="primary" v-close-popup @click="openDonatePage();"></q-btn>
-                <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+                <q-btn flat label="OK" color="primary" v-close-popup @click="openDonatePage();" tabindex="0"></q-btn>
+                <q-btn flat label="Cancel" color="primary" v-close-popup tabindex="0"></q-btn>
             </q-card-actions>
         </q-card>
     </q-dialog>

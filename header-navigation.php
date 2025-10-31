@@ -1,17 +1,17 @@
 <div id="topNavigation">
     <template v-if="windowWidth < 1440">
         <q-toolbar class="q-pa-md justify-start horizontalDropDown">
-            <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Menu">
+            <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Open Menu" tabindex="0">
                 <q-menu>
                     <q-list dense>
                         <template v-for="item in navBarData">
                             <template v-if="item.subItems && item.subItems.length">
-                                <q-item clickable>
+                                <q-item clickable tabindex="0">
                                     <q-item-section>{{ item.label }}</q-item-section>
                                     <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start">
                                         <q-list dense>
                                             <template v-for="subitem in item.subItems">
-                                                <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')">
+                                                <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab ? '_blank' : '_self')" :aria-label="(subitem.newTab ? (subitem.label + ' - opens in separate tab') : null)" tabindex="0">
                                                     <q-item-section>{{ subitem.label }}</q-item-section>
                                                 </q-item>
                                             </template>
@@ -20,12 +20,12 @@
                                 </q-item>
                             </template>
                             <template v-else>
-                                <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')">
+                                <q-item clickable v-close-popup :href="item.url" :target="(item.newTab ? '_blank' : '_self')" :aria-label="(item.newTab ? (item.label + ' - opens in separate tab') : null)" tabindex="0">
                                     <q-item-section>{{ item.label }}</q-item-section>
                                 </q-item>
                             </template>
                         </template>
-                        <q-item clickable v-close-popup @click="donateConfirm = true">
+                        <q-item role="button" clickable v-close-popup @click="donateConfirm = true" tabindex="0">
                             <q-item-section>DONATE</q-item-section>
                         </q-item>
                     </q-list>
@@ -37,11 +37,11 @@
         <q-toolbar class="q-pa-md justify-center horizontalDropDown">
             <template v-for="item in navBarData">
                 <template v-if="item.subItems && item.subItems.length">
-                    <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap>
+                    <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab ? '_blank' : '_self')" :label="item.label" :aria-label="(item.newTab ? (item.label + ' - opens in separate tab') : null)" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap tabindex="0">
                         <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="bottom start" self="top start" square>
                             <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                 <template v-for="subitem in item.subItems">
-                                    <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" clickable v-close-popup>
+                                    <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab ? '_blank' : '_self')" :aria-label="(subitem.newTab ? (subitem.label + ' - opens in separate tab') : null)" clickable v-close-popup tabindex="0">
                                         <q-item-section>
                                             <q-item-label>{{ subitem.label }}</q-item-label>
                                         </q-item-section>
@@ -52,10 +52,10 @@
                     </q-btn>
                 </template>
                 <template v-else>
-                    <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" stretch flat no-wrap></q-btn>
+                    <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab ? '_blank' : '_self')" :label="item.label" :aria-label="(item.newTab ? (item.label + ' - opens in separate tab') : null)" stretch flat no-wrap tabindex="0"></q-btn>
                 </template>
             </template>
-            <q-btn class="horizontalDropDownButton horizontalDropDownDonateButton text-capitalize" label="Donate" stretch flat no-wrap @click="donateConfirm = true"></q-btn>
+            <q-btn class="horizontalDropDownButton horizontalDropDownDonateButton text-capitalize" label="Donate" stretch flat no-wrap @click="donateConfirm = true" tabindex="0"></q-btn>
         </q-toolbar>
     </template>
     <q-dialog v-model="donateConfirm" persistent>
@@ -66,8 +66,8 @@
                 Inventory" in the "Apply my donation to" box. Thank you for your support!
             </q-card-section>
             <q-card-actions align="right">
-                <q-btn flat label="OK" color="primary" v-close-popup @click="openDonatePage();"></q-btn>
-                <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+                <q-btn flat label="OK" color="primary" v-close-popup @click="openDonatePage();" tabindex="0"></q-btn>
+                <q-btn flat label="Cancel" color="primary" v-close-popup tabindex="0"></q-btn>
             </q-card-actions>
         </q-card>
     </q-dialog>
