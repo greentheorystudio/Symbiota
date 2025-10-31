@@ -27,7 +27,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-card-section>
                         <div class="text-h6 q-mb-md">Login Credentials</div>
                         <div class="row justify-start q-gutter-md">
-                            <q-input ref="usernameRef" outlined bottom-slots v-model="newAccount.username" label="Username" bg-color="white" class="col-4" dense lazy-rules :rules="usernameRules">
+                            <q-input ref="usernameRef" outlined bottom-slots v-model="newAccount.username" label="Username" bg-color="white" class="col-4" dense lazy-rules :rules="usernameRules" tabindex="0">
                                 <template v-slot:hint>
                                     Required
                                 </template>
@@ -48,10 +48,10 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-card-section class="q-pa-lg column q-gutter-sm">
                         <div class="row justify-center q-gutter-md no-wrap">
                             <div>
-                                <q-checkbox v-model="agreeCheck" dense @update:model-value="processTermsAgreeChange"></q-checkbox>
+                                <q-checkbox v-model="agreeCheck" dense @update:model-value="processTermsAgreeChange" aria-label="I have read and agree to the Terms of Use" tabindex="0"></q-checkbox>
                             </div>
                             <div>
-                                I have read and agree to the <a :href="usagePolicyUrl" class="text-bold" target="_blank">Terms of Use</a>
+                                I have read and agree to the <a :href="usagePolicyUrl" class="text-bold" target="_blank" aria-label="Go to Terms of Use page - Opens in separate tab" tabindex="0">Terms of Use</a>
                             </div>
                         </div>
                         <div v-if="termsAgreeError" class="row justify-center text-negative text-bold">
@@ -63,7 +63,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-card-section>
                         <human-validator ref="humanValidationInputRef"></human-validator>
                         <div class="row justify-end q-mt-md">
-                            <q-btn color="primary" @click="createAccount();" label="Create Account" dense />
+                            <q-btn color="primary" @click="createAccount();" label="Create Account" dense tabindex="0" />
                         </div>
                     </q-card-section>
                 </q-card>

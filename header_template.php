@@ -18,7 +18,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                                         <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="top end" self="top start">
                                             <q-list dense>
                                                 <template v-for="subitem in item.subItems">
-                                                    <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" tabindex="0">
+                                                    <q-item clickable v-close-popup :href="subitem.url" :target="(subitem.newTab ? '_blank' : '_self')" :aria-label="(subitem.newTab ? (subitem.label + ' - opens in separate tab') : null)" tabindex="0">
                                                         <q-item-section>{{ subitem.label }}</q-item-section>
                                                     </q-item>
                                                 </template>
@@ -27,7 +27,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                                     </q-item>
                                 </template>
                                 <template v-else>
-                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab?'_blank':'_self')" tabindex="0">
+                                    <q-item clickable v-close-popup :href="item.url" :target="(item.newTab ? '_blank' : '_self')" :aria-label="(item.newTab ? (item.label + ' - opens in separate tab') : null)" tabindex="0">
                                         <q-item-section>{{ item.label }}</q-item-section>
                                     </q-item>
                                 </template>
@@ -39,11 +39,11 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             <template v-if="windowWidth >= 1440">
                 <template v-for="item in navBarData">
                     <template v-if="item.subItems && item.subItems.length">
-                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap tabindex="0">
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab ? '_blank' : '_self')" :label="item.label" :aria-label="(item.newTab ? (item.label + ' - opens in separate tab') : null)" v-model="navBarToggle[item.id]" @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)" stretch flat no-wrap tabindex="0">
                             <q-menu v-model="navBarToggle[item.id]" transition-duration="100" anchor="bottom start" self="top start" square>
                                 <q-list dense @mouseover="navbarToggleOn(item.id)" @mouseleave="navbarToggleOff(item.id)">
                                     <template v-for="subitem in item.subItems">
-                                        <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab?'_blank':'_self')" clickable v-close-popup tabindex="0">
+                                        <q-item class="horizontalDropDownButton text-capitalize" :href="subitem.url" :target="(subitem.newTab ? '_blank' : '_self')" :aria-label="(subitem.newTab ? (subitem.label + ' - opens in separate tab') : null)" clickable v-close-popup tabindex="0">
                                             <q-item-section>
                                                 <q-item-label>{{ subitem.label }}</q-item-label>
                                             </q-item-section>
@@ -54,7 +54,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         </q-btn>
                     </template>
                     <template v-else>
-                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab?'_blank':'_self')" :label="item.label" stretch flat no-wrap tabindex="0"></q-btn>
+                        <q-btn class="horizontalDropDownButton text-capitalize" :href="item.url" :target="(item.newTab ? '_blank' : '_self')" :label="item.label" :aria-label="(item.newTab ? (item.label + ' - opens in separate tab') : null)" stretch flat no-wrap tabindex="0"></q-btn>
                     </template>
                 </template>
             </template>

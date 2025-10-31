@@ -46,7 +46,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     <selector-input-element label="Node Layout" :options="linkLayoutOptions" :value="selectedLinkLayout" @update:value="setLinkLayout"></selector-input-element>
                                 </div>
                                 <div>
-                                    <q-btn color="primary" @click="centerTree();" label="Center Tree" dense />
+                                    <q-btn color="primary" @click="centerTree();" label="Center Tree" dense tabindex="0" />
                                 </div>
                             </q-card-section>
                         </q-card>

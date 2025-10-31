@@ -24,7 +24,7 @@ header('X-Frame-Options: SAMEORIGIN');
                 <div class="column q-gutter-md">
                     <div class="row justify-between">
                         <div class="text-h5 text-bold">Protected Species</div>
-                        <q-btn v-if="isEditor" color="secondary" @click="setOccurrenceSecurity();" label="Secure occurrence data" dense />
+                        <q-btn v-if="isEditor" color="secondary" @click="setOccurrenceSecurity();" label="Secure occurrence data" dense tabindex="0" />
                     </div>
                     <template v-if="isEditor">
                         <q-card flat bordered>
@@ -43,7 +43,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                         <checkbox-input-element label="Add subtaxa" :value="addSubtaxaValue" @update:value="(value) => addSubtaxaValue = value"></checkbox-input-element>
                                     </div>
                                     <div>
-                                        <q-btn color="secondary" @click="addTaxon();" label="Add" :disabled="!selectedTaxon" dense />
+                                        <q-btn color="secondary" @click="addTaxon();" label="Add" :disabled="!selectedTaxon" dense aria-label="Add taxon" tabindex="0" />
                                     </div>
                                 </div>
                             </q-card-section>
@@ -62,7 +62,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                     <div class="q-pl-md column q-gutter-xs">
                                                         <template v-for="taxon in family['taxa']">
                                                             <div class="row">
-                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" class="row" target="_blank">
+                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" class="row" target="_blank" aria-label="Go to Taxon Profile Page - opens in separate tab" tabindex="0">
                                                                     <div class="text-italic">
                                                                         {{ taxon['sciname'] }}
                                                                     </div>
@@ -71,7 +71,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                                     </div>
                                                                 </a>
                                                                 <div v-if="isEditor" class="q-ml-sm">
-                                                                    <q-btn color="white" text-color="black" size="sm" @click="removeTaxon(taxon['tid']);" icon="far fa-trash-alt" dense>
+                                                                    <q-btn color="white" text-color="black" size="sm" @click="removeTaxon(taxon['tid']);" icon="far fa-trash-alt" dense aria-label="Remove taxon" tabindex="0">
                                                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                                             Remove taxon
                                                                         </q-tooltip>
@@ -96,7 +96,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                             <div class="q-pl-md column q-gutter-xs">
                                                 <template v-for="taxon in family['taxa']">
                                                     <div class="row">
-                                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" class="row" target="_blank">
+                                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" class="row" target="_blank" aria-label="Go to Taxon Profile Page - opens in separate tab" tabindex="0">
                                                             <div class="text-italic">
                                                                 {{ taxon['sciname'] }}
                                                             </div>
@@ -105,7 +105,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                             </div>
                                                         </a>
                                                         <div v-if="isEditor" class="q-ml-sm">
-                                                            <q-btn color="white" text-color="black" size="sm" @click="removeTaxon(taxon['tid']);" icon="far fa-trash-alt" dense>
+                                                            <q-btn color="white" text-color="black" size="sm" @click="removeTaxon(taxon['tid']);" icon="far fa-trash-alt" dense aria-label="Remove taxon" tabindex="0">
                                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                                     Remove taxon
                                                                 </q-tooltip>

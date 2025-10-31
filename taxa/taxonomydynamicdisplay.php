@@ -54,11 +54,11 @@ header('X-Frame-Options: SAMEORIGIN');
                             <single-scientific-common-name-auto-complete :sciname="(targetTaxon ? targetTaxon.sciname : null)" :disabled="loading" label="Find a taxon" limit-to-options="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
                         </div>
                         <div class="button-div">
-                            <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />
+                            <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense tabindex="0" />
                         </div>
                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                         <div class="q-my-sm">
-                            <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" />
+                            <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" tabindex="0" />
                         </div>
                     </q-card-section>
                 </q-card>
