@@ -83,10 +83,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                     </div>
                                                     <div class="processor-tool-button-container">
                                                         <div>
-                                                            <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense />
+                                                            <q-btn :loading="currentProcess === 'cleanProcesses'" :disabled="currentProcess && currentProcess !== 'cleanProcesses'" color="secondary" @click="callCleaningController('question-marks');" label="Start" dense aria-label="Start General Cleaning" tabindex="0" />
                                                         </div>
                                                         <div>
-                                                            <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                            <q-btn v-if="currentProcess === 'cleanProcesses'" :disabled="processCancelling && currentProcess === 'cleanProcesses'" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel General Cleaning" tabindex="0" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -104,10 +104,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                     </div>
                                                     <div class="processor-tool-button-container">
                                                         <div>
-                                                            <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense />
+                                                            <q-btn :loading="currentProcess === 'cleanScinameAuthor'" :disabled="currentProcess && currentProcess !== 'cleanScinameAuthor'" color="secondary" @click="initializeCleanScinameAuthor();" label="Start" dense dense aria-label="Start Scientific Name Authorship Cleaning" tabindex="0" />
                                                         </div>
                                                         <div>
-                                                            <q-btn v-if="currentProcess === 'cleanScinameAuthor'" :disabled="processCancelling && currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                            <q-btn v-if="currentProcess === 'cleanScinameAuthor'" :disabled="processCancelling && currentProcess === 'cleanScinameAuthor'" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Scientific Name Authorship Cleaning" tabindex="0" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -127,10 +127,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                     </div>
                                                     <div class="processor-tool-button-container">
                                                         <div>
-                                                            <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense />
+                                                            <q-btn :loading="currentProcess === 'updateWithTaxThesaurus'" :disabled="currentProcess && currentProcess !== 'updateWithTaxThesaurus'" color="secondary" @click="callTaxThesaurusLinkController();" label="Start" dense dense aria-label="Start Set Taxonomic Thesaurus Linkages" tabindex="0" />
                                                         </div>
                                                         <div>
-                                                            <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" :disabled="processCancelling && currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                            <q-btn v-if="currentProcess === 'updateWithTaxThesaurus'" :disabled="processCancelling && currentProcess === 'updateWithTaxThesaurus'" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Set Taxonomic Thesaurus Linkages" tabindex="0" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -147,10 +147,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                     </div>
                                                     <div class="processor-tool-button-container">
                                                         <div>
-                                                            <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense />
+                                                            <q-btn :loading="currentProcess === 'updateOccLocalitySecurity'" :disabled="currentProcess && currentProcess !== 'updateOccLocalitySecurity'" color="secondary" @click="updateOccLocalitySecurity();" label="Start" dense dense aria-label="Start Update Locality Security Settings" tabindex="0" />
                                                         </div>
                                                         <div>
-                                                            <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" :disabled="processCancelling && currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                            <q-btn v-if="currentProcess === 'updateOccLocalitySecurity'" :disabled="processCancelling && currentProcess === 'updateOccLocalitySecurity'" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Update Locality Security Settings" tabindex="0" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -180,10 +180,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                     </div>
                                                     <div class="processor-tool-button-container">
                                                         <div>
-                                                            <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense />
+                                                            <q-btn :loading="currentProcess === 'resolveFromTaxaDataSource'" :disabled="currentProcess && currentProcess !== 'resolveFromTaxaDataSource'" color="secondary" @click="initializeDataSourceSearch();" label="Start" dense dense aria-label="Start Search Taxonomic Data Sources" tabindex="0" />
                                                         </div>
                                                         <div>
-                                                            <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" :disabled="processCancelling && currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                            <q-btn v-if="currentProcess === 'resolveFromTaxaDataSource'" :disabled="processCancelling && currentProcess === 'resolveFromTaxaDataSource'" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Search Taxonomic Data Sources" tabindex="0" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -204,10 +204,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                     </div>
                                                     <div class="processor-tool-button-container">
                                                         <div>
-                                                            <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense />
+                                                            <q-btn :loading="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="currentProcess && currentProcess !== 'taxThesaurusFuzzyMatch'" color="secondary" @click="initializeTaxThesaurusFuzzyMatch();" label="Start" dense dense aria-label="Start Taxonomic Thesaurus Fuzzy Search" tabindex="0" />
                                                         </div>
                                                         <div>
-                                                            <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                            <q-btn v-if="currentProcess === 'taxThesaurusFuzzyMatch'" :disabled="processCancelling && currentProcess === 'taxThesaurusFuzzyMatch'" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Taxonomic Thesaurus Fuzzy Search" tabindex="0" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -251,7 +251,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                                         {{subproc.resultText}}
                                                                     </div>
                                                                     <div v-if="subproc.result === 'success' && subproc.type === 'undo'" class="q-ml-sm text-weight-bold text-green-9">
-                                                                        {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense />
+                                                                        {{subproc.resultText}} <q-btn :disabled="undoButtonsDisabled" class="q-ml-md text-grey-9" color="warning" size="sm" @click="undoChangedSciname(proc.id,subproc.undoOrigName,subproc.undoChangedName);" label="Undo" dense aria-label="Undo selection" tabindex="0" />
                                                                     </div>
                                                                     <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
                                                                         {{subproc.resultText}}
@@ -263,7 +263,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                                     <div class="q-mx-xl q-my-sm row justify-between">
                                                                         <div></div>
                                                                         <div>
-                                                                            <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense />
+                                                                            <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="runTaxThesaurusFuzzyMatchProcess();" label="Skip Taxon" dense tabindex="0" />
                                                                         </div>
                                                                     </div>
                                                                 </template>
@@ -273,7 +273,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                                                             {{ subproc.procText }}
                                                                         </div>
                                                                         <div>
-                                                                            <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense />
+                                                                            <q-btn :disabled="!(currentSciname === proc.id)" class="q-ml-md" color="primary" size="sm" @click="selectFuzzyMatch(subproc.undoOrigName,subproc.undoChangedName,subproc.changedTid);" label="Select" dense aria-label="Select taxon" tabindex="0" />
                                                                         </div>
                                                                     </div>
                                                                 </template>

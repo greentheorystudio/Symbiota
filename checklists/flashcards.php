@@ -86,10 +86,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </div>
                         <div class="row justify-end q-gutter-sm">
                             <div>
-                                <q-btn color="negative" @click="resetGame();" label="Reset" />
+                                <q-btn color="negative" @click="resetGame();" label="Reset" tabindex="0" />
                             </div>
                             <div>
-                                <q-btn size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="displayInstructionsPopup = true">
+                                <q-btn size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="displayInstructionsPopup = true" aria-label="Display Instructions" tabindex="0">
                                     <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Show instructions
                                     </q-tooltip>
@@ -106,15 +106,15 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <q-card-section class="q-pa-sm column q-gutter-sm">
                                 <div class="row justify-between">
                                     <div>
-                                        <q-btn color="primary" @click="setCurrentTaxon();" label="Skip" />
+                                        <q-btn color="primary" @click="setCurrentTaxon();" label="Skip" tabindex="0" />
                                     </div>
                                     <div class="row justify-end q-gutter-xs">
-                                        <q-btn round dense color="primary" text-color="white" icon="arrow_left" @click="currentImageIndex--" :disabled="currentImageIndex === 0">
+                                        <q-btn round dense color="primary" text-color="white" icon="arrow_left" @click="currentImageIndex--" :disabled="currentImageIndex === 0" aria-label="Previous image" tabindex="0">
                                             <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Previous image
                                             </q-tooltip>
                                         </q-btn>
-                                        <q-btn round dense color="primary" text-color="white" icon="arrow_right" @click="currentImageIndex++" :disabled="(currentImageIndex + 1) === checklistImageData[currentTaxon['tidaccepted']].length">
+                                        <q-btn round dense color="primary" text-color="white" icon="arrow_right" @click="currentImageIndex++" :disabled="(currentImageIndex + 1) === checklistImageData[currentTaxon['tidaccepted']].length" aria-label="Next image" tabindex="0">
                                             <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Next image
                                             </q-tooltip>
@@ -136,10 +136,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 </div>
                                 <div class="row justify-between">
                                     <div>
-                                        <q-btn color="negative" @click="showCurrentTaxon();" label="Show Me" />
+                                        <q-btn color="negative" @click="showCurrentTaxon();" label="Show Me" tabindex="0" />
                                     </div>
                                     <div>
-                                        <q-btn color="primary" @click="checkAnswers();" label="Check Answer" :disabled="!scinameAnswer && !familyAnswer" />
+                                        <q-btn color="primary" @click="checkAnswers();" label="Check Answer" :disabled="!scinameAnswer && !familyAnswer" tabindex="0" />
                                     </div>
                                 </div>
                             </q-card-section>
@@ -158,7 +158,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayInstructionsPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayInstructionsPopup = false" aria-label="Close Instructions" tabindex="0"></q-btn>
                         </div>
                     </div>
                     <div class="q-pa-md text-body1">

@@ -68,7 +68,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                 <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/index.php?refurl=' + requestPath" label="Log In" stretch flat no-wrap tabindex="0"></q-btn>
                 <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/profile/newprofile.php'" label="New Account" stretch flat no-wrap tabindex="0"></q-btn>
             </template>
-            <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/sitemap.php'" label="Sitemap" stretch flat no-wrap tabindex="0"></q-btn>
+            <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/sitemap.php'" label="Sitemap" aria-label="Site map" stretch flat no-wrap tabindex="0"></q-btn>
         </q-toolbar>
     </div>
     <script type="text/javascript">
