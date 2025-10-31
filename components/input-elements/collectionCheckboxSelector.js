@@ -4,6 +4,10 @@ const collectionCheckboxSelector = {
             type: Array,
             default: []
         },
+        tabindex: {
+            type: Number,
+            default: 0
+        },
         valueArr: {
             type: Array,
             default: []

@@ -67,7 +67,7 @@ const taxaImageDisplay = {
                                                 </template>
                                                 <template v-if="editing">
                                                     <span class="q-ml-sm">
-                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense tabindex="0">
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense aria-label="Edit this taxon" tabindex="0">
                                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                                 Edit this taxon
                                                             </q-tooltip>
@@ -127,7 +127,7 @@ const taxaImageDisplay = {
                                     </template>
                                     <template v-if="editing">
                                         <span class="q-ml-sm">
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense tabindex="0">
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense aria-label="Edit this taxon" tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Edit this taxon
                                                 </q-tooltip>

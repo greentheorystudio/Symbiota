@@ -4,6 +4,10 @@ const occurrenceCoordinateToolPopup = {
             type: String,
             default: null
         },
+        tabindex: {
+            type: Number,
+            default: 0
+        },
         verbatimCoordinates: {
             type: String,
             default: null
@@ -26,16 +30,16 @@ const occurrenceCoordinateToolPopup = {
                             Lat:
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="latDegreeValue" label="Degrees" dense>
+                            <q-input outlined v-model="latDegreeValue" label="Degrees" dense :tabindex="tabindex">
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="latMinuteValue" label="Minutes" dense>
+                            <q-input outlined v-model="latMinuteValue" label="Minutes" dense :tabindex="tabindex">
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="latSecondValue" label="Seconds" dense>
+                            <q-input outlined v-model="latSecondValue" label="Seconds" dense :tabindex="tabindex">
                         </div>
                         <div class="self-center">
-                            <q-select bg-color="white" outlined v-model="latNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" outlined v-model="latNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
@@ -43,21 +47,21 @@ const occurrenceCoordinateToolPopup = {
                             Long:
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="longDegreeValue" label="Degrees" dense>
+                            <q-input outlined v-model="longDegreeValue" label="Degrees" dense :tabindex="tabindex">
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="longMinuteValue" label="Minutes" dense>
+                            <q-input outlined v-model="longMinuteValue" label="Minutes" dense :tabindex="tabindex">
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="longSecondValue" label="Seconds" dense>
+                            <q-input outlined v-model="longSecondValue" label="Seconds" dense :tabindex="tabindex">
                         </div>
                         <div class="self-center">
-                            <q-select bg-color="white" outlined v-model="longWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" outlined v-model="longWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
-                        <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
-                        <q-btn color="primary" @click="transcribeDMSData();" label="Process DMS Values" dense></q-btn>
+                        <q-btn color="negative" @click="closePopup();" label="Close" dense aria-label="Close definition pop up" :tabindex="tabindex"></q-btn>
+                        <q-btn color="primary" @click="transcribeDMSData();" label="Process DMS Values" dense :tabindex="tabindex"></q-btn>
                     </div>
                 </q-tab-panel>
                 <q-tab-panel name="ddm" class="q-pa-sm column q-col-gutter-xs">
@@ -67,13 +71,13 @@ const occurrenceCoordinateToolPopup = {
                             Lat:
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="latDDMDegreeValue" label="Degrees" dense>
+                            <q-input outlined v-model="latDDMDegreeValue" label="Degrees" dense :tabindex="tabindex">
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="latDDMMinuteValue" label="Decimal Minutes" dense>
+                            <q-input outlined v-model="latDDMMinuteValue" label="Decimal Minutes" dense :tabindex="tabindex">
                         </div>
                         <div class="self-center">
-                            <q-select bg-color="white" outlined v-model="latDDMNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" outlined v-model="latDDMNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
@@ -81,71 +85,71 @@ const occurrenceCoordinateToolPopup = {
                             Long:
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="longDDMDegreeValue" label="Degrees" dense>
+                            <q-input outlined v-model="longDDMDegreeValue" label="Degrees" dense :tabindex="tabindex">
                         </div>
                         <div class="col self-center">
-                            <q-input outlined v-model="longDDMMinuteValue" label="Decimal Minutes" dense>
+                            <q-input outlined v-model="longDDMMinuteValue" label="Decimal Minutes" dense :tabindex="tabindex">
                         </div>
                         <div class="self-center">
-                            <q-select bg-color="white" outlined v-model="longDDMWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" outlined v-model="longDDMWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
-                        <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
-                        <q-btn color="primary" @click="transcribeDDMData();" label="Process DDM Values" dense></q-btn>
+                        <q-btn color="negative" @click="closePopup();" label="Close" dense :tabindex="tabindex"></q-btn>
+                        <q-btn color="primary" @click="transcribeDDMData();" label="Process DDM Values" dense :tabindex="tabindex"></q-btn>
                     </div>
                 </q-tab-panel>
                 <q-tab-panel name="utm" class="q-pa-sm column q-col-gutter-xs">
                     <div class="text-h6">UTM</div>
                     <div>
-                        <q-input outlined v-model="utmZoneValue" label="UTM Zone" dense>
+                        <q-input outlined v-model="utmZoneValue" label="UTM Zone" dense :tabindex="tabindex">
                     </div>
                     <div>
-                        <q-input outlined v-model="utmEastingValue" label="UTM Easting" dense>
+                        <q-input outlined v-model="utmEastingValue" label="UTM Easting" dense :tabindex="tabindex">
                     </div>
                     <div>
-                        <q-input outlined v-model="utmNorthingValue" label="UTM Northing" dense>
+                        <q-input outlined v-model="utmNorthingValue" label="UTM Northing" dense :tabindex="tabindex">
                     </div>
                     <div >
-                        <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-max" behavior="menu" dense options-dense />
+                        <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
-                        <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
-                        <q-btn color="primary" @click="transcribeUTMData();" label="Process UTM Values" dense></q-btn>
+                        <q-btn color="negative" @click="closePopup();" label="Close" dense :tabindex="tabindex"></q-btn>
+                        <q-btn color="primary" @click="transcribeUTMData();" label="Process UTM Values" dense :tabindex="tabindex"></q-btn>
                     </div>
                 </q-tab-panel>
                 <q-tab-panel name="trs" class="q-pa-sm column q-col-gutter-xs">
                     <div class="text-h6">Township, Range, Section</div>
                     <div class="row justify-between q-col-gutter-xs">
                         <div class="col">
-                            <q-input outlined v-model="trsTownshipValue" label="Township" dense>
+                            <q-input outlined v-model="trsTownshipValue" label="Township" dense :tabindex="tabindex">
                         </div>
                         <div class="col">
-                            <q-select bg-color="white" outlined v-model="trsTownshipNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" outlined v-model="trsTownshipNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                         <div class="col">
-                            <q-input outlined v-model="trsRangeValue" label="Range" dense>
+                            <q-input outlined v-model="trsRangeValue" label="Range" dense :tabindex="tabindex">
                         </div>
                         <div>
-                            <q-select bg-color="white" outlined v-model="trsRangeWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" outlined v-model="trsRangeWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
                         <div class="col-3">
-                            <q-input outlined v-model="trsSectionValue" label="Section" dense>
+                            <q-input outlined v-model="trsSectionValue" label="Section" dense :tabindex="tabindex">
                         </div>
                         <div class="col-9">
-                            <q-input outlined v-model="trsDetailsValue" label="Details" dense>
+                            <q-input outlined v-model="trsDetailsValue" label="Details" dense :tabindex="tabindex">
                         </div>
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
                         <div class="col-12">
-                            <q-select bg-color="white" outlined v-model="trsMerideanValue" :options="trsMerideanOptions" :option-value="value" :option-label="label" label="Meridian Selection" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" outlined v-model="trsMerideanValue" :options="trsMerideanOptions" :option-value="value" :option-label="label" label="Meridian Selection" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
-                        <q-btn color="negative" @click="closePopup();" label="Close" dense></q-btn>
-                        <q-btn color="primary" @click="transcribeTRSData();" label="Process TRS Values" dense></q-btn>
+                        <q-btn color="negative" @click="closePopup();" label="Close" dense :tabindex="tabindex"></q-btn>
+                        <q-btn color="primary" @click="transcribeTRSData();" label="Process TRS Values" dense :tabindex="tabindex"></q-btn>
                     </div>
                 </q-tab-panel>
             </q-tab-panels>
@@ -459,17 +463,17 @@ const occurrenceVerbatimCoordinatesInputElement = {
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
             <q-input outlined v-model="value" :label="label" bg-color="white" :maxlength="maxlength" @update:model-value="processValueChange" :tabindex="tabindex" dense>
                 <template v-if="value || definition" v-slot:append>
-                    <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                    <q-icon role="button" v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();">
+                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Recalculate decimal coordinates
                         </q-tooltip>
@@ -493,17 +497,17 @@ const occurrenceVerbatimCoordinatesInputElement = {
         <template v-else>
             <q-input outlined v-model="value" :label="label" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" :tabindex="tabindex" dense>
                 <template v-if="!disabled && (value || definition)" v-slot:append>
-                    <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                    <q-icon role="button" v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();">
+                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Recalculate decimal coordinates
                         </q-tooltip>
@@ -525,11 +529,11 @@ const occurrenceVerbatimCoordinatesInputElement = {
             </q-input>
         </template>
         <template v-if="definition">
-            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false" aria-label="Close definition pop up" :tabindex="tabindex"></q-btn>
                         </div>
                     </div>
                     <div class="q-pa-sm column q-gutter-sm">
@@ -551,7 +555,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold">Go to source</span></a>
+                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
                             </div>
                         </template>
                     </div>

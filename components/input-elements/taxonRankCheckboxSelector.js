@@ -23,6 +23,10 @@ const taxonRankCheckboxSelector = {
         selectedRanks: {
             type: Array,
             default: []
+        },
+        tabindex: {
+            type: Number,
+            default: 0
         }
     },
     template: `
@@ -30,7 +34,7 @@ const taxonRankCheckboxSelector = {
         <q-dialog v-model="rankSelectDialog">
             <q-card>
                 <div class="row justify-end q-pb-none">
-                    <q-btn icon="close" flat round dense v-close-popup></q-btn>
+                    <q-btn icon="close" flat round dense v-close-popup aria-label="Close pop up" :tabindex="tabindex"></q-btn>
                 </div>
                 <q-card-section class="row justify-between q-pb-none">
                     <div class="text-h6">{{ innerLabel }}</div>                  

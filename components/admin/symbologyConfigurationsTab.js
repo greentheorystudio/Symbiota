@@ -9,10 +9,10 @@ const symbologyConfigurationsTab = {
                 </div>
                 <div class="row justify-end q-gutter-sm">
                     <div>
-                        <q-btn color="secondary" @click="setDefaultSymbologySettings();" label="Set Default Settings" />
+                        <q-btn color="secondary" @click="setDefaultSymbologySettings();" label="Set Default Settings" tabindex="0" />
                     </div>
                     <div>
-                        <q-btn color="primary" @click="saveConfigurationEdits();" label="Save Settings" :disabled="!editsExist" />
+                        <q-btn color="primary" @click="saveConfigurationEdits();" label="Save Settings" :disabled="!editsExist" tabindex="0" />
                     </div>
                     <div onclick="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
                         <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />

@@ -34,7 +34,7 @@ const layersConfigurationsLayerGroupElement = {
                     </template>
                 </div>
                 <div>
-                    <q-btn color="grey-4" text-color="black" size="sm" @click="openLayerGroupEditPopup(layerGroup);" icon="fas fa-edit" dense>
+                    <q-btn color="grey-4" text-color="black" size="sm" @click="openLayerGroupEditPopup(layerGroup);" icon="fas fa-edit" dense aria-label="Edit layer group" tabindex="0">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Edit layer group
                         </q-tooltip>

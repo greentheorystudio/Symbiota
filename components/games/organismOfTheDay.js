@@ -45,7 +45,7 @@ const organismOfTheDay = {
                 <q-card class="md-tall-popup overflow-hidden">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showPopup = false" aria-label="Close window" tabindex="0"></q-btn>
                         </div>
                     </div>
                     <div ref="containerRef" class="fit overflow-auto">
@@ -59,7 +59,7 @@ const organismOfTheDay = {
                                                 Name that {{ type }}!
                                             </div>
                                             <div>
-                                                <q-btn size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="displayInstructionsPopup = true">
+                                                <q-btn size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="displayInstructionsPopup = true" aria-label="Show instructions" tabindex="0">
                                                     <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Show instructions
                                                     </q-tooltip>
@@ -81,10 +81,10 @@ const organismOfTheDay = {
                                         </div>
                                         <div class="row justify-between">
                                             <div>
-                                                <q-btn color="negative" @click="showAnswer();" label="I give up!" />
+                                                <q-btn color="negative" @click="showAnswer();" label="I give up!" tabindex="0" />
                                             </div>
                                             <div>
-                                                <q-btn color="primary" @click="checkAnswers();" label="Check Answer" :disabled="!scinameAnswer && !familyAnswer" />
+                                                <q-btn color="primary" @click="checkAnswers();" label="Check Answer" :disabled="!scinameAnswer && !familyAnswer" tabindex="0" />
                                             </div>
                                         </div>
                                     </div>
@@ -178,7 +178,7 @@ const organismOfTheDay = {
                         </div>
                         <div class="row justify-end">
                             <div>
-                                <q-btn color="primary" @click="displayInstructionsPopup = false" label="Ok" />
+                                <q-btn color="primary" @click="displayInstructionsPopup = false" label="Ok" tabindex="0" />
                             </div>
                         </div>
                     </q-card>

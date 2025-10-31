@@ -12,6 +12,10 @@ const occurrenceFootprintWktInputElement = {
             type: String,
             default: ''
         },
+        tabindex: {
+            type: Number,
+            default: 0
+        },
         value: {
             type: String,
             default: null
@@ -20,14 +24,14 @@ const occurrenceFootprintWktInputElement = {
     template: `
         <template v-if="showFootprintWktText">
             <div class="col-grow">
-                <q-input outlined v-model="value" type="textarea" :label="label" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" autogrow dense>
+                <q-input outlined v-model="value" type="textarea" :label="label" bg-color="white" @update:model-value="processValueChange" :readonly="disabled" autogrow dense :tabindex="tabindex">
                     <template v-if="!disabled" v-slot:append>
-                        <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                        <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 See field definition
                             </q-tooltip>
                         </q-icon>
-                        <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-icon role="button" v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Clear value
                             </q-tooltip>
@@ -55,7 +59,7 @@ const occurrenceFootprintWktInputElement = {
             <div v-if="!disabled" class="row justify-start q-gutter-sm no-wrap">
                 <template v-if="definition">
                     <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openDefinitionPopup();" icon="help" dense>
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openDefinitionPopup();" icon="help" dense aria-label="Open definition pop up" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 See field definition
                             </q-tooltip>
@@ -63,21 +67,21 @@ const occurrenceFootprintWktInputElement = {
                     </div>
                 </template>
                 <div v-if="value" class="self-center">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="processValueChange(null);" icon="cancel" dense>
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="processValueChange(null);" icon="cancel" dense aria-label="Clear value" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
                         </q-tooltip>
                     </q-btn>
                 </div>
                 <div class="self-center">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-polygon,wkt');" icon="fas fa-globe" dense>
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-polygon,wkt');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Mapping Aid
                         </q-tooltip>
                     </q-btn>
                 </div>
                 <div class="self-center">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="showFootprintWktText = true" icon="keyboard" dense>
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="showFootprintWktText = true" icon="keyboard" dense aria-label="Show text display" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Show text display
                         </q-tooltip>
@@ -86,11 +90,11 @@ const occurrenceFootprintWktInputElement = {
             </div>
         </template>
         <template v-if="definition">
-            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false" aria-label="Close definition pop up" :tabindex="tabindex"></q-btn>
                         </div>
                     </div>
                     <div class="q-pa-sm column q-gutter-sm">
@@ -112,7 +116,7 @@ const occurrenceFootprintWktInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold">Go to source</span></a>
+                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
                             </div>
                         </template>
                     </div>

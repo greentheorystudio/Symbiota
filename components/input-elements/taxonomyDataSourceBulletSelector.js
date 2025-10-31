@@ -7,6 +7,10 @@ const taxonomyDataSourceBulletSelector = {
         disable: {
             type: Boolean,
             default: false
+        },
+        tabindex: {
+            type: Number,
+            default: 0
         }
     },
     template: `

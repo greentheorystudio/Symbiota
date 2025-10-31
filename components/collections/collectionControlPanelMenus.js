@@ -27,68 +27,68 @@ const collectionControlPanelMenus = {
                                 <div class="text-h6 text-bold">Administration Control Panel</div>
                                 <div class="q-mt-xs q-pl-sm column">
                                     <div>
-                                        <a :href="(clientRoot + '/collections/misc/collmetadata.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/misc/collmetadata.php?collid=' + collectionId)" tabindex="0">
                                             Edit Collection Metadata
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/misc/collpermissions.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/misc/collpermissions.php?collid=' + collectionId)" tabindex="0">
                                             Manage Permissions
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/editor/editreviewer.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/editor/editreviewer.php?collid=' + collectionId)" tabindex="0">
                                             Review/Verify Occurrence Edits
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/upload/index.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/upload/index.php?collid=' + collectionId)" tabindex="0">
                                             Occurrence Data Upload Module
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/management/index.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/management/index.php?collid=' + collectionId)" tabindex="0">
                                             Data Management Toolbox
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/management/politicalunits.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/management/politicalunits.php?collid=' + collectionId)" tabindex="0">
                                             Geography Cleaning Module
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/management/taxonomycleaner.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/management/taxonomycleaner.php?collid=' + collectionId)" tabindex="0">
                                             Taxonomy Management Module
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/datasets/datapublisher.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/datasets/datapublisher.php?collid=' + collectionId)" tabindex="0">
                                             Darwin Core Archive Publisher
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/download/index.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/download/index.php?collid=' + collectionId)" tabindex="0">
                                             Data Exporter and Backup
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/management/thumbnailbuilder.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/management/thumbnailbuilder.php?collid=' + collectionId)" tabindex="0">
                                             Thumbnail Builder
                                         </a>
                                     </div>
                                     <div>
-                                        <a :href="(clientRoot + '/collections/management/guidmapper.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/management/guidmapper.php?collid=' + collectionId)" tabindex="0">
                                             GUID/UUID Generator
                                         </a>
                                     </div>
                                     <div class="cursor-pointer">
-                                        <a @click="updateCollectionStatistics()">
+                                        <a @click="updateCollectionStatistics()" tabindex="0">
                                             Update Statistics
                                         </a>
                                     </div>
                                     <template v-if="solrMode">
                                         <div class="cursor-pointer">
-                                            <a @click="cleanSOLRIndex()">
+                                            <a @click="cleanSOLRIndex()" tabindex="0">
                                                 Clean SOLR Index
                                             </a>
                                         </div>
@@ -107,38 +107,38 @@ const collectionControlPanelMenus = {
                                     <collection-catalog-number-quick-search :collection-id="collectionId"></collection-catalog-number-quick-search>
                                 </div>
                                 <div class="q-mt-sm">
-                                    <a :href="(clientRoot + '/collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collectionId)">
+                                    <a :href="(clientRoot + '/collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collectionId)" tabindex="0">
                                         Create A New Occurrence Record (Occurrence Editor)
                                     </a>
                                 </div>
                                 <div>
-                                    <a :href="(clientRoot + '/collections/table.php?collid=' + collectionId)">
+                                    <a :href="(clientRoot + '/collections/table.php?collid=' + collectionId)" tabindex="0">
                                         View/Edit Existing Records (Occurrence Table Viewer)
                                     </a>
                                 </div>
                                 <div>
-                                    <a :href="(clientRoot + '/collections/editor/batchdeterminations.php?collid=' + collectionId)">
+                                    <a :href="(clientRoot + '/collections/editor/batchdeterminations.php?collid=' + collectionId)" tabindex="0">
                                         Batch Determinations/Nomenclatural Adjustments
                                     </a>
                                 </div>
                                 <div>
-                                    <a :href="(clientRoot + '/collections/reports/labelmanager.php?collid=' + collectionId)">
+                                    <a :href="(clientRoot + '/collections/reports/labelmanager.php?collid=' + collectionId)" tabindex="0">
                                         Print Labels
                                     </a>
                                 </div>
                                 <div>
-                                    <a :href="(clientRoot + '/collections/reports/annotationmanager.php?collid=' + collectionId)">
+                                    <a :href="(clientRoot + '/collections/reports/annotationmanager.php?collid=' + collectionId)" tabindex="0">
                                         Print Annotation Labels
                                     </a>
                                 </div>
                                 <div>
-                                    <a :href="(clientRoot + '/collections/georef/batchgeoreftool.php?collid=' + collectionId)">
+                                    <a :href="(clientRoot + '/collections/georef/batchgeoreftool.php?collid=' + collectionId)" tabindex="0">
                                         Batch Georeference Occurrences
                                     </a>
                                 </div>
                                 <template v-if="collectionType === 'PreservedSpecimen'">
                                     <div>
-                                        <a :href="(clientRoot + '/collections/loans/index.php?collid=' + collectionId)">
+                                        <a :href="(clientRoot + '/collections/loans/index.php?collid=' + collectionId)" tabindex="0">
                                             Loan Management
                                         </a>
                                     </div>

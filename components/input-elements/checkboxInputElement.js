@@ -31,11 +31,11 @@ const checkboxInputElement = {
             </div>
         </div>
         <template v-if="definition">
-            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false" aria-label="Close definition pop up" :tabindex="tabindex"></q-btn>
                         </div>
                     </div>
                     <div class="q-pa-sm column q-gutter-sm">
@@ -57,7 +57,7 @@ const checkboxInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold">Go to source</span></a>
+                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
                             </div>
                         </template>
                     </div>

@@ -37,12 +37,12 @@ const singleCountyAutoComplete = {
         <template v-if="!disabled && maxlength && Number(maxlength) > 0">
             <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :counter="showCounter" :maxlength="maxlength" :label="label" :tabindex="tabindex" :disable="disabled">
                 <template v-if="value || definition" v-slot:append>
-                    <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                    <q-icon role="button" v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
                         </q-tooltip>
@@ -53,12 +53,12 @@ const singleCountyAutoComplete = {
         <template v-else>
             <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @blur="blurAction" :options="autocompleteOptions" option-label="name" @filter="getOptions" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
                 <template v-if="!disabled && (value || definition)" v-slot:append>
-                    <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                    <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             See field definition
                         </q-tooltip>
                     </q-icon>
-                    <q-icon v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                    <q-icon role="button" v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Clear value
                         </q-tooltip>
@@ -67,11 +67,11 @@ const singleCountyAutoComplete = {
             </q-select>
         </template>
         <template v-if="definition">
-            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false" aria-label="Close definition pop up" :tabindex="tabindex"></q-btn>
                         </div>
                     </div>
                     <div class="q-pa-sm column q-gutter-sm">
@@ -93,7 +93,7 @@ const singleCountyAutoComplete = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold">Go to source</span></a>
+                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
                             </div>
                         </template>
                     </div>

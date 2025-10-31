@@ -24,21 +24,21 @@ const timeInputElement = {
     template: `
         <q-input outlined v-model="displayValue" mask="time" :label="label" debounce="2000" bg-color="white" @update:model-value="processValueChange" :tabindex="tabindex" :readonly="disabled" dense>
             <template v-if="!disabled" v-slot:append>
-                <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon v-if="displayValue" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                <q-icon role="button" v-if="displayValue" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>
                 </q-icon>
-                <q-icon name="access_time" class="cursor-pointer">
+                <q-icon name="access_time" class="cursor-pointer" aria-label="Open time picker" :tabindex="tabindex">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
                         <q-time v-model="displayValue" @update:model-value="processValueChange" format24h>
                             <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat></q-btn>
+                                <q-btn v-close-popup label="Close" color="primary" flat :tabindex="tabindex"></q-btn>
                             </div>
                         </q-time>
                     </q-popup-proxy>
@@ -46,11 +46,11 @@ const timeInputElement = {
             </template>
         </q-input>
         <template v-if="definition">
-            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false" aria-label="Close definition pop up" :tabindex="tabindex"></q-btn>
                         </div>
                     </div>
                     <div class="q-pa-sm column q-gutter-sm">
@@ -72,7 +72,7 @@ const timeInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold">Go to source</span></a>
+                                <a :href="definition.source" target="_blank"><span class="text-bold" :tabindex="tabindex">Go to source</span></a>
                             </div>
                         </template>
                     </div>

@@ -15,7 +15,7 @@ const mapWindowConfigurationsTab = {
                 </div>
                 <div class="full-width row justify-end items-center">
                     <div>
-                        <q-btn color="primary" @click="updateConfigurations();" label="Save Settings" :disabled="!mapBaseLayerValue || !mapCenterValue || !mapZoomValue" />
+                        <q-btn color="primary" @click="updateConfigurations();" label="Save Settings" :disabled="!mapBaseLayerValue || !mapCenterValue || !mapZoomValue" tabindex="0" />
                     </div>
                 </div>
             </div>

@@ -10,7 +10,7 @@ const occurrenceEditorBatchUpdatePopup = {
             <q-card class="sm-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div class="q-mt-sm q-pa-md column q-gutter-sm">

@@ -9,11 +9,11 @@ const collectionCatalogNumberQuickSearch = {
         <q-card flat bordered class="full-width">
             <q-card-section class="q-pa-xs full-width row justify-between">
                 <div class="col-5">
-                    <q-input outlined v-model="catalogNumber" label="Catalog Number Quick Search" @keyup.enter="processSearch" dense />
+                    <q-input outlined v-model="catalogNumber" label="Catalog Number Quick Search" @keyup.enter="processSearch" dense tabindex="0" />
                 </div>
                 <div class="col-grow row justify-end self-center q-mr-md">
                     <div>
-                        <q-btn color="secondary" size="sm" @click="processSearch" label="Go To Record" :disabled="!catalogNumber" />
+                        <q-btn color="secondary" size="sm" @click="processSearch" label="Go To Record" :disabled="!catalogNumber" tabindex="0" />
                     </div>
                 </div>
             </q-card-section>
