@@ -8,14 +8,14 @@ const occurrenceEditorLocationModule = {
                     </div>
                     <div class="row justify-end q-gutter-sm">
                         <template v-if="locationId > 0 && collectingEventArr.length > 0">
-                            <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Events" />
+                            <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Events" tabindex="0" />
                         </template>
                         <template v-if="Number(locationId) === 0">
-                            <q-btn color="secondary" @click="showLocationLinkageToolPopup = true" label="Search Locations" />
-                            <q-btn color="secondary" @click="createLocationRecord();" label="Create Location Record" :disabled="!locationValid" />
+                            <q-btn color="secondary" @click="showLocationLinkageToolPopup = true" label="Search Locations" tabindex="0" />
+                            <q-btn color="secondary" @click="createLocationRecord();" label="Create Location Record" :disabled="!locationValid" tabindex="0" />
                         </template>
                         <template v-else>
-                            <q-btn color="secondary" @click="processOpenEditor" label="Edit Location" />
+                            <q-btn color="secondary" @click="processOpenEditor" label="Edit Location" tabindex="0" />
                         </template>
                     </div>
                 </div>

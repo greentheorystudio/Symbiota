@@ -43,8 +43,8 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
-                <a :href="(clientRoot + '/projects/index.php')">Biotic Inventory Projects</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/projects/index.php')" tabindex="0">Biotic Inventory Projects</a> &gt;&gt;
                 <span class="text-bold">{{ projectData['projname'] }}</span>
             </div>
             <div class="q-pa-md column">
@@ -57,7 +57,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     <div class="row justify-end q-gutter-sm items-center">
                         <template v-if="Number(pId) > 0 && isEditor">
                             <div>
-                                <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showProjectEditorPopup = true" icon="fas fa-cog" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showProjectEditorPopup = true" icon="fas fa-cog" dense aria-label="Open Project Administration" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Open Project Administration
                                     </q-tooltip>
@@ -75,7 +75,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="row justify-start q-gutter-md">
                             <div class="text-h6 text-bold">Checklists</div>
                             <div v-if="projectChecklistCoordArr.length > 0" class="self-center">
-                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showSpatialPopup = true" icon="fas fa-globe" dense>
+                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showSpatialPopup = true" icon="fas fa-globe" dense aria-label="See checklists on map" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         See checklists on map
                                     </q-tooltip>
@@ -86,10 +86,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <template v-for="checklist in projectChecklistArr">
                                 <div class="row justify-start">
                                     <div class="text-body1">
-                                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'] + '&pid=' + projectData['pid'])">{{ checklist['name'] }}</a>
+                                        <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'] + '&pid=' + projectData['pid'])" tabindex="0">{{ checklist['name'] }}</a>
                                     </div>
                                     <div v-if="keyModuleIsActive && checklist['defaultsettings'] && checklist['defaultsettings'].hasOwnProperty('keyactive') && checklist['defaultsettings']['keyactive']" class="self-center">
-                                        <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + checklist['clid'] + '&pid=' + projectId)" icon="fas fa-key" dense unelevated :ripple="false">
+                                        <q-btn role="link" text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + checklist['clid'] + '&pid=' + projectId)" icon="fas fa-key" dense unelevated :ripple="false" aria-label="Open Interactive Key" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Open Interactive Key
                                             </q-tooltip>

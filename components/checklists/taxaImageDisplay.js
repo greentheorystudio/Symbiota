@@ -48,9 +48,9 @@ const taxaImageDisplay = {
                             </div>
                             <div class="full-width row q-gutter-sm">
                                 <template v-for="taxon in family['taxa']">
-                                    <q-card flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);" :style="cardStyle">
+                                    <q-card role="link" flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);" :style="cardStyle" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
                                         <template v-if="imageData.hasOwnProperty(taxon['tidaccepted']) && imageData[taxon['tidaccepted']].length > 0">
-                                            <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="scale-down"></q-img>
+                                            <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="scale-down" :alt="(imageData[taxon['tidaccepted']][0]['alttext'] ? imageData[taxon['tidaccepted']][0]['alttext'] : taxon['sciname'])"></q-img>
                                         </template>
                                         <template v-else>
                                             <div class="column justify-center" :style="('height: ' + imageHeight + ';')">
@@ -67,7 +67,7 @@ const taxaImageDisplay = {
                                                 </template>
                                                 <template v-if="editing">
                                                     <span class="q-ml-sm">
-                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense>
+                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense aria-label="Edit this taxon" tabindex="0">
                                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                                 Edit this taxon
                                                             </q-tooltip>
@@ -87,13 +87,13 @@ const taxaImageDisplay = {
                                                 </div>
                                                 <div v-if="voucherData.hasOwnProperty(taxon['tid']) && voucherData[taxon['tid']].length > 0">
                                                     <template v-for="voucher in getAdjustedVoucherArr(taxon['tid'], voucherData[taxon['tid']])">
-                                                        <span class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);">{{ voucher['label'] + '; ' }}</span>
+                                                        <span role="button" class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);" aria-label="See record details" tabindex="0">{{ voucher['label'] + '; ' }}</span>
                                                     </template>
                                                     <template v-if="voucherData[taxon['tid']].length > 10 && !expandedVouchers.includes(taxon['tid'])">
-                                                        <span class="cursor-pointer" @click="addExpandedVoucher(taxon['tid']);">more...</span>
+                                                        <span role="button" class="cursor-pointer" @click="addExpandedVoucher(taxon['tid']);" aria-label="Show more" tabindex="0">more...</span>
                                                     </template>
                                                     <template v-else-if="voucherData[taxon['tid']].length > 10 && expandedVouchers.includes(taxon['tid'])">
-                                                        <span class="cursor-pointer" @click="removeExpandedVoucher(taxon['tid']);">less...</span>
+                                                        <span role="button" class="cursor-pointer" @click="removeExpandedVoucher(taxon['tid']);" aria-label="Show less" tabindex="0">less...</span>
                                                     </template>
                                                 </div>
                                             </template>
@@ -108,9 +108,9 @@ const taxaImageDisplay = {
             <template v-else>
                 <div class="full-width row q-gutter-sm">
                     <template v-for="taxon in taxaArr">
-                        <q-card flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid'])" :style="cardStyle">
+                        <q-card role="link" flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid'])" :style="cardStyle" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
                             <template v-if="imageData.hasOwnProperty(taxon['tidaccepted']) && imageData[taxon['tidaccepted']].length > 0">
-                                <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="scale-down"></q-img>
+                                <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="scale-down" :alt="(imageData[taxon['tidaccepted']][0]['alttext'] ? imageData[taxon['tidaccepted']][0]['alttext'] : taxon['sciname'])"></q-img>
                             </template>
                             <template v-else>
                                 <div class="column justify-center" :style="('height: ' + imageHeight + ';')">
@@ -127,7 +127,7 @@ const taxaImageDisplay = {
                                     </template>
                                     <template v-if="editing">
                                         <span class="q-ml-sm">
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openEditorPopup(taxon['cltlid']);" icon="far fa-edit" dense aria-label="Edit this taxon" tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Edit this taxon
                                                 </q-tooltip>
@@ -150,13 +150,13 @@ const taxaImageDisplay = {
                                     </div>
                                     <div v-if="voucherData.hasOwnProperty(taxon['tid']) && voucherData[taxon['tid']].length > 0">
                                         <template v-for="voucher in getAdjustedVoucherArr(taxon['tid'], voucherData[taxon['tid']])">
-                                            <span class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);">{{ voucher['label'] + '; ' }}</span>
+                                            <span role="button" class="cursor-pointer" @click="openRecordInfoWindow(voucher['occid']);" aria-label="See record details" tabindex="0">{{ voucher['label'] + '; ' }}</span>
                                         </template>
                                         <template v-if="voucherData[taxon['tid']].length > 10 && !expandedVouchers.includes(taxon['tid'])">
-                                            <span class="cursor-pointer" @click="addExpandedVoucher(taxon['tid']);">more...</span>
+                                            <span role="button" class="cursor-pointer" @click="addExpandedVoucher(taxon['tid']);" aria-label="Show more" tabindex="0">more...</span>
                                         </template>
                                         <template v-else-if="voucherData[taxon['tid']].length > 10 && expandedVouchers.includes(taxon['tid'])">
-                                            <span class="cursor-pointer" @click="removeExpandedVoucher(taxon['tid']);">less...</span>
+                                            <span role="button" class="cursor-pointer" @click="removeExpandedVoucher(taxon['tid']);" aria-label="Show less" tabindex="0">less...</span>
                                         </template>
                                     </div>
                                 </template>

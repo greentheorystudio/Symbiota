@@ -30,7 +30,7 @@ if(!$GLOBALS['SYMB_UID']) {
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Taxonomic Identifier Manager</span>
             </div>
             <div class="q-pa-md">
@@ -68,10 +68,10 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     </div>
                                                     <div class="processor-tool-button-container">
                                                         <div>
-                                                            <q-btn :loading="currentProcess === 'initializeUSDAImport'" :disabled="currentProcess && currentProcess !== 'initializeUSDAImport'" color="secondary" @click="initializeUSDAImport();" label="Start" dense />
+                                                            <q-btn :loading="currentProcess === 'initializeUSDAImport'" :disabled="currentProcess && currentProcess !== 'initializeUSDAImport'" color="secondary" @click="initializeUSDAImport();" label="Start" dense aria-label="Start Upload USDA Symbol data file" tabindex="0" />
                                                         </div>
                                                         <div>
-                                                            <q-btn v-if="currentProcess === 'initializeUSDAImport'" :disabled="processCancelling && currentProcess === 'initializeUSDAImport'" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                            <q-btn v-if="currentProcess === 'initializeUSDAImport'" :disabled="processCancelling && currentProcess === 'initializeUSDAImport'" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Upload USDA Symbol data file" tabindex="0" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -87,7 +87,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
                                                         <q-item>
                                                             <q-item-section>
-                                                                <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                                                <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" aria-label="Show previous 100 entries" tabindex="0">Show previous 100 entries</a></div>
                                                             </q-item-section>
                                                         </q-item>
                                                     </template>
@@ -124,7 +124,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
                                                         <q-item>
                                                             <q-item-section>
-                                                                <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                                                <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" aria-label="Show next 100 entries" tabindex="0">Show next 100 entries</a></div>
                                                             </q-item-section>
                                                         </q-item>
                                                     </template>

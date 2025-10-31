@@ -21,17 +21,17 @@ const collectionRecordDistributionDisplay = {
                                     {{ key }}
                                 </template>
                                 <template v-else-if="selectedCountry">
-                                    <a @click="setSelectedState(key);" class="cursor-pointer">
+                                    <a role="button" @click="setSelectedState(key);" class="cursor-pointer" aria-label="See distribution" tabindex="0">
                                         {{ key }}
                                     </a>
                                 </template>
                                 <template v-else>
-                                    <a @click="setSelectedCountry(key);" class="cursor-pointer">
+                                    <a role="button" @click="setSelectedCountry(key);" class="cursor-pointer" aria-label="See distribution" tabindex="0">
                                         {{ key }}
                                     </a>
                                 </template>
                                 <span>
-                                    (<a :href="getSearchUrl(key)" target="_blank">
+                                    (<a :href="getSearchUrl(key)" target="_blank" aria-label="See occurrence records - Opens in separate tab" tabindex="0">
                                         {{ distributionData[key] }}
                                     </a>)
                                 </span>

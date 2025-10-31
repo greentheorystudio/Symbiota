@@ -17,7 +17,7 @@ const collectionMetadataBlock = {
             </div>
             <div v-if="collectionData['homepage']">
                 <span class="text-body1 text-bold">Home Page: </span>
-                <a :href="collectionData['homepage']" target="_blank">
+                <a :href="collectionData['homepage']" target="_blank" aria-label="Go to collection homepage - Opens in separate tab" tabindex="0">
                     {{ collectionData['homepage'] }}
                 </a>
             </div>
@@ -38,25 +38,25 @@ const collectionMetadataBlock = {
             </div>
             <div v-if="collectionData['dwcaurl']">
                 <span class="text-body1 text-bold">DwC-Archive Publishing: </span>
-                <a :href="(clientRoot + '/collections/datasets/datapublisher.php')">
+                <a :href="(clientRoot + '/collections/datasets/datapublisher.php')" tabindex="0">
                     {{ (clientRoot + '/collections/datasets/datapublisher.php') }}
                 </a>
             </div>
             <div v-if="collectionData['managementtype'] && collectionData['managementtype'] === 'Live Data'">
                 <span class="text-body1 text-bold">Live Data Download: </span>
-                <a class="cursor-pointer" @click="processLiveDataDownload(collectionData['collid']);">
+                <a role="button" class="cursor-pointer" @click="processLiveDataDownload(collectionData['collid']);" tabindex="0">
                     DwC-Archive File
                 </a>
             </div>
             <div>
                 <span class="text-body1 text-bold">Digital Metadata: </span>
-                <a :href="(clientRoot + '/collections/datasets/emlhandler.php?collid=' + collectionData['collid'])" target="_blank">
+                <a :href="(clientRoot + '/collections/datasets/emlhandler.php?collid=' + collectionData['collid'])" target="_blank" aria-label="View EML file - Opens in separate tab" tabindex="0">
                     EML File
                 </a>
             </div>
             <div v-if="collectionData['rights'] && rightsTerms.hasOwnProperty(collectionData['rights'])">
                 <span class="text-body1 text-bold">Usage Rights: </span>
-                <a :href="collectionData['rights']" target="_blank">
+                <a :href="collectionData['rights']" target="_blank" aria-label="View Usage rights - Opens in separate tab" tabindex="0">
                     {{ rightsTerms[collectionData['rights']]['title'] }}
                 </a>
             </div>

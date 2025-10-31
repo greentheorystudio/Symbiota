@@ -12,6 +12,10 @@ const userPermissionManagementModule = {
             type: String,
             default: null
         },
+        tabindex: {
+            type: Number,
+            default: 0
+        },
         tablePk: {
             type: Number,
             default: null
@@ -31,7 +35,7 @@ const userPermissionManagementModule = {
                                     {{ user['lastname'] + ', ' + user['firstname'] + ' (' + user['username'] + ')' }}
                                 </div>
                                 <div class="self-center">
-                                    <q-btn color="white" text-color="black" size=".6rem" @click="removeUser(user['uid']);" icon="far fa-trash-alt" dense>
+                                    <q-btn color="white" text-color="black" size=".6rem" @click="removeUser(user['uid']);" icon="far fa-trash-alt" dense aria-label="Remove user" :tabindex="tabindex">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Remove user
                                         </q-tooltip>
@@ -57,7 +61,7 @@ const userPermissionManagementModule = {
                             </div>
                             <div class="col-2 row justify-end">
                                 <div>
-                                    <q-btn color="secondary" @click="addUser();" label="Add User"/>
+                                    <q-btn color="secondary" @click="addUser();" label="Add User" :tabindex="tabindex"/>
                                 </div>
                             </div>
                         </div>

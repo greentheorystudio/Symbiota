@@ -20,7 +20,7 @@ const taxaProfileDescriptionTabs = {
                                         <template v-if="desc.source || desc.sourceurl">
                                             <div class="desc-source">
                                                 <template v-if="desc.sourceurl">
-                                                    <a :href="desc.sourceurl" target="_blank">{{ desc.source }}</a>
+                                                    <a :href="desc.sourceurl" target="_blank" aria-label="External link: View description source - Opens in separate tab" tabindex="0">{{ desc.source }}</a>
                                                 </template>
                                                 <template v-else>
                                                     {{ desc.source }}

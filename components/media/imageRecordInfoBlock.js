@@ -19,18 +19,18 @@ const imageRecordInfoBlock = {
                         </div>
                         <div class="q-mt-xs full-width row justify-center q-gutter-sm text-bold">
                             <span v-if="imageData.thumbnailurl">
-                                <a :href="(imageData.thumbnailurl.startsWith('/') ? (clientRoot + imageData.thumbnailurl) : imageData.thumbnailurl)" target="_blank">Thumbnail</a>
+                                <a :href="(imageData.thumbnailurl.startsWith('/') ? (clientRoot + imageData.thumbnailurl) : imageData.thumbnailurl)" target="_blank" aria-label="View thumbnail image - Opens in separate tab" tabindex="0">Thumbnail</a>
                             </span>
                             <span v-if="imageData.url">
-                                <a :href="(imageData.url.startsWith('/') ? (clientRoot + imageData.url) : imageData.url)" target="_blank">Web</a>
+                                <a :href="(imageData.url.startsWith('/') ? (clientRoot + imageData.url) : imageData.url)" target="_blank" aria-label="View web image - Opens in separate tab" tabindex="0">Web</a>
                             </span>
                         </div>
                         <div class="full-width row justify-center q-gutter-sm text-bold">
                             <span v-if="imageData.originalurl">
-                                <a :href="(imageData.originalurl.startsWith('/') ? (clientRoot + imageData.originalurl) : imageData.originalurl)" target="_blank">Original</a>
+                                <a :href="(imageData.originalurl.startsWith('/') ? (clientRoot + imageData.originalurl) : imageData.originalurl)" target="_blank" aria-label="View original image - Opens in separate tab" tabindex="0">Original</a>
                             </span>
                             <span v-if="imageData.sourceurl">
-                                <a :href="(imageData.sourceurl.startsWith('/') ? (clientRoot + imageData.sourceurl) : imageData.sourceurl)" target="_blank">Source</a>
+                                <a :href="(imageData.sourceurl.startsWith('/') ? (clientRoot + imageData.sourceurl) : imageData.sourceurl)" target="_blank" aria-label="View source image - Opens in separate tab" tabindex="0">Source</a>
                             </span>
                         </div>
                     </div>
@@ -57,6 +57,9 @@ const imageRecordInfoBlock = {
                         </div>
                         <div v-if="imageData.caption">
                             <span class="text-bold">Caption: </span>{{ imageData.caption }}
+                        </div>
+                        <div v-if="imageData.alttext">
+                            <span class="text-bold">Image Alt-Text: </span>{{ imageData.alttext }}
                         </div>
                         <div v-if="imageData.owner">
                             <span class="text-bold">Owner: </span>{{ imageData.owner }}
@@ -91,7 +94,7 @@ const imageRecordInfoBlock = {
                     </div>
                     <div v-if="editor" class="col-1 row justify-end">
                         <div>
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(imageData['imgid']);" icon="fas fa-edit" dense>
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(imageData['imgid']);" icon="fas fa-edit" dense aria-label="Edit image record" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Edit image record
                                 </q-tooltip>

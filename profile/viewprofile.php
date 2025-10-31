@@ -51,10 +51,10 @@ header('X-Frame-Options: SAMEORIGIN');
                         <q-tab-panel v-if="validUser" name="checklists" class="column">
                             <div class="row justify-end q-gutter-sm q-pr-md">
                                 <div>
-                                    <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist"/>
+                                    <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist" tabindex="0" />
                                 </div>
                                 <div>
-                                    <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project"/>
+                                    <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project" tabindex="0" />
                                 </div>
                             </div>
                             <account-checklist-project-list></account-checklist-project-list>

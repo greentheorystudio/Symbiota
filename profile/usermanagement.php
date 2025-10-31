@@ -23,7 +23,7 @@ header('X-Frame-Options: SAMEORIGIN');
             <template v-if="isAdmin">
                 <template v-if="Number(currentUserId) > 0">
                     <div class="column q-gutter-sm">
-                        <div class="cursor-pointer text-body1 text-bold" @click="processUserChange(0);">
+                        <div role="button" class="cursor-pointer text-body1 text-bold" @click="processUserChange(0);" aria-label="Back to user list" tabindex="0">
                             Back to user list
                         </div>
                         <q-card>
@@ -34,7 +34,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                             {{ userInfo['firstname'] + ' ' + userInfo['lastname'] + '(#' + userInfo['uid'] + ')' }}
                                         </div>
                                         <div class="cursor-pointer">
-                                            <q-btn icon="far fa-edit" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="showAccountEditorPopup = true"></q-btn>
+                                            <q-btn icon="far fa-edit" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="showAccountEditorPopup = true" aria-label="Edit account" tabindex="0"></q-btn>
                                         </div>
                                     </div>
                                     <div class="row justify-start q-gutter-sm">
@@ -67,7 +67,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     </div>
                                     <div class="row justify-start q-gutter-sm">
                                         <div class="text-bold">URL:</div>
-                                        <div v-if="userInfo['url']"><a :href="userInfo['url']" target="_blank">{{ userInfo['url'] }}</a></div>
+                                        <div v-if="userInfo['url']"><a :href="userInfo['url']" target="_blank" aria-label="Go to user homepage - Opens in separate tab" tabindex="0">{{ userInfo['url'] }}</a></div>
                                     </div>
                                     <div class="row justify-start q-gutter-sm">
                                         <div class="text-bold">Login:</div>
@@ -75,17 +75,17 @@ header('X-Frame-Options: SAMEORIGIN');
                                     </div>
                                     <div v-if="Number(userInfo['validated']) !== 1" class="row justify-start q-gutter-sm">
                                         <div class="text-bold text-red">UNCONFIRMED USER</div>
-                                        <div><q-btn label="Confirm User" color="grey-4" text-color="black" class="black-border" size="sm" dense @click="confirmUser();"></q-btn></div>
+                                        <div><q-btn label="Confirm User" color="grey-4" text-color="black" class="black-border" size="sm" dense @click="confirmUser();" tabindex="0"></q-btn></div>
                                     </div>
                                     <div v-if="isAdmin" class="q-mt-sm column justify-start q-gutter-sm">
                                         <div>
-                                            <q-btn label="Reset Password" color="grey-4" text-color="black" class="black-border" size="md" dense @click="resetPassword();"></q-btn>
+                                            <q-btn label="Reset Password" color="grey-4" text-color="black" class="black-border" size="md" dense @click="resetPassword();" tabindex="0"></q-btn>
                                         </div>
                                         <div v-if="resetPasswordValue" class="text-red">
                                             Notify user that their password has been reset to: <span class="text-bold">{{ resetPasswordValue }}</span>
                                         </div>
                                         <div>
-                                            <q-btn label="Login as this user" color="grey-4" text-color="black" class="black-border" size="md" dense @click="loginAsUser();"></q-btn>
+                                            <q-btn label="Login as this user" color="grey-4" text-color="black" class="black-border" size="md" dense @click="loginAsUser();" tabindex="0"></q-btn>
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-sm row justify-start q-gutter-sm">
                                                             <div class="text-bold">Super Administrator</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('SuperAdmin', null);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('SuperAdmin', null);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -107,7 +107,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-sm row justify-start q-gutter-sm">
                                                             <div class="text-bold">Taxonomy Editor</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('Taxonomy', null);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('Taxonomy', null);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -115,7 +115,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-sm row justify-start q-gutter-sm">
                                                             <div class="text-bold">Taxon Profile Editor</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('TaxonProfile', null);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('TaxonProfile', null);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -123,7 +123,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-sm row justify-start q-gutter-sm">
                                                             <div class="text-bold">Identification Keys Administrator</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('KeyAdmin', null);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('KeyAdmin', null);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -131,7 +131,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-sm row justify-start q-gutter-sm">
                                                             <div class="text-bold">Identification Keys Editor</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('KeyEditor', null);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('KeyEditor', null);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -139,7 +139,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-sm row justify-start q-gutter-sm">
                                                             <div class="text-bold">Can Create Public Checklists and Biotic Inventory Projects</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('PublicChecklist', null);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('PublicChecklist', null);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -147,7 +147,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-sm row justify-start q-gutter-sm">
                                                             <div class="text-bold">Rare Species List Administrator</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppAdmin', null);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppAdmin', null);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -155,7 +155,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-sm row justify-start q-gutter-sm">
                                                             <div class="text-bold">View and Map Occurrences of Rare Species from all Collections</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppReadAll', null);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppReadAll', null);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -168,7 +168,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-lg row justify-start q-gutter-sm">
                                                             <div>{{ perm['name'] }}</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('CollAdmin', perm['id']);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('CollAdmin', perm['id']);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -181,7 +181,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-lg row justify-start q-gutter-sm">
                                                             <div>{{ perm['name'] }}</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('CollEditor', perm['id']);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('CollEditor', perm['id']);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -194,7 +194,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-lg row justify-start q-gutter-sm">
                                                             <div>{{ perm['name'] }}</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppReader', perm['id']);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('RareSppReader', perm['id']);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -207,7 +207,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-lg row justify-start q-gutter-sm">
                                                             <div>{{ perm['name'] }}</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('ProjAdmin', perm['id']);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('ProjAdmin', perm['id']);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -220,7 +220,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                         <div class="q-pl-lg row justify-start q-gutter-sm">
                                                             <div>{{ perm['name'] }}</div>
                                                             <div class="cursor-pointer">
-                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('ClAdmin', perm['id']);"></q-btn>
+                                                                <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('ClAdmin', perm['id']);" aria-label="Delete permission" tabindex="0"></q-btn>
                                                             </div>
                                                         </div>
                                                     </template>
@@ -231,7 +231,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                             </template>
                                             <template v-if="isAdmin">
                                                 <div v-if="Object.keys(userPermissions).length > 0" class="cursor-pointer">
-                                                    <q-btn label="Delete All Permissions" color="grey-4" text-color="black" class="black-border" size="sm" dense @click="deleteAllPermissions();"></q-btn>
+                                                    <q-btn label="Delete All Permissions" color="grey-4" text-color="black" class="black-border" size="sm" dense @click="deleteAllPermissions();" tabindex="0"></q-btn>
                                                 </div>
                                             </template>
                                         </q-card-section>
@@ -278,7 +278,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                 <div class="full-width row justify-between q-gutter-md">
                                                     <div class="text-body1 text-bold q-mb-sm">Collections</div>
                                                     <div class="row justify-end">
-                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense />
+                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense tabindex="0" />
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -312,7 +312,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                 <div class="full-width row justify-between q-gutter-md">
                                                     <div class="text-body1 text-bold q-mb-sm">Biotic Inventory Project Management</div>
                                                     <div class="row justify-end">
-                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense />
+                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense tabindex="0" />
                                                     </div>
                                                 </div>
                                                 <template v-for="project in projectArr">
@@ -327,7 +327,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                                 <div class="full-width row justify-between q-gutter-md">
                                                     <div class="text-body1 text-bold q-mb-sm">Checklist Management</div>
                                                     <div class="row justify-end">
-                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense />
+                                                        <q-btn color="secondary" @click="addPermissions();" label="Add Permissions" :disabled="newPermissionArr.length === 0" dense tabindex="0" />
                                                     </div>
                                                 </div>
                                                 <template v-for="checklist in checklistArr">
@@ -350,7 +350,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             </div>
                             <div class="row q-gutter-xs">
                                 <template v-for="letter in filterOptions">
-                                    <span class="cursor-pointer text-body1 text-bold" @click="processFilterChange(letter);">
+                                    <span role="button" class="cursor-pointer text-body1 text-bold" @click="processFilterChange(letter);" :aria-label="('Filter user list ' + letter)" tabindex="0">
                                         {{ letter }}
                                     </span>
                                 </template>
@@ -361,10 +361,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                 </div>
                                 <template v-if="userListDisplaySelectedOption === 'unconfirmed' && userList.length > 0">
                                     <div>
-                                        <q-btn color="secondary" @click="validateAllUnconfirmedUsers();" label="Confirm All" dense />
+                                        <q-btn color="secondary" @click="validateAllUnconfirmedUsers();" label="Confirm All" dense tabindex="0" />
                                     </div>
                                     <div>
-                                        <q-btn color="secondary" @click="deleteAllUnconfirmedUsers();" label="Delete All" dense />
+                                        <q-btn color="secondary" @click="deleteAllUnconfirmedUsers();" label="Delete All" dense tabindex="0" />
                                     </div>
                                 </template>
                             </div>
@@ -375,7 +375,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             <div class="text-body1 text-bold q-mb-sm">Users</div>
                             <template v-if="userList.length > 0">
                                 <template v-for="user in userList">
-                                    <div class="text-body1 cursor-pointer" @click="processUserChange(user['uid']);">
+                                    <div role="button" class="text-body1 cursor-pointer" @click="processUserChange(user['uid']);" aria-label="Change user" tabindex="0">
                                         {{ (user['lastname'] ? user['lastname'] : '') + ((user['lastname'] && user['firstname']) ? ', ' : '') + (user['firstname'] ? user['firstname'] : '') + ' (' + user['username'] + ')' }}
                                     </div>
                                 </template>

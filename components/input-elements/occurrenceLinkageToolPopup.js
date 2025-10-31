@@ -19,6 +19,10 @@ const occurrenceLinkageToolPopup = {
         showPopup: {
             type: Boolean,
             default: false
+        },
+        tabindex: {
+            type: Number,
+            default: 0
         }
     },
     template: `
@@ -26,7 +30,7 @@ const occurrenceLinkageToolPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" :tabindex="tabindex"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -94,10 +98,10 @@ const occurrenceLinkageToolPopup = {
                                         </div>
                                         <div class="col-6 row justify-end q-gutter-sm">
                                             <div>
-                                                <q-btn color="secondary" @click="createOccurrence();" label="Create Occurrence" :disabled="!isEditor" />
+                                                <q-btn color="secondary" @click="createOccurrence();" label="Create Occurrence" :disabled="!isEditor" :tabindex="tabindex" />
                                             </div>
                                             <div>
-                                                <q-btn color="secondary" @click="processSearch();" label="Search Occurrences" :disabled="!searchCriteriaValid" />
+                                                <q-btn color="secondary" @click="processSearch();" label="Search Occurrences" :disabled="!searchCriteriaValid" :tabindex="tabindex" />
                                             </div>
                                         </div>
                                     </div>
@@ -108,10 +112,10 @@ const occurrenceLinkageToolPopup = {
                                     <div>
                                         <div class="q-pa-sm q-mb-sm row justify-end q-gutter-sm" :style="recordTopRowStyle">
                                             <div>
-                                                <q-btn color="secondary" @click="linkAllRecords();" label="Link All" />
+                                                <q-btn color="secondary" @click="linkAllRecords();" label="Link All" :tabindex="tabindex" />
                                             </div>
                                             <div>
-                                                <q-btn color="secondary" @click="linkSelectedRecords();" label="Link Selected" :disabled="selectedOccidArr.length === 0" />
+                                                <q-btn color="secondary" @click="linkSelectedRecords();" label="Link Selected" :disabled="selectedOccidArr.length === 0" :tabindex="tabindex" />
                                             </div>
                                         </div>
                                         <div class="q-pa-xs column q-gutter-sm overflow-auto no-wrap" :style="recordBottomRowStyle">
@@ -136,7 +140,7 @@ const occurrenceLinkageToolPopup = {
                                                     <occurrence-selector-info-block :occurrence-data="record"></occurrence-selector-info-block>
                                                 </div>
                                                 <div class="col-2 row justify-end self-center">
-                                                    <q-btn color="primary" @click="linkOccurrence(record.occid);" label="Link Record" dense />
+                                                    <q-btn color="primary" @click="linkOccurrence(record.occid);" label="Link Record" dense :tabindex="tabindex" />
                                                 </div>
                                             </q-card-section>
                                         </q-card>

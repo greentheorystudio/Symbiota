@@ -44,9 +44,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     <body class="full-window-mode">
         <div id="tableContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <template v-if="Number(searchTermsCollId) > 0 && isEditor">
-                    <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + searchTermsCollId)">Collection Control Panel</a> &gt;&gt;
+                    <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + searchTermsCollId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
                     <span class="text-bold">View/Edit Existing Records</span>
                 </template>
                 <template v-else>
@@ -65,19 +65,19 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <selector-input-element :options="sortDirectionOptions" :value="sortDirection" @update:value="processSortDirectionChange"></selector-input-element>
                 </div>
                 <div>
-                    <q-btn color="secondary" @click="loadRecords()" label="Sort" />
+                    <q-btn color="secondary" @click="loadRecords()" label="Sort" aria-label="Sort records" tabindex="0" />
                 </div>
             </div>
             <div class="q-mb-sm row justify-start q-col-gutter-md self-center">
                 <div class="q-mr-lg row justify-start q-gutter-sm">
                     <div class="row justify-start self-center q-mr-lg">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
                     </div>
                     <div v-if="recordDataArr.length > 0">
                         <search-data-downloader :spatial="false"></search-data-downloader>
                     </div>
                     <div v-if="recordDataArr.length > 0 && Number(searchTermsCollId) > 0 && isEditor" class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense>
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" tabindex="0">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Batch Update Tool
                             </q-tooltip>
@@ -95,13 +95,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 <div v-if="recordDataArr.length > 0" class="row justify-start">
                     <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
 
-                    <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);"></q-btn>
+                    <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);"></q-btn>
+                    <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);"></q-btn>
+                    <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);"></q-btn>
+                    <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);" aria-label="Go to last record page" tabindex="0"></q-btn>
                 </div>
             </div>
             <template v-if="recordDataArr.length > 0">
@@ -117,9 +117,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 <template v-for="field in recordDataFieldArr">
                                     <td :class="field === 'sciname' ? 'text-italic' : ''">
                                         <template v-if="field === 'occid'">
-                                            <span class="cursor-pointer" @click="openRecordInfoWindow(record[field]);">{{ record[field] }}</span>
+                                            <span role="button" class="cursor-pointer" @click="openRecordInfoWindow(record[field]);" aria-label="See record details" tabindex="0">{{ record[field] }}</span>
                                             <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(record['collid'])))">
-                                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" @click="redirectToOccurrenceEditorWithQueryId(record[field], searchTermsCollId);" icon="fas fa-edit" dense>
+                                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" @click="redirectToOccurrenceEditorWithQueryId(record[field], searchTermsCollId);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Edit occurrence record
                                                     </q-tooltip>
@@ -145,13 +145,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             <div v-if="recordDataArr.length > 0" class="q-mt-xs row justify-start q-col-gutter-md self-center">
                 <div class="q-mr-lg row justify-start q-gutter-sm">
                     <div class="row justify-start self-center q-mr-lg">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
                     </div>
                     <div>
                         <search-data-downloader :spatial="false"></search-data-downloader>
                     </div>
                     <div v-if="Number(searchTermsCollId) > 0 && isEditor" class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense>
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" tabindex="0">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Batch Update Tool
                             </q-tooltip>
@@ -169,13 +169,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 <div class="row justify-start">
                     <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
 
-                    <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);"></q-btn>
+                    <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);"></q-btn>
+                    <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);"></q-btn>
+                    <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);"></q-btn>
+                    <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);" aria-label="Go to last record page" tabindex="0"></q-btn>
                 </div>
             </div>
             <template v-if="displayBatchUpdatePopup">

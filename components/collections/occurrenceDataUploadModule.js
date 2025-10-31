@@ -22,7 +22,7 @@ const occurrenceDataUploadModule = {
                                             </div>
                                             <div class="col-12 col-sm-3 row justify-end">
                                                 <div>
-                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" :disabled="currentTab !== 'configuration' || !!currentProcess" dense />
+                                                    <q-btn color="secondary" @click="showCollectionDataUploadParametersEditorPopup = true" :label="Number(collectionDataUploadParametersId) > 0 ? 'Edit' : 'Create'" :disabled="currentTab !== 'configuration' || !!currentProcess" dense tabindex="0" />
                                                 </div>
                                             </div>
                                         </div>
@@ -34,7 +34,7 @@ const occurrenceDataUploadModule = {
                                         <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || !!currentProcess"></collection-data-upload-parameters-field-module>
                                         <div class="row justify-end">
                                             <div>
-                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || !!currentProcess || !initializeValid" dense />
+                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || !!currentProcess || !initializeValid" dense tabindex="0" />
                                             </div>
                                         </div>
                                     </div>
@@ -61,33 +61,33 @@ const occurrenceDataUploadModule = {
                                             </template>
                                             <div class="q-mb-sm row q-gutter-sm">
                                                 <div class="text-body1 text-bold">Occurrence records</div> 
-                                                <div class="cursor-pointer" @click="openFieldMapperPopup('flat-file');">(view mapping)</div>
+                                                <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('flat-file');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                             </div>
                                         </template>
                                         <template v-else>
                                             <div class="q-mb-sm row q-gutter-sm">
                                                 <div class="text-body1 text-bold">Occurrence Records</div>
-                                                <div class="cursor-pointer" @click="openFieldMapperPopup('occurrence');">(view mapping)</div>
+                                                <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('occurrence');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                             </div>
                                             <template v-if="determinationDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeDeterminationData" @update:value="(value) => includeDeterminationData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Identification History</div>
-                                                    <div class="cursor-pointer" @click="openFieldMapperPopup('determination');">(view mapping)</div>
+                                                    <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('determination');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                                 </div>
                                             </template>
                                             <template v-if="multimediaDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeMultimediaData" @update:value="(value) => includeMultimediaData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Media Records</div>
-                                                    <div class="cursor-pointer" @click="openFieldMapperPopup('multimedia');">(view mapping)</div>
+                                                    <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('multimedia');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                                 </div>
                                             </template>
                                             <template v-if="mofDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeMofData" @update:value="(value) => includeMofData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Measurement or Fact Records</div>
-                                                    <div class="cursor-pointer" @click="openFieldMapperPopup('mof');">(view mapping)</div>
+                                                    <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('mof');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                                 </div>
                                             </template>
                                         </template>
@@ -96,10 +96,10 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div class="q-mt-sm row justify-end q-gutter-sm">
                                             <div v-if="collectionDataUploadParametersId">
-                                                <q-btn color="secondary" @click="saveMapping();" label="Save Mapping" :disabled="currentTab !== 'mapping' || !!currentProcess" dense />
+                                                <q-btn color="secondary" @click="saveMapping();" label="Save Mapping" :disabled="currentTab !== 'mapping' || !!currentProcess" dense tabindex="0" />
                                             </div>
                                             <div>
-                                                <q-btn color="secondary" @click="startUpload();" label="Start Upload" :disabled="currentTab !== 'mapping' || !!currentProcess || !mappingValid" dense />
+                                                <q-btn color="secondary" @click="startUpload();" label="Start Upload" :disabled="currentTab !== 'mapping' || !!currentProcess || !mappingValid" dense tabindex="0" />
                                             </div>
                                         </div>
                                     </div>
@@ -119,14 +119,14 @@ const occurrenceDataUploadModule = {
                                                 Occurrence records pending transfer: {{ uploadSummaryData['occur'] }}
                                             </div>
                                             <div v-if="Number(uploadSummaryData['occur']) > 0" class="q-ml-xs">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('occur');" icon="fas fa-list" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('occur');" icon="fas fa-list" dense aria-label="View Occurrence records" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         View records
                                                     </q-tooltip>
                                                 </q-btn>
                                             </div>
                                             <div v-if="Number(uploadSummaryData['occur']) > 0">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('occur', 'upload_occurrence_records');" icon="fas fa-download" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('occur', 'upload_occurrence_records');" icon="fas fa-download" dense aria-label="Download Occurrence records" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Download records
                                                     </q-tooltip>
@@ -138,14 +138,14 @@ const occurrenceDataUploadModule = {
                                                 Records to be updated: {{ uploadSummaryData['update'] }}
                                             </div>
                                             <div v-if="Number(uploadSummaryData['update']) > 0" class="q-ml-xs">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('update');" icon="fas fa-list" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('update');" icon="fas fa-list" dense aria-label="View Records to be updated" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         View records
                                                     </q-tooltip>
                                                 </q-btn>
                                             </div>
                                             <div v-if="Number(uploadSummaryData['update']) > 0">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('update', 'records_to_update');" icon="fas fa-download" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('update', 'records_to_update');" icon="fas fa-download" dense aria-label="Download Records to be updated" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Download records
                                                     </q-tooltip>
@@ -157,14 +157,14 @@ const occurrenceDataUploadModule = {
                                                 New records: {{ uploadSummaryData['new'] }}
                                             </div>
                                             <div v-if="Number(uploadSummaryData['new']) > 0" class="q-ml-xs">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('new');" icon="fas fa-list" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('new');" icon="fas fa-list" dense aria-label="View New records" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         View records
                                                     </q-tooltip>
                                                 </q-btn>
                                             </div>
                                             <div v-if="Number(uploadSummaryData['new']) > 0">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('new', 'new_records');" icon="fas fa-download" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('new', 'new_records');" icon="fas fa-download" dense aria-label="Download New records" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Download records
                                                     </q-tooltip>
@@ -176,14 +176,14 @@ const occurrenceDataUploadModule = {
                                                 Previously loaded records not included in upload: {{ uploadSummaryData['exist'] }}
                                             </div>
                                             <div class="q-ml-xs">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('exist');" icon="fas fa-list" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('exist');" icon="fas fa-list" dense aria-label="View Previously loaded records not included in upload" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         View records
                                                     </q-tooltip>
                                                 </q-btn>
                                             </div>
                                             <div>
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('exist', 'previous_records_not_matching');" icon="fas fa-download" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('exist', 'previous_records_not_matching');" icon="fas fa-download" dense aria-label="Download Previously loaded records not included in upload" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Download records
                                                     </q-tooltip>
@@ -195,14 +195,14 @@ const occurrenceDataUploadModule = {
                                                 Records that have a missing primary identifier: {{ uploadSummaryData['nulldbpk'] }}
                                             </div>
                                             <div class="q-ml-xs">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('nulldbpk');" icon="fas fa-list" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('nulldbpk');" icon="fas fa-list" dense aria-label="View Records that have a missing primary identifier" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         View records
                                                     </q-tooltip>
                                                 </q-btn>
                                             </div>
                                             <div>
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('nulldbpk', 'missing_primary_identifier_records');" icon="fas fa-download" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('nulldbpk', 'missing_primary_identifier_records');" icon="fas fa-download" dense aria-label="Download Records that have a missing primary identifier" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Download records
                                                     </q-tooltip>
@@ -214,14 +214,14 @@ const occurrenceDataUploadModule = {
                                                 Records with duplicate primary identifiers (will not upload): {{ uploadSummaryData['dupdbpk'] }}
                                             </div>
                                             <div class="q-ml-xs">
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('dupdbpk');" icon="fas fa-list" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processOpenRecordViewerPopup('dupdbpk');" icon="fas fa-list" dense aria-label="View Records with duplicate primary identifiers" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         View records
                                                     </q-tooltip>
                                                 </q-btn>
                                             </div>
                                             <div>
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('dupdbpk', 'duplicate_primary_identifier_records');" icon="fas fa-download" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="processDownloadRecords('dupdbpk', 'duplicate_primary_identifier_records');" icon="fas fa-download" dense aria-label="Download Records with duplicate primary identifiers" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Download records
                                                     </q-tooltip>
@@ -245,7 +245,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <div class="q-mt-sm row justify-end">
                                             <div>
-                                                <q-btn color="secondary" @click="finalTransfer();" label="Transfer Records to Central Occurrence Table" :disabled="currentTab !== 'summary' || !!currentProcess" dense />
+                                                <q-btn color="secondary" @click="finalTransfer();" label="Transfer Records to Central Occurrence Table" :disabled="currentTab !== 'summary' || !!currentProcess" dense tabindex="0" />
                                             </div>
                                         </div>
                                     </div>
@@ -263,7 +263,7 @@ const occurrenceDataUploadModule = {
                             <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
                                 <q-item>
                                     <q-item-section>
-                                        <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                        <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" aria-label="Show previous 100 entries" tabindex="0">Show previous 100 entries</a></div>
                                     </q-item-section>
                                 </q-item>
                             </template>
@@ -300,7 +300,7 @@ const occurrenceDataUploadModule = {
                             <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
                                 <q-item>
                                     <q-item-section>
-                                        <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                        <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" aria-label="Show next 100 entries" tabindex="0">Show next 100 entries</a></div>
                                     </q-item-section>
                                 </q-item>
                             </template>

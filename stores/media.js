@@ -7,6 +7,7 @@ const useMediaStore = Pinia.defineStore('media', {
             occid: null,
             accessuri: null,
             sourceurl: null,
+            descriptivetranscripturi: null,
             title: null,
             creatoruid: null,
             creator: null,
@@ -81,9 +82,26 @@ const useMediaStore = Pinia.defineStore('media', {
                 body: formData
             })
             .then((response) => {
-                response.text().then((val) => {
-                    callback(Number(val));
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((val) => {
+                callback(Number(val));
+            });
+        },
+        deleteMediaTranscriptFile(collid, filepath, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('transcriptPath', filepath.toString());
+            formData.append('action', 'deleteDescriptiveTranscriptFile');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((val) => {
+                callback(Number(val));
             });
         },
         resetOccurrenceLinkage(collid, occidVal, callback) {
@@ -97,9 +115,10 @@ const useMediaStore = Pinia.defineStore('media', {
                 body: formData
             })
             .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
             });
         },
         setCurrentMediaRecord(medid) {
@@ -160,12 +179,47 @@ const useMediaStore = Pinia.defineStore('media', {
                 body: formData
             })
             .then((response) => {
-                response.text().then((res) => {
-                    callback(Number(res));
-                    if(res && Number(res) === 1){
-                        this.mediaData = Object.assign({}, this.mediaEditData);
-                    }
-                });
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(res && Number(res) === 1){
+                    this.mediaData = Object.assign({}, this.mediaEditData);
+                }
+            });
+        },
+        uploadDescriptiveTranscriptFromFile(collid, file, uploadPath, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('transcriptfile', file);
+            formData.append('uploadpath', uploadPath.toString());
+            formData.append('action', 'uploadDescriptiveTranscriptFromFile');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res);
+            });
+        },
+        uploadDescriptiveTranscriptFromUrl(collid, url, uploadPath, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('transcripturl', url.toString());
+            formData.append('uploadpath', uploadPath.toString());
+            formData.append('action', 'uploadDescriptiveTranscriptFromUrl');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res);
             });
         }
     }

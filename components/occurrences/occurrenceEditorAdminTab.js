@@ -6,7 +6,7 @@ const occurrenceEditorAdminTab = {
                     <div class="text-h6 text-bold">Edit History</div>
                     <div class="q-mt-xs q-pl-sm column q-col-gutter-sm">
                         <div class="text-bold">
-                            <a :href="(clientRoot + '/collections/editor/editreviewer.php?collid=' + collId + '&occid=' + occId)" target="_blank">
+                            <a :href="(clientRoot + '/collections/editor/editreviewer.php?collid=' + collId + '&occid=' + occId)" target="_blank" aria-label="Manage Edits - Opens in separate tab" tabindex="0">
                                 Manage Edits
                             </a>
                         </div>
@@ -56,7 +56,7 @@ const occurrenceEditorAdminTab = {
                             ></selector-input-element>
                         </div>
                         <div class="row justify-end">
-                            <q-btn color="secondary" @click="transferOccurrenceRecord();" label="Transfer" :disabled="!transferToCollid" />
+                            <q-btn color="secondary" @click="transferOccurrenceRecord();" label="Transfer" :disabled="!transferToCollid" tabindex="0" />
                         </div>
                     </div>
                 </q-card-section>
@@ -84,7 +84,7 @@ const occurrenceEditorAdminTab = {
                             </div>
                         </div>
                         <div class="q-mt-md row justify-start">
-                            <q-btn color="secondary" @click="processDeleteOccurrenceRecord();" label="Delete Occurrence" :disabled="!occurrenceDeleteApproved" />
+                            <q-btn color="secondary" @click="processDeleteOccurrenceRecord();" label="Delete Occurrence" :disabled="!occurrenceDeleteApproved" tabindex="0" />
                         </div>
                     </div>
                 </q-card-section>

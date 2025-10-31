@@ -4,27 +4,27 @@ const spatialMapSettingsPopup = {
             <q-card class="sm-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="updateMapSettings('showMapSettings', false);"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="updateMapSettings('showMapSettings', false);" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div class="q-mt-sm q-pa-md column q-gutter-sm">
                     <div>
-                        <q-checkbox v-model="mapSettings.drawToolFreehandMode" label="Set Draw Tool to Freehand Mode" @update:model-value="changeFreehandMode" />
+                        <q-checkbox v-model="mapSettings.drawToolFreehandMode" label="Set Draw Tool to Freehand Mode" @update:model-value="changeFreehandMode" tabindex="0" />
                     </div>
                     <div>
-                        <q-checkbox v-model="mapSettings.clusterPoints" label="Cluster Points" @update:model-value="changeClusterPoints" />
+                        <q-checkbox v-model="mapSettings.clusterPoints" label="Cluster Points" @update:model-value="changeClusterPoints" tabindex="0" />
                     </div>
                     <div class="row col-5">
-                        <q-input type="number" outlined v-model="mapSettings.clusterDistance" class="col-6" label="Cluster Distance (px)" min="1" dense @update:model-value="changeClusterDistance" />
+                        <q-input type="number" outlined v-model="mapSettings.clusterDistance" class="col-6" label="Cluster Distance (px)" min="1" dense @update:model-value="changeClusterDistance" tabindex="0" />
                     </div>
                     <div>
-                        <q-checkbox v-model="mapSettings.showHeatMap" label="Display Heat Map" @update:model-value="toggleHeatMap" />
+                        <q-checkbox v-model="mapSettings.showHeatMap" label="Display Heat Map" @update:model-value="toggleHeatMap" tabindex="0" />
                     </div>
                     <div class="row col-5">
-                        <q-input type="number" outlined v-model="mapSettings.heatMapRadius" class="col-6" label="Heat Map Radius (px)" min="1" dense @update:model-value="changeHeatMapRadius" />
+                        <q-input type="number" outlined v-model="mapSettings.heatMapRadius" class="col-6" label="Heat Map Radius (px)" min="1" dense @update:model-value="changeHeatMapRadius" tabindex="0" />
                     </div>
                     <div class="row col-5">
-                        <q-input type="number" outlined v-model="mapSettings.heatMapBlur" class="col-6" label="Heat Map Blur (px)" min="1" dense @update:model-value="changeHeatMapBlur" />
+                        <q-input type="number" outlined v-model="mapSettings.heatMapBlur" class="col-6" label="Heat Map Blur (px)" min="1" dense @update:model-value="changeHeatMapBlur" tabindex="0" />
                     </div>
                 </div>
             </q-card>

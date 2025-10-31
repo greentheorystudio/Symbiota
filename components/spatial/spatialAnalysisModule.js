@@ -27,7 +27,9 @@ const spatialAnalysisModule = {
         <template v-if="mapSettings.recordInfoWindowId">
             <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
         </template>
-        <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @reset:search-criteria="processResetCriteria" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+        <template v-if="displayQueryPopup">
+            <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @reset:search-criteria="processResetCriteria" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
+        </template>
 
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
             <spatial-side-panel :show-panel="mapSettings.showSidePanel" :expanded-element="mapSettings.sidePanelExpandedElement"></spatial-side-panel>
@@ -35,12 +37,12 @@ const spatialAnalysisModule = {
             <spatial-side-button-tray></spatial-side-button-tray>
             <div id="popup" class="ol-popup">
                 <template v-if="popupCloser">
-                    <a class="ol-popup-closer cursor-pointer" @click="closePopup();"></a>
+                    <a role="button" class="ol-popup-closer cursor-pointer" @click="closePopup();" aria-label="Close pop up" tabindex="0"></a>
                 </template>
                 <div id="popup-content" v-html="popupContent"></div>
             </div>
             <template v-if="inputWindowMode">
-                <q-btn dense class="z-max map-popup-close-button" size="md" color="red" text-color="white" icon="fas fa-times" @click="emitClosePopup();"></q-btn>
+                <q-btn dense class="z-max map-popup-close-button" size="md" color="red" text-color="white" icon="fas fa-times" @click="emitClosePopup();" aria-label="Close window" tabindex="0"></q-btn>
             </template>
 
             <div id="mapinfo">

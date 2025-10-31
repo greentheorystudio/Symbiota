@@ -10,10 +10,10 @@ const projectEditorChecklistManagementTab = {
                         <template v-for="checklist in projectChecklistArr">
                             <div class="row justify-start q-gutter-md">
                                 <div class="text-body1">
-                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])">{{ checklist['name'] }}</a>
+                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])" tabindex="0">{{ checklist['name'] }}</a>
                                 </div>
                                 <div class="self-center">
-                                    <q-btn color="white" text-color="black" size=".6rem" @click="removeChecklist(checklist['clid']);" icon="far fa-trash-alt" dense>
+                                    <q-btn color="white" text-color="black" size=".6rem" @click="removeChecklist(checklist['clid']);" icon="far fa-trash-alt" dense aria-label="Remove checklist" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Remove checklist
                                         </q-tooltip>
@@ -38,7 +38,7 @@ const projectEditorChecklistManagementTab = {
                         </div>
                         <div class="col-2 row justify-end">
                             <div>
-                                <q-btn color="secondary" @click="addChecklist();" label="Add Checklist" :disabled="!selectedChecklistId" />
+                                <q-btn color="secondary" @click="addChecklist();" label="Add Checklist" :disabled="!selectedChecklistId" tabindex="0" />
                             </div>
                         </div>
                     </div>

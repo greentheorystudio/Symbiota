@@ -10,7 +10,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -35,7 +35,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
                                                                 {{ props.row[column.name] }}
                                                             </div>
                                                             <div>
-                                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="processEditTaxon(props.row['taxon']);" icon="fas fa-edit" dense>
+                                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="processEditTaxon(props.row['taxon']);" icon="fas fa-edit" dense aria-label="Edit taxon records" tabindex="0">
                                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                                         Edit taxon records
                                                                     </q-tooltip>
@@ -48,7 +48,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
                                                     </template>
                                                 </template>
                                                 <template v-else>
-                                                    <div class="cursor-pointer" @click="processOccurrenceSelection(props.row['occidData'][column.name]);">
+                                                    <div role="button" class="cursor-pointer" @click="processOccurrenceSelection(props.row['occidData'][column.name]);" aria-label="View record" tabindex="0">
                                                         {{ props.row[column.name] }}
                                                     </div>
                                                 </template>

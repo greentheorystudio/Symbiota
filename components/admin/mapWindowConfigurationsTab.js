@@ -8,14 +8,14 @@ const mapWindowConfigurationsTab = {
                         Then click the Save Settings button to save the settings.
                     </div>
                     <div class="col-1 row justify-end">
-                        <div onclick="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" title="Open Tutorial Window">
-                            <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
+                        <div role="button" class="cursor-pointer" @click="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" aria-label="Open Tutorial Window" tabindex="0">
+                            <q-icon name="far fa-question-circle" size="20px" />
                         </div>
                     </div>
                 </div>
                 <div class="full-width row justify-end items-center">
                     <div>
-                        <q-btn color="primary" @click="updateConfigurations();" label="Save Settings" :disabled="!mapBaseLayerValue || !mapCenterValue || !mapZoomValue" />
+                        <q-btn color="primary" @click="updateConfigurations();" label="Save Settings" :disabled="!mapBaseLayerValue || !mapCenterValue || !mapZoomValue" tabindex="0" />
                     </div>
                 </div>
             </div>

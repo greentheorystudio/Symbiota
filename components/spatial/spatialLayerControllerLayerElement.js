@@ -39,7 +39,7 @@ const spatialLayerControllerLayerElement = {
                                 <span class="text-bold">Provided by: </span> {{ layer.providedBy + (layer.sourceURL ? ' ' : '') }}
                             </template>
                             <template v-if="layer.sourceURL">
-                                <span class="text-bold"><a :href="layer.sourceURL" target="_blank">(Go to source)</a></span>
+                                <span class="text-bold"><a :href="layer.sourceURL" target="_blank" aria-label="External link: View layer source - Opens in separate tab" tabindex="0">(Go to source)</a></span>
                             </template>
                         </div>
                     </template>
@@ -109,22 +109,22 @@ const spatialLayerControllerLayerElement = {
                                 </template>
                                 <template v-if="layer.active && query && mapDataType === 'vector'">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="toggleLayerQuerySelector(layer.id);" label="Query Selector" />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="toggleLayerQuerySelector(layer.id);" label="Query Selector" tabindex="0" />
                                     </div>
                                 </template>
                                 <template v-if="removable">
                                     <div>
-                                        <q-btn padding="xs" color="grey-4" text-color="black" class="black-border" icon="far fa-trash-alt" @click="removeUserLayer(layer.id);"></q-btn>
+                                        <q-btn padding="xs" color="grey-4" text-color="black" class="black-border" icon="far fa-trash-alt" @click="removeUserLayer(layer.id);" aria-label="Remove layer" tabindex="0"></q-btn>
                                     </div>
                                 </template>
                                 <template v-if="layer.type === 'userLayer'">
                                     <div>
-                                        <q-checkbox v-model="layer.active" @update:model-value="(value) => toggleUserLayerVisibility(layer.id, layer.layerName, value)"></q-checkbox>
+                                        <q-checkbox v-model="layer.active" @update:model-value="(value) => toggleUserLayerVisibility(layer.id, layer.layerName, value)" aria-label="Toggle layer display" tabindex="0"></q-checkbox>
                                     </div>
                                 </template>
                                 <template v-else>
                                     <div>
-                                        <q-checkbox v-model="layer.active" @update:model-value="(value) => toggleServerLayerVisibility(layer.id, layer.layerName, layer.file, value)"></q-checkbox>
+                                        <q-checkbox v-model="layer.active" @update:model-value="(value) => toggleServerLayerVisibility(layer.id, layer.layerName, layer.file, value)" aria-label="Toggle layer display" tabindex="0"></q-checkbox>
                                     </div>
                                 </template>
                             </div>
@@ -135,7 +135,7 @@ const spatialLayerControllerLayerElement = {
                             <div class="row justify-between q-mt-sm">
                                 <template v-if="query && mapDataType === 'vector'">
                                     <div class="self-center">
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="toggleLayerQuerySelector(layer.id);" label="Query Selector" />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="toggleLayerQuerySelector(layer.id);" label="Query Selector" tabindex="0" />
                                     </div>
                                 </template>
                                 <template v-if="sortable">
@@ -157,17 +157,17 @@ const spatialLayerControllerLayerElement = {
                             <div class="row justify-end self-center q-gutter-sm">
                                 <template v-if="removable">
                                     <div>
-                                        <q-btn padding="xs" color="grey-4" text-color="black" class="black-border" icon="far fa-trash-alt" @click="removeUserLayer(layer.id);"></q-btn>
+                                        <q-btn padding="xs" color="grey-4" text-color="black" class="black-border" icon="far fa-trash-alt" @click="removeUserLayer(layer.id);" aria-label="Remove layer" tabindex="0"></q-btn>
                                     </div>
                                 </template>
                                 <template v-if="layer.type === 'userLayer'">
                                     <div>
-                                        <q-checkbox v-model="layer.active" @update:model-value="(value) => toggleUserLayerVisibility(layer.id, layer.layerName, value)"></q-checkbox>
+                                        <q-checkbox v-model="layer.active" @update:model-value="(value) => toggleUserLayerVisibility(layer.id, layer.layerName, value)" aria-label="Toggle layer display" tabindex="0"></q-checkbox>
                                     </div>
                                 </template>
                                 <template v-else>
                                     <div>
-                                        <q-checkbox v-model="layer.active" @update:model-value="(value) => toggleServerLayerVisibility(layer.id, layer.layerName, layer.file, value)"></q-checkbox>
+                                        <q-checkbox v-model="layer.active" @update:model-value="(value) => toggleServerLayerVisibility(layer.id, layer.layerName, layer.file, value)" aria-label="Toggle layer display" tabindex="0"></q-checkbox>
                                     </div>
                                 </template>
                             </div>
