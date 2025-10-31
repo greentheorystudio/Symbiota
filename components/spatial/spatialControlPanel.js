@@ -71,7 +71,7 @@ const spatialControlPanel = {
                                 </div>
                             </template>
                         </div>
-                        <div role="button" class="row justify-center cursor-pointer" @click="updateMapSettings('showControlPanelTop', false);" aria-role="Toggle control panel" tabindex="0">
+                        <div role="button" class="row justify-center cursor-pointer" @click="updateMapSettings('showControlPanelTop', false);" @keyup.enter="updateMapSettings('showControlPanelTop', false);" aria-role="Toggle control panel" tabindex="0">
                             <q-icon color="white" size="sm" name="fas fa-caret-up"></q-icon>
                         </div>
                     </div>
@@ -148,7 +148,7 @@ const spatialControlPanel = {
                                 </div>
                             </template>
                         </div>
-                        <div role="button" class="row justify-center cursor-pointer" @click="updateMapSettings('showControlPanelTop', false);" aria-role="Toggle control panel" tabindex="0">
+                        <div role="button" class="row justify-center cursor-pointer" @click="updateMapSettings('showControlPanelTop', false);" @keyup.enter="updateMapSettings('showControlPanelTop', false);" aria-role="Toggle control panel" tabindex="0">
                             <q-icon color="white" size="sm" name="fas fa-caret-up"></q-icon>
                         </div>
                     </div>
@@ -217,7 +217,7 @@ const spatialControlPanel = {
                         </div>
                     </div>
                 </div>
-                <div role="button" class="col-grow column justify-center items-center cursor-pointer map-side-panel-close-bar" @click="updateMapSettings('showControlPanelLeft', false);" aria-role="Toggle control panel" tabindex="0">
+                <div role="button" class="col-grow column justify-center items-center cursor-pointer map-side-panel-close-bar" @click="updateMapSettings('showControlPanelLeft', false);" @keyup.enter="updateMapSettings('showControlPanelLeft', false);" aria-role="Toggle control panel" tabindex="0">
                     <q-icon color="white" size="sm" name="fas fa-caret-left"></q-icon>
                 </div>
             </div>
