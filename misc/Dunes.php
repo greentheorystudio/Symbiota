@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Flock of birds flying over a beach with a red lighthouse on a dune under a clear blue sky."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Dunes</b>
         </div>
     </div>
@@ -62,10 +62,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Dunes</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             On virtually any barrier island, wind and sand combine to create sand dunes. Dunes play a vital role in protecting
             coastlines and property from storms, high winds and saltwater intrusion.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: R. Pastor
@@ -77,37 +77,37 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#dune-formation-section" data-number="2">
+                        <a href="#dune-formation-section" data-number="2" aria-label="Skip to Dune Formation" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Dune Formation</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#dune-systems-section" data-number="3">
+                        <a href="#dune-systems-section" data-number="3" aria-label="Skip to Dune Systems" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Dune Systems</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#dune-plants-section" data-number="4">
+                        <a href="#dune-plants-section" data-number="4" aria-label="Skip to Dune Plants" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Dune Plants</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#dune-animals-section" data-number="5">
+                        <a href="#dune-animals-section" data-number="5" aria-label="Skip to Dune Animals" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Dune Animals</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#human-impacts-section" data-number="6">
+                        <a href="#human-impacts-section" data-number="6" aria-label="Skip to Human Impacts" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Human Impacts</span>
                         </a>
@@ -124,7 +124,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="dune-formation-section" class="cd-section">
-            <h4>Dune Formation</h4>
+            <div class="text-h5 text-bold">Dune Formation</div>
             <p>
                 The process of dune formation begins with the transport of sand landward. This happens in three ways: saltation,
                 surface creep, or suspension.
@@ -157,7 +157,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="dune-systems-section" class="cd-section">
-            <h4>Dune Systems</h4>
+            <div class="text-h5 text-bold">Dune Systems</div>
             <p>
                 Within dune systems, which resemble a series of low peaks and valleys, the first dune above the intertidal
                 zone is called the primary dune, or foredune. This is the area of active colonization by plants, and the area
@@ -186,7 +186,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="dune-plants-section" class="cd-section">
-            <h4>Dune Systems</h4>
+            <div class="text-h5 text-bold">Dune Systems</div>
             <p>
                 Vegetation colonizing the upper beach and foredune must be well-adapted to periodic disturbance, and generally
                 consists of grassy, salt-adapted species. Growth of these colonizing species must keep pace with the rate
@@ -204,7 +204,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 where shrubs and trees replace the pioneering vines and herbaceous species.
             </p>
 
-            <h5>Foredune</h5>
+            <div class="text-h6 text-bold">Foredune</div>
             <p>
                 On the foredune, beach pioneers include railroad vine and shoreline sea purslane. South of Cape Hatteras,
                 sea oats are the principal dune colonizer; this coarse grass grows up to 6 feet tall and spreads laterally
@@ -224,7 +224,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </figure>
             </div>
 
-            <h5>Dune Crest</h5>
+            <div class="text-h6 text-bold">Dune Crest</div>
             <p>
                 The dune crest is the area where shrubby and woody species begin to replace herbaceous vines and grasses.
                 Common herbaceous plants of the dune crest include sea ox-eye daisy, beach sunflower, firewheel, and annual
@@ -246,7 +246,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </figure>
             </div>
 
-            <h5>Swales</h5>
+            <div class="text-h6 text-bold">Swales</div>
             <p>
                 Swales between dunes gain an increased measure of protection from winds and salt spray as the dune system
                 builds over time. Swales can support freshwater plants, though most plants that grow in swales have some
@@ -262,7 +262,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </figure>
             </div>
 
-            <h5>Backdune</h5>
+            <div class="text-h6 text-bold">Backdune</div>
             <p>
                 Backdunes and secondary dunes generally support a wider variety of vegetation than foredunes. The same species
                 that grow as low shrubs or stunted trees on dune crests do grow in backdune areas as well, but in these more
@@ -271,7 +271,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="dune-animals-section" class="cd-section">
-            <h4>Dune Animals</h4>
+            <div class="text-h5 text-bold">Dune Animals</div>
             <p>
                 A number of rodents, some of which are becoming increasingly rare, utilize dune habitats. The threatened
                 southeastern beach mouse can be found in scattered populations from Cape Canaveral to Sebastian Inlet. Other
@@ -312,7 +312,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="human-impacts-section" class="cd-section">
-            <h4>Dune Animals</h4>
+            <div class="text-h5 text-bold">Dune Animals</div>
             <p>
                 In spite of the stabilizing ability of dune plants, dunes are highly susceptible to human impacts. Vehicles
                 traversing beaches, as well as heavy foot traffic, damage vegetation by shifting sand and roots, thus

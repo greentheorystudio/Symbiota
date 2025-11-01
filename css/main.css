@@ -323,8 +323,8 @@ h1{
 h2{
 	font-family: 'Fira Sans';
 	font-weight: bold;
-	font-size: 20pt;
-	line-height: normal;
+	font-size: 18pt;
+	line-height: 150%;
 }
 
 h3 {

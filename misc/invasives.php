@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Striped lionfish with long, spiky fins swimming in an aquarium with white gravel, rocks, and green coral."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Habitat_Threats.php">Threats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Habitat_Threats.php" tabindex="0">Threats</a> &gt;
             <b>Invasive Species</b>
         </div>
     </div>
@@ -62,10 +62,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Invasive Species</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Two of the very features that make the Indian River Lagoon so biologically diverse also predispose the system
             to invasion by exotics: its climate, and its geographic location near to the western Atlantic Gulf Stream.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: A. Nalley, FWS
@@ -77,19 +77,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#about-section" data-number="2">
+                        <a href="#about-section" data-number="2" aria-label="Skip to About Non-Native Species" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">About Non-Native Species</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#changed-section" data-number="3">
+                        <a href="#changed-section" data-number="3" aria-label="Skip to Changed Waters, Changed Species" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Changed Waters, Changed Species</span>
                         </a>
@@ -107,7 +107,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="about-section" class="cd-section">
-            <h4>About Non-Native Species</h4>
+            <div class="text-h5 text-bold">About Non-Native Species</div>
             <p>
                 Hundreds of non-indigenous plants and animals have been introduced in the five centuries since the arrival of
                 the first Europeans in Florida. Many have greatly benefited humans. For example, cultivated plants of the
@@ -145,14 +145,14 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="changed-section" class="cd-section">
-            <h4>Changed Waters, Changed Species</h4>
+            <div class="text-h5 text-bold">Changed Waters, Changed Species</div>
             <p>
-                In Florida, the introduced nutria, <a href="../taxa/index.php?taxon=Myocastor coypus"><i>Myocastor coypus</i></a>,
+                In Florida, the introduced nutria, <a href="../taxa/index.php?taxon=Myocastor coypus" class="text-italic" tabindex="0">Myocastor coypus</a>,
                 contributes to the loss of marsh acreage by foraging on vegetation. Changes in water flow around salt marshes and
-                mangroves have allowed for expansion of the invading Brazilian pepper, <a href="../taxa/index.php?taxon=Schinus terebinthifolius"><i>Schinus terebinthifolius</i></a>,
-                and the Australian pine, <a href="../taxa/index.php?taxon=Casuarina equistifolia"><i>Casuarina equistifolia</i></a>.
+                mangroves have allowed for expansion of the invading Brazilian pepper, <a href="../taxa/index.php?taxon=Schinus terebinthifolius" class="text-italic" tabindex="0">Schinus terebinthifolius</a>,
+                and the Australian pine, <a href="../taxa/index.php?taxon=Casuarina equistifolia" class="text-italic" tabindex="0">Casuarina equistifolia</a>.
                 Closing portions of these habitats for mosquito impoundments has reduced the salinity, allowing the invasion of
-                more oligohaline vegetation and animals such as the blackchin tilapia, <a href="../taxa/index.php?taxon=Sarotherodon melanotheron"><i>Sarotherodon melanotheron</i></a>.
+                more oligohaline vegetation and animals such as the blackchin tilapia, <a href="../taxa/index.php?taxon=Sarotherodon melanotheron" class="text-italic" tabindex="0">Sarotherodon melanotheron</a>.
             </p>
             <p>
                 Disturbed or barren areas will often be colonized by invasives before native plants can become established.

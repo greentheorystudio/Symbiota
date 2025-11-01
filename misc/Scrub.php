@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Sunset over a landscape with palm trees and vegetation, with clouds lit by the setting sun."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Scrub</b>
         </div>
     </div>
@@ -62,11 +62,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Scrub</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Built upon sandy or well-drained soils on stable backdune areas, scrub communities are dominated by herbaceous
             shrubs, evergreen oaks and pines. Also known as coastal strand, these ecosystems are rapidly vanishing due to
             developmental pressures along the coast.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: H. Sweat
@@ -78,31 +78,31 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#scrub-composition-section" data-number="2">
+                        <a href="#scrub-composition-section" data-number="2" aria-label="Skip to Scrub Composition" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Scrub Composition</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#fire-ecology-section" data-number="3">
+                        <a href="#fire-ecology-section" data-number="3" aria-label="Skip to Fire Ecology" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Fire Ecology</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#scrub-plants-section" data-number="4">
+                        <a href="#scrub-plants-section" data-number="4" aria-label="Skip to Scrub Plants" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Scrub Plants</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#scrub-animals-section" data-number="5">
+                        <a href="#scrub-animals-section" data-number="5" aria-label="Skip to Scrub Animals" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Scrub Animals</span>
                         </a>
@@ -128,7 +128,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="scrub-composition-section" class="cd-section">
-            <h4>Scrub Composition</h4>
+            <div class="text-h5 text-bold">Scrub Composition</div>
             <p>
                 Except for saw palmetto scrub, the term “scrub” refers to well-drained, open pineland with oak or palmetto
                 understory that are well-adapted to dry conditions. Scrub habitats are further divided into subcategories
@@ -156,7 +156,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="fire-ecology-section" class="cd-section">
-            <h4>Fire Ecology</h4>
+            <div class="text-h5 text-bold">Fire Ecology</div>
             <p>
                 While strong winds and flooding influence the character and structure of scrub habitats, fire has been the
                 historic primary force shaping these ecosystems.
@@ -178,7 +178,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="scrub-plants-section" class="cd-section">
-            <h4>Scrub Plants</h4>
+            <div class="text-h5 text-bold">Scrub Plants</div>
             <p>
                 East central Florida's barrier islands scrub is dominated primarily by saw palmetto and other common shrubs
                 such as nakedwood, tough buckthorn, rapanea, hercules club, bay, sea grapes and snowberry. Shrubby forms of
@@ -210,7 +210,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="scrub-animals-section" class="cd-section">
-            <h4>Scrub Animals</h4>
+            <div class="text-h5 text-bold">Scrub Animals</div>
             <p>
                 Some of Florida's most threatened and endangered species rely on scrub habitat—and many species are found
                 only in Florida. Among them are the gopher tortoise, the eastern indigo snake, the southeastern beach mouse,

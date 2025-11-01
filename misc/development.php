@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Coastal scene with ocean, sandy beach, tall buildings, and a person walking at sunset."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Habitat_Threats.php">Threats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Habitat_Threats.php" tabindex="0">Threats</a> &gt;
             <b>Shoreline Development</b>
         </div>
     </div>
@@ -62,11 +62,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Shoreline Development</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Land use changes from the growing population and urbanization in Florida and throughout the world have altered
             coastal ecosystems. Along the Indian River Lagoon, many habitats have been altered or removed to accommodate
             booming population growth.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: K. Roark, Flickr
@@ -78,19 +78,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#habitat-impacts-section" data-number="2">
+                        <a href="#habitat-impacts-section" data-number="2" aria-label="Skip to Habitat Impacts" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Habitat Impacts</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#water-impacts-section" data-number="3">
+                        <a href="#water-impacts-section" data-number="3" aria-label="Skip to Water Impacts" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Water Impacts</span>
                         </a>
@@ -107,7 +107,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="habitat-impacts-section" class="cd-section">
-            <h4>Habitat Impacts</h4>
+            <div class="text-h5 text-bold">Habitat Impacts</div>
             <p>
                 Since the 1950s, an estimated 75 percent of the Indian River Lagoon’s mangroves and salt marshes have been
                 destroyed, altered or functionally isolated. These marginal habitats have been removed and filled with dredged
@@ -135,7 +135,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="water-impacts-section" class="cd-section">
-            <h4>Water Impacts</h4>
+            <div class="text-h5 text-bold">Water Impacts</div>
             <p>
                 Development of the built human environment has greatly increased the amount of freshwater that drains to
                 the Indian River Lagoon. This change in the natural volume and timing of freshwater inputs to the lagoon has

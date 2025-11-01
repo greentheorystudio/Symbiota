@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Aerial view of beach with turquoise water, white sand, and nearby buildings."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Beaches</b>
         </div>
     </div>
@@ -62,11 +62,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Beaches</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Beaches lie at the boundary between land and ocean. Florida’s Atlantic beaches, especially those in the Indian
             River Lagoon area, are dynamic, high-energy zones. Though harsh and seemingly barren, beaches are complex habitats
             that support many species of animals and plants.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Vero Beach, Florida. Photo credit: D. Piraino, Flickr
@@ -78,49 +78,49 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#beach-dynamics-section" data-number="2">
+                        <a href="#beach-dynamics-section" data-number="2" aria-label="Skip to Beach Dynamics" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Beach Dynamics</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#beach-plants-section" data-number="3">
+                        <a href="#beach-plants-section" data-number="3" aria-label="Skip to Beach Plants" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Beach Plants</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#animals-section" data-number="4">
+                        <a href="#animals-section" data-number="4" aria-label="Skip to Animals" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Animals</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#invertebrates-section" data-number="5">
+                        <a href="#invertebrates-section" data-number="5" aria-label="Skip to Invertebrates" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Invertebrates</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#birds-section" data-number="6">
+                        <a href="#birds-section" data-number="6" aria-label="Skip to Birds" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Birds</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#reptiles-section" data-number="7">
+                        <a href="#reptiles-section" data-number="7" aria-label="Skip to Reptiles" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Reptiles</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#mammals-section" data-number="8">
+                        <a href="#mammals-section" data-number="8" aria-label="Skip to Mammals" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Mammals</span>
                         </a>
@@ -141,7 +141,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="beach-dynamics-section" class="cd-section">
-            <h4>Beach Dynamics</h4>
+            <div class="text-h5 text-bold">Beach Dynamics</div>
             <p>
                 <b><i>Abiotic factors</i></b> such as wave action, erosion, sand accretion by winds, overwash, and the deposition of salt
                 spray are physical processes that contribute to beach and dune formation.
@@ -174,7 +174,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="beach-plants-section" class="cd-section">
-            <h4>Beach Plants</h4>
+            <div class="text-h5 text-bold">Beach Plants</div>
             <p>
                 Intense wave action, strong winds, and the presence of sea water make it difficult for many species of plants
                 to colonize beach areas directly along the shoreline. However, several species are able to become established
@@ -211,7 +211,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="animals-section" class="cd-section">
-            <h4>Animals</h4>
+            <div class="text-h5 text-bold">Animals</div>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
                     <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/4_Black_Skimmer_Beach1_WaltersL.jpg" alt="Flock of black skimmers with red bills standing on coarse sand." />
@@ -226,12 +226,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <p>
                 Many species utilize beaches as feeding areas. Sandpipers and other shorebirds, wading birds, and even some
-                fish such as the Florida pompano (<a href="../taxa/index.php?taxon=7640"><i>Trachinotus carolinus</i></a>) employ the surf zone to prey on animals that either
+                fish such as the Florida pompano (<a href="../taxa/index.php?taxon=7640" class="text-italic" tabindex="0">Trachinotus carolinus</a>) employ the surf zone to prey on animals that either
                 wash out of the sand due to wave action, or come close enough to the shore to be captured.
             </p>
         </div>
         <div id="invertebrates-section" class="cd-section">
-            <h4>Invertebrates</h4>
+            <div class="text-h5 text-bold">Invertebrates</div>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
                     <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_Ocypode_quadrata_Maureen_McNally.jpg" alt="Small beige ghost crab on sand." />
@@ -254,7 +254,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="birds-section" class="cd-section">
-            <h4>Birds</h4>
+            <div class="text-h5 text-bold">Birds</div>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
                     <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_I_Brought_Lunch_Mary_White.jpg" alt="Seagull holding a fish in its beak against a blue background." />
@@ -271,7 +271,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="reptiles-section" class="cd-section">
-            <h4>Reptiles</h4>
+            <div class="text-h5 text-bold">Reptiles</div>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">
                     <img style="border:0;width:500px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_11_DubrickU2.jpg" alt="Sea turtle popping its head out of the water." />
@@ -298,7 +298,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="mammals-section" class="cd-section">
-            <h4>Mammals</h4>
+            <div class="text-h5 text-bold">Mammals</div>
             <p>
                 Some mammals also exploit beaches for feeding. Raccoons, feral cats and foxes patrol the wrack line at the
                 high-water mark for morsels, and scavenge eggs from sea turtle nests.

@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Person holding a large clump of muck with both hands near a boat."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Habitat_Threats.php">Threats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Habitat_Threats.php" tabindex="0">Threats</a> &gt;
             <b>Muck & Nutrients</b>
         </div>
     </div>
@@ -62,10 +62,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Muck & Nutrients</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Black, sticky and smelly, and coating more and more of the bottom of the Indian River Lagoon, the tarry sediments
             known as muck pose a major threat to the estuary’s function and health.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: H. Sweat
@@ -77,19 +77,19 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#nutrients-section" data-number="2">
+                        <a href="#nutrients-section" data-number="2" aria-label="Skip to Nutrients and Harmful Wastes" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Nutrients and Harmful Wastes</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#remediation-section" data-number="3">
+                        <a href="#remediation-section" data-number="3" aria-label="Skip to Remediation" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Remediation</span>
                         </a>
@@ -129,7 +129,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="nutrients-section" class="cd-section">
-            <h4>Nutrients and Harmful Wastes</h4>
+            <div class="text-h5 text-bold">Nutrients and Harmful Wastes</div>
             <p>
                 In addition to suspended sediments, storm water runoff (non-point pollution) from urban and agricultural areas
                 can contain high levels of industrial, automotive and household chemicals, fertilizers, pesticides, and animal
@@ -167,7 +167,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="remediation-section" class="cd-section">
-            <h4>Remediation</h4>
+            <div class="text-h5 text-bold">Remediation</div>
             <p>
                 Muck removal dredging projects are a major avenue to address harmful sediments in the Indian River Lagoon.
                 In Brevard County alone, remediation projects aim to remove roughly 6 million cubic yards of sediments that

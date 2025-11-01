@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Close-up of underwater seagrass with overlapping green and brown blades."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Seagrass Beds</b>
         </div>
     </div>
@@ -62,11 +62,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Seagrass Beds</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Often likened to the rich, grassy meadows of bucolic landscapes, seagrass beds are common features of coastal
             shallows and estuaries from the tropics to the Arctic Circle. Of the 72 species identified worldwide, seven are
             found in Florida—all of which grow in the Indian River Lagoon.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: J. St. John, Wikimedia Commons
@@ -78,31 +78,31 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#value-section" data-number="2">
+                        <a href="#value-section" data-number="2" aria-label="Skip to The Value of Seagrasses" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">The Value of Seagrasses</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#threats-section" data-number="3">
+                        <a href="#threats-section" data-number="3" aria-label="Skip to Threats to Seagrass Communities" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Threats to Seagrass Communities</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#management-section" data-number="4">
+                        <a href="#management-section" data-number="4" aria-label="Skip to Management and Restoration" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Management and Restoration</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#further-reading-section" data-number="5">
+                        <a href="#further-reading-section" data-number="5" aria-label="Skip to Further Reading" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Further Reading</span>
                         </a>
@@ -133,7 +133,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="value-section" class="cd-section">
-            <h4>The Value of Seagrasses</h4>
+            <div class="text-h5 text-bold">The Value of Seagrasses</div>
             <p>
                 A single acre of seagrass can produce over 10 tons of leaves per year. By comparison, an acre of most grass
                 forage crops like alfalfa and switchgrasses produce from 3 to 8 tons of vegetation per year. This high level
@@ -193,7 +193,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="threats-section" class="cd-section">
-            <h4>Threats to Seagrass Communities</h4>
+            <div class="text-h5 text-bold">Threats to Seagrass Communities</div>
             <p>
                 Seagrasses are subject to a number of naturally occurring stresses including storms, excessive grazing by
                 herbivores and disease. Human-made threats include point and non-point sources of pollution, reduced water
@@ -215,7 +215,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </figure>
             </div>
 
-            <h5>Storms, Grazing and Disease</h5>
+            <div class="text-h6 text-bold">Storms, Grazing and Disease</div>
             <p>
                 Several natural processes can negatively affect seagrasses. Wind-driven waves from heavy storms can break
                 or uproot seagrasses. Additionally, a number of small and large marine animals disturb seagrasses while foraging,
@@ -249,7 +249,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 North America. Introduced seaweed species can also compete with and displace native seagrasses.
             </p>
 
-            <h5>Human Impacts</h5>
+            <div class="text-h6 text-bold">Human Impacts</div>
             <p>
                 By far, human activities have the greatest impact on Indian River Lagoon seagrasses.
             </p>
@@ -297,7 +297,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="management-section" class="cd-section">
-            <h4>Management and Restoration</h4>
+            <div class="text-h5 text-bold">Management and Restoration</div>
             <p>
                 As of 2015, the Indian River Lagoon had approximately 59,000 acres of seagrass coverage, down from 80,000
                 in 2007, a decline of approximately 26 percent. Since the 1940s, some areas of the lagoon have completely
@@ -344,7 +344,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="further-reading-section" class="cd-section">
-            <h4>Further Reading</h4>
+            <div class="text-h5 text-bold">Further Reading</div>
             <ul class="further-reading-list">
                 <li>
                     Almasi, M. N., C. M. Hoskin, J. K. Reed and J. Milo. 1987. Effects of natural and artificial Thalassia on rates of

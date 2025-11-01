@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Dirt path winding through a dense, mossy forest with lush greenery."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Maritime Hammocks</b>
         </div>
     </div>
@@ -62,12 +62,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Maritime Hammocks</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Maritime hammocks, also known as maritime forests, tropical hammocks or coastal hammocks, are narrow bands of
             hardwood forest that develop almost exclusively on stabilized backdunes of barrier islands, inland of primary
             dunes and scrub. Generally dominated by species of broad-leaved evergreen trees and shrubs, maritime hammocks
             are climax communities influenced heavily by salt spray.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: R. Rasmussen
@@ -79,25 +79,25 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#hammock-dynamics-section" data-number="2">
+                        <a href="#hammock-dynamics-section" data-number="2" aria-label="Skip to Hammock Dynamics" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Hammock Dynamics</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#hammock-plants-section" data-number="3">
+                        <a href="#hammock-plants-section" data-number="3" aria-label="Skip to Hammock Plants" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Maritime Hammock Plants</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#hammock-animals-section" data-number="4">
+                        <a href="#hammock-animals-section" data-number="4" aria-label="Skip to Hammock Animals" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Maritime Hammock Animals</span>
                         </a>
@@ -129,14 +129,14 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="hammock-dynamics-section" class="cd-section">
-            <h4>Hammock Dynamics</h4>
+            <div class="text-h5 text-bold">Hammock Dynamics</div>
             <p>
                 Many factors influence whether particular species will be successful colonizers of the maritime forest. Soil
                 composition, salt spray, fire, hydrology and human activity are all major influencers of hammock plant community
                 composition.
             </p>
 
-            <h5>Soils</h5>
+            <div class="text-h6 text-bold">Soils</div>
             <p>
                 Soils are predominantly composed of either sand or peat. Sandy soils are more common along forested dune ridges,
                 while peat is more common among interdune swales and wetlands.
@@ -147,7 +147,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 is a tan or orange horizon which receives substances leeched from above.
             </p>
 
-            <h5>Salt Spray</h5>
+            <div class="text-h6 text-bold">Salt Spray</div>
             <p>
                 Tolerance to salt spray is considered the principal factor that controls vegetative cover in maritime forests.
                 Trees closest to the ocean are subject to onshore winds carrying sand and salt spray, which acts not only
@@ -179,7 +179,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </figure>
             </div>
 
-            <h5>Fire</h5>
+            <div class="text-h6 text-bold">Fire</div>
             <p>
                 Fire is considered an "organizer" of forest cover patterns on barrier islands in Florida. It has long been
                 a traditional agricultural tool for maintaining open areas, improving grazing lands, and eliminating pest
@@ -212,7 +212,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </figure>
             </div>
 
-            <h5>Hydrology</h5>
+            <div class="text-h6 text-bold">Hydrology</div>
             <p>
                 Maritime forests have distinctive hydrological features that affect a barrier island's natural communities,
                 and help determine whether human development can be sustained.
@@ -236,7 +236,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 water intrusion into surface waters on the island.
             </p>
 
-            <h5>Other Human Impacts</h5>
+            <div class="text-h6 text-bold">Other Human Impacts</div>
             <p>
                 In addition to water management, habitat fragmentation and road construction are two other major impacts of
                 human activities on maritime hammock barrier islands in Florida.
@@ -269,7 +269,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="hammock-plants-section" class="cd-section">
-            <h4>Maritime Hammock Plants</h4>
+            <div class="text-h5 text-bold">Maritime Hammock Plants</div>
             <p>
                 Florida’s maritime hammocks fall into three major types: temperate broad-leaved forest, also known as evergreen
                 forest; southern mixed hardwood forest; and tropical forest.
@@ -282,7 +282,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="hammock-animals-section" class="cd-section">
-            <h4>Maritime Hammock Animals</h4>
+            <div class="text-h5 text-bold">Maritime Hammock Animals</div>
             <p>
                 Many different animal species inhabit Florida's barrier island communities. In maritime hammocks, insects,
                 small mammals, reptiles and birds dominate the fauna.

@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Cracked earth of a dried riverbed at sunset, with grasses along the edges and a clear sky."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Salt Marshes</b>
         </div>
     </div>
@@ -62,11 +62,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Salt Marshes</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Occurring in the zone between high and low tide, salt marshes are common in sheltered coastal areas and along
             estuaries. Marshes act as nurseries to a wide variety of organisms, some of which are notably threatened or marketed
             as important fisheries species.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: A. Smith
@@ -78,37 +78,37 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#plant-adaptations-section" data-number="2">
+                        <a href="#plant-adaptations-section" data-number="2" aria-label="Skip to Plant Adaptations" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Plant Adaptations</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#distribution-section" data-number="3">
+                        <a href="#distribution-section" data-number="3" aria-label="Skip to Distribution & Regional Occurrence" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Distribution & Regional Occurrence</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#communities-section" data-number="4">
+                        <a href="#communities-section" data-number="4" aria-label="Skip to Types of Communities" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Types of Communities</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#species-section" data-number="5">
+                        <a href="#species-section" data-number="5" aria-label="Skip to Salt Marsh Species" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Salt Marsh Species</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#further-reading-section" data-number="6">
+                        <a href="#further-reading-section" data-number="6" aria-label="Skip to Further Reading" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Further Reading</span>
                         </a>
@@ -136,14 +136,14 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="plant-adaptations-section" class="cd-section">
-            <h4>Plant Adaptations</h4>
+            <div class="text-h5 text-bold">Plant Adaptations</div>
             <p>
                 Perched between terrestrial and marine environments, salt marshes are biologically diverse communities adapted
                 for harsh environmental conditions including flooding, low oxygen (anoxia), salinity fluctuations and extreme
                 temperatures.
             </p>
 
-            <h5>Flooding & Anoxia</h5>
+            <div class="text-h6 text-bold">Flooding & Anoxia</div>
             <p>
                 Tidal flooding is a normal process in salt marshes. Low- and mid-marsh areas can be submerged for hours during
                 daily tidal cycles, and high marshes can experience storm surge that can affect more upland vegetation. The
@@ -175,7 +175,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 passages, called aerenchyma tissue, which transfer oxygen from the atmosphere to submerged roots.
             </p>
 
-            <h5>Salinity</h5>
+            <div class="text-h6 text-bold">Salinity</div>
             <p>
                 Salinity in salt marshes is highly variable because of the influx of both fresh and saltwater into the environment.
                 Freshwater enters upland marsh areas from terrestrial streams and rivers, increasing during periods of high
@@ -206,7 +206,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="distribution-section" class="cd-section">
-            <h4>Distribution & Regional Occurrence</h4>
+            <div class="text-h5 text-bold">Distribution & Regional Occurrence</div>
             <p>
                 Salt marsh habitats are found at nearly all latitudes, transitioning into mangrove forests in the tropics/subtropics.
                 In the United States, the majority of the four million acres of salt marshes are along the east coast from
@@ -218,8 +218,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="communities-section" class="cd-section">
-            <h4>Types of Communities</h4>
-            <h5>Salt Marsh-Mangrove Transition</h5>
+            <div class="text-h5 text-bold">Types of Communities</div>
+            <div class="text-h6 text-bold">Salt Marsh-Mangrove Transition</div>
             <div style="clear:both;">
                 <figure style="float: left;margin-right: 30px;">
                     <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/5_mangrove_salt_marsh_transition.jpg" alt="Winding stream flowing through lush vegetation with grasses, shrubs, and a partly cloudy sky." />
@@ -236,7 +236,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </p>
             </div>
 
-            <h5>High Marsh</h5>
+            <div class="text-h6 text-bold">High Marsh</div>
             <p>
                 High marsh occurs in areas above the mean high-water mark and is not commonly flooded by tides. Stands of
                 <i>Spartina</i>, <i>Juncus</i>, <i>Salicornia</i> and <i>Distichlis</i> are mixed with various mangrove species. On the east coast of
@@ -245,12 +245,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 IRL.
             </p>
 
-            <h5>Oligohaline Marsh</h5>
+            <div class="text-h6 text-bold">Oligohaline Marsh</div>
             <div style="clear:both;">
                 <figure style="float: left;margin-right: 30px;">
                     <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/6_salt_marsh_creek.jpg" alt="Marshland with winding water channels, tall grasses, and a clear blue sky on a sunny day." />
                     <figcaption>
-                        <a href="https://www.flickr.com/photos/ryanregister/2454522021/sizes/l/" target="_blank"><i>Credit: Ryan Register, Flickr</i></a>
+                        <a href="https://www.flickr.com/photos/ryanregister/2454522021/sizes/l/" target="_blank" aria-label="External link - opens in separate tab" tabindex="0"><i>Credit: Ryan Register, Flickr</i></a>
                     </figcaption>
                 </figure>
                 <p>
@@ -261,7 +261,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </p>
             </div>
 
-            <h5>Salt Pans</h5>
+            <div class="text-h6 text-bold">Salt Pans</div>
             <p>
                 Salt pans form in low-latitude marshes where high soil salinities of 100 parts per thousand or greater create
                 bare patches devoid of vegetation. These barrens are often bordered by highly salt-tolerant plants including
@@ -271,7 +271,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="species-section" class="cd-section">
-            <h4>Salt Marsh Species</h4>
+            <div class="text-h5 text-bold">Salt Marsh Species</div>
             <p>
                 Salt marsh vegetation can vary between community types. However, the most common genera of foundation plants
                 in Florida marshes include <i>Spartina</i>, <i>Juncus</i>, <i>Distichlis</i> and <i>Batis</i>. These vascular plants and associated algae
@@ -313,7 +313,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="further-reading-section" class="cd-section">
-            <h4>Further Reading</h4>
+            <div class="text-h5 text-bold">Further Reading</div>
             <ul class="further-reading-list">
                 <li>
                     Adam, P. 1990. <i>Saltmarsh ecology.</i> Cambridge University Press. Cambridge, UK. 461 pp.

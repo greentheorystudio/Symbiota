@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Four stingrays swimming in dark green water, illuminated to show their smooth bodies and long tails."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -55,11 +55,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Stewardship</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Critical to the Indian River Lagoon’s remarkable biodiversity is its water quality—drawing humans, flora and
             fauna alike. Yet many human activities on the lagoon directly affect the estuary’s water quality, diminishing
             quality of life both above and below water.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: A. Smith
@@ -71,43 +71,43 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#fertilizer-section" data-number="2">
+                        <a href="#fertilizer-section" data-number="2" aria-label="Skip to Reduce fertilizer use" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Reduce fertilizer use</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#rain-section" data-number="3">
+                        <a href="#rain-section" data-number="3" aria-label="Skip to Send only rain down storm drains" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Send only rain down storm drains</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#pet-section" data-number="4">
+                        <a href="#pet-section" data-number="4" aria-label="Skip to Pick up after your pet" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Pick up after your pet</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#plant-section" data-number="5">
+                        <a href="#plant-section" data-number="5" aria-label="Skip to Right plant, right place" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Right plant, right place</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#footprints-section" data-number="6">
+                        <a href="#footprints-section" data-number="6" aria-label="Skip to Leave only footprints" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Leave only footprints</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#volunteer-section" data-number="7">
+                        <a href="#volunteer-section" data-number="7" aria-label="Skip to Volunteer" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Volunteer</span>
                         </a>
@@ -138,7 +138,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="fertilizer-section" class="cd-section">
-            <h4>Reduce fertilizer use.</h4>
+            <div class="text-h5 text-bold">Reduce fertilizer use.</div>
             <p>
                 Indiscriminate use of fertilizers results in deteriorating water quality in the Indian River Lagoon as well
                 as waterways everywhere. Fertilizers are composed primarily of nitrogen, phosphorus and potassium which are
@@ -179,7 +179,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 threat to healthy seagrass growth.
             </p>
             <p>
-                Become familiar with the <a href="https://sfyl.ifas.ufl.edu/miami-dade/natural-resources/florida-yards-and-neighborhoods-fyn/" target="_blank">Florida Yards & Neighborhoods program</a>,
+                Become familiar with the <a href="https://sfyl.ifas.ufl.edu/miami-dade/natural-resources/florida-yards-and-neighborhoods-fyn/" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">Florida Yards & Neighborhoods program</a>,
                 run by the University of Florida Cooperative Extension service and supported by UF/Institute of Food and Agricultural
                 Sciences. This program educates homeowners about the design, installation, and maintenance of healthy landscapes
                 that use a minimum of water, fertilizer, and pesticides.
@@ -217,7 +217,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="rain-section" class="cd-section">
-            <h4>Send only rain down storm drains.</h4>
+            <div class="text-h5 text-bold">Send only rain down storm drains.</div>
             <p>
                 An estimated that 75 billion gallons of stormwater runoff in Brevard County makes its way into the IRL annually.
                 Most of this is collected from hard, impervious surfaces: streets, parking lots, sidewalks, and rooftops via
@@ -237,7 +237,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <p>
                 To help keep sediment, leaves, yard clippings, and floating litter that would normally reach the IRL via storm
-                drains, many local governments as well as the <a href="https://onelagoon.org/" target="_blank">Indian River Lagoon National Estuary Program</a> have been instrumental
+                drains, many local governments as well as the <a href="https://onelagoon.org/" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">Indian River Lagoon National Estuary Program</a> have been instrumental
                 in installing a number of stormwater treatment devices known as baffle boxes throughout the IRL. Although
                 baffle boxes do not remove dissolved nutrients, this inexpensive, relatively simple technology has been
                 tremendously successful in preventing much solid material from entering the lagoon.
@@ -288,7 +288,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="pet-section" class="cd-section">
-            <h4>Pick up after your pet.</h4>
+            <div class="text-h5 text-bold">Pick up after your pet.</div>
             <p>
                 It’s true: animal waste is gross. Understandably, some pet owners are reluctant to pick up after their pets
                 for a variety of reasons: inconvenience; unsightliness; odor. Although more than 60 percent of dog owners
@@ -349,7 +349,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="plant-section" class="cd-section">
-            <h4>Right plant, right place.</h4>
+            <div class="text-h5 text-bold">Right plant, right place.</div>
             <p>
                 Many homeowners take pride in a beautiful landscape. Landscaping increases the aesthetic and curb appeal of
                 dwellings, and enhances property value. Florida’s nursery and landscaping industry is big business, valued
@@ -409,13 +409,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <ul class="statictext">
                 <li>
-                    <a href="https://ffl.ifas.ufl.edu/" target="_blank">Florida Friendly Landscaping</a>, by the University of Florida Extension
+                    <a href="https://ffl.ifas.ufl.edu/" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">Florida Friendly Landscaping</a>, by the University of Florida Extension
                 </li>
                 <li>
-                    <a href="http://publicserver2.sjrwmd.com/waterwise/search.jsp" target="_blank">Waterwise Plants</a>, by the St. Johns River Water Management District
+                    <a href="http://publicserver2.sjrwmd.com/waterwise/search.jsp" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">Waterwise Plants</a>, by the St. Johns River Water Management District
                 </li>
                 <li>
-                    <a href="https://www.fnps.org/plants" target="_blank">Florida Native Plant Society</a>
+                    <a href="https://www.fnps.org/plants" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">Florida Native Plant Society</a>
                 </li>
             </ul>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
@@ -428,7 +428,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="footprints-section" class="cd-section">
-            <h4>Leave only footprints.</h4>
+            <div class="text-h5 text-bold">Leave only footprints.</div>
             <p>
                 The Indian River Lagoon’s natural beauty is irresistible, drawing thousands of people every year for kayaking,
                 boating, canoeing, camping, sightseeing, wildlife viewing and more. Tourism and recreation contributes significantly
@@ -440,7 +440,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 on the lagoon by “leaving only footprints”
             </p>
             <p>
-                <a href="https://lnt.org/why/7-principles/" target="_blank">Leave No Trace</a> principles provide a guideline
+                <a href="https://lnt.org/why/7-principles/" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">Leave No Trace</a> principles provide a guideline
                 for reducing human impact on the natural environment.
             </p>
             <ul class="statictext">
@@ -477,7 +477,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="volunteer-section" class="cd-section">
-            <h4>Volunteer.</h4>
+            <div class="text-h5 text-bold">Volunteer.</div>
             <p>
                 Many hands make light work – and the Indian River Lagoon needs all hands on deck to help restore and maintain
                 its many habitats and natural resources. Shoreline cleanups, mangrove planting, water quality monitoring,
@@ -486,7 +486,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <p>
                 For more information on volunteer activities, outreach and other opportunities, visit the Indian River
-                Lagoon Council’s website at <a href="https://onelagoon.org/find-volunteer-event/" target="_blank">OneLagoon.org</a>.
+                Lagoon Council’s website at <a href="https://onelagoon.org/find-volunteer-event/" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">OneLagoon.org</a>.
             </p>
         </div>
     </div>

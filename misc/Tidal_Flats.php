@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Sandy beach with wind-formed patterns, calm water, and a small island under a clear sky."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Tidal Flats</b>
         </div>
     </div>
@@ -62,11 +62,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Tidal Flats</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             In some areas of the Indian River Lagoon, when the tides recede, an ephemeral landscape reveals itself. At first
             glance, the lagoon’s silty-sandy bottom may seem like a barren mudscape – but just below the surface an abundance
             of life is burrowed in, waiting for the return of the lagoon’s waters.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: D. Fischer
@@ -78,37 +78,37 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#mud-sand-section" data-number="2">
+                        <a href="#mud-sand-section" data-number="2" aria-label="Skip to Mud vs. Sand" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Mud vs. Sand</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#pros-cons-section" data-number="3">
+                        <a href="#pros-cons-section" data-number="3" aria-label="Skip to Ecological Pros and Cons" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Ecological Pros and Cons</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#threats-section" data-number="4">
+                        <a href="#threats-section" data-number="4" aria-label="Skip to Threats to Tidal Flats" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Threats to Tidal Flats</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#species-section" data-number="5">
+                        <a href="#species-section" data-number="5" aria-label="Skip to Tidal Flat Species" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Tidal Flat Species</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#further-reading-section" data-number="6">
+                        <a href="#further-reading-section" data-number="6" aria-label="Skip to Further Reading" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Further Reading</span>
                         </a>
@@ -142,7 +142,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="mud-sand-section" class="cd-section">
-            <h4>Mud vs. Sand</h4>
+            <div class="text-h5 text-bold">Mud vs. Sand</div>
             <p>
                 Tidal flats are highly dynamic, with sediments continuously on the move. Depending on sediment grain size,
                 tidal flats are generally categorized as either mud or sand flats.
@@ -197,7 +197,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="pros-cons-section" class="cd-section">
-            <h4>Ecological Pros and Cons</h4>
+            <div class="text-h5 text-bold">Ecological Pros and Cons</div>
             <p>
                 For benthic organisms, life in the muddy sands of tidal flats affords many advantages. They can retreat into
                 deeper sediments or burrows when threatened by predation. Able to move around, infaunal bivalves can survive
@@ -220,7 +220,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="threats-section" class="cd-section">
-            <h4>Threats to Tidal Flats</h4>
+            <div class="text-h5 text-bold">Threats to Tidal Flats</div>
             <p>
                 Clean water and sediments are critical for healthy lagoon habitats. Tidal flat areas face a number of human-made
                 and natural threats, including sea level rise, loss of habitat, salinity fluctuations, pollution, erosion
@@ -228,11 +228,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <p>
                 For more information on the challenges facing the tidal flats and other areas of the lagoon, visit the
-                <a href="Habitat_Threats.php">Threats resource page</a>.
+                <a href="Habitat_Threats.php" tabindex="0">Threats resource page</a>.
             </p>
         </div>
         <div id="species-section" class="cd-section">
-            <h4>Tidal Flat Species</h4>
+            <div class="text-h5 text-bold">Tidal Flat Species</div>
             <p>
                 Tidal flats host a diverse biotic assemblage, ranging from microscopic organisms to large crabs, fish and
                 wading birds.
@@ -273,7 +273,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </ul>
         </div>
         <div id="further-reading-section" class="cd-section">
-            <h4>Further Reading</h4>
+            <div class="text-h5 text-bold">Further Reading</div>
             <ul class="further-reading-list">
                 <li>
                     Ambrose, W. G. 1984. Role of predatory infauna in structuring marine soft-bottom communities. Mar. Ecol. Prog. Ser. 17(2): 109-115.
@@ -339,7 +339,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </li>
                 <li>
                     Koulouri, P. Preliminary study of hyperbenthos in Heraklion Bay (Cretan Sea). Accessed 5 April 2010. Available
-                    at: <a href="https://www.biomareweb.org/3.6.html" target="_blank">https://www.biomareweb.org/3.6.html</a>.
+                    at: <a href="https://www.biomareweb.org/3.6.html" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">https://www.biomareweb.org/3.6.html</a>.
                 </li>
                 <li>
                     Little, C. 2000. The Biology of Soft Shores and Estuaries. Oxford University Press, Oxford. 252 pp.

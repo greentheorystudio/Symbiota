@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Close-up of a circular teal-colored animal on a green background, showing intricate radial symmetry of the animal and tentacles extending from its outer edge."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -55,10 +55,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Biodiversity</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             The Indian River Lagoon’s diverse montage of habitats creates a broad variety of opportunities for life in the estuary.
             Thousands of species of plants, birds, fish and mammals call the lagoon home.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: M. Spradley
@@ -70,31 +70,31 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#location-section" data-number="2">
+                        <a href="#location-section" data-number="2" aria-label="Skip to A Unique Location" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">A Unique Location</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#what-is-section" data-number="3">
+                        <a href="#what-is-section" data-number="3" aria-label="Skip to What is Biodiversity?" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">What is Biodiversity?</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#threats-section" data-number="4">
+                        <a href="#threats-section" data-number="4" aria-label="Skip to Threats to Biodiversity" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Threats to Biodiversity</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#further-reading-section" data-number="5">
+                        <a href="#further-reading-section" data-number="5" aria-label="Skip to Further Reading" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Further Reading</span>
                         </a>
@@ -134,7 +134,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="location-section" class="cd-section">
-            <h4>A Unique Location</h4>
+            <div class="text-h5 text-bold">A Unique Location</div>
             <p>
                 The IRL owes its incredible biodiversity to two main factors: its unique geographical position, and its diverse
                 montage of habitat types.
@@ -177,7 +177,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="what-is-section" class="cd-section">
-            <h4>What is Biodiversity?</h4>
+            <div class="text-h5 text-bold">What is Biodiversity?</div>
             <p>
                 Biodiversity may be defined as the measure of how healthy an ecosystem is. Healthy ecosystems support high
                 biological diversity, while stressed or highly disturbed ecosystems do not. Biodiversity encompasses not
@@ -210,7 +210,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="threats-section" class="cd-section">
-            <h4>Threats to Biodiversity</h4>
+            <div class="text-h5 text-bold">Threats to Biodiversity</div>
             <p>
                 The factors which threaten biodiversity in estuaries and in the oceans are generally the same as those which
                 affect biodiversity in terrestrial systems: overexploitation, physical alteration of habitat areas, alien species
@@ -232,7 +232,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="further-reading-section" class="cd-section">
-            <h4>Further Reading</h4>
+            <div class="text-h5 text-bold">Further Reading</div>
             <ul class="further-reading-list">
                 <li>
                     Norse, Elliot A. 1993. Global Marine Biological Diversity: A Strategy for Building Conservation Into Decision Making.

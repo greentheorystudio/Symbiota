@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Lightning bolts strike over water during a thunderstorm, with rocks in the foreground."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Habitat_Threats.php">Threats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Habitat_Threats.php" tabindex="0">Threats</a> &gt;
             <b>Extreme Weather</b>
         </div>
     </div>
@@ -62,11 +62,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Extreme Weather</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Salt marshes, mangroves and other coastal ecosystems can usually recover quickly from natural disturbances such
             as fire and hurricanes. However, when disturbance events occur in close succession, they may have lasting effects
             on the ecosystems.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: N. Adams
@@ -78,13 +78,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#erosion-section" data-number="2">
+                        <a href="#erosion-section" data-number="2" aria-label="Skip to Erosion" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Erosion</span>
                         </a>
@@ -129,7 +129,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="erosion-section" class="cd-section">
-            <h4>Erosion</h4>
+            <div class="text-h5 text-bold">Erosion</div>
             <p>
                 Sources of IRL tidal flat erosion are many. Storms, wind induced waves, hurricanes, epibenthic bioturbation,
                 prop scarring, etc., can singly and sometimes synergistically contribute to the erosion of tidal flats. Because

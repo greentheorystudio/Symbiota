@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Oyster shells on a muddy shore with mangroves and water in the background."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Oyster Reefs</b>
         </div>
     </div>
@@ -62,12 +62,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Oyster Reefs</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Oysters have been an important part of Florida’s human history for thousands of years. Huge shell middens at
             archaeological sites throughout the state indicate the species’ importance to the indigenous people of Florida;
             in modern times, oysters have continued to serve as a valuable fishery. A better understanding of their ecological
             role has also emerged.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: P. Sacks
@@ -79,31 +79,31 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#reef-formation-section" data-number="2">
+                        <a href="#reef-formation-section" data-number="2" aria-label="Skip to Reef Formation" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Reef Formation</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#environmental-benefits-section" data-number="3">
+                        <a href="#environmental-benefits-section" data-number="3" aria-label="Skip to Environmental Benefits" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Environmental Benefits</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#threats-section" data-number="4">
+                        <a href="#threats-section" data-number="4" aria-label="Skip to Threats and Restoration" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Threats and Restoration</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#further-reading-section" data-number="5">
+                        <a href="#further-reading-section" data-number="5" aria-label="Skip to Further Reading" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Further Reading</span>
                         </a>
@@ -137,7 +137,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="reef-formation-section" class="cd-section">
-            <h4>Reef Formation</h4>
+            <div class="text-h5 text-bold">Reef Formation</div>
             <p>
                 Oyster reefs are built primarily by the eastern oyster, <i>Crassostrea virginica</i>, through successive reproduction
                 and settlement of larvae onto existing reef structure. Oysters in Florida spawn from late spring through
@@ -193,7 +193,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="environmental-benefits-section" class="cd-section">
-            <h4>Environmental Benefits</h4>
+            <div class="text-h5 text-bold">Environmental Benefits</div>
             <p>
                 Oysters provide numerous benefits to their surrounding ecosystems, as well as to humans.
             </p>
@@ -224,7 +224,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="threats-section" class="cd-section">
-            <h4>Threats and Restoration</h4>
+            <div class="text-h5 text-bold">Threats and Restoration</div>
             <p>
                 Oyster reef restoration has been a concern for resource managers all along the East Coast of the United States,
                 but especially in areas where oyster harvesting has historically been commercially important. Over-harvesting,
@@ -259,7 +259,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="further-reading-section" class="cd-section">
-            <h4>Further Reading</h4>
+            <div class="text-h5 text-bold">Further Reading</div>
             <ul class="further-reading-list">
                 <li>
                     Bahr, L.M. and W.P. Lanier. 1981. The Ecology of Intertidal Oyster Reefs of the South Atlantic Coast: a Community Profile.

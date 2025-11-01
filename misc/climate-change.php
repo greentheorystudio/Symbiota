@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Satellite view of a hurricane approaching Florida, with a visible eye and city lights on land."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Habitat_Threats.php">Threats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Habitat_Threats.php" tabindex="0">Threats</a> &gt;
             <b>Climate Change</b>
         </div>
     </div>
@@ -62,12 +62,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Climate Change</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             The Indian River Lagoon’s abundance of natural fauna and flora is a result of its geographical overlap of both
             temperate and subtropical biomes. Impacts from sea level rise, the most immediate and emergent threat due to climate
             change, directly affects the ecology, hydrodynamics, circulation patterns, depth and salinity of the many interconnected
             habitats of this shallow, marine-connected ecosystem.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: NOAA/Wikimedia Commons
@@ -79,13 +79,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#sea-level-rise-section" data-number="1">
+                        <a href="#sea-level-rise-section" data-number="1" aria-label="Skip to Sea Level Rise" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Sea Level Rise</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#impacts-section" data-number="2">
+                        <a href="#impacts-section" data-number="2" aria-label="Skip to Impacts" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Impacts</span>
                         </a>
@@ -96,7 +96,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div id="innertext">
         <div id="sea-level-rise-section" class="cd-section">
-            <h4>Sea Level Rise</h4>
+            <div class="text-h5 text-bold">Sea Level Rise</div>
             <p>
                 Sea level rise in response to global warming is a major concern to all coastal wetlands and tidal flats. Current
                 estimates predict sea levels to rise between 12 inches to 8 feet by 2100. Though estuaries are thought of
@@ -145,7 +145,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="impacts-section" class="cd-section">
-            <h4>Impacts</h4>
+            <div class="text-h5 text-bold">Impacts</div>
             <p>
                 <b>Mangrove communities</b>, occurring along the fringes of intertidal regions throughout most of the IRL, stabilize
                 shorelines and also provide habitat and nursery area for IRL's many ecologically and recreationally important

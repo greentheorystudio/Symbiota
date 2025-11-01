@@ -25,12 +25,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Storm clouds over water with a docked boat and distant red lighthouse."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -47,7 +47,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
             <b>Threats</b>
         </div>
     </div>
@@ -55,11 +55,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Threats</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Humans are drawn to the Indian River Lagoon estuary for many of the same reasons its abundance of wildlife is:
             a favorable climate, a coastal location, a wealth of natural resources. However, the increasing numbers of humans
             in the lagoon watershed over the last century has disrupted its fragile ecological balance.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: J. Mandeville
@@ -73,7 +73,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         restore and protect the Indian River Lagoon’s unique ecology.
     </p>
     <div style="display:flex;justify-content: space-around;align-content: center;">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/impoundments.php">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/impoundments.php" aria-label="Go to Mosquito Impoundments" tabindex="0">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/12_PowellD2_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <span class="screen-reader-only" role="img" aria-label="Aerial view of coastal islands and water channels under a partly cloudy sky."> </span>
@@ -84,7 +84,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </div>
             </div>
         </a>
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/development.php">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/development.php" aria-label="Go to Shoreline Development" tabindex="0">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/stuart_shore_KRoark_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <span class="screen-reader-only" role="img" aria-label="Beach with waves, high-rises, palm trees, and a pool under a partly cloudy sky."> </span>
@@ -95,7 +95,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </div>
             </div>
         </a>
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/muck-nutrients.php">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/muck-nutrients.php" aria-label="Go to Muck & Nutrients" tabindex="0">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/muck_LHS_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <span class="screen-reader-only" role="img" aria-label="Close-up of two hands holding Indian River Lagoon muck."> </span>
@@ -108,7 +108,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         </a>
     </div>
     <div style="display:flex;justify-content: space-around;align-content: center;margin-top: 10px;">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/invasives.php">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/invasives.php" aria-label="Go to Invasive Species" tabindex="0">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/lionfish_FWS_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <span class="screen-reader-only" role="img" aria-label="Lionfish with striped pattern and long spines swimming above gravel bottom."> </span>
@@ -119,7 +119,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </div>
             </div>
         </a>
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/weather.php">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/weather.php" aria-label="Go to Extreme Weather" tabindex="0">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/17AdamsN1_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <span class="screen-reader-only" role="img" aria-label="Lightning storm over water with city lights in the distance."> </span>
@@ -130,7 +130,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </div>
             </div>
         </a>
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/climate-change.php">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/climate-change.php" aria-label="Go to Climate Change" tabindex="0">
             <div class="nav-item-container">
                 <div style='width:100%;height:250px;background-image: url("../content/imglib/static/dorian_NOAA_crop.jpg");background-position: center;background-repeat: no-repeat;background-size: cover;'></div>
                 <span class="screen-reader-only" role="img" aria-label="Satellite view of a hurricane with a visible eye approaching Florida."> </span>

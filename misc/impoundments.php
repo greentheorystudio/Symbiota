@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Aerial view of coastal landscape with water channels, islands, and shimmering sunlight."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Habitat_Threats.php">Threats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Habitat_Threats.php" tabindex="0">Threats</a> &gt;
             <b>Mosquito Impoundments</b>
         </div>
     </div>
@@ -62,11 +62,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Mosquito Impoundments</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             For humans, Florida's mangroves and salt marshes have historically been problem areas in one important respect:
             they are preferred breeding habitat for salt marsh mosquitoes. Impoundments were a solution—but one with several
             important ecological side effects.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: D. Powell
@@ -78,31 +78,31 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#history-section" data-number="2">
+                        <a href="#history-section" data-number="2" aria-label="Skip to History" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">History</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#improved-impoundments-section" data-number="3">
+                        <a href="#improved-impoundments-section" data-number="3" aria-label="Skip to Improved Impoundments" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Improved Impoundments</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#negative-impacts-section" data-number="4">
+                        <a href="#negative-impacts-section" data-number="4" aria-label="Skip to Negative Impacts" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Negative Impacts</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#further-reading-section" data-number="5">
+                        <a href="#further-reading-section" data-number="5" aria-label="Skip to Further Reading" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Further Reading</span>
                         </a>
@@ -152,7 +152,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="history-section" class="cd-section">
-            <h4>History</h4>
+            <div class="text-h5 text-bold">History</div>
             <p>
                 Before mosquito control methods like impoundments were in place, mosquito landings were among the highest
                 densities ever recorded in the continental United States, reaching 500 per person per minute in some areas
@@ -187,7 +187,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="improved-impoundments-section" class="cd-section">
-            <h4>Improved Impoundments</h4>
+            <div class="text-h5 text-bold">Improved Impoundments</div>
             <p>
                 In the 1960s, in an effort to reduce impoundment impacts, natural resources managers experimented with seasonal
                 flooding during peak mosquito breeding season. The rest of the year, dike culverts remained open to allow
@@ -229,9 +229,9 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="negative-impacts-section" class="cd-section">
-            <h4>Negative Impacts</h4>
+            <div class="text-h5 text-bold">Negative Impacts</div>
 
-            <h5>Water Levels</h5>
+            <div class="text-h6 text-bold">Water Levels</div>
             <p>
                 While only a thin film of water is enough to prevent salt marsh mosquitoes from laying eggs, impoundments
                 are typically flooded to depths of 6 to 20 inches (15 to 50 cm) above the ground surface to compensate for
@@ -241,7 +241,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 deep flooding.
             </p>
 
-            <h5>Water Quality</h5>
+            <div class="text-h6 text-bold">Water Quality</div>
             <p>
                 Closed impoundment significantly impacts soil chemistry and water quality. In soils, oxygen concentrations
                 can decrease, while nitrogen and sulfide concentrations rise. Water effects are myriad. Some impoundments
@@ -251,14 +251,14 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 with artesian well water, ecological turnover resulted, shifting from halophytic to freshwater communities.
             </p>
 
-            <h5>Salinity Fluctuations</h5>
+            <div class="text-h6 text-bold">Salinity Fluctuations</div>
             <p>
                 Excessive freshwater flows from storms, as well as runoff from agricultural and developed areas, can cause
                 extreme salinity fluctuations in the Indian River Lagoon estuary. Continuous exposure to lower salinity can
                 deplete populations of shallow burrowing organisms, resulting in damaging effects on food web dynamics.
             </p>
 
-            <h5>Effects on Fish and Invertebrates</h5>
+            <div class="text-h6 text-bold">Effects on Fish and Invertebrates</div>
             <p>
                 Several fish species have been greatly impacted by closed impoundments, particularly those that rely on mangrove
                 or salt marsh for nursery grounds. Important commercial and recreational fisheries have also experienced
@@ -267,7 +267,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 freshwater wetlands than marine or estuarine wetlands in some areas.
             </p>
 
-            <h5>Nutrient Flow</h5>
+            <div class="text-h6 text-bold">Nutrient Flow</div>
             <p>
                 In unaltered systems, nutrients from mangrove leaf fall, which are decomposed into particulate and dissolved
                 forms, are utilized in a variety of ways by many different organisms as mangroves are flushed by tides. In
@@ -277,7 +277,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="further-reading-section" class="cd-section">
-            <h4>Further Reading</h4>
+            <div class="text-h5 text-bold">Further Reading</div>
             <ul class="further-reading-list">
                 <li>
                     Brockmeyer, R.E., J.R. Rey, R.W. Virnstein, R.G. Gilmore, Jr., and L. Earnest. 1997. Rehabilitation of impounded
@@ -389,7 +389,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 <li>
                     Rey, J.R. and C.R. Rutledge, 2001. Mosquito Control Impoundments. Document # ENY-648, Entomology and Nematology Department,
                     Florida Cooperative Extension Service, Institute of Food and Agricultural Sciences, University of Florida. Available on the
-                    Internet at :  <a href="https://edis.ifas.ufl.edu" target="_blank">https://edis.ifas.ufl.edu</a>.
+                    Internet at :  <a href="https://edis.ifas.ufl.edu" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">https://edis.ifas.ufl.edu</a>.
                 </li>
                 <li>
                     Simberloff, D.S. 1983. Mangroves. In: Costa Rican Natural History. D.H. Janzen, ed. Pp. 273-276. University of Chicago

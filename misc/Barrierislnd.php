@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Misty landscape with water, green vegetation, and bare trees."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Barrier Islands</b>
         </div>
     </div>
@@ -62,12 +62,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Barrier Islands</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             The extensive Indian River Lagoon barrier island system along the east coast of Florida is the largest in the
             United States, consisting of approximately 189,300 hectares (467,700 acres). These islands separate the IRL
             from the Atlantic Ocean, and are an important defense against hurricanes, large waves, heavy winds and storm
             surges.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: R. Richards
@@ -79,13 +79,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#human-impacts-section" data-number="2">
+                        <a href="#human-impacts-section" data-number="2" aria-label="Skip to Human Impacts" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Human Impacts</span>
                         </a>
@@ -137,7 +137,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="human-impacts-section" class="cd-section">
-            <h4>Human Impacts</h4>
+            <div class="text-h5 text-bold">Human Impacts</div>
             <p>
                 Florida's barrier islands have been extensively developed and support a large human population, leaving
                 little of the original landscape unaltered.

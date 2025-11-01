@@ -46,12 +46,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Calm river surrounded by lush trees with sunlight reflecting on the water."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -70,10 +70,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Silent Sentinels</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             As signals of change in Florida’s Indian River Lagoon, tiny bottom-dwelling creatures known as benthic infauna
             punch above their weight.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container" style="font-size: 17px;font-style: italic;">
         The St. Lucie River at sunrise. The river is a major tributary to the Indian River Lagoon, and its freshwater carries
@@ -86,13 +86,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#monitoring-section" data-number="2">
+                        <a href="#monitoring-section" data-number="2" aria-label="Skip to Monitoring the Invisible" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Monitoring the Invisible</span>
                         </a>
@@ -198,7 +198,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="monitoring-section" class="cd-section">
-            <h4>Monitoring the Invisible</h4>
+            <div class="text-h5 text-bold">Monitoring the Invisible</div>
             <p>
                 The Indian River Lagoon’s range of temperate-to-subtropical climates make for enticing environs for many plants
                 and animals. More than 4,000 species of flora and fauna call the lagoon home. Set foot anywhere on the bottom
@@ -248,7 +248,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 Though the lagoon has proven to be resilient, effects pile up over time—both negative impacts as well as positive
                 gains from restoration efforts. Often, these trends can only be detected by long-term data collection like
                 the Smithsonian’s benthic infaunal monitoring program, which was launched in 2005 as a component of the hugely
-                ambitious <a href="https://storymaps.arcgis.com/stories/dfd3e4261602415683015a919dfbafec" target="_blank" >Comprehensive Everglades Restoration Program</a>.
+                ambitious <a href="https://storymaps.arcgis.com/stories/dfd3e4261602415683015a919dfbafec" target="_blank" aria-label="Comprehensive Everglades Restoration Program - opens in separate tab" tabindex="0">Comprehensive Everglades Restoration Program</a>.
             </p>
             <div style="margin: 15px 0;display:flex;justify-content: center;">
                 <figure style="margin: 15px;">

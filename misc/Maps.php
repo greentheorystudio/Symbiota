@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Aerial view of a coastal road with palm trees, lush greenery, and a calm ocean at sunrise or sunset."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -55,10 +55,10 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>The Indian River Lagoon</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             Occupying more than 40 percent of Florida’s eastern coast, the 156-mile-long Indian River Lagoon (IRL) is part
             of the longest barrier island complex in the United States.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: M. La Martina
@@ -70,31 +70,31 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#what-is-lagoon-section" data-number="2">
+                        <a href="#what-is-lagoon-section" data-number="2" aria-label="Skip to What Is a Lagoon?" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">What Is a Lagoon?</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#irl-dynamics-section" data-number="3">
+                        <a href="#irl-dynamics-section" data-number="3" aria-label="Skip to Dynamics of the IRL" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Dynamics of the IRL</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#wind-section" data-number="4">
+                        <a href="#wind-section" data-number="4" aria-label="Skip to The Role of Wind" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">The Role of Wind</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#inlets-section" data-number="5">
+                        <a href="#inlets-section" data-number="5" aria-label="Skip to Inlets and Tides" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Inlets and Tides</span>
                         </a>
@@ -121,7 +121,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="what-is-lagoon-section" class="cd-section">
-            <h3>What Is a Lagoon?</h3>
+            <h2>What Is a Lagoon?</h2>
             <div style="display:flex;justify-content: space-between">
                 <div style="width: 100%;">
                     <figure style="float: left;margin-right: 30px;">
@@ -175,7 +175,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="irl-dynamics-section" class="cd-section">
-            <h3>Dynamics of the IRL</h3>
+            <h2>Dynamics of the IRL</h2>
             <p>
                 Florida’s Indian River Lagoon (IRL) system actually consists of three lagoons: the Mosquito Lagoon, which
                 originates in Volusia County; the Banana River, in Brevard County; and the Indian River Lagoon, which spans
@@ -195,7 +195,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="wind-section" class="cd-section">
-            <h4>The Role of Wind</h4>
+            <div class="text-h5 text-bold">The Role of Wind</div>
             <p>
                 Lagoons like the IRL tend to be well-mixed because they are heavily influenced by wind patterns.
             </p>
@@ -210,7 +210,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="inlets-section" class="cd-section">
-            <h4>Inlets and Tides</h4>
+            <div class="text-h5 text-bold">Inlets and Tides</div>
             <p>
                 The southern portion of the IRL exchanges water with the ocean through three jettied, human-made inlets,
                 all of which differ in size. These and other features divide the IRL into three sub-basins: the southern

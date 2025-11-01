@@ -20,12 +20,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     include(__DIR__ . '/../header.php');
     ?>
     <div style="display:flex;flex-direction:column;justify-content:center;width:100%;">
-        <div class="statictext" style="width:80%;margin: 20 auto;text-align: center;">
+        <div class="statictext" style="width:80%;margin: 20px auto;text-align: center;">
             Discover the history, geography and ecology of Florida’s Indian River Lagoon from anywhere in the world.<br />
             Click the photo to explore the biodiverse estuary and its watershed via our interactive StoryMap,<br />
-            <a href="https://storymaps.arcgis.com/stories/6370ba882c26422987b91030f588c100" >A River in Name Only.</a>
+            <a href="https://storymaps.arcgis.com/stories/6370ba882c26422987b91030f588c100" tabindex="0">A River in Name Only.</a>
         </div>
-        <a style="border:0;width:90%;margin: 0 auto;" href="https://storymaps.arcgis.com/stories/6370ba882c26422987b91030f588c100">
+        <a style="border:0;width:90%;margin: 0 auto;" href="https://storymaps.arcgis.com/stories/6370ba882c26422987b91030f588c100" aria-label="Go to A River in Name Only" tabindex="0">
             <img style="width:100%;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/StoryMapCover.jpg" alt="Aerial view of Florida's Indian River Lagoon with vegetation, water, and text overlay." />
         </a>
     </div>

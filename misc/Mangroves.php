@@ -31,12 +31,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <span class="screen-reader-only" role="img" aria-label="Coastal scene with mangrove trees in calm, shallow water under a partly cloudy sky."> </span>
     <div class="top-shade-container"></div>
     <div class="logo-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <img class="logo-image" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/layout/janky_mangrove_logo_med.png" alt="Mangrove logo" />
         </a>
     </div>
     <div class="title-container">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" >
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" class="header-home-link" aria-label="Go to homepage" tabindex="0">
             <span class="titlefont">Indian River Lagoon<br />
             Species Inventory</span>
         </a>
@@ -53,8 +53,8 @@ include_once(__DIR__ . '/../config/header-includes.php');
     </div>
     <div class="breadcrumb-container">
         <div class='navpath'>
-            <a href="Maps.php">The Indian River Lagoon</a> &gt;
-            <a href="Whatsa_Habitat.php">Habitats</a> &gt;
+            <a href="Maps.php" tabindex="0">The Indian River Lagoon</a> &gt;
+            <a href="Whatsa_Habitat.php" tabindex="0">Habitats</a> &gt;
             <b>Mangroves</b>
         </div>
     </div>
@@ -62,12 +62,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
         <h1>Mangroves</h1>
     </div>
     <div class="top-text-container">
-        <h3>
+        <h2>
             One of Florida’s true natives, mangroves are uniquely evolved to leverage the state’s many miles of low-lying
             coastline for their benefit. Flooded twice daily by ocean tides, or fringing brackish waters like the Indian
             River Lagoon, mangroves are bristling with adaptations that allow them to thrive in water up to 100 times saltier
             than most plants can tolerate.
-        </h3>
+        </h2>
     </div>
     <div class="photo-credit-container">
         Photo credit: J. Whiticar
@@ -79,61 +79,61 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <nav id="cd-vertical-nav">
                 <ul class="vertical-nav-list">
                     <li>
-                        <a href="#intro-section" data-number="1">
+                        <a href="#intro-section" data-number="1" aria-label="Skip to Intro" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Intro</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#mangrove-species-section" data-number="2">
+                        <a href="#mangrove-species-section" data-number="2" aria-label="Skip to Mangrove Species" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Mangrove Species</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#mangrove-distribution-section" data-number="3">
+                        <a href="#mangrove-distribution-section" data-number="3" aria-label="Skip to Mangrove Distribution" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Mangrove Distribution</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#adaptations-section" data-number="4">
+                        <a href="#adaptations-section" data-number="4" aria-label="Skip to Adaptations" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Adaptations</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#forests-section" data-number="5">
+                        <a href="#forests-section" data-number="5" aria-label="Skip to Types of Mangrove Forests" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Types of Mangrove Forests</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#environmental-benefits-section" data-number="6">
+                        <a href="#environmental-benefits-section" data-number="6" aria-label="Skip to Environmental Benefits" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Environmental Benefits</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#ecological-role-section" data-number="7">
+                        <a href="#ecological-role-section" data-number="7" aria-label="Skip to Ecological Role" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Ecological Role</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#nutrients-section" data-number="8">
+                        <a href="#nutrients-section" data-number="8" aria-label="Skip to Nutrients" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Nutrients</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#associated-section" data-number="9">
+                        <a href="#associated-section" data-number="9" aria-label="Skip to Associated Plants and Animals" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Associated Plants and Animals</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#further-reading-section" data-number="10">
+                        <a href="#further-reading-section" data-number="10" aria-label="Skip to Further Reading" tabindex="0">
                             <span class="cd-dot"></span>
                             <span class="cd-label">Further Reading</span>
                         </a>
@@ -157,17 +157,17 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
             <p>
                 Worldwide, more than 50 species of mangroves exist. In Florida, the mangrove community consists of three
-                main species of true mangroves: the red mangrove, <a href="../taxa/index.php?taxon=Rhizophora mangle"><i>Rhizophora mangle</i></a>,
-                the black mangrove, <a href="../taxa/index.php?taxon=Avicennia germinans"><i>Avicennia germinans</i></a>,
-                and the white mangrove, <a href="../taxa/index.php?taxon=Laguncularia racemosa"><i>Laguncularia racemosa</i></a>.
+                main species of true mangroves: the red mangrove, <a href="../taxa/index.php?taxon=Rhizophora mangle" class="text-italic" tabindex="0">Rhizophora mangle</a>,
+                the black mangrove, <a href="../taxa/index.php?taxon=Avicennia germinans" class="text-italic" tabindex="0">Avicennia germinans</a>,
+                and the white mangrove, <a href="../taxa/index.php?taxon=Laguncularia racemosa" class="text-italic" tabindex="0">Laguncularia racemosa</a>.
             </p>
             <p>
-                Buttonwood (<a href="../taxa/index.php?taxon=Conocarpus erectus"><i>Conocarpus erectus</i></a>), while often considered a fourth mangrove species, is technically a mangrove
+                Buttonwood (<a href="../taxa/index.php?taxon=Conocarpus erectus" class="text-italic" tabindex="0">Conocarpus erectus</a>), while often considered a fourth mangrove species, is technically a mangrove
                 associate, as it lacks the specialization of true mangroves and grows in uplands beyond the reach of tides.
             </p>
         </div>
         <div id="mangrove-species-section" class="cd-section">
-            <h4>Mangrove Species</h4>
+            <div class="text-h5 text-bold">Mangrove Species</div>
             <figure style="float: left;margin-right: 30px;">
                 <img style="border:0;width:475px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/2_Rhizophora_mangle_L_Holly_Sweat.jpg" alt="Mangrove tree with aerial roots in shallow coastal water under a clear sky." />
                 <figcaption>
@@ -223,7 +223,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="mangrove-distribution-section" class="cd-section" style="clear:both;">
-            <h4>Mangrove Distribution</h4>
+            <div class="text-h5 text-bold">Mangrove Distribution</div>
             <figure style="float: left;margin-right: 30px;">
                 <img style="border:0;width:200px;height:200px;" src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/content/imglib/static/FL-Mangrove-dist.PNG" alt="Map of Florida with county boundaries, highlighting Cedar Keys, Ponce de Leon Inlet, and a red area on the southern coast." />
                 <figcaption>
@@ -245,13 +245,13 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="adaptations-section" class="cd-section">
-            <h4>Adaptations</h4>
+            <div class="text-h5 text-bold">Adaptations</div>
             <p>
                 Mangroves have several important traits that allow them to thrive in a harsh saline environment that often
                 excludes other species.
             </p>
 
-            <h5>Aerial Roots</h5>
+            <div class="text-h6 text-bold">Aerial Roots</div>
             <p>
                 Soils in mangrove areas tend to be fairly oxygen-poor, preventing many types of plants from taking root.
                 Mangroves have adapted to these anoxic conditions by evolving broad, shallow root systems instead of deep-reaching
@@ -294,7 +294,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 </figure>
             </div>
 
-            <h5>Salt Management</h5>
+            <div class="text-h6 text-bold">Salt Management</div>
             <p>
                 Mangroves can grow in either fresh or salt water, depending on which is available. However, they are largely
                 confined to estuaries and upland fringe areas that are at least periodically flooded by brackish or salt water.
@@ -310,7 +310,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 using specialized salt glands located in the leaves.
             </p>
 
-            <h5>Reproductive Strategies</h5>
+            <div class="text-h6 text-bold">Reproductive Strategies</div>
             <p>
                 Mangroves employ two unique methods to increase their chances of reproductive success: vivipary, and water-borne
                 dispersal of young plants.
@@ -345,12 +345,12 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="forests-section" class="cd-section">
-            <h4>Types of Mangrove Forests</h4>
+            <div class="text-h5 text-bold">Types of Mangrove Forests</div>
             <p>
                 There are five distinct types of mangrove forests based on water level, wave energy, and pore water salinity.
             </p>
 
-            <h5>Mangrove Fringe</h5>
+            <div class="text-h6 text-bold">Mangrove Fringe</div>
             <p>
                 Tall mangrove fringe forests occur along protected coastlines and the exposed open waters of bays and lagoons.
                 Red mangroves are typically the dominant species. Daily tidal cycles inundate fringe, as well as export buoyant
@@ -359,7 +359,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 the fringing forest.
             </p>
 
-            <h5>Overwash Islands</h5>
+            <div class="text-h6 text-bold">Overwash Islands</div>
             <p>
                 Mangrove overwash islands are also subject to tidal inundation, and are dominated by red mangroves. The major
                 difference between fringe and overwash islands is that the entire island is typically flooded during each
@@ -367,7 +367,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 to predatory animals such as raccoons, rats and feral cats, overwash islands are often the site of bird rookeries.
             </p>
 
-            <h5>Riverine Mangrove Forests</h5>
+            <div class="text-h6 text-bold">Riverine Mangrove Forests</div>
             <p>
                 Riverine mangrove forests occur on seasonal floodplains in areas where natural patterns of freshwater discharge
                 remain intact. Salinity drops during the wet season, when rains cause extensive freshwater runoff; during
@@ -375,7 +375,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 Nutrient availability is also highest during low-salinity periods, supporting optimal mangrove growth.
             </p>
 
-            <h5>Basin Mangrove Forests</h5>
+            <div class="text-h6 text-bold">Basin Mangrove Forests</div>
             <p>
                 Basin mangrove forests are a very common community type, and the most commonly altered. Basin mangrove forests
                 occur in inland depressions which are irregularly flushed by tides. Periodic hypersaline conditions can stunt
@@ -384,7 +384,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 amounts of organic debris to adjacent waters, including whole leaves and dissolved organics.
             </p>
 
-            <h5>Dwarf Mangrove Forests</h5>
+            <div class="text-h6 text-bold">Dwarf Mangrove Forests</div>
             <p>
                 Dwarf mangrove forests occur in areas where lack of nutrients, freshwater, and inundation by tides limit
                 tree growth. Any mangrove species can be dwarfed; trees are generally no taller than three feet (1 meter).
@@ -401,7 +401,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="environmental-benefits-section" class="cd-section">
-            <h4>Environmental Benefits</h4>
+            <div class="text-h5 text-bold">Environmental Benefits</div>
             <p>
                 Long viewed as inhospitable, marginal environments, mangroves provide numerous environmental benefits.
             </p>
@@ -438,7 +438,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="ecological-role-section" class="cd-section">
-            <h4>Ecological Role</h4>
+            <div class="text-h5 text-bold">Ecological Role</div>
             <p>
                 Mangroves were once believed to create soils. It’s not hard to see why: their complex aerial root structures
                 trap the abundant leaf litter that falls from the trees each year, as well as any other passing organic detritus
@@ -450,7 +450,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="nutrients-section" class="cd-section">
-            <h4>Nutrients</h4>
+            <div class="text-h5 text-bold">Nutrients</div>
             <p>
                 Leaf litter, including twigs, propagules, flowers, small branches and insect refuse, is a major nutrient
                 source to consumers in mangrove systems. Generally, leaf litter is composed of approximately 68 to 86 percent
@@ -474,7 +474,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </div>
         </div>
         <div id="associated-section" class="cd-section">
-            <h4>Associated Plants and Animals</h4>
+            <div class="text-h5 text-bold">Associated Plants and Animals</div>
             <p>
                 Mangroves provide habitat for a wide variety of species. An estimated 220 fish species, 24 reptile species,
                 18 mammal species, and 181 bird species that all utilize Florida mangroves as habitat during their life cycles.
@@ -506,7 +506,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             </p>
         </div>
         <div id="further-reading-section" class="cd-section">
-            <h4>Further Reading</h4>
+            <div class="text-h5 text-bold">Further Reading</div>
             <ul class="further-reading-list">
                 <li>
                     Atkinson, MR, Findlay, GP, Hope, AB, Pitman, MG, Sadler, HDW & HR West. 1967. Salt regulation in the mangroves
@@ -652,7 +652,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 <li>
                     Rey, JR & CR Rutledge. 2001. <i>Mosquito Control Impoundments.</i> Document # ENY-648, Entomology and Nematology Department, Florida
                     Cooperative Extension Service, Institute of Food and Agricultural Sciences, University of Florida. Available
-                    online at: <a href="https://edis.ifas.ufl.edu" target="_blank">https://edis.ifas.ufl.edu</a>.
+                    online at: <a href="https://edis.ifas.ufl.edu" target="_blank" aria-label="External link - opens in separate tab" tabindex="0">https://edis.ifas.ufl.edu</a>.
                 </li>
                 <li>
                     Savage, T. 1972. <i>Florida mangroves as shoreline stabilizers.</i> Florida Department of Natural Resources Professional Papers 19.
