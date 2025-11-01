@@ -21,12 +21,12 @@ const collectionRecordDistributionDisplay = {
                                     {{ key }}
                                 </template>
                                 <template v-else-if="selectedCountry">
-                                    <a role="button" @click="setSelectedState(key);" class="cursor-pointer" aria-label="See distribution" tabindex="0">
+                                    <a role="button" @click="setSelectedState(key);" @keyup.enter="setSelectedState(key);" class="cursor-pointer" aria-label="See distribution" tabindex="0">
                                         {{ key }}
                                     </a>
                                 </template>
                                 <template v-else>
-                                    <a role="button" @click="setSelectedCountry(key);" class="cursor-pointer" aria-label="See distribution" tabindex="0">
+                                    <a role="button" @click="setSelectedCountry(key);" @keyup.enter="setSelectedCountry(key);" class="cursor-pointer" aria-label="See distribution" tabindex="0">
                                         {{ key }}
                                     </a>
                                 </template>

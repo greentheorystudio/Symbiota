@@ -10,7 +10,7 @@ const taxaProfileImagePanel = {
                         <div class="row">
                             <q-intersection v-for="image in taxaImageArr" :key="image" class="img-thumb q-mb-sm">
                                 <q-card class="q-ma-md overflow-hidden">
-                                    <a role="button" @click="toggleImageCarousel(image.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
+                                    <a role="button" @click="toggleImageCarousel(image.url);" @keyup.enter="toggleImageCarousel(image.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
                                         <q-img :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="(image.alttext ? image.alttext : image.sciname)"></q-img>
                                     </a>
                                     <div class="photographer">
@@ -28,7 +28,7 @@ const taxaProfileImagePanel = {
                         <div class="row">
                             <q-intersection v-for="image in taxaImageArr" :key="image" class="img-thumb q-mb-sm">
                                 <q-card class="q-ma-md overflow-hidden">
-                                    <a role="button" @click="toggleImageCarousel(image.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
+                                    <a role="button" @click="toggleImageCarousel(image.url);" @keyup.enter="toggleImageCarousel(image.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
                                         <q-img :src="(image.url.startsWith('/') ? (clientRoot + image.url) : image.url)" class="img-thumb-image" :fit="contain" :title="image.caption" :alt="(image.alttext ? image.alttext : image.sciname)"></q-img>
                                     </a>
                                     <div class="photographer">

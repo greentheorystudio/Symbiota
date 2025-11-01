@@ -44,7 +44,7 @@ const collectionMetadataBlock = {
             </div>
             <div v-if="collectionData['managementtype'] && collectionData['managementtype'] === 'Live Data'">
                 <span class="text-body1 text-bold">Live Data Download: </span>
-                <a role="button" class="cursor-pointer" @click="processLiveDataDownload(collectionData['collid']);" tabindex="0">
+                <a role="button" class="cursor-pointer" @click="processLiveDataDownload(collectionData['collid']);" @keyup.enter="processLiveDataDownload(collectionData['collid']);" tabindex="0">
                     DwC-Archive File
                 </a>
             </div>

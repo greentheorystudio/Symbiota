@@ -37,7 +37,7 @@ const spatialSelectionsTab = {
                             <q-td key="collector" :props="props">
                                 <div class="column q-gutter-xs">
                                     <div class="fit text-left">
-                                        <a role="button" class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);" aria-label="View record details" tabindex="0">{{ (props.row.collector ? props.row.collector : '[No data]') }}</a>
+                                        <a role="button" class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);" @keyup.enter="openRecordInfoWindow(props.row.occid);" aria-label="View record details" tabindex="0">{{ (props.row.collector ? props.row.collector : '[No data]') }}</a>
                                     </div>
                                     <div class="row justify-end">
                                         <q-btn color="grey-4" size="xs" text-color="black" class="q-ml-sm black-border" icon="fas fa-search-location" @click="setMapFinderPopup(props.row);" dense aria-label="See location on map" tabindex="0">
