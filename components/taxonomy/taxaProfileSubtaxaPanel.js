@@ -121,7 +121,6 @@ const taxaProfileSubtaxaPanel = {
         const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
 
         function getSubtaxaImageUrlFromData(imageData) {
-            console.log(subtaxaImageData.value);
             if(imageData['thumbnailurl']){
                 return (imageData['thumbnailurl'].startsWith('/') ? (clientRoot + imageData['thumbnailurl']) : imageData['thumbnailurl']);
             }
@@ -131,7 +130,6 @@ const taxaProfileSubtaxaPanel = {
         }
 
         Vue.onMounted(() => {
-            console.log(subtaxaImageData.value);
             panelExpanded.value = props.expanded;
         });
 
