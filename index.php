@@ -134,7 +134,7 @@ include_once(__DIR__ . '/config/header-includes.php');
         </div>
         <div class="heading-container">
             <div class="heading-inner">
-                <h3>The <b>Indian River Lagoon Species Inventory</b> is a dynamic and growing research resource and ecological encyclopedia that documents the biodiversity of the 156-mile-long estuary system along Florida’s Atlantic coast.</h3>
+                <div class="text-h5">The <b>Indian River Lagoon Species Inventory</b> is a dynamic and growing research resource and ecological encyclopedia that documents the biodiversity of the 156-mile-long estuary system along Florida’s Atlantic coast.</div>
             </div>
         </div>
         <div class="photo-credit-container">
