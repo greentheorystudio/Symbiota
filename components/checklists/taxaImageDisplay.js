@@ -48,7 +48,7 @@ const taxaImageDisplay = {
                             </div>
                             <div class="full-width row q-gutter-sm">
                                 <template v-for="taxon in family['taxa']">
-                                    <q-card role="link" flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);" :style="cardStyle" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
+                                    <q-card role="button" flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);" @keyup.enter="openTaxaProfileTab(taxon['tid']);" :style="cardStyle" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
                                         <template v-if="imageData.hasOwnProperty(taxon['tidaccepted']) && imageData[taxon['tidaccepted']].length > 0">
                                             <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="scale-down" :alt="(imageData[taxon['tidaccepted']][0]['alttext'] ? imageData[taxon['tidaccepted']][0]['alttext'] : taxon['sciname'])"></q-img>
                                         </template>
@@ -108,7 +108,7 @@ const taxaImageDisplay = {
             <template v-else>
                 <div class="full-width row q-gutter-sm">
                     <template v-for="taxon in taxaArr">
-                        <q-card role="link" flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid'])" :style="cardStyle" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
+                        <q-card role="button" flat bordered class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);" @keyup.enter="openTaxaProfileTab(taxon['tid']);" :style="cardStyle" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
                             <template v-if="imageData.hasOwnProperty(taxon['tidaccepted']) && imageData[taxon['tidaccepted']].length > 0">
                                 <q-img class="rounded-borders" :height="imageHeight" :src="(imageData[taxon['tidaccepted']][0]['url'].startsWith('/') ? (clientRoot + imageData[taxon['tidaccepted']][0]['url']) : imageData[taxon['tidaccepted']][0]['url'])" fit="scale-down" :alt="(imageData[taxon['tidaccepted']][0]['alttext'] ? imageData[taxon['tidaccepted']][0]['alttext'] : taxon['sciname'])"></q-img>
                             </template>

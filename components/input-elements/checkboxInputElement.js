@@ -27,7 +27,7 @@ const checkboxInputElement = {
                 <q-checkbox v-model="checkboxValue" :label="label" :disable="disabled" @update:model-value="processValueChange" :tabindex="tabindex" dense></q-checkbox>
             </div>
             <div v-if="!disabled && definition" class="self-center">
-                <q-icon role="button" name="help" size="sm" class="cursor-pointer q-ma-none" color="grey-7" @click="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex"></q-icon>
+                <q-icon role="button" name="help" size="sm" class="cursor-pointer q-ma-none" color="grey-7" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex"></q-icon>
             </div>
         </div>
         <template v-if="definition">

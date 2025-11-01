@@ -68,7 +68,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                                 </span>
                                 <template v-if="emailConfigured">
                                     <span class="row justify-center">
-                                        <div role="button" class="anchor-class text-primary cursor-pointer" @click="resetPassword();" aria-label="Reset password" tabindex="0">Reset password</div>
+                                        <div role="button" class="anchor-class text-primary cursor-pointer" @click="resetPassword();" @keyup.enter="resetPassword();" aria-label="Reset password" tabindex="0">Reset password</div>
                                     </span>
                                 </template>
                             </div>
@@ -81,7 +81,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                                     </span>
                                     <template v-if="emailConfigured">
                                         <span class="row justify-center">
-                                            <div role="button" class="anchor-class text-primary cursor-pointer" @click="retrieveUsernameWindow = !retrieveUsernameWindow" aria-label="Retrieve username" tabindex="0">Retrieve username</div>
+                                            <div role="button" class="anchor-class text-primary cursor-pointer" @click="retrieveUsernameWindow = !retrieveUsernameWindow" @keyup.enter="retrieveUsernameWindow = !retrieveUsernameWindow" aria-label="Retrieve username" tabindex="0">Retrieve username</div>
                                         </span>
                                     </template>
                                 </div>

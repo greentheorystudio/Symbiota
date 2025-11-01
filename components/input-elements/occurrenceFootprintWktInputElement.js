@@ -36,7 +36,7 @@ const occurrenceFootprintWktInputElement = {
                                 Clear value
                             </q-tooltip>
                         </q-icon>
-                        <q-icon role="button" name="hide_source" class="cursor-pointer" @click="showFootprintWktText = false" aria-label="Hide text display" :tabindex="tabindex">
+                        <q-icon role="button" name="hide_source" class="cursor-pointer" @click="showFootprintWktText = false" @keyup.enter="showFootprintWktText = false" aria-label="Hide text display" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Hide text display
                             </q-tooltip>

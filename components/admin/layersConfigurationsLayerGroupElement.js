@@ -18,14 +18,14 @@ const layersConfigurationsLayerGroupElement = {
                     </div>
                     <template v-if="layerGroup.hasOwnProperty('layers') && layerGroup['layers'].length > 0">
                         <template v-if="expandedGroupArr.includes(layerGroup['id'].toString())">
-                            <q-icon role="button" name="arrow_drop_up" class="cursor-pointer" size="sm" @click="hideLayerGroup(layerGroup['id']);" aria-label="Hide layers" tabindex="0">
+                            <q-icon role="button" name="arrow_drop_up" class="cursor-pointer" size="sm" @click="hideLayerGroup(layerGroup['id']);" @keyup.enter="hideLayerGroup(layerGroup['id']);" aria-label="Hide layers" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Hide layers
                                 </q-tooltip>
                             </q-icon>
                         </template>
                         <template v-else>
-                            <q-icon role="button" name="arrow_drop_down" class="cursor-pointer text-bold" size="sm" @click="showLayerGroup(layerGroup['id']);" aria-label="Show layers" tabindex="0">
+                            <q-icon role="button" name="arrow_drop_down" class="cursor-pointer text-bold" size="sm" @click="showLayerGroup(layerGroup['id']);" @keyup.enter="showLayerGroup(layerGroup['id']);" aria-label="Show layers" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Show layers
                                 </q-tooltip>

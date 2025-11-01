@@ -48,7 +48,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
                                                     </template>
                                                 </template>
                                                 <template v-else>
-                                                    <div role="button" class="cursor-pointer" @click="processOccurrenceSelection(props.row['occidData'][column.name]);" aria-label="View record" tabindex="0">
+                                                    <div role="button" class="cursor-pointer" @click="processOccurrenceSelection(props.row['occidData'][column.name]);" @keyup.enter="processOccurrenceSelection(props.row['occidData'][column.name]);" aria-label="View record" tabindex="0">
                                                         {{ props.row[column.name] }}
                                                     </div>
                                                 </template>

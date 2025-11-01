@@ -1,7 +1,7 @@
 const taxaProfileTaxonImageLink = {
     template: `
         <div class="all-images-link-frame">
-            <q-card role="link" class="taxon-profile-image-link-card cursor-pointer" @click="openImageSearch();" aria-label="View all images - opens in separate tab" tabindex="0">
+            <q-card role="button" class="taxon-profile-image-link-card cursor-pointer" @click="openImageSearch();" @keyup.enter="openImageSearch();" aria-label="View all images - opens in separate tab" tabindex="0">
                 <div class="all-images-link">
                     View All {{ taxaImageCount }} Images
                 </div>

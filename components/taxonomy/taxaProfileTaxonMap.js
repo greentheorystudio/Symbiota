@@ -1,7 +1,7 @@
 const taxaProfileTaxonMap = {
     template: `
         <div class="map-thumb-frame">
-            <q-card role="link" class="taxon-profile-taxon-map-card cursor-pointer" @click="openMapPopup(true);" aria-label="Open map window - opens in separate tab" tabindex="0">
+            <q-card role="button" class="taxon-profile-taxon-map-card cursor-pointer" @click="openMapPopup(true);" @keyup.enter="openMapPopup(true);" aria-label="Open map window - opens in separate tab" tabindex="0">
                 <div class="map-thumb-container">
                     <template v-if="taxonMap">
                         <div class="map-thumb-image">

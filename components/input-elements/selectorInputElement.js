@@ -45,7 +45,7 @@ const selectorInputElement = {
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon role="button" v-if="clearable && value" name="cancel" class="cursor-pointer" @click="clearValue();" aria-label="Clear value" :tabindex="tabindex">
+                <q-icon role="button" v-if="clearable && value" name="cancel" class="cursor-pointer" @click="clearValue();" @keyup.enter="clearValue();" aria-label="Clear value" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>

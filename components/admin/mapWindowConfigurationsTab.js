@@ -8,7 +8,7 @@ const mapWindowConfigurationsTab = {
                         Then click the Save Settings button to save the settings.
                     </div>
                     <div class="col-1 row justify-end">
-                        <div role="button" class="cursor-pointer" @click="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" aria-label="Open Tutorial Window" tabindex="0">
+                        <div role="button" class="cursor-pointer" @click="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" @keyup.enter="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" aria-label="Open Tutorial Window" tabindex="0">
                             <q-icon name="far fa-question-circle" size="20px" />
                         </div>
                     </div>
