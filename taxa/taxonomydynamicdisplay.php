@@ -64,13 +64,13 @@ header('X-Frame-Options: SAMEORIGIN');
                 </q-card>
                 <q-card class="q-my-md">
                     <q-card-section>
-                        <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
+                        <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" no-selection-unset @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
                             <template v-slot:default-header="prop">
                                 <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-if="prop.node.nodetype === 'child'">
-                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span>
+                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <a role="button" @click="processClick(prop.node.tid, true);" :aria-label="( prop.node.sciname + ' taxon profile page page - Opens in separate tab')" tabindex="0"><span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span></a>
                                 </div>
                                 <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-else-if="prop.node.nodetype === 'synonym'">
-                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span>
+                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <a role="button" @click="processClick(prop.node.tid, true);" :aria-label="( prop.node.sciname + ' taxon profile page page - Opens in separate tab')" tabindex="0"><span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span></a>
                                 </div>
                             </template>
                         </q-tree>
@@ -149,20 +149,23 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
-                    function processClick(tid) {
-                        selectedTid.value = targetTaxon.value ? targetTaxon.value.tid : null;
-                        if(!tid){
-                            tid = selectedTid.value;
-                        }
+                    function processClick(tid, link = false) {
                         if(tid){
-                            let url;
-                            if(isEditor.value){
-                                url = clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + tid;
+                            if(link){
+                                let url;
+                                if(isEditor.value){
+                                    url = clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + tid;
+                                }
+                                else{
+                                    url = clientRoot + '/taxa/index.php?taxon=' + tid;
+                                }
+                                window.open(url, '_blank');
                             }
                             else{
-                                url = clientRoot + '/taxa/index.php?taxon=' + tid;
+                                const expanded = treeRef.value.isExpanded(tid);
+                                treeRef.value.setExpanded(tid, !expanded);
+                                selectedTid.value = null;
                             }
-                            window.open(url, '_blank');
                         }
                     }
 
