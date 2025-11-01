@@ -200,7 +200,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                                 <template v-if="configuredDataDownloads.length > 0">
                                                     <template v-for="download in configuredDataDownloads">
                                                         <div class="cursor-pointer">
-                                                            <a role="button" @click="processConfiguredDataDownload(download['api-endpoint'], download['endpoint-action'], download['filename'])" tabindex="0">{{ download.label }}</a>
+                                                            <a role="button" @click="processConfiguredDataDownload(download['api-endpoint'], download['endpoint-action'], download['filename'])" tabindex="0">{{ download.label + ' CSV' }}</a>
                                                         </div>
                                                     </template>
                                                 </template>

@@ -102,16 +102,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <template v-if="Number(clId) > 0">
                                 <template v-if="taxaDataArr.length > 0">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('csv');" icon="fas fa-download" dense aria-label="Download Checklist as CSV" tabindex="0">
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('csv');" icon="fas fa-download" dense aria-label="Download Checklist CSV" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Download Checklist as CSV
+                                                Download Checklist CSV
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('docx');" icon="far fa-file-word" dense aria-label="Download Checklist as Word Document" tabindex="0">
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('docx');" icon="far fa-file-word" dense aria-label="Download Checklist Word Document" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Download Checklist as Word Document
+                                                Download Checklist Word Document
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
