@@ -81,7 +81,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                             {{ collectionData['institutionname'] }}
                                         </div>
                                         <div v-if="collectionPermissions.includes('CollAdmin')">
-                                            <a role="button" :href="(clientRoot + '/collections/misc/institutioneditor.php?emode=1&targetcollid=' + collId + '&iid=' + collectionData.iid)" title="Edit institution information" tabindex="0">
+                                            <a :href="(clientRoot + '/collections/misc/institutioneditor.php?emode=1&targetcollid=' + collId + '&iid=' + collectionData.iid)" aria-label="Edit institution information" tabindex="0">
                                                 <q-icon name="far fa-edit" size="13px" class="cursor-pointer" />
                                             </a>
                                         </div>
@@ -174,16 +174,16 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                             <div class="text-h6 text-bold">Record Distribution</div>
                                             <div class="q-pl-sm column">
                                                 <div v-if="distributionDisplay !== 'geographic'" class="cursor-pointer">
-                                                    <a role="button" @click="distributionDisplay = 'geographic'" tabindex="0">Show Geographic Distribution</a>
+                                                    <a role="button" @click="distributionDisplay = 'geographic'" @keyup.enter="distributionDisplay = 'geographic'" tabindex="0">Show Geographic Distribution</a>
                                                 </div>
                                                 <div v-if="distributionDisplay === 'geographic'" class="cursor-pointer">
-                                                    <a role="button" @click="distributionDisplay = null" tabindex="0">Hide Geographic Distribution</a>
+                                                    <a role="button" @click="distributionDisplay = null" @keyup.enter="distributionDisplay = null" tabindex="0">Hide Geographic Distribution</a>
                                                 </div>
                                                 <div v-if="distributionDisplay !== 'taxonomic'" class="cursor-pointer">
-                                                    <a role="button" @click="distributionDisplay = 'taxonomic'" tabindex="0">Show Family Distribution</a>
+                                                    <a role="button" @click="distributionDisplay = 'taxonomic'" @keyup.enter="distributionDisplay = 'taxonomic'" tabindex="0">Show Family Distribution</a>
                                                 </div>
                                                 <div v-if="distributionDisplay === 'taxonomic'" class="cursor-pointer">
-                                                    <a role="button" @click="distributionDisplay = null" tabindex="0">Hide Family Distribution</a>
+                                                    <a role="button" @click="distributionDisplay = null" @keyup.enter="distributionDisplay = null" tabindex="0">Hide Family Distribution</a>
                                                 </div>
                                             </div>
                                         </q-card-section>
@@ -195,7 +195,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                             <div class="text-h6 text-bold">Data Downloads</div>
                                             <div class="q-pl-sm column">
                                                 <div class="cursor-pointer">
-                                                    <a role="button" @click="processDownloadSpeciesList()" tabindex="0">Download Taxa List CSV</a>
+                                                    <a role="button" @click="processDownloadSpeciesList();" @keyup.enter="processDownloadSpeciesList();" tabindex="0">Download Taxa List CSV</a>
                                                 </div>
                                                 <template v-if="configuredDataDownloads.length > 0">
                                                     <template v-for="download in configuredDataDownloads">
@@ -238,7 +238,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                     </q-card-section>
                                     <q-card-section class="column">
                                         <div class="text-h6 text-bold">
-                                            <a role="button" class="cursor-pointer" @click="setCollection(collection.collid)" tabindex="0">
+                                            <a role="button" class="cursor-pointer" @click="setCollection(collection.collid);" @keyup.enter="setCollection(collection.collid);" tabindex="0">
                                                 {{ collection.collectionname }}
                                             </a>
                                         </div>

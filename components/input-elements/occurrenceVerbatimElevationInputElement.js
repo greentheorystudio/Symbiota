@@ -47,7 +47,7 @@ const occurrenceVerbatimElevationInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseElevationValues();" aria-label="Recalculate minimum and maximum elevation values" :tabindex="tabindex">
+                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseElevationValues();" @keyup.enter="parseElevationValues();" aria-label="Recalculate minimum and maximum elevation values" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Recalculate minimum and maximum elevation values
                         </q-tooltip>
@@ -68,7 +68,7 @@ const occurrenceVerbatimElevationInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseElevationValues();" aria-label="Recalculate minimum and maximum elevation values" :tabindex="tabindex">
+                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseElevationValues();" @keyup.enter="parseElevationValues();" aria-label="Recalculate minimum and maximum elevation values" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Recalculate minimum and maximum elevation values
                         </q-tooltip>

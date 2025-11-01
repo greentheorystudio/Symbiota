@@ -117,7 +117,7 @@ const organismOfTheDay = {
                                                 <div v-if="answerCorrect !== 'complete'" class="text-h5 text-bold text-center">
                                                     {{ taxonData['family'] }}
                                                 </div>
-                                                <div role="link" class="q-my-md text-h6 text-bold text-blue cursor-pointer text-center" @click="showTaxonProfile" aria-label="Go to taxon profile page - Opens in separate tab" tabindex="0">
+                                                <div role="button" class="q-my-md text-h6 text-bold text-blue cursor-pointer text-center" @click="showTaxonProfile" @keyup.enter="showTaxonProfile" aria-label="Go to taxon profile page - Opens in separate tab" tabindex="0">
                                                     Click here to learn more about this {{ type }}
                                                 </div>
                                                 <div class="text-h6 text-bold text-center">
@@ -153,13 +153,13 @@ const organismOfTheDay = {
                                                         On the bright side, <span class="text-bold">you did get the genus and family right</span>, but the scientific name is not {{ scinameAnswer['sciname'] }}
                                                     </div>
                                                 </template>
-                                                <div role="button" class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showAnswerResponse = false" aria-label="Click here to try again" tabindex="0">
+                                                <div role="button" class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showAnswerResponse = false" @keyup.enter="showAnswerResponse = false" aria-label="Click here to try again" tabindex="0">
                                                     Click here to try again
                                                 </div>
                                                 <div class="text-h5 text-bold text-center">
                                                     OR
                                                 </div>
-                                                <div role="button" class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showCorrectAnswer = true" aria-label="Click here reveal what the answer is" tabindex="0">
+                                                <div role="button" class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showCorrectAnswer = true" @keyup.enter="showCorrectAnswer = true" aria-label="Click here reveal what the answer is" tabindex="0">
                                                     Click here reveal what the answer is
                                                 </div>
                                             </template>

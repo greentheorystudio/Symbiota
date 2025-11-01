@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class TaxonHierarchy{
@@ -102,7 +103,7 @@ class TaxonHierarchy{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $expandable = $this->taxonHasChildren($row['TID']);
+                $expandable = (new Taxa)->taxonHasChildren($row['TID']);
                 $nodeArr = array();
                 $nodeArr['tid'] = $row['TID'];
                 $nodeArr['sciname'] = $row['SciName'];
@@ -135,7 +136,7 @@ class TaxonHierarchy{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $expandable = $this->taxonHasChildren($row['TID']);
+                $expandable = (new Taxa)->taxonHasChildren($row['TID']);
                 $nodeArr = array();
                 $nodeArr['tid'] = $row['TID'];
                 $nodeArr['sciname'] = $row['SciName'];

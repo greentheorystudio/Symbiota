@@ -77,7 +77,7 @@ const singleScientificCommonNameAutoComplete = {
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon role="button" v-if="clearable && sciname" name="cancel" class="cursor-pointer" @click="clearAction();" aria-label="Clear value" :tabindex="tabindex">
+                <q-icon role="button" v-if="clearable && sciname" name="cancel" class="cursor-pointer" @click="clearAction();" @keyup.enter="clearAction();" aria-label="Clear value" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>

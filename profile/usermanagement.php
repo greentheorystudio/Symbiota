@@ -23,7 +23,7 @@ header('X-Frame-Options: SAMEORIGIN');
             <template v-if="isAdmin">
                 <template v-if="Number(currentUserId) > 0">
                     <div class="column q-gutter-sm">
-                        <div role="button" class="cursor-pointer text-body1 text-bold" @click="processUserChange(0);" aria-label="Back to user list" tabindex="0">
+                        <div role="button" class="cursor-pointer text-body1 text-bold" @click="processUserChange(0);" @keyup.enter="processUserChange(0);" aria-label="Back to user list" tabindex="0">
                             Back to user list
                         </div>
                         <q-card>
@@ -375,7 +375,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             <div class="text-body1 text-bold q-mb-sm">Users</div>
                             <template v-if="userList.length > 0">
                                 <template v-for="user in userList">
-                                    <div role="button" class="text-body1 cursor-pointer" @click="processUserChange(user['uid']);" aria-label="Change user" tabindex="0">
+                                    <div role="button" class="text-body1 cursor-pointer" @click="processUserChange(user['uid']);" @keyup.enter="processUserChange(user['uid']);" aria-label="Change user" tabindex="0">
                                         {{ (user['lastname'] ? user['lastname'] : '') + ((user['lastname'] && user['firstname']) ? ', ' : '') + (user['firstname'] ? user['firstname'] : '') + ' (' + user['username'] + ')' }}
                                     </div>
                                 </template>

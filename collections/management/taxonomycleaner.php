@@ -41,7 +41,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             <template v-if="collInfo && collInfo.collectionname">{{ collInfo.collectionname }}</template>
                             <template v-if="collInfo && (collInfo.institutioncode || collInfo.collectioncode)"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
                         </div>
-                        <div role="button" @click="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" title="Open Tutorial" tabindex="0">
+                        <div role="button" @click="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" @keyup.enter="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" title="Open Tutorial" tabindex="0">
                             <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                         </div>
                     </div>
@@ -226,7 +226,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
                                             <q-item>
                                                 <q-item-section>
-                                                    <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" tabindex="0">Show previous 100 entries</a></div>
+                                                    <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" @keyup.enter="processorDisplayScrollUp();" tabindex="0">Show previous 100 entries</a></div>
                                                 </q-item-section>
                                             </q-item>
                                         </template>
@@ -286,7 +286,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                                         <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
                                             <q-item>
                                                 <q-item-section>
-                                                    <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" tabindex="0">Show next 100 entries</a></div>
+                                                    <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" @keyup.enter="processorDisplayScrollDown();" tabindex="0">Show next 100 entries</a></div>
                                                 </q-item-section>
                                             </q-item>
                                         </template>

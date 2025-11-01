@@ -87,7 +87,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
                                                         <q-item>
                                                             <q-item-section>
-                                                                <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" aria-label="Show previous 100 entries" tabindex="0">Show previous 100 entries</a></div>
+                                                                <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" @keyup.enter="processorDisplayScrollUp();" aria-label="Show previous 100 entries" tabindex="0">Show previous 100 entries</a></div>
                                                             </q-item-section>
                                                         </q-item>
                                                     </template>
@@ -124,7 +124,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
                                                         <q-item>
                                                             <q-item-section>
-                                                                <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" aria-label="Show next 100 entries" tabindex="0">Show next 100 entries</a></div>
+                                                                <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" @keyup.enter="processorDisplayScrollDown();" aria-label="Show next 100 entries" tabindex="0">Show next 100 entries</a></div>
                                                             </q-item-section>
                                                         </q-item>
                                                     </template>

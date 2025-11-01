@@ -13,7 +13,7 @@ const taxaProfileCentralImage = {
         <q-card class="overflow-hidden full-width">
             <template v-if="centralImage">
                 <div class="taxon-profile-central-image">
-                    <a role="button" @click="toggleImageCarousel(centralImage.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
+                    <a role="button" @click="toggleImageCarousel(centralImage.url);" @keyup.enter="toggleImageCarousel(centralImage.url);" class="cursor-pointer" aria-label="Open image carousel" tabindex="0">
                         <q-img :src="(centralImage.url.startsWith('/') ? (clientRoot + centralImage.url) : centralImage.url)" :fit="contain" :title="centralImage.caption" :alt="(centralImage.alttext ? centralImage.alttext : centralImage.sciname)"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">

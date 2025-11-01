@@ -473,7 +473,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();" aria-label="Recalculate decimal coordinates" :tabindex="tabindex">
+                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();" @keyup.enter="parseDecimalCoordinates();" aria-label="Recalculate decimal coordinates" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Recalculate decimal coordinates
                         </q-tooltip>
@@ -507,7 +507,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
                             Clear value
                         </q-tooltip>
                     </q-icon>
-                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();" aria-label="Recalculate decimal coordinates" :tabindex="tabindex">
+                    <q-icon role="button" v-if="value" name="calculate" class="cursor-pointer" @click="parseDecimalCoordinates();" @keyup.enter="parseDecimalCoordinates();" aria-label="Recalculate decimal coordinates" :tabindex="tabindex">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Recalculate decimal coordinates
                         </q-tooltip>

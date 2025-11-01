@@ -82,13 +82,13 @@ const collectionControlPanelMenus = {
                                         </a>
                                     </div>
                                     <div class="cursor-pointer">
-                                        <a role="button" @click="updateCollectionStatistics()" tabindex="0">
+                                        <a role="button" @click="updateCollectionStatistics()" @keyup.enter="updateCollectionStatistics()" tabindex="0">
                                             Update Statistics
                                         </a>
                                     </div>
                                     <template v-if="solrMode">
                                         <div class="cursor-pointer">
-                                            <a role="button" @click="cleanSOLRIndex()" tabindex="0">
+                                            <a role="button" @click="cleanSOLRIndex()" @keyup.enter="cleanSOLRIndex()" tabindex="0">
                                                 Clean SOLR Index
                                             </a>
                                         </div>
