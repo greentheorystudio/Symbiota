@@ -23,6 +23,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         </script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
@@ -237,6 +238,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const currentImageIndex = Vue.ref(0);
                     const currentTaxon = Vue.ref(null);
+                    const displayAcceptedNames = Vue.computed(() => checklistStore.getDisplayAcceptedNames);
                     const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
                     const displayInstructionsPopup = Vue.ref(false);
                     const familyAnswer = Vue.ref(null);
@@ -379,10 +381,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     function setChecklistData() {
                         checklistStore.setChecklist(clId.value, (clid) => {
                             if(Number(clid) > 0){
-                                checklistStore.setChecklistTaxaArr(false, false, true, () => {
-                                    checklistStore.setChecklistFlashcardImageData(3);
-                                });
+                                setChecklistTaxa();
                             }
+                        });
+                    }
+
+                    function setChecklistTaxa() {
+                        checklistStore.setChecklistTaxaArr(false, false, true, displayAcceptedNames.value, () => {
+                            checklistStore.setChecklistFlashcardImageData(3);
                         });
                     }
 
@@ -423,9 +429,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         projectStore.setProject(pId.value, (pid) => {
                             if(Number(pid) > 0 && Number(clId.value) === 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
-                                checklistStore.setChecklistTaxaArr(false, false, true, () => {
-                                    checklistStore.setChecklistFlashcardImageData(3);
-                                });
+                                setChecklistTaxa();
                             }
                         });
                     }

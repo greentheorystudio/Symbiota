@@ -42,6 +42,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         </script>
     </head>
     <body class="full-window-mode">
+        <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;

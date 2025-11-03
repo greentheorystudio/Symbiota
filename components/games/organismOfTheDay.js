@@ -217,6 +217,7 @@ const organismOfTheDay = {
             return (taxonData.value && imageData.value && imageData.value.hasOwnProperty(taxonData.value['tidaccepted'])) ? imageData.value[taxonData.value['tidaccepted']][Number(currentImageIndex.value)] : null;
         });
         const currentImageIndex = Vue.ref(0);
+        const displayAcceptedNames = Vue.computed(() => checklistStore.getDisplayAcceptedNames);
         const displayInstructionsPopup = Vue.ref(false);
         const error = Vue.ref(false);
         const familyAnswer = Vue.ref(null);
@@ -413,7 +414,7 @@ const organismOfTheDay = {
             if(Number(props.checklistId) > 0){
                 checklistStore.setChecklist(props.checklistId, (clid) => {
                     if(Number(clid) > 0){
-                        checklistStore.setChecklistTaxaArr(false, false, false, () => {
+                        checklistStore.setChecklistTaxaArr(false, false, false, displayAcceptedNames.value, () => {
                             if((taxaDataArr.value.length > 0 && !configData.value) || (taxaDataArr.value.length > 1 && configData.value)){
                                 do {
                                     const randomIndex = Math.floor(Math.random() * taxaDataArr.value.length);

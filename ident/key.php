@@ -37,6 +37,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         </script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
@@ -72,13 +73,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                             <selector-input-element label="Sort by" :options="sortByOptions" :value="selectedSortByOption" @update:value="processSortByChange"></selector-input-element>
                                         </div>
                                         <div class="full-width">
-                                            <checkbox-input-element label="Display Common Names" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
+                                            <checkbox-input-element label="Common Names" :value="displayCommonNamesVal" @update:value="processDisplayCommonNameChange"></checkbox-input-element>
                                         </div>
                                         <div class="full-width">
-                                            <checkbox-input-element label="Display Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
+                                            <checkbox-input-element label="Images" :value="displayImagesVal" @update:value="processDisplayImagesChange"></checkbox-input-element>
                                         </div>
                                         <div class="full-width">
-                                            <checkbox-input-element label="Display Taxon Authors" :value="displayAuthorsVal" @update:value="processDisplayAuthorsChange"></checkbox-input-element>
+                                            <checkbox-input-element label="Taxon Authors" :value="displayAuthorsVal" @update:value="processDisplayAuthorsChange"></checkbox-input-element>
+                                        </div>
+                                        <div>
+                                            <checkbox-input-element label="Accepted Names" :value="displayAcceptedNames" @update:value="processDisplayAcceptedNamesChange"></checkbox-input-element>
                                         </div>
                                     </q-card-section>
                                 </q-card>
@@ -337,6 +341,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     const clId = Vue.ref(CLID);
                     const clientRoot = baseStore.getClientRoot;
                     const csidArr = Vue.ref([]);
+                    const displayAcceptedNames = Vue.computed(() => checklistStore.getDisplayAcceptedNames);
                     const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
                     const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
                     const displayImagesVal = Vue.computed(() => checklistStore.getDisplayImages);
@@ -456,6 +461,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         setActiveCidArr();
                     }
 
+                    function processDisplayAcceptedNamesChange(value) {
+                        checklistStore.setDisplayAcceptedNames(value);
+                        setExtendedData();
+                    }
+
                     function processDisplayAuthorsChange(value) {
                         checklistStore.setDisplayAuthors(value);
                     }
@@ -569,7 +579,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function setExtendedData() {
-                        checklistStore.setChecklistTaxaArr(true, true, true, () => {
+                        checklistStore.setChecklistTaxaArr(true, true, true, displayAcceptedNames.value, () => {
                             processTaxaData();
                             checklistStore.setChecklistImageData(1);
                         });
@@ -633,6 +643,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         checklistName,
                         clId,
                         clientRoot,
+                        displayAcceptedNames,
                         displayAuthorsVal,
                         displayCommonNamesVal,
                         displayImagesVal,
@@ -657,6 +668,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         closeSpatialPopup,
                         openSpatialPopup,
                         processCharacterStateSelectionChange,
+                        processDisplayAcceptedNamesChange,
                         processDisplayAuthorsChange,
                         processDisplayCommonNameChange,
                         processDisplayImagesChange,

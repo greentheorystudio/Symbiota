@@ -42,6 +42,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         </script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
@@ -228,6 +229,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     </div>
                                     <div>
                                         <checkbox-input-element label="Taxon Authors" :value="displayAuthorsVal" @update:value="processDisplayAuthorsChange"></checkbox-input-element>
+                                    </div>
+                                    <div>
+                                        <checkbox-input-element label="Accepted Names" :value="displayAcceptedNames" @update:value="processDisplayAcceptedNamesChange"></checkbox-input-element>
                                     </div>
                                 </div>
                             </div>
@@ -550,6 +554,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         returnData['total'] = totalArr.length;
                         return returnData;
                     });
+                    const displayAcceptedNames = Vue.computed(() => checklistStore.getDisplayAcceptedNames);
                     const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
                     const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
                     const displayImagesVal = Vue.computed(() => checklistStore.getDisplayImages);
@@ -742,6 +747,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         showSpatialPopup.value = true;
                     }
 
+                    function processDisplayAcceptedNamesChange(value) {
+                        checklistStore.setDisplayAcceptedNames(value);
+                        setChecklistTaxa();
+                    }
+
                     function processDisplayAuthorsChange(value) {
                         checklistStore.setDisplayAuthors(value);
                     }
@@ -796,15 +806,19 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         setEditor();
                         checklistStore.setChecklist(clId.value, (clid) => {
                             if(Number(clid) > 0){
-                                checklistStore.setChecklistTaxaArr(false, true, true, () => {
-                                    hideWorking();
-                                    checklistStore.setChecklistImageData(1);
-                                    checklistStore.setChecklistVoucherData();
-                                });
+                                setChecklistTaxa();
                             }
                             else{
                                 hideWorking();
                             }
+                        });
+                    }
+
+                    function setChecklistTaxa() {
+                        checklistStore.setChecklistTaxaArr(false, true, true, displayAcceptedNames.value, () => {
+                            hideWorking();
+                            checklistStore.setChecklistImageData(1);
+                            checklistStore.setChecklistVoucherData();
                         });
                     }
 
@@ -831,11 +845,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         projectStore.setProject(pId.value, (pid) => {
                             if(Number(pid) > 0 && Number(clId.value) === 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
-                                checklistStore.setChecklistTaxaArr(false, true, true, () => {
-                                    hideWorking();
-                                    checklistStore.setChecklistImageData(1);
-                                    checklistStore.setChecklistVoucherData();
-                                });
+                                setChecklistTaxa();
                             }
                             else{
                                 hideWorking();
@@ -878,6 +888,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         clId,
                         clientRoot,
                         countData,
+                        displayAcceptedNames,
                         displayAuthorsVal,
                         displayCommonNamesVal,
                         displayImagesVal,
@@ -914,6 +925,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         downloadChecklist,
                         openChecklistTaxaEditorPopup,
                         openSpatialPopup,
+                        processDisplayAcceptedNamesChange,
                         processDisplayAuthorsChange,
                         processDisplayCommonNameChange,
                         processDisplayDetailsChange,
