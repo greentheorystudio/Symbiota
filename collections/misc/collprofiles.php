@@ -28,7 +28,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
         </script>
     </head>
     <body>
-        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
