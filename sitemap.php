@@ -28,13 +28,13 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <li><a :href="(clientRoot + '/collections/list.php')" tabindex="0">Search Collections</a></li>
                         <li><a :href="(clientRoot + '/spatial/index.php')" tabindex="0">Spatial Module</a></li>
                         <li><a :href="(clientRoot + '/collections/misc/collprofiles.php')" tabindex="0">Collections</a></li>
-                        <li><a :href="(clientRoot + '/collections/misc/collstats.php')" tabindex="0">Collection Statistics</a></li>
+                        <!-- <li><a :href="(clientRoot + '/collections/misc/collstats.php')" tabindex="0">Collection Statistics</a></li> -->
                         <template v-if="activateExsiccati">
                             <li><a :href="(clientRoot + '/collections/exsiccati/index.php')" tabindex="0">Exsiccati Index</a></li>
                         </template>
                         <li>Data Publishing</li>
-                        <li class="q-ml-md"><a :href="(clientRoot + '/rsshandler.php')" target="_blank" aria-label="Collection RSS Feed - opens in separate tab" tabindex="0">Collection RSS Feed</a></li>
                         <li class="q-ml-md"><a :href="(clientRoot + '/collections/datasets/datapublisher.php')" tabindex="0">Darwin Core Archives (DwC-A)</a></li>
+                        <li class="q-ml-md"><a :href="(clientRoot + '/rsshandler.php?feed=collection')" target="_blank" aria-label="Collection RSS Feed - opens in separate tab" tabindex="0">Collection RSS Feed</a></li>
                         <template v-if="rssActive">
                             <li class="q-ml-md"><a :href="(clientRoot + '/rss.xml')" target="_blank" aria-label="DwC-A RSS Feed - opens in separate tab" tabindex="0">DwC-A RSS Feed</a></li>
                         </template>

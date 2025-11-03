@@ -14,72 +14,74 @@ class RssService {
         $channelElem = $newDoc->createElement('channel');
         $rootElem->appendChild($channelElem);
         $titleElem = $newDoc->createElement('title');
-        $titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Biological Occurrences RSS feed'));
+        $titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'] . ' Collections RSS Feed'));
         $channelElem->appendChild($titleElem);
         $urlPathPrefix = ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/';
         $linkElem = $newDoc->createElement('link');
         $linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
         $channelElem->appendChild($linkElem);
         $descriptionElem = $newDoc->createElement('description');
-        $descriptionElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Natural History Collections and Observation Project feed'));
+        $descriptionElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'] . ' Occurrence Data Collections RSS Feed'));
         $channelElem->appendChild($descriptionElem);
         $languageElem = $newDoc->createElement('language','en-us');
         $channelElem->appendChild($languageElem);
         $collectionsArr = (new Collections)->getCollectionArr();
         foreach($collectionsArr as $cArr){
-            $itemElem = $newDoc->createElement('item');
-            $itemAttr = $newDoc->createAttribute('collid');
-            $itemAttr->value = $cArr['collid'];
-            $itemElem->appendChild($itemAttr);
-            $instCode = $cArr['institutioncode'] ?: '';
-            if($cArr['collectioncode']) {
-                $instCode .= ($instCode ? '-' : '') . $cArr['collectioncode'];
-            }
-            $title = $instCode ?: $cArr['collectionname'];
-            $itemTitleElem = $newDoc->createElement('title');
-            $itemTitleElem->appendChild($newDoc->createTextNode($title));
-            $itemElem->appendChild($itemTitleElem);
-            if($GLOBALS['CLIENT_ROOT'] && strncmp($cArr['icon'], '/', 1) === 0){
-                $cArr['icon'] = $GLOBALS['CLIENT_ROOT'] . $cArr['icon'];
-            }
-            if($cArr['icon'] && strncmp($cArr['icon'], '/', 1) === 0){
-                $cArr['icon'] = $urlPathPrefix . $cArr['icon'];
-            }
-            $iconElem = $newDoc->createElement('image');
-            if($cArr['icon']){
-                $iconElem->appendChild($newDoc->createTextNode($cArr['icon']));
-                $itemElem->appendChild($iconElem);
-            }
-            $descTitleElem = $newDoc->createElement('description');
-            $descTitleElem->appendChild($newDoc->createTextNode($cArr['collectionname']));
-            $itemElem->appendChild($descTitleElem);
-            $guidElem = $newDoc->createElement('guid');
-            $guidElem->appendChild($newDoc->createTextNode($cArr['collectionguid']));
-            $itemElem->appendChild($guidElem);
-            $emlElem = $newDoc->createElement('emllink');
-            $emlElem->appendChild($newDoc->createTextNode($urlPathPrefix . 'collections/datasets/emlhandler.php?collid=' . $cArr['collid']));
-            $itemElem->appendChild($emlElem);
-            $link = $cArr['dwcaurl'];
-            if(!$link){
-                $link = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $cArr['collid'];
-            }
-            $typeTitleElem = $newDoc->createElement('type','DWCA');
-            $itemElem->appendChild($typeTitleElem);
+            if((int)$cArr['recordcnt'] > 0){
+                $itemElem = $newDoc->createElement('item');
+                $itemAttr = $newDoc->createAttribute('collid');
+                $itemAttr->value = $cArr['collid'];
+                $itemElem->appendChild($itemAttr);
+                $instCode = $cArr['institutioncode'] ?: '';
+                if($cArr['collectioncode']) {
+                    $instCode .= ($instCode ? '-' : '') . $cArr['collectioncode'];
+                }
+                $title = $instCode ?: $cArr['collectionname'];
+                $itemTitleElem = $newDoc->createElement('title');
+                $itemTitleElem->appendChild($newDoc->createTextNode($title));
+                $itemElem->appendChild($itemTitleElem);
+                if($GLOBALS['CLIENT_ROOT'] && strncmp($cArr['icon'], '/', 1) === 0){
+                    $cArr['icon'] = $GLOBALS['CLIENT_ROOT'] . $cArr['icon'];
+                }
+                if($cArr['icon'] && strncmp($cArr['icon'], '/', 1) === 0){
+                    $cArr['icon'] = $urlPathPrefix . $cArr['icon'];
+                }
+                $iconElem = $newDoc->createElement('image');
+                if($cArr['icon']){
+                    $iconElem->appendChild($newDoc->createTextNode($cArr['icon']));
+                    $itemElem->appendChild($iconElem);
+                }
+                $descTitleElem = $newDoc->createElement('description');
+                $descTitleElem->appendChild($newDoc->createTextNode($cArr['collectionname']));
+                $itemElem->appendChild($descTitleElem);
+                $guidElem = $newDoc->createElement('guid');
+                $guidElem->appendChild($newDoc->createTextNode($cArr['collectionguid']));
+                $itemElem->appendChild($guidElem);
+                $emlElem = $newDoc->createElement('emllink');
+                $emlElem->appendChild($newDoc->createTextNode($urlPathPrefix . 'collections/datasets/emlhandler.php?collid=' . $cArr['collid']));
+                $itemElem->appendChild($emlElem);
+                $link = $cArr['dwcaurl'];
+                if(!$link){
+                    $link = $urlPathPrefix . 'collections/misc/collprofiles.php?collid=' . $cArr['collid'];
+                }
+                $typeTitleElem = $newDoc->createElement('type','DWCA');
+                $itemElem->appendChild($typeTitleElem);
 
-            $linkTitleElem = $newDoc->createElement('link');
-            $linkTitleElem->appendChild($newDoc->createTextNode($link));
-            $itemElem->appendChild($linkTitleElem);
-            $dateStr = '';
-            if($cArr['managementtype'] === 'Live Data'){
-                $dateStr = date('D, d M Y H:i:s');
+                $linkTitleElem = $newDoc->createElement('link');
+                $linkTitleElem->appendChild($newDoc->createTextNode($link));
+                $itemElem->appendChild($linkTitleElem);
+                $dateStr = '';
+                if($cArr['managementtype'] === 'Live Data'){
+                    $dateStr = date('D, d M Y H:i:s');
+                }
+                elseif($cArr['uploaddate']){
+                    $dateStr = date('D, d M Y H:i:s', strtotime($cArr['uploaddate']));
+                }
+                $pubDateTitleElem = $newDoc->createElement('pubDate');
+                $pubDateTitleElem->appendChild($newDoc->createTextNode($dateStr));
+                $itemElem->appendChild($pubDateTitleElem);
+                $channelElem->appendChild($itemElem);
             }
-            elseif($cArr['uploaddate']){
-                $dateStr = date('D, d M Y H:i:s', strtotime($cArr['uploaddate']));
-            }
-            $pubDateTitleElem = $newDoc->createElement('pubDate');
-            $pubDateTitleElem->appendChild($newDoc->createTextNode($dateStr));
-            $itemElem->appendChild($pubDateTitleElem);
-            $channelElem->appendChild($itemElem);
         }
         return $newDoc->saveXML();
     }
