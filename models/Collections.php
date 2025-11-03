@@ -167,7 +167,7 @@ class Collections {
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', s.uploaddate '.
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', s.uploaddate, s.recordcnt '.
             'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid ';
         if(!$GLOBALS['IS_ADMIN']){
             $sql .= 'WHERE c.ispublic = 1 ';
