@@ -34,12 +34,15 @@ class RssService {
                 $itemElem->appendChild($itemAttr);
                 $instCode = $cArr['institutioncode'] ?: '';
                 if($cArr['collectioncode']) {
-                    $instCode .= ($instCode ? '-' : '') . $cArr['collectioncode'];
+                    $instCode .= ($instCode ? ':' : '') . $cArr['collectioncode'];
                 }
-                $title = $instCode ?: $cArr['collectionname'];
+                $title = $cArr['collectionname'] . ($instCode ? ' (' . $instCode . ')' : '');
                 $itemTitleElem = $newDoc->createElement('title');
                 $itemTitleElem->appendChild($newDoc->createTextNode($title));
                 $itemElem->appendChild($itemTitleElem);
+                $itemNameElem = $newDoc->createElement('name');
+                $itemNameElem->appendChild($newDoc->createTextNode($cArr['collectionname']));
+                $itemElem->appendChild($itemNameElem);
                 if($GLOBALS['CLIENT_ROOT'] && strncmp($cArr['icon'], '/', 1) === 0){
                     $cArr['icon'] = $GLOBALS['CLIENT_ROOT'] . $cArr['icon'];
                 }
@@ -52,7 +55,7 @@ class RssService {
                     $itemElem->appendChild($iconElem);
                 }
                 $descTitleElem = $newDoc->createElement('description');
-                $descTitleElem->appendChild($newDoc->createTextNode($cArr['collectionname']));
+                $descTitleElem->appendChild($newDoc->createTextNode(($cArr['fulldescription'] ? strip_tags($cArr['fulldescription']) : '')));
                 $itemElem->appendChild($descTitleElem);
                 $guidElem = $newDoc->createElement('guid');
                 $guidElem->appendChild($newDoc->createTextNode($cArr['collectionguid']));

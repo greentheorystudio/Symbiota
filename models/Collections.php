@@ -176,7 +176,7 @@ class Collections {
             }
         }
         $sql .= 'ORDER BY c.collectionname ';
-        //echo $sql;
+        //error_log($sql);
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
