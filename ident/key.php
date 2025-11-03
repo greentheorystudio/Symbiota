@@ -294,13 +294,15 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         taxaDataArr.value.forEach(taxon => {
                             const cidArr = [];
                             let includeTaxon = false;
-                            taxon['keyData'].forEach(char => {
-                                if(!includeTaxon && (selectedCidArr.value.length === 0 || (selectedCidArr.value.includes(Number(char['cid'])) && selectedCsidArr.value.includes(Number(char['csid']))))){
-                                    includeTaxon = true;
-                                }
-                                if(includeTaxon && !cidArr.includes(Number(char['cid']))){
-                                    cidArr.push(Number(char['cid']));
-                                }
+                            Object.keys(taxon['keyData']).forEach(cid => {
+                                taxon['keyData'][cid].forEach(char => {
+                                    if(!includeTaxon && (selectedCidArr.value.length === 0 || (selectedCidArr.value.includes(Number(char['cid'])) && selectedCsidArr.value.includes(Number(char['csid']))))){
+                                        includeTaxon = true;
+                                    }
+                                    if(includeTaxon && !cidArr.includes(Number(char['cid']))){
+                                        cidArr.push(Number(char['cid']));
+                                    }
+                                });
                             });
                             selectedCidArr.value.forEach(cid => {
                                 if(!cidArr.includes(Number(cid))){
@@ -518,11 +520,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processTaxaData() {
                         taxaDataArr.value.forEach(taxon => {
-                            if(taxon['keyData'].length > 0){
-                                taxon['keyData'].forEach(keyData => {
-                                    if(!csidArr.value.includes(keyData['csid'])){
-                                        csidArr.value.push(keyData['csid']);
-                                    }
+                            if(Object.keys(taxon['keyData']).length > 0){
+                                Object.keys(taxon['keyData']).forEach(cid => {
+                                    taxon['keyData'][cid].forEach(keyData => {
+                                        if(!csidArr.value.includes(keyData['csid'])){
+                                            csidArr.value.push(keyData['csid']);
+                                        }
+                                    });
                                 });
                             }
                         });
