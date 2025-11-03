@@ -748,6 +748,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function processDisplayAcceptedNamesChange(value) {
+                        showWorking();
                         checklistStore.setDisplayAcceptedNames(value);
                         setChecklistTaxa();
                     }
