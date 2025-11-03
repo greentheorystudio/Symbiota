@@ -416,7 +416,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             searchStore.getSearchTidArr(options, (tidArr) => {
                                 if(tidArr.length > 0){
                                     checklistStore.createTemporaryChecklistFromTidArr(tidArr, (res) => {
-                                        hideWorking();
                                         if(Number(res) > 0){
                                             setQueryPopupDisplay(false);
                                             clId.value = Number(res);
@@ -462,6 +461,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function processDisplayAcceptedNamesChange(value) {
+                        showWorking();
                         checklistStore.setDisplayAcceptedNames(value);
                         setExtendedData();
                     }
@@ -580,6 +580,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setExtendedData() {
                         checklistStore.setChecklistTaxaArr(true, true, true, displayAcceptedNames.value, () => {
+                            hideWorking();
                             processTaxaData();
                             checklistStore.setChecklistImageData(1);
                         });
@@ -617,6 +618,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     Vue.onMounted(() => {
                         if(Number(clId.value) > 0 || Number(pId.value) > 0){
+                            showWorking();
                             if(Number(clId.value) > 0){
                                 setChecklistData();
                             }
