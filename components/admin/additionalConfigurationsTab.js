@@ -2,7 +2,7 @@ const additionalConfigurationsTab = {
     template: `
         <div class="q-mb-md full-width row justify-end items-center">
             <div>
-                <q-btn color="primary" @click="showAddPopup = true" label="Add Configuration" />
+                <q-btn color="primary" @click="showAddPopup = true" label="Add Configuration" tabindex="0" />
             </div>
         </div>
         <q-card flat bordered>
@@ -16,7 +16,7 @@ const additionalConfigurationsTab = {
                             <div class="col-5 text-body1 text-bold no-wrap self-center">
                                 <div class="full-width">
                                     {{ config }}:  
-                                    <q-btn color="primary" size="sm" @click="processConfigurationDelete(config);" label="Delete" />
+                                    <q-btn color="primary" size="sm" @click="processConfigurationDelete(config);" label="Delete" aria-label="Delete configuration" tabindex="0" />
                                 </div>
                             </div>
                             <div class="col-6 self-center">
@@ -34,7 +34,7 @@ const additionalConfigurationsTab = {
             <q-card class="sm-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div class="q-mt-sm q-pa-md column q-gutter-sm">
@@ -49,7 +49,7 @@ const additionalConfigurationsTab = {
                     </div>
                     <div class="row justify-end">
                         <div>
-                            <q-btn color="primary" @click="processAddNewConfiguration();" label="Add" :disabled="!addConfigNameValue || !addConfigValueValue" />
+                            <q-btn color="primary" @click="processAddNewConfiguration();" label="Add" :disabled="!addConfigNameValue || !addConfigValueValue" aria-label="Add configuration" tabindex="0" />
                         </div>
                     </div>
                 </div>

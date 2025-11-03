@@ -10,22 +10,22 @@ const occurrenceEditorCollectingEventModule = {
                         <template v-if="Number(eventId) > 0">
                             <template v-if="occurrenceEntryFormat === 'benthic' && Number(eventData.repcount) > 0">
                                 <template v-if="collectingEventBenthicTaxaCnt > 0">
-                                    <q-btn color="secondary" @click="showBenthicTaxaListPopup = true" label="View Taxa" />
+                                    <q-btn color="secondary" @click="showBenthicTaxaListPopup = true" label="View Taxa" tabindex="0" />
                                 </template>
-                                <q-btn color="secondary" @click="showBenthicTaxaEditorPopup = true" label="Add Taxa" />
+                                <q-btn color="secondary" @click="showBenthicTaxaEditorPopup = true" label="Add Taxa" tabindex="0" />
                             </template>
                             <template v-else-if="collectingEventCollectionArr.length > 0">
-                                <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" />
+                                <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" tabindex="0" />
                             </template>
                         </template>
                         <template v-if="Object.keys(configuredDataFields).length > 0">
-                            <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
+                            <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" tabindex="0" />
                         </template>
                         <template v-if="Number(eventId) === 0">
-                            <q-btn color="secondary" @click="createCollectingEventRecord();" label="Create Event Record" :disabled="!eventValid" />
+                            <q-btn color="secondary" @click="createCollectingEventRecord();" label="Create Event Record" :disabled="!eventValid" tabindex="0" />
                         </template>
                         <template v-else>
-                            <q-btn color="secondary" @click="processOpenEditor" label="Edit Event" />
+                            <q-btn color="secondary" @click="processOpenEditor" label="Edit Event" tabindex="0" />
                         </template>
                     </div>
                 </div>

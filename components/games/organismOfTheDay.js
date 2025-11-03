@@ -15,7 +15,7 @@ const organismOfTheDay = {
     },
     template: `
         <div ref="cardContainerRef" class="full-width row justify-center">
-            <q-card class="cursor-pointer" @click="showPopup = true">
+            <q-card role="button" class="cursor-pointer" @click="showPopup = true" :aria-label="('Show ' + {{ title }})" tabindex="0">
                 <q-card-section v-if="imageData && taxonData && imageData.hasOwnProperty(taxonData['tidaccepted']) && imageData[taxonData['tidaccepted']].length > 0" class="q-pa-md column">
                     <div class="full-width text-h5 text-bold row justify-center">
                         {{ title }}
@@ -36,7 +36,7 @@ const organismOfTheDay = {
                     <q-spinner color="primary" size="3em" :thickness="10"></q-spinner>
                 </q-inner-loading>
                 <q-inner-loading :showing="error">
-                    <q-icon name="warning" color="negative" size="3em"></q-icon>
+                    <q-icon name="warning" color="negative" size="3em" aria-label="Error occurred loading game"></q-icon>
                 </q-inner-loading>
             </q-card>
         </div>
@@ -45,7 +45,7 @@ const organismOfTheDay = {
                 <q-card class="md-tall-popup overflow-hidden">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showPopup = false" aria-label="Close window" tabindex="0"></q-btn>
                         </div>
                     </div>
                     <div ref="containerRef" class="fit overflow-auto">
@@ -59,7 +59,7 @@ const organismOfTheDay = {
                                                 Name that {{ type }}!
                                             </div>
                                             <div>
-                                                <q-btn size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="displayInstructionsPopup = true">
+                                                <q-btn size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="displayInstructionsPopup = true" aria-label="Show instructions" tabindex="0">
                                                     <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Show instructions
                                                     </q-tooltip>
@@ -81,10 +81,10 @@ const organismOfTheDay = {
                                         </div>
                                         <div class="row justify-between">
                                             <div>
-                                                <q-btn color="negative" @click="showAnswer();" label="I give up!" />
+                                                <q-btn color="negative" @click="showAnswer();" label="I give up!" tabindex="0" />
                                             </div>
                                             <div>
-                                                <q-btn color="primary" @click="checkAnswers();" label="Check Answer" :disabled="!scinameAnswer && !familyAnswer" />
+                                                <q-btn color="primary" @click="checkAnswers();" label="Check Answer" :disabled="!scinameAnswer && !familyAnswer" tabindex="0" />
                                             </div>
                                         </div>
                                     </div>
@@ -117,7 +117,7 @@ const organismOfTheDay = {
                                                 <div v-if="answerCorrect !== 'complete'" class="text-h5 text-bold text-center">
                                                     {{ taxonData['family'] }}
                                                 </div>
-                                                <div class="q-my-md text-h6 text-bold text-blue cursor-pointer text-center" @click="showTaxonProfile">
+                                                <div role="button" class="q-my-md text-h6 text-bold text-blue cursor-pointer text-center" @click="showTaxonProfile" @keyup.enter="showTaxonProfile" aria-label="Go to taxon profile page - Opens in separate tab" tabindex="0">
                                                     Click here to learn more about this {{ type }}
                                                 </div>
                                                 <div class="text-h6 text-bold text-center">
@@ -153,13 +153,13 @@ const organismOfTheDay = {
                                                         On the bright side, <span class="text-bold">you did get the genus and family right</span>, but the scientific name is not {{ scinameAnswer['sciname'] }}
                                                     </div>
                                                 </template>
-                                                <div class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showAnswerResponse = false">
+                                                <div role="button" class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showAnswerResponse = false" @keyup.enter="showAnswerResponse = false" aria-label="Click here to try again" tabindex="0">
                                                     Click here to try again
                                                 </div>
                                                 <div class="text-h5 text-bold text-center">
                                                     OR
                                                 </div>
-                                                <div class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showCorrectAnswer = true">
+                                                <div role="button" class="text-h6 text-bold text-blue cursor-pointer text-center" @click="showCorrectAnswer = true" @keyup.enter="showCorrectAnswer = true" aria-label="Click here reveal what the answer is" tabindex="0">
                                                     Click here reveal what the answer is
                                                 </div>
                                             </template>
@@ -178,7 +178,7 @@ const organismOfTheDay = {
                         </div>
                         <div class="row justify-end">
                             <div>
-                                <q-btn color="primary" @click="displayInstructionsPopup = false" label="Ok" />
+                                <q-btn color="primary" @click="displayInstructionsPopup = false" label="Ok" tabindex="0" />
                             </div>
                         </div>
                     </q-card>
@@ -217,6 +217,7 @@ const organismOfTheDay = {
             return (taxonData.value && imageData.value && imageData.value.hasOwnProperty(taxonData.value['tidaccepted'])) ? imageData.value[taxonData.value['tidaccepted']][Number(currentImageIndex.value)] : null;
         });
         const currentImageIndex = Vue.ref(0);
+        const displayAcceptedNames = Vue.computed(() => checklistStore.getDisplayAcceptedNames);
         const displayInstructionsPopup = Vue.ref(false);
         const error = Vue.ref(false);
         const familyAnswer = Vue.ref(null);
@@ -413,7 +414,7 @@ const organismOfTheDay = {
             if(Number(props.checklistId) > 0){
                 checklistStore.setChecklist(props.checklistId, (clid) => {
                     if(Number(clid) > 0){
-                        checklistStore.setChecklistTaxaArr(false, false, false, () => {
+                        checklistStore.setChecklistTaxaArr(false, false, false, displayAcceptedNames.value, () => {
                             if((taxaDataArr.value.length > 0 && !configData.value) || (taxaDataArr.value.length > 1 && configData.value)){
                                 do {
                                     const randomIndex = Math.floor(Math.random() * taxaDataArr.value.length);

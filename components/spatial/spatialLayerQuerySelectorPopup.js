@@ -10,44 +10,44 @@ const spatialLayerQuerySelectorPopup = {
             <q-card class="sm-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="updateMapSettings('showLayerQuerySelector', false);"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="updateMapSettings('showLayerQuerySelector', false);" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div class="q-mt-sm q-pa-md column q-gutter-sm">
                     <template v-if="fieldArr.length > 0">
                         <div class="row">
-                            <q-select bg-color="white" class="col-6" outlined v-model="selectedField" :options="fieldOptions" option-value="value" option-label="label" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" class="col-6" outlined v-model="selectedField" :options="fieldOptions" option-value="value" option-label="label" popup-content-class="z-max" behavior="menu" dense options-dense aria-label="Select layer to query" tabindex="0" />
                         </div>
                         <div class="row">
-                            <q-select bg-color="white" class="col-6" outlined v-model="selectedOperator" :options="operatorSelectorOptions" option-value="value" option-label="label" popup-content-class="z-max" behavior="menu" dense options-dense />
+                            <q-select bg-color="white" class="col-6" outlined v-model="selectedOperator" :options="operatorSelectorOptions" option-value="value" option-label="label" popup-content-class="z-max" behavior="menu" dense options-dense aria-label="Select query operator" tabindex="0" />
                         </div>
                         <template v-if="selectedOperator.value === 'between'">
                             <div class="row justify-around items-center q-gutter-md q-mt-xs">
                                 <div>
-                                    <q-input type="number" outlined v-model="dualValueLow" bg-color="white" label="Value" class="col-3" dense></q-input>
+                                    <q-input type="number" outlined v-model="dualValueLow" bg-color="white" label="Low Value" class="col-3" dense tabindex="0"></q-input>
                                 </div>
                                 <div>
                                     AND
                                 </div>
                                 <div>
-                                    <q-input type="number" outlined v-model="dualValueHigh" bg-color="white" label="Value" class="col-3" dense></q-input>
+                                    <q-input type="number" outlined v-model="dualValueHigh" bg-color="white" label="High Value" class="col-3" dense tabindex="0"></q-input>
                                 </div>
                             </div>
                         </template>
                         <template v-else>
                             <template v-if="selectedOperator.value === 'greaterThan' || selectedOperator.value === 'lessThan'">
                                 <div>
-                                    <q-input type="number" outlined v-model="singleValue" bg-color="white" label="Value" class="col-6" dense></q-input>
+                                    <q-input type="number" outlined v-model="singleValue" bg-color="white" label="Value" class="col-6" dense tabindex="0"></q-input>
                                 </div>
                             </template>
                             <template v-else>
                                 <div>
-                                    <q-input outlined v-model="singleValue" bg-color="white" label="Value" class="col-6" dense></q-input>
+                                    <q-input outlined v-model="singleValue" bg-color="white" label="Value" class="col-6" dense tabindex="0"></q-input>
                                 </div>
                             </template>
                         </template>
                         <div class="row col-5 justify-end">
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processQuerySelectorQuery();" label="Run Query" />
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processQuerySelectorQuery();" label="Run Query" tabindex="0" />
                         </div>
                     </template>
                     <template v-else>

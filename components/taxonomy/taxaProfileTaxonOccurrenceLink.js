@@ -1,7 +1,7 @@
 const taxaProfileTaxonOccurrenceLink = {
     template: `
         <div class="occurrences-link-frame">
-            <q-card class="taxon-profile-occurrence-link-card cursor-pointer" @click="openOccurrenceSearch();">
+            <q-card role="button" class="taxon-profile-occurrence-link-card cursor-pointer" @click="openOccurrenceSearch();" @keyup.enter="openOccurrenceSearch();" aria-label="View occurrence records - opens in separate tab" tabindex="0">
                 <div class="occurrences-link">
                     View Occurrence Records
                 </div>

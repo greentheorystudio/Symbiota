@@ -33,6 +33,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
@@ -51,10 +52,10 @@ header('X-Frame-Options: SAMEORIGIN');
                         <q-tab-panel v-if="validUser" name="checklists" class="column">
                             <div class="row justify-end q-gutter-sm q-pr-md">
                                 <div>
-                                    <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist"/>
+                                    <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist" tabindex="0" />
                                 </div>
                                 <div>
-                                    <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project"/>
+                                    <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project" tabindex="0" />
                                 </div>
                             </div>
                             <account-checklist-project-list></account-checklist-project-list>

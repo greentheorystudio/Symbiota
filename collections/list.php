@@ -35,12 +35,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         </script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Search Collections List Display</span>
             </div>
             <div class="q-pa-md">
@@ -57,7 +58,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     <div class="q-pa-sm column q-col-gutter-xs">
                                         <div class="row justify-start">
                                             <div>
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
                                             </div>
                                         </div>
                                         <div v-if="recordDataArr.length > 0" class="row justify-between q-col-gutter-sm">
@@ -81,13 +82,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                 <div class="full-width row justify-end">
                                                     <div class="self-center text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
                                                 </div>
                                             </template>
                                             <template v-slot:header="props"></template>
@@ -103,14 +104,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                     <div class="col-1 row justify-center items-center">
                                                                         <div>
                                                                             <template v-if="props.row.icon">
-                                                                                <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain"></q-img>
+                                                                                <q-img :src="props.row.icon" class="occurrence-search-list-coll-icon" fit="contain" :alt="('Logo of ' + props.row.collectionname)"></q-img>
                                                                             </template>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-11 column text-body1 wrap">
                                                                         <div v-if="props.row.sciname">
                                                                             <template v-if="Number(props.row.tid) > 0">
-                                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">
+                                                                                <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank" :aria-label="(props.row.sciname + ' taxon profile page - Opens in separate tab')" tabindex="0">
                                                                                     <span class="text-italic">{{ props.row.sciname }}</span><span class="q-ml-sm">{{ props.row.scientificnameauthorship }}</span>
                                                                                 </a>
                                                                             </template>
@@ -161,7 +162,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                                             {{ props.row.informationwithheld }}
                                                                         </div>
                                                                         <div>
-                                                                            <span class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);">Full Record Details</span>
+                                                                            <span role="button" class="cursor-pointer text-body1 text-bold" @click="openRecordInfoWindow(props.row.occid);" tabindex="0">Full Record Details</span>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -169,13 +170,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                             <div class="col-3 row justify-end q-gutter-sm no-wrap">
                                                                 <div class="full-width q-pa-xs">
                                                                     <template v-if="props.row.img">
-                                                                        <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain"></q-img>
+                                                                        <q-img :src="props.row.img" class="occurrence-search-image-thumbnail" fit="contain" :alt="(props.row['img-alt'] ? props.row['img-alt'] : ('Image of occurrence record ' + props.row.occid + ' of ' + props.row.sciname))"></q-img>
                                                                     </template>
                                                                 </div>
                                                                 <div v-if="isAdmin || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))" class="col-1">
                                                                     <div class="row justify-end vertical-top">
                                                                         <div>
-                                                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="redirectToOccurrenceEditorWithQueryId(props.row.occid, props.row.collid);" icon="fas fa-edit" dense>
+                                                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="redirectToOccurrenceEditorWithQueryId(props.row.occid, props.row.collid);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
                                                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                                                     Edit occurrence record
                                                                                 </q-tooltip>
@@ -192,13 +193,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                 <div class="full-width row justify-end">
                                                     <div class="self-center text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage"></q-btn>
+                                                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage"></q-btn>
+                                                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage"></q-btn>
+                                                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
                                                 </div>
                                             </template>
                                             <template v-slot:no-data>
@@ -221,7 +222,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     <div class="q-pa-sm column q-col-gutter-xs">
                                         <div class="row justify-start">
                                             <div>
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
                                             </div>
                                         </div>
                                         <div v-if="recordDataArr.length > 0" class="row justify-between q-col-gutter-sm">
@@ -251,7 +252,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                                         <template v-for="taxon in family['taxa']">
                                                             <div>
                                                                 <template v-if="Number(taxon.tid) > 0">
-                                                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon.tid)" target="_blank">
+                                                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon.tid)" target="_blank" :aria-label="(taxon.sciname + ' taxon profile page - Opens in separate tab')" tabindex="0">
                                                                         <span class="text-italic">{{ taxon.sciname }}</span><span class="q-ml-sm">{{ taxon.author }}</span>
                                                                     </a>
                                                                 </template>

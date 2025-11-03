@@ -7,12 +7,12 @@ const spatialSelectionsTab = {
                         <search-data-downloader :selections="true"></search-data-downloader>
                     </div>
                     <div class="row q-gutter-sm">
-                        <q-checkbox v-model="mapSettings.toggleSelectedPoints" label="Show Only Selected Points" @update:model-value="processToggleSelectedPoints"></q-checkbox>
+                        <q-checkbox v-model="mapSettings.toggleSelectedPoints" label="Show Only Selected Points" @update:model-value="processToggleSelectedPoints" tabindex="0"></q-checkbox>
                     </div>
                 </div>
                 <div class="column q-gutter-xs">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processClearSelections();" label="Clear Selections" dense />
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="zoomToSelections();" label="Zoom to Selections" dense />
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processClearSelections();" label="Clear Selections" dense tabindex="0" />
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="zoomToSelections();" label="Zoom to Selections" dense tabindex="0" />
                 </div>
             </div>
             <q-separator ></q-separator>
@@ -29,7 +29,7 @@ const spatialSelectionsTab = {
                     <template v-slot:body="props">
                         <q-tr v-if="!tableLoading" :props="props">
                             <q-td>
-                                <q-checkbox v-model="checkboxValue" @update:model-value="deselectRecord(props.row.occid)" dense />
+                                <q-checkbox v-model="checkboxValue" @update:model-value="deselectRecord(props.row.occid)" dense aria-label="Deselect record" tabindex="0" />
                             </q-td>
                             <q-td key="catalognumber" :props="props">
                                 {{ props.row.catalognumber }}
@@ -37,10 +37,10 @@ const spatialSelectionsTab = {
                             <q-td key="collector" :props="props">
                                 <div class="column q-gutter-xs">
                                     <div class="fit text-left">
-                                        <a class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);">{{ (props.row.collector ? props.row.collector : '[No data]') }}</a>
+                                        <a role="button" class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);" @keyup.enter="openRecordInfoWindow(props.row.occid);" aria-label="View record details" tabindex="0">{{ (props.row.collector ? props.row.collector : '[No data]') }}</a>
                                     </div>
                                     <div class="row justify-end">
-                                        <q-btn color="grey-4" size="xs" text-color="black" class="q-ml-sm black-border" icon="fas fa-search-location" @click="setMapFinderPopup(props.row);" dense>
+                                        <q-btn color="grey-4" size="xs" text-color="black" class="q-ml-sm black-border" icon="fas fa-search-location" @click="setMapFinderPopup(props.row);" dense aria-label="See location on map" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 See location on map
                                             </q-tooltip>
@@ -53,7 +53,7 @@ const spatialSelectionsTab = {
                             </q-td>
                             <q-td key="sciname" :props="props">
                                 <template v-if="Number(props.row.tid) > 0">
-                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank">{{ props.row.sciname }}</a>
+                                    <a :href="(clientRoot + '/taxa/index.php?taxon=' + props.row.tid)" target="_blank" :aria-label="( props.row.sciname + ' taxon profile page page - Opens in separate tab')" tabindex="0">{{ props.row.sciname }}</a>
                                 </template>
                                 <template v-else>
                                     {{ props.row.sciname }}

@@ -11,7 +11,7 @@ const viewProfileAccountModule = {
                                     Please follow the instructions in that email to confirm your account.
                                 </div>
                                 <div class="row col-3 self-center justify-end">
-                                    <q-btn color="secondary" @click="resendConfirmationEmail();" label="Resend Confirmation Email" dense />
+                                    <q-btn color="secondary" @click="resendConfirmationEmail();" label="Resend Confirmation Email" dense tabindex="0" />
                                 </div>
                             </template>
                             <template v-else>
@@ -27,7 +27,7 @@ const viewProfileAccountModule = {
                 <q-card-section>
                     <div class="text-h6 q-mb-md">Edit Account Information</div>
                     <div class="row justify-start q-gutter-md">
-                        <q-input outlined v-model="accountInfo.username" label="Username" bg-color="white" class="col-4" dense disable></q-input>
+                        <q-input outlined v-model="accountInfo.username" label="Username" bg-color="white" class="col-4" dense disable tabindex="0"></q-input>
                     </div>
                     <account-information-form ref="accountInformationFormRef" @update:account-information="updateAccountData"></account-information-form>
                     <div class="row justify-between q-mt-md">
@@ -37,7 +37,7 @@ const viewProfileAccountModule = {
                             </template>
                         </div>
                         <div class="row justify-end">
-                            <q-btn color="secondary" @click="editAccount();" label="Save Edits" :disabled="!editsExist || !userValid" dense />
+                            <q-btn color="secondary" @click="editAccount();" label="Save Edits" :disabled="!editsExist || !userValid" dense tabindex="0" />
                         </div>
                     </div>
                 </q-card-section>
@@ -50,7 +50,7 @@ const viewProfileAccountModule = {
                             <password-input ref="passwordInputRef" :password="newPassword" @update:password="updatePassword"></password-input>
                         </div>
                         <div class="row col-3 self-center justify-end">
-                            <q-btn color="secondary" @click="changePassword();" label="Change Password" dense />
+                            <q-btn color="secondary" @click="changePassword();" label="Change Password" dense tabindex="0" />
                         </div>
                     </div>
                 </q-card-section>
@@ -69,7 +69,7 @@ const viewProfileAccountModule = {
                                 </div>
                             </div>
                             <div class="row col-3 self-center justify-end">
-                                <q-btn color="secondary" @click="clearAccessTokens();" label="Clear Tokens" dense />
+                                <q-btn color="secondary" @click="clearAccessTokens();" label="Clear Tokens" dense tabindex="0" />
                             </div>
                         </div>
                     </q-card-section>
@@ -85,7 +85,7 @@ const viewProfileAccountModule = {
                         </div>
                     </template>
                     <div class="row justify-center">
-                        <q-btn color="red" @click="deleteConfirmation = true" label="Delete Account" :disable="checklistArr.length > 0 || projectArr.length > 0" dense />
+                        <q-btn color="red" @click="deleteConfirmation = true" label="Delete Account" :disable="checklistArr.length > 0 || projectArr.length > 0" dense tabindex="0" />
                     </div>
                 </q-card-section>
             </q-card>
@@ -96,8 +96,8 @@ const viewProfileAccountModule = {
                     <span class="q-ml-sm">You are about to delete your account. This action cannot be undone. Are you certain that you want to continue?</span>
                 </q-card-section>
                 <q-card-actions align="right">
-                    <q-btn flat label="Yes, Delete Account" color="primary" @click="deleteAccount();" v-close-popup></q-btn>
-                    <q-btn flat label="No, Cancel" color="primary" v-close-popup></q-btn>
+                    <q-btn flat label="Yes, Delete Account" color="primary" @click="deleteAccount();" v-close-popup tabindex="0"></q-btn>
+                    <q-btn flat label="No, Cancel" color="primary" v-close-popup tabindex="0"></q-btn>
                 </q-card-actions>
             </q-card>
         </q-dialog>

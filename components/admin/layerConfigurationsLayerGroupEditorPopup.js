@@ -14,7 +14,7 @@ const layerConfigurationsLayerGroupEditorPopup = {
             <q-card class="sm-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div class="q-pa-md column q-col-gutter-sm">
@@ -26,11 +26,11 @@ const layerConfigurationsLayerGroupEditorPopup = {
                         </div>
                         <div class="row justify-end q-gutter-sm">
                             <template v-if="Number(layerGroup.id) > 0">
-                                <q-btn color="secondary" @click="updateLayerGroup();" label="Save Edits" :disabled="!editsExist || !editDataValid" />
-                                <q-btn v-if="layerGroup.layers.length === 0" color="negative" @click="deleteLayerGroup();" label="Remove" />
+                                <q-btn color="secondary" @click="updateLayerGroup();" label="Save Edits" :disabled="!editsExist || !editDataValid" tabindex="0" />
+                                <q-btn v-if="layerGroup.layers.length === 0" color="negative" @click="deleteLayerGroup();" label="Remove" aria-label="Remove layer group" tabindex="0" />
                             </template>
                             <template v-else>
-                                <q-btn color="secondary" @click="addLayerGroup();" label="Add Layer Group" :disabled="!editDataValid" />
+                                <q-btn color="secondary" @click="addLayerGroup();" label="Add Layer Group" :disabled="!editDataValid" tabindex="0" />
                             </template>
                         </div>
                     </div>

@@ -21,7 +21,7 @@ const spatialViewerElement = {
         <div ref="mapRef" id="viewer-map" :class="(!height && !width) ? 'fit' : null" :style="mapStyle">
             <div id="viewer-popup" class="ol-popup">
                 <template v-if="popupCloser">
-                    <a class="ol-popup-closer cursor-pointer" @click="closePopup();"></a>
+                    <a role="button" class="ol-popup-closer cursor-pointer" @click="closePopup();" @keyup.enter="closePopup();" aria-label="Close window" tabindex="0"></a>
                 </template>
                 <div id="popup-content" v-html="popupContent"></div>
             </div>

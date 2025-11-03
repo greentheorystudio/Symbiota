@@ -28,6 +28,10 @@ const mediaFileUploadInputElement = {
             type: Boolean,
             default: true
         },
+        tabindex: {
+            type: Number,
+            default: 0
+        },
         taxon: {
             type: Object,
             default: null
@@ -43,22 +47,22 @@ const mediaFileUploadInputElement = {
                 <div class="full-width row justify-between">
                     <div class="text-h6 text-bold">{{ label }}</div>
                     <div>
-                        <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary"></q-btn-toggle>
+                        <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
                     </div>
                 </div>
                 <template v-if="selectedUploadMethod === 'upload'">
                     <div class="full-width row justify-between">
                         <div class="row justify-start q-gutter-sm">
                             <div>
-                                <q-btn color="primary" @click="uploaderRef.pickFiles();" label="Choose Files" />
+                                <q-btn color="primary" @click="uploaderRef.pickFiles();" label="Choose Files" :tabindex="tabindex" />
                             </div>
                             <div>
-                                <q-btn color="negative" @click="cancelUpload();" label="Clear Files" :disabled="fileArr.length === 0" />
+                                <q-btn color="negative" @click="cancelUpload();" label="Clear Files" :disabled="fileArr.length === 0" :tabindex="tabindex" />
                             </div>
                         </div>
                         <div class="row justify-end">
                             <div v-if="showStart">
-                                <q-btn color="positive" @click="uploadFiles();" label="Start Upload" :disabled="fileArr.length === 0" />
+                                <q-btn color="positive" @click="uploadFiles();" label="Start Upload" :disabled="fileArr.length === 0" :tabindex="tabindex" />
                             </div>
                         </div>
                     </div>
@@ -75,7 +79,7 @@ const mediaFileUploadInputElement = {
                                 <checkbox-input-element label="Copy file to server" :value="urlMethodCopyFile" @update:value="(value) => urlMethodCopyFile = value"></checkbox-input-element>
                             </div>
                             <div>
-                                <q-btn color="primary" @click="processExternalUrl();" label="Process URL" />
+                                <q-btn color="primary" @click="processExternalUrl();" label="Process URL" :tabindex="tabindex" />
                             </div>
                         </div>
                     </div>
@@ -158,10 +162,10 @@ const mediaFileUploadInputElement = {
                                                 <div class="col-2 row justify-end">
                                                     <div class="column q-gutter-xs">
                                                         <div class="row justify-end">
-                                                            <q-btn color="negative" class="black-border" @click="removePickedFile(file);" label="Remove" dense/>
+                                                            <q-btn color="negative" class="black-border" @click="removePickedFile(file);" label="Remove" dense :tabindex="tabindex" />
                                                         </div>
                                                         <div class="row justify-end">
-                                                            <q-btn color="grey-4" class="black-border text-black" @click="openDataEditor(file['uploadMetadata']);" label="Edit Metadata" dense/>
+                                                            <q-btn color="grey-4" class="black-border text-black" @click="openDataEditor(file['uploadMetadata']);" label="Edit Metadata" dense :tabindex="tabindex" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -187,6 +191,7 @@ const mediaFileUploadInputElement = {
             <media-editor-popup
                 :new-media-data="editData"
                 :show-popup="showMediaEditorPopup"
+                :upload-path="uploadPath"
                 @update:media-data="updateFileMetadata"
                 @close:popup="showMediaEditorPopup = false"
             ></media-editor-popup>
@@ -820,6 +825,7 @@ const mediaFileUploadInputElement = {
             uploaderRef,
             uploaderStyle,
             uploadMethodOptions,
+            uploadPath,
             urlMethodCopyFile,
             urlMethodUrl,
             cancelUpload,

@@ -33,6 +33,7 @@ $occid = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
         </script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../../header.php');
         ?>

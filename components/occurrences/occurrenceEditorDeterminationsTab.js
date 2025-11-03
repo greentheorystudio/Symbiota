@@ -4,7 +4,7 @@ const occurrenceEditorDeterminationsTab = {
             <div class="row justify-between q-gutter-sm">
                 <div class="text-h6 text-bold">Determination History</div>
                 <div>
-                    <q-btn color="secondary" @click="openDeterminationEditorPopup(0);" label="Add New Determination" />
+                    <q-btn color="secondary" @click="openDeterminationEditorPopup(0);" label="Add New Determination" tabindex="0" />
                 </div>
             </div>
             <div class="q-mt-sm column q-gutter-sm">
