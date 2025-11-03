@@ -97,8 +97,8 @@ include(__DIR__ . '/../header.php');
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-        <a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+        <a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>" tabindex="0">Return to Checklist</a> &gt;&gt;
         <b>Checklist Administration</b>
     </div>
 <div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">

@@ -97,7 +97,7 @@ class ChecklistTaxa{
         return $retVal;
     }
 
-    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $taxonSort = null, $index = null, $recCnt = null): array
+    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $useAcceptedNames, $taxonSort = null, $index = null, $recCnt = null): array
     {
         $retArr = array();
         $tempArr = array();
@@ -111,9 +111,14 @@ class ChecklistTaxa{
             $fieldNameArr[] = 't.family';
             $fieldNameArr[] = 't.rankid';
             $fieldNameArr[] = 't.tidaccepted';
-            $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
-                'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid '.
-                'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
+            $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' ';
+            if($useAcceptedNames){
+                $sql .= 'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t1 ON c.tid = t1.tid LEFT JOIN taxa AS t ON t1.tidaccepted = t.tid ';
+            }
+            else{
+                $sql .= 'FROM fmchklsttaxalink AS c LEFT JOIN taxa AS t ON c.tid = t.tid ';
+            }
+            $sql .= 'WHERE c.clid IN(' . implode(',', $clidArr) . ') ';
             if($taxonSort === 'family'){
                 $sql .= 'ORDER BY t.family, t.sciname ';
             }

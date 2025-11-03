@@ -14,7 +14,7 @@ const checklistEditorAdminTab = {
                     </div>
                     <div class="row justify-end">
                         <div>
-                            <q-btn color="negative" @click="deleteChecklist();" label="Delete" :disabled="!deleteValid" />
+                            <q-btn color="negative" @click="deleteChecklist();" label="Delete" :disabled="!deleteValid" aria-label="Delete checklist" tabindex="0" />
                         </div>
                     </div>
                 </q-card-section>

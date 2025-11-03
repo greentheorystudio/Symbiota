@@ -15,7 +15,7 @@ const searchDataDownloader = {
                 <selector-input-element class="download-type-dropdown" :options="downloadTypeOptions" label="Download Type" :value="selectedDownloadType" @update:value="updateSelectedDownloadType"></selector-input-element>
             </div>
             <div class="q-ml-sm self-center">
-                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="initializeDownload();" icon="fas fa-download" dense>
+                <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="initializeDownload();" icon="fas fa-download" dense aria-label="Download Records" tabindex="0">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Download Records
                     </q-tooltip>

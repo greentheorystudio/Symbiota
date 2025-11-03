@@ -17,15 +17,15 @@ const occurrenceEditorOccurrenceDataControls = {
             <div class="row justify-end q-gutter-sm">
                 <template v-if="Number(occId) === 0">
                     <template v-if="Object.keys(configuredDataFields).length > 0">
-                        <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" />
+                        <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" tabindex="0" />
                     </template>
-                    <q-btn color="secondary" @click="createOccurrenceRecord();" label="Create Occurrence Record" :disabled="!occurrenceValid" />
+                    <q-btn color="secondary" @click="createOccurrenceRecord();" label="Create Occurrence Record" :disabled="!occurrenceValid" tabindex="0" />
                 </template>
                 <template v-else>
                     <template v-if="occurrenceEntryFormat === 'lot' || occurrenceEntryFormat === 'benthic'">
-                        <q-btn color="secondary" @click="showEventLocationTransferPopup = true" label="Change Event/Location" />
+                        <q-btn color="secondary" @click="showEventLocationTransferPopup = true" label="Change Event/Location" tabindex="0" />
                     </template>
-                    <q-btn color="secondary" @click="saveOccurrenceEdits();" label="Save Occurrence Edits" :disabled="!editsExist || !occurrenceValid" />
+                    <q-btn color="secondary" @click="saveOccurrenceEdits();" label="Save Occurrence Edits" :disabled="!editsExist || !occurrenceValid" tabindex="0" />
                 </template>
             </div>
         </div>

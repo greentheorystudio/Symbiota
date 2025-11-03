@@ -33,6 +33,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
         </script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
@@ -40,11 +41,11 @@ elseif(array_key_exists('refurl', $_REQUEST)){
             <div class="row justify-center q-mt-lg q-mb-xl">
                 <q-card class="login-container">
                     <q-card-section class="bg-indigo-1 column">
-                        <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense></q-input>
-                        <q-input outlined v-model="password" type="password" autocomplete="current-password" label="Password" bg-color="white" class="q-mb-sm" dense></q-input>
-                        <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm"></q-checkbox>
+                        <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense tabindex="0"></q-input>
+                        <q-input outlined v-model="password" type="password" autocomplete="current-password" label="Password" bg-color="white" class="q-mb-sm" dense tabindex="0"></q-input>
+                        <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm" tabindex="0"></q-checkbox>
                         <div class="row justify-end q-pr-md">
-                            <q-btn color="primary" @click="processLogin();" label="Login" dense></q-btn>
+                            <q-btn color="primary" @click="processLogin();" label="Login" dense tabindex="0"></q-btn>
                         </div>
                     </q-card-section>
                     <q-separator size="1px" color="grey-8"></q-separator>
@@ -68,7 +69,7 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                                 </span>
                                 <template v-if="emailConfigured">
                                     <span class="row justify-center">
-                                        <div class="anchor-class text-primary cursor-pointer" @click="resetPassword();">Reset password</div>
+                                        <div role="button" class="anchor-class text-primary cursor-pointer" @click="resetPassword();" @keyup.enter="resetPassword();" aria-label="Reset password" tabindex="0">Reset password</div>
                                     </span>
                                 </template>
                             </div>
@@ -81,16 +82,16 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                                     </span>
                                     <template v-if="emailConfigured">
                                         <span class="row justify-center">
-                                            <div class="anchor-class text-primary cursor-pointer" @click="retrieveUsernameWindow = !retrieveUsernameWindow">Retrieve username</div>
+                                            <div role="button" class="anchor-class text-primary cursor-pointer" @click="retrieveUsernameWindow = !retrieveUsernameWindow" @keyup.enter="retrieveUsernameWindow = !retrieveUsernameWindow" aria-label="Retrieve username" tabindex="0">Retrieve username</div>
                                         </span>
                                     </template>
                                 </div>
                             </template>
                             <template v-else>
                                 <div class="column justify-center q-mb-xs text-bold">
-                                    <q-input outlined v-model="email" label="Your Email" bg-color="white" class="q-mb-sm" dense></q-input>
+                                    <q-input outlined v-model="email" label="Your Email" bg-color="white" class="q-mb-sm" dense tabindex="0"></q-input>
                                     <div class="row justify-center">
-                                        <q-btn color="secondary" @click="retrieveUsername();" label="Retrieve Username" dense></q-btn>
+                                        <q-btn color="secondary" @click="retrieveUsername();" label="Retrieve Username" dense tabindex="0"></q-btn>
                                     </div>
                                 </div>
                             </template>
@@ -239,11 +240,6 @@ elseif(array_key_exists('refurl', $_REQUEST)){
                         if(Number(uid) > 0 && confirmationCode !== ''){
                             processConfirmationCode();
                         }
-                        window.addEventListener('keydown', (event) => {
-                            if(event.key === 'Enter'){
-                                processLogin();
-                            }
-                        });
                     });
                     
                     return {

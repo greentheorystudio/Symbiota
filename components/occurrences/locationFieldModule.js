@@ -63,14 +63,14 @@ const locationFieldModule = {
             </div>
             <div v-if="!disabled" class="col-12 col-sm-6 col-md-3 row justify-end q-gutter-sm">
                 <div class="self-center">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-point,uncertainty');" icon="fas fa-globe" dense>
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-point,uncertainty');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Mapping Aid
                         </q-tooltip>
                     </q-btn>
                 </div>
                 <div v-if="!eventMode" class="self-center">
-                    <q-btn color="grey-4" class="black-border" size="sm" @click="openGeolocatePopup();" dense>
+                    <q-btn color="grey-4" class="black-border" size="sm" @click="openGeolocatePopup();" dense aria-label="Open GeoLocate pop up" tabindex="0">
                         <q-avatar size="xs">
                             <img src="../../images/geolocate.png">
                         </q-avatar>
@@ -105,10 +105,10 @@ const locationFieldModule = {
                 <div class="self-center">
                     <div>
                         <template v-if="showExtendedForm">
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showExtendedForm = false" icon="fas fa-minus" dense></q-btn>
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showExtendedForm = false" icon="fas fa-minus" dense aria-label="Hide additional fields" tabindex="0"></q-btn>
                         </template>
                         <template v-else>
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showExtendedForm = true" icon="fas fa-plus" dense></q-btn>
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="showExtendedForm = true" icon="fas fa-plus" dense aria-label="Show additional fields" tabindex="0"></q-btn>
                         </template>
                     </div>
                 </div>
