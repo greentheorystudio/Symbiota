@@ -18,7 +18,7 @@ include_once(__DIR__ . '/config/header-includes.php');
     </style>
 </head>
 <body>
-    <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
+    <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
     <?php
     include(__DIR__ . '/header.php');
     ?>
