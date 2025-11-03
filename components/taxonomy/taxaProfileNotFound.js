@@ -7,7 +7,7 @@ const taxaProfileNotFound = {
                     Did you mean?
                     <div class="q-ml-lg">
                         <template v-for="match in fuzzyMatches">
-                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + match.tid)">{{ match.sciname }}</a><br/>
+                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + match.tid)" tabindex="0">{{ match.sciname }}</a><br/>
                         </template>
                     </div>
                 </template>

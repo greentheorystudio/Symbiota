@@ -9,10 +9,10 @@ const checklistFieldModule = {
                 </div>
                 <div class="row justify-end">
                     <template v-if="checklistId > 0">
-                        <q-btn color="secondary" @click="saveChecklistEdits();" label="Save Edits" :disabled="!editsExist || !checklistValid" />
+                        <q-btn color="secondary" @click="saveChecklistEdits();" label="Save Edits" :disabled="!editsExist || !checklistValid" tabindex="0" />
                     </template>
                     <template v-else>
-                        <q-btn color="secondary" @click="createChecklist();" label="Create" :disabled="!checklistValid" />
+                        <q-btn color="secondary" @click="createChecklist();" label="Create" :disabled="!checklistValid" aria-label="Create checklist" tabindex="0" />
                     </template>
                 </div>
             </div>
@@ -64,7 +64,7 @@ const checklistFieldModule = {
                     <text-field-input-element data-type="number" label="Longitude" :value="checklistData['longcentroid']" @update:value="(value) => updateChecklistData('longcentroid', value)"></text-field-input-element>
                 </div>
                 <div class="col-1 self-center">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-point');" icon="fas fa-globe" dense>
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-point');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Mapping Aid
                         </q-tooltip>
@@ -84,6 +84,9 @@ const checklistFieldModule = {
                     </div>
                     <div>
                         <checkbox-input-element label="Sort Taxa by Scientific Name" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dalpha')) ? checklistData['defaultsettings']['dalpha'] : null" @update:value="(value) => updateDefaultSettingsData('dalpha', value)"></checkbox-input-element>
+                    </div>
+                    <div>
+                        <checkbox-input-element label="Accepted Names" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('acceptedNames')) ? checklistData['defaultsettings']['acceptedNames'] : null" @update:value="(value) => updateDefaultSettingsData('acceptedNames', value)"></checkbox-input-element>
                     </div>
                     <div>
                         <checkbox-input-element label="Synonyms" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('showsynonyms')) ? checklistData['defaultsettings']['showsynonyms'] : null" @update:value="(value) => updateDefaultSettingsData('showsynonyms', value)"></checkbox-input-element>

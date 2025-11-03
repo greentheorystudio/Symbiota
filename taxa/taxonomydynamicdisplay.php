@@ -39,12 +39,13 @@ header('X-Frame-Options: SAMEORIGIN');
         </style>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Taxonomy Explorer</span>
             </div>
             <div class="q-pa-md">
@@ -54,23 +55,23 @@ header('X-Frame-Options: SAMEORIGIN');
                             <single-scientific-common-name-auto-complete :sciname="(targetTaxon ? targetTaxon.sciname : null)" :disabled="loading" label="Find a taxon" limit-to-options="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
                         </div>
                         <div class="button-div">
-                            <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />
+                            <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense tabindex="0" />
                         </div>
                         <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
                         <div class="q-my-sm">
-                            <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" />
+                            <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" tabindex="0" />
                         </div>
                     </q-card-section>
                 </q-card>
                 <q-card class="q-my-md">
                     <q-card-section>
-                        <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
+                        <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" no-selection-unset @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
                             <template v-slot:default-header="prop">
                                 <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-if="prop.node.nodetype === 'child'">
-                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span>
+                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <a role="button" @click="processClick(prop.node.tid, true);" :aria-label="( prop.node.sciname + ' taxon profile page page - Opens in separate tab')" tabindex="0"><span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span></a>
                                 </div>
                                 <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-else-if="prop.node.nodetype === 'synonym'">
-                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span>
+                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <a role="button" @click="processClick(prop.node.tid, true);" :aria-label="( prop.node.sciname + ' taxon profile page page - Opens in separate tab')" tabindex="0"><span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span></a>
                                 </div>
                             </template>
                         </q-tree>
@@ -149,20 +150,23 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
-                    function processClick(tid) {
-                        selectedTid.value = targetTaxon.value ? targetTaxon.value.tid : null;
-                        if(!tid){
-                            tid = selectedTid.value;
-                        }
+                    function processClick(tid, link = false) {
                         if(tid){
-                            let url;
-                            if(isEditor.value){
-                                url = clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + tid;
+                            if(link){
+                                let url;
+                                if(isEditor.value){
+                                    url = clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + tid;
+                                }
+                                else{
+                                    url = clientRoot + '/taxa/index.php?taxon=' + tid;
+                                }
+                                window.open(url, '_blank');
                             }
                             else{
-                                url = clientRoot + '/taxa/index.php?taxon=' + tid;
+                                const expanded = treeRef.value.isExpanded(tid);
+                                treeRef.value.setExpanded(tid, !expanded);
+                                selectedTid.value = null;
                             }
-                            window.open(url, '_blank');
                         }
                     }
 

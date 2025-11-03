@@ -27,7 +27,7 @@ const viewProfileOccurrenceModule = {
         </template>
         <q-card class="q-mt-md">
             <q-card-section class="text-h6">
-                <a :href="(clientRoot + '/collections/datasets/index.php')">
+                <a :href="(clientRoot + '/collections/datasets/index.php')" aria-label="Dataset Management" tabindex="0">
                     Dataset Management
                 </a>
             </q-card-section>

@@ -1,6 +1,6 @@
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet" type="text/css">
 <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/animate.min.css?ver=4.1.1" rel="stylesheet" type="text/css"/>
-<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/quasar.prod.css?ver=2.14.1" rel="stylesheet" type="text/css"/>
+<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/quasar.prod.css?ver=2.18.5" rel="stylesheet" type="text/css"/>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/vue.global.prod.js?ver=2023-11-30" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/vue-demi.js?ver=2023-11-30" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/pinia.js?ver=2.1.7" type="text/javascript"></script>

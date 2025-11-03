@@ -18,7 +18,7 @@ const mofDataFieldModule = {
                     </template>
                 </div>
                 <div class="row justify-end">
-                    <q-btn color="secondary" @click="processSaveDataEdits();" :label="('Save ' + configuredDataLabel + ' Edits')" :disabled="!editsExist" />
+                    <q-btn color="secondary" @click="processSaveDataEdits();" :label="('Save ' + configuredDataLabel + ' Edits')" :disabled="!editsExist" tabindex="0" />
                 </div>
             </div>
             <div v-if="configuredDataFieldsLayoutData.length > 0" class="q-mt-sm column q-col-gutter-sm">

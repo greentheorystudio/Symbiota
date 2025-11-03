@@ -10,7 +10,7 @@ const occurrenceLocationEditorPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -23,8 +23,8 @@ const occurrenceLocationEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end q-gutter-xs">
-                                    <q-btn color="negative" @click="deleteLocation();" label="Delete Location" :disabled="locationId === 0 || collectingEventArr.length > 0" />
-                                    <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" />
+                                    <q-btn color="negative" @click="deleteLocation();" label="Delete Location" :disabled="locationId === 0 || collectingEventArr.length > 0" tabindex="0" />
+                                    <q-btn color="secondary" @click="saveLocationEdits();" label="Save Location Edits" :disabled="!editsExist || !locationValid" tabindex="0" />
                                 </div>
                             </div>
                             <div class="q-mb-xs row justify-between q-col-gutter-sm">

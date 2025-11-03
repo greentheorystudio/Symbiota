@@ -14,7 +14,7 @@ const layerConfigurationsLayerEditorPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -28,11 +28,11 @@ const layerConfigurationsLayerEditorPopup = {
                                 </div>
                                 <div class="row justify-end q-gutter-sm">
                                     <template v-if="Number(layer.id) > 0">
-                                        <q-btn color="secondary" @click="updateLayer();" label="Save Edits" :disabled="!editsExist || !editDataValid" />
-                                        <q-btn color="negative" @click="deleteLayer();" label="Remove" />
+                                        <q-btn color="secondary" @click="updateLayer();" label="Save Edits" :disabled="!editsExist || !editDataValid" tabindex="0" />
+                                        <q-btn color="negative" @click="deleteLayer();" label="Remove" aria-label="Remove layer" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addLayer();" label="Add Layer" :disabled="!editDataValid" />
+                                        <q-btn color="secondary" @click="addLayer();" label="Add Layer" :disabled="!editDataValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@ const layerConfigurationsLayerEditorPopup = {
                                                 <file-picker-input-element label="Update File" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="true" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                             </div>
                                             <div class="col-3 row justify-end">
-                                                <q-btn color="secondary" @click="updateDataFile();" label="Update" :disabled="!uploadedFile" />
+                                                <q-btn color="secondary" @click="updateDataFile();" label="Update" :disabled="!uploadedFile" aria-label="Update data file" tabindex="0" />
                                             </div>
                                         </div>
                                     </q-card-section>

@@ -14,7 +14,7 @@ const projectEditorAdminTab = {
                     </div>
                     <div class="row justify-end">
                         <div>
-                            <q-btn color="negative" @click="deleteProject();" label="Delete" :disabled="!deleteValid" />
+                            <q-btn color="negative" @click="deleteProject();" label="Delete" :disabled="!deleteValid" aria-label="Delete Project" tabindex="0" />
                         </div>
                     </div>
                 </q-card-section>

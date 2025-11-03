@@ -66,7 +66,7 @@ const searchCriteriaBlock = {
                             </div>
                             <div class="q-mt-sm row justify-end">
                                 <div class="self-center">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-box');" icon="fas fa-globe" dense>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-box');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Mapping Aid
                                         </q-tooltip>
@@ -94,7 +94,7 @@ const searchCriteriaBlock = {
                             </div>
                             <div class="q-mt-sm row justify-end">
                                 <div class="self-center">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-circle,radius');" icon="fas fa-globe" dense>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-circle,radius');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Mapping Aid
                                         </q-tooltip>
@@ -108,7 +108,7 @@ const searchCriteriaBlock = {
                             <div class="text-body1 text-bold text-grey-8">Open the Spatial Window to define complex spatial criteria</div>
                             <div>
                                 <div class="self-center">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input');" icon="fas fa-globe" dense>
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Mapping Aid
                                         </q-tooltip>

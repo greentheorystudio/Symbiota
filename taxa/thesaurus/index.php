@@ -25,12 +25,13 @@ if(!$GLOBALS['SYMB_UID']) {
         </style>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Taxonomic Thesaurus Manager</span>
             </div>
             <div class="q-pa-md">

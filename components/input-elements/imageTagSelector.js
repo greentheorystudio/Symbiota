@@ -10,7 +10,7 @@ const imageTagSelector = {
         },
         tabindex: {
             type: Number,
-            default: 1
+            default: 0
         },
         tagArr: {
             type: Array

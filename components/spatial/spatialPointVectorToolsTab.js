@@ -2,7 +2,7 @@ const spatialPointVectorToolsTab = {
     template: `
         <div class="q-pa-sm column">
             <div class="q-mb-sm">
-                <q-select bg-color="white" outlined v-model="selectedScope" :options="processScopeOptions" :option-value="value" :option-label="label" label="Create Polygon For:" popup-content-class="z-max" behavior="menu" @update:model-value="processScopeChange" dense options-dense />
+                <q-select bg-color="white" outlined v-model="selectedScope" :options="processScopeOptions" :option-value="value" :option-label="label" label="Create Polygon For:" popup-content-class="z-max" behavior="menu" @update:model-value="processScopeChange" dense options-dense tabindex="0" />
             </div>
             <q-separator ></q-separator>
             <div class="q-my-sm column">
@@ -16,12 +16,12 @@ const spatialPointVectorToolsTab = {
                 </div>
                 <div class="q-mb-xs">
                     <div>
-                        <q-input type="number" outlined v-model="maximumEdgeLengthValue" min="0" class="col-3" label="Maximum Edge Length (km)" @update:model-value="processMaximumEdgeLengthChange" dense />
+                        <q-input type="number" outlined v-model="maximumEdgeLengthValue" min="0" class="col-3" label="Maximum Edge Length (km)" @update:model-value="processMaximumEdgeLengthChange" dense tabindex="0" />
                     </div>
                 </div>
                 <div class="row justify-end">
                     <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createConcavePoly();" label="Create Concave Hull Polygon" :disabled="searchRecordCnt === 0" dense />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createConcavePoly();" label="Create Concave Hull Polygon" :disabled="searchRecordCnt === 0" dense tabindex="0" />
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@ const spatialPointVectorToolsTab = {
                 </div>
                 <div class="row justify-end">
                     <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createConvexPoly();" label="Create Convex Hull Polygon" :disabled="searchRecordCnt === 0" dense />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createConvexPoly();" label="Create Convex Hull Polygon" :disabled="searchRecordCnt === 0" dense tabindex="0" />
                     </div>
                 </div>
             </div>
