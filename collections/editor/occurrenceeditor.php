@@ -47,7 +47,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         </script>
     </head>
     <body class="full-window-mode">
-        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <div id="mainContainer" class="q-mt-lg">
             <div class="row justify-center">
                 <div ref="moduleContainerRef" class="editor-inner-container rounded-borders shadow-5 q-pa-md column q-gutter-y-sm self-center bg-white">

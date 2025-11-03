@@ -23,7 +23,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/d3.v7.js" type="text/javascript"></script>
     </head>
     <body>
-        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
