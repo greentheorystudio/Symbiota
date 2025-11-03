@@ -15,6 +15,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
@@ -70,7 +71,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     Images within this website have been generously contributed by their owners to
                     promote education and research. These contributors retain the full copyright for
                     their images. Unless stated otherwise, images are made available under the Creative Commons
-                    Attribution-ShareAlike (<a href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank">CC BY-SA</a>)
+                    Attribution-ShareAlike (<a href="http://creativecommons.org/licenses/by-sa/3.0/" target="_blank" aria-label="External link: CC BY-SA - Opens in separate tab" tabindex="0">CC BY-SA</a>)
                     Users are allowed to copy, transmit, reuse, and/or adapt content, as long as attribution
                     regarding the source of the content is made. If the content is altered, transformed, or enhanced,
                     it may be re-distributed only under the same or similar license by which it was acquired.

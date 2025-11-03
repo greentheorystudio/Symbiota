@@ -20,6 +20,7 @@ class Images{
         'photographeruid' => array('dataType' => 'number', 'length' => 10),
         'format' => array('dataType' => 'string', 'length' => 45),
         'caption' => array('dataType' => 'string', 'length' => 750),
+        'alttext' => array('dataType' => 'string', 'length' => 355),
         'owner' => array('dataType' => 'string', 'length' => 250),
         'sourceurl' => array('dataType' => 'string', 'length' => 255),
         'referenceurl' => array('dataType' => 'string', 'length' => 255),
@@ -229,13 +230,13 @@ class Images{
             $result->free();
             foreach($rows as $index => $row){
                 if($row['url'] && strncmp($row['url'], '/', 1) === 0){
-                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['url']), true);
+                    FileSystemService::deleteFile(FileSystemService::getServerPathFromUrlPath($row['url']), true);
                 }
                 if($row['thumbnailurl'] && strncmp($row['thumbnailurl'], '/', 1) === 0){
-                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['thumbnailurl']), true);
+                    FileSystemService::deleteFile(FileSystemService::getServerPathFromUrlPath($row['thumbnailurl']), true);
                 }
                 if($row['originalurl'] && strncmp($row['originalurl'], '/', 1) === 0){
-                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['originalurl']), true);
+                    FileSystemService::deleteFile(FileSystemService::getServerPathFromUrlPath($row['originalurl']), true);
                 }
                 unset($rows[$index]);
             }
@@ -350,7 +351,7 @@ class Images{
     public function getChecklistImageDataBatch($retArr, $tidArr, $matchField, $taxonLimit): array
     {
         if(count($tidArr) > 0){
-            $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl '.
+            $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl, i.alttext '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'WHERE t.' . $matchField . ' IN(' . implode(',', $tidArr) . ') AND i.sortsequence < 500 ORDER BY i.sortsequence ';
             //echo '<div>'.$sql.'</div>';
@@ -366,6 +367,7 @@ class Images{
                         $nodeArr['imgid'] = $row['imgid'];
                         $nodeArr['url'] = $row['url'];
                         $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
+                        $nodeArr['alttext'] = $row['alttext'];
                         $retArr[$row[$matchField]][] = $nodeArr;
                     }
                     unset($rows[$index]);
@@ -405,7 +407,7 @@ class Images{
                     $sqlWhereArr[] = 't.keyvalue LIKE "CLID-' . (int)$clid . '-%"';
                 }
             }
-            $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, t.keyvalue '.
+            $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.alttext, t.keyvalue '.
                 'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.
                 'WHERE ' . implode(' OR ', $sqlWhereArr) . ' ';
             //echo '<div>'.$sql.'</div>';
@@ -427,6 +429,7 @@ class Images{
                             $nodeArr['imgid'] = $row['imgid'];
                             $nodeArr['url'] = $row['url'];
                             $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
+                            $nodeArr['alttext'] = $row['alttext'];
                             $retArr[$tid][] = $nodeArr;
                         }
                     }
@@ -584,7 +587,7 @@ class Images{
         $returnArr = array();
         $returnArr['count'] = 0;
         if($tidArr && is_array($tidArr) && count($tidArr) > 0){
-            $sql = 'SELECT DISTINCT i.imgid, t.tidaccepted AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.photographer, i.owner, '.
+            $sql = 'SELECT DISTINCT i.imgid, t.tidaccepted AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.alttext, i.caption, i.photographer, i.owner, '.
                 't.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
@@ -625,7 +628,7 @@ class Images{
                 }
             }
 
-            $sql = 'SELECT DISTINCT i.imgid, te.parenttid AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.caption, i.photographer, i.owner, '.
+            $sql = 'SELECT DISTINCT i.imgid, te.parenttid AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.alttext, i.caption, i.photographer, i.owner, '.
                 't.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.

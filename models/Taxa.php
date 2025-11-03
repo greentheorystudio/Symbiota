@@ -898,7 +898,7 @@ class Taxa{
     public function taxonHasChildren($tid): bool
     {
         $retVal = false;
-        $sql = 'SELECT TID FROM taxa WHERE parenttid = '.$tid.' LIMIT 1 ';
+        $sql = 'SELECT TID FROM taxa WHERE parenttid = ' . (int)$tid . ' LIMIT 1 ';
         //echo $sql;
         $result = $this->conn->query($sql);
         if($result->num_rows){

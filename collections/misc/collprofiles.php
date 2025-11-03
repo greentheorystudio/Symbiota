@@ -28,13 +28,14 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
         </script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
-                <a :href="(clientRoot + '/collections/list.php')">Collection Search Page</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/collections/list.php')" tabindex="0">Collection Search Page</a> &gt;&gt;
                 <span class="text-bold">{{ collectionData.collectionname }} Details</span>
             </div>
             <div class="q-pa-md">
@@ -60,7 +61,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                 <template v-if="publishGBIF && datasetKey">
                                     <div class="q-mt-xs">
                                         <span class="text-body1 text-bold">GBIF Dataset page: </span>
-                                        <a :href="('https://www.gbif.org/dataset/' + datasetKey)" target="_blank">
+                                        <a :href="('https://www.gbif.org/dataset/' + datasetKey)" target="_blank" aria-label="External link: GBIF Dataset page - Opens in separate tab" tabindex="0">
                                             {{ ('https://www.gbif.org/dataset/' + datasetKey) }}
                                         </a>
                                     </div>
@@ -68,7 +69,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                 <template v-if="publishIDIGBIO && datasetKey">
                                     <div class="q-mt-xs">
                                         <span class="text-body1 text-bold">iDigBio Dataset page: </span>
-                                        <a :href="('https://www.idigbio.org/portal/recordsets/' + idigbioKey)" target="_blank">
+                                        <a :href="('https://www.idigbio.org/portal/recordsets/' + idigbioKey)" target="_blank" aria-label="External link: iDigBio Dataset page - Opens in separate tab" tabindex="0">
                                             {{ ('https://www.idigbio.org/portal/recordsets/' + idigbioKey) }}
                                         </a>
                                     </div>
@@ -81,7 +82,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                             {{ collectionData['institutionname'] }}
                                         </div>
                                         <div v-if="collectionPermissions.includes('CollAdmin')">
-                                            <a :href="(clientRoot + '/collections/misc/institutioneditor.php?emode=1&targetcollid=' + collId + '&iid=' + collectionData.iid)" title="Edit institution information">
+                                            <a :href="(clientRoot + '/collections/misc/institutioneditor.php?emode=1&targetcollid=' + collId + '&iid=' + collectionData.iid)" aria-label="Edit institution information" tabindex="0">
                                                 <q-icon name="far fa-edit" size="13px" class="cursor-pointer" />
                                             </a>
                                         </div>
@@ -174,16 +175,16 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                             <div class="text-h6 text-bold">Record Distribution</div>
                                             <div class="q-pl-sm column">
                                                 <div v-if="distributionDisplay !== 'geographic'" class="cursor-pointer">
-                                                    <a @click="distributionDisplay = 'geographic'">Show Geographic Distribution</a>
+                                                    <a role="button" @click="distributionDisplay = 'geographic'" @keyup.enter="distributionDisplay = 'geographic'" tabindex="0">Show Geographic Distribution</a>
                                                 </div>
                                                 <div v-if="distributionDisplay === 'geographic'" class="cursor-pointer">
-                                                    <a @click="distributionDisplay = null">Hide Geographic Distribution</a>
+                                                    <a role="button" @click="distributionDisplay = null" @keyup.enter="distributionDisplay = null" tabindex="0">Hide Geographic Distribution</a>
                                                 </div>
                                                 <div v-if="distributionDisplay !== 'taxonomic'" class="cursor-pointer">
-                                                    <a @click="distributionDisplay = 'taxonomic'">Show Family Distribution</a>
+                                                    <a role="button" @click="distributionDisplay = 'taxonomic'" @keyup.enter="distributionDisplay = 'taxonomic'" tabindex="0">Show Family Distribution</a>
                                                 </div>
                                                 <div v-if="distributionDisplay === 'taxonomic'" class="cursor-pointer">
-                                                    <a @click="distributionDisplay = null">Hide Family Distribution</a>
+                                                    <a role="button" @click="distributionDisplay = null" @keyup.enter="distributionDisplay = null" tabindex="0">Hide Family Distribution</a>
                                                 </div>
                                             </div>
                                         </q-card-section>
@@ -195,12 +196,12 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                             <div class="text-h6 text-bold">Data Downloads</div>
                                             <div class="q-pl-sm column">
                                                 <div class="cursor-pointer">
-                                                    <a @click="processDownloadSpeciesList()">Download Taxa List</a>
+                                                    <a role="button" @click="processDownloadSpeciesList();" @keyup.enter="processDownloadSpeciesList();" tabindex="0">Download Taxa List CSV</a>
                                                 </div>
                                                 <template v-if="configuredDataDownloads.length > 0">
                                                     <template v-for="download in configuredDataDownloads">
                                                         <div class="cursor-pointer">
-                                                            <a @click="processConfiguredDataDownload(download['api-endpoint'], download['endpoint-action'], download['filename'])">{{ download.label }}</a>
+                                                            <a role="button" @click="processConfiguredDataDownload(download['api-endpoint'], download['endpoint-action'], download['filename'])" tabindex="0">{{ download.label + ' CSV' }}</a>
                                                         </div>
                                                     </template>
                                                 </template>
@@ -222,7 +223,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                 {{ defaultTitle + ' Occurrence Data Collections' }}
                             </div>
                             <div class="q-ma-sm">
-                                <a :href="(clientRoot + '/collections/datasets/rsshandler.php')" target="_blank">
+                                <a :href="(clientRoot + '/collections/datasets/rsshandler.php')" target="_blank" aria-label="View RSS feed - Opens in separate tab" tabindex="0">
                                     View RSS feed
                                 </a>
                             </div>
@@ -238,7 +239,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                     </q-card-section>
                                     <q-card-section class="column">
                                         <div class="text-h6 text-bold">
-                                            <a class="cursor-pointer" @click="setCollection(collection.collid)">
+                                            <a role="button" class="cursor-pointer" @click="setCollection(collection.collid);" @keyup.enter="setCollection(collection.collid);" tabindex="0">
                                                 {{ collection.collectionname }}
                                             </a>
                                         </div>

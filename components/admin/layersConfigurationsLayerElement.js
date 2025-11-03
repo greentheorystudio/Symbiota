@@ -13,7 +13,7 @@ const layersConfigurationsLayerElement = {
                         {{ layer['layerName'] }}
                     </div>
                     <div>
-                        <q-btn color="grey-4" text-color="black" size="sm" @click="openLayerEditPopup(layer);" icon="fas fa-edit" dense>
+                        <q-btn color="grey-4" text-color="black" size="sm" @click="openLayerEditPopup(layer);" icon="fas fa-edit" dense aria-label="Edit layer" tabindex="0">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Edit layer
                             </q-tooltip>
@@ -31,7 +31,7 @@ const layersConfigurationsLayerElement = {
                             <span class="text-bold">Provided by: </span>{{ layer['providedBy'] + ' ' }}
                         </template>
                         <template v-if="layer.hasOwnProperty('sourceURL') && layer['sourceURL']">
-                            <a class="text-bold" :href="layer['sourceURL']" target="_blank">(Go to source)</a>
+                            <a class="text-bold" :href="layer['sourceURL']" target="_blank" aria-label="External link: Go to source - Opens in separate tab" tabindex="0">(Go to source)</a>
                         </template>
                     </div>
                 </template>

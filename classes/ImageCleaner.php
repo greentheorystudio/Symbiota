@@ -72,7 +72,8 @@ class ImageCleaner extends Manager{
 		while($row = $result->fetch_object()){
 			$status = true;
 			$imgId = $row->imgid;
-			$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid='.$imgId.'" target="_blank">'.$imgId.'</a>...');
+			//$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid='.$imgId.'" target="_blank">'.$imgId.'</a>...');
+            $this->logOrEcho($cnt.': Building thumbnail: '.$imgId.'...');
 			$this->conn->autocommit(false);
 			$testSql = 'SELECT thumbnailurl, url FROM images WHERE (imgid = '.$imgId.') FOR UPDATE ';
 			$textRS = $this->conn->query($testSql);
@@ -282,7 +283,8 @@ class ImageCleaner extends Manager{
 			$url = $r->url;
 			$urlTn = $r->thumbnailurl;
 			$urlOrig = $r->originalurl;
-			$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid='.$r->imgid.'" target="_blank">'.$r->imgid.'</a> [cat#: '.$r->catalognumber.']...',0,'div');
+			//$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid='.$r->imgid.'" target="_blank">'.$r->imgid.'</a> [cat#: '.$r->catalognumber.']...',0,'div');
+            $this->logOrEcho($cnt.'. Rebuilding thumbnail: '.$r->imgid.' [cat#: '.$r->catalognumber.']...',0,'div');
 			$tsSource = 0;
 			if($postArr['evaluate_ts']){
 				$tsSource = $this->getRemoteModifiedTime($urlOrig?:$url);

@@ -13,8 +13,9 @@ class Media{
         'mediaid' => array('dataType' => 'number', 'length' => 10),
         'tid' => array('dataType' => 'number', 'length' => 10),
         'occid' => array('dataType' => 'number', 'length' => 10),
-        'accessuri' => array('dataType' => 'string', 'length' => 2048),
+        'accessuri' => array('dataType' => 'string', 'length' => 255),
         'sourceurl' => array('dataType' => 'string', 'length' => 255),
+        'descriptivetranscripturi' => array('dataType' => 'string', 'length' => 255),
         'title' => array('dataType' => 'string', 'length' => 255),
         'creatoruid' => array('dataType' => 'number', 'length' => 10),
         'creator' => array('dataType' => 'string', 'length' => 45),
@@ -132,7 +133,8 @@ class Media{
             $result->free();
             foreach($rows as $index => $row){
                 if(strncmp($row['accessuri'], '/', 1) === 0){
-                    FileSystemService::deleteFile(($GLOBALS['SERVER_ROOT'] . $row['accessuri']), true);
+                    $serverPath = FileSystemService::getServerPathFromUrlPath($row['accessuri']);
+                    FileSystemService::deleteFile($serverPath, true);
                 }
                 unset($rows[$index]);
             }
@@ -163,6 +165,19 @@ class Media{
             }
         }
         return $retVal;
+    }
+
+    public function deleteDescriptiveTranscriptFile($filepath): int
+    {
+        $returnVal = 0;
+        if($filepath && strncmp($filepath, '/', 1) === 0){
+            $serverPath = FileSystemService::getServerPathFromUrlPath($filepath);
+            FileSystemService::deleteFile($serverPath, true);
+            if(!FileSystemService::fileExists($serverPath)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
     }
 
     public function deleteMediaRecord($mediaid): int
@@ -254,7 +269,7 @@ class Media{
     {
         $returnArr = array();
         if($tidArr && is_array($tidArr) && count($tidArr) > 0){
-            $sql = 'SELECT DISTINCT m.mediaid, t.tidaccepted AS tid, m.occid, m.accessuri, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
+            $sql = 'SELECT DISTINCT m.mediaid, t.tidaccepted AS tid, m.occid, m.accessuri, m.descriptivetranscripturi, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
                 't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
@@ -289,7 +304,7 @@ class Media{
                 }
             }
 
-            $sql = 'SELECT DISTINCT m.mediaid, te.parenttid AS tid, m.occid, m.accessuri, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
+            $sql = 'SELECT DISTINCT m.mediaid, te.parenttid AS tid, m.occid, m.accessuri, m.descriptivetranscripturi, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
                 't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
@@ -360,5 +375,33 @@ class Media{
             $sql = 'UPDATE media SET tid = ' . (((int)$tid > 0) ? (int)$tid : 'NULL') . ' WHERE occid = ' . (int)$occid . ' ';
             $this->conn->query($sql);
         }
+    }
+
+    public function uploadDescriptiveTranscriptFromFile($file, $uploadPath): string
+    {
+        $returnStr = '';
+        $targetPath = FileSystemService::getServerMediaUploadPath($uploadPath);
+        if($targetPath && $file['name'] && (strtolower(substr($file['name'], -4)) === '.doc' || strtolower(substr($file['name'], -5)) === '.docx' || strtolower(substr($file['name'], -4)) === '.pdf' || strtolower(substr($file['name'], -4)) === '.txt')){
+            $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $file['name']);
+            if($targetFilename && FileSystemService::moveUploadedFileToServer($_FILES['medfile'], $targetPath, $targetFilename)){
+                $returnStr = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+            }
+        }
+        return $returnStr;
+    }
+
+    public function uploadDescriptiveTranscriptFromUrl($url, $uploadPath): string
+    {
+        $returnStr = '';
+        $targetPath = FileSystemService::getServerMediaUploadPath($uploadPath);
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        $origFilename = basename($urlPath);
+        if($targetPath && $origFilename && (strtolower(substr($origFilename, -4)) === '.doc' || strtolower(substr($origFilename, -5)) === '.docx' || strtolower(substr($origFilename, -4)) === '.pdf' || strtolower(substr($origFilename, -4)) === '.txt')){
+            $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
+            if($targetFilename && FileSystemService::copyFileToTarget($url, $targetPath, $targetFilename)){
+                $returnStr = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+            }
+        }
+        return $returnStr;
     }
 }

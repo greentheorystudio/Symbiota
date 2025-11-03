@@ -21,12 +21,13 @@ header('X-Frame-Options: SAMEORIGIN');
         </style>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Biotic Inventory Projects</span>
             </div>
             <div class="q-pa-md">
@@ -37,7 +38,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         </h1>
                         <div v-if="validUser" class="row justify-end q-gutter-sm q-pr-md">
                             <div>
-                                <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project"/>
+                                <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project" tabindex="0" />
                             </div>
                         </div>
                     </div>
@@ -46,7 +47,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             <q-card>
                                 <q-card-section>
                                     <div class="text-h5 text-bold">
-                                        <a :href="(clientRoot + '/projects/project.php?pid=' + project['pid'])">{{ project['projname'] }}</a>
+                                        <a :href="(clientRoot + '/projects/project.php?pid=' + project['pid'])" tabindex="0">{{ project['projname'] }}</a>
                                     </div>
                                     <div class="text-body1 text-bold">{{ 'Managers: ' + project['managers'] }}</div>
                                 </q-card-section>

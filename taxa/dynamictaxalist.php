@@ -181,8 +181,8 @@ include(__DIR__ . '/../header.php');
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-        <a href="dynamictaxalist.php"><b>Dynamic Species List</b></a>
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+        <a href="dynamictaxalist.php" tabindex="0"><b>Dynamic Species List</b></a>
     </div>
     <?php
     if($statusStr){

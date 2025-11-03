@@ -10,7 +10,7 @@ const occurrenceCollectingEventEditorPopup = {
             <q-card v-if="!showEventTransferPopup" class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -23,9 +23,9 @@ const occurrenceCollectingEventEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end q-gutter-xs">
-                                    <q-btn color="negative" @click="deleteEvent();" label="Delete Event" :disabled="eventId === 0 || collectingEventBenthicTaxaCnt > 0 || collectingEventCollectionArr.length > 0" />
-                                    <q-btn color="secondary" @click="showEventTransferPopup = true" label="Change Location" />
-                                    <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" />
+                                    <q-btn color="negative" @click="deleteEvent();" label="Delete Event" :disabled="eventId === 0 || collectingEventBenthicTaxaCnt > 0 || collectingEventCollectionArr.length > 0" tabindex="0" />
+                                    <q-btn color="secondary" @click="showEventTransferPopup = true" label="Change Location" tabindex="0" />
+                                    <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" tabindex="0" />
                                 </div>
                             </div>
                             <collecting-event-field-module :event-mode="true" :data="eventData" :fields="eventFields" :field-definitions="occurrenceFieldDefinitions" @update:collecting-event-data="(data) => updateCollectingEventData(data.key, data.value)"></collecting-event-field-module>

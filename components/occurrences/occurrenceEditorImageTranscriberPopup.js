@@ -10,7 +10,7 @@ const occurrenceEditorImageTranscriberPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div ref="topBarRef" class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="instructionRef" class="black-border q-pa-sm text-body1 text-bold text-grey-8">

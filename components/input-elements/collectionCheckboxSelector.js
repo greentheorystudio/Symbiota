@@ -4,6 +4,10 @@ const collectionCheckboxSelector = {
             type: Array,
             default: []
         },
+        tabindex: {
+            type: Number,
+            default: 0
+        },
         valueArr: {
             type: Array,
             default: []
@@ -13,7 +17,7 @@ const collectionCheckboxSelector = {
         <div class="column q-gutter-sm">
             <div class="q-pl-lg row justify-start q-gutter-md">
                 <div class="text-body1">
-                    <q-checkbox v-model="selectAllValue" label="Select all" @update:model-value="processSelectAllChange" dense></q-checkbox>
+                    <q-checkbox v-model="selectAllValue" label="Select all" @update:model-value="processSelectAllChange" dense :tabindex="tabindex"></q-checkbox>
                 </div>
                 <div v-if="selectAllValue === false" class="text-body1 text-bold text-red self-center">
                     *Note that if all collections remain deselected the result will default to include all collections
@@ -25,7 +29,7 @@ const collectionCheckboxSelector = {
                         <q-expansion-item v-model="cat.expanded" dense>
                             <template v-slot:header>
                                 <q-item-section avatar>
-                                    <q-checkbox v-model="cat['selectAllVal']" @update:model-value="(value) => processCatSelectAllChange(cat.ccpk, value)" dense></q-checkbox>
+                                    <q-checkbox v-model="cat['selectAllVal']" @update:model-value="(value) => processCatSelectAllChange(cat.ccpk, value)" dense :tabindex="tabindex"></q-checkbox>
                                 </q-item-section>
                                 <q-item-section class="text-h6 text-bold">
                                     {{ cat.name }}
@@ -42,10 +46,10 @@ const collectionCheckboxSelector = {
                                                     </template>
                                                 </q-item-section>
                                                 <q-item-section avatar>
-                                                    <q-checkbox v-model="col['checkboxVal']" @update:model-value="(value) => processColCheckboxChange(col.collid, value)" dense></q-checkbox>
+                                                    <q-checkbox v-model="col['checkboxVal']" @update:model-value="(value) => processColCheckboxChange(col.collid, value)" dense :tabindex="tabindex"></q-checkbox>
                                                 </q-item-section>
                                                 <q-item-section class="text-body1">
-                                                    <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + col.collid)" target="_blank">
+                                                    <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + col.collid)" target="_blank" aria-label="Go to collection profile page - Opens in separate tab" :tabindex="tabindex">
                                                         {{ col.name + (col.code ? ' (' + col.code + ')' : '') }}
                                                     </a>
                                                 </q-item-section>
@@ -68,10 +72,10 @@ const collectionCheckboxSelector = {
                                 </template>
                             </q-item-section>
                             <q-item-section avatar>
-                                <q-checkbox v-model="col['checkboxVal']" @update:model-value="(value) => processColCheckboxChange(col.collid, value)" dense></q-checkbox>
+                                <q-checkbox v-model="col['checkboxVal']" @update:model-value="(value) => processColCheckboxChange(col.collid, value)" dense :tabindex="tabindex"></q-checkbox>
                             </q-item-section>
                             <q-item-section>
-                                <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + col.collid)" target="_blank">
+                                <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + col.collid)" target="_blank" aria-label="Go to collection profile page - Opens in separate tab" :tabindex="tabindex">
                                     {{ col.name + (col.code ? ' (' + col.code + ')' : '') }}
                                 </a>
                             </q-item-section>

@@ -22,10 +22,10 @@ const taxaProfileImageCarousel = {
                                 <template v-if="image.owner">Image provided by: {{ image.owner }}. </template>
                                 <div class="row justify-between q-gutter-md">
                                     <div>
-                                        <a class="cursor-pointer" @click="openPopup(image);">See image details</a>
+                                        <a role="button" class="cursor-pointer" @click="openPopup(image);" @keyup.enter="openPopup(image);" tabindex="0">See image details</a>
                                     </div>
                                     <div>
-                                        <a :href="image.url" target="_blank">View full size</a>
+                                        <a :href="image.url" target="_blank" aria-label="View full size - Opens in separate tab" tabindex="0">View full size</a>
                                     </div>
                                 </div>
                             </div>
@@ -34,7 +34,7 @@ const taxaProfileImageCarousel = {
                 </template>
                 <template v-slot:control>
                     <q-carousel-control position="top-right" :offset="[0, 0]">
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="hideImageCarousel();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="hideImageCarousel();" aria-label="Close window" tabindex="0"></q-btn>
                     </q-carousel-control>
                 </template>
             </q-carousel>

@@ -10,7 +10,7 @@ const accountInformationEditorPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -23,7 +23,7 @@ const accountInformationEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="editAccount();" label="Save Edits" :disabled="!editsExist || !userValid" dense />
+                                    <q-btn color="secondary" @click="editAccount();" label="Save Edits" :disabled="!editsExist || !userValid" dense tabindex="0" />
                                 </div>
                             </div>
                             <account-information-form ref="accountInformationFormRef" @update:account-information="updateAccountData"></account-information-form>

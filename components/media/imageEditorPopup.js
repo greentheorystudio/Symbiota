@@ -22,7 +22,7 @@ const imageEditorPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -35,7 +35,7 @@ const imageEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <q-btn color="secondary" @click="saveImageEdits();" label="Save Image Edits" :disabled="!editsExist" />
+                                    <q-btn color="secondary" @click="saveImageEdits();" label="Save Image Edits" :disabled="!editsExist" tabindex="0" />
                                 </div>
                             </div>
                             <template v-if="Number(imageData.occid) === 0">
@@ -56,6 +56,11 @@ const imageEditorPopup = {
                             <div class="row">
                                 <div class="col-grow">
                                     <text-field-input-element data-type="textarea" label="Caption" :value="imageData.caption" @update:value="(value) => updateData('caption', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Alt-Text" :value="imageData.alttext" @update:value="(value) => updateData('alttext', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
@@ -120,14 +125,14 @@ const imageEditorPopup = {
                                 <div class="row justify-between">
                                     <div class="row justify-start q-gutter-sm">
                                         <div>
-                                            <q-btn color="primary" @click="showOccurrenceLinkageToolPopup = true" label="Set Occurrence Linkage" dense>
+                                            <q-btn color="primary" @click="showOccurrenceLinkageToolPopup = true" label="Set Occurrence Linkage" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Link, or change linkage, to an occurrence record
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
                                         <div>
-                                            <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense>
+                                            <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Remove occurrence linkage so that image only displays on Taxon Profile page
                                                 </q-tooltip>
@@ -136,7 +141,7 @@ const imageEditorPopup = {
                                     </div>
                                     <div class="row justify-end q-gutter-sm">
                                         <div>
-                                            <q-btn color="negative" @click="processDeleteImageRecord();" label="Delete Image" />
+                                            <q-btn color="negative" @click="processDeleteImageRecord();" label="Delete Image" tabindex="0" />
                                         </div>
                                     </div>
                                 </div>
