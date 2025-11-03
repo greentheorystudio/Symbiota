@@ -27,6 +27,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/static-page.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
+<a class="screen-reader-only" href="#page-title-container" tabindex="0">Skip to main content</a>
 <div class="hero-container">
     <span class="screen-reader-only" role="img" aria-label="Close-up of a circular teal-colored animal on a green background, showing intricate radial symmetry of the animal and tentacles extending from its outer edge."> </span>
     <div class="top-shade-container"></div>
@@ -51,7 +52,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
         include(__DIR__ . '/../header-navigation.php');
         ?>
     </div>
-    <div class="page-title-container">
+    <div id="page-title-container" class="page-title-container">
         <h1>Biodiversity</h1>
     </div>
     <div class="top-text-container">

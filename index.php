@@ -96,6 +96,7 @@ include_once(__DIR__ . '/config/header-includes.php');
     </script>
 </head>
 <body>
+    <a class="screen-reader-only" href="#heading-container" tabindex="0">Skip to main content</a>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
         <iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $GLOBALS['GOOGLE_TAG_MANAGER_ID']; ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe>
@@ -125,16 +126,16 @@ include_once(__DIR__ . '/config/header-includes.php');
             include(__DIR__ . '/header-navigation.php');
             ?>
         </div>
+        <div id="heading-container" class="heading-container">
+            <div class="heading-inner">
+                <div class="text-h5">The <b>Indian River Lagoon Species Inventory</b> is a dynamic and growing research resource and ecological encyclopedia that documents the biodiversity of the 156-mile-long estuary system along Florida’s Atlantic coast.</div>
+            </div>
+        </div>
         <div id="quicksearch-container" class="quicksearch-container">
             <div class="full-width row justify-center">
                 <div class="col-6">
                     <taxa-quick-search></taxa-quick-search>
                 </div>
-            </div>
-        </div>
-        <div class="heading-container">
-            <div class="heading-inner">
-                <div class="text-h5">The <b>Indian River Lagoon Species Inventory</b> is a dynamic and growing research resource and ecological encyclopedia that documents the biodiversity of the 156-mile-long estuary system along Florida’s Atlantic coast.</div>
             </div>
         </div>
         <div class="photo-credit-container">

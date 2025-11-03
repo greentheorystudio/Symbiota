@@ -16,10 +16,11 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
 </head>
 <body>
+<a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
 <?php
 include(__DIR__ . '/../header.php');
 ?>
-<div id="innertext">
+<div id="mainContainer">
     <h1>Contact Us</h1>
     <table style="width:450px;margin-left:auto;margin-right:auto;">
         <tr>

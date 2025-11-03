@@ -27,6 +27,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/static-page.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 </head>
 <body>
+<a class="screen-reader-only" href="#page-title-container" tabindex="0">Skip to main content</a>
 <div class="hero-container">
     <span class="screen-reader-only" role="img" aria-label="Person holding a large clump of muck with both hands near a boat."> </span>
     <div class="top-shade-container"></div>
@@ -58,7 +59,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <b>Muck & Nutrients</b>
         </div>
     </div>
-    <div class="page-title-container">
+    <div id="page-title-container" class="page-title-container">
         <h1>Muck & Nutrients</h1>
     </div>
     <div class="top-text-container">

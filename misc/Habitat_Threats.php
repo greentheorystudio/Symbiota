@@ -21,6 +21,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
 </head>
 <body>
+<a class="screen-reader-only" href="#page-title-container" tabindex="0">Skip to main content</a>
 <div class="hero-container">
     <span class="screen-reader-only" role="img" aria-label="Storm clouds over water with a docked boat and distant red lighthouse."> </span>
     <div class="top-shade-container"></div>
@@ -51,7 +52,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
             <b>Threats</b>
         </div>
     </div>
-    <div class="page-title-container">
+    <div id="page-title-container" class="page-title-container">
         <h1>Threats</h1>
     </div>
     <div class="top-text-container">
