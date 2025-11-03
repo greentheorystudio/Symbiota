@@ -392,16 +392,16 @@ include(__DIR__ . '/../../header.php');
 ?>
 <div id="mainContainer" style="padding: 10px 15px 15px;">
     <div id="breadcrumbs">
-        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="0">Home</a> &gt;&gt;
         <?php
         if($isGeneralObservation) {
-            echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
+            echo '<a href="../../profile/viewprofile.php?tabindex=1" tabindex="0">Personal Management Menu</a> &gt;&gt; ';
         }
         elseif($collid){
-            echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Management Panel</a> &gt;&gt; ';
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'" tabindex="0">Collection Management Panel</a> &gt;&gt; ';
         }
         ?>
-        <a href="labelmanager.php?collid=<?php echo $collid; ?>">Print Labels/Annotations</a> &gt;&gt;
+        <a href="labelmanager.php?collid=<?php echo $collid; ?>" tabindex="0">Print Labels/Annotations</a> &gt;&gt;
         <b>Label Profile Manager</b>
     </div>
     <?php

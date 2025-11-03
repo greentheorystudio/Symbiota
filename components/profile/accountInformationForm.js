@@ -1,28 +1,28 @@
 const accountInformationForm = {
     template: `
         <div class="row justify-start q-gutter-md q-mt-xs">
-            <q-input ref="firstnameRef" outlined bottom-slots v-model="user.firstname" label="First Name" bg-color="white" class="col-grow" dense lazy-rules :rules="requiredRules" @update:model-value="(value) => processChange('firstname', value)">
+            <q-input ref="firstnameRef" outlined bottom-slots v-model="user.firstname" label="First Name" bg-color="white" class="col-grow" dense lazy-rules :rules="requiredRules" @update:model-value="(value) => processChange('firstname', value)" tabindex="0">
                 <template v-slot:hint>
                     Required
                 </template>
             </q-input>
-            <q-input outlined v-model="user.middleinitial" label="Middle Initial" bg-color="white" class="col-2" dense @update:model-value="(value) => processChange('middleinitial', value)"></q-input>
-            <q-input ref="lastnameRef" outlined bottom-slots v-model="user.lastname" label="Last Name" bg-color="white" class="col-grow" dense lazy-rules :rules="requiredRules" @update:model-value="(value) => processChange('lastname', value)">
-                <template v-slot:hint>
-                    Required
-                </template>
-            </q-input>
-        </div>
-        <div class="row justify-start q-gutter-md q-mt-xs">
-            <q-input ref="emailRef" outlined bottom-slots v-model="user.email" type="email" label="Email Address" bg-color="white" class="col-grow" dense lazy-rules :rules="emailRules" @update:model-value="(value) => processChange('email', value)">
+            <q-input outlined v-model="user.middleinitial" label="Middle Initial" bg-color="white" class="col-2" dense @update:model-value="(value) => processChange('middleinitial', value)" tabindex="0"></q-input>
+            <q-input ref="lastnameRef" outlined bottom-slots v-model="user.lastname" label="Last Name" bg-color="white" class="col-grow" dense lazy-rules :rules="requiredRules" @update:model-value="(value) => processChange('lastname', value)" tabindex="0">
                 <template v-slot:hint>
                     Required
                 </template>
             </q-input>
         </div>
         <div class="row justify-start q-gutter-md q-mt-xs">
-            <q-input outlined v-model="user.title" label="Title" bg-color="white" class="col-3" dense @update:model-value="(value) => processChange('title', value)"></q-input>
-            <q-input outlined v-model="user.institution" label="Institution" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('institution', value)"></q-input>
+            <q-input ref="emailRef" outlined bottom-slots v-model="user.email" type="email" label="Email Address" bg-color="white" class="col-grow" dense lazy-rules :rules="emailRules" @update:model-value="(value) => processChange('email', value)" tabindex="0">
+                <template v-slot:hint>
+                    Required
+                </template>
+            </q-input>
+        </div>
+        <div class="row justify-start q-gutter-md q-mt-xs">
+            <q-input outlined v-model="user.title" label="Title" bg-color="white" class="col-3" dense @update:model-value="(value) => processChange('title', value)" tabindex="0"></q-input>
+            <q-input outlined v-model="user.institution" label="Institution" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('institution', value)" tabindex="0"></q-input>
         </div>
     `,
     setup(_, context) {

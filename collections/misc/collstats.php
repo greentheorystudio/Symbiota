@@ -366,8 +366,8 @@ if($action !== 'Update Statistics'){
         ?>
         <div id="mainContainer" style="padding: 10px 15px 15px;">
             <div id="breadcrumbs">
-                <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php'>Home</a> &gt;&gt;
-                <a href='collprofiles.php'>Collections</a> &gt;&gt;
+                <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="0">Home</a> &gt;&gt;
+                <a href='collprofiles.php' tabindex="0">Collections</a> &gt;&gt;
                 <b>Collection Statistics</b>
             </div>
             <h3>Select Collections to be Analyzed</h3>

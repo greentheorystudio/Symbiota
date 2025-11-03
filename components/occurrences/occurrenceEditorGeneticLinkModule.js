@@ -6,7 +6,7 @@ const occurrenceEditorGeneticLinkModule = {
                     <div class="row justify-between q-gutter-sm">
                         <div class="text-h6 text-bold">Genetic Record Linkages</div>
                         <div>
-                            <q-btn color="secondary" @click="openGeneticLinkageEditorPopup(0);" label="Add New Genetic Record Linkage" />
+                            <q-btn color="secondary" @click="openGeneticLinkageEditorPopup(0);" label="Add New Genetic Record Linkage" tabindex="0" />
                         </div>
                     </div>
                     <div class="q-mt-sm column q-gutter-sm">

@@ -187,12 +187,17 @@ CREATE TABLE `ommofextension` (
 );
 
 ALTER TABLE `media`
+    MODIFY COLUMN `accessuri` varchar(255) NOT NULL AFTER `occid`,
     ADD COLUMN `sourceurl` varchar(255) NULL AFTER `accessuri`,
-    ADD INDEX `sourceurl`(`sourceurl`);
+    ADD COLUMN `descriptivetranscripturi` varchar(255) NULL AFTER `sourceurl`,
+    ADD INDEX `sourceurl`(`sourceurl`),
+    ADD INDEX `INDEX_media_descriptivetranscripturi`(`descriptivetranscripturi`);
 
 ALTER TABLE `images`
+    ADD COLUMN `altText` varchar(355) NULL AFTER `caption`,
     ADD INDEX `sourceurl`(`sourceurl`),
-    ADD INDEX `images_sortsequence`(`sortsequence`);
+    ADD INDEX `images_sortsequence`(`sortsequence`),
+    ADD INDEX `INDEX_images_altText`(`altText`);
 
 ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
@@ -300,12 +305,14 @@ CREATE TABLE `uploadmediatemp` (
     `url` varchar(255) DEFAULT NULL,
     `thumbnailurl` varchar(255) DEFAULT NULL,
     `originalurl` varchar(255) DEFAULT NULL,
-    `accessuri` varchar(2048) DEFAULT NULL,
+    `accessuri` varchar(255) DEFAULT NULL,
+    `descriptivetranscripturi` varchar(255) DEFAULT NULL,
     `photographer` varchar(100) DEFAULT NULL,
     `title` varchar(255) DEFAULT NULL,
     `imagetype` varchar(50) DEFAULT NULL,
     `format` varchar(45) DEFAULT NULL,
     `caption` varchar(100) DEFAULT NULL,
+    `altText` varchar(355) DEFAULT NULL,
     `description` varchar(1000) DEFAULT NULL,
     `creator` varchar(45) DEFAULT NULL,
     `owner` varchar(100) DEFAULT NULL,

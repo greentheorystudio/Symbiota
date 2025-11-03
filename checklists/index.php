@@ -33,12 +33,13 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Checklists</span>
             </div>
             <div class="q-pa-md">
@@ -49,7 +50,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         </h1>
                         <div v-if="validUser" class="row justify-end q-gutter-sm q-pr-md">
                             <div>
-                                <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist"/>
+                                <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist" tabindex="0" />
                             </div>
                         </div>
                     </div>
@@ -59,10 +60,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                 <q-card-section class="column q-gutter-sm">
                                     <div v-if="projectGroup['projname']" class="row justify-start">
                                         <div class="text-h6 text-bold">
-                                            <a :href="(clientRoot + '/projects/project.php?pid=' + projectGroup['pid'])">{{ projectGroup['projname'] }}</a>
+                                            <a :href="(clientRoot + '/projects/project.php?pid=' + projectGroup['pid'])" tabindex="0">{{ projectGroup['projname'] }}</a>
                                         </div>
                                         <div v-if="projectGroup['coordinates'].length > 0" class="q-ml-sm self-center">
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(projectGroup['coordinates']);" icon="fas fa-globe" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(projectGroup['coordinates']);" icon="fas fa-globe" dense aria-label="See checklists on map" tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     See checklists on map
                                                 </q-tooltip>
@@ -73,10 +74,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                         <template v-for="checklist in projectGroup['checklists']">
                                             <div class="row justify-start">
                                                 <div class="text-body1">
-                                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])">{{ checklist['name'] }}</a>
+                                                    <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])" tabindex="0">{{ checklist['name'] }}</a>
                                                 </div>
                                                 <div v-if="(checklist['latcentroid'] && checklist['longcentroid']) || checklist['footprintwkt']" class="q-ml-md self-center">
-                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(((checklist['latcentroid'] && checklist['longcentroid']) ? [[Number(checklist['longcentroid']), Number(checklist['latcentroid'])]] : null), (checklist['footprintwkt'] ? checklist['footprintwkt'] : null));" icon="fas fa-globe" dense>
+                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(((checklist['latcentroid'] && checklist['longcentroid']) ? [[Number(checklist['longcentroid']), Number(checklist['latcentroid'])]] : null), (checklist['footprintwkt'] ? checklist['footprintwkt'] : null));" icon="fas fa-globe" dense aria-label="See checklist on map" tabindex="0">
                                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                             See checklist on map
                                                         </q-tooltip>

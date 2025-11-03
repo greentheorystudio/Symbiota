@@ -2,7 +2,7 @@ const checklistTaxaVoucherModule = {
     template: `
         <div class="fit q-pa-md column q-gutter-sm no-wrap">
             <div class="row justify-end">
-                <q-btn color="primary" @click="openOccurrenceLinkagePopup();" label="Add Vouchers" dense>
+                <q-btn color="primary" @click="openOccurrenceLinkagePopup();" label="Add Vouchers" dense tabindex="0">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Link occurrence voucher records for this taxon
                     </q-tooltip>
@@ -14,7 +14,7 @@ const checklistTaxaVoucherModule = {
                         <q-card-section class="row justify-between q-col-gutter-sm no-wrap">
                             <occurrence-selector-info-block :occurrence-data="voucher"></occurrence-selector-info-block>
                             <div>
-                                <q-btn color="negative" @click="deleteChecklistVoucherRecord(voucher['occid']);" label="Remove" dense />
+                                <q-btn color="negative" @click="deleteChecklistVoucherRecord(voucher['occid']);" label="Remove" dense aria-label="Remove taxon" tabindex="0" />
                             </div>
                         </q-card-section>
                     </q-card>

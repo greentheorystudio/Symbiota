@@ -3,7 +3,7 @@ const spatialSymbologyTab = {
         <div class="column">
             <div class="row justify-between">
                 <div class="q-px-sm q-mb-sm column q-gutter-xs">
-                    <q-select bg-color="white" outlined v-model="selectedSymbologyOption" :options="symbologyOptions" option-value="field" option-label="label" label="Symbology" popup-content-class="z-max" behavior="menu" class="spatial-symbology-dropdown" @update:model-value="processSymbologyChange" dense options-dense />
+                    <q-select bg-color="white" outlined v-model="selectedSymbologyOption" :options="symbologyOptions" option-value="field" option-label="label" label="Symbology" popup-content-class="z-max" behavior="menu" class="spatial-symbology-dropdown" @update:model-value="processSymbologyChange" dense options-dense tabindex="0" />
                     <div class="q-mt-sm q-ml-md">
                         <svg xmlns="http://www.w3.org/2000/svg" style="height:15px;width:15px;margin-bottom:-2px;">
                             <g>
@@ -20,9 +20,9 @@ const spatialSymbologyTab = {
                     </div>
                 </div>
                 <div class="q-px-sm q-mb-sm column q-gutter-xs">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processResetSymbology();" label="Reset Symbology" dense />
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="autoColorSymbologyKeys();" label="Auto Color" dense />
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="saveSymbologyImage();" label="Save Symbology" dense />
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processResetSymbology();" label="Reset Symbology" dense tabindex="0" />
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="autoColorSymbologyKeys();" label="Auto Color" dense tabindex="0" />
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="saveSymbologyImage();" label="Save Symbology" dense aria-label="Save Symbology PNG Image" tabindex="0" />
                 </div>
             </div>
             <q-separator ></q-separator>

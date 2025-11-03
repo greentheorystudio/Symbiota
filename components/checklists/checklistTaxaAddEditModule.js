@@ -9,10 +9,10 @@ const checklistTaxaAddEditModule = {
                 </div>
                 <div class="row justify-end">
                     <template v-if="checklistTaxaId > 0">
-                        <q-btn color="secondary" @click="saveChecklistTaxaEdits();" label="Save Edits" :disabled="!editsExist || !checklistTaxaValid" />
+                        <q-btn color="secondary" @click="saveChecklistTaxaEdits();" label="Save Edits" :disabled="!editsExist || !checklistTaxaValid" tabindex="0" />
                     </template>
                     <template v-else>
-                        <q-btn color="secondary" @click="addChecklistTaxon();" label="Add Taxon" :disabled="!checklistTaxaValid" />
+                        <q-btn color="secondary" @click="addChecklistTaxon();" label="Add Taxon" :disabled="!checklistTaxaValid" tabindex="0" />
                     </template>
                 </div>
             </div>
@@ -43,7 +43,7 @@ const checklistTaxaAddEditModule = {
             </div>
             <div v-if="Number(checklistTaxaId) > 0" class="row justify-end q-gutter-md">
                 <div>
-                    <q-btn color="negative" @click="deleteChecklistTaxon();" label="Remove Taxon" />
+                    <q-btn color="negative" @click="deleteChecklistTaxon();" label="Remove Taxon" tabindex="0" />
                 </div>
             </div>
         </div>

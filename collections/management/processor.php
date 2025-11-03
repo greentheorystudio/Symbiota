@@ -53,9 +53,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
     <div id="mainContainer" style="padding: 10px 15px 15px;">
         <?php
         echo '<div id="breadcrumbs">';
-        echo '<a href="../../index.php">Home</a> &gt;&gt; ';
-        echo '<a href="../misc/collprofiles.php?collid='.$collid.'">Collection Control Panel</a> &gt;&gt; ';
-        echo '<a href="../upload/index.php?collid='.$collid.'&tabindex='.$tabIndex.'"><b>Occurrence Data Upload Module</b></a> &gt;&gt; ';
+        echo '<a href="../../index.php" tabindex="0">Home</a> &gt;&gt; ';
+        echo '<a href="../misc/collprofiles.php?collid='.$collid.'" tabindex="0">Collection Control Panel</a> &gt;&gt; ';
+        echo '<a href="../upload/index.php?collid='.$collid.'&tabindex='.$tabIndex.'" tabindex="0"><b>Occurrence Data Upload Module</b></a> &gt;&gt; ';
         echo '<b>Image Processor</b>';
         echo '</div>';
         ?>

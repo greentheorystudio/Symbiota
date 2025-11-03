@@ -25,20 +25,20 @@ const taxaProfileSubtaxaPanel = {
                             <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon">
                                 <q-card class="q-ma-md spp-taxon">
                                     <div class="spp-taxon-label">
-                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)" tabindex="0">
                                             {{ spptaxon.sciname }}
                                         </a>
                                     </div>
                                     <div>
                                         <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
-                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
-                                                <q-img class="spp-image-container" :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" fit="scale-down" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)" aria-label="Go to taxon" tabindex="0">
+                                                <q-img class="spp-image-container" :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" fit="scale-down" :title="subtaxaImageData[spptaxon.tid][0]['caption']" :alt="(subtaxaImageData[spptaxon.tid][0]['alttext'] ? subtaxaImageData[spptaxon.tid][0]['alttext'] : spptaxon.sciname)"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
                                             <div class="no-spptaxon-image">
                                                 <template v-if="isEditor">
-                                                    <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + spptaxon.tid)">Add an Image</a>
+                                                    <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + spptaxon.tid)" aria-label="Add an Image" tabindex="0">Add an Image</a>
                                                 </template>
                                                 <template v-else>
                                                     Image not available
@@ -49,7 +49,7 @@ const taxaProfileSubtaxaPanel = {
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
                                             <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
-                                                <q-img class="spp-map-container" :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" fit="scale-down" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
+                                                <q-img class="spp-map-container" :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" fit="scale-down" :title="spptaxon.sciname" :alt="('Map displaying the range of ' + spptaxon.sciname)"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">
@@ -69,20 +69,20 @@ const taxaProfileSubtaxaPanel = {
                             <q-intersection v-for="spptaxon in subtaxaArr" :key="spptaxon" :class="{'spp-taxon':true, 'below-family':(spptaxon.rankid > 140), 'family-or-above':(spptaxon.rankid <= 140)}">
                                 <q-card class="q-ma-md overflow-hidden">
                                     <div class="spp-taxon-label">
-                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
+                                        <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)" aria-label="Go to taxon" tabindex="0">
                                             {{ spptaxon.sciname }}
                                         </a>
                                     </div>
                                     <div class="spp-image-container">
                                         <template v-if="subtaxaImageData.hasOwnProperty(spptaxon.tid)">
-                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)">
-                                                <q-img :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" :fit="contain" :title="spptaxon.caption" :alt="spptaxon.sciname"></q-img>
+                                            <a :href="(clientRoot + '/taxa/index.php?taxon=' + spptaxon.tid)" aria-label="Go to taxon" tabindex="0">
+                                                <q-img :src="getSubtaxaImageUrlFromData(subtaxaImageData[spptaxon.tid][0])" :fit="contain" :title="subtaxaImageData[spptaxon.tid][0]['caption']" :alt="(subtaxaImageData[spptaxon.tid][0]['alttext'] ? subtaxaImageData[spptaxon.tid][0]['alttext'] : spptaxon.sciname)"></q-img>
                                             </a>
                                         </template>
                                         <template v-else>
                                             <div class="no-spptaxon-image">
                                                 <template v-if="isEditor">
-                                                    <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + spptaxon.tid)">Add an Image</a>
+                                                    <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + spptaxon.tid)" aria-label="Add an Image" tabindex="0">Add an Image</a>
                                                 </template>
                                                 <template v-else>
                                                     Image not available
@@ -93,7 +93,7 @@ const taxaProfileSubtaxaPanel = {
                                     <template v-if="spptaxon.rankid > 140">
                                         <div class="spp-map-container">
                                             <template v-if="taxaMapData.hasOwnProperty(spptaxon.tid)">
-                                                <q-img :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" :fit="contain" :title="spptaxon.sciname" :alt="spptaxon.sciname"></q-img>
+                                                <q-img :src="(taxaMapData[spptaxon.tid]['url'].startsWith('/') ? (clientRoot + taxaMapData[spptaxon.tid]['url']) : taxaMapData[spptaxon.tid]['url'])" :fit="contain" :title="spptaxon.sciname" :alt="('Map displaying the range of ' + spptaxon.sciname)"></q-img>
                                             </template>
                                             <template v-else>
                                                 <div class="no-spptaxon-image">

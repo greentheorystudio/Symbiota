@@ -10,7 +10,7 @@ const collectionMediaUploadParametersEditorPopup = {
             <q-card class="md-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -24,10 +24,10 @@ const collectionMediaUploadParametersEditorPopup = {
                                 </div>
                                 <div class="row justify-end">
                                     <template v-if="collectionMediaUploadParametersId > 0">
-                                        <q-btn color="secondary" @click="saveCollectionMediaUploadParametersEdits();" label="Save Edits" :disabled="!editsExist || !profileDataValid" />
+                                        <q-btn color="secondary" @click="saveCollectionMediaUploadParametersEdits();" label="Save Edits" :disabled="!editsExist || !profileDataValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addCollectionMediaUploadParameters();" label="Add Profile" :disabled="!profileDataValid" />
+                                        <q-btn color="secondary" @click="addCollectionMediaUploadParameters();" label="Add Profile" :disabled="!profileDataValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
@@ -39,7 +39,7 @@ const collectionMediaUploadParametersEditorPopup = {
                             <collection-media-upload-parameters-field-module></collection-media-upload-parameters-field-module>
                             <div v-if="Number(collectionMediaUploadParametersId) > 0" class="row justify-end q-gutter-md">
                                 <div>
-                                    <q-btn color="negative" @click="deleteCollectionMediaUploadParameters();" label="Delete Profile" />
+                                    <q-btn color="negative" @click="deleteCollectionMediaUploadParameters();" label="Delete Profile" tabindex="0" />
                                 </div>
                             </div>
                         </div>

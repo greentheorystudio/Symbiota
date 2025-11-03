@@ -78,11 +78,11 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
 </head>
 <body style="margin-left: 0; margin-right: 0;background-color:white;">
 	<div id="breadcrumbs">
-		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-		<a href="index.php">Source Board</a> &gt;&gt;
+		<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+		<a href="index.php" tabindex="0">Source Board</a> &gt;&gt;
 		<?php
 		if($collid) {
-            echo '<a href="../index.php?tabindex=2&collid=' . $collid . '">Control Panel</a> &gt;&gt;';
+            echo '<a href="../index.php?tabindex=2&collid=' . $collid . '" tabindex="0">Control Panel</a> &gt;&gt;';
         }
 		?>
 		<b>Crowdsourcing Review</b>

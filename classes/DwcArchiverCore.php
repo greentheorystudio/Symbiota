@@ -1043,10 +1043,10 @@ class DwcArchiverCore extends Manager{
             $itemTitleElem = $newDoc->createElement('title');
             $itemTitleElem->appendChild($newDoc->createTextNode($title));
             $itemElem->appendChild($itemTitleElem);
-            if($GLOBALS['CLIENT_ROOT'] && strncmp($r->icon, '/', 1) === 0){
+            if($GLOBALS['CLIENT_ROOT'] && strncmp($cArr['icon'], '/', 1) === 0){
                 $cArr['icon'] = $GLOBALS['CLIENT_ROOT'] . $cArr['icon'];
             }
-            if(strncmp($cArr['icon'], '/', 1) === 0){
+            if($cArr['icon'] && strncmp($cArr['icon'], '/', 1) === 0){
                 $urlPrefix = 'http://';
                 if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
                     $urlPrefix = 'https://';
@@ -1055,8 +1055,10 @@ class DwcArchiverCore extends Manager{
                 $cArr['icon'] = $urlPrefix . $cArr['icon'];
             }
             $iconElem = $newDoc->createElement('image');
-            $iconElem->appendChild($newDoc->createTextNode($cArr['icon']));
-            $itemElem->appendChild($iconElem);
+            if($cArr['icon']){
+                $iconElem->appendChild($newDoc->createTextNode($cArr['icon']));
+                $itemElem->appendChild($iconElem);
+            }
             $descTitleElem = $newDoc->createElement('description');
             $descTitleElem->appendChild($newDoc->createTextNode($cArr['collectionname']));
             $itemElem->appendChild($descTitleElem);

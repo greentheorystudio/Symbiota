@@ -54,7 +54,7 @@ const textFieldInputElement = {
         },
         tabindex: {
             type: Number,
-            default: 1
+            default: 0
         },
         value: {
             type: String,
@@ -66,14 +66,14 @@ const textFieldInputElement = {
             <template v-if="!disabled && maxlength && Number(maxlength) > 0">
                 <q-input outlined v-model="value" :type="inputType" :step="step" :label="label" :debounce="debounce" bg-color="white" :counter="(showCounter && dataType !== 'int' && dataType !== 'increment' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" @keyup.enter="processEnterClick" :autogrow="inputType === 'textarea'" :hint="fieldHint" :tabindex="tabindex" :autocomplete="field" dense>
                     <template v-if="(value && clearable) || definition" v-slot:append>
-                        <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                        <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 See field definition
                             </q-tooltip>
                         </q-icon>
-                        <q-icon v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-icon role="button" v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                Clear value {{ fieldHint }}
+                                Clear value
                             </q-tooltip>
                         </q-icon>
                     </template>
@@ -82,12 +82,12 @@ const textFieldInputElement = {
             <template v-else>
                 <q-input outlined v-model="value" :type="inputType" :step="step" :label="label" :debounce="debounce" bg-color="white" @update:model-value="processValueChange" @keyup.enter="processEnterClick" :readonly="disabled" :autogrow="inputType === 'textarea'" :hint="fieldHint" :tabindex="tabindex" :autocomplete="field" dense>
                     <template v-if="!disabled && ((value && clearable) || definition)" v-slot:append>
-                        <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                        <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 See field definition
                             </q-tooltip>
                         </q-icon>
-                        <q-icon v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-icon role="button" v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Clear value
                             </q-tooltip>
@@ -100,14 +100,14 @@ const textFieldInputElement = {
             <template v-if="!disabled && maxlength && Number(maxlength) > 0">
                 <q-input outlined v-model="value" :type="inputType" :step="step" :label="label" :debounce="debounce" bg-color="white" :counter="(showCounter && dataType !== 'int' && dataType !== 'increment' && dataType !== 'number')" :maxlength="maxlength" @update:model-value="processValueChange" @keyup.enter="processEnterClick" :autogrow="inputType === 'textarea'" :tabindex="tabindex" :autocomplete="field" dense>
                     <template v-if="(value && clearable) || definition" v-slot:append>
-                        <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                        <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 See field definition
                             </q-tooltip>
                         </q-icon>
-                        <q-icon v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-icon role="button" v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                Clear value {{ fieldHint }}
+                                Clear value
                             </q-tooltip>
                         </q-icon>
                     </template>
@@ -116,12 +116,12 @@ const textFieldInputElement = {
             <template v-else>
                 <q-input outlined v-model="value" :type="inputType" :step="step" :label="label" :debounce="debounce" bg-color="white" @update:model-value="processValueChange" @keyup.enter="processEnterClick" :readonly="disabled" :autogrow="inputType === 'textarea'" :tabindex="tabindex" :autocomplete="field" dense>
                     <template v-if="!disabled && ((value && clearable) || definition)" v-slot:append>
-                        <q-icon v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();">
+                        <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 See field definition
                             </q-tooltip>
                         </q-icon>
-                        <q-icon v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);">
+                        <q-icon role="button" v-if="value && clearable" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Clear value
                             </q-tooltip>
@@ -131,11 +131,11 @@ const textFieldInputElement = {
             </template>
         </template>
         <template v-if="definition">
-            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
-                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false"></q-btn>
+                            <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="displayDefinitionPopup = false" aria-label="Close definition pop up" :tabindex="tabindex"></q-btn>
                         </div>
                     </div>
                     <div class="q-pa-sm column q-gutter-sm">
@@ -157,7 +157,7 @@ const textFieldInputElement = {
                         </template>
                         <template v-if="definition.source">
                             <div>
-                                <a :href="definition.source" target="_blank"><span class="text-bold">Go to source</span></a>
+                                <a :href="definition.source" target="_blank" aria-label="External link: Go to source - Opens in separate tab" :tabindex="tabindex"><span class="text-bold">Go to source</span></a>
                             </div>
                         </template>
                     </div>

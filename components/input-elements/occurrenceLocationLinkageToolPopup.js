@@ -7,6 +7,10 @@ const occurrenceLocationLinkageToolPopup = {
         showPopup: {
             type: Boolean,
             default: false
+        },
+        tabindex: {
+            type: Number,
+            default: 0
         }
     },
     template: `
@@ -14,7 +18,7 @@ const occurrenceLocationLinkageToolPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -49,10 +53,10 @@ const occurrenceLocationLinkageToolPopup = {
                             </div>
                             <div class="full-width row justify-end q-gutter-sm">
                                 <div>
-                                    <q-btn color="secondary" @click="findNearbyLocations();" label="Find Nearby Locations" :disabled="!searchCoordinates" />
+                                    <q-btn color="secondary" @click="findNearbyLocations();" label="Find Nearby Locations" :disabled="!searchCoordinates" :tabindex="tabindex" />
                                 </div>
                                 <div>
-                                    <q-btn color="secondary" @click="processSearch();" label="Search Locations" :disabled="!searchCriteria" />
+                                    <q-btn color="secondary" @click="processSearch();" label="Search Locations" :disabled="!searchCriteria" :tabindex="tabindex" />
                                 </div>
                             </div>
                         </div>
@@ -137,7 +141,7 @@ const occurrenceLocationLinkageToolPopup = {
                                         </template>
                                     </div>
                                     <div class="q-mt-md q-pl-md row justify-start q-gutter-md">
-                                        <q-btn color="primary" @click="processLocationSelection(location);" label="Select Location" dense />
+                                        <q-btn color="primary" @click="processLocationSelection(location);" label="Select Location" dense :tabindex="tabindex" />
                                     </div>
                                 </q-card-section>
                             </q-card>

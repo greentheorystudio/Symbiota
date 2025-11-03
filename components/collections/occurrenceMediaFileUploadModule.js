@@ -15,7 +15,7 @@ const occurrenceMediaFileUploadModule = {
                 </div>
                 <div class="col-12 col-sm-3 row justify-end">
                     <div>
-                        <q-btn color="secondary" @click="showCollectionMediaUploadParametersEditorPopup = true" :label="Number(collectionMediaUploadParametersId) > 0 ? 'Edit' : 'Create'" dense />
+                        <q-btn color="secondary" @click="showCollectionMediaUploadParametersEditorPopup = true" :label="Number(collectionMediaUploadParametersId) > 0 ? 'Edit' : 'Create'" dense tabindex="0" />
                     </div>
                 </div>
             </div>
