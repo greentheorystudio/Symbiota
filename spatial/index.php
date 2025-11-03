@@ -40,6 +40,7 @@ $stArrJson = array_key_exists('starr',$_REQUEST) ? $_REQUEST['starr'] : '';
         </script>
     </head>
     <body id="mapbody">
+        <a class="screen-reader-only" href="#map-container">Skip to main content</a>
         <div id="map-container" class="fullscreen">
             <spatial-analysis-module :cluster-points="clusterPointsSetting" :query-id="queryId" :st-arr-json="stArrJson" :window-type="windowType"></spatial-analysis-module>
         </div>
