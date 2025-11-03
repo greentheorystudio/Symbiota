@@ -295,14 +295,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             const cidArr = [];
                             let includeTaxon = false;
                             Object.keys(taxon['keyData']).forEach(cid => {
-                                taxon['keyData'][cid].forEach(char => {
-                                    if(!includeTaxon && (selectedCidArr.value.length === 0 || (selectedCidArr.value.includes(Number(char['cid'])) && selectedCsidArr.value.includes(Number(char['csid']))))){
-                                        includeTaxon = true;
-                                    }
-                                    if(includeTaxon && !cidArr.includes(Number(char['cid']))){
-                                        cidArr.push(Number(char['cid']));
-                                    }
-                                });
+                                if(!includeTaxon){
+                                    taxon['keyData'][cid].forEach(char => {
+                                        if(!includeTaxon && (selectedCidArr.value.length === 0 || (selectedCidArr.value.includes(Number(char['cid'])) && selectedCsidArr.value.includes(Number(char['csid']))))){
+                                            includeTaxon = true;
+                                        }
+                                        if(includeTaxon && !cidArr.includes(Number(char['cid']))){
+                                            cidArr.push(Number(char['cid']));
+                                        }
+                                    });
+                                }
                             });
                             selectedCidArr.value.forEach(cid => {
                                 if(!cidArr.includes(Number(cid))){
