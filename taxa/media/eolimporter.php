@@ -20,12 +20,13 @@ if(!$GLOBALS['SYMB_UID']) {
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Encyclopedia of Life Media Importer</span>
             </div>
             <div class="q-pa-md">
@@ -41,7 +42,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                     <q-card class="q-my-sm" flat bordered>
                                         <q-card-section>
                                             <div class="text-subtitle1 text-weight-bold">Select Media Type</div>
-                                            <q-option-group :options="mediaTypeOptions" type="radio" v-model="selectedMediaType" :disable="loading" @update:model-value="processMediaTypeChange" dense />
+                                            <q-option-group :options="mediaTypeOptions" type="radio" v-model="selectedMediaType" :disable="loading" @update:model-value="processMediaTypeChange" dense aria-label="Media type options" tabindex="0" />
                                         </q-card-section>
                                     </q-card>
                                     <q-card class="q-my-sm" flat bordered>
@@ -51,17 +52,17 @@ if(!$GLOBALS['SYMB_UID']) {
                                                     <single-language-auto-complete :language="descriptionLanguage" :disable="loading" label="Description Language" @update:language="updateDescriptionLanguage"></single-language-auto-complete>
                                                 </div>
                                                 <div class="q-my-sm">
-                                                    <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense />
+                                                    <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense aria-label="Description save options" tabindex="0" />
                                                 </div>
                                             </template>
                                             <div class="row q-my-sm">
-                                                <q-input type="number" outlined v-model="maximumRecordsPerTaxon" class="col-6" label="Maximum records per taxon" hint="(Maximum 25)" min="1" max="25" :readonly="loading" @update:model-value="validateMaximumRecordsValue" dense />
+                                                <q-input type="number" outlined v-model="maximumRecordsPerTaxon" class="col-6" label="Maximum records per taxon" hint="(Maximum 25)" min="1" max="25" :readonly="loading" @update:model-value="validateMaximumRecordsValue" dense tabindex="0" />
                                             </div>
                                             <div class="q-my-sm">
                                                 <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
                                             </div>
                                             <div class="q-my-sm">
-                                                <q-checkbox v-model="importMissingOnly" label="Import only for taxa missing selected media type" :disable="loading" />
+                                                <q-checkbox v-model="importMissingOnly" label="Import only for taxa missing selected media type" :disable="loading" tabindex="0" />
                                             </div>
                                         </q-card-section>
                                     </q-card>
@@ -73,10 +74,10 @@ if(!$GLOBALS['SYMB_UID']) {
                                         </div>
                                         <div class="processor-tool-button-container">
                                             <div>
-                                                <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start" dense />
+                                                <q-btn :loading="loading" color="secondary" @click="initializeEOLImport();" label="Start" dense aria-label="Start Encyclopedia of Life Media Import" tabindex="0" />
                                             </div>
                                             <div>
-                                                <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense />
+                                                <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Encyclopedia of Life Media Import" tabindex="0" />
                                             </div>
                                         </div>
                                     </div>
@@ -91,7 +92,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                         <template v-if="!currentProcess && processorDisplayCurrentIndex > 0">
                                             <q-item>
                                                 <q-item-section>
-                                                    <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollUp();">Show previous 100 entries</a></div>
+                                                    <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollUp();" @keyup.enter="processorDisplayScrollUp();" aria-label="Show previous 100 entries" tabindex="0">Show previous 100 entries</a></div>
                                                 </q-item-section>
                                             </q-item>
                                         </template>
@@ -115,7 +116,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                                                     <div v-if="subproc.result === 'success' && subproc.type === 'text'" class="q-ml-sm text-weight-bold text-green-9">
                                                                         <span class="q-ml-sm text-weight-bold text-green-9">{{subproc.resultText}}</span>
                                                                         <span class="q-ml-sm">
-                                                                        <a :href="subproc.taxonPageHref" target="_blank">(Go to Taxon Profile Page)</a>
+                                                                        <a :href="subproc.taxonPageHref" target="_blank" aria-label="Go to Taxon Profile Page - opens in separate tab" tabindex="0">(Go to Taxon Profile Page)</a>
                                                                     </span>
                                                                     </div>
                                                                     <div v-if="subproc.result === 'error'" class="q-ml-sm text-weight-bold text-negative">
@@ -131,7 +132,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                         <template v-if="!currentProcess && processorDisplayCurrentIndex < processorDisplayIndex">
                                             <q-item>
                                                 <q-item-section>
-                                                    <div><a class="text-bold cursor-pointer" @click="processorDisplayScrollDown();">Show next 100 entries</a></div>
+                                                    <div><a role="button" class="text-bold cursor-pointer" @click="processorDisplayScrollDown();" @keyup.enter="processorDisplayScrollDown();" aria-label="Show next 100 entries" tabindex="0">Show next 100 entries</a></div>
                                                 </q-item-section>
                                             </q-item>
                                         </template>

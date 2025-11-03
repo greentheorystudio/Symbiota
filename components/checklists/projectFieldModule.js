@@ -9,10 +9,10 @@ const projectFieldModule = {
                 </div>
                 <div class="row justify-end">
                     <template v-if="projectId > 0">
-                        <q-btn color="secondary" @click="saveProjectEdits();" label="Save Edits" :disabled="!editsExist || !projectValid" />
+                        <q-btn color="secondary" @click="saveProjectEdits();" label="Save Edits" :disabled="!editsExist || !projectValid" tabindex="0" />
                     </template>
                     <template v-else>
-                        <q-btn color="secondary" @click="createProject();" label="Create" :disabled="!projectValid" />
+                        <q-btn color="secondary" @click="createProject();" label="Create" :disabled="!projectValid" aria-label="Create project" tabindex="0" />
                     </template>
                 </div>
             </div>

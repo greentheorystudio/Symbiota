@@ -1,11 +1,17 @@
 const confirmationPopup = {
+    props: {
+        tabindex: {
+            type: Number,
+            default: 0
+        }
+    },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
             <q-card class="q-dialog-plugin q-pa-lg">
                 {{ popupText }}
                 <q-card-actions align="right">
-                    <q-btn color="primary" :label="trueButtonText" @click="processTrueClick" />
-                    <q-btn v-if="cancelOption" color="primary" :label="falseButtonText" @click="processFalseClick" />
+                    <q-btn color="primary" :label="trueButtonText" @click="processTrueClick" :tabindex="tabindex" />
+                    <q-btn v-if="cancelOption" color="primary" :label="falseButtonText" @click="processFalseClick" :tabindex="tabindex" />
                 </q-card-actions>
             </q-card>
         </q-dialog>

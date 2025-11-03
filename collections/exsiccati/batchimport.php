@@ -128,9 +128,9 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	?>
 	<div id="mainContainer" style="padding: 10px 15px 15px;">
         <div id="breadcrumbs">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <a href="index.php">Exsiccati Index</a> &gt;&gt;
-            <a href="batchimport.php">Batch Import Module</a>
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+            <a href="index.php" tabindex="0">Exsiccati Index</a> &gt;&gt;
+            <a href="batchimport.php" tabindex="0">Batch Import Module</a>
         </div>
         <?php
 		if($statusStr){

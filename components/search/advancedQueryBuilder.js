@@ -16,7 +16,7 @@ const advancedQueryBuilder = {
                     <div class="full-width row justify-between">
                         <div class="text-body1 text-bold">{{ queryType === 'advanced' ? 'Occurrence Data ' : 'Data Extension ' }}Query Builder</div>
                         <div>
-                            <q-btn color="primary" @click="addCriteriaObjToArr();" label="Add Criteria" :disabled="addCriteriaDisabled" />
+                            <q-btn color="primary" @click="addCriteriaObjToArr();" label="Add Criteria" :disabled="addCriteriaDisabled" tabindex="0" />
                         </div>
                     </div>
                     <div v-if="!parenthesisValid" class="text-body1 text-bold text-red self-center">
@@ -58,7 +58,7 @@ const advancedQueryBuilder = {
                             <q-card>
                                 <q-card-section class="row q-col-gutter-xs">
                                     <div class="col-12 col-sm-2 col-md-1 q-pt-xs row justify-center" v-if="criteria['field'] && (criteria['operator'] === 'IS NULL' || criteria['operator'] === 'IS NOT NULL' || criteria['value'])">
-                                        <q-btn color="negative" @click="deleteCriteria(criteria['index']);" text-color="white" icon="delete" dense>
+                                        <q-btn color="negative" @click="deleteCriteria(criteria['index']);" text-color="white" icon="delete" dense aria-label="Delete this query line" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Delete this query line
                                             </q-tooltip>

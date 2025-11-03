@@ -10,7 +10,7 @@ const occurrenceEditorEventLocationTransferPopup = {
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit">
@@ -18,16 +18,16 @@ const occurrenceEditorEventLocationTransferPopup = {
                         <div class="q-pa-md column q-gutter-sm">
                             <div class="row justify-between">
                                 <div>
-                                    <q-btn-toggle v-model="selectedChangeType" :options="changeTypeOptions" class="black-border" rounded unelevated toggle-color="primary" color="white" text-color="primary" @update:model-value="processSelectedChangeTypeChange"></q-btn-toggle>
+                                    <q-btn-toggle v-model="selectedChangeType" :options="changeTypeOptions" class="black-border" rounded unelevated toggle-color="primary" color="white" text-color="primary" @update:model-value="processSelectedChangeTypeChange" aria-label="Change type" tabindex="0"></q-btn-toggle>
                                 </div>
                                 <div class="row justify-end q-gutter-xs">
                                     <template v-if="selectedChangeType === 'changelocation'">
-                                        <q-btn color="secondary" @click="showLocationLinkageToolPopup = true" label="Search Locations" />
+                                        <q-btn color="secondary" @click="showLocationLinkageToolPopup = true" label="Search Locations" tabindex="0" />
                                     </template>
                                     <template v-if="collectingEventArr.length > 0">
-                                        <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Location Events" />
+                                        <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Location Events" tabindex="0" />
                                     </template>
-                                    <q-btn color="secondary" @click="processChangeOccurrence();" :label="(selectedChangeType === 'changelocation' ? 'Change Event & Location' : 'Change Event')" :disabled="!changeValid" />
+                                    <q-btn color="secondary" @click="processChangeOccurrence();" :label="(selectedChangeType === 'changelocation' ? 'Change Event & Location' : 'Change Event')" :disabled="!changeValid" tabindex="0" />
                                 </div>
                             </div>
                             <q-card v-if="selectedChangeType === 'changelocation'" flat bordered>

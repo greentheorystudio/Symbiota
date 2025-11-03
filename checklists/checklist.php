@@ -42,19 +42,20 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         </script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer">Skip to main content</a>
         <?php
         include(__DIR__ . '/../header.php');
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <template v-if="!temporaryChecklist">
                     <template v-if="Number(pId) > 0">
-                        <a :href="(clientRoot + '/projects/index.php')">Biotic Inventory Projects</a> &gt;&gt;
-                        <a :href="(clientRoot + '/projects/project.php?pid=' + pId)">{{ projectName }}</a> &gt;&gt;
+                        <a :href="(clientRoot + '/projects/index.php')" tabindex="0">Biotic Inventory Projects</a> &gt;&gt;
+                        <a :href="(clientRoot + '/projects/project.php?pid=' + pId)" tabindex="0">{{ projectName }}</a> &gt;&gt;
                     </template>
                     <template v-else-if="Number(clId) > 0">
-                        <a :href="(clientRoot + '/checklists/index.php')">Checklists</a> &gt;&gt;
+                        <a :href="(clientRoot + '/checklists/index.php')" tabindex="0">Checklists</a> &gt;&gt;
                     </template>
                     <template v-if="Number(clId) > 0">
                         <span class="text-bold">{{ checklistName }}</span>
@@ -76,21 +77,21 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             </div>
                             <div class="row q-gutter-sm">
                                 <div v-if="keyActive && taxaDataArr.length > 0">
-                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-key" dense unelevated :ripple="false">
+                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-key" dense unelevated :ripple="false" aria-label="Open Interactive Key" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Interactive Key
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
                                 <div v-if="taxaDataArr.length > 0">
-                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/checklists/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false">
+                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/checklists/flashcards.php?clid=' + clId)" icon="fas fa-gamepad" dense unelevated :ripple="false" aria-label="Open Flashcard Game" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Flashcard Game
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
                                 <div v-if="Object.keys(checklistVoucherData).length > 0">
-                                    <q-btn text-color="black" size="sm" :href="mapViewUrl" icon="fas fa-globe" dense unelevated :ripple="false">
+                                    <q-btn text-color="black" size="sm" :href="mapViewUrl" icon="fas fa-globe" dense unelevated :ripple="false" aria-label="View Vouchers in Interactive Map" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             View Vouchers in Interactive Map
                                         </q-tooltip>
@@ -102,16 +103,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <template v-if="Number(clId) > 0">
                                 <template v-if="taxaDataArr.length > 0">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('csv');" icon="fas fa-download" dense>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('csv');" icon="fas fa-download" dense aria-label="Download Checklist CSV" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Download Checklist as CSV
+                                                Download Checklist CSV
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('docx');" icon="far fa-file-word" dense>
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('docx');" icon="far fa-file-word" dense aria-label="Download Checklist Word Document" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                Download Checklist as Word Document
+                                                Download Checklist Word Document
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
@@ -119,7 +120,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <template v-if="validUser">
                                     <template v-if="temporaryChecklist">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="saveTemporaryChecklist();" icon="fas fa-save" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="saveTemporaryChecklist();" icon="fas fa-save" aria-label="Save Checklist" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Save Checklist
                                                 </q-tooltip>
@@ -128,21 +129,21 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     </template>
                                     <template v-else-if="isEditor">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showChecklistEditorPopup = true" icon="fas fa-cog" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showChecklistEditorPopup = true" icon="fas fa-cog" aria-label="Open Checklist Administration" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Open Checklist Administration
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/voucheradmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-link" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" :href="(clientRoot + '/checklists/voucheradmin.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-link" aria-label="Open Voucher Administration" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Open Voucher Administration
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openChecklistTaxaEditorPopup(0)" icon="add_circle" dense>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openChecklistTaxaEditorPopup(0)" icon="add_circle" dense aria-label="Add Taxon" tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Add Taxon
                                                 </q-tooltip>
@@ -150,14 +151,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                         </div>
                                         <div>
                                             <template v-if="taxaEditingActive">
-                                                <q-btn color="grey-4" text-color="red" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense>
+                                                <q-btn color="grey-4" text-color="red" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense aria-label="Toggle Taxa Editing Off" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Toggle Taxa Editing Off
                                                     </q-tooltip>
                                                 </q-btn>
                                             </template>
                                             <template v-else>
-                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense>
+                                                <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="taxaEditingActive = !taxaEditingActive" icon="fas fa-clipboard-list" dense aria-label="Toggle Taxa Editing On" tabindex="0">
                                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                         Toggle Taxa Editing On
                                                     </q-tooltip>
@@ -187,12 +188,12 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 <span class="text-bold">Notes: </span>{{ checklistData['notes'] }}
                             </div>
                             <div class="text-body1 text-bold text-blue cursor-pointer">
-                                <a @click="processDisplayDetailsChange(false);" class="text-primary">Less Details</a>
+                                <a @click="processDisplayDetailsChange(false);" class="text-primary" tabindex="0">Less Details</a>
                             </div>
                         </template>
                         <template v-else>
                             <div class="text-body1 text-bold text-blue cursor-pointer">
-                                <a @click="processDisplayDetailsChange(true);" class="text-primary">More Details</a>
+                                <a @click="processDisplayDetailsChange(true);" class="text-primary" tabindex="0">More Details</a>
                             </div>
                         </template>
                     </template>
@@ -229,6 +230,9 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     <div>
                                         <checkbox-input-element label="Taxon Authors" :value="displayAuthorsVal" @update:value="processDisplayAuthorsChange"></checkbox-input-element>
                                     </div>
+                                    <div>
+                                        <checkbox-input-element label="Accepted Names" :value="displayAcceptedNames" @update:value="processDisplayAcceptedNamesChange"></checkbox-input-element>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -254,7 +258,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     </div>
                     <template v-if="activeTaxaArr.length > taxaPerPage">
                         <div class="q-mb-sm q-px-md full-width row justify-end">
-                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10"></q-pagination>
+                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Checklist page navigation"></q-pagination>
                         </div>
                         <div class="q-mb-sm full-width">
                             <q-separator ></q-separator>
@@ -292,7 +296,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <q-separator ></q-separator>
                         </div>
                         <div class="q-mb-sm q-px-md full-width row justify-end">
-                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10"></q-pagination>
+                            <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Checklist page navigation"></q-pagination>
                         </div>
                         <div class="q-mb-sm full-width">
                             <q-separator ></q-separator>
@@ -304,7 +308,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         <div class="q-pa-sm column q-col-gutter-xs">
                             <div class="row justify-start">
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
                                 </div>
                             </div>
                         </div>
@@ -550,6 +554,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         returnData['total'] = totalArr.length;
                         return returnData;
                     });
+                    const displayAcceptedNames = Vue.computed(() => checklistStore.getDisplayAcceptedNames);
                     const displayAuthorsVal = Vue.computed(() => checklistStore.getDisplayAuthors);
                     const displayCommonNamesVal = Vue.computed(() => checklistStore.getDisplayVernaculars);
                     const displayImagesVal = Vue.computed(() => checklistStore.getDisplayImages);
@@ -742,6 +747,11 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         showSpatialPopup.value = true;
                     }
 
+                    function processDisplayAcceptedNamesChange(value) {
+                        checklistStore.setDisplayAcceptedNames(value);
+                        setChecklistTaxa();
+                    }
+
                     function processDisplayAuthorsChange(value) {
                         checklistStore.setDisplayAuthors(value);
                     }
@@ -796,15 +806,19 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         setEditor();
                         checklistStore.setChecklist(clId.value, (clid) => {
                             if(Number(clid) > 0){
-                                checklistStore.setChecklistTaxaArr(false, true, true, () => {
-                                    hideWorking();
-                                    checklistStore.setChecklistImageData(1);
-                                    checklistStore.setChecklistVoucherData();
-                                });
+                                setChecklistTaxa();
                             }
                             else{
                                 hideWorking();
                             }
+                        });
+                    }
+
+                    function setChecklistTaxa() {
+                        checklistStore.setChecklistTaxaArr(false, true, true, displayAcceptedNames.value, () => {
+                            hideWorking();
+                            checklistStore.setChecklistImageData(1);
+                            checklistStore.setChecklistVoucherData();
                         });
                     }
 
@@ -831,11 +845,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         projectStore.setProject(pId.value, (pid) => {
                             if(Number(pid) > 0 && Number(clId.value) === 0){
                                 checklistStore.setClidArr(projectData.value['clidArr']);
-                                checklistStore.setChecklistTaxaArr(false, true, true, () => {
-                                    hideWorking();
-                                    checklistStore.setChecklistImageData(1);
-                                    checklistStore.setChecklistVoucherData();
-                                });
+                                setChecklistTaxa();
                             }
                             else{
                                 hideWorking();
@@ -878,6 +888,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         clId,
                         clientRoot,
                         countData,
+                        displayAcceptedNames,
                         displayAuthorsVal,
                         displayCommonNamesVal,
                         displayImagesVal,
@@ -914,6 +925,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         downloadChecklist,
                         openChecklistTaxaEditorPopup,
                         openSpatialPopup,
+                        processDisplayAcceptedNamesChange,
                         processDisplayAuthorsChange,
                         processDisplayCommonNameChange,
                         processDisplayDetailsChange,

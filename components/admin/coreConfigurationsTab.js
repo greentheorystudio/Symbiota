@@ -10,7 +10,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Maximum Upload Filesize (MB): 
-                                <q-btn color="primary" size="sm" @click="changeEditField('MAX_UPLOAD_FILESIZE');" label="Edit" />
+                                <q-btn color="primary" size="sm" @click="changeEditField('MAX_UPLOAD_FILESIZE');" label="Edit" aria-label="Edit Maximum Upload Filesize" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">
@@ -21,7 +21,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Server Path: 
-                                <q-btn color="primary" size="sm" @click="changeEditField('SERVER_ROOT');" label="Edit" />
+                                <q-btn color="primary" size="sm" @click="changeEditField('SERVER_ROOT');" label="Edit" aria-label="Edit Server Path" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">
@@ -32,7 +32,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Browser (Client) Path: 
-                                <q-btn color="primary" size="sm" @click="changeEditField('CLIENT_ROOT');" label="Edit" />
+                                <q-btn color="primary" size="sm" @click="changeEditField('CLIENT_ROOT');" label="Edit" aria-label="Edit Browser (Client) Path" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">
@@ -43,7 +43,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Server Temp Directory Path: 
-                                <q-btn color="primary" size="sm" @click="changeEditField('TEMP_DIR_ROOT');" label="Edit" />
+                                <q-btn color="primary" size="sm" @click="changeEditField('TEMP_DIR_ROOT');" label="Edit" aria-label="Edit Server Temp Directory Path" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">
@@ -54,7 +54,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Server Media Upload Path:   
-                                <q-btn color="primary" size="sm" @click="changeEditField('IMAGE_ROOT_PATH');" label="Edit" />
+                                <q-btn color="primary" size="sm" @click="changeEditField('IMAGE_ROOT_PATH');" label="Edit" aria-label="Edit Server Media Upload Path" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">
@@ -65,7 +65,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Browser (Client) Media Path:   
-                                <q-btn color="primary" size="sm" @click="changeEditField('IMAGE_ROOT_URL');" label="Edit" />
+                                <q-btn color="primary" size="sm" @click="changeEditField('IMAGE_ROOT_URL');" label="Edit" aria-label="Edit Browser (Client) Media Path" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">
@@ -76,7 +76,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Portal GUID:   
-                                <q-btn color="primary" size="sm" @click="changeEditField('PORTAL_GUID');" label="Edit" />
+                                <q-btn color="primary" size="sm" @click="changeEditField('PORTAL_GUID');" label="Edit" aria-label="Edit Portal GUID" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">
@@ -87,7 +87,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Security Key:   
-                                <q-btn color="primary" size="sm" @click="changeEditField('SECURITY_KEY');" label="Edit" />
+                                <q-btn color="primary" size="sm" @click="changeEditField('SECURITY_KEY');" label="Edit" aria-label="Edit Security Key" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">
@@ -145,7 +145,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Portal CSS Version:   
-                                <q-btn color="primary" size="sm" @click="processUpdateCss();" label="Update" />
+                                <q-btn color="primary" size="sm" @click="processUpdateCss();" label="Update" aria-label="Update Portal CSS Version" tabindex="0" />
                             </div>   
                         </div>
                         <div class="col-6 self-center">
@@ -216,7 +216,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Password:   
-                                <q-btn color="primary" size="sm" @click="showSmtpPassword = !showSmtpPassword" label="Show" />
+                                <q-btn color="primary" size="sm" @click="showSmtpPassword = !showSmtpPassword" label="Show" aria-label="Show email password" tabindex="0" />
                             </div>   
                         </div>
                         <div class="col-6 self-center">
@@ -308,7 +308,7 @@ const coreConfigurationsTab = {
                         <div class="col-5 text-body1 text-bold no-wrap self-center">
                             <div class="full-width">
                                 Password:   
-                                <q-btn color="primary" size="sm" @click="showGbifPassword = !showGbifPassword" label="Show" />
+                                <q-btn color="primary" size="sm" @click="showGbifPassword = !showGbifPassword" label="Show" aria-label="Show GBIF password" tabindex="0" />
                             </div>
                         </div>
                         <div class="col-6 self-center">

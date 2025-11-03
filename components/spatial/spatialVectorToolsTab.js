@@ -8,16 +8,16 @@ const spatialVectorToolsTab = {
             <q-separator ></q-separator>
             <div class="q-py-sm row justify-center">
                 <div>
-                    <q-btn color="grey-4" size="md" text-color="black" class="black-border" @click="deleteSelections();" label="Delete Selected Features" dense />
+                    <q-btn color="grey-4" size="md" text-color="black" class="black-border" @click="deleteSelections();" label="Delete Selected Features" dense tabindex="0" />
                 </div>
             </div>
             <q-separator ></q-separator>
             <div class="q-py-sm row justify-between q-gutter-sm">
                 <div class="col-6">
-                    <q-select bg-color="white" outlined v-model="selectedDownloadType" :options="downloadTypeOptions" :option-value="value" :option-label="label" label="Download Type" popup-content-class="z-max" behavior="menu" dense options-dense />
+                    <q-select bg-color="white" outlined v-model="selectedDownloadType" :options="downloadTypeOptions" :option-value="value" :option-label="label" label="Download Type" popup-content-class="z-max" behavior="menu" dense options-dense tabindex="0" />
                 </div>
                 <div class="self-center">
-                    <q-btn color="grey-4" size="md" text-color="black" class="black-border" icon="fas fa-download" @click="downloadShapesLayer();" dense />
+                    <q-btn color="grey-4" size="md" text-color="black" class="black-border" icon="fas fa-download" @click="downloadShapesLayer();" dense aria-label="Download shapes layer features" tabindex="0" />
                 </div>
             </div>
             <q-separator ></q-separator>
@@ -30,10 +30,10 @@ const spatialVectorToolsTab = {
                 </div>
                 <div class="row justify-between q-gutter-sm">
                     <div>
-                        <q-input type="number" outlined v-model="bufferWidthValue" min="0" class="col-3" label="Buffer Width (km)" @update:model-value="processBufferWidthChange" dense />
+                        <q-input type="number" outlined v-model="bufferWidthValue" min="0" class="col-3" label="Buffer Width (km)" @update:model-value="processBufferWidthChange" dense tabindex="0" />
                     </div>
                     <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createBuffers();" label="Create Buffer" :disabled="mapSettings.featureCount < 1" dense />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createBuffers();" label="Create Buffer" :disabled="mapSettings.featureCount < 1" dense tabindex="0" />
                     </div>
                 </div>
             </div>
@@ -48,7 +48,7 @@ const spatialVectorToolsTab = {
                 </div>
                 <div class="row justify-end q-gutter-sm">
                     <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createPolyDifference();" label="Create Difference" :disabled="mapSettings.polyCount !== 2" dense />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createPolyDifference();" label="Create Difference" :disabled="mapSettings.polyCount !== 2" dense tabindex="0" />
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@ const spatialVectorToolsTab = {
                 </div>
                 <div class="row justify-end q-gutter-sm">
                     <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createPolyIntersect();" label="Create Intersect" :disabled="mapSettings.polyCount !== 2" dense />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createPolyIntersect();" label="Create Intersect" :disabled="mapSettings.polyCount !== 2" dense tabindex="0" />
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@ const spatialVectorToolsTab = {
                 </div>
                 <div class="row justify-end q-gutter-sm">
                     <div class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createPolyUnion();" label="Create Union" :disabled="mapSettings.polyCount < 2" dense />
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="createPolyUnion();" label="Create Union" :disabled="mapSettings.polyCount < 2" dense tabindex="0" />
                     </div>
                 </div>
             </div>

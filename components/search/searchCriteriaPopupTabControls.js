@@ -14,10 +14,10 @@ const searchCriteriaPopupTabControls = {
             </div>
             <div class="row justify-end q-col-gutter-sm">
                 <div>
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Clear" dense />
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Clear" dense tabindex="0" />
                 </div>
                 <div>
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processSearchButtonClick();" :label="searchButtonLabel" :disabled="!searchTermsValid" dense>
+                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processSearchButtonClick();" :label="searchButtonLabel" :disabled="!searchTermsValid" dense tabindex="0">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             {{ searchRecordsTooltip }}
                         </q-tooltip>

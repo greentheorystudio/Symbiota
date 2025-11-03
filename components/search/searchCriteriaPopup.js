@@ -18,7 +18,7 @@ const searchCriteriaPopup = {
             <q-card class="search-criteria-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div ref="contentRef" class="fit overflow-auto">
@@ -217,11 +217,6 @@ const searchCriteriaPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            window.addEventListener('keydown', (event) => {
-                if(event.key === 'Enter'){
-                    processEnterClick();
-                }
-            });
             if(searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0){
                 setMoFExtensionFieldArrFromCollectionId();
             }

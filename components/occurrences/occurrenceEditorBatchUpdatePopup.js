@@ -10,7 +10,7 @@ const occurrenceEditorBatchUpdatePopup = {
             <q-card class="sm-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
-                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();"></q-btn>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
                 <div class="q-mt-sm q-pa-md column q-gutter-sm">
@@ -36,12 +36,12 @@ const occurrenceEditorBatchUpdatePopup = {
                     </div>
                     <div class="row">
                         <div class="col-grow">
-                            <q-option-group :options="matchOptions" type="radio" v-model="selectedMatchOption" dense />
+                            <q-option-group :options="matchOptions" type="radio" v-model="selectedMatchOption" dense aria-label="Match options" tabindex="0" />
                         </div>
                     </div>
                     <div class="row justify-end q-gutter-md">
                         <div>
-                            <q-btn color="primary" @click="processBatchUpdateData();" label="Batch Update Field" :disabled="!selectedField || !currentValueValue" />
+                            <q-btn color="primary" @click="processBatchUpdateData();" label="Batch Update Field" :disabled="!selectedField || !currentValueValue" tabindex="0" />
                         </div>
                     </div>
                 </div>
