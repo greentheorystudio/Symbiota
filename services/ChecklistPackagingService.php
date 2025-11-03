@@ -102,7 +102,8 @@ class ChecklistPackagingService {
     {
         $includeSynonymyData = (int)$options['synonyms'] === 1;
         $includeVernacularData = (int)$options['vernaculars'] === 1;
-        $taxaArr = (new ChecklistTaxa)->getChecklistTaxa($clidArr, false, $includeSynonymyData, $includeVernacularData, $options['taxaSort']);
+        $useAcceptedNames = (int)$options['acceptedNames'] === 1;
+        $taxaArr = (new ChecklistTaxa)->getChecklistTaxa($clidArr, false, $includeSynonymyData, $includeVernacularData, $useAcceptedNames, $options['taxaSort']);
         if($options['taxonFilter'] && array_key_exists('rankid', $options['taxonFilter']) && (int)$options['taxonFilter']['rankid'] > 0 && count($taxaArr) > 0){
             $taxaArr = $this->filterTaxaArr($options['taxonFilter'], $taxaArr);
         }

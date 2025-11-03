@@ -86,6 +86,9 @@ const checklistFieldModule = {
                         <checkbox-input-element label="Sort Taxa by Scientific Name" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dalpha')) ? checklistData['defaultsettings']['dalpha'] : null" @update:value="(value) => updateDefaultSettingsData('dalpha', value)"></checkbox-input-element>
                     </div>
                     <div>
+                        <checkbox-input-element label="Accepted Names" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('acceptedNames')) ? checklistData['defaultsettings']['acceptedNames'] : null" @update:value="(value) => updateDefaultSettingsData('acceptedNames', value)"></checkbox-input-element>
+                    </div>
+                    <div>
                         <checkbox-input-element label="Synonyms" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('showsynonyms')) ? checklistData['defaultsettings']['showsynonyms'] : null" @update:value="(value) => updateDefaultSettingsData('showsynonyms', value)"></checkbox-input-element>
                     </div>
                     <div>
