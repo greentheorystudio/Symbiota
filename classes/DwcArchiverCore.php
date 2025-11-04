@@ -324,8 +324,6 @@ class DwcArchiverCore extends Manager{
             if($this->schemaType === 'pensoft'){
                 $typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
             }
-            $this->setServerDomain();
-            $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
             $cnt = 0;
             while($r = $rs->fetch_assoc()){
                 if($this->redactLocalities
@@ -433,9 +431,7 @@ class DwcArchiverCore extends Manager{
                         $r['t_kingdom'] = $this->upperTaxonomy[$phyStr]['k'];
                     }
                 }
-                if($urlPathPrefix) {
-                    $r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-                }
+                $r['t_references'] = SanitizerService::getFullUrlPathPrefix() . '/collections/individual/index.php?occid=' . $r['occid'];
 
                 foreach($r as $rKey => $rValue){
                     if(strncmp($rKey, 't_', 2) === 0) {
@@ -645,16 +641,12 @@ class DwcArchiverCore extends Manager{
 
     private function getEmlArr(): array
     {
-        $this->setServerDomain();
-        $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
-        $localDomain = $this->serverDomain;
-
         $emlArr = array();
         if(count($this->collArr) === 1){
             $collId = key($this->collArr);
             $cArr = $this->collArr[$collId];
 
-            $emlArr['alternateIdentifier'][] = $urlPathPrefix.'collections/misc/collprofiles.php?collid='.$collId;
+            $emlArr['alternateIdentifier'][] = SanitizerService::getFullUrlPathPrefix().'/collections/misc/collprofiles.php?collid='.$collId;
             $emlArr['title'] = $cArr['collname'];
             $emlArr['description'] = $cArr['description'];
 
@@ -686,11 +678,11 @@ class DwcArchiverCore extends Manager{
         }
         $emlArr['creator'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
         $emlArr['creator'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
-        $emlArr['creator'][0]['onlineUrl'] = $urlPathPrefix.'index.php';
+        $emlArr['creator'][0]['onlineUrl'] = SanitizerService::getFullUrlPathPrefix().'/index.php';
 
         $emlArr['metadataProvider'][0]['organizationName'] = $GLOBALS['DEFAULT_TITLE'];
         $emlArr['metadataProvider'][0]['electronicMailAddress'] = $GLOBALS['ADMIN_EMAIL'];
-        $emlArr['metadataProvider'][0]['onlineUrl'] = $urlPathPrefix.'index.php';
+        $emlArr['metadataProvider'][0]['onlineUrl'] = SanitizerService::getFullUrlPathPrefix().'/index.php';
 
         $emlArr['pubDate'] = date('Y-m-d');
 
@@ -716,18 +708,13 @@ class DwcArchiverCore extends Manager{
 
             $emlArr['collMetadata'][$cnt]['attr']['identifier'] = $collArr['collectionguid'];
             $emlArr['collMetadata'][$cnt]['attr']['id'] = $id;
-            $emlArr['collMetadata'][$cnt]['alternateIdentifier'] = $urlPathPrefix.'collections/misc/collprofiles.php?collid='.$id;
+            $emlArr['collMetadata'][$cnt]['alternateIdentifier'] = SanitizerService::getFullUrlPathPrefix().'/collections/misc/collprofiles.php?collid='.$id;
             $emlArr['collMetadata'][$cnt]['parentCollectionIdentifier'] = $collArr['instcode'];
             $emlArr['collMetadata'][$cnt]['collectionIdentifier'] = $collArr['collcode'];
             $emlArr['collMetadata'][$cnt]['collectionName'] = $collArr['collname'];
             if($collArr['icon']){
                 if(strncmp($collArr['icon'], '/', 1) === 0){
-                    $urlPrefix = 'http://';
-                    if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                        $urlPrefix = 'https://';
-                    }
-                    $urlPrefix .= $_SERVER['HTTP_HOST'];
-                    $collArr['icon'] = $urlPrefix . $collArr['icon'];
+                    $collArr['icon'] = SanitizerService::getFullUrlPathPrefix() . $collArr['icon'];
                 }
                 $emlArr['collMetadata'][$cnt]['resourceLogoUrl'] = $collArr['icon'];
             }
@@ -973,19 +960,16 @@ class DwcArchiverCore extends Manager{
         $metaElem = $newDoc->createElement('metadata');
         $metaElem->appendChild($symbElem);
         if($this->schemaType === 'coge' && $this->geolocateVariables){
-            $this->setServerDomain();
-            if($this->serverDomain){
-                $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
-                $urlPathPrefix .= 'collections/individual/index.php';
-                $glElem = $newDoc->createElement('geoLocate');
-                $glElem->appendChild($newDoc->createElement('dataSourcePrimaryName',$this->geolocateVariables['cogename']));
-                $glElem->appendChild($newDoc->createElement('dataSourceSecondaryName',$this->geolocateVariables['cogedescr']));
-                $glElem->appendChild($newDoc->createElement('targetCommunityName',$this->geolocateVariables['cogecomm']));
-                $glElem->appendChild($newDoc->createElement('specimenHyperlinkBase',$urlPathPrefix));
-                $glElem->appendChild($newDoc->createElement('specimenHyperlinkParameter','occid'));
-                $glElem->appendChild($newDoc->createElement('specimenHyperlinkValueField','Id'));
-                $metaElem->appendChild($glElem);
-            }
+            $urlPathPrefix = SanitizerService::getFullUrlPathPrefix();
+            $urlPathPrefix .= '/collections/individual/index.php';
+            $glElem = $newDoc->createElement('geoLocate');
+            $glElem->appendChild($newDoc->createElement('dataSourcePrimaryName',$this->geolocateVariables['cogename']));
+            $glElem->appendChild($newDoc->createElement('dataSourceSecondaryName',$this->geolocateVariables['cogedescr']));
+            $glElem->appendChild($newDoc->createElement('targetCommunityName',$this->geolocateVariables['cogecomm']));
+            $glElem->appendChild($newDoc->createElement('specimenHyperlinkBase',SanitizerService::getFullUrlPathPrefix()));
+            $glElem->appendChild($newDoc->createElement('specimenHyperlinkParameter','occid'));
+            $glElem->appendChild($newDoc->createElement('specimenHyperlinkValueField','Id'));
+            $metaElem->appendChild($glElem);
         }
         $addMetaElem = $newDoc->createElement('additionalMetadata');
         $addMetaElem->appendChild($metaElem);
@@ -1011,13 +995,8 @@ class DwcArchiverCore extends Manager{
         $titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Biological Occurrences RSS feed'));
         $channelElem->appendChild($titleElem);
 
-        $this->setServerDomain();
-        $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
-
-        $localDomain = $this->serverDomain;
-
         $linkElem = $newDoc->createElement('link');
-        $linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
+        $linkElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix()));
         $channelElem->appendChild($linkElem);
         $descriptionElem = $newDoc->createElement('description');
         $descriptionElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Natural History Collections and Observation Project feed'));
@@ -1047,12 +1026,7 @@ class DwcArchiverCore extends Manager{
                 $cArr['icon'] = $GLOBALS['CLIENT_ROOT'] . $cArr['icon'];
             }
             if($cArr['icon'] && strncmp($cArr['icon'], '/', 1) === 0){
-                $urlPrefix = 'http://';
-                if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                    $urlPrefix = 'https://';
-                }
-                $urlPrefix .= $_SERVER['HTTP_HOST'];
-                $cArr['icon'] = $urlPrefix . $cArr['icon'];
+                $cArr['icon'] = SanitizerService::getFullUrlPathPrefix() . $cArr['icon'];
             }
             $iconElem = $newDoc->createElement('image');
             if($cArr['icon']){
@@ -1066,11 +1040,11 @@ class DwcArchiverCore extends Manager{
             $guidElem->appendChild($newDoc->createTextNode($cArr['collectionguid']));
             $itemElem->appendChild($guidElem);
             $emlElem = $newDoc->createElement('emllink');
-            $emlElem->appendChild($newDoc->createTextNode($urlPathPrefix.'collections/datasets/emlhandler.php?collid='.$cArr['collid']));
+            $emlElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix().'/collections/datasets/emlhandler.php?collid='.$cArr['collid']));
             $itemElem->appendChild($emlElem);
             $link = $cArr['dwcaurl'];
             if(!$link){
-                $link = $urlPathPrefix.'collections/misc/collprofiles.php?collid='.$cArr['collid'];
+                $link = SanitizerService::getFullUrlPathPrefix().'/collections/misc/collprofiles.php?collid='.$cArr['collid'];
             }
             $typeTitleElem = $newDoc->createElement('type','DWCA');
             $itemElem->appendChild($typeTitleElem);
@@ -1142,8 +1116,6 @@ class DwcArchiverCore extends Manager{
 
             //echo $sql; exit;
             if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
-                $this->setServerDomain();
-                $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
                 $typeArr = null;
                 if($this->schemaType === 'pensoft'){
                     $typeArr = array('Other material', 'Holotype', 'Paratype', 'Isotype', 'Isoparatype', 'Isolectotype', 'Isoneotype', 'Isosyntype');
@@ -1175,9 +1147,7 @@ class DwcArchiverCore extends Manager{
                         }
                     }
 
-                    if($urlPathPrefix) {
-                        $r['t_references'] = $urlPathPrefix . 'collections/individual/index.php?occid=' . $r['occid'];
-                    }
+                    $r['t_references'] = SanitizerService::getFullUrlPathPrefix() . '/collections/individual/index.php?occid=' . $r['occid'];
                     $r['recordId'] = 'urn:uuid:'.$r['recordId'];
                     $managementType = $this->collArr[$r['collid']]['managementtype'];
                     if($managementType === 'Live Data' && array_key_exists('collectionID', $r) && !$r['collectionID']) {
@@ -1323,23 +1293,18 @@ class DwcArchiverCore extends Manager{
         $sql = DwcArchiverImage::getSqlImages($this->imageFieldArr['fields'], $this->conditionSql, $this->redactLocalities, $this->rareReaderArr);
         if($rs = $this->conn->query($sql,MYSQLI_USE_RESULT)){
 
-            $this->setServerDomain();
-            $urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'];
-
-            $localDomain = $this->serverDomain.$GLOBALS['CLIENT_ROOT'];
-
             while($r = $rs->fetch_assoc()){
                 if(strncmp($r['identifier'], '/', 1) === 0) {
-                    $r['identifier'] = $localDomain . $r['identifier'];
+                    $r['identifier'] = SanitizerService::getFullUrlPathPrefix() . $r['identifier'];
                 }
                 if(strncmp($r['accessURI'], '/', 1) === 0) {
-                    $r['accessURI'] = $localDomain . $r['accessURI'];
+                    $r['accessURI'] = SanitizerService::getFullUrlPathPrefix() . $r['accessURI'];
                 }
                 if($r['thumbnailAccessURI'] && strncmp($r['thumbnailAccessURI'], '/', 1) === 0) {
-                    $r['thumbnailAccessURI'] = $localDomain . $r['thumbnailAccessURI'];
+                    $r['thumbnailAccessURI'] = SanitizerService::getFullUrlPathPrefix() . $r['thumbnailAccessURI'];
                 }
                 if($r['goodQualityAccessURI'] && strncmp($r['goodQualityAccessURI'], '/', 1) === 0) {
-                    $r['goodQualityAccessURI'] = $localDomain . $r['goodQualityAccessURI'];
+                    $r['goodQualityAccessURI'] = SanitizerService::getFullUrlPathPrefix() . $r['goodQualityAccessURI'];
                 }
 
                 if($this->schemaType !== 'backup'){
@@ -1369,7 +1334,7 @@ class DwcArchiverCore extends Manager{
                     }
                 }
                 $r['providermanagedid'] = 'urn:uuid:'.$r['providermanagedid'];
-                $r['associatedSpecimenReference'] = $urlPathPrefix.'/collections/individual/index.php?occid='.$r['occid'];
+                $r['associatedSpecimenReference'] = SanitizerService::getFullUrlPathPrefix().'/collections/individual/index.php?occid='.$r['occid'];
                 $r['type'] = 'StillImage';
                 $r['subtype'] = 'Photograph';
                 $extStr = strtolower(substr($r['accessURI'],strrpos($r['accessURI'],'.')+1));
@@ -1516,30 +1481,6 @@ class DwcArchiverCore extends Manager{
     public function setCollID($id): void
     {
         $this->collID = $id;
-    }
-
-    public function setServerDomain($domain = null): void
-    {
-        if($domain){
-            $this->serverDomain = $domain;
-        }
-        elseif(!$this->serverDomain){
-            $this->serverDomain = 'http://';
-            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                $this->serverDomain = 'https://';
-            }
-            $this->serverDomain .= $_SERVER['HTTP_HOST'];
-        }
-    }
-
-    public function getServerDomain(){
-        $this->setServerDomain();
-        return $this->serverDomain;
-    }
-
-    private function encodeStr($inStr): string
-    {
-        return $inStr;
     }
 
     private function addcslashesArr(&$arr): void

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/DwcArchiverCore.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class DwcArchiverPublisher extends DwcArchiverCore{
 
@@ -66,8 +67,6 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	{
         $this->logOrEcho("Mapping data to RSS feed... \n");
 		
-		$urlPathPrefix = ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/';
-
 		foreach($this->collArr as $collID => $cArr){
 			$instCode = $cArr['instcode'] ?: '';
 			if($cArr['collcode']) {
@@ -78,7 +77,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
             }
 			$fileNameSeed = str_replace(array(' ','"',"'"),'',$instCode).'_DwC-A';
 			
-			$archivePath = $urlPathPrefix.'content/dwca/'.$fileNameSeed.'.zip';
+			$archivePath = SanitizerService::getFullUrlPathPrefix().'/content/dwca/'.$fileNameSeed.'.zip';
 			$sql = 'UPDATE omcollections SET dwcaUrl = "'.$archivePath.'" WHERE collid = '.$collID;
 			if(!$this->conn->query($sql)){
 				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance.');
@@ -91,7 +90,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	public function getDwcaItems($collid = null): array
 	{
 		$retArr = array();
-		$rssFile = ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/rsshandler.php?feed=dwc';
+		$rssFile = SanitizerService::getFullUrlPathPrefix() . '/rsshandler.php?feed=dwc';
 		if(file_exists($rssFile)){
 			$xmlDoc = new DOMDocument();
 			$xmlDoc->load($rssFile);

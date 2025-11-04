@@ -514,9 +514,7 @@ class Configurations{
 
     public function validateClientPath($path): int
     {
-        $testURL = $_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://';
-        $testURL .= $_SERVER['HTTP_HOST'];
-        $testURL .= ($path ?: '') . '/sitemap.php';
+        $testURL = SanitizerService::getConnectionProtocol() . $_SERVER['HTTP_HOST'] . ($path ?: '') . '/sitemap.php';
         $headers = @get_headers($testURL);
         $firstHeader = ($headers ? $headers[0] : '');
         return stripos($firstHeader, '200 OK') ? 1 : 0;

@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../models/Collections.php');
+include_once(__DIR__ . '/SanitizerService.php');
 
 class RssService {
 
@@ -16,9 +17,8 @@ class RssService {
         $titleElem = $newDoc->createElement('title');
         $titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'] . ' Collections RSS Feed'));
         $channelElem->appendChild($titleElem);
-        $urlPathPrefix = ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
         $linkElem = $newDoc->createElement('link');
-        $linkElem->appendChild($newDoc->createTextNode(($urlPathPrefix . '/')));
+        $linkElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix()));
         $channelElem->appendChild($linkElem);
         $descriptionElem = $newDoc->createElement('description');
         $descriptionElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'] . ' Occurrence Data Collections RSS Feed'));
@@ -44,7 +44,7 @@ class RssService {
                 $itemNameElem->appendChild($newDoc->createTextNode($cArr['collectionname']));
                 $itemElem->appendChild($itemNameElem);
                 if($cArr['icon'] && strncmp($cArr['icon'], '/', 1) === 0){
-                    $cArr['icon'] = $urlPathPrefix . $cArr['icon'];
+                    $cArr['icon'] = SanitizerService::getFullUrlPathPrefix() . $cArr['icon'];
                 }
                 $iconElem = $newDoc->createElement('image');
                 if($cArr['icon']){
@@ -58,11 +58,11 @@ class RssService {
                 $guidElem->appendChild($newDoc->createTextNode($cArr['collectionguid']));
                 $itemElem->appendChild($guidElem);
                 $emlElem = $newDoc->createElement('emllink');
-                $emlElem->appendChild($newDoc->createTextNode($urlPathPrefix . '/collections/datasets/emlhandler.php?collid=' . $cArr['collid']));
+                $emlElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix() . '/collections/datasets/emlhandler.php?collid=' . $cArr['collid']));
                 $itemElem->appendChild($emlElem);
                 $link = $cArr['dwcaurl'];
                 if(!$link){
-                    $link = $urlPathPrefix . '/collections/misc/collprofiles.php?collid=' . $cArr['collid'];
+                    $link = SanitizerService::getFullUrlPathPrefix() . '/collections/misc/collprofiles.php?collid=' . $cArr['collid'];
                 }
                 $typeTitleElem = $newDoc->createElement('type','DWCA');
                 $itemElem->appendChild($typeTitleElem);
@@ -98,9 +98,8 @@ class RssService {
         $titleElem = $newDoc->createElement('title');
         $titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'] . ' Darwin Core Archive RSS Feed'));
         $channelElem->appendChild($titleElem);
-        $urlPathPrefix = ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
         $linkElem = $newDoc->createElement('link');
-        $linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
+        $linkElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix()));
         $channelElem->appendChild($linkElem);
         $descriptionElem = $newDoc->createElement('description');
         $descriptionElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Darwin Core Archive rss feed'));
@@ -128,7 +127,7 @@ class RssService {
                 $imgLink = '';
                 if($cArr['icon']){
                     if(strncmp($cArr['icon'], '/', 1) === 0){
-                        $imgLink = $urlPathPrefix . $cArr['icon'];
+                        $imgLink = SanitizerService::getFullUrlPathPrefix() . $cArr['icon'];
                     }
                     else{
                         $imgLink = $cArr['icon'];
@@ -141,14 +140,14 @@ class RssService {
                 $descTitleElem->appendChild($newDoc->createTextNode('Darwin Core Archive for ' . $cArr['collectionname']));
                 $itemElem->appendChild($descTitleElem);
                 $guidElem = $newDoc->createElement('guid');
-                $guidElem->appendChild($newDoc->createTextNode($urlPathPrefix . '/collections/misc/collprofiles.php?collid=' . $cArr['collid']));
+                $guidElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix() . '/collections/misc/collprofiles.php?collid=' . $cArr['collid']));
                 $itemElem->appendChild($guidElem);
                 $guidElem2 = $newDoc->createElement('guid');
                 $guidElem2->appendChild($newDoc->createTextNode($cArr['collectionguid']));
                 $itemElem->appendChild($guidElem2);
                 $fileNameSeed = str_replace(array(' ', '"', "'"),'', $instCode) . '_DwC-A';
                 $emlElem = $newDoc->createElement('emllink');
-                $emlElem->appendChild($newDoc->createTextNode($urlPathPrefix . '/content/dwca/' . $fileNameSeed . '.eml'));
+                $emlElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix() . '/content/dwca/' . $fileNameSeed . '.eml'));
                 $itemElem->appendChild($emlElem);
                 $typeTitleElem = $newDoc->createElement('type','DWCA');
                 $itemElem->appendChild($typeTitleElem);
