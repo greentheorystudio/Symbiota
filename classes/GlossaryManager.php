@@ -628,20 +628,7 @@ class GlossaryManager{
 		$sql = 'DELETE FROM glossaryimages WHERE (glimgid = '.$imgIdDel.')';
 		//echo $sql;
 		if($this->conn->query($sql)){
-			$imgUrl2 = '';
-			$domain = $this->getServerDomain();
-			if(stripos($imgUrl,$domain) === 0){
-				$imgUrl2 = $imgUrl;
-				$imgUrl = substr($imgUrl,strlen($domain));
-			}
-			elseif(stripos($imgUrl,$this->imageRootUrl) === 0){
-				$imgUrl2 = $domain.$imgUrl;
-			}
-			
 			$sql = "SELECT glimgid FROM glossaryimages WHERE (url = '".$imgUrl."') ";
-			if($imgUrl2) {
-				$sql .= 'OR (url = "' . $imgUrl2 . '")';
-			}
 			$rs = $this->conn->query($sql);
 			if(!$rs->num_rows){
 				$imgDelPath = str_replace($this->imageRootUrl,$this->imageRootPath,$imgUrl);
@@ -863,7 +850,7 @@ class GlossaryManager{
 				$localUrl = str_replace($GLOBALS['IMAGE_ROOT_URL'],$GLOBALS['IMAGE_ROOT_PATH'],$url);
 			}
 			else{
-				$url = $this->getServerDomain().$url;
+				$url = SanitizerService::getFullUrlPathPrefix().$url;
 			}
 		}
 		
@@ -1402,14 +1389,5 @@ class GlossaryManager{
 	public function getErrorStr(){
 		return $this->errorStr;
 	}
-	
-	private function getServerDomain(): string
-	{
-		$domain = 'http://';
-		if(!(empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-			$domain = 'https://';
-		}
-		$domain .= $_SERVER['HTTP_HOST'];
-		return $domain;
-	}
+
 }

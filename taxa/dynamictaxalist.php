@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/TaxonomyDynamicListManager.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 header('Cache-Control: no-cache, must-revalidate, max-age=0');
@@ -283,7 +284,7 @@ include(__DIR__ . '/../header.php');
     <div>
         <?php
         if($tableArr){
-            $urlPrefix = (((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443)?'https://':'http://').$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/taxa/';
+            $urlPrefix = SanitizerService::getFullUrlPathPrefix() . '/taxa/';
             $navUrl = $urlPrefix . 'dynamictaxalist.php?' . $urlVars . '&index=';
             $downloadUrl = $urlPrefix . 'dynamictaxalistdownload.php?' . $urlVars;
             $navStr = '<div style="clear:both;display:flex;justify-content:center;">';

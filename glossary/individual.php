@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -206,12 +207,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
 						foreach($termImgArr as $imgId => $imgArr){
 							$imgUrl = $imgArr['url'];
 							if($imgUrl && strncmp($imgUrl, '/', 1) === 0){
-                                $urlPrefix = 'http://';
-                                if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                                    $urlPrefix = 'https://';
-                                }
-                                $urlPrefix .= $_SERVER['HTTP_HOST'];
-                                $imgUrl = $urlPrefix.$imgUrl;
+                                $imgUrl = SanitizerService::getFullUrlPathPrefix().$imgUrl;
 							}
 							?>
 							<fieldset style='clear:both;border:0;padding:0;margin-top:10px;'>

@@ -167,7 +167,7 @@ class Collections {
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
-        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', s.uploaddate '.
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ', s.uploaddate, s.recordcnt '.
             'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid ';
         if(!$GLOBALS['IS_ADMIN']){
             $sql .= 'WHERE c.ispublic = 1 ';
@@ -176,7 +176,7 @@ class Collections {
             }
         }
         $sql .= 'ORDER BY c.collectionname ';
-        //echo $sql;
+        //error_log($sql);
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
