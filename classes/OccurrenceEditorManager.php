@@ -2,7 +2,6 @@
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/OccurrenceEditorDeterminations.php');
 include_once(__DIR__ . '/OccurrenceEditorImages.php');
-include_once(__DIR__ . '/OccurrenceEditorMedia.php');
 include_once(__DIR__ . '/../services/UuidService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 include_once(__DIR__ . '/../services/SOLRService.php');

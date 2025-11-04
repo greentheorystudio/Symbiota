@@ -5,7 +5,7 @@ include_once(__DIR__ . '/../services/EncryptionService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 ini_set('session.gc_maxlifetime',3600);
 ini_set('session.cookie_httponly',1);
-if((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] === 443)){
+if(SanitizerService::getConnectionProtocol() === 'https://') {
     ini_set('session.cookie_secure',1);
 }
 session_start();

@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/GlossaryManager.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 require_once __DIR__ . '/../vendor/autoload.php';
 header('Content-Type: text/html; charset=UTF-8' );
 ini_set('max_execution_time', 3600);
@@ -19,7 +20,7 @@ $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $fileName = '';
 $citationFormat = $GLOBALS['DEFAULT_TITLE'].'. '.date('Y').'. '; 
-$citationFormat .= 'http//:'.$_SERVER['HTTP_HOST'].$GLOBALS['CLIENT_ROOT'].'/index.php. ';
+$citationFormat .= SanitizerService::getFullUrlPathPrefix().'/index.php. ';
 $citationFormat .= 'Accessed on '.date('F d').'. ';
 
 $phpWord = new PhpWord();
@@ -63,12 +64,7 @@ if($exportType === 'translation'){
 		$header->addPreserveText($metaArr['sciname'].' - p.{PAGE} '.date('Y-m-d'),null,array('align'=>'right'));
 		$textrun = $section->addTextRun('titlePara');
 		if(isset($GLOSSARY_BANNER)){
-			$serverDomain = 'http://';
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-				$serverDomain = 'https://';
-			}
-			$serverDomain .= $_SERVER['HTTP_HOST'];
-			$textrun->addImage($serverDomain.$GLOBALS['CLIENT_ROOT'].'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
+			$textrun->addImage(SanitizerService::getFullUrlPathPrefix().'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
 			$textrun->addTextBreak();
 		}
 		$textrun->addText(htmlspecialchars('Translation Table for '.$metaArr['sciname']),'titleFont');
@@ -194,12 +190,7 @@ elseif($exportType === 'singlelanguage'){
 		$header->addPreserveText($metaArr['sciname'].' - p.{PAGE} '.date('Y-m-d'),null,array('align'=>'right'));
 		$textrun = $section->addTextRun('titlePara');
 		if(isset($GLOSSARY_BANNER)){
-			$serverDomain = 'http://';
-			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-				$serverDomain = 'https://';
-			}
-			$serverDomain .= $_SERVER['HTTP_HOST'];
-			$textrun->addImage($serverDomain.$GLOBALS['CLIENT_ROOT'].'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
+			$textrun->addImage(SanitizerService::getFullUrlPathPrefix().'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
 			$textrun->addTextBreak();
 		}
 		$textrun->addText(htmlspecialchars('Single Language Glossary for '.$metaArr['sciname']),'titleFont');
@@ -220,7 +211,7 @@ elseif($exportType === 'singlelanguage'){
 				foreach($imageArr as $img => $imgArr){
 					$imgSrc = $imgArr['url'];
 					if($imgSrc && strncmp($imgSrc, '/', 1) === 0){
-                        $imgSrc = 'http://'.$_SERVER['HTTP_HOST'].$imgSrc;
+                        $imgSrc = SanitizerService::getFullUrlPathPrefix().$imgSrc;
 					}
 					$table->addRow();
 					$cell = $table->addCell(4125,$imageCellStyle);

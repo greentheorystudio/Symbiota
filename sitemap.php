@@ -28,16 +28,14 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <li><a :href="(clientRoot + '/collections/list.php')" tabindex="0">Search Collections</a></li>
                         <li><a :href="(clientRoot + '/spatial/index.php')" tabindex="0">Spatial Module</a></li>
                         <li><a :href="(clientRoot + '/collections/misc/collprofiles.php')" tabindex="0">Collections</a></li>
-                        <li><a :href="(clientRoot + '/collections/misc/collstats.php')" tabindex="0">Collection Statistics</a></li>
+                        <!-- <li><a :href="(clientRoot + '/collections/misc/collstats.php')" tabindex="0">Collection Statistics</a></li> -->
                         <template v-if="activateExsiccati">
                             <li><a :href="(clientRoot + '/collections/exsiccati/index.php')" tabindex="0">Exsiccati Index</a></li>
                         </template>
                         <li>Data Publishing</li>
-                        <li class="q-ml-md"><a :href="(clientRoot + '/collections/datasets/rsshandler.php')" target="_blank" aria-label="Collection RSS Feed - opens in separate tab" tabindex="0">Collection RSS Feed</a></li>
                         <li class="q-ml-md"><a :href="(clientRoot + '/collections/datasets/datapublisher.php')" tabindex="0">Darwin Core Archives (DwC-A)</a></li>
-                        <template v-if="rssActive">
-                            <li class="q-ml-md"><a :href="(clientRoot + '/rss.xml')" target="_blank" aria-label="DwC-A RSS Feed - opens in separate tab" tabindex="0">DwC-A RSS Feed</a></li>
-                        </template>
+                        <li class="q-ml-md"><a :href="(clientRoot + '/rsshandler.php?feed=collection')" target="_blank" aria-label="Collection RSS Feed - opens in separate tab" tabindex="0">Collection RSS Feed</a></li>
+                        <li class="q-ml-md"><a :href="(clientRoot + '/rsshandler.php?feed=dwc')" target="_blank" aria-label="DwC-A RSS Feed - opens in separate tab" tabindex="0">DwC-A RSS Feed</a></li>
                         <li><a :href="(clientRoot + '/taxa/protectedspecies.php')" tabindex="0">Protected Species</a></li>
                     </ul>
                     <div class="q-mt-md text-h6 text-bold">Image Library</div>
@@ -139,7 +137,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('KeyAdmin');
                     });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
-                    const rssActive = baseStore.getRssActive;
                     const symbUid = baseStore.getSymbUid;
                     const taxonomy = Vue.computed(() => {
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('Taxonomy');
@@ -176,7 +173,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                         isAdmin,
                         keyAdmin,
                         keyModuleIsActive,
-                        rssActive,
                         symbUid,
                         taxonomy,
                         taxonProfile,
