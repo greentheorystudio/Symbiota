@@ -199,13 +199,8 @@ include(__DIR__ . '/../../header.php');
 		<b>RSS Feed:</b>
 		<?php
 		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'];
-		if(file_exists('../../rss.xml')){
-			$feedLink = $urlPrefix.'/rss.xml';
-			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
-		}
-		else{
-			echo '--feed not published for any of the collections within the portal--';
-		}
+        $urlPath = ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/rsshandler.php?feed=dwc';
+        echo '<a href="' . $urlPath . '" target="_blank">' . $urlPath . '</a>';
 		?>
 	</div>
 	<?php

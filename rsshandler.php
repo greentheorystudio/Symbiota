@@ -9,3 +9,6 @@ header('Content-Type: text/xml; charset=utf-8');
 if($feed === 'collection'){
     echo (new RssService)->getPortalCollectionRss();
 }
+elseif($feed === 'dwc'){
+    echo (new RssService)->getPortalDwcRss();
+}

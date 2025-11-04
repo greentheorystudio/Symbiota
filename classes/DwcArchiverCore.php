@@ -1404,35 +1404,9 @@ class DwcArchiverCore extends Manager{
     public function deleteArchive($collID): bool
     {
         $status = false;
-        $rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
-        if(file_exists($rssFile)) {
-            $doc = new DOMDocument();
-            $doc->load($rssFile);
-            $cElem = $doc->getElementsByTagName('channel')->item(0);
-            if($cElem){
-                $items = $cElem->getElementsByTagName('item');
-                foreach($items as $i){
-                    if($i->getAttribute('collid') === $collID){
-                        $link = $i->getElementsByTagName('link');
-                        $nodeValue = $link->item(0)->nodeValue;
-                        $filePath = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/');
-                        $filePath1 = $filePath.'content/dwca'.substr($nodeValue,strrpos($nodeValue,'/'));
-                        if(file_exists($filePath1)) {
-                            unlink($filePath1);
-                        }
-                        $emlPath1 = str_replace('.zip','.eml',$filePath1);
-                        if(file_exists($emlPath1)) {
-                            unlink($emlPath1);
-                        }
-                        $cElem->removeChild($i);
-                    }
-                }
-                $doc->save($rssFile);
-                $sql = 'UPDATE omcollections SET dwcaUrl = NULL WHERE collid = '.$collID;
-                if($this->conn->query($sql)){
-                    $status = true;
-                }
-            }
+        $sql = 'UPDATE omcollections SET dwcaUrl = NULL WHERE collid = '.$collID;
+        if($this->conn->query($sql)){
+            $status = true;
         }
         return $status;
     }

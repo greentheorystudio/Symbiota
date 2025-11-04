@@ -14,7 +14,6 @@ const useBaseStore = Pinia.defineStore('base', {
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
         rightsTerms: RIGHTS_TERMS,
-        rssActive: RSS_ACTIVE,
         showPasswordReset: SHOW_PASSWORD_RESET,
         solrMode: SOLR_MODE,
         symbUid: SYMB_UID,
@@ -78,9 +77,6 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getRightsTerms(state) {
             return state.rightsTerms;
-        },
-        getRssActive(state) {
-            return state.rssActive;
         },
         getShowPasswordReset(state) {
             return state.showPasswordReset;

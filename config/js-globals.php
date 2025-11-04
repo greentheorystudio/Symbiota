@@ -13,7 +13,6 @@
     const MAX_UPLOAD_FILESIZE = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
     const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
     const RIGHTS_TERMS = JSON.parse('<?php echo json_encode($GLOBALS['RIGHTS_TERMS']); ?>');
-    const RSS_ACTIVE = <?php echo ($GLOBALS['RSS_ACTIVE'] ? 'true' : 'false'); ?>;
     const SHOW_PASSWORD_RESET = <?php echo ($GLOBALS['SHOW_PASSWORD_RESET'] ? 'true' : 'false'); ?>;
     const SOLR_MODE = <?php echo ($GLOBALS['SOLR_MODE'] ? 'true' : 'false'); ?>;
     const SYMB_UID = <?php echo $GLOBALS['SYMB_UID']; ?>;

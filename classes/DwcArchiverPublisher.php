@@ -66,42 +66,9 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	{
         $this->logOrEcho("Mapping data to RSS feed... \n");
 		
-		$newDoc = new DOMDocument('1.0',$this->charSetOut);
+		$urlPathPrefix = ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/';
 
-		$rootElem = $newDoc->createElement('rss');
-		$rootAttr = $newDoc->createAttribute('version');
-		$rootAttr->value = '2.0';
-		$rootElem->appendChild($rootAttr);
-		$newDoc->appendChild($rootElem);
-
-		$channelElem = $newDoc->createElement('channel');
-		$rootElem->appendChild($channelElem);
-		
-		$titleElem = $newDoc->createElement('title');
-		$titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Darwin Core Archive rss feed'));
-		$channelElem->appendChild($titleElem);
-
-		$this->setServerDomain();
-		$urlPathPrefix = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
-
-		$localDomain = $this->serverDomain;
-		
-		$linkElem = $newDoc->createElement('link');
-		$linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
-		$channelElem->appendChild($linkElem);
-		$descriptionElem = $newDoc->createElement('description');
-		$descriptionElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' Darwin Core Archive rss feed'));
-		$channelElem->appendChild($descriptionElem);
-		$languageElem = $newDoc->createElement('language','en-us');
-		$channelElem->appendChild($languageElem);
-
-		$itemArr = array();
 		foreach($this->collArr as $collID => $cArr){
-			$cArr = $this->utf8EncodeArr($cArr);
-			$itemElem = $newDoc->createElement('item');
-			$itemAttr = $newDoc->createAttribute('collid');
-			$itemAttr->value = $collID;
-			$itemElem->appendChild($itemAttr);
 			$instCode = $cArr['instcode'] ?: '';
 			if($cArr['collcode']) {
 				$instCode .= ($instCode?'-':'') . $cArr['collcode'];
@@ -109,78 +76,14 @@ class DwcArchiverPublisher extends DwcArchiverCore{
             if(!$instCode){
                 $instCode = $cArr['collname'];
             }
-			$title = $instCode.' DwC-Archive';
-			$itemTitleElem = $newDoc->createElement('title');
-			$itemTitleElem->appendChild($newDoc->createTextNode($title));
-			$itemElem->appendChild($itemTitleElem);
-            $imgLink = '';
-            if($cArr['icon']){
-                if(strncmp($cArr['icon'], 'images/collicons/', 17) === 0){
-                    $imgLink = $urlPathPrefix.$cArr['icon'];
-                }
-                elseif(strncmp($cArr['icon'], '/', 1) === 0){
-                    $imgLink = $localDomain.$cArr['icon'];
-                }
-                else{
-                    $imgLink = $cArr['icon'];
-                }
-            }
-			$iconElem = $newDoc->createElement('image');
-			$iconElem->appendChild($newDoc->createTextNode($imgLink));
-			$itemElem->appendChild($iconElem);
-			
-			$descTitleElem = $newDoc->createElement('description');
-			$descTitleElem->appendChild($newDoc->createTextNode('Darwin Core Archive for '.$cArr['collname']));
-			$itemElem->appendChild($descTitleElem);
-			$guidElem = $newDoc->createElement('guid');
-			$guidElem->appendChild($newDoc->createTextNode($urlPathPrefix.'collections/misc/collprofiles.php?collid='.$collID));
-			$itemElem->appendChild($guidElem);
-			$guidElem2 = $newDoc->createElement('guid');
-			$guidElem2->appendChild($newDoc->createTextNode($cArr['collectionguid']));
-			$itemElem->appendChild($guidElem2);
 			$fileNameSeed = str_replace(array(' ','"',"'"),'',$instCode).'_DwC-A';
 			
-			$emlElem = $newDoc->createElement('emllink');
-			$emlElem->appendChild($newDoc->createTextNode($urlPathPrefix.'content/dwca/'.$fileNameSeed.'.eml'));
-			$itemElem->appendChild($emlElem);
-			$typeTitleElem = $newDoc->createElement('type','DWCA');
-			$itemElem->appendChild($typeTitleElem);
-			$recTypeTitleElem = $newDoc->createElement('recordType','DWCA');
-			$itemElem->appendChild($recTypeTitleElem);
 			$archivePath = $urlPathPrefix.'content/dwca/'.$fileNameSeed.'.zip';
-			$linkTitleElem = $newDoc->createElement('link');
-			$linkTitleElem->appendChild($newDoc->createTextNode($archivePath));
-			$itemElem->appendChild($linkTitleElem);
-			$pubDateTitleElem = $newDoc->createElement('pubDate');
-			$pubDateTitleElem->appendChild($newDoc->createTextNode(date('D, d M Y H:i:s')));
-			$itemElem->appendChild($pubDateTitleElem);
-			$itemArr[$title] = $itemElem;
-			
 			$sql = 'UPDATE omcollections SET dwcaUrl = "'.$archivePath.'" WHERE collid = '.$collID;
 			if(!$this->conn->query($sql)){
 				$this->logOrEcho('ERROR updating dwcaUrl while adding new DWCA instance.');
 			}
 		}
-
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
-		if(file_exists($rssFile)){
-			$oldDoc = new DOMDocument();
-			$oldDoc->load($rssFile);
-			$items = $oldDoc->getElementsByTagName('item');
-			foreach($items as $i){
-				$t = $i->getElementsByTagName('title')->item(0)->nodeValue;
-				if(!array_key_exists($i->getAttribute('collid'),$this->collArr)) {
-					$itemArr[$t] = $newDoc->importNode($i, true);
-				}
-			}
-		}
-
-		ksort($itemArr);
-		foreach($itemArr as $i){
-			$channelElem->appendChild($i);
-		}
-		
-		$newDoc->save($rssFile);
 
 		$this->logOrEcho("Done!!\n");
 	}
@@ -188,7 +91,7 @@ class DwcArchiverPublisher extends DwcArchiverCore{
 	public function getDwcaItems($collid = null): array
 	{
 		$retArr = array();
-		$rssFile = $GLOBALS['SERVER_ROOT'].(substr($GLOBALS['SERVER_ROOT'],-1) === '/'?'':'/').'rss.xml';
+		$rssFile = ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/rsshandler.php?feed=dwc';
 		if(file_exists($rssFile)){
 			$xmlDoc = new DOMDocument();
 			$xmlDoc->load($rssFile);
