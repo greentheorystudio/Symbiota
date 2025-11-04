@@ -156,18 +156,8 @@ class OccurrenceDownload{
 		$titleElem->appendChild($newDoc->createTextNode($GLOBALS['DEFAULT_TITLE'].' New Occurrence Records'));
 		$channelElem->appendChild($titleElem);
 
-		$serverDomain = 'http://';
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-			$serverDomain = 'https://';
-		}
-		$serverDomain .= $_SERVER['HTTP_HOST'];
-		$urlPathPrefix = '';
-		if($serverDomain){
-			$urlPathPrefix = $serverDomain.$GLOBALS['CLIENT_ROOT'];
-		}
-
 		$linkElem = $newDoc->createElement('link');
-		$linkElem->appendChild($newDoc->createTextNode($urlPathPrefix));
+		$linkElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix()));
 		$channelElem->appendChild($linkElem);
 		$descriptionElem = $newDoc->createElement('description');
 		$descriptionElem->appendChild($newDoc->createTextNode('An RSS feed that lists summary information for new occurrence records recently entered into the '.$GLOBALS['DEFAULT_TITLE'].' portal'));
@@ -224,12 +214,12 @@ class OccurrenceDownload{
 			}
 
 			$itemLinkElem = $newDoc->createElement('link');
-			$itemLinkElem->appendChild($newDoc->createTextNode($urlPathPrefix.'/collections/individual/index.php?occid='.$r->occid));
+			$itemLinkElem->appendChild($newDoc->createTextNode(SanitizerService::getFullUrlPathPrefix().'/collections/individual/index.php?occid='.$r->occid));
 			$itemElem->appendChild($itemLinkElem);
 
 			$tnUrl = $r->thumbnailurl;
 			if(strncmp($tnUrl, '/', 1) === 0){
-                $tnUrl = $urlPathPrefix.$tnUrl;
+                $tnUrl = SanitizerService::getFullUrlPathPrefix().$tnUrl;
 			}
 			$tnLinkElem = $newDoc->createElement('thumbnailUri');
 			$tnLinkElem->appendChild($newDoc->createTextNode($tnUrl));

@@ -360,7 +360,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20251009';
-        $GLOBALS['JS_VERSION'] = '20251014';
+        $GLOBALS['JS_VERSION'] = '202510141111';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -514,9 +514,7 @@ class Configurations{
 
     public function validateClientPath($path): int
     {
-        $testURL = $_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://';
-        $testURL .= $_SERVER['HTTP_HOST'];
-        $testURL .= ($path ?: '') . '/sitemap.php';
+        $testURL = SanitizerService::getConnectionProtocol() . $_SERVER['HTTP_HOST'] . ($path ?: '') . '/sitemap.php';
         $headers = @get_headers($testURL);
         $firstHeader = ($headers ? $headers[0] : '');
         return stripos($firstHeader, '200 OK') ? 1 : 0;
@@ -733,7 +731,6 @@ class Configurations{
             $GLOBALS['RIGHTS_TERMS'] = $this->rightsTerms;
         }
         $GLOBALS['SHOW_PASSWORD_RESET'] = isset($GLOBALS['PW_RESET']) && (int)$GLOBALS['PW_RESET'] === 1;
-        $GLOBALS['RSS_ACTIVE'] = file_exists(__DIR__ . '/../rss.xml');
         $GLOBALS['TAXON_UNITS'] = array(
             array('rankid' => 10, 'rankname' => 'Kingdom', 'dirparentrankid' => 10, 'reqparentrankid' => 10),
             array('rankid' => 20, 'rankname' => 'Subkingdom', 'dirparentrankid' => 10, 'reqparentrankid' => 10),

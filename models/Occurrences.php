@@ -172,7 +172,7 @@ class Occurrences{
     public function batchUpdateOccurrenceData($searchTermsArr, $field, $oldValue, $newValue, $matchType): int
     {
         $returnVal = 0;
-        if($searchTermsArr && $field && $oldValue && $newValue){
+        if($searchTermsArr && $field && (($matchType === 'part' && $oldValue) || ($matchType === 'whole' && ($oldValue || $newValue)))){
             $sqlWhere = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
             if($sqlWhere){
                 $fromStr = (new SearchService)->setFromSql('occurrence');
@@ -180,7 +180,7 @@ class Occurrences{
                 $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence', false);
                 $sql = str_replace('FROM', 'UPDATE', $fromStr);
                 if($matchType === 'part'){
-                    $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = REPLACE(' . SanitizerService::cleanInStr($this->conn, $field) . ', "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '", ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ') ';
+                    $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = REPLACE(' . SanitizerService::cleanInStr($this->conn, $field) . ', "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '", ' . ($newValue ? SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) : '""') . ') ';
                 }
                 else{
                     $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ' ';
@@ -189,7 +189,7 @@ class Occurrences{
                     $sql .= $whereStr . ' AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
                 }
                 else{
-                    $sql .= $whereStr . ' AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ';
+                    $sql .= $whereStr . ' AND ' . ($oldValue ? (SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ') : ('ISNULL(' . SanitizerService::cleanInStr($this->conn, $field) . ') '));
                 }
                 if($this->conn->query($sql)){
                     $returnVal = 1;
@@ -747,7 +747,7 @@ class Occurrences{
     public function getBatchUpdateCount($searchTermsArr, $field, $oldValue, $matchType): int
     {
         $returnVal = 0;
-        if($searchTermsArr && $field && $oldValue){
+        if($searchTermsArr && $field && ($matchType !== 'part' || $oldValue)){
             $sqlWhere = (new SearchService)->prepareOccurrenceWhereSql($searchTermsArr);
             if($sqlWhere){
                 $fromStr = (new SearchService)->setFromSql('occurrence');
@@ -758,7 +758,7 @@ class Occurrences{
                     $sql .= 'AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
                 }
                 else{
-                    $sql .= 'AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ';
+                    $sql .= $oldValue ? ('AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ') : ('AND ISNULL(' . SanitizerService::cleanInStr($this->conn, $field) . ') ');
                 }
                 $result = $this->conn->query($sql);
                 if($row = $result->fetch_array(MYSQLI_ASSOC)){

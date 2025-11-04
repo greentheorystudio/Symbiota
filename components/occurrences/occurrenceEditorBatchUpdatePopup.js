@@ -41,7 +41,7 @@ const occurrenceEditorBatchUpdatePopup = {
                     </div>
                     <div class="row justify-end q-gutter-md">
                         <div>
-                            <q-btn color="primary" @click="processBatchUpdateData();" label="Batch Update Field" :disabled="!selectedField || !currentValueValue" tabindex="0" />
+                            <q-btn color="primary" @click="processBatchUpdateData();" label="Batch Update Field" :disabled="!updateValid" tabindex="0" />
                         </div>
                     </div>
                 </div>
@@ -72,6 +72,18 @@ const occurrenceEditorBatchUpdatePopup = {
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const selectedField = Vue.ref(null);
         const selectedMatchOption = Vue.ref('whole');
+        const updateValid = Vue.computed(() => {
+            let valid = false;
+            if(selectedField.value){
+                if(selectedMatchOption.value === 'whole' && (currentValueValue.value || newValueValue.value)){
+                    valid = true;
+                }
+                else if(selectedMatchOption.value === 'part' && currentValueValue.value){
+                    valid = true;
+                }
+            }
+            return valid;
+        });
 
         function closePopup() {
             context.emit('close:popup');
@@ -122,6 +134,7 @@ const occurrenceEditorBatchUpdatePopup = {
             processingStatusOptions,
             selectedField,
             selectedMatchOption,
+            updateValid,
             closePopup,
             processBatchUpdateData,
             processFieldSelectionChange
