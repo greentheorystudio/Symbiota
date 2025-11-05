@@ -406,7 +406,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     if(!initial){
                                         displayQueryPopup.value = false;
                                     }
-                                    setTableRecordData(pageNumber.value);
+                                    setTableRecordData(1);
                                 }
                                 else{
                                     hideWorking();
