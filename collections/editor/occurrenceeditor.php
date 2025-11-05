@@ -403,9 +403,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
-                                    if(Number(occId.value) === 0 || currentRecordIndex.value < 0){
-                                        goToFirstRecord();
-                                    }
+                                    goToFirstRecord();
                                 }
                                 else{
                                     showNotification('negative','There were no records matching your query.');
