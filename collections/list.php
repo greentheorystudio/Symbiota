@@ -477,7 +477,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
-                                    setTableRecordData(pagination.value.page);
+                                    setTableRecordData(1);
                                     searchStore.setSearchTaxaArr(() => {
                                         processTaxaData();
                                     });
