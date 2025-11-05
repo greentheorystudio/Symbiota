@@ -947,6 +947,8 @@ const spatialAnalysisModule = {
                         if(Number(searchStore.getSearchRecordCount) > 0){
                             displayQueryPopup.value = false;
                             updateMapSettings('showControlPanelLeft', false);
+                            spatialStore.updateRecordPage(1);
+                            searchStore.updateSearchTerms('mapIndex', 1);
                             loadPointsLayer();
                         }
                         else{
