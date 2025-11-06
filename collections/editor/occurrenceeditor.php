@@ -347,7 +347,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
                     const recordCount = Vue.computed(() => {
-                        return Number(occId.value) === 0 ? searchRecordCount.value + 1 : searchRecordCount.value;
+                        if(Number(searchRecordCount.value) > 0){
+                            return Number(occId.value) === 0 ? searchRecordCount.value + 1 : searchRecordCount.value;
+                        }
+                        else{
+                            return 1;
+                        }
                     });
                     const showSpatialPopup = Vue.ref(false);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
