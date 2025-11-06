@@ -83,8 +83,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                             <li><a :href="(clientRoot + '/taxa/taxonomy/index.php')" tabindex="0">Taxonomy Editor</a></li>
                                         </template>
                                         <template v-if="isAdmin || taxonProfile">
-                                            <li><a :href="(clientRoot + '/taxa/profile/tpeditor.php')" tabindex="0">Taxon Profile Manager</a></li>
-                                            <li><a :href="(clientRoot + '/taxa/profile/index.php')" tabindex="0">New Taxon Profile Manager</a></li>
+                                            <li><a :href="(clientRoot + '/taxa/profile/index.php')" tabindex="0">Taxon Profile Manager</a></li>
                                             <li><a :href="(clientRoot + '/taxa/media/batchimageloader.php')" tabindex="0">Taxa Media Batch Uploader</a></li>
                                             <li><a :href="(clientRoot + '/taxa/media/eolimporter.php')" tabindex="0">Encyclopedia of Life Media Importer</a></li>
                                         </template>

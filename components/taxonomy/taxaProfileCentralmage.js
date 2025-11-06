@@ -29,7 +29,7 @@ const taxaProfileCentralImage = {
             <template v-else>
                 <div class="no-central-image">
                     <template v-if="isEditor">
-                        <div><a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + taxon.tid)" aria-label="Add an Image" tabindex="0"><span class="text-weight-bold">Add an Image</span></a></div>
+                        <div><a :href="(clientRoot + '/taxa/profile/index.php?tid=' + taxon.tid)" aria-label="Add an Image" tabindex="0"><span class="text-weight-bold">Add an Image</span></a></div>
                     </template>
                     <template v-else>
                         <div>Image not available</div>
