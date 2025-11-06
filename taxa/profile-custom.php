@@ -160,12 +160,14 @@
                 taxaStore.setTaxa(taxonValue, (tid) => {
                     hideWorking();
                     if(Number(tid) > 0){
-                        taxaStore.setTaxaDescriptionData();
+                        taxaStore.setTaxonVernacularArr(taxon.value['tidaccepted']);
+                        taxaStore.setTaxonMapArr(taxon.value['tidaccepted']);
+                        taxaStore.setTaxonDescriptionData(taxon.value['tidaccepted']);
                         if(subtaxaArr.value.length > 0){
                             taxaStore.setSubtaxaImageData();
                         }
-                        taxaStore.setTaxaImageArr();
-                        taxaStore.setTaxaMediaArr();
+                        taxaStore.setTaxaImageArr(taxon.value['tidaccepted']);
+                        taxaStore.setTaxaMediaArr(taxon.value['tidaccepted']);
                     }
                     else if(taxonValue.value && taxonValue.value !== ''){
                         taxaStore.setFuzzyMatches();
