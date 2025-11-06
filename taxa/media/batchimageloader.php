@@ -79,7 +79,6 @@ if(!$GLOBALS['SYMB_UID']) {
                     'media-file-upload-input-element': mediaFileUploadInputElement,
                 },
                 setup() {
-                    const { showNotification } = useCore();
                     const baseStore = useBaseStore();
 
                     const clientRoot = baseStore.getClientRoot;

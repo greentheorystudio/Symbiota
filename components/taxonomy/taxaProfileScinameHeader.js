@@ -2,7 +2,7 @@ const taxaProfileScinameHeader = {
     template: `
         <div>
             <span class="taxon-profile-sciname"><span :class="taxonStyleClass">{{ acceptedTaxon.sciname }}</span></span> <span>{{ acceptedTaxon.author }}</span>
-            <a :href="(clientRoot + '/taxa/index.php?taxon=' + acceptedTaxon.parenttid)" class="parent-link" title="Go to Parent" tabindex="0">
+            <a :href="(clientRoot + '/taxa/index.php?taxon=' + acceptedTaxon.parenttid)" class="parent-link" title="Go to Parent" aria-label="Go to Parent" tabindex="0">
                 <q-icon name="fas fa-level-up-alt" size="15px" class="cursor-pointer" />
             </a>
             <template v-if="Number(acceptedTaxon['tid']) !== Number(taxon['tid'])">

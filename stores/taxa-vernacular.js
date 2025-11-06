@@ -90,7 +90,7 @@ const useTaxaVernacularStore = Pinia.defineStore('taxa-vernacular', {
             }
             this.taxaVernacularEditData = Object.assign({}, this.taxaVernacularData);
         },
-        setTaxaVernacularArr(tid) {
+        setTaxonVernacularArr(tid) {
             const formData = new FormData();
             formData.append('tid', tid.toString());
             formData.append('action', 'getCommonNamesByTid');

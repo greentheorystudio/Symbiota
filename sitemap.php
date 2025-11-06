@@ -40,7 +40,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                     </ul>
                     <div class="q-mt-md text-h6 text-bold">Image Library</div>
                     <ul>
-                        <li><a :href="(clientRoot + '/media/index.php')" tabindex="0">Image Library</a></li>
                         <li><a :href="(clientRoot + '/media/search.php')" tabindex="0">Image Search</a></li>
                         <li><a :href="(clientRoot + '/media/contributors.php')" tabindex="0">Image Contributors</a></li>
                         <li><a :href="usagePolicyUrl" tabindex="0">Terms of Use</a></li>
@@ -85,6 +84,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                         </template>
                                         <template v-if="isAdmin || taxonProfile">
                                             <li><a :href="(clientRoot + '/taxa/profile/tpeditor.php')" tabindex="0">Taxon Profile Manager</a></li>
+                                            <li><a :href="(clientRoot + '/taxa/profile/index.php')" tabindex="0">New Taxon Profile Manager</a></li>
                                             <li><a :href="(clientRoot + '/taxa/media/batchimageloader.php')" tabindex="0">Taxa Media Batch Uploader</a></li>
                                             <li><a :href="(clientRoot + '/taxa/media/eolimporter.php')" tabindex="0">Encyclopedia of Life Media Importer</a></li>
                                         </template>

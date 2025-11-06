@@ -1,8 +1,12 @@
 const mediaEditorPopup = {
     props: {
+        collection: {
+            type: Object,
+            default: null
+        },
         collId: {
             type: Number,
-            default: null
+            default: 0
         },
         mediaId: {
             type: Number,
@@ -16,13 +20,13 @@ const mediaEditorPopup = {
             type: Boolean,
             default: false
         },
-        uploadPath: {
-            type: String,
+        taxon: {
+            type: Object,
             default: null
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
+        <q-dialog class="z-max" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -158,7 +162,7 @@ const mediaEditorPopup = {
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
-                                        <div>
+                                        <div v-if="Number(mediaData.occid) > 0">
                                             <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Remove occurrence linkage so that media only displays on Taxon Profile page
@@ -228,6 +232,32 @@ const mediaEditorPopup = {
             {label: 'Local File', value: 'upload'},
             {label: 'From URL', value: 'url'}
         ];
+        const uploadPath = Vue.computed(() => {
+            let path = '';
+            if(props.collection){
+                if(props.collection.institutioncode){
+                    path += props.collection.institutioncode;
+                }
+                if(props.collection.institutioncode && props.collection.collectioncode){
+                    path += '_';
+                }
+                if(props.collection.collectioncode){
+                    path += props.collection.collectioncode;
+                }
+            }
+            else if(props.taxon){
+                if(props.taxon.family){
+                    path += props.taxon.family;
+                }
+                else{
+                    path += props.taxon['unitname1'];
+                }
+            }
+            else{
+                path += 'general';
+            }
+            return path;
+        });
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -376,7 +406,7 @@ const mediaEditorPopup = {
 
         function updateUploadTranscriptFile() {
             if(selectedUploadMethod.value === 'upload' && uploadedTranscriptFile.value){
-                mediaStore.uploadDescriptiveTranscriptFromFile(props.collId, uploadedTranscriptFile.value, props.uploadPath, (res) => {
+                mediaStore.uploadDescriptiveTranscriptFromFile(props.collId, uploadedTranscriptFile.value, uploadPath.value, (res) => {
                     if(res.toString() === ''){
                         showNotification('negative', ('An error occurred while uploading the descriptive transcript file.'));
                     }
@@ -390,7 +420,7 @@ const mediaEditorPopup = {
                 });
             }
             else if(transcriptUrl.value){
-                mediaStore.uploadDescriptiveTranscriptFromUrl(props.collId, transcriptUrl.value, props.uploadPath, (res) => {
+                mediaStore.uploadDescriptiveTranscriptFromUrl(props.collId, transcriptUrl.value, uploadPath.value, (res) => {
                     if(res.toString() === ''){
                         showNotification('negative', ('An error occurred while copying the descriptive transcript file.'));
                     }

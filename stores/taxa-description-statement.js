@@ -87,7 +87,7 @@ const useTaxaDescriptionStatementStore = Pinia.defineStore('taxa-description-sta
             }
             this.taxaDescriptionStatementEditData = Object.assign({}, this.taxaDescriptionStatementData);
         },
-        setTaxaDescriptionStatementArr(tid) {
+        setTaxonDescriptionStatementArr(tid) {
             const formData = new FormData();
             formData.append('tid', tid.toString());
             formData.append('action', 'getTaxonDescriptionStatements');

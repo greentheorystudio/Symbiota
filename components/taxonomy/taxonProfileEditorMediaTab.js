@@ -1,7 +1,7 @@
-const occurrenceEditorMediaTab = {
+const taxonProfileEditorMediaTab = {
     template: `
         <div class="column q-gutter-sm">
-            <media-file-upload-input-element :collection="collectionData" :occ-id="occId" :taxon-id="occurrenceData.tid" @upload:complete="processMediaUpdate"></media-file-upload-input-element>
+            <media-file-upload-input-element :taxon="taxon" :taxon-id="tId" @upload:complete="processMediaUpdate"></media-file-upload-input-element>
             <div class="q-mt-sm">
                 <template v-if="imageArr.length > 0 || mediaArr.length > 0">
                     <template v-if="imageArr.length > 0">
@@ -22,13 +22,12 @@ const occurrenceEditorMediaTab = {
                     </template>
                 </template>
                 <template v-else>
-                    <div class="q-mt-sm text-body1 text-bold">There are no media files associated with this record.</div>
+                    <div class="q-mt-sm text-body1 text-bold">There are no media files associated with this taxon.</div>
                 </template>
             </div>
         </div>
         <template v-if="showImageEditorPopup">
             <image-editor-popup
-                :coll-id="collId"
                 :image-id="editImageId"
                 :show-popup="showImageEditorPopup" 
                 @image:updated="processMediaUpdate" 
@@ -37,10 +36,10 @@ const occurrenceEditorMediaTab = {
         </template>
         <template v-if="showMediaEditorPopup">
             <media-editor-popup
-                :coll-id="collId"
-                :collection="collectionData"
                 :media-id="editMediaId"
                 :show-popup="showMediaEditorPopup"
+                :taxon="taxon"
+                :upload-path="uploadPath"
                 @media:updated="processMediaUpdate"
                 @close:popup="showMediaEditorPopup = false"
             ></media-editor-popup>
@@ -54,18 +53,16 @@ const occurrenceEditorMediaTab = {
         'media-file-upload-input-element': mediaFileUploadInputElement
     },
     setup() {
-        const occurrenceStore = useOccurrenceStore();
+        const taxaStore = useTaxaStore();
 
-        const collectionData = Vue.computed(() => occurrenceStore.getCollectionData);
-        const collId = Vue.computed(() => occurrenceStore.getCollId);
         const editImageId = Vue.ref(0);
         const editMediaId = Vue.ref(0);
-        const imageArr = Vue.computed(() => occurrenceStore.getImageArr);
-        const mediaArr = Vue.computed(() => occurrenceStore.getMediaArr);
-        const occId = Vue.computed(() => occurrenceStore.getOccId);
-        const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
+        const imageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+        const mediaArr = Vue.computed(() => taxaStore.getTaxaMediaArr);
         const showImageEditorPopup = Vue.ref(false);
         const showMediaEditorPopup = Vue.ref(false);
+        const taxon = Vue.computed(() => taxaStore.getTaxaData);
+        const tId = Vue.computed(() => taxaStore.getTaxaID);
 
         function openImageEditorPopup(id) {
             editImageId.value = id;
@@ -78,21 +75,19 @@ const occurrenceEditorMediaTab = {
         }
 
         function processMediaUpdate() {
-            occurrenceStore.setOccurrenceImageArr();
-            occurrenceStore.setOccurrenceMediaArr();
+            taxaStore.setTaxaImageArr(taxon.value['tid'], false);
+            taxaStore.setTaxaMediaArr(taxon.value['tid'], false);
         }
 
         return {
-            collectionData,
-            collId,
             editImageId,
             editMediaId,
             imageArr,
             mediaArr,
-            occId,
-            occurrenceData,
             showImageEditorPopup,
             showMediaEditorPopup,
+            taxon,
+            tId,
             openImageEditorPopup,
             openMediaEditorPopup,
             processMediaUpdate

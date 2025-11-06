@@ -83,8 +83,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         {url: clientRoot + '/index.php', label: 'Home'},
                         {url: clientRoot + '/collections/list.php', label: 'Search Collections'},
                         {url: clientRoot + '/spatial/index.php', label: 'Spatial Module', newTab: true},
-                        {url: clientRoot + '/media/search.php', label: 'Image Search'},
-                        {url: clientRoot + '/media/index.php', label: 'Browse Images'}
+                        {url: clientRoot + '/media/search.php', label: 'Image Search'}
                     ]);
                     let navBarTimeout = null;
                     const navBarToggle = Vue.ref({});

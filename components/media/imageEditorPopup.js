@@ -2,7 +2,7 @@ const imageEditorPopup = {
     props: {
         collId: {
             type: Number,
-            default: null
+            default: 0
         },
         imageId: {
             type: Number,
@@ -18,7 +18,7 @@ const imageEditorPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
+        <q-dialog class="z-max" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -131,7 +131,7 @@ const imageEditorPopup = {
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
-                                        <div>
+                                        <div v-if="Number(imageData.occid) > 0">
                                             <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Remove occurrence linkage so that image only displays on Taxon Profile page

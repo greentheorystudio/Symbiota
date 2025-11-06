@@ -22,7 +22,7 @@ const mediaFileUploadInputElement = {
         },
         occId: {
             type: Number,
-            default: null
+            default: 0
         },
         showStart: {
             type: Boolean,
@@ -38,7 +38,7 @@ const mediaFileUploadInputElement = {
         },
         taxonId: {
             type: Number,
-            default: null
+            default: 0
         }
     },
     template: `
@@ -189,8 +189,10 @@ const mediaFileUploadInputElement = {
         </template>
         <template v-if="showMediaEditorPopup">
             <media-editor-popup
+                :collection="collection"
                 :new-media-data="editData"
                 :show-popup="showMediaEditorPopup"
+                :taxon="taxon"
                 :upload-path="uploadPath"
                 @update:media-data="updateFileMetadata"
                 @close:popup="showMediaEditorPopup = false"

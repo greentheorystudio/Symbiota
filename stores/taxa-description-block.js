@@ -90,7 +90,7 @@ const useTaxaDescriptionBlockStore = Pinia.defineStore('taxa-description-block',
             }
             this.taxaDescriptionBlockEditData = Object.assign({}, this.taxaDescriptionBlockData);
         },
-        setTaxaDescriptionBlockArr(tid) {
+        setTaxonDescriptionBlockArr(tid) {
             const formData = new FormData();
             formData.append('tid', tid.toString());
             formData.append('action', 'getTaxonDescriptions');
