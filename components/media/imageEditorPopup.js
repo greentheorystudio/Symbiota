@@ -53,6 +53,11 @@ const imageEditorPopup = {
                                     <text-field-input-element label="Owner" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
                                 </div>
                             </div>
+                            <div v-if="Number(imageData.occid) === 0" class="row">
+                                <div class="col-grow">
+                                    <user-auto-complete label="Portal Contributor" :value="imageData.photographeruid" @update:value="processContributorChange"></user-auto-complete>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-grow">
                                     <text-field-input-element data-type="textarea" label="Caption" :value="imageData.caption" @update:value="(value) => updateData('caption', value)"></text-field-input-element>
@@ -166,7 +171,8 @@ const imageEditorPopup = {
         'image-tag-selector': imageTagSelector,
         'occurrence-linkage-tool-popup': occurrenceLinkageToolPopup,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'text-field-input-element': textFieldInputElement
+        'text-field-input-element': textFieldInputElement,
+        'user-auto-complete': userAutoComplete
     },
     setup(props, context) {
         const { showNotification } = useCore();
@@ -192,6 +198,17 @@ const imageEditorPopup = {
 
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function processContributorChange(user) {
+            if(user){
+                const fullName = user.firstname + ' ' + (user.middleinitial ? (user.middleinitial + ' ') : '') + user.lastname;
+                updateData('photographer', fullName);
+                updateData('photographeruid', user.uid);
+            }
+            else{
+                updateData('photographeruid', null);
+            }
         }
 
         function processDeleteImageRecord() {
@@ -282,6 +299,7 @@ const imageEditorPopup = {
             imageData,
             showOccurrenceLinkageToolPopup,
             closePopup,
+            processContributorChange,
             processDeleteImageRecord,
             processScientificNameChange,
             removeOccurrenceLinkage,
