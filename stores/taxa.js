@@ -34,6 +34,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         taxaParentData: {},
         taxaStr: '',
         taxaSynonyms: [],
+        taxaTaggedImageArr: [],
         taxaUpdateData: {},
         taxaDescriptionBlockStore: useTaxaDescriptionBlockStore(),
         taxaDescriptionStatementStore: useTaxaDescriptionStatementStore(),
@@ -141,6 +142,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         getTaxaSynonyms(state) {
             return state.taxaSynonyms;
         },
+        getTaxaTaggedImageArr(state) {
+            return state.taxaTaggedImageArr;
+        },
         getTaxaValid(state) {
             return (
                 (state.taxaEditData['kingdomid'] && state.taxaEditData['sciname'])
@@ -160,6 +164,26 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         }
     },
     actions: {
+        addTaxaImageTag(imgid, callback) {
+            const tagValue = 'TID-' + this.taxaId.toString();
+            const formData = new FormData();
+            formData.append('imgid', imgid.toString());
+            formData.append('tag', tagValue);
+            formData.append('action', 'addImageTag');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    this.setTaxaTaggedImageArr();
+                }
+                callback(Number(res));
+            });
+        },
         clearTaxonData() {
             this.taxaStr = '';
             this.taxaData = Object.assign({}, this.blankTaxaRecord);
@@ -173,6 +197,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             this.taxaImageArr.length = 0;
             this.taxaImageCount = 0;
             this.taxaMediaArr.length = 0;
+            this.taxaTaggedImageArr.length = 0;
             this.taxaId = 0;
             this.taxaDescriptionBlockStore.clearTaxaDescriptionBlockArr();
             this.taxaDescriptionStatementStore.clearTaxaDescriptionStatementArr();
@@ -235,6 +260,25 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 }
                 if(Number(res) === 1){
                     this.setTaxonDescriptionData(this.taxaId);
+                }
+            });
+        },
+        deleteTaxaImageTag(imgid) {
+            const tagValue = 'TID-' + this.taxaId.toString();
+            const formData = new FormData();
+            formData.append('imgid', imgid.toString());
+            formData.append('tag', tagValue);
+            formData.append('action', 'deleteImageTag');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    this.setTaxaTaggedImageArr();
                 }
             });
         },
@@ -344,6 +388,22 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 if(resObj.hasOwnProperty(this.getAcceptedTaxonTid)){
                     this.taxaMediaArr = resObj[this.getAcceptedTaxonTid];
                 }
+            });
+        },
+        setTaxaTaggedImageArr(tid) {
+            const tagValue = 'TID-' + tid.toString();
+            const formData = new FormData();
+            formData.append('value', tagValue);
+            formData.append('action', 'getImageArrByTagValue');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.taxaTaggedImageArr = data;
             });
         },
         setTaxon(str, callback = null) {

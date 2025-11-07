@@ -252,11 +252,31 @@ class Users{
 
     public function deleteUser($uid): int
     {
-        $retuenVal = 0;
+        $retuenVal = 1;
         if($uid){
+            $sql = 'DELETE FROM useraccesstokens WHERE uid = ' . (int)$uid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
+            $sql = 'DELETE FROM userroles WHERE uid = ' . (int)$uid . ' OR uidassignedby = ' . (int)$uid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
+            $sql = 'UPDATE images SET photographeruid = NULL WHERE photographeruid = ' . (int)$uid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
+            $sql = 'UPDATE media SET creatoruid = NULL WHERE creatoruid = ' . (int)$uid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
             $sql = 'DELETE FROM users WHERE uid = ' . (int)$uid . ' ';
-            if($this->conn->query($sql)){
-                $retuenVal = 1;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
             }
         }
         $this->clearCookieSession();

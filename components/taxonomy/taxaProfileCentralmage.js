@@ -47,13 +47,19 @@ const taxaProfileCentralImage = {
             if(props.image){
                 centralImage = props.image;
             }
-            else{
-                centralImage = (taxaImageArr.value && taxaImageArr.value.length > 0) ? taxaImageArr.value[0] : null;
+            else if(taxaImageArr.value && taxaImageArr.value.length > 0){
+                if(taxaTaggedImageArr.value.length > 0){
+                    centralImage = taxaTaggedImageArr.value[0];
+                }
+                if(!centralImage){
+                    centralImage = taxaImageArr.value[0];
+                }
             }
             return centralImage;
         });
         const clientRoot = baseStore.getClientRoot;
         const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+        const taxaTaggedImageArr = Vue.computed(() => taxaStore.getTaxaTaggedImageArr);
         const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
 
         function toggleImageCarousel(index) {

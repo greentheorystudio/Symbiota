@@ -31,7 +31,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Taxon Profile Editor</span>
             </div>
             <div v-if="isTaxonProfileEditor" class="q-pa-md">
@@ -86,7 +86,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             <q-tab-panel name="descriptions">
                                 <taxon-profile-editor-descriptions-tab></taxon-profile-editor-descriptions-tab>
                             </q-tab-panel>
-                            <q-tab-panel name="tag">
+                            <q-tab-panel name="tag" class="preview-image-carousel">
                                 <taxon-profile-editor-primary-image-tab></taxon-profile-editor-primary-image-tab>
                             </q-tab-panel>
                             <q-tab-panel name="common">
@@ -200,6 +200,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                 taxaStore.setTaxonDescriptionData(taxon.value['tid']);
                                 taxaStore.setTaxaImageArr(taxon.value['tid'], false);
                                 taxaStore.setTaxaMediaArr(taxon.value['tid'], false);
+                                taxaStore.setTaxaTaggedImageArr(taxon.value['tid']);
                             }
                             else{
                                 taxonNameVal.value = null;

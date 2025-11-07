@@ -116,6 +116,9 @@ class Taxa{
         if($tid){
             $retVal = (new Images)->deleteAssociatedImageRecords('tid', $tid);
             if($retVal){
+                $retVal = (new Images)->deleteTaxonImageTags($tid);
+            }
+            if($retVal){
                 $retVal = (new Media)->deleteAssociatedMediaRecords('tid', $tid);
             }
             if($retVal){
