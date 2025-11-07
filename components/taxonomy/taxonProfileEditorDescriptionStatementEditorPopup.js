@@ -153,7 +153,7 @@ const taxonProfileEditorDescriptionStatementEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            taxaStore.setCurrentTaxaDescriptionStatementRecord(props.statementId);
+            taxaStore.setCurrentTaxaDescriptionStatementRecord(props.blockId, props.statementId);
         });
 
         return {

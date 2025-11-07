@@ -8,7 +8,7 @@ const useTaxaDescriptionBlockStore = Pinia.defineStore('taxa-description-block',
             sourceurl: null,
             language: null,
             langid: null,
-            displaylevel: null,
+            displaylevel: 1,
             uid: null,
             notes: null
         },

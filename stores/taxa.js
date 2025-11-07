@@ -267,8 +267,8 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         setCurrentTaxaDescriptionBlockRecord(tdbid) {
             this.taxaDescriptionBlockStore.setCurrentTaxaDescriptionBlockRecord(tdbid);
         },
-        setCurrentTaxaDescriptionStatementRecord(tdsid) {
-            this.taxaDescriptionStatementStore.setCurrentTaxaDescriptionStatementRecord(this.taxaDescriptionBlockStore.getTaxaDescriptionBlockID, tdsid);
+        setCurrentTaxaDescriptionStatementRecord(tdbid, tdsid) {
+            this.taxaDescriptionStatementStore.setCurrentTaxaDescriptionStatementRecord(tdbid, tdsid);
         },
         setCurrentTaxaVernacularRecord(vid) {
             this.taxaVernacularStore.setCurrentTaxaVernacularRecord(vid);

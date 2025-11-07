@@ -10,7 +10,7 @@ const useTaxaVernacularStore = Pinia.defineStore('taxa-vernacular', {
             notes: null,
             username: null,
             isupperterm: null,
-            sortsequence: null
+            sortsequence: 1
         },
         taxaVernacularArr: [],
         taxaVernacularData: {},
