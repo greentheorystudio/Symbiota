@@ -15,7 +15,7 @@ const taxaProfileEditButton = {
                 <q-btn role="link" color="grey-4" text-color="black" class="black-border text-bold" size="sm" :href="(clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + taxon['tid'])" label="Edit Taxon" no-wrap tabindex="0"></q-btn>
             </div>
             <div v-if="taxonProfileEditor">
-                <q-btn role="link" color="grey-4" text-color="black" class="black-border text-bold" size="sm" :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + acceptedTaxon['tid'])" label="Edit Taxon Profile" no-wrap tabindex="0"></q-btn>
+                <q-btn role="link" color="grey-4" text-color="black" class="black-border text-bold" size="sm" :href="(clientRoot + '/taxa/profile/index.php?tid=' + acceptedTaxon['tid'])" label="Edit Taxon Profile" no-wrap tabindex="0"></q-btn>
             </div>
         </div>
     `,

@@ -85,7 +85,7 @@ const useTaxaMapStore = Pinia.defineStore('taxa-map', {
             }
             this.taxaMapEditData = Object.assign({}, this.taxaMapData);
         },
-        setTaxaMapArr(tid, includeSubtaxa) {
+        setTaxonMapArr(tid, includeSubtaxa) {
             const formData = new FormData();
             formData.append('tid', tid.toString());
             formData.append('includeSubtaxa', (includeSubtaxa ? '1' : '0'));

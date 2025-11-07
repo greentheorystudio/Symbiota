@@ -9,7 +9,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
         <q-toolbar class="q-pa-md horizontalDropDown">
             <template v-if="windowWidth < 1440">
                 <q-btn class="horizontalDropDownIconButton q-ml-md" flat round dense icon="menu" aria-label="Open Menu" tabindex="0">
-                    <q-menu>
+                    <q-menu class="z-max">
                         <q-list dense>
                             <template v-for="item in navBarData">
                                 <template v-if="item.subItems && item.subItems.length">
@@ -83,8 +83,7 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         {url: clientRoot + '/index.php', label: 'Home'},
                         {url: clientRoot + '/collections/list.php', label: 'Search Collections'},
                         {url: clientRoot + '/spatial/index.php', label: 'Spatial Module', newTab: true},
-                        {url: clientRoot + '/media/search.php', label: 'Image Search'},
-                        {url: clientRoot + '/media/index.php', label: 'Browse Images'}
+                        {url: clientRoot + '/media/search.php', label: 'Image Search'}
                     ]);
                     let navBarTimeout = null;
                     const navBarToggle = Vue.ref({});

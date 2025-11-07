@@ -14,7 +14,7 @@ const occurrenceLinkageToolPopup = {
         },
         searchTerms: {
             type: Object,
-            default: null
+            default: {}
         },
         showPopup: {
             type: Boolean,
@@ -26,7 +26,7 @@ const occurrenceLinkageToolPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" persistent>
+        <q-dialog class="z-max" v-model="showPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -57,7 +57,7 @@ const occurrenceLinkageToolPopup = {
                                 <div class="q-pa-sm column q-col-gutter-sm">
                                     <div v-if="!searchTerms.hasOwnProperty('db') || !searchTerms['db']" class="row">
                                         <div class="col-grow">
-                                            <selector-input-element :options="fullCollectionArr" label="Collection" :value="selectedCollection" option-value="collid" :clearable="true" @update:value="updateSelectedCollection"></selector-input-element>
+                                            <selector-input-element :options="collectionOptions" label="Collection" :value="selectedCollection" option-value="collid" :clearable="true" @update:value="updateSelectedCollection"></selector-input-element>
                                         </div>
                                     </div>
                                     <div class="row justify-between q-col-gutter-sm">
@@ -405,7 +405,6 @@ const occurrenceLinkageToolPopup = {
             collectionOptions,
             contentRef,
             contentStyle,
-            fullCollectionArr,
             isEditor,
             occurrenceTerm,
             recordBottomRowStyle,

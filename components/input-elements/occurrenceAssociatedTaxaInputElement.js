@@ -10,7 +10,7 @@ const occurrenceEditorAssociatedTaxaToolPopup = {
         }
     },
     template: `
-        <q-card class="input-tool-popup">
+        <q-card class="z-max input-tool-popup">
             <q-card-section class="column q-col-gutter-sm input-tool-popup z-max">
                 <div>
                     <single-scientific-common-name-auto-complete :sciname="scientificNameStr" label="Scientific Name" @update:sciname="updateScientificNameValue" @click:enter="addTaxon"></single-scientific-common-name-auto-complete>
