@@ -390,8 +390,8 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 }
             });
         },
-        setTaxaTaggedImageArr() {
-            const tagValue = 'TID-' + this.taxaId.toString();
+        setTaxaTaggedImageArr(tid) {
+            const tagValue = 'TID-' + tid.toString();
             const formData = new FormData();
             formData.append('value', tagValue);
             formData.append('action', 'getImageArrByTagValue');

@@ -200,7 +200,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                 taxaStore.setTaxonDescriptionData(taxon.value['tid']);
                                 taxaStore.setTaxaImageArr(taxon.value['tid'], false);
                                 taxaStore.setTaxaMediaArr(taxon.value['tid'], false);
-                                taxaStore.setTaxaTaggedImageArr();
+                                taxaStore.setTaxaTaggedImageArr(taxon.value['tid']);
                             }
                             else{
                                 taxonNameVal.value = null;

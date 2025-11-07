@@ -170,6 +170,7 @@
                         }
                         taxaStore.setTaxaImageArr(taxon.value['tidaccepted']);
                         taxaStore.setTaxaMediaArr(taxon.value['tidaccepted']);
+                        taxaStore.setTaxaTaggedImageArr(taxon.value['tidaccepted']);
                     }
                     else if(taxonValue.value && taxonValue.value !== ''){
                         taxaStore.setFuzzyMatches();
