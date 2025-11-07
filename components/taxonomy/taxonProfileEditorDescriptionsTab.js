@@ -49,14 +49,20 @@ const taxonProfileEditorDescriptionsTab = {
                                 </template>
                             </template>
                             <template v-else>
-                                <div class="q-mt-sm text-body1 text-bold">There are no statements for this description block yet, click the Add Description Statement button above to add the first one</div>
+                                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                                <div class="q-pa-md row justify-center text-h6 text-bold">
+                                    There are no statements for this description block yet, click the Add Description Statement button above to add the first one
+                                </div>
                             </template>
                         </q-card-section>
                     </q-card>
                 </template>
             </template>
             <template v-else>
-                <div class="q-mt-sm text-body1 text-bold">There are no description blocks for this taxon yet, click the Add Description Block button above to add the first one</div>
+                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                <div class="q-pa-md row justify-center text-h6 text-bold">
+                    There are no description blocks for this taxon yet, click the Add Description Block button above to add the first one
+                </div>
             </template>
         </div>
         <template v-if="showBlockEditorPopup">
@@ -88,22 +94,24 @@ const taxonProfileEditorDescriptionsTab = {
                 descriptionBlockArr.value.forEach((desc) => {
                     const description = Object.assign({}, desc);
                     description['stmts'] = [];
-                    descriptionStatementData.value[desc['tdbid']].forEach((stmt) => {
-                        if(stmt['statement'] && stmt['statement'] !== ''){
-                            const statement = Object.assign({}, stmt);
-                            if(statement['statement'].startsWith('<p>')){
-                                statement['statement'] = statement['statement'].slice(3);
+                    if(descriptionStatementData.value.hasOwnProperty(desc['tdbid']) && descriptionStatementData.value[desc['tdbid']].length > 0){
+                        descriptionStatementData.value[desc['tdbid']].forEach((stmt) => {
+                            if(stmt['statement'] && stmt['statement'] !== ''){
+                                const statement = Object.assign({}, stmt);
+                                if(statement['statement'].startsWith('<p>')){
+                                    statement['statement'] = statement['statement'].slice(3);
+                                }
+                                if(statement['statement'].endsWith('</p>')){
+                                    statement['statement'] = statement['statement'].substring(0, statement['statement'].length - 4);
+                                }
+                                if(Number(statement['displayheader']) === 1 && statement['heading'] && statement['heading'] !== ''){
+                                    const headingText = '<span class="desc-statement-heading">' + statement['heading'] + '</span>: ';
+                                    statement['statement'] = headingText + statement['statement'];
+                                }
+                                description['stmts'].push(statement);
                             }
-                            if(statement['statement'].endsWith('</p>')){
-                                statement['statement'] = statement['statement'].substring(0, statement['statement'].length - 4);
-                            }
-                            if(Number(statement['displayheader']) === 1 && statement['heading'] && statement['heading'] !== ''){
-                                const headingText = '<span class="desc-statement-heading">' + statement['heading'] + '</span>: ';
-                                statement['statement'] = headingText + statement['statement'];
-                            }
-                            description['stmts'].push(statement);
-                        }
-                    });
+                        });
+                    }
                     displayArr.push(description);
                 });
             }

@@ -7,7 +7,7 @@ const useTaxaDescriptionStatementStore = Pinia.defineStore('taxa-description-sta
             statement: null,
             displayheader: null,
             notes: null,
-            sortsequence: null
+            sortsequence: 1
         },
         taxaDescriptionStatementArr: {},
         taxaDescriptionStatementData: {},
@@ -34,7 +34,7 @@ const useTaxaDescriptionStatementStore = Pinia.defineStore('taxa-description-sta
             return exist;
         },
         getTaxaDescriptionStatementValid(state) {
-            return (state.taxaDescriptionStatementEditData['tdbid'] && state.taxaDescriptionStatementEditData['statement']);
+            return !!state.taxaDescriptionStatementEditData['statement'];
         }
     },
     actions: {
