@@ -31,7 +31,7 @@ if(!$GLOBALS['SYMB_UID']) {
         ?>
         <div id="mainContainer">
             <div id="breadcrumbs">
-                <a href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Taxonomic Thesaurus Manager</span>
             </div>
             <div v-if="isEditor" class="q-pa-md">
