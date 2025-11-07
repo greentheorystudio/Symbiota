@@ -78,80 +78,79 @@ include_once(__DIR__ . '/services/SanitizerService.php');
             <q-btn class="horizontalDropDownButton text-capitalize" :href="clientRoot + '/sitemap.php'" label="Sitemap" aria-label="Site map" stretch flat no-wrap tabindex="0"></q-btn>
         </q-toolbar>
     </div>
-    <script>
-        const navBarData = [
-            {url: CLIENT_ROOT + '/index.php', label: 'Home'},
-            {url: CLIENT_ROOT + '/collections/list.php', label: 'Search Collections'},
-            {url: CLIENT_ROOT + '/spatial/index.php', label: 'Spatial Module', newTab: true},
-            {url: CLIENT_ROOT + '/media/search.php', label: 'Image Search'},
-            {
-                label: 'Interactive Tools',
-                subItems: [
-                    {url: CLIENT_ROOT + '/checklists/checklist.php', label: 'Dynamic Checklist'},
-                    {url: CLIENT_ROOT + '/ident/key.php', label: 'Dynamic Key'}
-                ]
-            }
-        ];
-
-        document.addEventListener("DOMContentLoaded", function() {
+    <script type="text/javascript">
+        const REQUEST_PATH = "<?php echo SanitizerService::getCleanedRequestPath(true); ?>";
+        document.addEventListener("DOMContentLoaded", () => {
             const dropDownNavBar = Vue.createApp({
-                data() {
-                    return {
-                        curIndex: Vue.ref(0),
-                        imgArray: Vue.ref([
-                            "url(/content/imglib/layout/Image01.JPG)",
-                            "url(/content/imglib/layout/Image02.JPG)",
-                            "url(/content/imglib/layout/Image03.jpg)",
-                            "url(/content/imglib/layout/Image05.JPG)",
-                            "url(/content/imglib/layout/Image07.jpg)",
-                            "url(/content/imglib/layout/Image08.jpg)",
-                            "url(/content/imglib/layout/Image09.jpg)",
-                            "url(/content/imglib/layout/Image10.jpg)",
-                            "url(/content/imglib/layout/Image11.jpg)",
-                            "url(/content/imglib/layout/Image12.jpg)"
-                        ]),
-                        imgDuration: Vue.ref(4000),
-                        navBarData: navBarData,
-                        navBarToggle: Vue.ref({}),
-                        photographerArray: Vue.ref([
-                            "Denise Knapp",
-                            "Denise Knapp",
-                            "",
-                            "",
-                            "Morgan Ball",
-                            "Morgan Ball",
-                            "Morgan Ball",
-                            "Morgan Ball",
-                            "Morgan Ball",
-                            "Morgan Ball"
-                        ]),
-                        userDisplayName: USER_DISPLAY_NAME,
-                        windowWidth: Vue.ref(0)
+                setup() {
+                    const store = useBaseStore();
+
+                    const storeRefs = Pinia.storeToRefs(store);
+                    const clientRoot = store.getClientRoot;
+                    const curIndex = Vue.ref(0);
+                    const imgArray = [
+                        "url(/content/imglib/layout/Image01.JPG)",
+                        "url(/content/imglib/layout/Image02.JPG)",
+                        "url(/content/imglib/layout/Image03.jpg)",
+                        "url(/content/imglib/layout/Image05.JPG)",
+                        "url(/content/imglib/layout/Image07.jpg)",
+                        "url(/content/imglib/layout/Image08.jpg)",
+                        "url(/content/imglib/layout/Image09.jpg)",
+                        "url(/content/imglib/layout/Image10.jpg)",
+                        "url(/content/imglib/layout/Image11.jpg)",
+                        "url(/content/imglib/layout/Image12.jpg)"
+                    ];
+                    const imgDuration = 4000;
+                    const navBarData = Vue.ref([
+                        {url: (clientRoot + '/index.php'), label: 'Home'},
+                        {url: (clientRoot + '/collections/list.php'), label: 'Search Collections'},
+                        {url: (clientRoot + '/spatial/index.php'), label: 'Spatial Module', newTab: true},
+                        {url: (clientRoot + '/media/search.php'), label: 'Image Search'},
+                        {
+                            label: 'Interactive Tools',
+                            subItems: [
+                                {url: (clientRoot + '/checklists/checklist.php'), label: 'Dynamic Checklist'},
+                                {url: (clientRoot + '/ident/key.php'), label: 'Dynamic Key'}
+                            ]
+                        }
+                    ]);
+                    let navBarTimeout = null;
+                    const navBarToggle = Vue.ref({});
+                    const photographerArray = [
+                        "Denise Knapp",
+                        "Denise Knapp",
+                        "",
+                        "",
+                        "Morgan Ball",
+                        "Morgan Ball",
+                        "Morgan Ball",
+                        "Morgan Ball",
+                        "Morgan Ball",
+                        "Morgan Ball"
+                    ];
+                    const requestPath = REQUEST_PATH;
+                    const userDisplayName = storeRefs.getUserDisplayName;
+                    const windowWidth = Vue.ref(0);
+
+                    function  handleResize() {
+                        windowWidth.value = window.innerWidth;
                     }
-                },
-                mounted() {
-                    this.setNavBarData();
-                    window.addEventListener('resize', this.handleResize);
-                    this.handleResize();
-                    this.slideShow();
-                },
-                methods: {
-                    handleResize() {
-                        this.windowWidth = window.innerWidth;
-                    },
-                    logout() {
+
+                    function logout() {
                         const url = profileApiUrl + '?action=logout';
                         fetch(url)
-                            .then(() => {
-                                window.location.href = CLIENT_ROOT + '/index.php';
-                            })
-                    },
-                    navbarToggleOff(id) {
+                        .then(() => {
+                            window.location.href = clientRoot + '/index.php';
+                        })
+                    }
+
+                    function navbarToggleOff(id) {
                         this.navBarTimeout = setTimeout(() => {
                             this.navBarToggle[Number(id)] = false;
                         }, 400);
-                    },
-                    navbarToggleOn(id) {
+                    }
+
+                    function navbarToggleOn(id) {
                         clearTimeout(this.navBarTimeout);
                         for(let i in this.navBarToggle){
                             if(this.navBarToggle.hasOwnProperty(i) && Number(i) !== Number(id)){
@@ -159,36 +158,57 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                             }
                         }
                         this.navBarToggle[Number(id)] = true;
-                    },
-                    setNavBarData() {
-                        let indexId = 1;
-                        this.navBarData.forEach((dataObj) => {
+                    }
+
+                    function setNavBarData() {
+                        navBarData.value.forEach((dataObj, index) => {
                             if(dataObj.hasOwnProperty('subItems')){
-                                dataObj['id'] = indexId;
-                                this.navBarToggle[indexId] = false;
-                                indexId++;
+                                dataObj['id'] = index;
+                                navBarToggle[index] = false;
                             }
                         });
-                    },
-                    slideShow() {
-                        setTimeout(() => {
-                            document.getElementById('bannerContainer').style.backgroundImage = this.imgArray[this.curIndex];
-                            if(this.photographerArray[this.curIndex] !== ""){
-                                document.getElementById('imageCredit').innerHTML = '<div style="background-color:white;opacity:60%;color:black;padding:5px;font-size: 12px;">(photographer: ' + this.photographerArray[this.curIndex] + ')</div>';
-                            }
-                            else{
-                                document.getElementById('imageCredit').innerHTML = '';
-                            }
-                        },1000);
-                        this.curIndex++;
-                        if(this.curIndex === this.imgArray.length) {
-                            this.curIndex = 0;
-                        }
-                        setTimeout(this.slideShow, this.imgDuration);
                     }
+
+                    function slideShow() {
+                        document.getElementById('bannerContainer').style.backgroundImage = imgArray[curIndex.value];
+                        if(photographerArray[curIndex.value] !== ""){
+                            document.getElementById('imageCredit').innerHTML = '<div style="background-color:white;opacity:60%;color:black;padding:5px;font-size: 12px;">(photographer: ' + photographerArray[curIndex.value] + ')</div>';
+                        }
+                        else{
+                            document.getElementById('imageCredit').innerHTML = '';
+                        }
+                        curIndex.value++;
+                        if(curIndex.value === imgArray.length) {
+                            curIndex.value = 0;
+                        }
+                        setTimeout(slideShow, imgDuration);
+                    }
+
+                    Vue.onMounted(() => {
+                        setNavBarData();
+                        window.addEventListener('resize', handleResize);
+                        handleResize();
+                        slideShow();
+                    });
+
+                    return {
+                        clientRoot,
+                        navBarData,
+                        navBarToggle,
+                        navBarTimeout,
+                        requestPath,
+                        userDisplayName,
+                        windowWidth,
+                        navbarToggleOff,
+                        navbarToggleOn,
+                        setNavBarData,
+                        handleResize,
+                        logout
+                    };
                 }
             });
             dropDownNavBar.use(Quasar, { config: {} });
+            dropDownNavBar.use(Pinia.createPinia());
             dropDownNavBar.mount('#topNavigation');
         });
     </script>
