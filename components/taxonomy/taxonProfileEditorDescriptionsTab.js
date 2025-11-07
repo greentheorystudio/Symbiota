@@ -84,29 +84,27 @@ const taxonProfileEditorDescriptionsTab = {
 
         const descriptionArr = Vue.computed(() => {
             const displayArr = [];
-            if(descriptionBlockArr.value.length > 0 && Object.keys(descriptionStatementData.value).length > 0){
+            if(descriptionBlockArr.value.length > 0){
                 descriptionBlockArr.value.forEach((desc) => {
-                    if(descriptionStatementData.value.hasOwnProperty(desc['tdbid']) && descriptionStatementData.value[desc['tdbid']].length > 0){
-                        const description = Object.assign({}, desc);
-                        description['stmts'] = [];
-                        descriptionStatementData.value[desc['tdbid']].forEach((stmt) => {
-                            if(stmt['statement'] && stmt['statement'] !== ''){
-                                const statement = Object.assign({}, stmt);
-                                if(statement['statement'].startsWith('<p>')){
-                                    statement['statement'] = statement['statement'].slice(3);
-                                }
-                                if(statement['statement'].endsWith('</p>')){
-                                    statement['statement'] = statement['statement'].substring(0, statement['statement'].length - 4);
-                                }
-                                if(Number(statement['displayheader']) === 1 && statement['heading'] && statement['heading'] !== ''){
-                                    const headingText = '<span class="desc-statement-heading">' + statement['heading'] + '</span>: ';
-                                    statement['statement'] = headingText + statement['statement'];
-                                }
-                                description['stmts'].push(statement);
+                    const description = Object.assign({}, desc);
+                    description['stmts'] = [];
+                    descriptionStatementData.value[desc['tdbid']].forEach((stmt) => {
+                        if(stmt['statement'] && stmt['statement'] !== ''){
+                            const statement = Object.assign({}, stmt);
+                            if(statement['statement'].startsWith('<p>')){
+                                statement['statement'] = statement['statement'].slice(3);
                             }
-                        });
-                        displayArr.push(description);
-                    }
+                            if(statement['statement'].endsWith('</p>')){
+                                statement['statement'] = statement['statement'].substring(0, statement['statement'].length - 4);
+                            }
+                            if(Number(statement['displayheader']) === 1 && statement['heading'] && statement['heading'] !== ''){
+                                const headingText = '<span class="desc-statement-heading">' + statement['heading'] + '</span>: ';
+                                statement['statement'] = headingText + statement['statement'];
+                            }
+                            description['stmts'].push(statement);
+                        }
+                    });
+                    displayArr.push(description);
                 });
             }
             return displayArr;
