@@ -39,7 +39,6 @@ const taxonProfileEditorMediaTab = {
                 :media-id="editMediaId"
                 :show-popup="showMediaEditorPopup"
                 :taxon="taxon"
-                :upload-path="uploadPath"
                 @media:updated="processMediaUpdate"
                 @close:popup="showMediaEditorPopup = false"
             ></media-editor-popup>

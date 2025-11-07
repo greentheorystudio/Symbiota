@@ -36,9 +36,6 @@ const useTaxaVernacularStore = Pinia.defineStore('taxa-vernacular', {
             }
             return exist;
         },
-        getTaxaVernacularID(state) {
-            return state.taxaVernacularId;
-        },
         getTaxaVernacularValid(state) {
             return !!state.taxaVernacularEditData['vernacularname'];
         }

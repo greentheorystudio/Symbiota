@@ -35,8 +35,8 @@ if(!$GLOBALS['SYMB_UID']) {
                 <span class="text-bold">Taxonomic Thesaurus Manager</span>
             </div>
             <div v-if="isEditor" class="q-pa-md">
-                <div class="q-mb-sm">
-                    <h1>Taxonomic Thesaurus Manager</h1>
+                <div class="q-mb-sm text-h5 text-bold">
+                    Taxonomic Thesaurus Manager
                 </div>
                 <q-card class="top-tool-container q-mb-md">
                     <q-card-section>
