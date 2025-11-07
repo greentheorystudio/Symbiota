@@ -1,17 +1,21 @@
-const occurrenceGeneticRecordLinkageEditorPopup = {
+const taxonProfileEditorDescriptionStatementEditorPopup = {
     props: {
-        geneticLinkageId: {
+        blockId: {
             type: Number,
             default: 0
         },
         showPopup: {
             type: Boolean,
             default: false
+        },
+        statementId: {
+            type: Number,
+            default: 0
         }
     },
     template: `
         <q-dialog class="z-max" v-model="showPopup" persistent>
-            <q-card class="md-popup overflow-hidden">
+            <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
@@ -22,47 +26,42 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                         <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
-                                    <template v-if="geneticLinkageId > 0 && editsExist">
+                                    <template v-if="statementId > 0 && editsExist">
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <template v-if="geneticLinkageId > 0">
-                                        <q-btn color="secondary" @click="saveGeneticLinkageEdits();" label="Save Edits" :disabled="!editsExist || !geneticLinkageValid" tabindex="0" />
+                                    <template v-if="statementId > 0">
+                                        <q-btn color="secondary" @click="saveStatementEdits();" label="Save Description Statement Edits" :disabled="!editsExist || !statementValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addGeneticLinkage();" label="Add Genetic Record Linkage" :disabled="!geneticLinkageValid" tabindex="0" />
+                                        <q-btn color="secondary" @click="addStatement();" label="Add Description Statement" :disabled="!statementValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Name" :value="geneticLinkageData['resourcename']" @update:value="(value) => updateGeneticLinkageData('resourcename', value)"></text-field-input-element>
+                                    <text-field-input-element label="Heading" :value="statementData['heading']" @update:value="(value) => updateStatementData('heading', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Identifier" :value="geneticLinkageData['identifier']" @update:value="(value) => updateGeneticLinkageData('identifier', value)"></text-field-input-element>
+                                    <checkbox-input-element label="Display Header" :value="statementData['displayheader']" @update:value="(value) => updateStatementData('displayheader', value)"></checkbox-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Locus" :value="geneticLinkageData['locus']" @update:value="(value) => updateGeneticLinkageData('locus', value)"></text-field-input-element>
+                                    <wysiwyg-input-element :value="statementData['statement']" @update:value="(value) => updateStatementData('statement', value)"></wysiwyg-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="URL" :value="geneticLinkageData['resourceurl']" @update:value="(value) => updateGeneticLinkageData('resourceurl', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="statementData['sortsequence']" min-value="1" :clearable="false" @update:value="(value) => updateStatementData('sortsequence', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Notes" :value="geneticLinkageData['notes']" @update:value="(value) => updateGeneticLinkageData('notes', value)"></text-field-input-element>
-                                </div>
-                            </div>
-                            <div v-if="Number(geneticLinkageId) > 0" class="row justify-end q-gutter-md">
+                            <div v-if="Number(statementId) > 0" class="row justify-end q-gutter-md">
                                 <div>
-                                    <q-btn color="negative" @click="deleteGeneticLinkage();" label="Delete Genetic Record Linkage" tabindex="0" />
+                                    <q-btn color="negative" @click="deleteStatement();" label="Delete Description Statement" tabindex="0" />
                                 </div>
                             </div>
                         </div>
@@ -73,32 +72,34 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
+        'checkbox-input-element': checkboxInputElement,
         'confirmation-popup': confirmationPopup,
-        'text-field-input-element': textFieldInputElement
+        'text-field-input-element': textFieldInputElement,
+        'wysiwyg-input-element': wysiwygInputElement
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = useOccurrenceStore();
+        const taxaStore = useTaxaStore();
 
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const geneticLinkageData = Vue.computed(() => occurrenceStore.getGeneticLinkData);
-        const geneticLinkageValid = Vue.computed(() => occurrenceStore.getGeneticLinkValid);
-        const editsExist = Vue.computed(() => occurrenceStore.getGeneticLinkEditsExist);
-
+        const editsExist = Vue.computed(() => taxaStore.getTaxaDescriptionStatementEditsExist);
+        const statementData = Vue.computed(() => taxaStore.getTaxaDescriptionStatementData);
+        const statementValid = Vue.computed(() => taxaStore.getTaxaDescriptionStatementValid);
+        
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
-        function addGeneticLinkage() {
-            occurrenceStore.createOccurrenceGeneticLinkageRecord((newLinkId) => {
-                if(newLinkId > 0){
-                    showNotification('positive','Genetic record linkage added successfully.');
+        function addStatement() {
+            taxaStore.createTaxaDescriptionStatementRecord(props.blockId, (newBlockId) => {
+                if(newBlockId > 0){
+                    showNotification('positive','Description statement added successfully.');
                     context.emit('close:popup');
                 }
                 else{
-                    showNotification('negative', 'There was an error adding the new genetic record linkage.');
+                    showNotification('negative', 'There was an error adding the new description statement.');
                 }
             });
         }
@@ -107,32 +108,32 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             context.emit('close:popup');
         }
 
-        function deleteGeneticLinkage() {
-            const confirmText = 'Are you sure you want to delete this genetic record linkage? This action cannot be undone.';
+        function deleteStatement() {
+            const confirmText = 'Are you sure you want to delete this description statement? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    occurrenceStore.deleteGeneticLinkageRecord((res) => {
+                    taxaStore.deleteTaxaDescriptionStatementRecord((res) => {
                         if(res === 1){
-                            showNotification('positive','Genetic record linkage has been deleted.');
+                            showNotification('positive','Description statement has been deleted.');
                             context.emit('close:popup');
                         }
                         else{
-                            showNotification('negative', 'There was an error deleting the genetic record linkage.');
+                            showNotification('negative', 'There was an error deleting the description statement.');
                         }
                     });
                 }
             }});
         }
 
-        function saveGeneticLinkageEdits() {
+        function saveStatementEdits() {
             showWorking('Saving edits...');
-            occurrenceStore.updateOccurrenceGeneticLinkageRecord((res) => {
+            taxaStore.updateTaxaDescriptionStatementRecord((res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the genetic record linkage edits.');
+                    showNotification('negative', 'There was an error saving the description statement edits.');
                 }
                 context.emit('close:popup');
             });
@@ -145,14 +146,14 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             }
         }
 
-        function updateGeneticLinkageData(key, value) {
-            occurrenceStore.updateGeneticLinkageEditData(key, value);
+        function updateStatementData(key, value) {
+            taxaStore.updateTaxaDescriptionStatementEditData(key, value);
         }
 
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setCurrentGeneticLinkageRecord(props.geneticLinkageId);
+            taxaStore.setCurrentTaxaDescriptionStatementRecord(props.blockId, props.statementId);
         });
 
         return {
@@ -160,13 +161,13 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             contentRef,
             contentStyle,
             editsExist,
-            geneticLinkageData,
-            geneticLinkageValid,
-            addGeneticLinkage,
+            statementData,
+            statementValid,
+            addStatement,
             closePopup,
-            deleteGeneticLinkage,
-            saveGeneticLinkageEdits,
-            updateGeneticLinkageData
+            deleteStatement,
+            saveStatementEdits,
+            updateStatementData
         }
     }
 };

@@ -34,7 +34,7 @@ if($action && SanitizerService::validateInternalRequest()){
         echo $users->createUser(json_decode($_POST['user'], true));
     }
     elseif($action === 'getUserByUid' && array_key_exists('uid', $_POST)){
-        echo json_encode($users->getUserByUid($_POST['uid']));
+        echo json_encode($users->getUserByUid($_POST['uid']), JSON_FORCE_OBJECT);
     }
     elseif($action === 'sendConfirmationEmail' && array_key_exists('uid', $_POST)){
         echo $users->sendConfirmationEmail($_POST['uid']);

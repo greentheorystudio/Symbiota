@@ -10,7 +10,7 @@ const useTaxaVernacularStore = Pinia.defineStore('taxa-vernacular', {
             notes: null,
             username: null,
             isupperterm: null,
-            sortsequence: null
+            sortsequence: 1
         },
         taxaVernacularArr: [],
         taxaVernacularData: {},
@@ -35,9 +35,6 @@ const useTaxaVernacularStore = Pinia.defineStore('taxa-vernacular', {
                 }
             }
             return exist;
-        },
-        getTaxaVernacularID(state) {
-            return state.taxaVernacularId;
         },
         getTaxaVernacularValid(state) {
             return !!state.taxaVernacularEditData['vernacularname'];
@@ -90,7 +87,7 @@ const useTaxaVernacularStore = Pinia.defineStore('taxa-vernacular', {
             }
             this.taxaVernacularEditData = Object.assign({}, this.taxaVernacularData);
         },
-        setTaxaVernacularArr(tid) {
+        setTaxonVernacularArr(tid) {
             const formData = new FormData();
             formData.append('tid', tid.toString());
             formData.append('action', 'getCommonNamesByTid');

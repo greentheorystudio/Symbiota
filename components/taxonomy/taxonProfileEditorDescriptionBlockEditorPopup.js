@@ -1,6 +1,6 @@
-const occurrenceGeneticRecordLinkageEditorPopup = {
+const taxonProfileEditorDescriptionBlockEditorPopup = {
     props: {
-        geneticLinkageId: {
+        blockId: {
             type: Number,
             default: 0
         },
@@ -22,47 +22,52 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                         <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
-                                    <template v-if="geneticLinkageId > 0 && editsExist">
+                                    <template v-if="blockId > 0 && editsExist">
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <template v-if="geneticLinkageId > 0">
-                                        <q-btn color="secondary" @click="saveGeneticLinkageEdits();" label="Save Edits" :disabled="!editsExist || !geneticLinkageValid" tabindex="0" />
+                                    <template v-if="blockId > 0">
+                                        <q-btn color="secondary" @click="saveBlockEdits();" label="Save Description Block Edits" :disabled="!editsExist || !blockValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addGeneticLinkage();" label="Add Genetic Record Linkage" :disabled="!geneticLinkageValid" tabindex="0" />
+                                        <q-btn color="secondary" @click="addBlock();" label="Add Description Block" :disabled="!blockValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Name" :value="geneticLinkageData['resourcename']" @update:value="(value) => updateGeneticLinkageData('resourcename', value)"></text-field-input-element>
+                                    <single-language-auto-complete label="Language" :language="blockData['language']" @update:language="processLanguageChange"></single-language-auto-complete>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Identifier" :value="geneticLinkageData['identifier']" @update:value="(value) => updateGeneticLinkageData('identifier', value)"></text-field-input-element>
+                                    <text-field-input-element label="Caption" :value="blockData['caption']" @update:value="(value) => updateBlockData('caption', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Locus" :value="geneticLinkageData['locus']" @update:value="(value) => updateGeneticLinkageData('locus', value)"></text-field-input-element>
+                                    <text-field-input-element label="Source" :value="blockData['source']" @update:value="(value) => updateBlockData('source', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="URL" :value="geneticLinkageData['resourceurl']" @update:value="(value) => updateGeneticLinkageData('resourceurl', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" label="Source URL" :value="blockData['sourceurl']" @update:value="(value) => updateBlockData('sourceurl', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Notes" :value="geneticLinkageData['notes']" @update:value="(value) => updateGeneticLinkageData('notes', value)"></text-field-input-element>
+                                    <text-field-input-element label="Notes" :value="blockData['notes']" @update:value="(value) => updateBlockData('notes', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <div v-if="Number(geneticLinkageId) > 0" class="row justify-end q-gutter-md">
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="int" label="Display Level" :value="blockData['displaylevel']" min-value="1" :clearable="false" @update:value="(value) => updateBlockData('displaylevel', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div v-if="Number(blockId) > 0" class="row justify-end q-gutter-md">
                                 <div>
-                                    <q-btn color="negative" @click="deleteGeneticLinkage();" label="Delete Genetic Record Linkage" tabindex="0" />
+                                    <q-btn color="negative" @click="deleteBlock();" label="Delete Description Block" tabindex="0" />
                                 </div>
                             </div>
                         </div>
@@ -74,31 +79,32 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
     `,
     components: {
         'confirmation-popup': confirmationPopup,
+        'single-language-auto-complete': singleLanguageAutoComplete,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = useOccurrenceStore();
+        const taxaStore = useTaxaStore();
 
+        const blockData = Vue.computed(() => taxaStore.getTaxaDescriptionBlockData);
+        const blockValid = Vue.computed(() => taxaStore.getTaxaDescriptionBlockValid);
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const geneticLinkageData = Vue.computed(() => occurrenceStore.getGeneticLinkData);
-        const geneticLinkageValid = Vue.computed(() => occurrenceStore.getGeneticLinkValid);
-        const editsExist = Vue.computed(() => occurrenceStore.getGeneticLinkEditsExist);
-
+        const editsExist = Vue.computed(() => taxaStore.getTaxaDescriptionBlockEditsExist);
+        
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
-        function addGeneticLinkage() {
-            occurrenceStore.createOccurrenceGeneticLinkageRecord((newLinkId) => {
-                if(newLinkId > 0){
-                    showNotification('positive','Genetic record linkage added successfully.');
+        function addBlock() {
+            taxaStore.createTaxaDescriptionBlockRecord((newBlockId) => {
+                if(newBlockId > 0){
+                    showNotification('positive','Description block added successfully.');
                     context.emit('close:popup');
                 }
                 else{
-                    showNotification('negative', 'There was an error adding the new genetic record linkage.');
+                    showNotification('negative', 'There was an error adding the new description block.');
                 }
             });
         }
@@ -107,32 +113,37 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             context.emit('close:popup');
         }
 
-        function deleteGeneticLinkage() {
-            const confirmText = 'Are you sure you want to delete this genetic record linkage? This action cannot be undone.';
+        function deleteBlock() {
+            const confirmText = 'Are you sure you want to delete this description block? This will delete both the description block and any statements associated with it, and cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    occurrenceStore.deleteGeneticLinkageRecord((res) => {
+                    taxaStore.deleteTaxaDescriptionBlockRecord((res) => {
                         if(res === 1){
-                            showNotification('positive','Genetic record linkage has been deleted.');
+                            showNotification('positive','Description block has been deleted.');
                             context.emit('close:popup');
                         }
                         else{
-                            showNotification('negative', 'There was an error deleting the genetic record linkage.');
+                            showNotification('negative', 'There was an error deleting the description block.');
                         }
                     });
                 }
             }});
         }
 
-        function saveGeneticLinkageEdits() {
+        function processLanguageChange(langObj) {
+            updateBlockData('language', langObj['iso-1']);
+            updateBlockData('langid', langObj['id']);
+        }
+
+        function saveBlockEdits() {
             showWorking('Saving edits...');
-            occurrenceStore.updateOccurrenceGeneticLinkageRecord((res) => {
+            taxaStore.updateTaxaDescriptionBlockRecord((res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the genetic record linkage edits.');
+                    showNotification('negative', 'There was an error saving the description block edits.');
                 }
                 context.emit('close:popup');
             });
@@ -145,28 +156,29 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             }
         }
 
-        function updateGeneticLinkageData(key, value) {
-            occurrenceStore.updateGeneticLinkageEditData(key, value);
+        function updateBlockData(key, value) {
+            taxaStore.updateTaxaDescriptionBlockEditData(key, value);
         }
 
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setCurrentGeneticLinkageRecord(props.geneticLinkageId);
+            taxaStore.setCurrentTaxaDescriptionBlockRecord(props.blockId);
         });
 
         return {
+            blockData,
+            blockValid,
             confirmationPopupRef,
             contentRef,
             contentStyle,
             editsExist,
-            geneticLinkageData,
-            geneticLinkageValid,
-            addGeneticLinkage,
+            addBlock,
             closePopup,
-            deleteGeneticLinkage,
-            saveGeneticLinkageEdits,
-            updateGeneticLinkageData
+            deleteBlock,
+            processLanguageChange,
+            saveBlockEdits,
+            updateBlockData
         }
     }
 };
