@@ -112,7 +112,7 @@ const useTaxaDescriptionBlockStore = Pinia.defineStore('taxa-description-block',
             const formData = new FormData();
             formData.append('tdbid', this.taxaDescriptionBlockId.toString());
             formData.append('descriptionData', JSON.stringify(this.taxaDescriptionBlockUpdateData));
-            formData.append('action', 'updateCommonNameRecord');
+            formData.append('action', 'updateTaxonDescriptionBlockRecord');
             fetch(taxonDescriptionBlockApiUrl, {
                 method: 'POST',
                 body: formData
