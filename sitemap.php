@@ -80,10 +80,10 @@ header('Content-Type: text/html; charset=UTF-8' );
                                         <template v-if="isAdmin || taxonomy">
                                             <li><a :href="(clientRoot + '/taxa/thesaurus/index.php')" tabindex="0">Taxonomic Thesaurus Manager</a></li>
                                             <li><a :href="(clientRoot + '/taxa/thesaurus/identifiermanager.php')" tabindex="0">Taxonomic Identifier Manager</a></li>
-                                            <li><a :href="(clientRoot + '/taxa/taxonomy/index.php')" tabindex="0">Taxonomy Editor</a></li>
+                                            <li><a :href="(clientRoot + '/taxa/taxonomy/index.php')" tabindex="0">Taxon Editor</a></li>
                                         </template>
                                         <template v-if="isAdmin || taxonProfile">
-                                            <li><a :href="(clientRoot + '/taxa/profile/index.php')" tabindex="0">Taxon Profile Manager</a></li>
+                                            <li><a :href="(clientRoot + '/taxa/profile/index.php')" tabindex="0">Taxon Profile Editor</a></li>
                                             <li><a :href="(clientRoot + '/taxa/media/batchimageloader.php')" tabindex="0">Taxa Media Batch Uploader</a></li>
                                             <li><a :href="(clientRoot + '/taxa/media/eolimporter.php')" tabindex="0">Encyclopedia of Life Media Importer</a></li>
                                         </template>
