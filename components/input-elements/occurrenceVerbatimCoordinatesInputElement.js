@@ -14,7 +14,7 @@ const occurrenceCoordinateToolPopup = {
         }
     },
     template: `
-        <q-card>
+        <q-card class="z-max">
             <q-tabs v-model="tab" dense class="text-grey" active-color="primary" indicator-color="primary" align="justify" narrow-indicator>
                 <q-tab name="dms" label="DMS"></q-tab>
                 <q-tab name="ddm" label="DDM"></q-tab>

@@ -10,7 +10,7 @@ const checklistTaxaEditorPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" seamless square position="right">
+        <q-dialog class="z-max" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" seamless square position="right">
             <q-card class="side-popup-right overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>

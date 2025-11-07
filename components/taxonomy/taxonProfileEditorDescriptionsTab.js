@@ -17,8 +17,8 @@ const taxonProfileEditorDescriptionsTab = {
                                     <div><span class="text-subtitle1 text-bold">Source URL: </span>{{ block['sourceurl'] }}</div>
                                     <div><span class="text-subtitle1 text-bold">Notes: </span>{{ block['notes'] }}</div>
                                 </div>
-                                <div class="column">
-                                    <div>
+                                <div class="column q-gutter-sm">
+                                    <div class="row justify-end">
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openBlockEditorPopup(block['tdbid']);" icon="fas fa-edit" dense aria-label="Edit description block record" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Edit description block record
@@ -29,28 +29,28 @@ const taxonProfileEditorDescriptionsTab = {
                                         <q-btn color="secondary" @click="openStatementEditorPopup(block['tdbid'], 0);" label="Add Description Statement" tabindex="0" />
                                     </div>
                                 </div>
-                                <template v-if="block['stmts'].length > 0">
-                                    <template v-for="statement in block['stmts']">
-                                        <q-card flat bordered>
-                                            <q-card-section class="column">
-                                                <div class="row justify-end">
-                                                    <div>
-                                                        <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openStatementEditorPopup(block['tdbid'], statement['tdsid']);" icon="fas fa-edit" dense aria-label="Edit description block record" tabindex="0">
-                                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                                Edit description statement record
-                                                            </q-tooltip>
-                                                        </q-btn>
-                                                    </div>
-                                                </div>
-                                                <div v-html="statement['statement']"></div>
-                                            </q-card-section>
-                                        </q-card>
-                                    </template>
-                                </template>
-                                <template v-else>
-                                    <div class="q-mt-sm text-body1 text-bold">There are no statements for this description block yet, click the Add Description Statement button above to add the first one</div>
-                                </template>
                             </div>
+                            <template v-if="block['stmts'].length > 0">
+                                <template v-for="statement in block['stmts']">
+                                    <q-card flat bordered>
+                                        <q-card-section class="column">
+                                            <div class="row justify-end">
+                                                <div>
+                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openStatementEditorPopup(block['tdbid'], statement['tdsid']);" icon="fas fa-edit" dense aria-label="Edit description block record" tabindex="0">
+                                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                            Edit description statement record
+                                                        </q-tooltip>
+                                                    </q-btn>
+                                                </div>
+                                            </div>
+                                            <div v-html="statement['statement']"></div>
+                                        </q-card-section>
+                                    </q-card>
+                                </template>
+                            </template>
+                            <template v-else>
+                                <div class="q-mt-sm text-body1 text-bold">There are no statements for this description block yet, click the Add Description Statement button above to add the first one</div>
+                            </template>
                         </q-card-section>
                     </q-card>
                 </template>
