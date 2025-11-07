@@ -112,6 +112,7 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             {value: 'ylgnbu', label: 'Ylgnbu'},
             {value: 'ylorrd', label: 'Ylorrd'}
         ],
+        recordPage: 1,
         symbologyOptions: [
             {field: 'collectionname', label: 'Collections'},
             {field: 'sciname', label: 'Taxa'}
@@ -127,8 +128,16 @@ const useSpatialStore = Pinia.defineStore('spatial', {
         getRasterColorScales(state) {
             return state.rasterColorScales;
         },
+        getRecordPage(state) {
+            return state.recordPage;
+        },
         getSymbologyOptions(state) {
             return state.symbologyOptions;
+        }
+    },
+    actions: {
+        updateRecordPage(page) {
+            this.recordPage = Number(page);
         }
     }
 });

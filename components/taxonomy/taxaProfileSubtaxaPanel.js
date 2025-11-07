@@ -38,7 +38,7 @@ const taxaProfileSubtaxaPanel = {
                                         <template v-else>
                                             <div class="no-spptaxon-image">
                                                 <template v-if="isEditor">
-                                                    <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + spptaxon.tid)" aria-label="Add an Image" tabindex="0">Add an Image</a>
+                                                    <a :href="(clientRoot + '/taxa/profile/index.php?tid=' + spptaxon.tid)" aria-label="Add an Image" tabindex="0">Add an Image</a>
                                                 </template>
                                                 <template v-else>
                                                     Image not available
@@ -82,7 +82,7 @@ const taxaProfileSubtaxaPanel = {
                                         <template v-else>
                                             <div class="no-spptaxon-image">
                                                 <template v-if="isEditor">
-                                                    <a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + spptaxon.tid)" aria-label="Add an Image" tabindex="0">Add an Image</a>
+                                                    <a :href="(clientRoot + '/taxa/profile/index.php?tid=' + spptaxon.tid)" aria-label="Add an Image" tabindex="0">Add an Image</a>
                                                 </template>
                                                 <template v-else>
                                                     Image not available

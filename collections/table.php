@@ -78,7 +78,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         <search-data-downloader :spatial="false"></search-data-downloader>
                     </div>
                     <div v-if="recordDataArr.length > 0 && Number(searchTermsCollId) > 0 && isEditor" class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" tabindex="0">
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Batch Update Tool
                             </q-tooltip>
@@ -152,7 +152,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         <search-data-downloader :spatial="false"></search-data-downloader>
                     </div>
                     <div v-if="Number(searchTermsCollId) > 0 && isEditor" class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" tabindex="0">
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                 Batch Update Tool
                             </q-tooltip>
@@ -359,6 +359,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
                     const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
                     const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
+                    const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
                     const sortDirection = Vue.ref('ASC');
@@ -390,7 +391,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function loadRecords(initial = false) {
-                        if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                        if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             searchStore.clearQueryOccidArr();
                             showWorking('Loading...');
                             const options = {
@@ -405,7 +406,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     if(!initial){
                                         displayQueryPopup.value = false;
                                     }
-                                    setTableRecordData(pageNumber.value);
+                                    setTableRecordData(1);
                                 }
                                 else{
                                     hideWorking();
@@ -505,7 +506,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             if(stArrJson){
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
-                            if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                            if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                                 if(searchTerms.value.hasOwnProperty('tableIndex')){
                                     pageNumber.value = Number(searchTerms.value['tableIndex']);
                                 }
@@ -542,6 +543,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchTermsJson,
                         searchTermsSortDirection,
                         searchTermsSortField,
+                        searchTermsValid,
                         showRecordInfoWindow,
                         showSpatialPopup,
                         sortDirection,

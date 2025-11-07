@@ -630,12 +630,7 @@ class OccurrenceLabel{
 
     public function getQRCodePng($occid, $size)
     {
-        $urlStr = 'http://';
-        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-            $urlStr = 'https://';
-        }
-        $urlStr .= $_SERVER['HTTP_HOST'];
-        $urlStr .= $GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?fullwindow=1&occid=' . $occid;
+        $urlStr = SanitizerService::getFullUrlPathPrefix().'/collections/individual/index.php?fullwindow=1&occid=' . $occid;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'http://chart.apis.google.com/chart');
         curl_setopt($ch, CURLOPT_POST, true);

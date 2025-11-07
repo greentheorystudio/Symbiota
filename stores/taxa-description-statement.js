@@ -33,9 +33,6 @@ const useTaxaDescriptionStatementStore = Pinia.defineStore('taxa-description-sta
             }
             return exist;
         },
-        getTaxaDescriptionStatementID(state) {
-            return state.taxaDescriptionStatementId;
-        },
         getTaxaDescriptionStatementValid(state) {
             return (state.taxaDescriptionStatementEditData['tdbid'] && state.taxaDescriptionStatementEditData['statement']);
         }
@@ -87,7 +84,7 @@ const useTaxaDescriptionStatementStore = Pinia.defineStore('taxa-description-sta
             }
             this.taxaDescriptionStatementEditData = Object.assign({}, this.taxaDescriptionStatementData);
         },
-        setTaxaDescriptionStatementArr(tid) {
+        setTaxonDescriptionStatementArr(tid) {
             const formData = new FormData();
             formData.append('tid', tid.toString());
             formData.append('action', 'getTaxonDescriptionStatements');

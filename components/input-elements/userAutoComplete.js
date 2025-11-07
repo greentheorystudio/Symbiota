@@ -16,20 +16,24 @@ const userAutoComplete = {
             type: Number,
             default: 0
         },
+        userType: {
+            type: String,
+            default: 'confirmed'
+        },
         value: {
             type: String,
             default: null
         }
     },
     template: `
-        <q-select v-model="value" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @blur="blurAction" :options="autocompleteOptions" @filter="getOptions" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
-            <template v-if="!disabled && (value || definition)" v-slot:append>
+        <q-select v-model="currentValue" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" :options="autocompleteOptions" @filter="getOptions" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
+            <template v-if="!disabled && (currentValue || definition)" v-slot:append>
                 <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         See field definition
                     </q-tooltip>
                 </q-icon>
-                <q-icon role="button" v-if="value" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
+                <q-icon role="button" v-if="currentValue" name="cancel" class="cursor-pointer" @click="processValueChange(null);" @keyup.enter="processValueChange(null);" aria-label="Clear value" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                         Clear value
                     </q-tooltip>
@@ -71,38 +75,26 @@ const userAutoComplete = {
             </q-dialog>
         </template>
     `,
-    setup(_, context) {
-        const baseStore = useBaseStore();
-
+    setup(props, context) {
         const autocompleteOptions = Vue.computed(() => {
             const returnArr = [];
             userArr.value.forEach((user) => {
-                if(Number(user['uid']) !== Number(symbUid)){
-                    returnArr.push({
-                        value: user['uid'],
-                        uid: user['uid'],
-                        label: (user['lastname'] + ', ' + user['firstname'] + ' (' + user['username'] + ')'),
-                    });
-                }
+                user.value = user['uid'];
+                user.label = (user['lastname'] + ', ' + user['firstname'] + ' (' + user['username'] + ')');
+                returnArr.push(user);
             });
             return returnArr;
         });
+        const currentValue = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
-        const symbUid = baseStore.getSymbUid;
         const userArr = Vue.ref([]);
-
-        function blurAction(val) {
-            if(val.target.value){
-                context.emit('update:value', ((val.target.value.length > 0) ? val.target.value : null));
-            }
-        }
 
         function getOptions(val, update) {
             update(() => {
                 if(val.length > 2) {
                     const formData = new FormData();
                     formData.append('keyword', val);
-                    formData.append('userType', 'nonadmin');
+                    formData.append('userType', props.userType);
                     formData.append('action', 'getUserListArr');
                     fetch(profileApiUrl, {
                         method: 'POST',
@@ -127,12 +119,45 @@ const userAutoComplete = {
 
         function processValueChange(selectedObj) {
             context.emit('update:value', selectedObj);
+            currentValue.value = selectedObj;
         }
+
+        function setCurrentValueFromUid() {
+            const formData = new FormData();
+            formData.append('uid', props.value);
+            formData.append('action', 'getUserByUid');
+            fetch(profileApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                if(resObj.hasOwnProperty('uid') && Number(resObj.uid) > 0) {
+                    currentValue.value = {
+                        value: resObj.uid,
+                        label: (resObj['lastname'] + ', ' + resObj['firstname'] + ' (' + resObj['username'] + ')')
+                    };
+                }
+            });
+        }
+
+        Vue.onMounted(() => {
+            if(props.value){
+                if(Number(props.value) > 0){
+                    setCurrentValueFromUid();
+                }
+                else{
+                    currentValue.value = {value: props.value, label: props.value};
+                }
+            }
+        });
 
         return {
             autocompleteOptions,
+            currentValue,
             displayDefinitionPopup,
-            blurAction,
             getOptions,
             openDefinitionPopup,
             processValueChange

@@ -293,13 +293,17 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         const returnArr = [];
                         taxaDataArr.value.forEach(taxon => {
                             const cidArr = [];
-                            let includeTaxon = true;
-                            taxon['keyData'].forEach(char => {
-                                if(includeTaxon && selectedCidArr.value.includes(Number(char['cid'])) && !selectedCsidArr.value.includes(Number(char['csid']))){
-                                    includeTaxon = false;
-                                }
-                                else if(!cidArr.includes(Number(char['cid']))){
-                                    cidArr.push(Number(char['cid']));
+                            let includeTaxon = false;
+                            Object.keys(taxon['keyData']).forEach(cid => {
+                                if(!includeTaxon){
+                                    taxon['keyData'][cid].forEach(char => {
+                                        if(!includeTaxon && (selectedCidArr.value.length === 0 || (selectedCidArr.value.includes(Number(char['cid'])) && selectedCsidArr.value.includes(Number(char['csid']))))){
+                                            includeTaxon = true;
+                                        }
+                                        if(includeTaxon && !cidArr.includes(Number(char['cid']))){
+                                            cidArr.push(Number(char['cid']));
+                                        }
+                                    });
                                 }
                             });
                             selectedCidArr.value.forEach(cid => {
@@ -416,7 +420,6 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             searchStore.getSearchTidArr(options, (tidArr) => {
                                 if(tidArr.length > 0){
                                     checklistStore.createTemporaryChecklistFromTidArr(tidArr, (res) => {
-                                        hideWorking();
                                         if(Number(res) > 0){
                                             setQueryPopupDisplay(false);
                                             clId.value = Number(res);
@@ -462,6 +465,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     }
 
                     function processDisplayAcceptedNamesChange(value) {
+                        showWorking();
                         checklistStore.setDisplayAcceptedNames(value);
                         setExtendedData();
                     }
@@ -518,11 +522,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function processTaxaData() {
                         taxaDataArr.value.forEach(taxon => {
-                            if(taxon['keyData'].length > 0){
-                                taxon['keyData'].forEach(keyData => {
-                                    if(!csidArr.value.includes(keyData['csid'])){
-                                        csidArr.value.push(keyData['csid']);
-                                    }
+                            if(Object.keys(taxon['keyData']).length > 0){
+                                Object.keys(taxon['keyData']).forEach(cid => {
+                                    taxon['keyData'][cid].forEach(keyData => {
+                                        if(!csidArr.value.includes(keyData['csid'])){
+                                            csidArr.value.push(keyData['csid']);
+                                        }
+                                    });
                                 });
                             }
                         });
@@ -580,6 +586,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function setExtendedData() {
                         checklistStore.setChecklistTaxaArr(true, true, true, displayAcceptedNames.value, () => {
+                            hideWorking();
                             processTaxaData();
                             checklistStore.setChecklistImageData(1);
                         });
@@ -617,6 +624,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     Vue.onMounted(() => {
                         if(Number(clId.value) > 0 || Number(pId.value) > 0){
+                            showWorking();
                             if(Number(clId.value) > 0){
                                 setChecklistData();
                             }

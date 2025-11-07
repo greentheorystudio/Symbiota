@@ -79,11 +79,26 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         getTaxaDescriptionBlockArr(state) {
             return state.taxaDescriptionBlockStore.getTaxaDescriptionBlockArr;
         },
+        getTaxaDescriptionBlockData(state) {
+            return state.taxaDescriptionBlockStore.getTaxaDescriptionBlockData;
+        },
+        getTaxaDescriptionBlockEditsExist(state) {
+            return state.taxaDescriptionBlockStore.getTaxaDescriptionBlockEditsExist;
+        },
+        getTaxaDescriptionBlockValid(state) {
+            return state.taxaDescriptionBlockStore.getTaxaDescriptionBlockValid;
+        },
         getTaxaDescriptionStatementArr(state) {
             return state.taxaDescriptionStatementStore.getTaxaDescriptionStatementArr;
         },
         getTaxaDescriptionStatementData(state) {
             return state.taxaDescriptionStatementStore.getTaxaDescriptionStatementData;
+        },
+        getTaxaDescriptionStatementEditsExist(state) {
+            return state.taxaDescriptionStatementStore.getTaxaDescriptionStatementEditsExist;
+        },
+        getTaxaDescriptionStatementValid(state) {
+            return state.taxaDescriptionStatementStore.getTaxaDescriptionStatementValid;
         },
         getTaxaEditsExist(state) {
             let exist = false;
@@ -133,10 +148,19 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         },
         getTaxaVernacularArr(state) {
             return state.taxaVernacularStore.getTaxaVernacularArr;
+        },
+        getTaxaVernacularData(state) {
+            return state.taxaVernacularStore.getTaxaVernacularData;
+        },
+        getTaxaVernacularEditsExist(state) {
+            return state.taxaVernacularStore.getTaxaVernacularEditsExist;
+        },
+        getTaxaVernacularValid(state) {
+            return state.taxaVernacularStore.getTaxaVernacularValid;
         }
     },
     actions: {
-        clearTaxaData() {
+        clearTaxonData() {
             this.taxaStr = '';
             this.taxaData = Object.assign({}, this.blankTaxaRecord);
             this.taxaAcceptedData = null;
@@ -150,8 +174,33 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             this.taxaImageCount = 0;
             this.taxaMediaArr.length = 0;
             this.taxaId = 0;
+            this.taxaDescriptionBlockStore.clearTaxaDescriptionBlockArr();
+            this.taxaDescriptionStatementStore.clearTaxaDescriptionStatementArr();
+            this.taxaMapStore.clearTaxaMapArr();
+            this.taxaVernacularStore.clearTaxaVernacularArr();
         },
-        createTaxaRecord(callback) {
+        createTaxaDescriptionBlockRecord(callback) {
+            this.updateTaxaDescriptionBlockEditData('tid', this.taxaId);
+            this.taxaDescriptionBlockStore.createTaxaDescriptionBlockRecord((newBlockId) => {
+                callback(Number(newBlockId));
+                this.setTaxonDescriptionData(this.taxaId);
+            });
+        },
+        createTaxaDescriptionStatementRecord(tdbid, callback) {
+            this.updateTaxaDescriptionStatementEditData('tdbid', tdbid);
+            this.taxaDescriptionStatementStore.createTaxaDescriptionStatementRecord((newStatementId) => {
+                callback(Number(newStatementId));
+                this.setTaxonDescriptionData(this.taxaId);
+            });
+        },
+        createTaxaVernacularRecord(callback) {
+            this.updateTaxaVernacularEditData('tid', this.taxaId);
+            this.taxaVernacularStore.createTaxaVernacularRecord((newVernacularId) => {
+                callback(Number(newVernacularId));
+                this.setTaxonVernacularArr(this.taxaId);
+            });
+        },
+        createTaxonRecord(callback) {
             const formData = new FormData();
             formData.append('taxon', JSON.stringify(this.taxaEditData));
             formData.append('action', 'addTaxon');
@@ -165,11 +214,41 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             .then((res) => {
                 callback(Number(res));
                 if(res && Number(res) > 0){
-                    this.setTaxa(Number(res));
+                    this.setTaxon(Number(res));
                 }
             });
         },
-        deleteTaxaRecord(tid, callback) {
+        deleteTaxaDescriptionBlockRecord(callback = null) {
+            this.taxaDescriptionBlockStore.deleteTaxaDescriptionBlockRecord((res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setTaxonDescriptionData(this.taxaId);
+                }
+            });
+        },
+        deleteTaxaDescriptionStatementRecord(callback = null) {
+            this.taxaDescriptionStatementStore.deleteTaxaDescriptionStatementRecord((res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setTaxonDescriptionData(this.taxaId);
+                }
+            });
+        },
+        deleteTaxaVernacularRecord(callback = null) {
+            this.taxaVernacularStore.deleteTaxaVernacularRecord((res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setTaxonVernacularArr(this.taxaId);
+                }
+            });
+        },
+        deleteTaxonRecord(tid, callback) {
             const formData = new FormData();
             formData.append('tid', tid.toString());
             formData.append('action', 'deleteTaxonByTid');
@@ -181,57 +260,18 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                this.setTaxa(0);
+                this.setTaxon(0);
                 callback(Number(res));
             });
         },
-        setTaxa(str, callback = null) {
-            this.clearTaxaData();
-            if(str.toString().length > 0){
-                this.taxaStr = str;
-                const formData = new FormData();
-                if(Number(this.taxaStr) > 0){
-                    formData.append('tid', this.taxaStr.toString());
-                    formData.append('action', 'getTaxonFromTid');
-                }
-                else{
-                    formData.append('sciname', this.taxaStr.toString());
-                    formData.append('action', 'getTaxonFromSciname');
-                }
-                fetch(taxaApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((resObj) => {
-                    if(resObj.hasOwnProperty('tid') && Number(resObj['tid'] > 0)){
-                        this.taxaEditData = Object.assign({}, {});
-                        this.taxaId = Number(resObj['tid']);
-                        this.taxaData = Object.assign({}, resObj);
-                        this.taxaEditData = Object.assign({}, this.taxaData);
-                        if(resObj['acceptedTaxon']){
-                            this.taxaAcceptedData = Object.assign({}, resObj['acceptedTaxon']);
-                        }
-                        this.taxaParentData = Object.assign({}, resObj['parentTaxon']);
-                        this.taxaIdentifiers = resObj['identifiers'];
-                        this.taxaSynonyms = resObj['synonyms'];
-                        this.taxaChildren = resObj['children'];
-                        this.taxaVernacularStore.setTaxaVernacularArr(this.getAcceptedTaxonTid);
-                        this.taxaMapStore.setTaxaMapArr(this.getAcceptedTaxonTid, true);
-                    }
-                    if(callback){
-                        callback(this.taxaId);
-                    }
-                });
-            }
-            else{
-                this.taxaEditData = Object.assign({}, this.taxaData);
-                if(callback){
-                    callback();
-                }
-            }
+        setCurrentTaxaDescriptionBlockRecord(tdbid) {
+            this.taxaDescriptionBlockStore.setCurrentTaxaDescriptionBlockRecord(tdbid);
+        },
+        setCurrentTaxaDescriptionStatementRecord(tdsid) {
+            this.taxaDescriptionStatementStore.setCurrentTaxaDescriptionStatementRecord(this.taxaDescriptionBlockStore.getTaxaDescriptionBlockID, tdsid);
+        },
+        setCurrentTaxaVernacularRecord(vid) {
+            this.taxaVernacularStore.setCurrentTaxaVernacularRecord(vid);
         },
         setFuzzyMatches() {
             const formData = new FormData();
@@ -267,14 +307,10 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 this.subtaxaImageData = Object.assign({}, resObj);
             });
         },
-        setTaxaDescriptionData() {
-            this.taxaDescriptionBlockStore.setTaxaDescriptionBlockArr(this.getAcceptedTaxonTid);
-            this.taxaDescriptionStatementStore.setTaxaDescriptionStatementArr(this.getAcceptedTaxonTid);
-        },
-        setTaxaImageArr() {
+        setTaxaImageArr(tid, includeOccurrence = true) {
             const formData = new FormData();
-            formData.append('tidArr', JSON.stringify([this.getAcceptedTaxonTid]));
-            formData.append('includeoccurrence', '1');
+            formData.append('tidArr', JSON.stringify([Number(tid)]));
+            formData.append('includeoccurrence', (includeOccurrence ? '1' : '0'));
             formData.append('limitPerTaxon', '100');
             formData.append('action', 'getTaxonArrDisplayImageData');
             fetch(imageApiUrl, {
@@ -291,10 +327,10 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 }
             });
         },
-        setTaxaMediaArr() {
+        setTaxaMediaArr(tid, includeOccurrence = true) {
             const formData = new FormData();
-            formData.append('tidArr', JSON.stringify([this.getAcceptedTaxonTid]));
-            formData.append('includeoccurrence', '1');
+            formData.append('tidArr', JSON.stringify([Number(tid)]));
+            formData.append('includeoccurrence', (includeOccurrence ? '1' : '0'));
             formData.append('limitPerTaxon', '100');
             formData.append('action', 'getTaxonArrDisplayMediaData');
             fetch(mediaApiUrl, {
@@ -310,10 +346,93 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 }
             });
         },
-        updateTaxaEditData(key, value) {
+        setTaxon(str, callback = null) {
+            this.clearTaxonData();
+            if(str.toString().length > 0 && str.toString() !== '0'){
+                this.taxaStr = str;
+                const formData = new FormData();
+                if(Number(this.taxaStr) > 0){
+                    formData.append('tid', this.taxaStr.toString());
+                    formData.append('action', 'getTaxonFromTid');
+                }
+                else{
+                    formData.append('sciname', this.taxaStr.toString());
+                    formData.append('action', 'getTaxonFromSciname');
+                }
+                fetch(taxaApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((resObj) => {
+                    if(resObj.hasOwnProperty('tid') && Number(resObj['tid'] > 0)){
+                        this.taxaEditData = Object.assign({}, {});
+                        this.taxaId = Number(resObj['tid']);
+                        this.taxaData = Object.assign({}, resObj);
+                        this.taxaEditData = Object.assign({}, this.taxaData);
+                        if(resObj['acceptedTaxon']){
+                            this.taxaAcceptedData = Object.assign({}, resObj['acceptedTaxon']);
+                        }
+                        this.taxaParentData = Object.assign({}, resObj['parentTaxon']);
+                        this.taxaIdentifiers = resObj['identifiers'];
+                        this.taxaSynonyms = resObj['synonyms'];
+                        this.taxaChildren = resObj['children'];
+                    }
+                    if(callback){
+                        callback(this.taxaId);
+                    }
+                });
+            }
+            else{
+                this.taxaEditData = Object.assign({}, this.taxaData);
+                if(callback){
+                    callback();
+                }
+            }
+        },
+        setTaxonDescriptionData(tid) {
+            this.taxaDescriptionBlockStore.setTaxonDescriptionBlockArr(Number(tid));
+            this.taxaDescriptionStatementStore.setTaxonDescriptionStatementArr(Number(tid));
+        },
+        setTaxonMapArr(tid) {
+            this.taxaMapStore.setTaxonMapArr(Number(tid), true);
+        },
+        setTaxonVernacularArr(tid) {
+            this.taxaVernacularStore.setTaxonVernacularArr(Number(tid));
+        },
+        updateTaxaDescriptionBlockEditData(key, value) {
+            this.taxaDescriptionBlockStore.updateTaxaDescriptionBlockEditData(key, value);
+        },
+        updateTaxaDescriptionStatementEditData(key, value) {
+            this.taxaDescriptionStatementStore.updateTaxaDescriptionStatementEditData(key, value);
+        },
+        updateTaxaVernacularEditData(key, value) {
+            this.taxaVernacularStore.updateTaxaVernacularEditData(key, value);
+        },
+        updateTaxaDescriptionBlockRecord(callback) {
+            this.taxaDescriptionBlockStore.updateTaxaDescriptionBlockRecord((res) => {
+                callback(Number(res));
+                this.setTaxonDescriptionData(this.taxaId);
+            });
+        },
+        updateTaxaDescriptionStatementRecord(callback) {
+            this.taxaDescriptionStatementStore.updateTaxaDescriptionStatementRecord((res) => {
+                callback(Number(res));
+                this.setTaxonDescriptionData(this.taxaId);
+            });
+        },
+        updateTaxaVernacularRecord(callback) {
+            this.taxaVernacularStore.updateTaxaVernacularRecord((res) => {
+                callback(Number(res));
+                this.setTaxonVernacularArr(this.taxaId);
+            });
+        },
+        updateTaxonEditData(key, value) {
             this.taxaEditData[key] = value;
         },
-        updateTaxaRecord(callback) {
+        updateTaxonRecord(callback) {
             const formData = new FormData();
             formData.append('tid', this.taxaId.toString());
             formData.append('taxonData', JSON.stringify(this.taxaUpdateData));

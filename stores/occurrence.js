@@ -388,8 +388,8 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             formData.append('collid', this.getCollId.toString());
             formData.append('starr', JSON.stringify(starr));
             formData.append('field', field);
-            formData.append('oldValue', oldValue.toString());
-            formData.append('newValue', newValue.toString());
+            formData.append('oldValue', (oldValue ? oldValue.toString() : ''));
+            formData.append('newValue', (newValue ? newValue.toString() : ''));
             formData.append('matchType', matchType.toString());
             formData.append('action', 'batchUpdateOccurrenceData');
             fetch(occurrenceApiUrl, {
@@ -563,7 +563,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             formData.append('collid', this.getCollId.toString());
             formData.append('starr', JSON.stringify(starr));
             formData.append('field', field);
-            formData.append('oldValue', oldValue.toString());
+            formData.append('oldValue', (oldValue ? oldValue.toString() : ''));
             formData.append('matchType', matchType.toString());
             formData.append('action', 'getBatchUpdateCount');
             fetch(occurrenceApiUrl, {

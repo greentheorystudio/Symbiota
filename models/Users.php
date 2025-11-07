@@ -390,7 +390,7 @@ class Users{
         $this->clearOldUnregisteredUsers();
         $retArr = array();
         $whereArr = array();
-        $sql = 'SELECT uid, firstname, lastname, username FROM users ';
+        $sql = 'SELECT uid, firstname, middleinitial, lastname, username FROM users ';
         if($userType === 'confirmed'){
             $whereArr[] = 'validated = "1"';
         }
@@ -415,6 +415,7 @@ class Users{
                 $nodeArr = array();
                 $nodeArr['uid'] = $row['uid'];
                 $nodeArr['firstname'] = $row['firstname'];
+                $nodeArr['middleinitial'] = $row['middleinitial'];
                 $nodeArr['lastname'] = $row['lastname'];
                 $nodeArr['username'] = $row['username'];
                 $retArr[] = $nodeArr;
@@ -477,7 +478,7 @@ class Users{
                     if($emailAddr){
                         $subject = 'Your password';
                         $bodyStr = 'Your ' . $GLOBALS['DEFAULT_TITLE'] . ' password has been reset to: ' . $newPassword . ' ';
-                        $bodyStr .= '<br/><br/>After logging in, you can reset your password by clicking on <a href="' . ($_SERVER['SERVER_PORT'] === 443 ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'] . '/profile/viewprofile.php">View Profile</a> link and then click the View Profile tab.';
+                        $bodyStr .= '<br/><br/>After logging in, you can reset your password by clicking on <a href="' . SanitizerService::getFullUrlPathPrefix() . '/profile/viewprofile.php">View Profile</a> link and then click the View Profile tab.';
                         if($GLOBALS['ADMIN_EMAIL']){
                             $bodyStr .= '<br/>If you have problems with the new password, contact the System Administrator at ' . $GLOBALS['ADMIN_EMAIL'];
                         }
@@ -508,8 +509,7 @@ class Users{
             }
             $result->free();
             if($email && $code){
-                $confirmationLink = ($_SERVER['SERVER_PORT'] === 443 ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
-                $confirmationLink .= '/profile/index.php?uid=' . (int)$uid . '&confirmationcode=' . $code;
+                $confirmationLink = SanitizerService::getFullUrlPathPrefix() . '/profile/index.php?uid=' . (int)$uid . '&confirmationcode=' . $code;
                 $subject = $GLOBALS['DEFAULT_TITLE'] . ' Confirmation';
                 $bodyStr = 'Your ' . $GLOBALS['DEFAULT_TITLE'] . ' account has been created. ';
                 $bodyStr .= '<br/><br/><a href="' . $confirmationLink . '">Please follow this link to confirm your new account.</a>';

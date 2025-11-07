@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverPublisher.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -198,14 +199,8 @@ include(__DIR__ . '/../../header.php');
 	<div style="margin:20px;">
 		<b>RSS Feed:</b>
 		<?php
-		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'];
-		if(file_exists('../../rss.xml')){
-			$feedLink = $urlPrefix.'/rss.xml';
-			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
-		}
-		else{
-			echo '--feed not published for any of the collections within the portal--';
-		}
+        $urlPath = SanitizerService::getFullUrlPathPrefix() . '/rsshandler.php?feed=dwc';
+        echo '<a href="' . $urlPath . '" target="_blank">' . $urlPath . '</a>';
 		?>
 	</div>
 	<?php
@@ -240,7 +235,7 @@ include(__DIR__ . '/../../header.php');
 				</div>
 				<div><b>Description:</b> <?php echo $dArr['description']; ?></div>
 				<?php
-				$emlLink = $urlPrefix.'collections/datasets/emlhandler.php?collid='.$collId;
+				$emlLink = SanitizerService::getFullUrlPathPrefix().'/collections/datasets/emlhandler.php?collid='.$collId;
 				?>
 				<div><b>EML:</b> <a href="<?php echo $emlLink; ?>"><?php echo $emlLink; ?></a></div>
 				<div><b>DwC-Archive File:</b> <a href="<?php echo $dArr['link']; ?>"><?php echo $dArr['link']; ?></a></div>
@@ -459,7 +454,7 @@ include(__DIR__ . '/../../header.php');
 						</td>
 						<td>
 							<?php
-							echo '<a href="'.$urlPrefix.'collections/datasets/emlhandler.php?collid='.$v['collid'].'">EML</a>';
+							echo '<a href="'.SanitizerService::getFullUrlPathPrefix().'/collections/datasets/emlhandler.php?collid='.$v['collid'].'">EML</a>';
 							?>
 						</td>
 						<td class="nowrap"><?php echo date('Y-m-d', strtotime($v['pubDate'])); ?></td>
