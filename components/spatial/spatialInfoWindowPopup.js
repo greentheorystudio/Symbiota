@@ -1,6 +1,6 @@
 const spatialInfoWindowPopup = {
     template: `
-        <q-dialog class="z-top" v-model="mapSettings.showInfoWindow" persistent>
+        <q-dialog class="z-max" v-model="mapSettings.showInfoWindow" persistent>
             <q-card class="sm-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>

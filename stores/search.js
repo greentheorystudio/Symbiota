@@ -236,7 +236,12 @@ const useSearchStore = Pinia.defineStore('search', {
     }),
     getters: {
         getCurrentOccIdIndex(state) {
-            return Number(state.currentOccId) > 0 ? (state.queryOccidArr.indexOf(state.currentOccId.toString()) + 1) : (state.queryOccidArr.length + 1);
+            if(state.queryOccidArr.length > 0){
+                return Number(state.currentOccId) > 0 ? (state.queryOccidArr.indexOf(state.currentOccId.toString()) + 1) : (state.queryOccidArr.length + 1);
+            }
+            else{
+                return 1;
+            }
         },
         getDateId(state) {
             return state.dateId;

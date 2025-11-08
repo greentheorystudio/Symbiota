@@ -99,7 +99,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             </template>
                             <template v-if="recordCount > 1">
                                 <div class="self-center">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" tabindex="0">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Batch Update Tool
                                         </q-tooltip>
@@ -236,6 +236,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleCountyAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/imageTagSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceSelectorInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceLinkageToolPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceLocationLinkageToolPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -345,8 +346,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const queryId = QUERYID;
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
+                    const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
                     const recordCount = Vue.computed(() => {
-                        return Number(occId.value) === 0 ? searchRecordCount.value + 1 : searchRecordCount.value;
+                        if(Number(searchRecordCount.value) > 0){
+                            return Number(occId.value) === 0 ? searchRecordCount.value + 1 : searchRecordCount.value;
+                        }
+                        else{
+                            return 1;
+                        }
                     });
                     const showSpatialPopup = Vue.ref(false);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
@@ -391,7 +398,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function loadRecords() {
-                        if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                        if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             searchStore.clearQueryOccidArr();
                             showWorking('Loading...');
                             const options = {
@@ -402,7 +409,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
-                                    if(Number(occId.value) === 0 || currentRecordIndex.value < 0){
+                                    if(Number(occId.value) === 0 || currentRecordIndex.value === 0){
                                         goToFirstRecord();
                                     }
                                 }
@@ -480,7 +487,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 if(stArrJson){
                                     searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                                 }
-                                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                                if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                                     loadRecords();
                                 }
                             }
@@ -507,6 +514,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         occurrenceEntryFormat,
                         popupWindowType,
                         recordCount,
+                        searchTermsValid,
                         showSpatialPopup,
                         spatialInputValues,
                         changeOccurrenceEntryFormat,

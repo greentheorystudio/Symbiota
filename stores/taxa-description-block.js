@@ -8,7 +8,7 @@ const useTaxaDescriptionBlockStore = Pinia.defineStore('taxa-description-block',
             sourceurl: null,
             language: null,
             langid: null,
-            displaylevel: null,
+            displaylevel: 1,
             uid: null,
             notes: null
         },
@@ -90,7 +90,7 @@ const useTaxaDescriptionBlockStore = Pinia.defineStore('taxa-description-block',
             }
             this.taxaDescriptionBlockEditData = Object.assign({}, this.taxaDescriptionBlockData);
         },
-        setTaxaDescriptionBlockArr(tid) {
+        setTaxonDescriptionBlockArr(tid) {
             const formData = new FormData();
             formData.append('tid', tid.toString());
             formData.append('action', 'getTaxonDescriptions');
@@ -112,7 +112,7 @@ const useTaxaDescriptionBlockStore = Pinia.defineStore('taxa-description-block',
             const formData = new FormData();
             formData.append('tdbid', this.taxaDescriptionBlockId.toString());
             formData.append('descriptionData', JSON.stringify(this.taxaDescriptionBlockUpdateData));
-            formData.append('action', 'updateCommonNameRecord');
+            formData.append('action', 'updateTaxonDescriptionBlockRecord');
             fetch(taxonDescriptionBlockApiUrl, {
                 method: 'POST',
                 body: formData

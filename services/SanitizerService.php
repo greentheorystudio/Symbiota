@@ -85,9 +85,24 @@ class SanitizerService {
         return $returnPath;
     }
 
+    public static function getConnectionProtocol(): string
+    {
+        $returnStr = 'http://';
+        if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' && $_SERVER['HTTPS'] !== ''){
+            $returnStr = 'https://';
+        }
+        if(isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] === 443){
+            $returnStr = 'https://';
+        }
+        if(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            $returnStr = 'https://';
+        }
+        return $returnStr;
+    }
+
     public static function getFullUrlPathPrefix(): string
     {
-        return ($_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
+        return self::getConnectionProtocol() . $_SERVER['HTTP_HOST'] . $GLOBALS['CLIENT_ROOT'];
     }
 
     public static function getSqlValueString($conn, $value, $dataType): string

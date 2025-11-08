@@ -2,7 +2,7 @@ const taxaProfileTaxonFamily = {
     template: `
         <template v-if="taxon.rankid > 140 && taxon.family">
             <div>
-                <span class="text-weight-bold">Family:</span> {{ taxon.family }}
+                <span class="text-bold">Family:</span> {{ taxon.family }}
             </div>
         </template>
     `,

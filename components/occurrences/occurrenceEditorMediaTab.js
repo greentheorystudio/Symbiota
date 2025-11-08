@@ -38,9 +38,9 @@ const occurrenceEditorMediaTab = {
         <template v-if="showMediaEditorPopup">
             <media-editor-popup
                 :coll-id="collId"
+                :collection="collectionData"
                 :media-id="editMediaId"
                 :show-popup="showMediaEditorPopup"
-                :upload-path="uploadPath"
                 @media:updated="processMediaUpdate"
                 @close:popup="showMediaEditorPopup = false"
             ></media-editor-popup>
@@ -66,21 +66,6 @@ const occurrenceEditorMediaTab = {
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const showImageEditorPopup = Vue.ref(false);
         const showMediaEditorPopup = Vue.ref(false);
-        const uploadPath = Vue.computed(() => {
-            let path = '';
-            if(collectionData.value){
-                if(collectionData.value.institutioncode){
-                    path += collectionData.value.institutioncode;
-                }
-                if(collectionData.value.institutioncode && collectionData.value.collectioncode){
-                    path += '_';
-                }
-                if(collectionData.value.collectioncode){
-                    path += collectionData.value.collectioncode;
-                }
-            }
-            return path;
-        });
 
         function openImageEditorPopup(id) {
             editImageId.value = id;
@@ -108,7 +93,6 @@ const occurrenceEditorMediaTab = {
             occurrenceData,
             showImageEditorPopup,
             showMediaEditorPopup,
-            uploadPath,
             openImageEditorPopup,
             openMediaEditorPopup,
             processMediaUpdate

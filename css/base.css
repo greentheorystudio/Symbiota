@@ -62,7 +62,10 @@ h6 {
 }
 #mainContainer{
 	background-color: #FFFFFF;
-	min-height:400px;
+	min-height: 400px;
+}
+.main-container-height{
+	min-height: 400px;
 }
 a{
 	color: 		#424242;
