@@ -184,6 +184,7 @@
             const specimenImageCarousel = Vue.ref(false);
             const specimenImageCarouselSlide = Vue.ref(null);
             const subtaxaArr = Vue.computed(() => taxaStore.getTaxaChildren);
+            const taxaTaggedImageArr = Vue.computed(() => taxaStore.getTaxaTaggedImageArr);
             const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
             const taxaImageCount = Vue.computed(() => taxaStore.getTaxaImageCount);
             const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
@@ -205,7 +206,10 @@
                         fieldImageArr.value.push(image);
                     }
                 });
-                if(fieldImageArr.value.length > 0){
+                if(taxaTaggedImageArr.value.length > 0){
+                    centralImage.value = taxaTaggedImageArr.value[0];
+                }
+                else if(fieldImageArr.value.length > 0){
                     centralImage.value = fieldImageArr.value[0];
                 }
                 else{
@@ -306,14 +310,17 @@
             Vue.onMounted(() => {
                 showWorking('Loading...');
                 setEditor();
-                taxaStore.setTaxa(taxonValue, (tid) => {
+                taxaStore.setTaxon(taxonValue, (tid) => {
                     hideWorking();
                     if(Number(tid) > 0){
-                        taxaStore.setTaxaDescriptionData();
+                        taxaStore.setTaxonVernacularArr(taxon.value['tidaccepted']);
+                        taxaStore.setTaxonMapArr(taxon.value['tidaccepted']);
+                        taxaStore.setTaxonDescriptionData(taxon.value['tidaccepted']);
                         if(subtaxaArr.value.length > 0){
                             taxaStore.setSubtaxaImageData();
                         }
-                        taxaStore.setTaxaImageArr();
+                        taxaStore.setTaxaImageArr(taxon.value['tidaccepted']);
+                        taxaStore.setTaxaTaggedImageArr(taxon.value['tidaccepted']);
                         if(Number(taxon.value['rankid']) > 180){
                             setTaxonFieldImages(100);
                         }
