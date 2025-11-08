@@ -21,8 +21,8 @@ if($action && SanitizerService::validateInternalRequest()){
         $id = $_POST['idType'] === 'mid' ? $mid : (int)$_POST['tid'];
         echo $taxonMaps->deleteTaxonMapRecord($_POST['idType'], $id);
     }
-    elseif($action === 'createTaxonMapRecord' && $isEditor && array_key_exists('map', $_POST)){
-        echo $taxonMaps->createTaxonMapRecord(json_decode($_POST['map'], true));
+    elseif($action === 'createTaxonMapRecord' && $isEditor && array_key_exists('mapImageFile', $_FILES)  && array_key_exists('uploadPath', $_POST) && array_key_exists('mapData', $_POST)){
+        echo $taxonMaps->createTaxonMapRecord($_FILES['mapImageFile'], $_POST['uploadPath'], json_decode($_POST['mapData'], true));
     }
     elseif($action === 'updateTaxonMapRecord' && $isEditor && $mid && array_key_exists('mapData', $_POST)){
         echo $taxonMaps->updateTaxonMapRecord($mid, json_decode($_POST['mapData'], true));

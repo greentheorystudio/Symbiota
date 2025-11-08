@@ -130,6 +130,12 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         getTaxaMapArr(state) {
             return state.taxaMapStore.getTaxaMapArr;
         },
+        getTaxaMapData(state) {
+            return state.taxaMapStore.getTaxaMapData;
+        },
+        getTaxaMapEditsExist(state) {
+            return state.taxaMapStore.getTaxaMapEditsExist;
+        },
         getTaxaMediaArr(state) {
             return state.taxaMediaArr;
         },
@@ -215,6 +221,13 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 this.setTaxonDescriptionData(this.taxaId);
             });
         },
+        createTaxaMapRecord(file, path, callback) {
+            this.updateTaxaMapEditData('tid', this.taxaId);
+            this.taxaMapStore.createTaxaMapRecord(file, path, (newMapId) => {
+                callback(Number(newMapId));
+                this.setTaxonMapArr(this.taxaId);
+            });
+        },
         createTaxaVernacularRecord(callback) {
             this.updateTaxaVernacularEditData('tid', this.taxaId);
             this.taxaVernacularStore.createTaxaVernacularRecord((newVernacularId) => {
@@ -260,6 +273,16 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 }
             });
         },
+        deleteTaxaMapRecord(callback = null) {
+            this.taxaMapStore.deleteTaxaMapRecord((res) => {
+                if(callback){
+                    callback(Number(res));
+                }
+                if(Number(res) === 1){
+                    this.setTaxonMapArr(this.taxaId);
+                }
+            });
+        },
         deleteTaxaImageTag(imgid) {
             const tagValue = 'TID-' + this.taxaId.toString();
             const formData = new FormData();
@@ -302,6 +325,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         },
         setCurrentTaxaDescriptionStatementRecord(tdbid, tdsid) {
             this.taxaDescriptionStatementStore.setCurrentTaxaDescriptionStatementRecord(tdbid, tdsid);
+        },
+        setCurrentTaxaMapRecord(mid) {
+            this.taxaMapStore.setCurrentTaxaMapRecord(this.taxaId, mid);
         },
         setCurrentTaxaVernacularRecord(vid) {
             this.taxaVernacularStore.setCurrentTaxaVernacularRecord(vid);
@@ -457,6 +483,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         updateTaxaDescriptionStatementEditData(key, value) {
             this.taxaDescriptionStatementStore.updateTaxaDescriptionStatementEditData(key, value);
         },
+        updateTaxaMapEditData(key, value) {
+            this.taxaMapStore.updateTaxaMapEditData(key, value);
+        },
         updateTaxaVernacularEditData(key, value) {
             this.taxaVernacularStore.updateTaxaVernacularEditData(key, value);
         },
@@ -470,6 +499,12 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             this.taxaDescriptionStatementStore.updateTaxaDescriptionStatementRecord((res) => {
                 callback(Number(res));
                 this.setTaxonDescriptionData(this.taxaId);
+            });
+        },
+        updateTaxaMapRecord(callback) {
+            this.taxaMapStore.updateTaxaMapRecord((res) => {
+                callback(Number(res));
+                this.setTaxonMapArr(this.taxaId);
             });
         },
         updateTaxaVernacularRecord(callback) {

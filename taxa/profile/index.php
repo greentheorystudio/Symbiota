@@ -80,19 +80,19 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
-                            <q-tab-panel name="media">
+                            <q-tab-panel name="media" class="main-container-height">
                                 <taxon-profile-editor-media-tab></taxon-profile-editor-media-tab>
                             </q-tab-panel>
-                            <q-tab-panel name="descriptions">
+                            <q-tab-panel name="descriptions" class="main-container-height">
                                 <taxon-profile-editor-descriptions-tab></taxon-profile-editor-descriptions-tab>
                             </q-tab-panel>
-                            <q-tab-panel name="tag" class="preview-image-carousel">
+                            <q-tab-panel name="tag" class="main-container-height">
                                 <taxon-profile-editor-primary-image-tab></taxon-profile-editor-primary-image-tab>
                             </q-tab-panel>
-                            <q-tab-panel name="common">
+                            <q-tab-panel name="common" class="main-container-height">
                                 <taxon-profile-editor-vernacular-tab></taxon-profile-editor-vernacular-tab>
                             </q-tab-panel>
-                            <q-tab-panel name="map">
+                            <q-tab-panel name="map" class="main-container-height">
                                 <taxon-profile-editor-taxon-map-tab></taxon-profile-editor-taxon-map-tab>
                             </q-tab-panel>
                         </q-tab-panels>

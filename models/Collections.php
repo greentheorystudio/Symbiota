@@ -43,6 +43,7 @@ class Collections {
         'publishtoidigbio' => array('dataType' => 'number', 'length' => 11),
         'aggkeysstr' => array('dataType' => 'string', 'length' => 1000),
         'dwcaurl' => array('dataType' => 'string', 'length' => 250),
+        'dwcapublishtimestamp' => array('dataType' => 'timestamp', 'length' => 0),
         'bibliographiccitation' => array('dataType' => 'string', 'length' => 1000),
         'accessrights' => array('dataType' => 'string', 'length' => 1000),
         'configjson' => array('dataType' => 'json', 'length' => 0),
