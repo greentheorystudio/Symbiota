@@ -31,7 +31,6 @@
       "@php -r \"file_exists('./config/dbconnection.php') || copy('./config/dbconnection_template.php', './config/dbconnection.php');\"",
       "@php -r \"file_exists('./css/main.css') || copy('./css/main_template.css', './css/main.css');\"",
       "@php -r \"file_exists('./misc/usagepolicy.php') || copy('./misc/usagepolicy_template.php', './misc/usagepolicy.php');\"",
-      "@php -r \"file_exists('rss.xml') || copy('rss.xml.dist', 'rss.xml');\"",
       "@php -r \"file_exists('./content') || mkdir('./content');\"",
       "@php -r \"file_exists('./content/collicon') || mkdir('./content/collicon');\"",
       "@php -r \"file_exists('./content/css') || mkdir('./content/css');\"",
@@ -61,8 +60,7 @@
       "chmod -R 777 ./temp/data",
       "chmod -R 777 ./temp/downloads",
       "chmod -R 777 ./temp/images",
-      "chmod -R 777 ./temp/report",
-      "chmod -R 777 ./rss.xml"
+      "chmod -R 777 ./temp/report"
     ],
     "update-docker-solr-config": [
       "docker-compose down",

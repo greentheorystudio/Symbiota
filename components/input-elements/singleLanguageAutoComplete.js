@@ -1,6 +1,10 @@
 const singleLanguageAutoComplete = {
     props: {
-        disable: {
+        clearable: {
+            type: Boolean,
+            default: true
+        },
+        disabled: {
             type: Boolean,
             default: false
         },
@@ -9,7 +13,7 @@ const singleLanguageAutoComplete = {
             default: 'Language'
         },
         language: {
-            type: Object,
+            type: String,
             default: null
         },
         tabindex: {
@@ -18,18 +22,25 @@ const singleLanguageAutoComplete = {
         }
     },
     template: `
-        <q-select v-model="language" :use-input="inputAllowed" outlined dense options-dense hide-dropdown-icon clearable use-input popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @clear="clearAction" @update:model-value="processChange" :label="label" :tabindex="tabindex" :disable="disable"></q-select>
+        <q-select v-model="language" use-input fill-input hide-selected outlined dense options-dense hide-dropdown-icon use-input popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autocompleteOptions" option-value="iso" option-label="name" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" :label="label" :tabindex="tabindex" :disable="disabled">
+            <template v-if="!disabled && language" v-slot:append>
+                <q-icon role="button" v-if="clearable && language" name="cancel" class="cursor-pointer" @click="clearAction();" @keyup.enter="clearAction();" aria-label="Clear value" :tabindex="tabindex">
+                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                        Clear value
+                    </q-tooltip>
+                </q-icon>
+            </template>
+        </q-select>
     `,
     setup(props, context) {
         const { showNotification } = useCore();
-        const store = useBaseStore();
+        const baseStore = useBaseStore();
+        
         const autocompleteOptions = Vue.ref([]);
-        const clearInput = Vue.ref(false);
-        const defaultLanguage = store.getDefaultLanguage;
-        const inputAllowed = Vue.ref(true);
+        const defaultLanguage = baseStore.getDefaultLanguage;
 
         function blurAction(val) {
-            if(props.language === null && val.target.value && !clearInput.value){
+            if(val.target.value && val.target.value !== props.language) {
                 const optionObj = autocompleteOptions.value.find(option => option['name'].toLowerCase() === val.target.value.toLowerCase());
                 if(optionObj){
                     processChange(optionObj);
@@ -38,12 +49,10 @@ const singleLanguageAutoComplete = {
                     showNotification('negative','That language was not found in the database.');
                 }
             }
-            clearInput.value = false;
         }
 
         function clearAction() {
-            clearInput.value = true;
-            inputAllowed.value = true;
+            processChange(null);
         }
 
         function createValue(val, done) {
@@ -80,41 +89,11 @@ const singleLanguageAutoComplete = {
         }
 
         function processChange(languageObj) {
-            if(languageObj){
-                inputAllowed.value = false;
-            }
             context.emit('update:language', languageObj);
         }
 
-        function setLanguage() {
-            let url;
-            if(props.language && (!props.language.hasOwnProperty('iso') || !props.language['iso']) && props.language.hasOwnProperty('name') && props.language['name']){
-                url = languageApiUrl + '?action=getLanguageByName&name=' + props.language['name'];
-            }
-            else if(props.language && (!props.language.hasOwnProperty('name') || !props.language['name']) && props.language.hasOwnProperty('iso') && props.language['iso']){
-                url = languageApiUrl + '?action=getLanguageByIso&iso=' + props.language['iso'];
-            }
-            else{
-                url = languageApiUrl + '?action=getLanguageByIso&iso=' + defaultLanguage;
-            }
-            fetch(url)
-            .then((response) => {
-                if(response.ok){
-                    return response.json();
-                }
-            })
-            .then((data) => {
-                context.emit('update:language', data);
-            });
-        }
-
-        Vue.onMounted(() => {
-            setLanguage();
-        });
-
         return {
             autocompleteOptions,
-            inputAllowed,
             blurAction,
             clearAction,
             createValue,

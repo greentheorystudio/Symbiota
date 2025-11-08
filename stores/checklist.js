@@ -512,7 +512,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                     }
                 });
                 this.imageStore.setChecklistImageData(targetArr, numberPerTaxon);
-            });
+            }, this.getChecklistTaxaTidAcceptedArr);
         },
         setChecklistTaxaArr(includeKeyData, includeSynonymyData, includeVernacularData, useAcceptedNames, callback = null) {
             this.loadAcceptedNames = useAcceptedNames;

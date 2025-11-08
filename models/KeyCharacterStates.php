@@ -63,24 +63,44 @@ class KeyCharacterStates{
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
-        $sql = 'SELECT tl.tid, ' . implode(',', $fieldNameArr) . ' '.
-            'FROM keycharacterstatetaxalink AS tl LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
-            'WHERE tl.tid IN(' . implode(',', $tidArr) . ') ';
+        $sql = 'SELECT DISTINCT IFNULL(te.tid, t.tid) AS tid, ' . implode(', ', $fieldNameArr) . ', IFNULL(pt.rankid, t.rankid) AS rankid '.
+            'FROM keycharacterstatetaxalink AS tl LEFT JOIN taxaenumtree AS te ON tl.tid = te.parenttid '.
+            'LEFT JOIN taxa AS pt ON te.parenttid = pt.tid '.
+            'LEFT JOIN taxa AS t ON tl.tid = t.tid '.
+            'LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
+            'WHERE tl.tid IN(' . implode(',', $tidArr) . ') OR te.tid IN(' . implode(',', $tidArr) . ') '.
+            'ORDER BY tid, cs.cid, rankid ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
+            $currentTid = '';
+            $currentCid = '';
+            $currentRankId = 0;
             foreach($rows as $index => $row){
+                if($currentTid !== $row['tid'] || $currentCid !== $row['cid']){
+                    if($currentTid !== $row['tid']){
+                        $currentTid = $row['tid'];
+                    }
+                    if($currentCid !== $row['cid']){
+                        $currentCid = $row['cid'];
+                    }
+                    $currentRankId = 0;
+                }
                 if(!array_key_exists($row['tid'], $retArr)){
                     $retArr[$row['tid']] = array();
+                }
+                if(!array_key_exists($row['cid'], $retArr[$row['tid']]) || $currentRankId < (int)$row['rankid']){
+                    $retArr[$row['tid']][$row['cid']] = array();
                 }
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
                     $nodeArr[$name] = $row[$name];
                 }
-                $retArr[$row['tid']][] = $nodeArr;
+                $retArr[$row['tid']][$row['cid']][] = $nodeArr;
+                $currentRankId = (int)$row['rankid'];
                 unset($rows[$index]);
             }
         }

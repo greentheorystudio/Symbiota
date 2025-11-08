@@ -1,8 +1,12 @@
 const mediaEditorPopup = {
     props: {
+        collection: {
+            type: Object,
+            default: null
+        },
         collId: {
             type: Number,
-            default: null
+            default: 0
         },
         mediaId: {
             type: Number,
@@ -16,13 +20,13 @@ const mediaEditorPopup = {
             type: Boolean,
             default: false
         },
-        uploadPath: {
-            type: String,
+        taxon: {
+            type: Object,
             default: null
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
+        <q-dialog class="z-max" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -55,6 +59,11 @@ const mediaEditorPopup = {
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <text-field-input-element label="Owner" :value="mediaData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div v-if="Number(mediaData.occid) === 0" class="row">
+                                <div class="col-grow">
+                                    <user-auto-complete label="Portal Contributor" :value="mediaData.creatoruid" @update:value="processContributorChange"></user-auto-complete>
                                 </div>
                             </div>
                             <div class="row justify-between q-col-gutter-sm">
@@ -158,7 +167,7 @@ const mediaEditorPopup = {
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
-                                        <div>
+                                        <div v-if="Number(mediaData.occid) > 0">
                                             <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Remove occurrence linkage so that media only displays on Taxon Profile page
@@ -198,7 +207,8 @@ const mediaEditorPopup = {
         'file-picker-input-element': filePickerInputElement,
         'occurrence-linkage-tool-popup': occurrenceLinkageToolPopup,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'text-field-input-element': textFieldInputElement
+        'text-field-input-element': textFieldInputElement,
+        'user-auto-complete': userAutoComplete
     },
     setup(props, context) {
         const { showNotification } = useCore();
@@ -228,6 +238,32 @@ const mediaEditorPopup = {
             {label: 'Local File', value: 'upload'},
             {label: 'From URL', value: 'url'}
         ];
+        const uploadPath = Vue.computed(() => {
+            let path = '';
+            if(props.collection){
+                if(props.collection.institutioncode){
+                    path += props.collection.institutioncode;
+                }
+                if(props.collection.institutioncode && props.collection.collectioncode){
+                    path += '_';
+                }
+                if(props.collection.collectioncode){
+                    path += props.collection.collectioncode;
+                }
+            }
+            else if(props.taxon){
+                if(props.taxon.family){
+                    path += props.taxon.family;
+                }
+                else{
+                    path += props.taxon['unitname1'];
+                }
+            }
+            else{
+                path += 'general';
+            }
+            return path;
+        });
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -250,6 +286,17 @@ const mediaEditorPopup = {
             else{
                 updateData('descriptivetranscripturi', null);
                 processUpdateUploadTranscriptFile();
+            }
+        }
+
+        function processContributorChange(user) {
+            if(user){
+                const fullName = user.firstname + ' ' + (user.middleinitial ? (user.middleinitial + ' ') : '') + user.lastname;
+                updateData('creator', fullName);
+                updateData('creatoruid', user.uid);
+            }
+            else{
+                updateData('creatoruid', null);
             }
         }
 
@@ -376,7 +423,7 @@ const mediaEditorPopup = {
 
         function updateUploadTranscriptFile() {
             if(selectedUploadMethod.value === 'upload' && uploadedTranscriptFile.value){
-                mediaStore.uploadDescriptiveTranscriptFromFile(props.collId, uploadedTranscriptFile.value, props.uploadPath, (res) => {
+                mediaStore.uploadDescriptiveTranscriptFromFile(props.collId, uploadedTranscriptFile.value, uploadPath.value, (res) => {
                     if(res.toString() === ''){
                         showNotification('negative', ('An error occurred while uploading the descriptive transcript file.'));
                     }
@@ -390,7 +437,7 @@ const mediaEditorPopup = {
                 });
             }
             else if(transcriptUrl.value){
-                mediaStore.uploadDescriptiveTranscriptFromUrl(props.collId, transcriptUrl.value, props.uploadPath, (res) => {
+                mediaStore.uploadDescriptiveTranscriptFromUrl(props.collId, transcriptUrl.value, uploadPath.value, (res) => {
                     if(res.toString() === ''){
                         showNotification('negative', ('An error occurred while copying the descriptive transcript file.'));
                     }
@@ -427,6 +474,7 @@ const mediaEditorPopup = {
             uploadedTranscriptFile,
             uploadMethodOptions,
             closePopup,
+            processContributorChange,
             processDeleteMediaRecord,
             processDeleteTranscript,
             processScientificNameChange,

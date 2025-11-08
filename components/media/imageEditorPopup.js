@@ -2,7 +2,7 @@ const imageEditorPopup = {
     props: {
         collId: {
             type: Number,
-            default: null
+            default: 0
         },
         imageId: {
             type: Number,
@@ -18,7 +18,7 @@ const imageEditorPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
+        <q-dialog class="z-max" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -51,6 +51,11 @@ const imageEditorPopup = {
                                 </div>
                                 <div class="col-12 col-sm-6 col-md-7">
                                     <text-field-input-element label="Owner" :value="imageData.owner" @update:value="(value) => updateData('owner', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div v-if="Number(imageData.occid) === 0" class="row">
+                                <div class="col-grow">
+                                    <user-auto-complete label="Portal Contributor" :value="imageData.photographeruid" @update:value="processContributorChange"></user-auto-complete>
                                 </div>
                             </div>
                             <div class="row">
@@ -131,7 +136,7 @@ const imageEditorPopup = {
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>
-                                        <div>
+                                        <div v-if="Number(imageData.occid) > 0">
                                             <q-btn color="primary" @click="removeOccurrenceLinkage();" label="Remove Occurrence Linkage" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                     Remove occurrence linkage so that image only displays on Taxon Profile page
@@ -166,7 +171,8 @@ const imageEditorPopup = {
         'image-tag-selector': imageTagSelector,
         'occurrence-linkage-tool-popup': occurrenceLinkageToolPopup,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'text-field-input-element': textFieldInputElement
+        'text-field-input-element': textFieldInputElement,
+        'user-auto-complete': userAutoComplete
     },
     setup(props, context) {
         const { showNotification } = useCore();
@@ -192,6 +198,17 @@ const imageEditorPopup = {
 
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function processContributorChange(user) {
+            if(user){
+                const fullName = user.firstname + ' ' + (user.middleinitial ? (user.middleinitial + ' ') : '') + user.lastname;
+                updateData('photographer', fullName);
+                updateData('photographeruid', user.uid);
+            }
+            else{
+                updateData('photographeruid', null);
+            }
         }
 
         function processDeleteImageRecord() {
@@ -282,6 +299,7 @@ const imageEditorPopup = {
             imageData,
             showOccurrenceLinkageToolPopup,
             closePopup,
+            processContributorChange,
             processDeleteImageRecord,
             processScientificNameChange,
             removeOccurrenceLinkage,

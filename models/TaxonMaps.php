@@ -13,6 +13,7 @@ class TaxonMaps{
         'tid' => array('dataType' => 'number', 'length' => 10),
         'url' => array('dataType' => 'string', 'length' => 255),
         'title' => array('dataType' => 'string', 'length' => 100),
+        'alttext' => array('dataType' => 'string', 'length' => 355),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -25,24 +26,36 @@ class TaxonMaps{
         $this->conn->close();
 	}
 
-    public function createTaxonMapRecord($data): int
+    public function createTaxonMapRecord($imgFile, $uploadPath, $data): int
     {
         $newID = 0;
-        $fieldNameArr = array();
-        $fieldValueArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field !== 'mid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
-                $fieldNameArr[] = $field;
-                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+        if($imgFile && $uploadPath && $data){
+            $origFilename = $imgFile['name'];
+            if(strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png'){
+                $targetPath = FileSystemService::getServerMediaUploadPath($uploadPath);
+                if($targetPath && $origFilename) {
+                    $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
+                    if($targetFilename && FileSystemService::moveUploadedFileToServer($imgFile, $targetPath, $targetFilename)){
+                        $data['url'] = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+                    }
+                }
             }
-        }
-        $fieldNameArr[] = 'initialtimestamp';
-        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
-        $sql = 'INSERT INTO taxamaps(' . implode(',', $fieldNameArr) . ') '.
-            'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
-        if($this->conn->query($sql)){
-            $newID = $this->conn->insert_id;
+            $fieldNameArr = array();
+            $fieldValueArr = array();
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'mid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
+                    $fieldNameArr[] = $field;
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
+            }
+            $fieldNameArr[] = 'initialtimestamp';
+            $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+            $sql = 'INSERT INTO taxamaps(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+            }
         }
         return $newID;
     }
@@ -58,7 +71,7 @@ class TaxonMaps{
         elseif($idType === 'tid'){
             $whereStr = 'tid = ' . (int)$id . ' ';
         }
-        if($data && $data['url'] && strpos($data['url'], '/') === 0){
+        if($data && $data['url'] && strncmp($data['url'], '/', 1) === 0){
             $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['url']);
             FileSystemService::deleteFile($urlServerPath, true);
         }

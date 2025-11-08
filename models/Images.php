@@ -335,6 +335,16 @@ class Images{
         return $retVal;
     }
 
+    public function deleteTaxonImageTags($tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM imagetag WHERE keyvalue = "TID-' . (int)$tid . '" ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getChecklistImageData($tidArr, $taxonLimit): array
     {
         $retArr = array();
@@ -398,6 +408,7 @@ class Images{
                 foreach($clidArr as $clid){
                     foreach($tidArr as $tid){
                         $keyValueArr[] = '"CLID-' . (int)$clid . '-' . (int)$tid . '"';
+                        $keyValueArr[] = '"TID-' . (int)$tid . '"';
                     }
                 }
                 $sqlWhereArr[] = 't.keyvalue IN(' . implode(',', $keyValueArr)  . ')';
@@ -409,7 +420,8 @@ class Images{
             }
             $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.alttext, t.keyvalue '.
                 'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.
-                'WHERE ' . implode(' OR ', $sqlWhereArr) . ' ';
+                'WHERE ' . implode(' OR ', $sqlWhereArr) . ' '.
+                'ORDER BY t.keyvalue ';
             //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -418,7 +430,12 @@ class Images{
                     $tid = '';
                     $tagArr = explode('-', $row['keyvalue']);
                     if($tagArr){
-                        $tid = $tagArr[2];
+                        if(strncmp($row['keyvalue'], 'CLID-', 5) === 0){
+                            $tid = $tagArr[2];
+                        }
+                        else{
+                            $tid = $tagArr[1];
+                        }
                     }
                     if($tid){
                         if(!array_key_exists($tid, $retArr)){

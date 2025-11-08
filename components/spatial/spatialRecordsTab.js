@@ -108,6 +108,7 @@ const spatialRecordsTab = {
     setup() {
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
+        const spatialStore = useSpatialStore();
 
         const clientRoot = baseStore.getClientRoot;
         const columns = [
@@ -118,7 +119,7 @@ const spatialRecordsTab = {
         ];
         const layersObj = Vue.inject('layersObj');
         const lazyLoadCnt = 100;
-        const pageNumber = Vue.ref(1);
+        const pageNumber = Vue.computed(() => spatialStore.getRecordPage);
         const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         const paginationFirstRecordNumber = Vue.computed(() => {
             let recordNumber = 1;
@@ -174,7 +175,9 @@ const spatialRecordsTab = {
         const updatePointStyle = Vue.inject('updatePointStyle');
 
         function changeRecordPage(props) {
-            setTableRecordData(props.pagination.page);
+            spatialStore.updateRecordPage(props.pagination.page);
+            searchStore.updateSearchTerms('mapIndex', props.pagination.page);
+            setTableRecordData();
         }
 
         function processRecordSelectionChange(selected, record) {
@@ -203,24 +206,23 @@ const spatialRecordsTab = {
             showPopup(label, recordPosition, false, true);
         }
 
-        function setTableRecordData(index) {
-            searchStore.updateSearchTerms('mapIndex', index);
+        function setTableRecordData() {
             const options = {
                 schema: 'map',
                 spatial: 1,
                 numRows: lazyLoadCnt,
-                index: (index - 1),
+                index: (pageNumber.value - 1),
                 output: 'json'
             };
             searchStore.setSearchRecordData(options);
-            pageNumber.value = Number(index);
         }
 
         Vue.onMounted(() => {
             if(searchTerms.value.hasOwnProperty('mapIndex')){
-                pageNumber.value = Number(searchTerms.value['mapIndex']);
+                spatialStore.updateRecordPage(searchTerms.value['mapIndex']);
+                searchStore.updateSearchTerms('mapIndex', searchTerms.value['mapIndex']);
             }
-            setTableRecordData(pagination.value.page);
+            setTableRecordData();
         });
 
         return {
