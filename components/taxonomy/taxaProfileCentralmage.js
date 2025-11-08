@@ -29,7 +29,7 @@ const taxaProfileCentralImage = {
             <template v-else>
                 <div class="no-central-image">
                     <template v-if="isEditor">
-                        <div><a :href="(clientRoot + '/taxa/profile/tpeditor.php?tid=' + taxon.tid)" aria-label="Add an Image" tabindex="0"><span class="text-weight-bold">Add an Image</span></a></div>
+                        <div><a :href="(clientRoot + '/taxa/profile/index.php?tid=' + taxon.tid)" aria-label="Add an Image" tabindex="0"><span class="text-weight-bold">Add an Image</span></a></div>
                     </template>
                     <template v-else>
                         <div>Image not available</div>
@@ -47,13 +47,19 @@ const taxaProfileCentralImage = {
             if(props.image){
                 centralImage = props.image;
             }
-            else{
-                centralImage = (taxaImageArr.value && taxaImageArr.value.length > 0) ? taxaImageArr.value[0] : null;
+            else if(taxaImageArr.value && taxaImageArr.value.length > 0){
+                if(taxaTaggedImageArr.value.length > 0){
+                    centralImage = taxaTaggedImageArr.value[0];
+                }
+                if(!centralImage){
+                    centralImage = taxaImageArr.value[0];
+                }
             }
             return centralImage;
         });
         const clientRoot = baseStore.getClientRoot;
         const taxaImageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+        const taxaTaggedImageArr = Vue.computed(() => taxaStore.getTaxaTaggedImageArr);
         const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
 
         function toggleImageCarousel(index) {

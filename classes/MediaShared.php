@@ -137,12 +137,7 @@ class MediaShared{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
 		if($url && strncmp($url, '/', 1) === 0){
-            $urlPrefix = 'http://';
-            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                $urlPrefix = 'https://';
-            }
-            $urlPrefix .= $_SERVER['HTTP_HOST'];
-            $url = $urlPrefix.$url;
+            $url = SanitizerService::getFullUrlPathPrefix().$url;
 		}
 
 		if($this->uriExists($url)){
@@ -335,61 +330,7 @@ class MediaShared{
         return $retVal;
     }
 
-	public function deleteMedia($medIdDel, $removeMed): bool
-	{
-		$medUrl = '';
-		$occid = 0;
-		$sqlQuery = 'SELECT * FROM media WHERE (mediaid = '.$medIdDel.')';
-		$rs = $this->conn->query($sqlQuery);
-		if($r = $rs->fetch_object()){
-			$medUrl = $r->accessuri;
-			$this->tid = $r->tid;
-			$occid = $r->occid;
-		}
-		$rs->close();
-
-		$sql = 'DELETE FROM media WHERE (mediaid = '.$medIdDel.')';
-		//echo $sql;
-		if($this->conn->query($sql)){
-			if($removeMed){
-				$medUrl2 = '';
-				$domain = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-					$domain = 'https://';
-				}
-				$domain .= $_SERVER['HTTP_HOST'];
-				if(stripos($medUrl,$domain) === 0){
-					$medUrl2 = $medUrl;
-					$medUrl = substr($medUrl,strlen($domain));
-				}
-				elseif(stripos($medUrl,$this->imageRootUrl) === 0){
-					$medUrl2 = $domain.$medUrl;
-				}
-
-				$sql = 'SELECT mediaid FROM media WHERE (accessuri = "'.$medUrl.'") ';
-				if($medUrl2) {
-					$sql .= 'OR (accessuri = "' . $medUrl2 . '")';
-				}
-				$rs = $this->conn->query($sql);
-				if($rs->num_rows){
-					$this->errArr[] = 'WARNING: Deleted records from database successfully but FAILED to delete media file from server because it is being referenced by another record.';
-				}
-				else{
-					$imgDelPath = str_replace($this->imageRootUrl,$this->imageRootPath,$medUrl);
-					if((strncmp($imgDelPath, 'http', 4) !== 0) && !unlink($imgDelPath)) {
-						$this->errArr[] = 'WARNING: Deleted records from database successfully but FAILED to delete media file from server (path: '.$imgDelPath.')';
-					}
-                }
-			}
-		}
-		else{
-			$this->errArr[] = 'ERROR: Unable to delete media record.';
-			return false;
-		}
-		return true;
-	}
-
-	public function getActiveMedId(): int
+    public function getActiveMedId(): int
 	{
 		return $this->activeMedId;
 	}
@@ -589,12 +530,7 @@ class MediaShared{
 					$exists = true;
 				}
 			}
-            $urlPrefix = 'http://';
-            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                $urlPrefix = 'https://';
-            }
-            $urlPrefix .= $_SERVER['HTTP_HOST'];
-            $uri = $urlPrefix.$uri;
+            $uri = SanitizerService::getFullUrlPathPrefix().$uri;
 		}
 
 		if(!$exists && function_exists('curl_init')) {

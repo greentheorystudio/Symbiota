@@ -13,7 +13,7 @@ const imageRecordInfoBlock = {
         <q-card>
             <q-card-section>
                 <div class="full-width row justify-between q-col-gutter-sm">
-                    <div class="col-3 column">
+                    <div class="col-3 column no-wrap">
                         <div class="full-width row justify-center">
                             <q-img :src="(imageData.url.startsWith('/') ? (clientRoot + imageData.url) : imageData.url)" :fit="contain" class="media-thumbnail"></q-img>
                         </div>
@@ -34,7 +34,7 @@ const imageRecordInfoBlock = {
                             </span>
                         </div>
                     </div>
-                    <div class="col-8 column">
+                    <div class="col-8 column no-wrap">
                         <template v-if="editor">
                             <div v-if="imageData.sortsequence">
                                 <span class="text-bold">Sort Sequence: </span>{{ imageData.sortsequence }}

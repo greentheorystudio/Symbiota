@@ -15,7 +15,7 @@ const organismOfTheDay = {
     },
     template: `
         <div ref="cardContainerRef" class="full-width row justify-center">
-            <q-card role="button" class="cursor-pointer" @click="showPopup = true" :aria-label="('Show ' + {{ title }})" tabindex="0">
+            <q-card role="button" class="cursor-pointer" @click="showPopup = true" :aria-label="('Show ' + title)" tabindex="0">
                 <q-card-section v-if="imageData && taxonData && imageData.hasOwnProperty(taxonData['tidaccepted']) && imageData[taxonData['tidaccepted']].length > 0" class="q-pa-md column">
                     <div class="full-width text-h5 text-bold row justify-center">
                         {{ title }}

@@ -21,9 +21,7 @@ const checklistTaxaImageSelectorModule = {
         </div>
     `,
     components: {
-        'checkbox-input-element': checkboxInputElement,
-        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-        'text-field-input-element': textFieldInputElement
+        'checkbox-input-element': checkboxInputElement
     },
     setup() {
         const { showNotification } = useCore();

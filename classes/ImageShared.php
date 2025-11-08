@@ -196,12 +196,7 @@ class ImageShared{
 		$status = false;
 		$url = str_replace(' ','%20',$url);
 		if($url && strncmp($url, '/', 1) === 0){
-            $urlPrefix = 'http://';
-            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                $urlPrefix = 'https://';
-            }
-            $urlPrefix .= $_SERVER['HTTP_HOST'];
-            $url = $urlPrefix.$url;
+            $url = SanitizerService::getFullUrlPathPrefix().$url;
 		}
 
 		$this->sourceUrl = $url;
@@ -593,24 +588,7 @@ class ImageShared{
 		//echo $sql;
 		if($this->conn->query($sql)){
 			if($removeImg){
-				$imgUrl2 = '';
-				$domain = 'http://';
-				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-					$domain = 'https://';
-				}
-				$domain .= $_SERVER['HTTP_HOST'];
-				if(stripos($imgUrl,$domain) === 0){
-					$imgUrl2 = $imgUrl;
-					$imgUrl = substr($imgUrl,strlen($domain));
-				}
-				elseif(stripos($imgUrl,$this->imageRootUrl) === 0){
-					$imgUrl2 = $domain.$imgUrl;
-				}
-
 				$sql = 'SELECT imgid FROM images WHERE (url = "'.$imgUrl.'") ';
-				if($imgUrl2) {
-					$sql .= 'OR (url = "' . $imgUrl2 . '")';
-				}
 				$rs = $this->conn->query($sql);
 				if($rs->num_rows){
 					$this->errArr[] = 'WARNING: Deleted records from database successfully but FAILED to delete image from server because it is being referenced by another record.';
@@ -830,12 +808,7 @@ class ImageShared{
 					$exists = true;
 				}
 			}
-            $urlPrefix = 'http://';
-            if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] === 443) {
-                $urlPrefix = 'https://';
-            }
-            $urlPrefix .= $_SERVER['HTTP_HOST'];
-            $uri = $urlPrefix.$uri;
+            $uri = SanitizerService::getFullUrlPathPrefix().$uri;
 		}
 
 		if(!$exists && function_exists('curl_init')) {

@@ -49,7 +49,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                         <q-card-section>
                                             <template v-if="descriptionSelected">
                                                 <div class="q-my-sm">
-                                                    <single-language-auto-complete :language="descriptionLanguage" :disable="loading" label="Description Language" @update:language="updateDescriptionLanguage"></single-language-auto-complete>
+                                                    <single-language-auto-complete :language="descriptionLanguage['name']" :disable="loading" label="Description Language" @update:language="updateDescriptionLanguage"></single-language-auto-complete>
                                                 </div>
                                                 <div class="q-my-sm">
                                                     <q-option-group :options="descriptionSaveOptions" type="radio" v-model="selectedDescSaveMethod" :disable="loading" dense aria-label="Description save options" tabindex="0" />

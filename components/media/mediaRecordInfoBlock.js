@@ -13,7 +13,7 @@ const mediaRecordInfoBlock = {
         <q-card>
             <q-card-section>
                 <div class="full-width row justify-between q-col-gutter-sm">
-                    <div class="col-3 column">
+                    <div class="col-3 column no-wrap">
                         <div v-if="mediaData.format.startsWith('audio') || mediaData.format.startsWith('video')" class="full-width row justify-center">
                             <template v-if="mediaData.format.startsWith('audio')">
                                 <audio class="media-thumbnail" controls>
@@ -38,7 +38,7 @@ const mediaRecordInfoBlock = {
                             <a :href="(mediaData.descriptivetranscripturi.startsWith('/') ? (clientRoot + mediaData.descriptivetranscripturi) : mediaData.descriptivetranscripturi)" target="_blank" aria-label="View descriptive transcript - Opens in separate tab" tabindex="0">Descriptive Transcript</a>
                         </div>
                     </div>
-                    <div class="col-8 column">
+                    <div class="col-8 column no-wrap">
                         <template v-if="editor">
                             <div v-if="mediaData.sortsequence">
                                 <span class="text-bold">Sort Sequence: </span>{{ mediaData.sortsequence }}

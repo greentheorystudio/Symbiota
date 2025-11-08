@@ -57,7 +57,7 @@ const userPermissionManagementModule = {
                         <div class="text-body1 text-bold">Add a new {{ permissionLabel }}</div>
                         <div class="row justify-between q-gutter-sm no-wrap">
                             <div class="col-grow">
-                                <user-auto-complete label="Add User" :value="selectedAddUser" @update:value="processAddUserChange"></user-auto-complete>
+                                <user-auto-complete label="Add User" :value="selectedAddUser" user-type="nonadmin" @update:value="processAddUserChange"></user-auto-complete>
                             </div>
                             <div class="col-2 row justify-end">
                                 <div>
