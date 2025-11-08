@@ -178,9 +178,6 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    this.setTaxaTaggedImageArr();
-                }
                 callback(Number(res));
             });
         },
@@ -273,14 +270,6 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 method: 'POST',
                 body: formData
             })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                if(Number(res) === 1){
-                    this.setTaxaTaggedImageArr();
-                }
-            });
         },
         deleteTaxaVernacularRecord(callback = null) {
             this.taxaVernacularStore.deleteTaxaVernacularRecord((res) => {
