@@ -126,8 +126,14 @@ const taxonProfileEditorVernacularEditorPopup = {
         }
 
         function processLanguageChange(langObj) {
-            updateVernacularData('language', langObj['iso-1']);
-            updateVernacularData('langid', langObj['id']);
+            if(langObj){
+                updateVernacularData('language', langObj['name']);
+                updateVernacularData('langid', langObj['id']);
+            }
+            else{
+                updateVernacularData('language', null);
+                updateVernacularData('langid', null);
+            }
         }
 
         function saveVernacularEdits() {

@@ -131,8 +131,14 @@ const taxonProfileEditorDescriptionBlockEditorPopup = {
         }
 
         function processLanguageChange(langObj) {
-            updateBlockData('language', langObj['iso-1']);
-            updateBlockData('langid', langObj['id']);
+            if(langObj){
+                updateBlockData('language', langObj['name']);
+                updateBlockData('langid', langObj['id']);
+            }
+            else{
+                updateBlockData('language', null);
+                updateBlockData('langid', null);
+            }
         }
 
         function saveBlockEdits() {
