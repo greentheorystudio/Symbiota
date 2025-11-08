@@ -592,7 +592,9 @@ class Images{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $retArr[] = $row['keyvalue'];
+                if(strncmp($row['keyvalue'], 'CLID-', 5) !== 0 && strncmp($row['keyvalue'], 'TID-', 4) !== 0){
+                    $retArr[] = $row['keyvalue'];
+                }
                 unset($rows[$index]);
             }
         }
