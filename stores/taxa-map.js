@@ -4,7 +4,8 @@ const useTaxaMapStore = Pinia.defineStore('taxa-map', {
             mid: 0,
             tid: null,
             url: null,
-            title: null
+            title: null,
+            alttext: null
         },
         taxaMapArr: {},
         taxaMapData: {},
@@ -29,21 +30,17 @@ const useTaxaMapStore = Pinia.defineStore('taxa-map', {
                 }
             }
             return exist;
-        },
-        getTaxaMapID(state) {
-            return state.taxaMapId;
-        },
-        getTaxaMapValid(state) {
-            return !!state.taxaMapEditData['tid'];
         }
     },
     actions: {
         clearTaxaMapArr() {
             this.taxaMapArr = Object.assign({}, {});
         },
-        createTaxaMapRecord(callback) {
+        createTaxaMapRecord(file, path, callback) {
             const formData = new FormData();
-            formData.append('map', JSON.stringify(this.taxaMapEditData));
+            formData.append('mapImageFile', file);
+            formData.append('uploadPath', path.toString());
+            formData.append('mapData', JSON.stringify(this.taxaMapEditData));
             formData.append('action', 'createTaxonMapRecord');
             fetch(taxonMapApiUrl, {
                 method: 'POST',

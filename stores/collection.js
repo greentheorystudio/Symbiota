@@ -32,6 +32,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
             publishtoidigbio: null,
             aggkeysstr: null,
             dwcaurl: null,
+            dwcapublishtimestamp: null,
             bibliographiccitation: null,
             accessrights: null,
             configjson: null,

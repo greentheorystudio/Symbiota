@@ -2,7 +2,7 @@ const taxonProfileEditorDescriptionsTab = {
     template: `
         <div class="column q-gutter-sm">
             <div class="full-width row justify-end items-center">
-                <div>
+                <div v-if="isAccepted">
                     <q-btn color="primary" @click="openBlockEditorPopup(0);" label="Add Description Block" tabindex="0" />
                 </div>
             </div>
@@ -25,7 +25,7 @@ const taxonProfileEditorDescriptionsTab = {
                                             </q-tooltip>
                                         </q-btn>
                                     </div>
-                                    <div>
+                                    <div v-if="isAccepted">
                                         <q-btn color="secondary" @click="openStatementEditorPopup(block['tdbid'], 0);" label="Add Description Statement" tabindex="0" />
                                     </div>
                                 </div>
@@ -121,6 +121,7 @@ const taxonProfileEditorDescriptionsTab = {
         const descriptionStatementData = Vue.computed(() => taxaStore.getTaxaDescriptionStatementArr);
         const editBlockId = Vue.ref(0);
         const editStatementId = Vue.ref(0);
+        const isAccepted = Vue.computed(() => taxaStore.getAccepted);
         const showBlockEditorPopup = Vue.ref(false);
         const showStatementEditorPopup = Vue.ref(false);
 
@@ -139,6 +140,7 @@ const taxonProfileEditorDescriptionsTab = {
             descriptionArr,
             editBlockId,
             editStatementId,
+            isAccepted,
             showBlockEditorPopup,
             showStatementEditorPopup,
             openBlockEditorPopup,
