@@ -5,7 +5,7 @@ const taxaProfileTaxonMap = {
                 <div class="map-thumb-container">
                     <template v-if="taxonMap">
                         <div class="map-thumb-image">
-                            <q-img :src="(taxonMap['url'].startsWith('/') ? (clientRoot + taxonMap['url']) : taxonMap['url'])" :fit="contain" :title="taxon.sciname" :alt="('Map displaying the range of ' + taxon.sciname)"></q-img>
+                            <q-img :src="(taxonMap['url'].startsWith('/') ? (clientRoot + taxonMap['url']) : taxonMap['url'])" fit="contain" :title="taxon.sciname" :alt="(taxonMap['alttext'] ? taxonMap['alttext'] : ('Map displaying the range of ' + taxon.sciname))"></q-img>
                         </div>
                     </template>
                     <div class="map-thumb-spatial-link">

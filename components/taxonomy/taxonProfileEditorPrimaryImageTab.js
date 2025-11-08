@@ -28,8 +28,6 @@ const taxonProfileEditorPrimaryImageTab = {
         const taxaStore = useTaxaStore();
 
         const cardStyle = Vue.ref(null);
-        const taxaImageOptionArr = Vue.computed(() => taxaStore.getTaxaImageArr);
-        const taxaTaggedImageArr = Vue.computed(() => taxaStore.getTaxaTaggedImageArr);
         const contentRef = Vue.ref(null);
         const displayArr = Vue.computed(() => {
             const returnArr = [];
@@ -48,6 +46,9 @@ const taxonProfileEditorPrimaryImageTab = {
         const imageHeight = Vue.ref(null);
         const scrollerStyle = Vue.ref(null);
         const taggedImageIdArr = Vue.ref([]);
+        const taxaImageOptionArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+        const taxaTaggedImageArr = Vue.computed(() => taxaStore.getTaxaTaggedImageArr);
+        const taxon = Vue.computed(() => taxaStore.getTaxaData);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
@@ -62,7 +63,11 @@ const taxonProfileEditorPrimaryImageTab = {
                     if(res !== 1){
                         showNotification('negative', 'There was an error selecting the image');
                     }
+                    taxaStore.setTaxaTaggedImageArr(taxon.value['tid']);
                 });
+            }
+            else{
+                taxaStore.setTaxaTaggedImageArr(taxon.value['tid']);
             }
         }
 

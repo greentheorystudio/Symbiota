@@ -7,6 +7,7 @@ ALTER TABLE `omcollections`
     ADD COLUMN `ccpk` int(10) UNSIGNED NULL AFTER `CollID`,
     ADD COLUMN `isPublic` smallint(1) NOT NULL DEFAULT 1 AFTER `SortSeq`,
     ADD COLUMN `defaultRepCount` int(10) NULL AFTER `DataRecordingMethod`,
+    ADD COLUMN `dwcaPublishTimestamp` timestamp NULL AFTER `dwcaUrl`,
     CHANGE COLUMN `dynamicProperties` `configJson` longtext NULL AFTER `accessrights`,
     ADD INDEX `isPublic`(`isPublic`),
     ADD CONSTRAINT `FK_collid_ccpk` FOREIGN KEY (`ccpk`) REFERENCES `omcollcategories` (`ccpk`) ON DELETE RESTRICT ON UPDATE NO ACTION;
@@ -426,6 +427,9 @@ ALTER TABLE `omcolldatauploadparameters`
 
 ALTER TABLE `omcollmediauploadparameters`
     MODIFY COLUMN `configjson` longtext NULL AFTER `patternmatchfield`;
+
+ALTER TABLE `taxamaps`
+    ADD COLUMN `altText` varchar(355) NULL AFTER `title`;
 
 ALTER TABLE `users`
     DROP COLUMN `department`,
