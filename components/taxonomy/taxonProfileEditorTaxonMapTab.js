@@ -12,7 +12,7 @@ const taxonProfileEditorTaxonMapTab = {
                 </div>
             </div>
             <div class="col-6 column q-gutter-sm">
-                <q-card flat bordered>
+                <q-card v-if="isAccepted" flat bordered>
                     <q-card-section class="column q-gutter-sm">
                         <div class="text-subtitle1 text-bold">Upload a taxon map image</div>
                         <div class="row">
@@ -64,6 +64,7 @@ const taxonProfileEditorTaxonMapTab = {
         const contentRef = Vue.ref(null);
         const editsExist = Vue.computed(() => taxaStore.getTaxaMapEditsExist);
         const imageHeight = Vue.ref(null);
+        const isAccepted = Vue.computed(() => taxaStore.getAccepted);
         const newAltText = Vue.ref(null);
         const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
         const taxon = Vue.computed(() => taxaStore.getTaxaData);
@@ -158,6 +159,7 @@ const taxonProfileEditorTaxonMapTab = {
             contentRef,
             editsExist,
             imageHeight,
+            isAccepted,
             newAltText,
             taxon,
             taxonMapData,

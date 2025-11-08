@@ -2,7 +2,7 @@ const taxonProfileEditorVernacularTab = {
     template: `
         <div class="column q-gutter-sm">
             <div class="full-width row justify-end items-center">
-                <div>
+                <div v-if="isAccepted">
                     <q-btn color="primary" @click="openVernacularEditorPopup(0);" label="Add Common Name" tabindex="0" />
                 </div>
             </div>
@@ -53,6 +53,7 @@ const taxonProfileEditorVernacularTab = {
         const taxaStore = useTaxaStore();
 
         const editVernacularId = Vue.ref(0);
+        const isAccepted = Vue.computed(() => taxaStore.getAccepted);
         const showVernacularEditorPopup = Vue.ref(false);
         const vernacularArr = Vue.computed(() => taxaStore.getTaxaVernacularArr);
         
@@ -63,6 +64,7 @@ const taxonProfileEditorVernacularTab = {
 
         return {
             editVernacularId,
+            isAccepted,
             showVernacularEditorPopup,
             vernacularArr,
             openVernacularEditorPopup

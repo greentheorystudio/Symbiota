@@ -42,6 +42,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         taxaVernacularStore: useTaxaVernacularStore()
     }),
     getters: {
+        getAccepted(state) {
+            return Number(state.taxaData['tid']) === Number(state.taxaData['tidaccepted']);
+        },
         getAcceptedTaxonData(state) {
             if(state.taxaAcceptedData){
                 return state.taxaAcceptedData;
