@@ -93,7 +93,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             <q-tab name="descriptions" label="Descriptions" no-caps></q-tab>
                             <q-tab v-if="isAccepted" name="tag" label="Tag Primary Image" no-caps></q-tab>
                             <q-tab name="common" label="Common Names" no-caps></q-tab>
-                            <q-tab name="map" label="Taxon Map" no-caps></q-tab>
+                            <q-tab v-if="isAccepted || taxonMap" name="map" label="Taxon Map" no-caps></q-tab>
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
@@ -109,7 +109,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             <q-tab-panel name="common" class="main-container-height">
                                 <taxon-profile-editor-vernacular-tab></taxon-profile-editor-vernacular-tab>
                             </q-tab-panel>
-                            <q-tab-panel name="map" class="main-container-height">
+                            <q-tab-panel v-if="isAccepted || taxonMap" name="map" class="main-container-height">
                                 <taxon-profile-editor-taxon-map-tab></taxon-profile-editor-taxon-map-tab>
                             </q-tab-panel>
                         </q-tab-panels>
@@ -179,7 +179,12 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const isTaxonEditor = Vue.ref(false);
                     const isTaxonProfileEditor = Vue.ref(false);
                     const tab = Vue.ref('media');
+                    const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
                     const taxon = Vue.computed(() => taxaStore.getTaxaData);
+                    const taxonId = Vue.computed(() => taxaStore.getTaxaID);
+                    const taxonMap = Vue.computed(() => {
+                        return taxaMapData.value.hasOwnProperty(taxonId.value) ? taxaMapData.value[taxonId.value] : null;
+                    });
                     const taxonNameVal = Vue.ref(null);
 
                     function processTaxonNameChange(taxonData) {
@@ -242,6 +247,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         isTaxonProfileEditor,
                         tab,
                         taxon,
+                        taxonMap,
                         taxonNameVal,
                         processTaxonNameChange,
                         setTaxonData
