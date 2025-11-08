@@ -1,6 +1,6 @@
-const checklistTaxaImageSelectorModule = {
+const taxonProfileEditorPrimaryImageTab = {
     template: `
-        <div ref="contentRef" class="fit">
+        <div ref="contentRef" class="fit preview-image-carousel">
             <template v-if="displayArr.length > 0">
                 <q-scroll-area class="q-px-md" :style="scrollerStyle">
                     <div class="row no-wrap q-gutter-md q-pt-md">
@@ -25,20 +25,18 @@ const checklistTaxaImageSelectorModule = {
     },
     setup() {
         const { showNotification } = useCore();
-        const checklistStore = useChecklistStore();
+        const taxaStore = useTaxaStore();
 
         const cardStyle = Vue.ref(null);
-        const checklistTaxaImageOptionArr = Vue.computed(() => checklistStore.getChecklistTaxaImageOptionArr);
-        const checklistTaxaTaggedImageArr = Vue.computed(() => checklistStore.getChecklistTaxaTaggedImageArr);
         const contentRef = Vue.ref(null);
         const displayArr = Vue.computed(() => {
             const returnArr = [];
             taggedImageIdArr.value.length = 0;
-            checklistTaxaTaggedImageArr.value.forEach((image) => {
+            taxaTaggedImageArr.value.forEach((image) => {
                 taggedImageIdArr.value.push(Number(image['imgid']));
                 returnArr.push(image);
             });
-            checklistTaxaImageOptionArr.value.forEach((image) => {
+            taxaImageOptionArr.value.forEach((image) => {
                 if(!taggedImageIdArr.value.includes(Number(image['imgid']))){
                     returnArr.push(image);
                 }
@@ -48,25 +46,28 @@ const checklistTaxaImageSelectorModule = {
         const imageHeight = Vue.ref(null);
         const scrollerStyle = Vue.ref(null);
         const taggedImageIdArr = Vue.ref([]);
+        const taxaImageOptionArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+        const taxaTaggedImageArr = Vue.computed(() => taxaStore.getTaxaTaggedImageArr);
+        const taxon = Vue.computed(() => taxaStore.getTaxaData);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
         function processImageSelectionChange(imgid, value) {
+            if(taggedImageIdArr.value.length > 0){
+                taxaStore.deleteTaxaImageTag(taggedImageIdArr.value[0]);
+            }
             if(Number(value) === 1){
-                checklistStore.addCurrentChecklistTaxonImageTag(imgid, (res) => {
+                taxaStore.addTaxaImageTag(imgid, (res) => {
                     if(res !== 1){
                         showNotification('negative', 'There was an error selecting the image');
                     }
+                    taxaStore.setTaxaTaggedImageArr(taxon.value['tid']);
                 });
             }
             else{
-                checklistStore.deleteCurrentChecklistTaxonImageTag(imgid, (res) => {
-                    if(res !== 1){
-                        showNotification('negative', 'There was an error deselecting the image');
-                    }
-                });
+                taxaStore.setTaxaTaggedImageArr(taxon.value['tid']);
             }
         }
 

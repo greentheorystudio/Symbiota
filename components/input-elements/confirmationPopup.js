@@ -6,7 +6,7 @@ const confirmationPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" persistent>
+        <q-dialog class="z-max" v-model="showPopup" persistent>
             <q-card class="q-dialog-plugin q-pa-lg">
                 {{ popupText }}
                 <q-card-actions align="right">

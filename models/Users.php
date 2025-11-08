@@ -252,11 +252,31 @@ class Users{
 
     public function deleteUser($uid): int
     {
-        $retuenVal = 0;
+        $retuenVal = 1;
         if($uid){
+            $sql = 'DELETE FROM useraccesstokens WHERE uid = ' . (int)$uid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
+            $sql = 'DELETE FROM userroles WHERE uid = ' . (int)$uid . ' OR uidassignedby = ' . (int)$uid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
+            $sql = 'UPDATE images SET photographeruid = NULL WHERE photographeruid = ' . (int)$uid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
+            $sql = 'UPDATE media SET creatoruid = NULL WHERE creatoruid = ' . (int)$uid . ' ';
+            //echo $sql;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
+            }
             $sql = 'DELETE FROM users WHERE uid = ' . (int)$uid . ' ';
-            if($this->conn->query($sql)){
-                $retuenVal = 1;
+            if(!$this->conn->query($sql)){
+                $retuenVal = 0;
             }
         }
         $this->clearCookieSession();
@@ -390,7 +410,7 @@ class Users{
         $this->clearOldUnregisteredUsers();
         $retArr = array();
         $whereArr = array();
-        $sql = 'SELECT uid, firstname, lastname, username FROM users ';
+        $sql = 'SELECT uid, firstname, middleinitial, lastname, username FROM users ';
         if($userType === 'confirmed'){
             $whereArr[] = 'validated = "1"';
         }
@@ -415,6 +435,7 @@ class Users{
                 $nodeArr = array();
                 $nodeArr['uid'] = $row['uid'];
                 $nodeArr['firstname'] = $row['firstname'];
+                $nodeArr['middleinitial'] = $row['middleinitial'];
                 $nodeArr['lastname'] = $row['lastname'];
                 $nodeArr['username'] = $row['username'];
                 $retArr[] = $nodeArr;

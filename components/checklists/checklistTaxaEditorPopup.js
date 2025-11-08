@@ -10,7 +10,7 @@ const checklistTaxaEditorPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" seamless square position="right">
+        <q-dialog class="z-max" v-model="showPopup" v-if="!showOccurrenceLinkageToolPopup" seamless square position="right">
             <q-card class="side-popup-right overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -22,7 +22,7 @@ const checklistTaxaEditorPopup = {
                         <template v-if="Number(checklistTaxaId) > 0">
                             <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                                 <q-tab name="edit" label="Info" no-caps></q-tab>
-                                <q-tab name="images" label="Images" no-caps></q-tab>
+                                <q-tab name="images" label="Tag Images" no-caps></q-tab>
                                 <q-tab name="vouchers" label="Vouchers" no-caps></q-tab>
                             </q-tabs>
                             <q-separator></q-separator>

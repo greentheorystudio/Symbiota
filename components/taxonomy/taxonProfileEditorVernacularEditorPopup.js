@@ -1,12 +1,12 @@
-const occurrenceGeneticRecordLinkageEditorPopup = {
+const taxonProfileEditorVernacularEditorPopup = {
     props: {
-        geneticLinkageId: {
-            type: Number,
-            default: 0
-        },
         showPopup: {
             type: Boolean,
             default: false
+        },
+        vernacularId: {
+            type: Number,
+            default: 0
         }
     },
     template: `
@@ -22,47 +22,42 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                         <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
-                                    <template v-if="geneticLinkageId > 0 && editsExist">
+                                    <template v-if="vernacularId > 0 && editsExist">
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <template v-if="geneticLinkageId > 0">
-                                        <q-btn color="secondary" @click="saveGeneticLinkageEdits();" label="Save Edits" :disabled="!editsExist || !geneticLinkageValid" tabindex="0" />
+                                    <template v-if="vernacularId > 0">
+                                        <q-btn color="secondary" @click="saveVernacularEdits();" label="Save Common Name Edits" :disabled="!editsExist || !vernacularValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addGeneticLinkage();" label="Add Genetic Record Linkage" :disabled="!geneticLinkageValid" tabindex="0" />
+                                        <q-btn color="secondary" @click="addVernacular();" label="Add Common Name" :disabled="!vernacularValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Name" :value="geneticLinkageData['resourcename']" @update:value="(value) => updateGeneticLinkageData('resourcename', value)"></text-field-input-element>
+                                    <text-field-input-element label="Common Name" :value="vernacularData['vernacularname']" @update:value="(value) => updateVernacularData('vernacularname', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Identifier" :value="geneticLinkageData['identifier']" @update:value="(value) => updateGeneticLinkageData('identifier', value)"></text-field-input-element>
+                                    <single-language-auto-complete label="Language" :language="vernacularData['language']" @update:language="processLanguageChange"></single-language-auto-complete>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Locus" :value="geneticLinkageData['locus']" @update:value="(value) => updateGeneticLinkageData('locus', value)"></text-field-input-element>
+                                    <text-field-input-element label="Notes" :value="vernacularData['notes']" @update:value="(value) => updateVernacularData('notes', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="URL" :value="geneticLinkageData['resourceurl']" @update:value="(value) => updateGeneticLinkageData('resourceurl', value)"></text-field-input-element>
+                                    <text-field-input-element label="Source" :value="vernacularData['source']" @update:value="(value) => updateVernacularData('source', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Notes" :value="geneticLinkageData['notes']" @update:value="(value) => updateGeneticLinkageData('notes', value)"></text-field-input-element>
-                                </div>
-                            </div>
-                            <div v-if="Number(geneticLinkageId) > 0" class="row justify-end q-gutter-md">
+                            <div v-if="Number(vernacularId) > 0" class="row justify-end q-gutter-md">
                                 <div>
-                                    <q-btn color="negative" @click="deleteGeneticLinkage();" label="Delete Genetic Record Linkage" tabindex="0" />
+                                    <q-btn color="negative" @click="deleteVernacular();" label="Delete Description Statement" tabindex="0" />
                                 </div>
                             </div>
                         </div>
@@ -74,31 +69,32 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
     `,
     components: {
         'confirmation-popup': confirmationPopup,
+        'single-language-auto-complete': singleLanguageAutoComplete,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const occurrenceStore = useOccurrenceStore();
+        const taxaStore = useTaxaStore();
 
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const geneticLinkageData = Vue.computed(() => occurrenceStore.getGeneticLinkData);
-        const geneticLinkageValid = Vue.computed(() => occurrenceStore.getGeneticLinkValid);
-        const editsExist = Vue.computed(() => occurrenceStore.getGeneticLinkEditsExist);
-
+        const editsExist = Vue.computed(() => taxaStore.getTaxaVernacularEditsExist);
+        const vernacularData = Vue.computed(() => taxaStore.getTaxaVernacularData);
+        const vernacularValid = Vue.computed(() => taxaStore.getTaxaVernacularValid);
+        
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
-        function addGeneticLinkage() {
-            occurrenceStore.createOccurrenceGeneticLinkageRecord((newLinkId) => {
-                if(newLinkId > 0){
-                    showNotification('positive','Genetic record linkage added successfully.');
+        function addVernacular() {
+            taxaStore.createTaxaVernacularRecord((newBlockId) => {
+                if(newBlockId > 0){
+                    showNotification('positive','Common name added successfully.');
                     context.emit('close:popup');
                 }
                 else{
-                    showNotification('negative', 'There was an error adding the new genetic record linkage.');
+                    showNotification('negative', 'There was an error adding the new common name.');
                 }
             });
         }
@@ -107,32 +103,43 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             context.emit('close:popup');
         }
 
-        function deleteGeneticLinkage() {
-            const confirmText = 'Are you sure you want to delete this genetic record linkage? This action cannot be undone.';
+        function deleteVernacular() {
+            const confirmText = 'Are you sure you want to delete this common name? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    occurrenceStore.deleteGeneticLinkageRecord((res) => {
+                    taxaStore.deleteTaxaVernacularRecord((res) => {
                         if(res === 1){
-                            showNotification('positive','Genetic record linkage has been deleted.');
+                            showNotification('positive','Common name has been deleted.');
                             context.emit('close:popup');
                         }
                         else{
-                            showNotification('negative', 'There was an error deleting the genetic record linkage.');
+                            showNotification('negative', 'There was an error deleting the common name.');
                         }
                     });
                 }
             }});
         }
 
-        function saveGeneticLinkageEdits() {
+        function processLanguageChange(langObj) {
+            if(langObj){
+                updateVernacularData('language', langObj['name']);
+                updateVernacularData('langid', langObj['id']);
+            }
+            else{
+                updateVernacularData('language', null);
+                updateVernacularData('langid', null);
+            }
+        }
+
+        function saveVernacularEdits() {
             showWorking('Saving edits...');
-            occurrenceStore.updateOccurrenceGeneticLinkageRecord((res) => {
+            taxaStore.updateTaxaVernacularRecord((res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the genetic record linkage edits.');
+                    showNotification('negative', 'There was an error saving the common name edits.');
                 }
                 context.emit('close:popup');
             });
@@ -145,14 +152,14 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             }
         }
 
-        function updateGeneticLinkageData(key, value) {
-            occurrenceStore.updateGeneticLinkageEditData(key, value);
+        function updateVernacularData(key, value) {
+            taxaStore.updateTaxaVernacularEditData(key, value);
         }
 
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            occurrenceStore.setCurrentGeneticLinkageRecord(props.geneticLinkageId);
+            taxaStore.setCurrentTaxaVernacularRecord(props.vernacularId);
         });
 
         return {
@@ -160,13 +167,14 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
             contentRef,
             contentStyle,
             editsExist,
-            geneticLinkageData,
-            geneticLinkageValid,
-            addGeneticLinkage,
+            vernacularData,
+            vernacularValid,
+            addVernacular,
             closePopup,
-            deleteGeneticLinkage,
-            saveGeneticLinkageEdits,
-            updateGeneticLinkageData
+            deleteVernacular,
+            processLanguageChange,
+            saveVernacularEdits,
+            updateVernacularData
         }
     }
 };

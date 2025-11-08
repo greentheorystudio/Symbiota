@@ -111,7 +111,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         </div>
         <h1>
         <?php
-            echo "<a href='../profile/tpeditor.php?tid=".$taxonEditorObj->getTid()."' style='color:inherit;text-decoration:none;'>";
+            echo "<a href='../profile/index.php?tid=".$taxonEditorObj->getTid()."' style='color:inherit;text-decoration:none;'>";
             echo '<i>' .$taxonEditorObj->getSciName(). '</i> ' .$taxonEditorObj->getAuthor(). ' [' .$taxonEditorObj->getTid(). ']';
             echo '</a>'
         ?>
