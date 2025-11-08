@@ -55,11 +55,6 @@ const taxonProfileEditorVernacularEditorPopup = {
                                     <text-field-input-element label="Source" :value="vernacularData['source']" @update:value="(value) => updateVernacularData('source', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-grow">
-                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="vernacularData['sortsequence']" min-value="1" :clearable="false" @update:value="(value) => updateVernacularData('sortsequence', value)"></text-field-input-element>
-                                </div>
-                            </div>
                             <div v-if="Number(vernacularId) > 0" class="row justify-end q-gutter-md">
                                 <div>
                                     <q-btn color="negative" @click="deleteVernacular();" label="Delete Description Statement" tabindex="0" />
@@ -126,8 +121,14 @@ const taxonProfileEditorVernacularEditorPopup = {
         }
 
         function processLanguageChange(langObj) {
-            updateVernacularData('language', langObj['iso-1']);
-            updateVernacularData('langid', langObj['id']);
+            if(langObj){
+                updateVernacularData('language', langObj['name']);
+                updateVernacularData('langid', langObj['id']);
+            }
+            else{
+                updateVernacularData('language', null);
+                updateVernacularData('langid', null);
+            }
         }
 
         function saveVernacularEdits() {

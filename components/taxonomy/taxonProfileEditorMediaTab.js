@@ -1,7 +1,9 @@
 const taxonProfileEditorMediaTab = {
     template: `
         <div class="column q-gutter-sm">
-            <media-file-upload-input-element :taxon="taxon" :taxon-id="tId" @upload:complete="processMediaUpdate"></media-file-upload-input-element>
+            <template v-if="isAccepted">
+                <media-file-upload-input-element :taxon="taxon" :taxon-id="tId" @upload:complete="processMediaUpdate"></media-file-upload-input-element>
+            </template>
             <div class="q-mt-sm">
                 <template v-if="imageArr.length > 0 || mediaArr.length > 0">
                     <template v-if="imageArr.length > 0">
@@ -60,6 +62,7 @@ const taxonProfileEditorMediaTab = {
         const editImageId = Vue.ref(0);
         const editMediaId = Vue.ref(0);
         const imageArr = Vue.computed(() => taxaStore.getTaxaImageArr);
+        const isAccepted = Vue.computed(() => taxaStore.getAccepted);
         const mediaArr = Vue.computed(() => taxaStore.getTaxaMediaArr);
         const showImageEditorPopup = Vue.ref(false);
         const showMediaEditorPopup = Vue.ref(false);
@@ -85,6 +88,7 @@ const taxonProfileEditorMediaTab = {
             editImageId,
             editMediaId,
             imageArr,
+            isAccepted,
             mediaArr,
             showImageEditorPopup,
             showMediaEditorPopup,
