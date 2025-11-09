@@ -313,6 +313,19 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('tabindex', d => {
                                 return d.data.expandable ? '0' : null
                             })
+                            .attr('aria-label', d => {
+                                if(d.data.expandable){
+                                    if(d.data.hasOwnProperty('children') && d.data.children){
+                                        return ('Hide ' + d.data.sciname);
+                                    }
+                                    else{
+                                        return ('Expand ' + d.data.sciname);
+                                    }
+                                }
+                                else{
+                                    return null;
+                                }
+                            })
                             .on('keydown', (event, d) => {
                                 if(event.key === 'Enter' && d.data.expandable) {
                                     if(d.data.hasOwnProperty('children') && d.data.children){
@@ -372,6 +385,9 @@ header('X-Frame-Options: SAMEORIGIN');
                             .style('font-size', '60px')
                             .attr('cursor', 'pointer')
                             .attr('tabindex', '0')
+                            .attr('aria-label', d => {
+                                return (d.data.sciname + ' taxon profile page page - Opens in separate tab')
+                            })
                             .attr('pointer-events', d => {
                                 return d.data.expandable ? 'all' : null
                             })
