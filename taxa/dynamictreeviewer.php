@@ -310,6 +310,32 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('pointer-events', d => {
                                 return d.data.expandable ? 'all' : null
                             })
+                            .attr('tabindex', d => {
+                                return d.data.expandable ? '0' : null
+                            })
+                            .on('keydown', (event, d) => {
+                                if(event.key === 'Enter' && d.data.expandable) {
+                                    if(d.data.hasOwnProperty('children') && d.data.children){
+                                        let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
+                                        parentNode.children = null;
+                                        update(event, d);
+                                    }
+                                    else{
+                                        getTaxonChildren(d.data.tid, (data) => {
+                                            let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
+                                            parentNode.children = data;
+                                            data.forEach((node) => {
+                                                const existingNode = nodeArr.value.find((eNode) => Number(eNode.tid) === Number(node.tid));
+                                                if(!existingNode){
+                                                    setDefs(node);
+                                                    nodeArr.value.push(node);
+                                                }
+                                            });
+                                            update(event, d);
+                                        });
+                                    }
+                                }
+                            })
                             .on('click', (event, d) => {
                                 if(d.data.expandable){
                                     if(d.data.hasOwnProperty('children') && d.data.children){
@@ -345,8 +371,15 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('paint-order', 'stroke')
                             .style('font-size', '60px')
                             .attr('cursor', 'pointer')
+                            .attr('tabindex', '0')
                             .attr('pointer-events', d => {
                                 return d.data.expandable ? 'all' : null
+                            })
+                            .on('keydown', (event, d) => {
+                                if(event.key === 'Enter') {
+                                    const url = clientRoot + '/taxa/index.php?taxon=' + d.data.tid;
+                                    window.open(url, '_blank');
+                                }
                             })
                             .on('click', (event, d) => {
                                 const url = clientRoot + '/taxa/index.php?taxon=' + d.data.tid;
