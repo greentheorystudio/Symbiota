@@ -32,11 +32,6 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'addImage' && $isEditor && array_key_exists('image',$_POST)){
         echo $images->createImageRecord(json_decode($_POST['image'], true));
     }
-    elseif($action === 'getImageArrByTaxonomicGroup' && array_key_exists('parenttid',$_POST)){
-        $includeOccurrence = array_key_exists('includeoccurrence',$_POST) && (int)$_POST['includeoccurrence'] === 1;
-        $limit = array_key_exists('limit',$_POST) ? (int)$_POST['limit'] : null;
-        echo json_encode($images->getImageArrByTaxonomicGroup((int)$_POST['parenttid'], $includeOccurrence, $limit));
-    }
     elseif($action === 'getImageArrByProperty' && array_key_exists('property',$_POST) && array_key_exists('value',$_POST)){
         $limit = array_key_exists('limit',$_POST) ? (int)$_POST['limit'] : null;
         echo json_encode($images->getImageArrByProperty($_POST['property'], $_POST['value'], $limit));
@@ -68,10 +63,11 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getTaxonArrDisplayImageData' && array_key_exists('tidArr', $_POST)){
         $includeOccurrence = array_key_exists('includeoccurrence',$_POST) && (int)$_POST['includeoccurrence'] === 1;
+        $includeTagged = array_key_exists('includetagged',$_POST) && (int)$_POST['includetagged'] === 1;
         $limitToOccurrence = array_key_exists('limittooccurrence',$_POST) && (int)$_POST['limittooccurrence'] === 1;
         $limitPerTaxon = array_key_exists('limitPerTaxon',$_POST) ? (int)$_POST['limitPerTaxon'] : null;
         $sortsequenceLimit = array_key_exists('sortsequenceLimit',$_POST) ? (int)$_POST['sortsequenceLimit'] : null;
-        echo json_encode($images->getTaxonArrDisplayImageData(json_decode($_POST['tidArr'], true), $includeOccurrence, $limitToOccurrence, $limitPerTaxon, $sortsequenceLimit));
+        echo json_encode($images->getTaxonArrDisplayImageData(json_decode($_POST['tidArr'], true), $includeOccurrence, $includeTagged, $limitToOccurrence, $limitPerTaxon, $sortsequenceLimit));
     }
     elseif($action === 'getChecklistTaggedImageData' && array_key_exists('clidArr', $_POST) && array_key_exists('numberPerTaxon', $_POST)){
         $tidArr = (array_key_exists('tidArr',$_POST) && $_POST['tidArr']) ? json_decode($_POST['tidArr'], false) : null;
