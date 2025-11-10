@@ -354,6 +354,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         setSubtaxaImageData() {
             const formData = new FormData();
             formData.append('tidArr', JSON.stringify(this.getSubtaxaTidArr));
+            formData.append('includetagged', '1');
             formData.append('includeoccurrence', '1');
             formData.append('limitPerTaxon', '1');
             formData.append('sortsequenceLimit', '50');

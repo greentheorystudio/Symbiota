@@ -72,6 +72,8 @@ class TaxonHierarchy{
     public function getTaxonomicTreeChildNodes($tId, $limitToAccepted, $includeImage): array
     {
         $retArr = array();
+        $tidArr = array();
+        $tempArr = array();
         if(!$limitToAccepted){
             $sql = 'SELECT t.TID, t.SciName, t.Author, tu.rankname '.
                 'FROM taxa AS t LEFT JOIN taxonunits AS tu ON t.kingdomId = tu.kingdomid AND t.rankid = tu.rankid  '.
@@ -114,13 +116,22 @@ class TaxonHierarchy{
                 $nodeArr['lazy'] = $expandable;
                 if($includeImage){
                     $nodeArr['image'] = null;
-                    $imageArr = (new Images)->getImageArrByTaxonomicGroup($row['TID'], false, 1);
-                    if(count($imageArr) > 0){
-                        $nodeArr['image'] = $imageArr[0]['url'];
-                    }
+                    $tidArr[] = $row['TID'];
+                    $tempArr[] = $nodeArr;
                 }
-                $retArr[] = $nodeArr;
+                else{
+                    $retArr[] = $nodeArr;
+                }
                 unset($rows[$index]);
+            }
+            if($includeImage){
+                $imageArr = (new Images)->getTaxonArrDisplayImageData($tidArr, false, true, false, 1, 50);
+                foreach($tempArr as $data){
+                    if(array_key_exists($data['tid'], $imageArr)){
+                        $data['image'] = $imageArr[$data['tid']][0]['url'];
+                    }
+                    $retArr[] = $data;
+                }
             }
         }
         return $retArr;
