@@ -473,32 +473,36 @@ header('X-Frame-Options: SAMEORIGIN');
                                 if(data.length > 0){
                                     setPng();
                                     const formData = new FormData();
-                                    formData.append('parenttid', selectedKingdom.value['tid'].toString());
-                                    formData.append('limit', '1');
-                                    formData.append('action', 'getImageArrByTaxonomicGroup');
+                                    formData.append('tidArr', JSON.stringify([selectedKingdom.value['tid'].toString()]));
+                                    formData.append('includetagged', '1');
+                                    formData.append('includeoccurrence', '0');
+                                    formData.append('limitPerTaxon', '1');
+                                    formData.append('sortsequenceLimit', '50');
+                                    formData.append('action', 'getTaxonArrDisplayImageData');
                                     fetch(imageApiUrl, {
                                         method: 'POST',
                                         body: formData
                                     })
                                     .then((response) => {
-                                        response.json().then((resObj) => {
-                                            const rootObj = {
-                                                tid: selectedKingdom.value['tid'],
-                                                expandable: true,
-                                                sciname: selectedKingdom.value['name'],
-                                                author: null,
-                                                image: (resObj.length > 0 ? resObj[0].url : null),
-                                                children: data
-                                            };
-                                            setDefs(rootObj);
-                                            treeData.value = Object.assign({}, rootObj);
-                                            nodeArr.value.push(rootObj);
-                                            data.forEach((node) => {
-                                                setDefs(node);
-                                                nodeArr.value.push(node);
-                                            });
-                                            update(null, root.value);
+                                        return response.ok ? response.json() : null;
+                                    })
+                                    .then((resObj) => {
+                                        const rootObj = {
+                                            tid: selectedKingdom.value['tid'],
+                                            expandable: true,
+                                            sciname: selectedKingdom.value['name'],
+                                            author: null,
+                                            image: (resObj.hasOwnProperty(selectedKingdom.value['tid'].toString()) && resObj[selectedKingdom.value['tid'].toString()].length > 0) ? resObj[selectedKingdom.value['tid'].toString()][0]['url'] : null,
+                                            children: data
+                                        };
+                                        setDefs(rootObj);
+                                        treeData.value = Object.assign({}, rootObj);
+                                        nodeArr.value.push(rootObj);
+                                        data.forEach((node) => {
+                                            setDefs(node);
+                                            nodeArr.value.push(node);
                                         });
+                                        update(null, root.value);
                                     });
                                 }
                             });
