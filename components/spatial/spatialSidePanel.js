@@ -10,7 +10,7 @@ const spatialSidePanel = {
         }
     },
     template: `
-        <div class="z-top side-panel-container row animate__animated animate__slow" :class="showPanel ? 'animate__slideInLeft' : 'animate__slideOutLeft'">
+        <div class="z-max side-panel-container row animate__animated animate__slow" :class="showPanel ? 'animate__slideInLeft' : 'animate__slideOutLeft'">
             <div class="map-side-panel-inner-container">
                 <div ref="contentContainerRef" class="map-side-panel-content">
                     <template v-if="inputWindowMode">

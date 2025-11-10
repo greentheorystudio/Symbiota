@@ -541,7 +541,7 @@ class Taxa{
                     $retArr[$name] = $row[$name];
                 }
                 $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted']) : null;
-                $acceptedTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['tid'] : (int)$row['tidaccepted'];
+                $acceptedTid = (int)$row['tidaccepted'];
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
                 $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
@@ -570,7 +570,7 @@ class Taxa{
                     $retArr[$name] = $row[$name];
                 }
                 $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted']) : null;
-                $acceptedTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['tid'] : (int)$row['tidaccepted'];
+                $acceptedTid = (int)$row['tidaccepted'];
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 if($fullData){
                     $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;

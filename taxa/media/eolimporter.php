@@ -37,7 +37,7 @@ if(!$GLOBALS['SYMB_UID']) {
                             <q-card class="processor-control-card">
                                 <q-card-section>
                                     <div class="q-my-sm">
-                                        <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Taxonomic Group" limit-to-options="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                                        <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Taxonomic Group" :limit-to-options="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                                     </div>
                                     <q-card class="q-my-sm" flat bordered>
                                         <q-card-section>
