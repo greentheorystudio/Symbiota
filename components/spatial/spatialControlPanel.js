@@ -3,7 +3,7 @@ const spatialControlPanel = {
         <template v-if="(windowWidth >= 875 && !inputWindowMode) || (windowWidth >= 600 && inputWindowMode)">
             <template v-if="windowWidth >= 1220 && !inputWindowMode">
                 <div class="absolute-top full-width row justify-center">
-                    <div class="z-top map-control-panel-inner-container-wide map-info-window-container animate__animated animate__slow" :class="(!mapSettings.showSidePanel && !mapSettings.showControlPanelLeft && mapSettings.showControlPanelTop) ? 'animate__slideInDown' : 'animate__slideOutUp'">
+                    <div class="z-max map-control-panel-inner-container-wide map-info-window-container animate__animated animate__slow" :class="(!mapSettings.showSidePanel && !mapSettings.showControlPanelLeft && mapSettings.showControlPanelTop) ? 'animate__slideInDown' : 'animate__slideOutUp'">
                         <div class="q-pt-xs q-px-sm">
                             <div class="row justify-around items-center q-gutter-sm">
                                 <div class="col-1(wider)">
@@ -79,7 +79,7 @@ const spatialControlPanel = {
             </template>
             <template v-else>
                 <div class="absolute-top full-width row justify-center">
-                    <div class="z-top column map-control-panel-inner-container-med map-info-window-container animate__animated animate__slow" :class="(!mapSettings.showSidePanel && !mapSettings.showControlPanelLeft && mapSettings.showControlPanelTop) ? 'animate__slideInDown' : 'animate__slideOutUp'">
+                    <div class="z-max column map-control-panel-inner-container-med map-info-window-container animate__animated animate__slow" :class="(!mapSettings.showSidePanel && !mapSettings.showControlPanelLeft && mapSettings.showControlPanelTop) ? 'animate__slideInDown' : 'animate__slideOutUp'">
                         <div class="q-pt-xs q-px-sm">
                             <template v-if="inputWindowMode">
                                 <div class="row justify-around items-center q-gutter-sm">
@@ -157,7 +157,7 @@ const spatialControlPanel = {
             <spatial-control-panel-top-show-button></spatial-control-panel-top-show-button>
         </template>
         <template v-if="(windowWidth < 875 && !inputWindowMode) || inputWindowMode">
-            <div class="z-top side-panel-container row animate__animated animate__slow" :class="(!mapSettings.showSidePanel && mapSettings.showControlPanelLeft) ? 'animate__slideInLeft' : 'animate__slideOutLeft'">
+            <div class="z-max side-panel-container row animate__animated animate__slow" :class="(!mapSettings.showSidePanel && mapSettings.showControlPanelLeft) ? 'animate__slideInLeft' : 'animate__slideOutLeft'">
                 <div class="map-side-panel-inner-container">
                     <div class="map-side-panel-content q-pa-md">
                         <div class="q-gutter-sm">

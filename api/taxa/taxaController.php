@@ -65,7 +65,7 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getTaxonFromSciname' && array_key_exists('sciname',$_POST)){
         $kingdomId = array_key_exists('kingdomid', $_POST) ? (int)$_POST['kingdomid'] : null;
-        echo json_encode($taxa->getTaxonFromSciname($_POST['sciname'], $kingdomId));
+        echo json_encode($taxa->getTaxonFromSciname($_POST['sciname'], $kingdomId), JSON_FORCE_OBJECT);
     }
     elseif($isEditor && $action === 'setUpdateFamiliesAccepted' && array_key_exists('parenttid', $_POST)){
         echo $taxa->setUpdateFamiliesAccepted((int)$_POST['parenttid']);
