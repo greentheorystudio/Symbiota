@@ -402,6 +402,78 @@ function useCore() {
         readNext();
     }
 
+    function parseScientificName(sciname){
+        const returnData = {
+            sciname: null,
+            parentname: null,
+            rankid: null,
+            unitind1: null,
+            unitname1: null,
+            unitind2: null,
+            unitname2: null,
+            unitind3: null,
+            unitname3: null
+        };
+        returnData['sciname'] = sciname.replaceAll(/^\s+|\s+$/g, '');
+        let activeIndex = 0;
+        const sciNameArr = returnData['sciname'].split(' ');
+        if(sciNameArr[activeIndex].length === 1){
+            returnData['unitind1'] = sciNameArr[activeIndex];
+            returnData['unitname1'] = sciNameArr[activeIndex + 1];
+            activeIndex = 2;
+        }
+        else{
+            returnData['unitname1'] = sciNameArr[activeIndex];
+            activeIndex = 1;
+        }
+        if(sciNameArr.length > activeIndex){
+            if(sciNameArr[activeIndex].length === 1){
+                returnData['unitind2'] = sciNameArr[activeIndex];
+                returnData['unitname2'] = sciNameArr[activeIndex + 1];
+                activeIndex += 2;
+            }
+            else{
+                returnData['unitname2'] = sciNameArr[activeIndex];
+                activeIndex += 1;
+            }
+            returnData['rankid'] = 220;
+        }
+        if(sciNameArr.length > activeIndex){
+            if(sciNameArr[activeIndex].substring(sciNameArr[activeIndex].length - 1, sciNameArr[activeIndex].length) === '.' || sciNameArr[activeIndex].length === 1){
+                returnData['unitind3'] = sciNameArr[activeIndex];
+                returnData['unitname3'] = sciNameArr[activeIndex + 1];
+                if(sciNameArr[activeIndex] === 'ssp.' || sciNameArr[activeIndex] === 'subsp.'){
+                    returnData['rankid'] = 230;
+                }
+                else if(sciNameArr[activeIndex] === 'var.'){
+                    returnData['rankid'] = 240;
+                }
+                else if(sciNameArr[activeIndex] === 'f.'){
+                    returnData['rankid'] = 260;
+                }
+                else if(sciNameArr[activeIndex] === 'x' || sciNameArr[activeIndex] === 'X'){
+                    returnData['rankid'] = 220;
+                }
+            }
+            else{
+                returnData['unitname3'] = sciNameArr[activeIndex];
+                returnData['rankid'] = 230;
+            }
+        }
+        if(returnData['unitname1'].length > 4 && (returnData['unitname1'].indexOf('aceae') === (returnData['unitname1'].length - 5) || returnData['unitname1'].indexOf('idae') === (returnData['unitname1'].length - 4))){
+            returnData['rankid'] = 140;
+        }
+        if(returnData['rankid'] > 180){
+            if(returnData['rankid'] === 220){
+                returnData['parentname'] = returnData['unitname1'];
+            }
+            else if(returnData['rankid'] > 220){
+                returnData['parentname'] = returnData['unitname1'] + ' ' + returnData['unitname2'];
+            }
+        }
+        return returnData;
+    }
+
     function processCsvDownload(csvDataArr, filename) {
         if(typeof csvDataArr === 'object' && csvDataArr.length > 0 && typeof filename === 'string' && filename.length > 0){
             let csvContent = '';
@@ -540,6 +612,7 @@ function useCore() {
         openTutorialWindow,
         parseFile,
         parseDate,
+        parseScientificName,
         processCsvDownload,
         showNotification,
         showWorking,

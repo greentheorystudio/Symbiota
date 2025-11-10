@@ -6,7 +6,7 @@ const spatialBaseLayerSelector = {
         }
     },
     template: `
-        <q-select bg-color="white" outlined v-model="selectedOption" :options="baseLayerSelectorOptions" option-value="value" option-label="label" label="Base Layer" popup-content-class="z-top" @update:model-value="changeBaseLayer" behavior="menu" :tabindex="tabindex" dense options-dense />
+        <q-select bg-color="white" outlined v-model="selectedOption" :options="baseLayerSelectorOptions" option-value="value" option-label="label" label="Base Layer" popup-content-class="z-max" @update:model-value="changeBaseLayer" behavior="menu" :tabindex="tabindex" dense options-dense />
     `,
     setup(_, context) {
         const baseLayerSelectorOptions = [
