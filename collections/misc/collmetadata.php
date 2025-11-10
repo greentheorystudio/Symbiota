@@ -371,7 +371,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <select name="rights">
                                             <?php
                                             foreach($GLOBALS['RIGHTS_TERMS'] as $k => $v){
-                                                echo '<option value="'.$k.'" '.(strtolower($collData['rights']) === strtolower($k)?'SELECTED':'').'>'.$v['title'].'</option>'."\n";
+                                                echo '<option value="'.$k.'" '.($k && strtolower($collData['rights']) === strtolower($k)?'SELECTED':'').'>'.$v['title'].'</option>'."\n";
                                             }
                                             ?>
                                         </select>
