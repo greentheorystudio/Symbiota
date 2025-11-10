@@ -37,6 +37,7 @@ const wysiwygInputElement = {
                 }
             ],
             ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
+            ['hr', 'link'],
             [
                 {
                     label: $q.lang.editor.formatting,
