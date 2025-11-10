@@ -41,7 +41,7 @@ const organismOfTheDay = {
             </q-card>
         </div>
         <template v-if="showPopup">
-            <q-dialog class="z-top" v-model="showPopup" persistent>
+            <q-dialog class="z-max" v-model="showPopup" persistent>
                 <q-card class="md-tall-popup overflow-hidden">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
@@ -71,12 +71,12 @@ const organismOfTheDay = {
                                         </div>
                                         <div class="row">
                                             <div class="col-grow">
-                                                <single-scientific-common-name-auto-complete :sciname="(familyAnswer ? familyAnswer.sciname : null)" label="Family" rank-limit="140" limit-to-options="true" @update:sciname="processFamilyAnswerChange"></single-scientific-common-name-auto-complete>
+                                                <single-scientific-common-name-auto-complete :sciname="(familyAnswer ? familyAnswer.sciname : null)" label="Family" rank-limit="140" :limit-to-options="true" @update:sciname="processFamilyAnswerChange"></single-scientific-common-name-auto-complete>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-grow">
-                                                <single-scientific-common-name-auto-complete :sciname="(scinameAnswer ? scinameAnswer.sciname : null)" label="Scientific Name" rank-low="220" limit-to-options="true" @update:sciname="processScinameAnswerChange"></single-scientific-common-name-auto-complete>
+                                                <single-scientific-common-name-auto-complete :sciname="(scinameAnswer ? scinameAnswer.sciname : null)" label="Scientific Name" rank-low="220" :limit-to-options="true" @update:sciname="processScinameAnswerChange"></single-scientific-common-name-auto-complete>
                                             </div>
                                         </div>
                                         <div class="row justify-between">
@@ -170,7 +170,7 @@ const organismOfTheDay = {
                         </div>
                     </div>
                 </q-card>
-                <q-dialog class="z-top" v-model="displayInstructionsPopup" persistent>
+                <q-dialog class="z-max" v-model="displayInstructionsPopup" persistent>
                     <q-card class="sm-popup q-pa-md column q-gutter-sm">
                         <div class="text-body1">
                             Look at the picture, and see if you can figure out what the {{ type }} is. If you get completely stumped, you can

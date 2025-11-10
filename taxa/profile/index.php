@@ -49,7 +49,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 <q-card class="q-mb-sm">
                     <q-card-section class="row justify-between q-gutter-x-sm">
                         <div class="col-4">
-                            <single-scientific-common-name-auto-complete :sciname="taxonNameVal" label="Taxon" limit-to-options="true" @update:sciname="processTaxonNameChange"></single-scientific-common-name-auto-complete>
+                            <single-scientific-common-name-auto-complete :sciname="taxonNameVal" label="Taxon" :limit-to-options="true" @update:sciname="processTaxonNameChange"></single-scientific-common-name-auto-complete>
                         </div>
                         <div class="col-4 row justify-end">
                             <div></div>
