@@ -22,7 +22,7 @@ const wysiwygInputElement = {
         }
     },
     template: `
-        <q-editor v-model="value" content-class="wysiwyg-editor" :toolbar="editorToolbarConfig" :fonts="editorToolbarFonts" :placeholder="label" :disable="disabled" :tabindex="tabindex" @update:model-value="processValueChange"></q-editor>
+        <q-editor v-model="value" :toolbar="editorToolbarConfig" :fonts="editorToolbarFonts" :placeholder="label" :disable="disabled" :tabindex="tabindex" @update:model-value="processValueChange"></q-editor>
     `,
     setup(props, context) {
         const $q = useQuasar();

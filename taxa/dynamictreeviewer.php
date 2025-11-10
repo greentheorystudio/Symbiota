@@ -310,6 +310,45 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('pointer-events', d => {
                                 return d.data.expandable ? 'all' : null
                             })
+                            .attr('tabindex', d => {
+                                return d.data.expandable ? '0' : null
+                            })
+                            .attr('aria-label', d => {
+                                if(d.data.expandable){
+                                    if(d.data.hasOwnProperty('children') && d.data.children){
+                                        return ('Hide ' + d.data.sciname);
+                                    }
+                                    else{
+                                        return ('Expand ' + d.data.sciname);
+                                    }
+                                }
+                                else{
+                                    return null;
+                                }
+                            })
+                            .on('keydown', (event, d) => {
+                                if(event.key === 'Enter' && d.data.expandable) {
+                                    if(d.data.hasOwnProperty('children') && d.data.children){
+                                        let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
+                                        parentNode.children = null;
+                                        update(event, d);
+                                    }
+                                    else{
+                                        getTaxonChildren(d.data.tid, (data) => {
+                                            let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
+                                            parentNode.children = data;
+                                            data.forEach((node) => {
+                                                const existingNode = nodeArr.value.find((eNode) => Number(eNode.tid) === Number(node.tid));
+                                                if(!existingNode){
+                                                    setDefs(node);
+                                                    nodeArr.value.push(node);
+                                                }
+                                            });
+                                            update(event, d);
+                                        });
+                                    }
+                                }
+                            })
                             .on('click', (event, d) => {
                                 if(d.data.expandable){
                                     if(d.data.hasOwnProperty('children') && d.data.children){
@@ -345,8 +384,18 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('paint-order', 'stroke')
                             .style('font-size', '60px')
                             .attr('cursor', 'pointer')
+                            .attr('tabindex', '0')
+                            .attr('aria-label', d => {
+                                return (d.data.sciname + ' taxon profile page page - Opens in separate tab')
+                            })
                             .attr('pointer-events', d => {
                                 return d.data.expandable ? 'all' : null
+                            })
+                            .on('keydown', (event, d) => {
+                                if(event.key === 'Enter') {
+                                    const url = clientRoot + '/taxa/index.php?taxon=' + d.data.tid;
+                                    window.open(url, '_blank');
+                                }
                             })
                             .on('click', (event, d) => {
                                 const url = clientRoot + '/taxa/index.php?taxon=' + d.data.tid;
@@ -424,32 +473,36 @@ header('X-Frame-Options: SAMEORIGIN');
                                 if(data.length > 0){
                                     setPng();
                                     const formData = new FormData();
-                                    formData.append('parenttid', selectedKingdom.value['tid'].toString());
-                                    formData.append('limit', '1');
-                                    formData.append('action', 'getImageArrByTaxonomicGroup');
+                                    formData.append('tidArr', JSON.stringify([selectedKingdom.value['tid'].toString()]));
+                                    formData.append('includetagged', '1');
+                                    formData.append('includeoccurrence', '0');
+                                    formData.append('limitPerTaxon', '1');
+                                    formData.append('sortsequenceLimit', '50');
+                                    formData.append('action', 'getTaxonArrDisplayImageData');
                                     fetch(imageApiUrl, {
                                         method: 'POST',
                                         body: formData
                                     })
                                     .then((response) => {
-                                        response.json().then((resObj) => {
-                                            const rootObj = {
-                                                tid: selectedKingdom.value['tid'],
-                                                expandable: true,
-                                                sciname: selectedKingdom.value['name'],
-                                                author: null,
-                                                image: (resObj.length > 0 ? resObj[0].url : null),
-                                                children: data
-                                            };
-                                            setDefs(rootObj);
-                                            treeData.value = Object.assign({}, rootObj);
-                                            nodeArr.value.push(rootObj);
-                                            data.forEach((node) => {
-                                                setDefs(node);
-                                                nodeArr.value.push(node);
-                                            });
-                                            update(null, root.value);
+                                        return response.ok ? response.json() : null;
+                                    })
+                                    .then((resObj) => {
+                                        const rootObj = {
+                                            tid: selectedKingdom.value['tid'],
+                                            expandable: true,
+                                            sciname: selectedKingdom.value['name'],
+                                            author: null,
+                                            image: (resObj.hasOwnProperty(selectedKingdom.value['tid'].toString()) && resObj[selectedKingdom.value['tid'].toString()].length > 0) ? resObj[selectedKingdom.value['tid'].toString()][0]['url'] : null,
+                                            children: data
+                                        };
+                                        setDefs(rootObj);
+                                        treeData.value = Object.assign({}, rootObj);
+                                        nodeArr.value.push(rootObj);
+                                        data.forEach((node) => {
+                                            setDefs(node);
+                                            nodeArr.value.push(node);
                                         });
+                                        update(null, root.value);
                                     });
                                 }
                             });

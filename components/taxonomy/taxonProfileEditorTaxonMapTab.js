@@ -136,10 +136,7 @@ const taxonProfileEditorTaxonMapTab = {
         }
 
         function setContentStyle() {
-            imageHeight.value = null;
-            if(contentRef.value){
-                imageHeight.value = (contentRef.value.clientHeight - 100) + 'px';
-            }
+            imageHeight.value = '350px';
         }
 
         function updateMapData(key, value) {
