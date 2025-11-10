@@ -44,7 +44,7 @@ const taxaListDisplay = {
                         <template v-for="taxon in family['taxa']">
                             <div class="q-pl-sm q-mb-xs full-width column">
                                 <div class="text-body1">
-                                    <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank" :aria-label="( taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
+                                    <a class="text-black" :href="(clientRoot + '/taxa/index.php?taxon=' + taxon['tid'])" target="_blank" :aria-label="(taxon['sciname'] + ' taxon profile page page - Opens in separate tab')" tabindex="0">
                                         <span class="text-bold text-italic">
                                             {{ taxon['sciname'] }}
                                         </span>
