@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/TaxonRanks.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class TaxonKingdoms{
@@ -20,10 +21,9 @@ class TaxonKingdoms{
         $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("' . SanitizerService::cleanInStr($this->conn, $name) . '")';
         if($this->conn->query($sql)){
             $retVal = $this->conn->insert_id;
-            $sql = 'INSERT INTO taxonunits(kingdomid,rankid,rankname,dirparentrankid,reqparentrankid) '.
-                'SELECT ' . $retVal . ', rankid, rankname, dirparentrankid, reqparentrankid '.
-                'FROM taxonunits WHERE kingdomid = 100 ';
-            $this->conn->query($sql);
+            if((int)$retVal > 0){
+                (new TaxonRanks)->setNewKingdomRanks($retVal, $name);
+            }
         }
         return $retVal;
     }

@@ -1,45 +1,10 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/TaxonRankDataService.php');
 
 class TaxonRanks{
 
 	private $conn;
-
-    private $defaultRanks = array(
-        '10' => array('rankname' => 'Kingdom', 'rankid' => 10),
-        '20' => array('rankname' => 'Subkingdom', 'rankid' => 20),
-        '25' => array('rankname' => 'Infrakingdom', 'rankid' => 25),
-        '27' => array('rankname' => 'Superphylum', 'rankid' => 27),
-        '30' => array('rankname' => 'Phylum', 'rankid' => 30),
-        '40' => array('rankname' => 'Subphylum', 'rankid' => 40),
-        '45' => array('rankname' => 'Infraphylum', 'rankid' => 45),
-        '50' => array('rankname' => 'Superclass', 'rankid' => 50),
-        '60' => array('rankname' => 'Class', 'rankid' => 60),
-        '70' => array('rankname' => 'Subclass', 'rankid' => 70),
-        '80' => array('rankname' => 'Infraclass', 'rankid' => 80),
-        '90' => array('rankname' => 'Superorder', 'rankid' => 90),
-        '100' => array('rankname' => 'Order', 'rankid' => 100),
-        '110' => array('rankname' => 'Suborder', 'rankid' => 110),
-        '120' => array('rankname' => 'Infraorder', 'rankid' => 120),
-        '124' => array('rankname' => 'Section', 'rankid' => 124),
-        '126' => array('rankname' => 'Subsection', 'rankid' => 126),
-        '130' => array('rankname' => 'Superfamily', 'rankid' => 130),
-        '140' => array('rankname' => 'Family', 'rankid' => 140),
-        '150' => array('rankname' => 'Subfamily', 'rankid' => 150),
-        '160' => array('rankname' => 'Tribe', 'rankid' => 160),
-        '170' => array('rankname' => 'Subtribe', 'rankid' => 170),
-        '180' => array('rankname' => 'Genus', 'rankid' => 180),
-        '190' => array('rankname' => 'Subgenus', 'rankid' => 190),
-        '220' => array('rankname' => 'Species', 'rankid' => 220),
-        '230' => array('rankname' => 'Subspecies', 'rankid' => 230),
-        '240' => array('rankname' => 'Variety', 'rankid' => 240),
-        '245' => array('rankname' => 'Form', 'rankid' => 245),
-        '250' => array('rankname' => 'Race', 'rankid' => 250),
-        '255' => array('rankname' => 'Stirp', 'rankid' => 255),
-        '260' => array('rankname' => 'Morph', 'rankid' => 260),
-        '265' => array('rankname' => 'Aberration', 'rankid' => 265),
-        '300' => array('rankname' => 'Unspecified', 'rankid' => 300)
-    );
 
     private $fields = array(
         'taxonunitid' => array('dataType' => 'number', 'length' => 11),
@@ -86,7 +51,7 @@ class TaxonRanks{
             }
         }
         else{
-            $retArr = $this->defaultRanks;
+            $retArr = TaxonRankDataService::getDefaultRankOptions();
         }
         return $retArr;
     }
@@ -106,5 +71,19 @@ class TaxonRanks{
             }
         }
         return $retArr;
+    }
+
+    public function setNewKingdomRanks($kingdomId, $kingdomName): void
+    {
+        $valueArr = array();
+        $rankData = (new TaxonRankDataService)->getRankData($kingdomName);
+        if($rankData){
+            foreach($rankData as $data){
+                $valueArr[] = '(' . $kingdomId . ', ' . $data['rankid'] . ', "' . $data['rankname'] . '", ' . $data['dirparentrankid'] . ', ' . $data['reqparentrankid'] . ')';
+            }
+            $sql = 'INSERT INTO taxonunits(kingdomid, rankid, rankname, dirparentrankid, reqparentrankid) '.
+                'VALUES ' . implode(',', $valueArr) . ' ';
+            $this->conn->query($sql);
+        }
     }
 }

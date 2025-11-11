@@ -95,9 +95,12 @@ class Taxa{
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
-            if((int)$data['acceptstatus'] === 1){
+            if((int)$data['tidaccepted'] === 0){
                 $sqlNewTaxUpdate = 'UPDATE taxa SET tidaccepted = ' . $newID . ' WHERE tid = ' . $newID . ' ';
                 $this->conn->query($sqlNewTaxUpdate);
+            }
+            if((int)$data['rankid'] === 10){
+                (new TaxonKingdoms)->createTaxonKingdomRecord($data['sciname']);
             }
             if(array_key_exists('source-name', $data) && array_key_exists('source-id', $data) && $data['source-name'] && $data['source-id']){
                 $sqlId = 'INSERT IGNORE INTO taxaidentifiers(tid, `name`, identifier) VALUES('.

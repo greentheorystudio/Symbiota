@@ -61,6 +61,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 return state.taxaData['tid'];
             }
         },
+        getBlankTaxaRecord(state) {
+            return state.blankTaxaRecord;
+        },
         getSubtaxaImageData(state) {
             return state.subtaxaImageData;
         },
@@ -238,9 +241,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 this.setTaxonVernacularArr(this.taxaId);
             });
         },
-        createTaxonRecord(callback) {
+        createTaxonRecord(taxonData, callback) {
             const formData = new FormData();
-            formData.append('taxon', JSON.stringify(this.taxaEditData));
+            formData.append('taxon', JSON.stringify(taxonData));
             formData.append('action', 'addTaxon');
             fetch(taxaApiUrl, {
                 method: 'POST',
@@ -251,9 +254,6 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             })
             .then((res) => {
                 callback(Number(res));
-                if(res && Number(res) > 0){
-                    this.setTaxon(Number(res));
-                }
             });
         },
         deleteTaxaDescriptionBlockRecord(callback = null) {
