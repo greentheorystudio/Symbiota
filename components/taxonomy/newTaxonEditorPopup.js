@@ -130,7 +130,7 @@ const newTaxonEditorPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            taxonData.value = taxaStore.getBlankTaxaRecord;
+            taxonData.value = Object.assign({}, taxaStore.getBlankTaxaRecord);
         });
 
         return {
