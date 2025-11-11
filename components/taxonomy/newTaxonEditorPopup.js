@@ -49,6 +49,9 @@ const newTaxonEditorPopup = {
                 else if(!uniqueTaxon.value){
                     errorMessage = 'Taxon already exists in the thesaurus.';
                 }
+                else if(Number(taxonData.value['rankid']) === 0){
+                    errorMessage = 'Taxon rank required.';
+                }
             }
             return errorMessage;
         });
