@@ -7,7 +7,7 @@ const newTaxonEditorPopup = {
     },
     template: `
         <q-dialog class="z-max" v-model="showPopup" persistent>
-            <q-card class="lg-popup overflow-hidden">
+            <q-card class="md-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
@@ -33,7 +33,7 @@ const newTaxonEditorPopup = {
         'taxon-field-module': taxonFieldModule
     },
     setup(props, context) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { showNotification } = useCore();
         const taxaStore = useTaxaStore();
 
         const contentRef = Vue.ref(null);
@@ -42,9 +42,9 @@ const newTaxonEditorPopup = {
         const taxonValid = Vue.computed(() => {
             return (
                 (taxonData.value['sciname'] && taxonData.value['sciname'].length > 0) &&
-                Number(taxonData.value['kingdomid']) > 0 &&
+                (Number(taxonData.value['rankid']) === 10 || Number(taxonData.value['kingdomid'])) > 0 &&
                 Number(taxonData.value['rankid']) > 0 &&
-                Number(taxonData.value['parenttid']) > 0
+                (Number(taxonData.value['rankid']) === 10 || Number(taxonData.value['parenttid']) > 0)
             );
         });
 

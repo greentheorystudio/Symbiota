@@ -26,7 +26,7 @@ const taxonFieldModule = {
                 <single-scientific-common-name-auto-complete :sciname="parentTaxonVal" label="Parent Taxon" :hide-author="false" :accepted-taxa-only="true" :limit-to-options="true" @update:sciname="processParentTaxonChange"></single-scientific-common-name-auto-complete>
             </div>
         </div>
-        <div class="row no-wrap">
+        <div class="row q-col-gutter-sm no-wrap">
             <div class="col-2">
                 <text-field-input-element :value="data.unitind1" @update:value="(value) => processUnitNameChange('unitind1', value)"></text-field-input-element>
             </div>
@@ -34,7 +34,7 @@ const taxonFieldModule = {
                 <text-field-input-element label="Unit Name 1" :value="data.unitname1" @update:value="(value) => processUnitNameChange('unitname1', value)"></text-field-input-element>
             </div>
         </div>
-        <div class="row no-wrap">
+        <div class="row q-col-gutter-sm no-wrap">
             <div class="col-2">
                 <text-field-input-element :value="data.unitind2" @update:value="(value) => processUnitNameChange('unitind2', value)"></text-field-input-element>
             </div>
@@ -42,7 +42,7 @@ const taxonFieldModule = {
                 <text-field-input-element label="Unit Name 2" :value="data.unitname2" @update:value="(value) => processUnitNameChange('unitname2', value)"></text-field-input-element>
             </div>
         </div>
-        <div class="row no-wrap">
+        <div class="row q-col-gutter-sm no-wrap">
             <div class="col-3">
                 <text-field-input-element :value="data.unitind3" @update:value="(value) => processUnitNameChange('unitind3', value)"></text-field-input-element>
             </div>
@@ -62,20 +62,20 @@ const taxonFieldModule = {
         </div>
         <div v-if="Number(data.tid) === 0" class="row">
             <div class="col-grow">
-                <checkbox-input-element label="Protect Taxon" :value="data.securitystatus" @update:value="(value) => updateData('securitystatus', (Number(value) === 1 ? 1 : null))"></checkbox-input-element>
+                <checkbox-input-element label="Protect Taxon Locations" :value="data.securitystatus" @update:value="(value) => updateData('securitystatus', (Number(value) === 1 ? 1 : null))"></checkbox-input-element>
             </div>
         </div>
-        <q-card v-if="Number(data.tid) === 0" flat bordered>
-            <q-card-section>
+        <q-card v-if="Number(data.tid) === 0" flat bordered class="q-mx-md q-mt-sm">
+            <q-card-section class="q-pt-xs q-px-sm q-pb-sm">
                 <div class="text-subtitle1 text-bold">Acceptance Status</div>
                 <div class="q-mt-xs q-pl-sm column">
                     <div class="row">
                         <div class="col-grow">
-                            <q-option-group v-model="selectedAcceptanceOption" :options="acceptanceOptions" color="primary" dense aria-label="Acceptance options" tabindex="0"></q-option-group>
+                            <q-option-group v-model="selectedAcceptanceOption" :options="acceptanceOptions" color="primary" dense inline aria-label="Acceptance options" tabindex="0"></q-option-group>
                         </div>
                     </div>
-                    <div v-if="Number(data.tid) === 0" class="row">
-                        <div class="col-grow">
+                    <div v-if="selectedAcceptanceOption === 'notaccepted'" class="q-mt-sm row">
+                        <div class="col-6">
                             <single-scientific-common-name-auto-complete :sciname="acceptedTaxonVal" label="Accepted Taxon" :hide-author="false" :accepted-taxa-only="true" :limit-to-options="true" @update:sciname="processAcceptedTaxonChange"></single-scientific-common-name-auto-complete>
                         </div>
                     </div>

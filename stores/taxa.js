@@ -254,6 +254,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             })
             .then((res) => {
                 callback(Number(res));
+                if(Number(res) > 0){
+                    this.populateTaxonHierarchyData(Number(res));
+                }
             });
         },
         deleteTaxaDescriptionBlockRecord(callback = null) {
@@ -322,6 +325,15 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 this.setTaxon(0);
                 callback(Number(res));
             });
+        },
+        populateTaxonHierarchyData(tid) {
+            const formData = new FormData();
+            formData.append('tid', tid.toString());
+            formData.append('action', 'populateTaxonHierarchyData');
+            fetch(taxonHierarchyApiUrl, {
+                method: 'POST',
+                body: formData
+            })
         },
         setCurrentTaxaDescriptionBlockRecord(tdbid) {
             this.taxaDescriptionBlockStore.setCurrentTaxaDescriptionBlockRecord(tdbid);

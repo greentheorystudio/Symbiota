@@ -268,6 +268,20 @@ class TaxonHierarchy{
         return $retCnt;
     }
 
+    public function populateTaxonHierarchyData($tid): int
+    {
+        $returnVal = 0;
+        if($this->primeHierarchyTable($tid)){
+            do {
+                $hierarchyAdded = $this->populateHierarchyTable();
+                if($hierarchyAdded > 0 && !$returnVal){
+                    $returnVal = 1;
+                }
+            } while($hierarchyAdded > 0);
+        }
+        return $returnVal;
+    }
+
     public function primeHierarchyTable($tid = null): int
     {
         $retCnt = 0;

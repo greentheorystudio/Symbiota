@@ -41,4 +41,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $limitToAccepted = array_key_exists('limittoaccepted', $_POST) && (int)$_POST['limittoaccepted'] === 1;
         echo json_encode($taxonHierarchy->getTaxonomicTreeChildNodes($tId, $limitToAccepted, $includeImage));
     }
+    elseif($isEditor && $action === 'populateTaxonHierarchyData' && $tId){
+        echo $taxonHierarchy->populateTaxonHierarchyData($tId);
+    }
 }
