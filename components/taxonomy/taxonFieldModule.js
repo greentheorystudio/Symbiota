@@ -137,7 +137,7 @@ const taxonFieldModule = {
                 updateData('unitname3', scinameData['unitname3']);
                 if(Number(props.data.tid) === 0){
                     updateData('rankid', scinameData['rankid']);
-                    if(!parentTaxonVal.value && scinameData['parentname']){
+                    if((!parentTaxonVal.value && scinameData['parentname']) || (parentTaxonVal.value && scinameData['parentname'] && parentTaxonVal.value !== scinameData['parentname'])){
                         validateParentName(scinameData['parentname']);
                     }
                 }
@@ -163,6 +163,14 @@ const taxonFieldModule = {
         function processUnitNameChange(key, value) {
             updateData(key, value);
             setScinameFromUnitNames();
+            if(Number(props.data.tid) === 0 && (key === 'unitname1' || key === 'unitname2')) {
+                if(key === 'unitname1' && Number(props.data.rankid) > 180){
+                    validateParentName(value);
+                }
+                else if(key === 'unitname2' && Number(props.data.rankid) > 220){
+                    validateParentName((props.data.unitname1 + ' ' + value));
+                }
+            }
         }
 
         function setScinameFromUnitNames() {
@@ -208,6 +216,11 @@ const taxonFieldModule = {
                     parentTaxonVal.value = data['sciname'];
                     updateData('kingdomid', data['kingdomid']);
                     updateData('parenttid', data['tid']);
+                }
+                else{
+                    parentTaxonVal.value = null;
+                    updateData('kingdomid', null);
+                    updateData('parenttid', null);
                 }
             });
         }

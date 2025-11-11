@@ -52,7 +52,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             <single-scientific-common-name-auto-complete :sciname="taxonNameVal" label="Taxon" :limit-to-options="true" @update:sciname="processTaxonNameChange"></single-scientific-common-name-auto-complete>
                         </div>
                         <div class="col-4 row justify-end">
-                            <div>
+                            <div v-if="isTaxonEditor">
                                 <q-btn color="primary" @click="showNewTaxonEditorPopup = true" label="Add Taxon" tabindex="0" />
                             </div>
                         </div>
