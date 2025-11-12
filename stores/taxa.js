@@ -340,6 +340,15 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 body: formData
             })
         },
+        revertScinameEdits() {
+            this.taxaEditData['sciname'] = this.taxaData['sciname'];
+            this.taxaEditData['unitind1'] = this.taxaData['unitind1'];
+            this.taxaEditData['unitname1'] = this.taxaData['unitname1'];
+            this.taxaEditData['unitind2'] = this.taxaData['unitind2'];
+            this.taxaEditData['unitname2'] = this.taxaData['unitname2'];
+            this.taxaEditData['unitind3'] = this.taxaData['unitind3'];
+            this.taxaEditData['unitname3'] = this.taxaData['unitname3'];
+        },
         setCurrentTaxaDescriptionBlockRecord(tdbid) {
             this.taxaDescriptionBlockStore.setCurrentTaxaDescriptionBlockRecord(tdbid);
         },

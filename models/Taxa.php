@@ -512,11 +512,14 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxaIdDataFromNameArr($nameArr): array
+    public function getTaxaIdDataFromNameArr($nameArr, $kingdomId = null): array
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT tid, sciname FROM taxa  '.
             'WHERE sciname IN("' . implode('","', $nameArr) . '") ';
+        if($kingdomId){
+            $sql .= 'AND kingdomid = ' . (int)$kingdomId . ' ';
+        }
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
