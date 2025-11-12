@@ -31,7 +31,7 @@ if($action && SanitizerService::validateInternalRequest()){
         echo $taxonHierarchy->deleteTidFromHierarchyTable(json_decode($_POST['tidarr'],false));
     }
     elseif($isEditor && $action === 'removeTaxonFromTaxonomicHierarchy' && $tId && array_key_exists('parenttid',$_POST)){
-        echo $taxonHierarchy->removeTaxonFromTaxonomicHierarchy($tId,(int)$_POST['parenttid']);
+        echo $taxonHierarchy->removeTaxonFromTaxonomicHierarchy($tId, (int)$_POST['parenttid']);
     }
     elseif($action === 'getTaxonomicTreeKingdomNodes'){
         echo json_encode($taxonHierarchy->getTaxonomicTreeKingdomNodes());
@@ -40,5 +40,11 @@ if($action && SanitizerService::validateInternalRequest()){
         $includeImage = array_key_exists('includeimage', $_POST) && (int)$_POST['includeimage'] === 1;
         $limitToAccepted = array_key_exists('limittoaccepted', $_POST) && (int)$_POST['limittoaccepted'] === 1;
         echo json_encode($taxonHierarchy->getTaxonomicTreeChildNodes($tId, $limitToAccepted, $includeImage));
+    }
+    elseif($isEditor && $action === 'populateTaxonHierarchyData' && $tId){
+        echo $taxonHierarchy->populateTaxonHierarchyData($tId);
+    }
+    elseif($isEditor && $action === 'updateTaxonHierarchyData' && $tId){
+        echo $taxonHierarchy->updateHierarchyTable($tId);
     }
 }

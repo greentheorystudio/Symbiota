@@ -1,6 +1,11 @@
 <?php
+include_once(__DIR__ . '/ChecklistTaxa.php');
 include_once(__DIR__ . '/Images.php');
+include_once(__DIR__ . '/KeyCharacterStates.php');
+include_once(__DIR__ . '/Media.php');
+include_once(__DIR__ . '/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/Occurrences.php');
+include_once(__DIR__ . '/TaxonDescriptionBlocks.php');
 include_once(__DIR__ . '/TaxonHierarchy.php');
 include_once(__DIR__ . '/TaxonKingdoms.php');
 include_once(__DIR__ . '/TaxonMaps.php');
@@ -95,8 +100,13 @@ class Taxa{
         //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
-            if((int)$data['acceptstatus'] === 1){
+            if((int)$data['tidaccepted'] === 0){
                 $sqlNewTaxUpdate = 'UPDATE taxa SET tidaccepted = ' . $newID . ' WHERE tid = ' . $newID . ' ';
+                $this->conn->query($sqlNewTaxUpdate);
+            }
+            if((int)$data['rankid'] === 10){
+                $kingdomId = (new TaxonKingdoms)->createTaxonKingdomRecord($data['sciname']);
+                $sqlNewTaxUpdate = 'UPDATE taxa SET kingdomid = ' . $kingdomId . ' WHERE tid = ' . $newID . ' ';
                 $this->conn->query($sqlNewTaxUpdate);
             }
             if(array_key_exists('source-name', $data) && array_key_exists('source-id', $data) && $data['source-name'] && $data['source-id']){
@@ -114,6 +124,7 @@ class Taxa{
     {
         $retVal = 1;
         if($tid){
+            $taxonData = $this->getTaxonFromTid($tid, false, true);
             $retVal = (new Images)->deleteAssociatedImageRecords('tid', $tid);
             if($retVal){
                 $retVal = (new Images)->deleteTaxonImageTags($tid);
@@ -124,15 +135,29 @@ class Taxa{
             if($retVal){
                 $retVal = (new TaxonMaps)->deleteTaxonMapRecord('tid', $tid);
             }
-            $sql = 'DELETE FROM taxaenumtree WHERE tid = ' . (int)$tid . ' OR parenttid = ' . (int)$tid . ' ';
-            //echo $sql;
-            if(!$this->conn->query($sql)){
-                $retVal = 0;
+            if($retVal){
+                $retVal = (new TaxonHierarchy)->deleteTidFromHierarchyTable($tid);
             }
-            $sql = 'DELETE FROM taxavernaculars WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql;
-            if(!$this->conn->query($sql)){
-                $retVal = 0;
+            if($retVal){
+                $retVal = (new TaxonVernaculars)->deleteTaxonVernacularRecords($tid);
+            }
+            if($retVal){
+                $retVal = (new ChecklistTaxa)->deleteChecklistTaxonRecords($tid);
+            }
+            if($retVal){
+                $retVal = (new KeyCharacterStates)->deleteTaxonCharacterStateRecords($tid);
+            }
+            if($retVal){
+                $retVal = (new Occurrences)->removeTaxonFromOccurrenceRecords($tid);
+            }
+            if($retVal){
+                $retVal = (new OccurrenceDeterminations)->removeTaxonFromDeterminationRecords($tid);
+            }
+            if($retVal){
+                $retVal = (new TaxonDescriptionBlocks)->deleteTaxonDescriptionBlockRecords($tid);
+            }
+            if($retVal && (int)$taxonData['rankid'] === 10){
+                $retVal = (new TaxonKingdoms)->deleteTaxonKingdom($taxonData['sciname']);
             }
             $sql = 'DELETE FROM glossarytaxalink WHERE tid = ' . (int)$tid . ' ';
             //echo $sql;
@@ -503,11 +528,14 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxaIdDataFromNameArr($nameArr): array
+    public function getTaxaIdDataFromNameArr($nameArr, $kingdomId = null): array
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT tid, sciname FROM taxa  '.
             'WHERE sciname IN("' . implode('","', $nameArr) . '") ';
+        if($kingdomId){
+            $sql .= 'AND kingdomid = ' . (int)$kingdomId . ' ';
+        }
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -520,7 +548,21 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxonFromSciname($sciname, $kingdomId = null): array
+    public function getTaxaUseData($tid): array
+    {
+        $retArr = array();
+        $retArr['children'] = $this->getChildTaxaFromTid($tid);
+        $retArr['checklists'] = (new ChecklistTaxa)->getTaxonChecklistArr($tid);
+        $retArr['images'] = (new Images)->getTaxonImageCount($tid);
+        $retArr['media'] = (new Media)->getTaxonMediaCount($tid);
+        $retArr['vernacular'] = (new TaxonVernaculars)->getTaxonVernacularCount($tid);
+        $retArr['description'] = (new TaxonDescriptionBlocks)->getTaxonDescriptionCount($tid);
+        $retArr['occurrences'] = (new Occurrences)->getTaxonOccurrenceCount($tid);
+        $retArr['determinations'] = (new OccurrenceDeterminations)->getTaxonDeterminationCount($tid);
+        return $retArr;
+    }
+
+    public function getTaxonFromSciname($sciname, $kingdomId = null, $showActual = null): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
@@ -544,15 +586,15 @@ class Taxa{
                 $acceptedTid = (int)$row['tidaccepted'];
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
-                $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($acceptedTid);
-                $retArr['children'] = $this->getChildTaxaFromTid($acceptedTid);
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
+                $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($showActual ? $row['tid'] : $acceptedTid);
+                $retArr['children'] = $this->getChildTaxaFromTid($showActual ? $row['tid'] : $acceptedTid);
             }
         }
         return $retArr;
     }
 
-    public function getTaxonFromTid($tid, $fullData = true): array
+    public function getTaxonFromTid($tid, $fullData = true, $showActual = null): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
@@ -574,9 +616,9 @@ class Taxa{
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 if($fullData){
                     $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
-                    $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
-                    $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($acceptedTid);
-                    $retArr['children'] = $this->getChildTaxaFromTid($acceptedTid);
+                    $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
+                    $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($showActual ? $row['tid'] : $acceptedTid);
+                    $retArr['children'] = $this->getChildTaxaFromTid($showActual ? $row['tid'] : $acceptedTid);
                 }
             }
         }
@@ -702,6 +744,77 @@ class Taxa{
             }
         }
         return $retArr;
+    }
+
+    public function remapChildTaxa($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE taxa SET parenttid = ' . (int)$targetTid . ' WHERE parenttid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function remapTaxaSynonyms($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE taxa SET parenttid = ' . (int)$targetTid . ' WHERE parenttid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function remapTaxonResources($tid, $targetTid): int
+    {
+        $returnVal = $this->remapChildTaxa($tid, $targetTid);
+        if($returnVal){
+            $returnVal = $this->remapTaxaSynonyms($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new ChecklistTaxa)->remapChecklistTaxon($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new Images)->remapTaxonImages($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new Images)->remapTaxonImageTags($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new Media)->remapTaxonMedia($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new Media)->remapTaxonMedia($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new TaxonVernaculars)->remapTaxonVernaculars($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new TaxonDescriptionBlocks)->remapTaxonDescriptions($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new TaxonDescriptionBlocks)->remapTaxonDescriptions($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new Occurrences)->remapTaxonOccurrences($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new OccurrenceDeterminations)->remapTaxonDeterminations($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new TaxonMaps)->remapTaxonMap($tid, $targetTid);
+        }
+        if($returnVal){
+            $returnVal = (new KeyCharacterStates)->remapTaxonCharacterStates($tid, $targetTid);
+        }
+        return $returnVal;
     }
 
     public function removeSecurityForTaxon($tid): int
@@ -953,6 +1066,20 @@ class Taxa{
             $sql = 'UPDATE taxa SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE tid = ' . (int)$tid . ' ';
             //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function updateTaxonChildrenKingdomFamily($tid, $kingdomid, $family): int
+    {
+        $retVal = 0;
+        if($tid && $kingdomid){
+            $sql = 'UPDATE taxa SET kingdomid = ' . (int)$kingdomid . ' AND family = ' . ($family ? ('"' . SanitizerService::cleanInStr($this->conn, $family) . '"') : 'NULL') . ' '.
+                'WHERE parenttid = ' . (int)$tid . ' ';
+            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

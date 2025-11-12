@@ -15,9 +15,9 @@ class TaxonHierarchy{
         $this->conn->close();
 	}
 
-    public function deleteTidFromHierarchyTable($tid): bool
+    public function deleteTidFromHierarchyTable($tid): int
     {
-        $status = false;
+        $returnVal = 0;
         $tidStr = '';
         if($tid){
             if(is_array($tid)){
@@ -31,11 +31,26 @@ class TaxonHierarchy{
                     'WHERE tid IN(' . $tidStr . ') OR parenttid IN(' . $tidStr . ') ';
                 //echo $sql;
                 if($this->conn->query($sql)){
-                    $status = true;
+                    $returnVal = 1;
                 }
             }
         }
-        return $status;
+        return $returnVal;
+    }
+
+    public function getChildTidArr($tid): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[] = $row['parenttid'];
+                unset($rows[$index]);
+            }
+        }
+        return $returnArr;
     }
 
     public function getParentTidArr($tid): array
@@ -268,6 +283,20 @@ class TaxonHierarchy{
         return $retCnt;
     }
 
+    public function populateTaxonHierarchyData($tid): int
+    {
+        $returnVal = 0;
+        if($this->primeHierarchyTable($tid)){
+            do {
+                $hierarchyAdded = $this->populateHierarchyTable();
+                if($hierarchyAdded > 0 && !$returnVal){
+                    $returnVal = 1;
+                }
+            } while($hierarchyAdded > 0);
+        }
+        return $returnVal;
+    }
+
     public function primeHierarchyTable($tid = null): int
     {
         $retCnt = 0;
@@ -325,14 +354,18 @@ class TaxonHierarchy{
         return $searchData;
     }
 
-    public function updateHierarchyTable($tid = null): void
+    public function updateHierarchyTable($tid): int
     {
+        $returnVal = 1;
         if(is_array($tid) || is_numeric($tid)){
-            $this->deleteTidFromHierarchyTable($tid);
-            $this->primeHierarchyTable($tid);
+            $tidArr = $this->getChildTidArr($tid);
+            $tidArr[] = $tid;
+            $this->deleteTidFromHierarchyTable($tidArr);
+            $this->primeHierarchyTable($tidArr);
             do {
                 $hierarchyAdded = $this->populateHierarchyTable();
             } while($hierarchyAdded > 0);
         }
+        return $returnVal;
     }
 }

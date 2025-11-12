@@ -59,6 +59,16 @@ class KeyCharacterStates{
         return $retVal;
     }
 
+    public function deleteTaxonCharacterStateRecords($tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM keycharacterstatetaxalink WHERE tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getCharacterStatesFromTidArr($tidArr): array
     {
         $retArr = array();
@@ -162,6 +172,19 @@ class KeyCharacterStates{
             }
         }
         return $retArr;
+    }
+
+    public function remapTaxonCharacterStates($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE keycharacterstatetaxalink SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function updateKeyCharacterStateRecord($csid, $editData): int
