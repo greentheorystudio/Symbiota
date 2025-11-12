@@ -51,7 +51,8 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getTaxonFromTid' && array_key_exists('tid', $_POST)){
         $fullData = !array_key_exists('full', $_POST) || (int)$_POST['full'] === 1;
-        echo json_encode($taxa->getTaxonFromTid($_POST['tid'], $fullData));
+        $showActual = array_key_exists('actual', $_POST) && (int)$_POST['actual'] === 1;
+        echo json_encode($taxa->getTaxonFromTid($_POST['tid'], $fullData, $showActual));
     }
     elseif($isEditor && $action === 'updateTaxonTidAccepted' && $tId && array_key_exists('tidaccepted', $_POST) && (int)$_POST['tidaccepted']){
         $kingdom = array_key_exists('kingdom', $_POST) ? (int)$_POST['kingdom'] : 0;
@@ -65,7 +66,8 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getTaxonFromSciname' && array_key_exists('sciname',$_POST)){
         $kingdomId = array_key_exists('kingdomid', $_POST) ? (int)$_POST['kingdomid'] : null;
-        echo json_encode($taxa->getTaxonFromSciname($_POST['sciname'], $kingdomId), JSON_FORCE_OBJECT);
+        $showActual = array_key_exists('actual', $_POST) && (int)$_POST['actual'] === 1;
+        echo json_encode($taxa->getTaxonFromSciname($_POST['sciname'], $kingdomId, $showActual), JSON_FORCE_OBJECT);
     }
     elseif($isEditor && $action === 'setUpdateFamiliesAccepted' && array_key_exists('parenttid', $_POST)){
         echo $taxa->setUpdateFamiliesAccepted((int)$_POST['parenttid']);
@@ -102,5 +104,8 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'removeSecurityForTaxon' && $isEditor && $tId){
         echo $taxa->removeSecurityForTaxon($tId);
+    }
+    elseif($action === 'getTaxaUseData' && $isEditor && $tId){
+        echo json_encode($taxa->getTaxaUseData($tId));
     }
 }
