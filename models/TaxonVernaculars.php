@@ -66,6 +66,16 @@ class TaxonVernaculars{
         return $retVal;
     }
 
+    public function deleteTaxonVernacularRecords($tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM taxavernaculars WHERE tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getAutocompleteVernacularList($opts): array
     {
         $retArr = array();
@@ -179,6 +189,33 @@ class TaxonVernaculars{
         }
         $result->free();
         return $returnVal;
+    }
+
+    public function getTaxonVernacularCount($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql ='SELECT COUNT(vid) AS cnt FROM taxavernaculars WHERE tid = ' . (int)$tid;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $retVal = $row->cnt;
+            }
+            $result->free();
+        }
+        return $retVal;
+    }
+
+    public function remapTaxonVernaculars($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE taxavernaculars SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function removeCommonNamesInTaxonomicGroup($parentTid): int

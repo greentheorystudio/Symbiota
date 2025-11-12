@@ -159,7 +159,7 @@
             Vue.onMounted(() => {
                 showWorking('Loading...');
                 setEditor();
-                taxaStore.setTaxon(taxonValue, (tid) => {
+                taxaStore.setTaxon(taxonValue, false, (tid) => {
                     hideWorking();
                     if(Number(tid) > 0){
                         taxaStore.setTaxonVernacularArr(taxon.value['tidaccepted']);
