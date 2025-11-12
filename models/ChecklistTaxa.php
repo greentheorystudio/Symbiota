@@ -218,6 +218,27 @@ class ChecklistTaxa{
         return $retArr;
     }
 
+    public function getTaxonChecklistArr($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT c.clid, c.`name` '.
+            'FROM fmchklsttaxalink AS t LEFT JOIN fmchecklists AS c ON t.clid = c.clid '.
+            'WHERE t.tid = ' . (int)$tid . ' AND ISNULL(c.expiration) ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['clid'] = $row['clid'];
+                $nodeArr['name'] = $row['name'];
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function updateChecklistTaxonRecord($cltlid, $editData): int
     {
         $retVal = 0;

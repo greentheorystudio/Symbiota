@@ -676,6 +676,20 @@ class Images{
         return $returnArr;
     }
 
+    public function getTaxonImageCount($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql ='SELECT COUNT(imgid) AS cnt FROM images WHERE tid = ' . (int)$tid;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $retVal = $row->cnt;
+            }
+            $result->free();
+        }
+        return $retVal;
+    }
+
     public function getTaxonTaggedImageData($tidArr, $taxonLimit): array
     {
         $retArr = array();

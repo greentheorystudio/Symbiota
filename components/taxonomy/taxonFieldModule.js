@@ -66,7 +66,7 @@ const taxonFieldModule = {
             </div>
         </div>
         <q-card v-if="Number(data.tid) === 0" flat bordered class="q-mx-md q-mt-sm">
-            <q-card-section class="q-pt-xs q-px-sm q-pb-sm">
+            <q-card-section class="q-pt-xs q-px-sm q-pb-sm column">
                 <div class="text-subtitle1 text-bold">Acceptance Status</div>
                 <div class="q-mt-xs q-pl-sm column">
                     <div class="row">

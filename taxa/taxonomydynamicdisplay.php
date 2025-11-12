@@ -155,7 +155,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             if(link){
                                 let url;
                                 if(isEditor.value){
-                                    url = clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + tid;
+                                    url = clientRoot + '/taxa/taxonomy/index.php?tid=' + tid;
                                 }
                                 else{
                                     url = clientRoot + '/taxa/index.php?taxon=' + tid;

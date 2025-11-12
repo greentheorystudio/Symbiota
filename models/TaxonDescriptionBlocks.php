@@ -93,6 +93,20 @@ class TaxonDescriptionBlocks{
         return $retArr;
     }
 
+    public function getTaxonDescriptionCount($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql ='SELECT COUNT(tdbid) AS cnt FROM taxadescrblock WHERE tid = ' . (int)$tid;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $retVal = $row->cnt;
+            }
+            $result->free();
+        }
+        return $retVal;
+    }
+
     public function getTaxonDescriptions($tid): array
     {
         $retArr = array();

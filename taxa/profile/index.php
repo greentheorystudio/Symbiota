@@ -94,7 +94,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             </div>
                             <div class="row justify-end">
                                 <div v-if="isTaxonEditor">
-                                    <q-btn role="link" color="grey-4" text-color="black" class="black-border text-bold" size="md" :href="(clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + taxon['tid'])" label="Edit Taxon" no-wrap tabindex="0"></q-btn>
+                                    <q-btn role="link" color="grey-4" text-color="black" class="black-border text-bold" size="md" :href="(clientRoot + '/taxa/taxonomy/index.php?tid=' + taxon['tid'])" label="Edit Taxon" no-wrap tabindex="0"></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -209,6 +209,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     });
                     const taxonNameVal = Vue.ref(null);
 
+                    Vue.watch(taxon, () => {
+                        taxonNameVal.value = taxon.value['sciname'];
+                        tab.value = 'media';
+                    });
+
                     function processTaxonCreated(taxonId) {
                         setTaxonData(taxonId);
                     }
@@ -242,7 +247,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     }
 
                     function setTaxonData(tidValue) {
-                        taxaStore.setTaxon(tidValue, (tid) => {
+                        taxaStore.setTaxon(tidValue, true, (tid) => {
                             if(Number(tid) > 0){
                                 taxonNameVal.value = taxon.value['sciname'];
                                 taxaStore.setTaxonVernacularArr(taxon.value['tid']);

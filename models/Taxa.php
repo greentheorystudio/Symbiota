@@ -1,6 +1,10 @@
 <?php
+include_once(__DIR__ . '/ChecklistTaxa.php');
 include_once(__DIR__ . '/Images.php');
+include_once(__DIR__ . '/Media.php');
+include_once(__DIR__ . '/OccurrenceDeterminations.php');
 include_once(__DIR__ . '/Occurrences.php');
+include_once(__DIR__ . '/TaxonDescriptionBlocks.php');
 include_once(__DIR__ . '/TaxonHierarchy.php');
 include_once(__DIR__ . '/TaxonKingdoms.php');
 include_once(__DIR__ . '/TaxonMaps.php');
@@ -525,7 +529,21 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxonFromSciname($sciname, $kingdomId = null): array
+    public function getTaxaUseData($tid): array
+    {
+        $retArr = array();
+        $retArr['children'] = $this->getChildTaxaFromTid($tid);
+        $retArr['checklists'] = (new ChecklistTaxa)->getTaxonChecklistArr($tid);
+        $retArr['images'] = (new Images)->getTaxonImageCount($tid);
+        $retArr['media'] = (new Media)->getTaxonMediaCount($tid);
+        $retArr['vernacular'] = (new TaxonVernaculars)->getTaxonVernacularCount($tid);
+        $retArr['description'] = (new TaxonDescriptionBlocks)->getTaxonDescriptionCount($tid);
+        $retArr['occurrences'] = (new Occurrences)->getTaxonOccurrenceCount($tid);
+        $retArr['determinations'] = (new OccurrenceDeterminations)->getTaxonDeterminationCount($tid);
+        return $retArr;
+    }
+
+    public function getTaxonFromSciname($sciname, $kingdomId = null, $showActual = null): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
@@ -549,15 +567,15 @@ class Taxa{
                 $acceptedTid = (int)$row['tidaccepted'];
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
-                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
-                $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($acceptedTid);
-                $retArr['children'] = $this->getChildTaxaFromTid($acceptedTid);
+                $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
+                $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($showActual ? $row['tid'] : $acceptedTid);
+                $retArr['children'] = $this->getChildTaxaFromTid($showActual ? $row['tid'] : $acceptedTid);
             }
         }
         return $retArr;
     }
 
-    public function getTaxonFromTid($tid, $fullData = true): array
+    public function getTaxonFromTid($tid, $fullData = true, $showActual = null): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
@@ -579,9 +597,9 @@ class Taxa{
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 if($fullData){
                     $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
-                    $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($acceptedTid);
-                    $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($acceptedTid);
-                    $retArr['children'] = $this->getChildTaxaFromTid($acceptedTid);
+                    $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
+                    $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($showActual ? $row['tid'] : $acceptedTid);
+                    $retArr['children'] = $this->getChildTaxaFromTid($showActual ? $row['tid'] : $acceptedTid);
                 }
             }
         }

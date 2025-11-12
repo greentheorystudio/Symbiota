@@ -1029,6 +1029,20 @@ class Occurrences{
         return $retArr;
     }
 
+    public function getTaxonOccurrenceCount($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql ='SELECT COUNT(occid) AS cnt FROM omoccurrences WHERE tid = ' . (int)$tid;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $retVal = $row->cnt;
+            }
+            $result->free();
+        }
+        return $retVal;
+    }
+
     public function getUnlinkedSciNames($collid): array
     {
         $retArr = array();

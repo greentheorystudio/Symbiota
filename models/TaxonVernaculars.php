@@ -181,6 +181,20 @@ class TaxonVernaculars{
         return $returnVal;
     }
 
+    public function getTaxonVernacularCount($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql ='SELECT COUNT(vid) AS cnt FROM taxavernaculars WHERE tid = ' . (int)$tid;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $retVal = $row->cnt;
+            }
+            $result->free();
+        }
+        return $retVal;
+    }
+
     public function removeCommonNamesInTaxonomicGroup($parentTid): int
     {
         $retVal = 1;
