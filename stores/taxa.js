@@ -65,6 +65,17 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         getBlankTaxaRecord(state) {
             return state.blankTaxaRecord;
         },
+        getHasAcceptedChildren(state) {
+            let response = false;
+            if(state.taxaChildren.length > 0){
+                state.taxaChildren.forEach((child) => {
+                    if(Number(child['tid']) === Number(child['tidaccepted'])){
+                        response = true;
+                    }
+                });
+            }
+            return response;
+        },
         getSubtaxaImageData(state) {
             return state.subtaxaImageData;
         },
@@ -74,9 +85,6 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 returnArr.push(child['tid']);
             });
             return returnArr;
-        },
-        getTaxaAcceptedData(state) {
-            return state.taxaAcceptedData;
         },
         getTaxaChildren(state) {
             return state.taxaChildren;
@@ -145,9 +153,6 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         },
         getTaxaMediaArr(state) {
             return state.taxaMediaArr;
-        },
-        getTaxaParentData(state) {
-            return state.taxaParentData;
         },
         getTaxaStr(state) {
             return state.taxaStr;
@@ -315,9 +320,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 }
             });
         },
-        deleteTaxonRecord(tid, callback) {
+        deleteTaxonRecord(callback) {
             const formData = new FormData();
-            formData.append('tid', tid.toString());
+            formData.append('tid', this.taxaId.toString());
             formData.append('action', 'deleteTaxonByTid');
             fetch(taxaApiUrl, {
                 method: 'POST',
@@ -339,6 +344,45 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 method: 'POST',
                 body: formData
             })
+        },
+        remapTaxonResources(remaptid, callback) {
+            const formData = new FormData();
+            formData.append('tid', this.taxaId.toString());
+            formData.append('targettid', remaptid);
+            formData.append('action', 'remapTaxonResources');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(Number(res) === 1){
+                    this.updateTaxonHierarchyData(this.taxaId, () => {
+                        this.updateTaxonHierarchyData(remaptid);
+                    });
+                }
+            });
+        },
+        removeTaxonFromHierarchyData() {
+            const formData = new FormData();
+            formData.append('tidarr', JSON.stringify([this.taxaId]));
+            formData.append('action', 'clearHierarchyTable');
+            fetch(taxonHierarchyApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+        },
+        revertScinameEdits() {
+            this.taxaEditData['sciname'] = this.taxaData['sciname'];
+            this.taxaEditData['unitind1'] = this.taxaData['unitind1'];
+            this.taxaEditData['unitname1'] = this.taxaData['unitname1'];
+            this.taxaEditData['unitind2'] = this.taxaData['unitind2'];
+            this.taxaEditData['unitname2'] = this.taxaData['unitname2'];
+            this.taxaEditData['unitind3'] = this.taxaData['unitind3'];
+            this.taxaEditData['unitname3'] = this.taxaData['unitname3'];
         },
         setCurrentTaxaDescriptionBlockRecord(tdbid) {
             this.taxaDescriptionBlockStore.setCurrentTaxaDescriptionBlockRecord(tdbid);
@@ -550,8 +594,53 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 this.setTaxonVernacularArr(this.taxaId);
             });
         },
+        updateTaxonChildrenKingdomFamily() {
+            const formData = new FormData();
+            formData.append('tid', this.taxaId.toString());
+            formData.append('kingdomid', this.taxaData['kingdomid'].toString());
+            formData.append('family', this.taxaData['family']);
+            formData.append('action', 'updateTaxonChildrenKingdomFamily');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+        },
         updateTaxonEditData(key, value) {
             this.taxaEditData[key] = value;
+        },
+        updateTaxonHierarchyData(tid, callback = null) {
+            const formData = new FormData();
+            formData.append('tid', tid.toString());
+            formData.append('action', 'updateTaxonHierarchyData');
+            fetch(taxonHierarchyApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then(() => {
+                if(callback){
+                    callback();
+                }
+            });
+        },
+        updateTaxonParent(parenttid, kingdomid, family, callback) {
+            this.updateTaxonEditData('kingdomid', kingdomid);
+            this.updateTaxonEditData('parenttid', parenttid);
+            this.updateTaxonEditData('family', family);
+            if(this.getTaxaEditsExist){
+                this.updateTaxonRecord((res) => {
+                    if(res === 1){
+                        this.updateTaxonHierarchyData(this.taxaId, (res) => {
+                            if(this.taxaChildren.length > 0){
+                                this.updateTaxonChildrenKingdomFamily();
+                            }
+                        });
+                    }
+                    callback(res);
+                });
+            }
         },
         updateTaxonRecord(callback) {
             const formData = new FormData();

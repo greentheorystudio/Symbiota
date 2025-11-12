@@ -1,6 +1,6 @@
 const taxonRankSelector = {
     props: {
-        disable: {
+        disabled: {
             type: Boolean,
             default: false
         },
@@ -12,6 +12,10 @@ const taxonRankSelector = {
             type: String,
             default: null
         },
+        rankIdFilterArr: {
+            type: Array,
+            default: []
+        },
         tabindex: {
             type: Number,
             default: 0
@@ -22,7 +26,7 @@ const taxonRankSelector = {
         }
     },
     template: `
-        <q-select outlined v-model="selectedOption" popup-content-class="z-max" behavior="menu" :options="rankOptions" option-value="rankid" option-label="rankname" :label="label" @update:model-value="processChange" :tabindex="tabindex" :readonly="disable" dense options-dense />
+        <q-select outlined v-model="selectedOption" popup-content-class="z-max" behavior="menu" :options="rankOptions" option-value="rankid" option-label="rankname" :label="label" @update:model-value="processChange" :tabindex="tabindex" :readonly="disabled" dense options-dense />
     `,
     setup(props, context) {
         const propsRefs = Vue.toRefs(props);
@@ -30,7 +34,9 @@ const taxonRankSelector = {
         const rankOptions = Vue.computed(() => {
             const returnArr = [];
             Object.keys(rankOptionData.value).forEach((rankid) => {
-                returnArr.push(rankOptionData.value[rankid]);
+                if(!props.rankIdFilterArr.includes(Number(rankid))){
+                    returnArr.push(rankOptionData.value[rankid]);
+                }
             });
             return returnArr;
         });

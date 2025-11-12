@@ -143,6 +143,12 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const taxaStore = useTaxaStore();
 
                     const clientRoot = baseStore.getClientRoot;
+                    const currentSciname = Vue.computed(() => {
+                        return taxon.value['sciname'];
+                    });
+                    const currentTid = Vue.computed(() => {
+                        return taxon.value['tid'];
+                    });
                     const initialTid = TID;
                     const isTaxonEditor = Vue.ref(false);
                     const isTaxonProfileEditor = Vue.ref(false);
@@ -150,11 +156,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const tab = Vue.ref('details');
                     const taxon = Vue.computed(() => taxaStore.getTaxaData);
                     const taxonNameVal = Vue.ref(null);
-
-                    Vue.watch(taxon, () => {
-                        taxonNameVal.value = taxon.value['sciname'];
-                        tab.value = 'details';
-                    });
 
                     function processTaxonCreated(taxonId) {
                         setTaxonData(taxonId);
@@ -192,6 +193,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         taxaStore.setTaxon(tidValue, true, (tid) => {
                             if(Number(tid) > 0){
                                 taxonNameVal.value = taxon.value['sciname'];
+                                tab.value = 'details';
                                 taxaStore.setTaxaUseData();
                             }
                             else{
@@ -199,6 +201,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             }
                         });
                     }
+
+                    Vue.provide('setTaxonData', setTaxonData);
 
                     Vue.onMounted(() => {
                         setEditor();

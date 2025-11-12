@@ -18,7 +18,7 @@ const taxonFieldModule = {
         </div>
         <div class="row">
             <div class="col-grow">
-                <taxon-rank-selector label="Taxon Rank" :value="data.rankid" @update:value="processTaxonRankChange"></taxon-rank-selector>
+                <taxon-rank-selector label="Taxon Rank" :value="data.rankid" :rank-id-filter-arr="((Number(data.tid) > 0 && Number(data.rankid) > 10) ? [10] : [])" :disabled="Number(data.tid) > 0 && Number(data.rankid) === 10" @update:value="processTaxonRankChange"></taxon-rank-selector>
             </div>
         </div>
         <div v-if="Number(data.tid) === 0" class="row">

@@ -11,7 +11,7 @@ const taxonEditorAdminTab = {
                     </div>
                     <div class="row justify-end q-gutter-sm">
                         <div>
-                            <q-btn color="primary" @click="processRemap();" label="Remap Resources" :disabled="!remapTaxonVal" tabindex="0" />
+                            <q-btn color="primary" @click="processRemap();" label="Remap Resources" :disabled="Number(remapTaxonTid) > 0" tabindex="0" />
                         </div>
                     </div>
                 </q-card-section>
@@ -20,9 +20,13 @@ const taxonEditorAdminTab = {
                 <q-card-section class="column q-gutter-sm">
                     <div class="text-subtitle1 text-bold">Delete Taxon</div>
                     <div class="q-mt-xs q-pl-sm column q-gutter-sm">
+                        <div v-if="!deleteValid" class="text-subtitle1 text-bold">
+                            Taxon cannot be deleted until all child taxa, synonyms, checklists, images, media, common names, taxon descriptions, 
+                            occurrences, and occurrence determinations have been removed.
+                        </div>
                         <template v-if="taxonUseData['children'].length > 0">
                             <div class="column">
-                                <div class="text-subtitle1 text-red text-bold">Warning: children taxa exist for this taxon. They must be remapped before this taxon can be removed</div>
+                                <div class="text-subtitle1 text-red text-bold">Children taxa exist for this taxon. They must be remapped before this taxon can be removed</div>
                                 <template v-for="child in taxonUseData['children']">
                                     <div class="q-ml-md row no-wrap">
                                         <div class="text-subtitle1 text-italic">{{ child['sciname'] }}</div>
@@ -37,12 +41,9 @@ const taxonEditorAdminTab = {
                                 </template>
                             </div>
                         </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no children taxa are linked to this taxon</div>
-                        </template>
                         <template v-if="synonymArr.length > 0">
                             <div class="column">
-                                <div class="text-subtitle1 text-red text-bold">Warning: synonym links exist for this taxon. They must be remapped before this taxon can be removed</div>
+                                <div class="text-subtitle1 text-red text-bold">Synonym links exist for this taxon. They must be remapped before this taxon can be removed</div>
                                 <template v-for="synonym in synonymArr">
                                     <div class="q-ml-md row no-wrap">
                                         <div class="text-subtitle1 text-italic">{{ synonym['sciname'] }}</div>
@@ -57,12 +58,9 @@ const taxonEditorAdminTab = {
                                 </template>
                             </div>
                         </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no synonyms are linked to this taxon</div>
-                        </template>
                         <template v-if="taxonUseData['checklists'].length > 0">
                             <div class="column">
-                                <div class="text-subtitle1 text-red text-bold">Warning: linked checklists exist for this taxon. They must be unlinked before this taxon can be removed</div>
+                                <div class="text-subtitle1 text-red text-bold">Linked checklists exist for this taxon. They must be unlinked before this taxon can be removed</div>
                                 <template v-for="checklist in taxonUseData['checklists']">
                                     <div class="q-ml-md text-body1">
                                         <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)" target="_blank" :aria-label="('Go to ' + checklist.name + ' - Opens in separate tab')" tabindex="0">
@@ -72,50 +70,25 @@ const taxonEditorAdminTab = {
                                 </template>
                             </div>
                         </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no checklists linked to this taxon</div>
-                        </template>
                         <template v-if="Number(taxonUseData['images']) > 0">
-                            <div class="text-subtitle1 text-red text-bold">Warning: {{ taxonUseData['images'] }} images linked to this taxon</div>
-                        </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no images linked to this taxon</div>
+                            <div class="text-subtitle1 text-red text-bold">{{ taxonUseData['images'] }} images linked to this taxon</div>
                         </template>
                         <template v-if="Number(taxonUseData['media']) > 0">
-                            <div class="text-subtitle1 text-red text-bold">Warning: {{ taxonUseData['media'] }} media records linked to this taxon</div>
-                        </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no media records linked to this taxon</div>
+                            <div class="text-subtitle1 text-red text-bold">{{ taxonUseData['media'] }} media records linked to this taxon</div>
                         </template>
                         <template v-if="Number(taxonUseData['vernacular']) > 0">
-                            <div class="text-subtitle1 text-red text-bold">Warning: {{ taxonUseData['vernacular'] }} common names linked to this taxon</div>
-                        </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no common names linked to this taxon</div>
+                            <div class="text-subtitle1 text-red text-bold">{{ taxonUseData['vernacular'] }} common names linked to this taxon</div>
                         </template>
                         <template v-if="Number(taxonUseData['description']) > 0">
-                            <div class="text-subtitle1 text-red text-bold">Warning: {{ taxonUseData['description'] }} taxon descriptions linked to this taxon</div>
-                        </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no taxon descriptions linked to this taxon</div>
+                            <div class="text-subtitle1 text-red text-bold">{{ taxonUseData['description'] }} taxon descriptions linked to this taxon</div>
                         </template>
                         <template v-if="Number(taxonUseData['occurrences']) > 0">
-                            <div class="text-subtitle1 text-red text-bold">Warning: {{ taxonUseData['occurrences'] }} occurrence records linked to this taxon</div>
-                        </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no occurrence records linked to this taxon</div>
+                            <div class="text-subtitle1 text-red text-bold">{{ taxonUseData['occurrences'] }} occurrence records linked to this taxon</div>
                         </template>
                         <template v-if="Number(taxonUseData['determinations']) > 0">
-                            <div class="text-subtitle1 text-red text-bold">Warning: {{ taxonUseData['determinations'] }} occurrence determination records linked to this taxon</div>
-                        </template>
-                        <template v-else>
-                            <div class="text-subtitle1 text-green text-bold">Approved: no occurrence determination records linked to this taxon</div>
+                            <div class="text-subtitle1 text-red text-bold">{{ taxonUseData['determinations'] }} occurrence determination records linked to this taxon</div>
                         </template>
                         <div class="q-mt-md column">
-                            <div v-if="!deleteValid" class="text-subtitle1 text-red text-bold">
-                                Taxon cannot be deleted until all child taxa, synonyms, checklists, images, media, common names, taxon descriptions, 
-                                occurrences, and occurrence determinations have been removed.
-                            </div>
                             <div class="row justify-end q-gutter-md">
                                 <div>
                                     <q-btn color="negative" @click="deleteTaxon();" label="Delete Taxon" :disabled="!deleteValid" tabindex="0" />
@@ -133,7 +106,7 @@ const taxonEditorAdminTab = {
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
     },
     setup() {
-        const { showNotification } = useCore();
+        const { hideWorking, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
         const taxaStore = useTaxaStore();
 
@@ -155,7 +128,10 @@ const taxonEditorAdminTab = {
         const remapTaxonTid = Vue.ref(null);
         const remapTaxonVal = Vue.ref(null);
         const synonymArr = Vue.computed(() => taxaStore.getTaxaSynonyms);
+        const taxon = Vue.computed(() => taxaStore.getTaxaData);
         const taxonUseData = Vue.computed(() => taxaStore.getTaxaUseData);
+
+        const setTaxonData = Vue.inject('setTaxonData');
 
         function deleteTaxon() {
             const confirmText = 'Are you sure you want to delete this taxon? This action cannot be undone.';
@@ -164,6 +140,7 @@ const taxonEditorAdminTab = {
                     taxaStore.deleteTaxonRecord((res) => {
                         if(res === 1){
                             showNotification('positive','Taxon has been deleted.');
+                            setTaxonData(0);
                         }
                         else{
                             showNotification('negative', 'There was an error deleting the taxon.');
@@ -173,8 +150,25 @@ const taxonEditorAdminTab = {
             }});
         }
 
-        function processRemap() {
+        function quietSetTaxonData(tid) {
+            taxaStore.setTaxon(tid, true);
+        }
 
+        function processRemap() {
+            showWorking();
+            taxaStore.remapTaxonResources(remapTaxonTid.value, (res) => {
+                hideWorking();
+                if(res === 1){
+                    showNotification('positive','Recources remapped successfully.');
+                    taxaStore.setTaxaUseData();
+                    quietSetTaxonData(taxon.value['tid']);
+                    remapTaxonVal.value = null;
+                    remapTaxonTid.value = null;
+                }
+                else{
+                    showNotification('negative', 'There was an error remapping the resources.');
+                }
+            });
         }
 
         function processRemapTaxonNameChange(taxonData) {
@@ -186,12 +180,11 @@ const taxonEditorAdminTab = {
                 remapTaxonVal.value = null;
                 remapTaxonTid.value = null;
             }
+            if(remapTaxonTid.value && Number(taxonData['kingdomid']) !== Number(taxon.value['kingdomid'])) {
+                showNotification('negative', 'The taxon you entered is in a different kingdom than the current taxon. Please ensure it is correct.');
+            }
         }
 
-        function setTaxonData(tid) {
-            taxaStore.setTaxon(tid, true);
-        }
-        
         return {
             clientRoot,
             confirmationPopupRef,

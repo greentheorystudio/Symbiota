@@ -285,6 +285,29 @@ class OccurrenceDeterminations{
         return $retVal;
     }
 
+    public function remapTaxonDeterminations($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE omoccurdeterminations SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function removeTaxonFromDeterminationRecords($tid): int
+    {
+        $retVal = 1;
+        $sql = 'UPDATE omoccurdeterminations SET tid = NULL WHERE tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function updateDeterminationRecord($detId, $editData): int
     {
         $retVal = 0;

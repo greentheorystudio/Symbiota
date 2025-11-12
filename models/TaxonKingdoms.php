@@ -28,11 +28,23 @@ class TaxonKingdoms{
         return $retVal;
     }
 
+    public function deleteTaxonKingdom($kingdomName): int
+    {
+        $retVal = (new TaxonRanks)->deleteKingdomRanks($kingdomName);
+        if($retVal){
+            $sql = 'DELETE FROM taxonkingdoms WHERE `kingdom_name` = "' . $kingdomName . '" ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
+    }
+
     public function getKingdomArr(): array
     {
         $retArr = array();
-        $sql = 'SELECT k.kingdom_id, t.tid, t.sciname '.
-            'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.kingdom_name = t.SciName '.
+        $sql = 'SELECT k.`kingdom_id`, t.tid, t.sciname '.
+            'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.`kingdom_name` = t.SciName '.
             'WHERE t.tid IS NOT NULL '.
             'ORDER BY t.SciName ';
         //echo $sql;

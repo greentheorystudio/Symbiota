@@ -47,7 +47,8 @@ if($action && SanitizerService::validateInternalRequest()){
         echo $taxa->addTaxonIdentifier($tId, $_POST['idname'], $_POST['id']);
     }
     elseif($action === 'getTaxaIdDataFromNameArr' && array_key_exists('taxa', $_POST)){
-        echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], true)));
+        $kingdomId = array_key_exists('kingdomid', $_POST) ? (int)$_POST['kingdomid'] : null;
+        echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], false), $kingdomId));
     }
     elseif($action === 'getTaxonFromTid' && array_key_exists('tid', $_POST)){
         $fullData = !array_key_exists('full', $_POST) || (int)$_POST['full'] === 1;
@@ -107,5 +108,11 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getTaxaUseData' && $isEditor && $tId){
         echo json_encode($taxa->getTaxaUseData($tId));
+    }
+    elseif($action === 'updateTaxonChildrenKingdomFamily' && $isEditor && $tId && array_key_exists('kingdomid',$_POST) && array_key_exists('family',$_POST)){
+        echo $taxa->updateTaxonChildrenKingdomFamily($tId, $_POST['kingdomid'], $_POST['family']);
+    }
+    elseif($action === 'remapTaxonResources' && $isEditor && $tId && array_key_exists('targettid',$_POST)){
+        echo $taxa->remapTaxonResources($tId, $_POST['targettid']);
     }
 }

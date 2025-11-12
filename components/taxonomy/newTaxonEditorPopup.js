@@ -72,6 +72,9 @@ const newTaxonEditorPopup = {
         });
 
         function addTaxon() {
+            if(Number(taxonData.value['rankid']) === 140){
+                updateTaxonData('family', taxonData.value['sciname']);
+            }
             taxaStore.createTaxonRecord(taxonData.value, (newTaxonId) => {
                 if(newTaxonId > 0){
                     context.emit('taxon:created', newTaxonId);
@@ -109,9 +112,9 @@ const newTaxonEditorPopup = {
             }
             else if(taxonData.value['sciname'] && taxonData.value['sciname'].length > 0 && Number(taxonData.value['kingdomid']) > 0){
                 const formData = new FormData();
-                formData.append('action', 'getTaxonFromSciname');
+                formData.append('action', 'getTaxaIdDataFromNameArr');
                 formData.append('kingdomid', taxonData.value['kingdomid'].toString());
-                formData.append('sciname', taxonData.value['sciname']);
+                formData.append('taxa', JSON.stringify([taxonData.value['sciname']]));
                 fetch(taxaApiUrl, {
                     method: 'POST',
                     body: formData
@@ -120,7 +123,7 @@ const newTaxonEditorPopup = {
                     return response.ok ? response.json() : null;
                 })
                 .then((data) => {
-                    if(!data.hasOwnProperty('tid') || Number(data['tid']) === 0){
+                    if(Object.keys(data).length === 0){
                         uniqueTaxon.value = true;
                     }
                 });
