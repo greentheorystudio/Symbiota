@@ -356,7 +356,7 @@ class TaxonHierarchy{
 
     public function updateHierarchyTable($tid): int
     {
-        $returnVal = 0;
+        $returnVal = 1;
         if(is_array($tid) || is_numeric($tid)){
             $tidArr = $this->getChildTidArr($tid);
             $tidArr[] = $tid;
@@ -364,9 +364,6 @@ class TaxonHierarchy{
             $this->primeHierarchyTable($tidArr);
             do {
                 $hierarchyAdded = $this->populateHierarchyTable();
-                if($hierarchyAdded > 0 && !$returnVal){
-                    $returnVal = 1;
-                }
             } while($hierarchyAdded > 0);
         }
         return $returnVal;

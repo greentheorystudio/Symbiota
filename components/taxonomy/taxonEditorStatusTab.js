@@ -119,32 +119,38 @@ const taxonEditorStatusTab = {
             taxaStore.updateTaxonEditData('kingdomid', acceptedTaxonKingdomId.value);
             taxaStore.updateTaxonEditData('tidaccepted', acceptedTaxonTid.value);
             taxaStore.updateTaxonEditData('family', acceptedTaxonFamily.value);
-            taxaStore.updateTaxonRecord((res) => {
-                if(res === 1){
-                    showNotification('positive','Accepted taxon changed.');
-                    quietSetTaxonData(taxon.value['tid']);
-                    if(remove){
-                        taxaStore.removeTaxonFromHierarchyData();
+            if(taxaStore.getTaxaEditsExist){
+                taxaStore.updateTaxonRecord((res) => {
+                    if(res === 1){
+                        showNotification('positive','Accepted taxon changed.');
+                        quietSetTaxonData(taxon.value['tid']);
+                        if(remove){
+                            taxaStore.removeTaxonFromHierarchyData();
+                        }
                     }
-                }
-                else{
-                    showNotification('negative', 'There was an error changing the accepted taxon.');
-                }
-            });
+                    else{
+                        showNotification('negative', 'There was an error changing the accepted taxon.');
+                    }
+                });
+            }
         }
 
         function changeUnacceptedToAccepted() {
             taxaStore.updateTaxonEditData('tidaccepted', taxon.value['tid']);
-            taxaStore.updateTaxonRecord((res) => {
-                if(res === 1){
-                    showNotification('positive','Taxon acceptance changed.');
-                    quietSetTaxonData(taxon.value['tid']);
-                    taxaStore.populateTaxonHierarchyData(taxon.value['tid']);
-                }
-                else{
-                    showNotification('negative', 'There was an error changing the taxon acceptance.');
-                }
-            });
+            if(taxaStore.getTaxaEditsExist){
+                taxaStore.updateTaxonRecord((res) => {
+                    if(res === 1){
+                        acceptedTaxonVal.value = null;
+                        acceptedTaxonTid.value = null;
+                        showNotification('positive','Taxon acceptance changed.');
+                        quietSetTaxonData(taxon.value['tid']);
+                        taxaStore.populateTaxonHierarchyData(taxon.value['tid']);
+                    }
+                    else{
+                        showNotification('negative', 'There was an error changing the taxon acceptance.');
+                    }
+                });
+            }
         }
 
         function processAcceptedTaxonChange() {

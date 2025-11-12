@@ -320,9 +320,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 }
             });
         },
-        deleteTaxonRecord(tid, callback) {
+        deleteTaxonRecord(callback) {
             const formData = new FormData();
-            formData.append('tid', tid.toString());
+            formData.append('tid', this.taxaId.toString());
             formData.append('action', 'deleteTaxonByTid');
             fetch(taxaApiUrl, {
                 method: 'POST',
@@ -348,7 +348,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         remapTaxonResources(remaptid, callback) {
             const formData = new FormData();
             formData.append('tid', this.taxaId.toString());
-            formData.append('targettid', JSON.stringify(this.taxaUpdateData));
+            formData.append('targettid', remaptid);
             formData.append('action', 'remapTaxonResources');
             fetch(taxaApiUrl, {
                 method: 'POST',
@@ -616,32 +616,31 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    if(callback){
-                        callback(res);
-                    }
-                });
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then(() => {
+                if(callback){
+                    callback();
+                }
+            });
         },
         updateTaxonParent(parenttid, kingdomid, family, callback) {
             this.updateTaxonEditData('kingdomid', kingdomid);
             this.updateTaxonEditData('parenttid', parenttid);
             this.updateTaxonEditData('family', family);
-            this.updateTaxonRecord((res) => {
-                if(res === 1){
-                    this.updateTaxonHierarchyData(this.taxaId, (res) => {
-                        callback(res);
-                        if(this.taxaChildren.length > 0){
-                            this.updateTaxonChildrenKingdomFamily();
-                        }
-                    });
-                }
-                else{
+            if(this.getTaxaEditsExist){
+                this.updateTaxonRecord((res) => {
+                    if(res === 1){
+                        this.updateTaxonHierarchyData(this.taxaId, (res) => {
+                            if(this.taxaChildren.length > 0){
+                                this.updateTaxonChildrenKingdomFamily();
+                            }
+                        });
+                    }
                     callback(res);
-                }
-            });
+                });
+            }
         },
         updateTaxonRecord(callback) {
             const formData = new FormData();

@@ -131,6 +131,8 @@ const taxonEditorAdminTab = {
         const taxon = Vue.computed(() => taxaStore.getTaxaData);
         const taxonUseData = Vue.computed(() => taxaStore.getTaxaUseData);
 
+        const setTaxonData = Vue.inject('setTaxonData');
+
         function deleteTaxon() {
             const confirmText = 'Are you sure you want to delete this taxon? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
@@ -138,6 +140,7 @@ const taxonEditorAdminTab = {
                     taxaStore.deleteTaxonRecord((res) => {
                         if(res === 1){
                             showNotification('positive','Taxon has been deleted.');
+                            setTaxonData(0);
                         }
                         else{
                             showNotification('negative', 'There was an error deleting the taxon.');
@@ -159,6 +162,8 @@ const taxonEditorAdminTab = {
                     showNotification('positive','Recources remapped successfully.');
                     taxaStore.setTaxaUseData();
                     quietSetTaxonData(taxon.value['tid']);
+                    remapTaxonVal.value = null;
+                    remapTaxonTid.value = null;
                 }
                 else{
                     showNotification('negative', 'There was an error remapping the resources.');
@@ -180,10 +185,6 @@ const taxonEditorAdminTab = {
             }
         }
 
-        function setTaxonData(tid) {
-            taxaStore.setTaxon(tid, true);
-        }
-        
         return {
             clientRoot,
             confirmationPopupRef,
