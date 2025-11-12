@@ -52,7 +52,9 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             <single-scientific-common-name-auto-complete :sciname="taxonNameVal" label="Taxon" :limit-to-options="true" @update:sciname="processTaxonNameChange"></single-scientific-common-name-auto-complete>
                         </div>
                         <div class="col-4 row justify-end">
-                            <div></div>
+                            <div v-if="isTaxonEditor">
+                                <q-btn color="primary" @click="showNewTaxonEditorPopup = true" label="Add Taxon" tabindex="0" />
+                            </div>
                         </div>
                     </q-card-section>
                 </q-card>
@@ -92,7 +94,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             </div>
                             <div class="row justify-end">
                                 <div v-if="isTaxonEditor">
-                                    <q-btn role="link" color="grey-4" text-color="black" class="black-border text-bold" size="md" :href="(clientRoot + '/taxa/taxonomy/taxonomyeditor.php?tid=' + taxon['tid'])" label="Edit Taxon" no-wrap tabindex="0"></q-btn>
+                                    <q-btn role="link" color="grey-4" text-color="black" class="black-border text-bold" size="md" :href="(clientRoot + '/taxa/taxonomy/index.php?tid=' + taxon['tid'])" label="Edit Taxon" no-wrap tabindex="0"></q-btn>
                                 </div>
                             </div>
                         </div>
@@ -129,6 +131,13 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         Please enter the scientific name of the taxon you wish to edit in the box above
                     </div>
                 </template>
+                <template v-if="showNewTaxonEditorPopup">
+                    <new-taxon-editor-popup
+                        :show-popup="showNewTaxonEditorPopup"
+                        @taxon:created="processTaxonCreated"
+                        @close:popup="showNewTaxonEditorPopup = false"
+                    ></new-taxon-editor-popup>
+                </template>
             </div>
         </div>
         <?php
@@ -143,6 +152,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/imageTagSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -158,6 +168,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/mediaFileUploadInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/newTaxonEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorDescriptionBlockEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorDescriptionStatementEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorVernacularEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -169,6 +181,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         <script type="text/javascript">
             const taxonProfileEditorModule = Vue.createApp({
                 components: {
+                    'new-taxon-editor-popup': newTaxonEditorPopup,
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
                     'taxon-profile-editor-descriptions-tab': taxonProfileEditorDescriptionsTab,
                     'taxon-profile-editor-media-tab': taxonProfileEditorMediaTab,
@@ -186,6 +199,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const isAccepted = Vue.computed(() => taxaStore.getAccepted);
                     const isTaxonEditor = Vue.ref(false);
                     const isTaxonProfileEditor = Vue.ref(false);
+                    const showNewTaxonEditorPopup = Vue.ref(false);
                     const tab = Vue.ref('media');
                     const taxaMapData = Vue.computed(() => taxaStore.getTaxaMapArr);
                     const taxon = Vue.computed(() => taxaStore.getTaxaData);
@@ -194,6 +208,15 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         return taxaMapData.value.hasOwnProperty(taxonId.value) ? taxaMapData.value[taxonId.value] : null;
                     });
                     const taxonNameVal = Vue.ref(null);
+
+                    Vue.watch(taxon, () => {
+                        taxonNameVal.value = taxon.value['sciname'];
+                        tab.value = 'media';
+                    });
+
+                    function processTaxonCreated(taxonId) {
+                        setTaxonData(taxonId);
+                    }
 
                     function processTaxonNameChange(taxonData) {
                         if(taxonData && Number(taxonData['tid']) > 0) {
@@ -224,7 +247,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     }
 
                     function setTaxonData(tidValue) {
-                        taxaStore.setTaxon(tidValue, (tid) => {
+                        taxaStore.setTaxon(tidValue, true, (tid) => {
                             if(Number(tid) > 0){
                                 taxonNameVal.value = taxon.value['sciname'];
                                 taxaStore.setTaxonVernacularArr(taxon.value['tid']);
@@ -253,10 +276,12 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         isAccepted,
                         isTaxonEditor,
                         isTaxonProfileEditor,
+                        showNewTaxonEditorPopup,
                         tab,
                         taxon,
                         taxonMap,
                         taxonNameVal,
+                        processTaxonCreated,
                         processTaxonNameChange,
                         setTaxonData
                     }

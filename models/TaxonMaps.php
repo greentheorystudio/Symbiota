@@ -139,6 +139,29 @@ class TaxonMaps{
         return $retArr;
     }
 
+    public function remapTaxonMap($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql ='SELECT COUNT(mid) AS cnt FROM taxamaps WHERE tid = ' . (int)$targetTid . ' ';
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                if((int)$row->cnt === 0){
+                    $sql2 = 'UPDATE taxamaps SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+                    //echo $sql2;
+                    if($this->conn->query($sql2)){
+                        $retVal = 1;
+                    }
+                }
+                else{
+                    $retVal = 1;
+                }
+            }
+            $result->free();
+        }
+        return $retVal;
+    }
+
     public function updateTaxonMapRecord($mid, $editData): int
     {
         $retVal = 0;

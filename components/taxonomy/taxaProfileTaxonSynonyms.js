@@ -8,7 +8,7 @@ const taxaProfileTaxonSynonyms = {
                         <span role="button" @click="showAll = true" class="cursor-pointer" aria-label="Click here to show more synonyms" tabindex="0">&nbsp;&nbsp;[more...]</span>
                     </template>
                     <template v-else>
-                        <template v-for="(val,index) in synonymArr">
+                        <template v-for="(val, index) in synonymArr">
                             <span class="text-italic">{{ val.sciname }}</span>
                             <template v-if="val.author">&nbsp;{{ val.author }}</template>
                             <template v-if="index != synonymArr.length - 1">,&nbsp;</template>
