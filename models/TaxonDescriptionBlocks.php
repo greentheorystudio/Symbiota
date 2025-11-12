@@ -72,6 +72,20 @@ class TaxonDescriptionBlocks{
         return $retVal;
     }
 
+    public function deleteTaxonDescriptionBlockRecords($tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE s.* FROM taxadescrstmts AS s LEFT JOIN taxadescrblock AS b ON s.tdbid = b.tdbid WHERE b.tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        $sql = 'DELETE FROM taxadescrblock WHERE tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getTaxonDescriptionBlockData($tdbid): array
     {
         $retArr = array();
@@ -130,6 +144,19 @@ class TaxonDescriptionBlocks{
             }
         }
         return $retArr;
+    }
+
+    public function remapTaxonDescriptions($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE taxadescrblock SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function updateTaxonDescriptionBlockRecord($tdbid, $editData): int

@@ -28,6 +28,16 @@ class TaxonRanks{
         $this->conn->close();
 	}
 
+    public function deleteKingdomRanks($kingdomName): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE u.* FROM taxonunits AS u LEFT JOIN taxonkingdoms AS k ON u.kingdomid = k.`kingdom_id` WHERE k.`kingdom_name` = "' . $kingdomName . '" ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function getRankArr($kingdomId = null): array
     {
         $retArr = array();

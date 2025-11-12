@@ -357,6 +357,19 @@ class Media{
         return $retVal;
     }
 
+    public function remapTaxonMedia($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE media SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function updateMediaRecord($medId, $editData): int
     {
         $retVal = 0;

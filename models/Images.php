@@ -338,7 +338,7 @@ class Images{
     public function deleteTaxonImageTags($tid): int
     {
         $retVal = 1;
-        $sql = 'DELETE FROM imagetag WHERE keyvalue = "TID-' . (int)$tid . '" ';
+        $sql = 'DELETE FROM imagetag WHERE keyvalue LIKE "%-' . (int)$tid . '" ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
@@ -740,6 +740,34 @@ class Images{
             }
         }
         return $retArr;
+    }
+
+    public function remapTaxonImages($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE images SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function remapTaxonImageTags($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $oldTag = '-' . (int)$tid;
+            $newTag = '-' . (int)$targetTid;
+            $sql = 'UPDATE imagetag SET keyvalue = REPLACE(keyvalue, "' . $oldTag . '", "' . $newTag . '") WHERE keyvalue LIKE "%' . $oldTag . '" ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function updateImageRecord($imgId, $editData): int

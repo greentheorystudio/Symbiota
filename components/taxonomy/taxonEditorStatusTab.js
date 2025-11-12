@@ -112,6 +112,8 @@ const taxonEditorStatusTab = {
         const taxaChildren = Vue.computed(() => taxaStore.getTaxaChildren);
         const taxon = Vue.computed(() => taxaStore.getTaxaData);
 
+        const setTaxonData = Vue.inject('setTaxonData');
+
         function changeAcceptedTaxon() {
             const remove = (isAccepted.value && Number(acceptedTaxonTid.value) > 0);
             taxaStore.updateTaxonEditData('kingdomid', acceptedTaxonKingdomId.value);
@@ -120,6 +122,7 @@ const taxonEditorStatusTab = {
             taxaStore.updateTaxonRecord((res) => {
                 if(res === 1){
                     showNotification('positive','Accepted taxon changed.');
+                    quietSetTaxonData(taxon.value['tid']);
                     if(remove){
                         taxaStore.removeTaxonFromHierarchyData();
                     }
@@ -135,6 +138,7 @@ const taxonEditorStatusTab = {
             taxaStore.updateTaxonRecord((res) => {
                 if(res === 1){
                     showNotification('positive','Taxon acceptance changed.');
+                    quietSetTaxonData(taxon.value['tid']);
                     taxaStore.populateTaxonHierarchyData(taxon.value['tid']);
                 }
                 else{
@@ -176,6 +180,7 @@ const taxonEditorStatusTab = {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Parent taxon saved.');
+                    quietSetTaxonData(taxon.value['tid']);
                 }
                 else{
                     showNotification('negative', 'There was an error changing the parent taxon.');
@@ -201,7 +206,7 @@ const taxonEditorStatusTab = {
             }
         }
 
-        function setTaxonData(tid) {
+        function quietSetTaxonData(tid) {
             taxaStore.setTaxon(tid, true);
         }
 

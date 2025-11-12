@@ -74,6 +74,16 @@ class ChecklistTaxa{
         return $newID;
     }
 
+    public function deleteChecklistTaxonRecords($tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM fmchklsttaxalink WHERE tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function deleteChecklistTaxonRecord($cltlid): int
     {
         $retVal = 0;
@@ -237,6 +247,19 @@ class ChecklistTaxa{
             }
         }
         return $retArr;
+    }
+
+    public function remapChecklistTaxon($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE fmchklsttaxalink SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function updateChecklistTaxonRecord($cltlid, $editData): int

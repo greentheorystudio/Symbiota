@@ -345,6 +345,27 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 body: formData
             })
         },
+        remapTaxonResources(remaptid, callback) {
+            const formData = new FormData();
+            formData.append('tid', this.taxaId.toString());
+            formData.append('targettid', JSON.stringify(this.taxaUpdateData));
+            formData.append('action', 'remapTaxonResources');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+                if(Number(res) === 1){
+                    this.updateTaxonHierarchyData(this.taxaId, () => {
+                        this.updateTaxonHierarchyData(remaptid);
+                    });
+                }
+            });
+        },
         removeTaxonFromHierarchyData() {
             const formData = new FormData();
             formData.append('tidarr', JSON.stringify([this.taxaId]));
@@ -537,32 +558,6 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         setTaxonVernacularArr(tid) {
             this.taxaVernacularStore.setTaxonVernacularArr(Number(tid));
         },
-        updateTaxonChildrenKingdomFamily() {
-            const formData = new FormData();
-            formData.append('tid', this.taxaId.toString());
-            formData.append('kingdomid', this.taxaData['kingdomid'].toString());
-            formData.append('family', this.taxaData['family']);
-            formData.append('action', 'updateTaxonChildrenKingdomFamily');
-            fetch(taxaApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-        },
-        updateTaxonHierarchyData(callback) {
-            const formData = new FormData();
-            formData.append('tid', this.taxaId.toString());
-            formData.append('action', 'updateTaxonHierarchyData');
-            fetch(taxonHierarchyApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                callback(res);
-            });
-        },
         updateTaxaDescriptionBlockEditData(key, value) {
             this.taxaDescriptionBlockStore.updateTaxaDescriptionBlockEditData(key, value);
         },
@@ -599,8 +594,36 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 this.setTaxonVernacularArr(this.taxaId);
             });
         },
+        updateTaxonChildrenKingdomFamily() {
+            const formData = new FormData();
+            formData.append('tid', this.taxaId.toString());
+            formData.append('kingdomid', this.taxaData['kingdomid'].toString());
+            formData.append('family', this.taxaData['family']);
+            formData.append('action', 'updateTaxonChildrenKingdomFamily');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+        },
         updateTaxonEditData(key, value) {
             this.taxaEditData[key] = value;
+        },
+        updateTaxonHierarchyData(tid, callback = null) {
+            const formData = new FormData();
+            formData.append('tid', tid.toString());
+            formData.append('action', 'updateTaxonHierarchyData');
+            fetch(taxonHierarchyApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(callback){
+                        callback(res);
+                    }
+                });
         },
         updateTaxonParent(parenttid, kingdomid, family, callback) {
             this.updateTaxonEditData('kingdomid', kingdomid);
@@ -608,7 +631,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             this.updateTaxonEditData('family', family);
             this.updateTaxonRecord((res) => {
                 if(res === 1){
-                    this.updateTaxonHierarchyData((res) => {
+                    this.updateTaxonHierarchyData(this.taxaId, (res) => {
                         callback(res);
                         if(this.taxaChildren.length > 0){
                             this.updateTaxonChildrenKingdomFamily();

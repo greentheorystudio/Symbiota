@@ -112,4 +112,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'updateTaxonChildrenKingdomFamily' && $isEditor && $tId && array_key_exists('kingdomid',$_POST) && array_key_exists('family',$_POST)){
         echo $taxa->updateTaxonChildrenKingdomFamily($tId, $_POST['kingdomid'], $_POST['family']);
     }
+    elseif($action === 'remapTaxonResources' && $isEditor && $tId && array_key_exists('targettid',$_POST)){
+        echo $taxa->remapTaxonResources($tId, $_POST['targettid']);
+    }
 }
