@@ -5,7 +5,7 @@ const taxonEditorStatusTab = {
                 <q-card-section class="column">
                     <div><span class="text-subtitle1 text-bold">Status: <span class="text-red">{{ (isAccepted ? 'Accepted' : 'Not Accepted') }}</span></span></div>
                     <div><span class="text-subtitle1 text-bold">Family: </span>{{ (isAccepted ? taxon['family'] : acceptedTaxon['family']) }}</div>
-                    <div class="row justify-start no-wrap">
+                    <div v-if="Number(taxon['rankid']) > 10" class="row justify-start no-wrap">
                         <div class="col-4">
                             <single-scientific-common-name-auto-complete :sciname="parentTaxonVal" label="Parent Taxon" :limit-to-options="true" :disabled="!isAccepted" @update:sciname="processParentTaxonNameChange"></single-scientific-common-name-auto-complete>
                         </div>
@@ -60,6 +60,7 @@ const taxonEditorStatusTab = {
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
     },
     setup() {
+        const { showNotification } = useCore();
         const taxaStore = useTaxaStore();
 
         const acceptedTaxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
@@ -87,14 +88,17 @@ const taxonEditorStatusTab = {
 
         function processAcceptedTaxonNameChange(taxonData) {
             if(taxonData){
-                parentTaxonVal.value = taxonData['sciname'];
-                parentTaxonTid.value = taxonData['tid'];
-                parentTaxonKingdomId.value = taxonData['kingdomid'];
+                acceptedTaxonVal.value = taxonData['sciname'];
+                acceptedTaxonTid.value = taxonData['tid'];
+                acceptedTaxonKingdomId.value = taxonData['kingdomid'];
             }
             else{
-                parentTaxonVal.value = null;
-                parentTaxonTid.value = null;
-                parentTaxonKingdomId.value = null;
+                acceptedTaxonVal.value = null;
+                acceptedTaxonTid.value = null;
+                acceptedTaxonKingdomId.value = null;
+            }
+            if(acceptedTaxonKingdomId.value && Number(acceptedTaxonKingdomId.value) !== Number(origAcceptedTaxonKingdomId.value)) {
+                showNotification('negative', 'The Accepted Taxon you entered is in a different kingdom than the current taxon. Please ensure it is correct.');
             }
         }
 
@@ -117,6 +121,9 @@ const taxonEditorStatusTab = {
                 parentTaxonTid.value = null;
                 parentTaxonKingdomId.value = null;
             }
+            if(parentTaxonKingdomId.value && Number(parentTaxonKingdomId.value) !== Number(origParentTaxonKingdomId.value)) {
+                showNotification('negative', 'The Parent Taxon you entered is in a different kingdom than the current taxon. Please ensure it is correct.');
+            }
         }
 
         function setTaxonData(tid) {
@@ -129,18 +136,22 @@ const taxonEditorStatusTab = {
                     acceptedTaxonTid.value = taxon.value['tid'];
                     acceptedTaxonKingdomId.value = taxon.value['kingdomid'];
                     origAcceptedTaxonKingdomId.value = taxon.value['kingdomid'];
-                    parentTaxonVal.value = taxon.value['parentTaxon']['sciname'];
-                    parentTaxonTid.value = taxon.value['parentTaxon']['tid'];
-                    parentTaxonKingdomId.value = taxon.value['parentTaxon']['kingdomid'];
-                    origParentTaxonKingdomId.value = taxon.value['parentTaxon']['kingdomid'];
+                    if(Number(taxon.value['rankid']) > 10){
+                        parentTaxonVal.value = taxon.value['parentTaxon']['sciname'];
+                        parentTaxonTid.value = taxon.value['parentTaxon']['tid'];
+                        parentTaxonKingdomId.value = taxon.value['parentTaxon']['kingdomid'];
+                        origParentTaxonKingdomId.value = taxon.value['parentTaxon']['kingdomid'];
+                    }
                 }
                 else{
                     acceptedTaxonVal.value = taxon.value['acceptedTaxon']['sciname'];
                     acceptedTaxonTid.value = taxon.value['acceptedTaxon']['tid'];
                     acceptedTaxonKingdomId.value = taxon.value['acceptedTaxon']['kingdomid'];
                     origAcceptedTaxonKingdomId.value = taxon.value['acceptedTaxon']['kingdomid'];
-                    parentTaxonVal.value = taxon.value['acceptedTaxon']['parentTaxon']['sciname'];
-                    parentTaxonTid.value = taxon.value['acceptedTaxon']['parentTaxon']['tid'];
+                    if(Number(taxon.value['acceptedTaxon']['rankid']) > 10){
+                        parentTaxonVal.value = taxon.value['acceptedTaxon']['parentTaxon']['sciname'];
+                        parentTaxonTid.value = taxon.value['acceptedTaxon']['parentTaxon']['tid'];
+                    }
                 }
             }
         }
@@ -152,11 +163,13 @@ const taxonEditorStatusTab = {
         return {
             acceptedTaxon,
             acceptedTaxonChangeValid,
+            acceptedTaxonVal,
             isAccepted,
             parentTaxonChangeValid,
             parentTaxonVal,
             synonymArr,
             taxon,
+            processAcceptedTaxonChange,
             processAcceptedTaxonNameChange,
             processMakeAccepted,
             processParentTaxonChange,
