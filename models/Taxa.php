@@ -986,6 +986,20 @@ class Taxa{
         return $retVal;
     }
 
+    public function updateTaxonChildrenKingdomFamily($tid, $kingdomid, $family): int
+    {
+        $retVal = 0;
+        if($tid && $kingdomid){
+            $sql = 'UPDATE taxa SET kingdomid = ' . (int)$kingdomid . ' AND family = ' . ($family ? ('"' . SanitizerService::cleanInStr($this->conn, $family) . '"') : 'NULL') . ' '.
+                'WHERE parenttid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function updateTaxonIdentifier($tid, $idName, $id): int
     {
         $returnVal = 0;

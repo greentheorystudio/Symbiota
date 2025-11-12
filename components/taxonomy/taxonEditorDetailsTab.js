@@ -44,6 +44,9 @@ const taxonEditorDetailsTab = {
                 uniqueTaxon.value = false;
                 validateUniqueTaxon();
             }
+            if(key === 'rankid' && Number(value) === 140) {
+                taxaStore.updateTaxonEditData('family', taxon.value['sciname']);
+            }
         }
 
         function validateUniqueTaxon() {

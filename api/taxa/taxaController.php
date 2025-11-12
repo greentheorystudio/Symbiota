@@ -109,4 +109,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getTaxaUseData' && $isEditor && $tId){
         echo json_encode($taxa->getTaxaUseData($tId));
     }
+    elseif($action === 'updateTaxonChildrenKingdomFamily' && $isEditor && $tId && array_key_exists('kingdomid',$_POST) && array_key_exists('family',$_POST)){
+        echo $taxa->updateTaxonChildrenKingdomFamily($tId, $_POST['kingdomid'], $_POST['family']);
+    }
 }

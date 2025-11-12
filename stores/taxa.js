@@ -75,9 +75,6 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             });
             return returnArr;
         },
-        getTaxaAcceptedData(state) {
-            return state.taxaAcceptedData;
-        },
         getTaxaChildren(state) {
             return state.taxaChildren;
         },
@@ -145,9 +142,6 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         },
         getTaxaMediaArr(state) {
             return state.taxaMediaArr;
-        },
-        getTaxaParentData(state) {
-            return state.taxaParentData;
         },
         getTaxaStr(state) {
             return state.taxaStr;
@@ -523,6 +517,32 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         setTaxonVernacularArr(tid) {
             this.taxaVernacularStore.setTaxonVernacularArr(Number(tid));
         },
+        updateTaxonChildrenKingdomFamily() {
+            const formData = new FormData();
+            formData.append('tid', this.taxaId.toString());
+            formData.append('kingdomid', this.taxaData['kingdomid'].toString());
+            formData.append('family', this.taxaData['family']);
+            formData.append('action', 'updateTaxonChildrenKingdomFamily');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+        },
+        updateTaxonHierarchyData(callback) {
+            const formData = new FormData();
+            formData.append('tid', this.taxaId.toString());
+            formData.append('action', 'updateTaxonHierarchyData');
+            fetch(taxonHierarchyApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res);
+            });
+        },
         updateTaxaDescriptionBlockEditData(key, value) {
             this.taxaDescriptionBlockStore.updateTaxaDescriptionBlockEditData(key, value);
         },
@@ -561,6 +581,24 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         },
         updateTaxonEditData(key, value) {
             this.taxaEditData[key] = value;
+        },
+        updateTaxonParent(parenttid, kingdomid, family, callback) {
+            this.updateTaxonEditData('kingdomid', kingdomid);
+            this.updateTaxonEditData('parenttid', parenttid);
+            this.updateTaxonEditData('family', family);
+            this.updateTaxonRecord((res) => {
+                if(res === 1){
+                    this.updateTaxonHierarchyData((res) => {
+                        callback(res);
+                        if(this.taxaData.has('children') && this.taxaData['children'].length > 0){
+                            this.updateTaxonChildrenKingdomFamily();
+                        }
+                    });
+                }
+                else{
+                    callback(res);
+                }
+            });
         },
         updateTaxonRecord(callback) {
             const formData = new FormData();

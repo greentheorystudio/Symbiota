@@ -44,4 +44,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($isEditor && $action === 'populateTaxonHierarchyData' && $tId){
         echo $taxonHierarchy->populateTaxonHierarchyData($tId);
     }
+    elseif($isEditor && $action === 'updateTaxonHierarchyData' && $tId){
+        echo $taxonHierarchy->updateHierarchyTable($tId);
+    }
 }

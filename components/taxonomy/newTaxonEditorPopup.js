@@ -72,6 +72,9 @@ const newTaxonEditorPopup = {
         });
 
         function addTaxon() {
+            if(Number(taxonData.value['rankid']) === 140){
+                updateTaxonData('family', taxonData.value['sciname']);
+            }
             taxaStore.createTaxonRecord(taxonData.value, (newTaxonId) => {
                 if(newTaxonId > 0){
                     context.emit('taxon:created', newTaxonId);

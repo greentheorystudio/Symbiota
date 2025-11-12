@@ -38,6 +38,21 @@ class TaxonHierarchy{
         return $status;
     }
 
+    public function getChildTidArr($tid): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $returnArr[] = $row['parenttid'];
+                unset($rows[$index]);
+            }
+        }
+        return $returnArr;
+    }
+
     public function getParentTidArr($tid): array
     {
         $returnArr = array();
@@ -339,14 +354,21 @@ class TaxonHierarchy{
         return $searchData;
     }
 
-    public function updateHierarchyTable($tid = null): void
+    public function updateHierarchyTable($tid): int
     {
+        $returnVal = 0;
         if(is_array($tid) || is_numeric($tid)){
-            $this->deleteTidFromHierarchyTable($tid);
-            $this->primeHierarchyTable($tid);
+            $tidArr = $this->getChildTidArr($tid);
+            $tidArr[] = $tid;
+            $this->deleteTidFromHierarchyTable($tidArr);
+            $this->primeHierarchyTable($tidArr);
             do {
                 $hierarchyAdded = $this->populateHierarchyTable();
+                if($hierarchyAdded > 0 && !$returnVal){
+                    $returnVal = 1;
+                }
             } while($hierarchyAdded > 0);
         }
+        return $returnVal;
     }
 }
