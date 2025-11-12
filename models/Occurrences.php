@@ -1029,6 +1029,20 @@ class Occurrences{
         return $retArr;
     }
 
+    public function getTaxonOccurrenceCount($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql ='SELECT COUNT(occid) AS cnt FROM omoccurrences WHERE tid = ' . (int)$tid;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $retVal = $row->cnt;
+            }
+            $result->free();
+        }
+        return $retVal;
+    }
+
     public function getUnlinkedSciNames($collid): array
     {
         $retArr = array();
@@ -1070,6 +1084,19 @@ class Occurrences{
         return $returnVal;
     }
 
+    public function remapTaxonOccurrences($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE omoccurrences SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function removePrimaryIdentifiersFromUploadedOccurrences($collid): int
     {
         $retVal = 0;
@@ -1081,6 +1108,16 @@ class Occurrences{
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
+        }
+        return $retVal;
+    }
+
+    public function removeTaxonFromOccurrenceRecords($tid): int
+    {
+        $retVal = 1;
+        $sql = 'UPDATE omoccurrences SET tid = NULL WHERE tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
         }
         return $retVal;
     }

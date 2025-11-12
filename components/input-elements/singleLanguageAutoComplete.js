@@ -34,10 +34,8 @@ const singleLanguageAutoComplete = {
     `,
     setup(props, context) {
         const { showNotification } = useCore();
-        const baseStore = useBaseStore();
-        
+
         const autocompleteOptions = Vue.ref([]);
-        const defaultLanguage = baseStore.getDefaultLanguage;
 
         function blurAction(val) {
             if(val.target.value && val.target.value !== props.language) {

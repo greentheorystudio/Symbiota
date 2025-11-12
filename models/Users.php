@@ -56,7 +56,7 @@ class Users{
                 $sql .= 'AND password = PASSWORD("' . SanitizerService::cleanInStr($this->conn, $password) . '") ';
             }
             if($this->encryption === 'sha2'){
-                $sql .= 'AND password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) OR password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 256) ';
+                $sql .= 'AND (password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 224) OR password = SHA2("' . SanitizerService::cleanInStr($this->conn, $password) . '", 256)) ';
             }
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);

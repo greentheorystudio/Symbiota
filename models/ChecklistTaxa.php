@@ -74,6 +74,16 @@ class ChecklistTaxa{
         return $newID;
     }
 
+    public function deleteChecklistTaxonRecords($tid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM fmchklsttaxalink WHERE tid = ' . (int)$tid . ' ';
+        if(!$this->conn->query($sql)){
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
     public function deleteChecklistTaxonRecord($cltlid): int
     {
         $retVal = 0;
@@ -216,6 +226,40 @@ class ChecklistTaxa{
             }
         }
         return $retArr;
+    }
+
+    public function getTaxonChecklistArr($tid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT c.clid, c.`name` '.
+            'FROM fmchklsttaxalink AS t LEFT JOIN fmchecklists AS c ON t.clid = c.clid '.
+            'WHERE t.tid = ' . (int)$tid . ' AND ISNULL(c.expiration) ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                $nodeArr['clid'] = $row['clid'];
+                $nodeArr['name'] = $row['name'];
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function remapChecklistTaxon($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE fmchklsttaxalink SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
     }
 
     public function updateChecklistTaxonRecord($cltlid, $editData): int

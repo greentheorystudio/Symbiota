@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/TaxonRanks.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
 class TaxonKingdoms{
@@ -20,10 +21,21 @@ class TaxonKingdoms{
         $sql = 'INSERT INTO taxonkingdoms(`kingdom_name`) VALUES("' . SanitizerService::cleanInStr($this->conn, $name) . '")';
         if($this->conn->query($sql)){
             $retVal = $this->conn->insert_id;
-            $sql = 'INSERT INTO taxonunits(kingdomid,rankid,rankname,dirparentrankid,reqparentrankid) '.
-                'SELECT ' . $retVal . ', rankid, rankname, dirparentrankid, reqparentrankid '.
-                'FROM taxonunits WHERE kingdomid = 100 ';
-            $this->conn->query($sql);
+            if((int)$retVal > 0){
+                (new TaxonRanks)->setNewKingdomRanks($retVal, $name);
+            }
+        }
+        return $retVal;
+    }
+
+    public function deleteTaxonKingdom($kingdomName): int
+    {
+        $retVal = (new TaxonRanks)->deleteKingdomRanks($kingdomName);
+        if($retVal){
+            $sql = 'DELETE FROM taxonkingdoms WHERE `kingdom_name` = "' . $kingdomName . '" ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
         }
         return $retVal;
     }
@@ -31,8 +43,8 @@ class TaxonKingdoms{
     public function getKingdomArr(): array
     {
         $retArr = array();
-        $sql = 'SELECT k.kingdom_id, t.tid, t.sciname '.
-            'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.kingdom_name = t.SciName '.
+        $sql = 'SELECT k.`kingdom_id`, t.tid, t.sciname '.
+            'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.`kingdom_name` = t.SciName '.
             'WHERE t.tid IS NOT NULL '.
             'ORDER BY t.SciName ';
         //echo $sql;
