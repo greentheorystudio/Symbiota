@@ -65,6 +65,17 @@ const useTaxaStore = Pinia.defineStore('taxa', {
         getBlankTaxaRecord(state) {
             return state.blankTaxaRecord;
         },
+        getHasAcceptedChildren(state) {
+            let response = false;
+            if(state.taxaChildren.length > 0){
+                state.taxaChildren.forEach((child) => {
+                    if(Number(child['tid']) === Number(child['tidaccepted'])){
+                        response = true;
+                    }
+                });
+            }
+            return response;
+        },
         getSubtaxaImageData(state) {
             return state.subtaxaImageData;
         },
@@ -590,7 +601,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 if(res === 1){
                     this.updateTaxonHierarchyData((res) => {
                         callback(res);
-                        if(this.taxaData.has('children') && this.taxaData['children'].length > 0){
+                        if(this.taxaChildren.length > 0){
                             this.updateTaxonChildrenKingdomFamily();
                         }
                     });

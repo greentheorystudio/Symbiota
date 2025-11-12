@@ -17,6 +17,25 @@ const taxonEditorStatusTab = {
                     </div>
                 </q-card-section>
             </q-card>
+            <q-card v-if="taxaChildren.length > 0" flat bordered>
+                <q-card-section class="column q-gutter-sm">
+                    <div class="text-subtitle1 text-bold">Child Taxa Of This Taxon</div>
+                    <div class="q-mt-xs q-pl-sm column q-gutter-xs">
+                        <template v-for="child in taxaChildren">
+                            <div class="row no-wrap">
+                                <div class="text-subtitle1 text-italic">{{ child['sciname'] }}</div>
+                                <div class="q-ml-sm">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="setTaxonData(child['tid']);" icon="fas fa-edit" dense aria-label="Edit taxon" tabindex="0">
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Edit taxon
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </q-card-section>
+            </q-card>
             <q-card v-if="synonymArr.length > 0" flat bordered>
                 <q-card-section class="column q-gutter-sm">
                     <div class="text-subtitle1 text-bold">Synonyms Of This Taxon</div>
@@ -39,19 +58,26 @@ const taxonEditorStatusTab = {
             <q-card flat bordered>
                 <q-card-section class="column q-gutter-sm">
                     <div class="text-subtitle1 text-bold">Change Acceptance</div>
-                    <div class="row">
-                        <div class="col-grow">
-                            <single-scientific-common-name-auto-complete :sciname="acceptedTaxonVal" label="Accepted Taxon" :limit-to-options="true" @update:sciname="processAcceptedTaxonNameChange"></single-scientific-common-name-auto-complete>
+                    <template v-if="isAccepted && hasAcceptedChildren">
+                        <div class="text-subtitle1 text-bold text-red">
+                            This taxon has child taxa with a current taxonomic status of Accepted and therefore cannot have its acceptance changed.
                         </div>
-                    </div>
-                    <div class="row justify-end q-gutter-sm">
-                        <div>
-                            <q-btn color="primary" @click="processAcceptedTaxonChange();" label="Change Accepted Taxon" :disabled="!acceptedTaxonChangeValid" tabindex="0" />
+                    </template>
+                    <template v-else>
+                        <div class="row">
+                            <div class="col-grow">
+                                <single-scientific-common-name-auto-complete :sciname="acceptedTaxonVal" label="Accepted Taxon" :limit-to-options="true" @update:sciname="processAcceptedTaxonNameChange" :disabled="isAccepted && hasAcceptedChildren"></single-scientific-common-name-auto-complete>
+                            </div>
                         </div>
-                        <div v-if="!isAccepted">
-                            <q-btn color="primary" @click="processMakeAccepted();" label="Change Status to Accepted" tabindex="0" />
+                        <div class="row justify-end q-gutter-sm">
+                            <div>
+                                <q-btn color="primary" @click="processAcceptedTaxonChange();" label="Change Accepted Taxon" :disabled="!acceptedTaxonChangeValid" tabindex="0" />
+                            </div>
+                            <div v-if="!isAccepted">
+                                <q-btn color="primary" @click="processMakeAccepted();" label="Change Status to Accepted" tabindex="0" />
+                            </div>
                         </div>
-                    </div>
+                    </template>
                 </q-card-section>
             </q-card>
         </div>
@@ -71,6 +97,7 @@ const taxonEditorStatusTab = {
         const acceptedTaxonKingdomId = Vue.ref(null);
         const acceptedTaxonTid = Vue.ref(null);
         const acceptedTaxonVal = Vue.ref(null);
+        const hasAcceptedChildren = Vue.computed(() => taxaStore.getHasAcceptedChildren);
         const isAccepted = Vue.computed(() => taxaStore.getAccepted);
         const origAcceptedTaxonKingdomId = Vue.ref(null);
         const origParentTaxonKingdomId = Vue.ref(null);
@@ -82,6 +109,7 @@ const taxonEditorStatusTab = {
         const parentTaxonTid = Vue.ref(null);
         const parentTaxonVal = Vue.ref(null);
         const synonymArr = Vue.computed(() => taxaStore.getTaxaSynonyms);
+        const taxaChildren = Vue.computed(() => taxaStore.getTaxaChildren);
         const taxon = Vue.computed(() => taxaStore.getTaxaData);
 
         function processAcceptedTaxonChange() {
@@ -183,10 +211,12 @@ const taxonEditorStatusTab = {
             acceptedTaxon,
             acceptedTaxonChangeValid,
             acceptedTaxonVal,
+            hasAcceptedChildren,
             isAccepted,
             parentTaxonChangeValid,
             parentTaxonVal,
             synonymArr,
+            taxaChildren,
             taxon,
             processAcceptedTaxonChange,
             processAcceptedTaxonNameChange,
