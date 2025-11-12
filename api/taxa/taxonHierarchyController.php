@@ -31,7 +31,7 @@ if($action && SanitizerService::validateInternalRequest()){
         echo $taxonHierarchy->deleteTidFromHierarchyTable(json_decode($_POST['tidarr'],false));
     }
     elseif($isEditor && $action === 'removeTaxonFromTaxonomicHierarchy' && $tId && array_key_exists('parenttid',$_POST)){
-        echo $taxonHierarchy->removeTaxonFromTaxonomicHierarchy($tId,(int)$_POST['parenttid']);
+        echo $taxonHierarchy->removeTaxonFromTaxonomicHierarchy($tId, (int)$_POST['parenttid']);
     }
     elseif($action === 'getTaxonomicTreeKingdomNodes'){
         echo json_encode($taxonHierarchy->getTaxonomicTreeKingdomNodes());

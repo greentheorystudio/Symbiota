@@ -15,9 +15,9 @@ class TaxonHierarchy{
         $this->conn->close();
 	}
 
-    public function deleteTidFromHierarchyTable($tid): bool
+    public function deleteTidFromHierarchyTable($tid): int
     {
-        $status = false;
+        $returnVal = 0;
         $tidStr = '';
         if($tid){
             if(is_array($tid)){
@@ -31,11 +31,11 @@ class TaxonHierarchy{
                     'WHERE tid IN(' . $tidStr . ') OR parenttid IN(' . $tidStr . ') ';
                 //echo $sql;
                 if($this->conn->query($sql)){
-                    $status = true;
+                    $returnVal = 1;
                 }
             }
         }
-        return $status;
+        return $returnVal;
     }
 
     public function getChildTidArr($tid): array

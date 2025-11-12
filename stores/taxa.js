@@ -345,6 +345,15 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 body: formData
             })
         },
+        removeTaxonFromHierarchyData() {
+            const formData = new FormData();
+            formData.append('tidarr', JSON.stringify([this.taxaId]));
+            formData.append('action', 'clearHierarchyTable');
+            fetch(taxonHierarchyApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+        },
         revertScinameEdits() {
             this.taxaEditData['sciname'] = this.taxaData['sciname'];
             this.taxaEditData['unitind1'] = this.taxaData['unitind1'];

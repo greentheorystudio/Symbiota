@@ -74,7 +74,7 @@ const taxonEditorStatusTab = {
                                 <q-btn color="primary" @click="processAcceptedTaxonChange();" label="Change Accepted Taxon" :disabled="!acceptedTaxonChangeValid" tabindex="0" />
                             </div>
                             <div v-if="!isAccepted">
-                                <q-btn color="primary" @click="processMakeAccepted();" label="Change Status to Accepted" tabindex="0" />
+                                <q-btn color="primary" @click="changeUnacceptedToAccepted();" label="Change Status to Accepted" tabindex="0" />
                             </div>
                         </div>
                     </template>
@@ -91,7 +91,7 @@ const taxonEditorStatusTab = {
 
         const acceptedTaxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
         const acceptedTaxonChangeValid = Vue.computed(() => {
-            return (Number(acceptedTaxonTid.value) > 0 && Number(taxon.value['tidaccepted']) !== Number(acceptedTaxonTid.value));
+            return ((isAccepted.value && Number(acceptedTaxonTid.value) > 0) || (!isAccepted.value && !acceptedTaxonTid.value) || (!isAccepted.value && Number(taxon.value['tidaccepted']) !== Number(acceptedTaxonTid.value)));
         });
         const acceptedTaxonFamily = Vue.ref(null);
         const acceptedTaxonKingdomId = Vue.ref(null);
@@ -112,8 +112,44 @@ const taxonEditorStatusTab = {
         const taxaChildren = Vue.computed(() => taxaStore.getTaxaChildren);
         const taxon = Vue.computed(() => taxaStore.getTaxaData);
 
-        function processAcceptedTaxonChange() {
+        function changeAcceptedTaxon() {
+            const remove = (isAccepted.value && Number(acceptedTaxonTid.value) > 0);
+            taxaStore.updateTaxonEditData('kingdomid', acceptedTaxonKingdomId.value);
+            taxaStore.updateTaxonEditData('tidaccepted', acceptedTaxonTid.value);
+            taxaStore.updateTaxonEditData('family', acceptedTaxonFamily.value);
+            taxaStore.updateTaxonRecord((res) => {
+                if(res === 1){
+                    showNotification('positive','Accepted taxon changed.');
+                    if(remove){
+                        taxaStore.removeTaxonFromHierarchyData();
+                    }
+                }
+                else{
+                    showNotification('negative', 'There was an error changing the accepted taxon.');
+                }
+            });
+        }
 
+        function changeUnacceptedToAccepted() {
+            taxaStore.updateTaxonEditData('tidaccepted', taxon.value['tid']);
+            taxaStore.updateTaxonRecord((res) => {
+                if(res === 1){
+                    showNotification('positive','Taxon acceptance changed.');
+                    taxaStore.populateTaxonHierarchyData(taxon.value['tid']);
+                }
+                else{
+                    showNotification('negative', 'There was an error changing the taxon acceptance.');
+                }
+            });
+        }
+
+        function processAcceptedTaxonChange() {
+            if(!isAccepted.value && (!acceptedTaxonTid.value || Number(acceptedTaxonTid.value) === 0)){
+                changeUnacceptedToAccepted();
+            }
+            else{
+                changeAcceptedTaxon();
+            }
         }
 
         function processAcceptedTaxonNameChange(taxonData) {
@@ -132,10 +168,6 @@ const taxonEditorStatusTab = {
             if(acceptedTaxonKingdomId.value && Number(acceptedTaxonKingdomId.value) !== Number(origAcceptedTaxonKingdomId.value)) {
                 showNotification('negative', 'The Accepted Taxon you entered is in a different kingdom than the current taxon. Please ensure it is correct.');
             }
-        }
-
-        function processMakeAccepted() {
-
         }
 
         function processParentTaxonChange() {
@@ -218,9 +250,9 @@ const taxonEditorStatusTab = {
             synonymArr,
             taxaChildren,
             taxon,
+            changeUnacceptedToAccepted,
             processAcceptedTaxonChange,
             processAcceptedTaxonNameChange,
-            processMakeAccepted,
             processParentTaxonChange,
             processParentTaxonNameChange,
             setTaxonData

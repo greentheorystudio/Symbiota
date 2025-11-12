@@ -28,7 +28,6 @@ const taxonEditorDetailsTab = {
 
         function saveTaxonEdits() {
             taxaStore.updateTaxonRecord((res) => {
-                hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
                 }
