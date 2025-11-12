@@ -343,6 +343,33 @@ class Media{
         return $returnArr;
     }
 
+    public function getTaxonMediaCount($tid): int
+    {
+        $retVal = 0;
+        if($tid){
+            $sql ='SELECT COUNT(mediaid) AS cnt FROM media WHERE tid = ' . (int)$tid;
+            $result = $this->conn->query($sql);
+            while($row = $result->fetch_object()){
+                $retVal = $row->cnt;
+            }
+            $result->free();
+        }
+        return $retVal;
+    }
+
+    public function remapTaxonMedia($tid, $targetTid): int
+    {
+        $retVal = 0;
+        if($tid && $targetTid){
+            $sql = 'UPDATE media SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
+            //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function updateMediaRecord($medId, $editData): int
     {
         $retVal = 0;
