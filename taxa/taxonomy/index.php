@@ -143,12 +143,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const taxaStore = useTaxaStore();
 
                     const clientRoot = baseStore.getClientRoot;
-                    const currentSciname = Vue.computed(() => {
-                        return taxon.value['sciname'];
-                    });
-                    const currentTid = Vue.computed(() => {
-                        return taxon.value['tid'];
-                    });
                     const initialTid = TID;
                     const isTaxonEditor = Vue.ref(false);
                     const isTaxonProfileEditor = Vue.ref(false);
