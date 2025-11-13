@@ -358,11 +358,20 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                callback(Number(res));
                 if(Number(res) === 1){
-                    this.updateTaxonHierarchyData(this.taxaId, () => {
-                        this.updateTaxonHierarchyData(remaptid);
+                    this.updateTaxonHierarchyData(this.taxaId, (res) => {
+                        if(Number(res) === 1){
+                            this.updateTaxonHierarchyData(remaptid, (res) => {
+                                callback(Number(res));
+                            });
+                        }
+                        else{
+                            callback(Number(res));
+                        }
                     });
+                }
+                else{
+                    callback(Number(res));
                 }
             });
         },
@@ -619,9 +628,9 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             .then((response) => {
                 return response.ok ? response.text() : null;
             })
-            .then(() => {
+            .then((res) => {
                 if(callback){
-                    callback();
+                    callback(res);
                 }
             });
         },
@@ -631,14 +640,17 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             this.updateTaxonEditData('family', family);
             if(this.getTaxaEditsExist){
                 this.updateTaxonRecord((res) => {
-                    if(res === 1){
+                    if(Number(res) === 1){
                         this.updateTaxonHierarchyData(this.taxaId, (res) => {
+                            callback(Number(res));
                             if(this.taxaChildren.length > 0){
                                 this.updateTaxonChildrenKingdomFamily();
                             }
                         });
                     }
-                    callback(res);
+                    else{
+                        callback(Number(res));
+                    }
                 });
             }
         },
