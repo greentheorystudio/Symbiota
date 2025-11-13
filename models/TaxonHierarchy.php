@@ -270,12 +270,24 @@ class TaxonHierarchy{
         return $returnArr;
     }
 
-    public function populateHierarchyTable(): int
+    public function populateHierarchyTable($tid = null): int
     {
         $retCnt = 0;
-        $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
+        $tidStr = '';
+        if($tid){
+            if(is_array($tid)){
+                $tidStr = implode(',', $tid);
+            }
+            elseif(is_numeric($tid)){
+                $tidStr = $tid;
+            }
+        }
+        $sql = 'INSERT IGNORE INTO taxaenumtree(tid, parenttid) '.
             'SELECT DISTINCT e.tid, t.parenttid '.
             'FROM taxaenumtree AS e LEFT JOIN taxa AS t ON e.parenttid = t.tid ';
+        if($tidStr){
+            $sql .= 'WHERE e.tid IN(' . $tidStr . ') ';
+        }
         //echo $sql . '<br />';
         if($this->conn->query($sql)){
             $retCnt = $this->conn->affected_rows;
@@ -288,7 +300,7 @@ class TaxonHierarchy{
         $returnVal = 0;
         if($this->primeHierarchyTable($tid)){
             do {
-                $hierarchyAdded = $this->populateHierarchyTable();
+                $hierarchyAdded = $this->populateHierarchyTable($tid);
                 if($hierarchyAdded > 0 && !$returnVal){
                     $returnVal = 1;
                 }
@@ -356,14 +368,17 @@ class TaxonHierarchy{
 
     public function updateHierarchyTable($tid): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if(is_array($tid) || is_numeric($tid)){
             $tidArr = $this->getChildTidArr($tid);
             $tidArr[] = $tid;
             $this->deleteTidFromHierarchyTable($tidArr);
             $this->primeHierarchyTable($tidArr);
             do {
-                $hierarchyAdded = $this->populateHierarchyTable();
+                $hierarchyAdded = $this->populateHierarchyTable($tidArr);
+                if($hierarchyAdded > 0 && !$returnVal){
+                    $returnVal = 1;
+                }
             } while($hierarchyAdded > 0);
         }
         return $returnVal;
