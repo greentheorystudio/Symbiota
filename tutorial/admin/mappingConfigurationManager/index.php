@@ -34,7 +34,7 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
             <section id="intro" data-background-iframe="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/admin/mapping.php" data-background-interactive data-preload>
                 <div style="position:absolute;left: 50%; bottom:20%; width:40%;">
                     <div class="tutorial-frame" style="position:relative;left: -50%;">
-                        <h2>Mapping Configurations Tutorial</h2>
+                        <div class="tutorial-title">Mapping Configurations Tutorial</div>
                         <p>Welcome to the mapping configurations manager tutorial! This tutorial will explain the different
                             settings that can be configured within this module. It will also explain how to upload and
                             configure map data layers, and configure map layer groups in the Layers Tab.</p>
