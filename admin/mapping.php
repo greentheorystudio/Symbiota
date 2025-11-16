@@ -59,7 +59,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
-                            <q-tab-panel name="mapwindow">
+                            <q-tab-panel name="mapwindow" class="map-tab-height">
                                 <map-window-configurations-tab></map-window-configurations-tab>
                             </q-tab-panel>
                             <q-tab-panel name="symbology">

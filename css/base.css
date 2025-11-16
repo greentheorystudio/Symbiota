@@ -67,6 +67,9 @@ h6 {
 .main-container-height{
 	min-height: 400px;
 }
+.map-tab-height{
+	min-height: 810px;
+}
 a{
 	color: 		#424242;
 	text-decoration: none;

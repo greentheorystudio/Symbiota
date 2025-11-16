@@ -23,7 +23,7 @@ const mapWindowConfigurationsTab = {
                 <div>
                     <spatial-viewer-element height="625" @change:map-settings="processMapChange"></spatial-viewer-element>
                 </div>
-            </q-card>
+            </div>
         </div>
     `,
     components: {
