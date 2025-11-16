@@ -11,21 +11,23 @@ const tutorialModule = {
     },
     template: `
         <q-dialog v-if="currentSlide" class="z-max" v-model="showTutorial" persistent seamless>
-            <q-card class="tutorial-frame" style="width:40%;" flat>
-                <h2>Mapping Configurations Tutorial</h2>
-                    <p>Welcome to the mapping configurations manager tutorial! This tutorial will explain the different
-                        settings that can be configured within this module. It will also explain how to upload and
-                        configure map data layers, and configure map layer groups in the Layers Tab.</p>
-                    <p>Use the red arrows located in
-                        the bottom-right corner of this screen to progress forwards and backwards. The left and right arrow
-                        keys on your keyboard can also be used for progression, however if anything is clicked outside
-                        the tutorial windows on any slide, the red arrows will need to be used for the next progression.</p>
-                    <p>On any topic slide there will be a Hide Tutorial link in the bottom-left corner of the screen,
-                        which can be clicked to hide the tutorial content. Once clicked, a Show Tutorial link in the
-                        same location can be clicked to show the tutorial content again.</p>
-            </q-card>
-            <q-card class="tutorial-frame fixed-bottom-right" style="width:40%;" flat square>
-                test
+            <div v-if="currentSlide.type === 'intro' || currentSlide.type === 'toc'" class="tutorial-center-frame-container">
+                <q-card class="tutorial-frame tutorial-content q-pa-md fit" flat>
+                    <template v-if="currentSlide.type === 'intro'">
+                        <div v-if="currentSlide.title" class="heading title">{{ currentSlide.title }}</div>
+                        <div v-html="currentSlide.content"></div>
+                    </template>
+                    <template v-else>
+                        
+                    </template>
+                </q-card>
+            </div>
+            <q-card class="tutorial-frame fixed-bottom-right" flat square>
+                <q-card-section class="q-pa-sm row q-gutter-sm no-wrap">
+                    <q-btn round color="negative" icon="close" size="lg" glossy dense></q-btn>
+                    <q-btn round color="green" icon="chevron_left" size="lg" glossy dense></q-btn>
+                    <q-btn round color="green" icon="chevron_right" size="lg" glossy dense></q-btn>
+                </q-card-section>
             </q-card>
         </q-dialog>
     `,
@@ -106,6 +108,7 @@ const tutorialModule = {
                             })
                             .then((data) => {
                                 tutorialData.value = data;
+                                console.log(data);
                             });
                         }
                     });
