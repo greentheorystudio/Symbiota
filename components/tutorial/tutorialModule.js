@@ -11,7 +11,7 @@ const tutorialModule = {
     },
     template: `
         <q-dialog v-if="currentSlide" class="z-max" v-model="showTutorial" persistent seamless>
-            <div v-if="currentSlide.type === 'intro' || currentSlide.type === 'toc'" class="tutorial-center-frame-container">
+            <div v-if="!hideTutorial && (currentSlide.type === 'intro' || currentSlide.type === 'toc')" class="tutorial-center-frame-container">
                 <q-card class="tutorial-frame tutorial-content q-pa-md fit" flat>
                     <template v-if="currentSlide.type === 'intro'">
                         <div v-if="currentSlide.title" class="heading title">{{ currentSlide.title }}</div>
@@ -22,11 +22,33 @@ const tutorialModule = {
                     </template>
                 </q-card>
             </div>
-            <q-card class="tutorial-frame fixed-bottom-right" flat square>
-                <q-card-section class="q-pa-sm row q-gutter-sm no-wrap">
-                    <q-btn round color="negative" icon="close" size="lg" glossy dense></q-btn>
-                    <q-btn round color="green" icon="chevron_left" size="lg" glossy dense></q-btn>
-                    <q-btn round color="green" icon="chevron_right" size="lg" glossy dense></q-btn>
+            <q-card v-if="!hideTutorial" class="tutorial-frame fixed-bottom-right" flat square>
+                <q-card-section class="q-pa-xs row q-gutter-xs no-wrap">
+                    <q-btn round color="negative" icon="close" size="md" glossy dense @click="closeTutorial();" aria-label="Close tutorial" tabindex="0">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Close tutorial
+                        </q-tooltip>
+                    </q-btn>
+                    <q-btn v-if="currentSlideIndex > 0" round color="green" icon="chevron_left" size="md" glossy dense @click="goToPreviousSlide();" aria-label="Go to previous slide" tabindex="0">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Go to previous slide
+                        </q-tooltip>
+                    </q-btn>
+                    <q-btn v-if="currentSlideIndex < (tutorialSlides.length - 1)" round color="green" icon="chevron_right" size="md" glossy dense @click="goToNextSlide();" aria-label="Go to next slide" tabindex="0">
+                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                            Go to next slide
+                        </q-tooltip>
+                    </q-btn>
+                </q-card-section>
+            </q-card>
+            <q-card v-if="currentSlide.type !== 'intro' && currentSlide.type !== 'toc'" class="tutorial-frame fixed-bottom-left" flat square>
+                <q-card-section class="q-pa-xs">
+                    <template v-if="hideTutorial">
+                        <a class="cursor-pointer toggle-tutorial tutorial-link" @click="hideTutorial = false" aria-label="Show tutorial" tabindex="0">Show Tutorial</a>
+                    </template>
+                    <template v-else>
+                        <a class="cursor-pointer toggle-tutorial tutorial-link" @click="hideTutorial = true" aria-label="Hide tutorial" tabindex="0">Hide Tutorial</a>
+                    </template>
                 </q-card-section>
             </q-card>
         </q-dialog>
@@ -39,6 +61,8 @@ const tutorialModule = {
             return tutorialSlides.value.length > 0 ? tutorialSlides.value[currentSlideIndex.value] : null;
         });
         const currentSlideIndex = Vue.ref(0);
+        const hideTutorial = Vue.ref(false);
+        const jsVersion = baseStore.getJsVersion;
         const tutorialData = Vue.ref(null);
         const tutorialIndex = Vue.ref({});
         const tutorialSlides = Vue.computed(() => {
@@ -79,6 +103,10 @@ const tutorialModule = {
             return returnArr;
         });
 
+        function closeTutorial() {
+            context.emit('close:tutorial');
+        }
+
         function goToNextSlide() {
             currentSlideIndex.value++;
         }
@@ -101,14 +129,13 @@ const tutorialModule = {
                     baseStore.getGlobalConfigValue('DEFAULT_TUTORIAL_JSON', (dataStr) => {
                         const defaultConfig = dataStr ? JSON.parse(dataStr) : null;
                         if(defaultConfig && defaultConfig.hasOwnProperty(props.tutorial)){
-                            const dataUrl = clientRoot + '/config/tutorial/' + defaultConfig[props.tutorial];
+                            const dataUrl = clientRoot + '/config/tutorial/' + defaultConfig[props.tutorial] + '?ver=' + jsVersion;
                             fetch(dataUrl)
                             .then((response) => {
                                 return response.ok ? response.json() : null;
                             })
                             .then((data) => {
                                 tutorialData.value = data;
-                                console.log(data);
                             });
                         }
                     });
@@ -123,6 +150,9 @@ const tutorialModule = {
         return {
             currentSlide,
             currentSlideIndex,
+            hideTutorial,
+            tutorialSlides,
+            closeTutorial,
             goToNextSlide,
             goToPreviousSlide,
             goToSlide

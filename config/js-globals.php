@@ -9,6 +9,7 @@
     const EMAIL_CONFIGURED = <?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>;
     const GLOSSARY_MOD_IS_ACTIVE = <?php echo ($GLOBALS['GLOSSARY_MOD_IS_ACTIVE'] ? 'true' : 'false'); ?>;
     const IMAGE_TAG_OPTIONS = JSON.parse('<?php echo $GLOBALS['IMAGE_TAG_OPTIONS']; ?>');
+    const JS_VERSION = '<?php echo $GLOBALS['JS_VERSION']; ?>';
     const KEY_MOD_IS_ACTIVE = <?php echo ($GLOBALS['KEY_MOD_IS_ACTIVE'] ? 'true' : 'false'); ?>;
     const MAX_UPLOAD_FILESIZE = <?php echo $GLOBALS['MAX_UPLOAD_FILESIZE']; ?>;
     const PROCESSING_STATUS_OPTIONS = JSON.parse('<?php echo json_encode($GLOBALS['PROCESSING_STATUS_OPTIONS']); ?>');
