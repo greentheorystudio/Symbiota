@@ -42,7 +42,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                             <template v-if="collInfo && collInfo.collectionname">{{ collInfo.collectionname }}</template>
                             <template v-if="collInfo && (collInfo.institutioncode || collInfo.collectioncode)"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
                         </div>
-                        <div role="button" @click="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" @keyup.enter="openTutorialWindow('/tutorial/collections/management/taxonomy/index.php?collid=' + collId);" title="Open Tutorial" tabindex="0">
+                        <div role="button" @click="showTutorial();" @keyup.enter="showTutorial();" title="Open Tutorial" tabindex="0">
                             <q-icon name="far fa-question-circle" size="20px" class="cursor-pointer" />
                         </div>
                     </div>
@@ -298,6 +298,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     </div>
                 </template>
             </div>
+            <tutorial-module tutorial="collections-taxonomy-management" :show-tutorial="displayTutorial" @close:tutorial="displayTutorial = false"></tutorial-module>
         </div>
         <?php
         include_once(__DIR__ . '/../../config/footer-includes.php');
@@ -309,10 +310,11 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
             const occurrenceTaxonomyManagementModule = Vue.createApp({
                 components: {
                     'taxa-kingdom-selector': taxaKingdomSelector,
-                    'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector
+                    'taxonomy-data-source-bullet-selector': taxonomyDataSourceBulletSelector,
+                    'tutorial-module': tutorialModule
                 },
                 setup() {
-                    const { getErrorResponseText, openTutorialWindow, showNotification } = useCore();
+                    const { getErrorResponseText, showNotification } = useCore();
                     const baseStore = useBaseStore();
                     const collectionStore = useCollectionStore();
 
@@ -326,6 +328,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                     const currentProcess = Vue.ref(null);
                     const currentSciname = Vue.ref(null);
                     const dataSource = Vue.ref('col');
+                    const displayTutorial = Vue.ref(false);
                     const isEditor = Vue.computed(() => {
                         return collectionStore.getCollectionPermissions.includes('CollAdmin');
                     });
@@ -1760,6 +1763,10 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         }
                     }
 
+                    function showTutorial() {
+                        displayTutorial.value = !displayTutorial.value;
+                    }
+
                     function undoChangedSciname(id, oldName, newName) {
                         const parentProcObj = processorDisplayArr.find(proc => proc['id'] === id);
                         const subProcObj = parentProcObj['subs'].find(subproc => subproc['undoChangedName'] === newName);
@@ -2075,6 +2082,7 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         currentProcess,
                         currentSciname,
                         dataSource,
+                        displayTutorial,
                         isEditor,
                         levValue,
                         procDisplayScrollAreaRef,
@@ -2097,13 +2105,13 @@ $collid = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
                         initializeCleanScinameAuthor,
                         initializeDataSourceSearch,
                         initializeTaxThesaurusFuzzyMatch,
-                        openTutorialWindow,
                         processingBatchLimitChange,
                         processorDisplayScrollDown,
                         processorDisplayScrollUp,
                         runTaxThesaurusFuzzyMatchProcess,
                         selectFuzzyMatch,
                         setScroller,
+                        showTutorial,
                         undoChangedSciname,
                         updateOccLocalitySecurity,
                         updateSelectedDataSource,

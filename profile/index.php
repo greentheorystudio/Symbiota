@@ -41,8 +41,8 @@ elseif(array_key_exists('refurl', $_REQUEST)){
             <div class="row justify-center q-mt-lg q-mb-xl">
                 <q-card class="login-container">
                     <q-card-section class="bg-indigo-1 column">
-                        <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense tabindex="0"></q-input>
-                        <q-input outlined v-model="password" type="password" autocomplete="current-password" label="Password" bg-color="white" class="q-mb-sm" dense tabindex="0"></q-input>
+                        <q-input outlined v-model="username" label="Username" bg-color="white" class="q-mb-sm" dense @keyup.enter="processLogin();" tabindex="0"></q-input>
+                        <q-input outlined v-model="password" type="password" autocomplete="current-password" label="Password" bg-color="white" class="q-mb-sm" dense @keyup.enter="processLogin();" tabindex="0"></q-input>
                         <q-checkbox v-model="rememberMe" label="Remember me on this computer" class="q-mb-sm" tabindex="0"></q-checkbox>
                         <div class="row justify-end q-pr-md">
                             <q-btn color="primary" @click="processLogin();" label="Login" dense tabindex="0"></q-btn>

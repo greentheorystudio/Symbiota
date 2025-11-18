@@ -14,7 +14,7 @@ const symbologyConfigurationsTab = {
                     <div>
                         <q-btn color="primary" @click="saveConfigurationEdits();" label="Save Settings" :disabled="!editsExist" tabindex="0" />
                     </div>
-                    <div role="button" class="cursor-pointer" @click="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" @keyup.enter="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" aria-label="Open Tutorial Window" tabindex="0">
+                    <div role="button" class="cursor-pointer" @click="showTutorial();" @keyup.enter="showTutorial();" aria-label="Open Tutorial Window" tabindex="0">
                         <q-icon name="far fa-question-circle" size="20px" />
                     </div>
                 </div>
@@ -214,6 +214,8 @@ const symbologyConfigurationsTab = {
         const configurationData = Vue.computed(() => configurationStore.getMapSymbologyData);
         const editsExist = Vue.computed(() => configurationStore.getConfigurationEditsExist);
 
+        const showTutorial = Vue.inject('showTutorial');
+
         function saveConfigurationEdits() {
             configurationStore.updateConfigurationData((res) => {
                 if(res === 1){
@@ -245,6 +247,7 @@ const symbologyConfigurationsTab = {
             editsExist,
             saveConfigurationEdits,
             setDefaultSymbologySettings,
+            showTutorial,
             updateConfigurationData
         }
     }
