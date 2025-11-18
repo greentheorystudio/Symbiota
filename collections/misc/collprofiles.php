@@ -223,7 +223,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                 {{ defaultTitle + ' Occurrence Data Collections' }}
                             </div>
                             <div class="q-ma-sm">
-                                <a :href="(clientRoot + '/collections/datasets/rsshandler.php?feed=collection')" target="_blank" aria-label="View RSS feed - Opens in separate tab" tabindex="0">
+                                <a :href="(clientRoot + '/rsshandler.php?feed=collection')" target="_blank" aria-label="View RSS feed - Opens in separate tab" tabindex="0">
                                     View RSS feed
                                 </a>
                             </div>
