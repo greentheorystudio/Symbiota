@@ -1,7 +1,7 @@
 const taxonEditorAdminTab = {
     template: `
         <div class="column q-gutter-md">
-            <q-card flat bordered>
+            <q-card v-if="!deleteValid" flat bordered>
                 <q-card-section class="column q-gutter-sm">
                     <div class="text-subtitle1 text-bold">Remap Resources to Another Taxon</div>
                     <div class="row">

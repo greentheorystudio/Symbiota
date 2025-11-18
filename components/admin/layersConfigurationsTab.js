@@ -10,7 +10,7 @@ const layersConfigurationsTab = {
                     <div>
                         <q-btn color="primary" @click="openLayerGroupEditPopup();" label="Add Layer Group" tabindex="0" />
                     </div>
-                    <div role="button" class="cursor-pointer" @click="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" @keyup.enter="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" aria-label="Open Tutorial" tabindex="0">
+                    <div role="button" class="cursor-pointer" @click="showTutorial();" @keyup.enter="showTutorial();" aria-label="Open Tutorial" tabindex="0">
                         <q-icon name="far fa-question-circle" size="20px" />
                     </div>
                 </div>
@@ -102,6 +102,8 @@ const layersConfigurationsTab = {
         const layerConfigArr = Vue.ref([]);
         const showLayerEditorPopup = Vue.ref(false);
         const showLayerGroupEditorPopup = Vue.ref(false);
+
+        const showTutorial = Vue.inject('showTutorial');
 
         function addLayer(layer) {
             layerConfigArr.value.push(layer);
@@ -267,6 +269,7 @@ const layersConfigurationsTab = {
             openLayerEditPopup,
             openLayerGroupEditPopup,
             processDragDrop,
+            showTutorial,
             updateLayer,
             updateLayerGroup,
             validateDragDrop

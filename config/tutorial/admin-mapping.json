@@ -1,0 +1,254 @@
+{
+    "title": "Mapping Configurations Tutorial",
+    "introHtml": "<p>Welcome to the mapping configurations manager tutorial! This tutorial will explain the different settings that can be configured within this module. It will also explain how to upload and configure map data layers, and configure map layer groups in the Layers Tab.</p><p>Use the green arrow buttons located in the bottom-right corner of this screen to progress forwards and backwards and the red x button to close the tutorial. The left and right arrow keys on your keyboard can also be used for progression.</p><p>On any topic slide there will be a Hide Tutorial link in the bottom-left corner of the screen, which can be clicked to hide the tutorial content. Once clicked, a Show Tutorial link in the same location can be clicked to show the tutorial content again.</p>",
+    "sections": [
+        {
+            "title": "Overview",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Mapping Configurations Manager can be used to make global configuration settings for the various map windows throughout the portal. The module contains three tabs, Map Window, Symbology, and Layers, which contain configuration controls. Each of these tabs will be discussed further in the following topics.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Map Window Tab",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Map Window tab is open by default when opening the Mapping Configurations Manager module, but can also be accessed by clicking on the Map Window tab. It contains controls for setting the initial base layer, zoom level, and location of all map windows within the portal.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Click on the Full Screen Toggle button in the top-right corner of the map window to toggle the full screen display of the map. Once the full screen display has been toggled, the esc key can be pressed to exit back to normal display.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Use the Base Layer selector, located in the blue colored region just above the map window, to select the base layer you would like to be initially selected in map windows.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Click and drag on any area of the map to pan it in any direction.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Click the + and - buttons along the top-right edge of the map window, just below the Full Screen Toggle button, to increase and decrease the zoom level of the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Once the base layer, zoom level, and location have been set of the map to how you would like map windows to initially open, click the Save Settings button to save these configurations.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Symbology Tab",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Symbology tab can be accessed by clicking on the Symbology tab. It contains several symbology settings for the Mapping module arranged in three groups, Points Layer, Shapes Layer, and Drag and Dropped Layers, which can be set and saved as the initial setting. We will go through each of the settings in each of these groups here:</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Cluster Points</p><p>When checked, occurrence points loaded onto the map are clustered, based on the cluster distance setting, into clusters of like records. When not checked, all occurrence records are loaded as individual points on the map, regardless of proximity.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Cluster Distance</p><p>This setting controls the minimum distance threshold (in pixels) between points or clusters which determine whether they are clustered when Cluster Points is checked.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Display Heat Map</p><p>When checked, occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map Radius and Heat Map Blur settings. When not checked occurrence records are displayed on the map as individual points, or clusters of like points.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Heat Map Radius</p><p>This setting controls the radius (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Heat Map Blur</p><p>This setting controls the blur size (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Border color</p><p>This sets the border color for occurrence record points loaded on the map.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Fill color</p><p>This sets the initial fill color for occurrence record points loaded on the map.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Border width</p><p>This sets the border width, in pixels, for occurrence record points loaded on the map.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Point radius</p><p>This sets the point radius, in pixels, for occurrence record points loaded on the map.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Selections Border color</p><p>This sets the border color for selected occurrence record points.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p class=\"heading subheader\">Selections Border width</p><p>This sets the border width, in pixels, for selected occurrence record points.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Border color</p><p>This sets the border color for all features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Fill color</p><p>This sets the fill color for all features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Border width</p><p>This sets the border width, in pixels, for all features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Point radius</p><p>This sets the point radius, in pixels, for all point features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Fill Opacity</p><p>This sets the fill color opacity for all features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Selections Border color</p><p>This sets the border color for all selected features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Selections Fill color</p><p>This sets the fill color for all selected features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Selections Border width</p><p>This sets the border width, in pixels, for all selected features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p class=\"heading subheader\">Selections Opacity</p><p>This sets the fill color opacity for all selected features in the Shapes Layer on the map.</p>"
+                },
+                {
+                    "header": "Drag and Dropped Layers",
+                    "html": "<p class=\"heading subheader\">Raster color scale</p><p>This sets the initial color scale that is used to symbolize raster layers that are added to the map by dragging and dropping raster files onto the map.</p>"
+                },
+                {
+                    "header": "Drag and Dropped Layers",
+                    "html": "<p class=\"heading subheader\">Border color</p><p>This sets the initial border color that is used to symbolize features in vector layers that are added to the map by dragging and dropping vector files onto the map.</p>"
+                },
+                {
+                    "header": "Drag and Dropped Layers",
+                    "html": "<p class=\"heading subheader\">Fill color</p><p>This sets the initial fill color that is used to symbolize features in vector layers that are added to the map by dragging and dropping vector files onto the map.</p>"
+                },
+                {
+                    "header": "Drag and Dropped Layers",
+                    "html": "<p class=\"heading subheader\">Border width</p><p>This sets the initial border width, in pixels, that is used to symbolize features in vector layers that are added to the map by dragging and dropping vector files onto the map.</p>"
+                },
+                {
+                    "header": "Drag and Dropped Layers",
+                    "html": "<p class=\"heading subheader\">Point radius</p><p>This sets the initial point radius, in pixels, that is used to symbolize point features in vector layers that are added to the map by dragging and dropping vector files onto the map.</p>"
+                },
+                {
+                    "header": "Drag and Dropped Layers",
+                    "html": "<p class=\"heading subheader\">Fill Opacity</p><p>This sets the initial fill color opacity that is used to symbolize features in vector layers that are added to the map by dragging and dropping vector files onto the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Click the Save Settings button to save changes to any of the settings in this tab.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Click the Set Default Settings button to reset and save all of the settings in this tab back to their defaults.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Layers Tab",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Layers tab can be accessed by clicking on the Layers tab. In the Layers tab you can upload map data layers and create layer groups, which will be available in the Layers Panel of the Mapping module. You can also edit metadata for, set initial symbology, arrange the order of display in the Layers Panel, and delete layers and layer groups.</p>"
+                },
+                {
+                    "header": "Adding Layers",
+                    "html": "<p>Click the Add Layer button to open the Add Layer box, where you can choose the layer data file to be used and enter a layer name, description, provided by, source URL, and date acquired for the layer. This information will be displayed with the layer in the Layers Panel.</p>"
+                },
+                {
+                    "header": "Adding Layers",
+                    "html": "<p><b>Layer data files must be of the following file formats: KML (.kml), GeoJSON (.geojson), Shapefile (.zip), and GeoTIFF (.tif or .tiff).</b></p>"
+                },
+                {
+                    "header": "Adding Layers",
+                    "html": "<p><span class=\"text-bold\">All layer data must be in either WGS84 or NAD83 projections.</span></p>"
+                },
+                {
+                    "header": "Adding Layers",
+                    "html": "<p>Once the layer data file has been chosen and other desired information entered, click the Add button to upload the data file and save the new layer. New layers will appear in the box in the lower portion of the Layers tab.</p>"
+                },
+                {
+                    "header": "Adding Layers",
+                    "html": "<p>Click the Cancel button to close the Add Layer box.</p>"
+                },
+                {
+                    "header": "Adding Layer Groups",
+                    "html": "<p>Click the Add Layer Group button to open the Add Layer Group box, where you can enter a name for the layer group. The name entered will be used as the label for the layer group in the Layers Panel.</p>"
+                },
+                {
+                    "header": "Adding Layer Groups",
+                    "html": "<p>Once the name has been entered, click the Add button to save the new layer group. New layer groups will appear in the box in the lower portion of the Layers tab.</p>"
+                },
+                {
+                    "header": "Adding Layer Groups",
+                    "html": "<p>Click the Cancel button to close the Add Layer Group box.</p>"
+                },
+                {
+                    "header": "Arranging Layers and Layer Groups",
+                    "html": "<p>All layers and layer groups appear in the box in the lower portion of the Layers tab where they can be arranged and organized.</p>"
+                },
+                {
+                    "header": "Arranging Layers and Layer Groups",
+                    "html": "<p>All layer groups have a grey header bar, whcih includes the group name, expand/minimize control, and edit icon. Click and drag the header bar to move the layer group upwards or downwards in the list of other layers and layer groups.</p>"
+                },
+                {
+                    "header": "Arranging Layers and Layer Groups",
+                    "html": "<p>Layer groups that are currently expanded will have a - icon just to the right of the layer name in the header bar. Click this con to minimize the layer group and hide all of the layers that it contains.</p>"
+                },
+                {
+                    "header": "Arranging Layers and Layer Groups",
+                    "html": "<p>Layer groups that are currently minimized will have a + icon just to the right of the layer name in the header bar. Click this con to expand the layer group and show all of the layers that it contains.</p>"
+                },
+                {
+                    "header": "Arranging Layers and Layer Groups",
+                    "html": "<p>All layers are displayed within a grey outline. Click and drag within the outline of any layer to move it upwards or downwards in the list of other layers and layer groups, or within the list of layers in any layer group. Additionally, layers can be dragged into, or out of, any layer group to either include it in, or remove it from, that group.</p>"
+                },
+                {
+                    "header": "Arranging Layers and Layer Groups",
+                    "html": "<p>When dragging any layer or layer group, a grey placeholder box will appear within the list to show its placement once the mouse click is released.</p>"
+                },
+                {
+                    "header": "Arranging Layers and Layer Groups",
+                    "html": "<p>Once any changes have been made to the arrangement or organization of layers or leyer groups, click the Save Settings button in the top-right corner of the Layer tab to save the changes.</p>"
+                },
+                {
+                    "header": "Editing Layer Groups",
+                    "html": "<p>Click the edit icon <i style=\"height:20px;width:20px;\" class=\"fas fa-edit\"></i> in the grey header bar of any layer group to open the edit panel.</p>"
+                },
+                {
+                    "header": "Editing Layer Groups",
+                    "html": "<p>Within the layer group edit panel: You can edit the group name. Click the Save button to save any changes to the group name. Click the Delete Layer Group button to delete the layer group (note layer groups containing layers cannot be deleted until all layers have been removed). Click the Cancel button to close the edit panel.</p>"
+                },
+                {
+                    "header": "Editing Layers",
+                    "html": "<p>Click the edit icon <i style=\"height:20px;width:20px;\" class=\"fas fa-edit\"></i> in the top-right corner of any layer to open the edit panel.</p>"
+                },
+                {
+                    "header": "Editing Layers",
+                    "html": "<p>Within the layer edit panel: You can edit the layer name, description, provided by, source URL, and date acquired information. Additionally, you can also edit the intial symbology for the layer, including border color, fill color, border width, point radius, and fill opacity for vector layers, and color scale for raster layers. Click the Save button to save any changes to the layer information or initial symbology. Click the Update Layer File button to open the update box (explained further in the next slide). Click the Delete Layer button to delete the layer, which also deletes the layer data file from the server. Click the Cancel button to close the edit panel.</p>"
+                },
+                {
+                    "header": "Updating Layers",
+                    "html": "<p>Layer data files can be updated to reflect changes in data. Click the Update Layer File button in the layer edit panel to open the update box. In the box that opens, choose the update file you would like to use to upadte the layer. Once the update file has been chosen, click the Update button to complete the process. Update files completely replace the previously existing data file for the layer, while maintaining all information and symbology settings for the layer.</p>"
+                }
+            ]
+        }
+    ]
+}
