@@ -67,6 +67,9 @@ h6 {
 .main-container-height{
 	min-height: 400px;
 }
+.map-tab-height{
+	min-height: 810px;
+}
 a{
 	color: 		#424242;
 	text-decoration: none;
@@ -1220,4 +1223,59 @@ body.processing .loadingModal {
 	clip: rect(0, 0, 0, 0);
 	clip-path: inset(50%);
 	border: 0;
+}
+.tutorial-frame {
+	background-color: rgba(0, 0, 0, 0.9);
+	color: #fff;
+}
+.tutorial-content {
+	font-family: Lato, sans-serif;
+	font-size: 20px;
+}
+.tutorial-content .heading {
+	font-family: League Gothic, Impact, sans-serif;
+	color: #fff;
+	text-transform: uppercase;
+	margin-bottom: 0;
+}
+div.tutorial-intro-frame-container{
+	max-width: 55%;
+	width: 55%;
+}
+div.tutorial-toc-frame-container{
+	min-width: 30%;
+	max-width: 80%;
+	min-height: 30%;
+	max-height: 80%;
+}
+div.tutorial-content-frame-container{
+	max-width: 40%;
+	max-height: 80%;
+	overflow: scroll;
+	width: 40%;
+}
+div.tutorial-bottom-nav-container{
+	position: fixed;
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 40%;
+}
+.tutorial-link{
+	color: #268bd2;
+}
+.tutorial-link:hover{
+	color: #78b9e6;
+}
+.toggle-tutorial{
+	font-size: 20px;
+}
+.tutorial-content .title {
+	font-size: 40px;
+}
+.tutorial-content .header {
+	font-size: 30px;
+}
+.tutorial-content .subheader {
+	font-size: 25px;
 }
