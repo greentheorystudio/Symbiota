@@ -16,46 +16,6 @@ header('X-Frame-Options: SAMEORIGIN');
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-        <style>
-            .tutorial-frame {
-                box-shadow: 0 1px 4px rgba(0,0,0,0.5), 0 5px 25px rgba(0,0,0,0.2);
-                background-color: rgba(0, 0, 0, 0.8);
-                color: #fff;
-            }
-            .tutorial-content {
-                font-family: Lato, sans-serif;
-                font-size: 20px;
-            }
-            .tutorial-content div.heading {
-                margin: 0 0 20px 0;
-                font-family: League Gothic, Impact, sans-serif;
-                color: #fff;
-                text-transform: uppercase;
-            }
-            div.tutorial-center-frame-container{
-                max-width: 55%;
-                width: 55%;
-            }
-            .tutorial-link{
-                color: #268bd2;
-            }
-            .tutorial-link:hover{
-                color: #78b9e6;
-            }
-            .toggle-tutorial{
-                font-size: 23px;
-                font-weight: bold;
-            }
-            .tutorial-content div.title {
-                font-size: 40px;
-            }
-            .tutorial-content div.heading2 {
-                font-size: 2.11em;
-            }
-            .tutorial-content div.heading3 {
-                font-size: 1.55em;
-            }
-        </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
@@ -133,7 +93,6 @@ header('X-Frame-Options: SAMEORIGIN');
                     'tutorial-module': tutorialModule
                 },
                 setup() {
-                    const { openTutorialWindow } = useCore();
                     const baseStore = useBaseStore();
                     const configurationStore = useConfigurationStore();
 
@@ -176,8 +135,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     return {
                         displayTutorial,
                         isAdmin,
-                        tab,
-                        openTutorialWindow
+                        tab
                     }
                 }
             });
