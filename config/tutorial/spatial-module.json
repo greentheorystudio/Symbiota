@@ -243,11 +243,11 @@
                 },
                 {
                     "header": "",
-                    "html": "<p>Each layer is depicted in a box within the Layers Panel. In the top-left of the box is the layer name, which corresponds with the layer name in the Active Layer Selector if the layer is visible. Any metadata that has been configured with layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of the box will be an icon to indicate whether the layer contains vector or raster data, with <i style=\\\"height:20px;width:20px;\\\" class=\\\"fas fa-vector-square\\\"></i> for vector data and <i style=\\\"height:20px;width:20px;\\\" class=\\\"fas fa-border-all\\\"></i> for raster data.</p>"
+                    "html": "<p>Each layer is depicted in a box within the Layers Panel. In the top-left of the box is the layer name, which corresponds with the layer name in the Active Layer Selector if the layer is visible. Any metadata that has been configured with layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of the box will be an icon to indicate whether the layer contains vector or raster data, with <i style=\"height:20px;width:20px;\" class=\"fas fa-vector-square\"></i> for vector data and <i style=\"height:20px;width:20px;\" class=\"fas fa-border-all\"></i> for raster data.</p>"
                 },
                 {
                     "header": "",
-                    "html": "<p>Each layer's information and controls are enclosed within individual frames within the Layers Panel. In the top-left of each frame is the layer name, which corresponds with the layer name in the Active Layer Selector, if the layer is visible. Any metadata that has been configured with the layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of each frame will be an icon to indicate whether the layer contains vector or raster data, with <i style=\\\"height:20px;width:20px;\\\" class=\\\"fas fa-vector-square\\\"></i> for vector data and <i style=\\\"height:20px;width:20px;\\\" class=\\\"fas fa-border-all\\\"></i> for raster data.</p>"
+                    "html": "<p>Each layer's information and controls are enclosed within individual frames within the Layers Panel. In the top-left of each frame is the layer name, which corresponds with the layer name in the Active Layer Selector, if the layer is visible. Any metadata that has been configured with the layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of each frame will be an icon to indicate whether the layer contains vector or raster data, with <i style=\"height:20px;width:20px;\" class=\"fas fa-vector-square\"></i> for vector data and <i style=\"height:20px;width:20px;\" class=\"fas fa-border-all\"></i> for raster data.</p>"
                 },
                 {
                     "header": "",
@@ -415,23 +415,23 @@
                 },
                 {
                     "header": "Download Type Selector and Button",
-                    "html": "<p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download button <button class=\\\"icon-button\\\" title=\\\"Download\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-download\\\"></i></button>. These can be used to download the occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format. Downloading occurrence records will be discussed further in a later topic.</p>"
+                    "html": "<p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download the occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format. Downloading occurrence records will be discussed further in a later topic.</p>"
                 },
                 {
                     "header": "List Display Button",
-                    "html": "<p>To the right of the Download Type Selector and button is the List Display button <button class=\\\"icon-button\\\" title=\\\"List Display\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-list\\\"></i></button>. This can be clicked to go to the list display for the occurrence records search.</p>"
+                    "html": "<p>To the right of the Download Type Selector and button is the List Display button <button class=\"icon-button\" title=\"List Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-list\"></i></button>. This can be clicked to go to the list display for the occurrence records search.</p>"
                 },
                 {
                     "header": "Table Display Button",
-                    "html": "<p>To the right of the List Display button is the Table Display button <button class=\\\"icon-button\\\" title=\\\"Table Display\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-table\\\"></i></button>. This can be clicked to go to the table display for the occurrence records search.</p>"
+                    "html": "<p>To the right of the List Display button is the Table Display button <button class=\"icon-button\" title=\"Table Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-table\"></i></button>. This can be clicked to go to the table display for the occurrence records search.</p>"
                 },
                 {
                     "header": "Image Display Button",
-                    "html": "<p>To the right of the Table Display button is the Image Display button <button class=\\\"icon-button\\\" title=\\\"Image Display\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-camera\\\"></i></button>. This can be clicked to go to the image display for the occurrence records search.</p>"
+                    "html": "<p>To the right of the Table Display button is the Image Display button <button class=\"icon-button\" title=\"Image Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-camera\"></i></button>. This can be clicked to go to the image display for the occurrence records search.</p>"
                 },
                 {
                     "header": "Copy Search URL Button",
-                    "html": "<p>When the search does not include a complex shape, to the right of the Image Display button is the Copy Search URL button <button class=\\\"icon-button\\\" title=\\\"Copy Search URL\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-link\\\"></i></button>. This can be clicked to copy a url to your computer's clipboard that will load the same search. This url can be used at any time to quickly reload the same search at a different time.</p>"
+                    "html": "<p>When the search does not include a complex shape, to the right of the Image Display button is the Copy Search URL button <button class=\"icon-button\" title=\"Copy Search URL\"><i style=\"height:15px;width:15px;\" class=\"fas fa-link\"></i></button>. This can be clicked to copy a url to your computer's clipboard that will load the same search. This url can be used at any time to quickly reload the same search at a different time.</p>"
                 },
                 {
                     "header": "Pagination and Record Count Bar",
@@ -443,7 +443,7 @@
                 },
                 {
                     "header": "Occurrence Record Table",
-                    "html": "<p>Below the Select/Deselect All Checkbox is the Occurrence Record Table displaying a paginated table of the occurrence records returned from the search. There are columns for Catalog Number, Collector, Date, and Scientific Name for each record. In the far left column there is a checkbox to select and deselect individual records in the table. This will also select or deselect the record on the map, and add it to, or remove it from, the Selections Tab. The text in the Collector column for each record can be clicked to open a popup window displaying the complete data for that record. Additionally, the <i style=\\\"height:20px;width:20px;\\\" class=\\\"fas fa-search-location\\\"></i> icon in the Collector column can be clicked to pan the map to that record's location on the map and add a temporary marker. If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>"
+                    "html": "<p>Below the Select/Deselect All Checkbox is the Occurrence Record Table displaying a paginated table of the occurrence records returned from the search. There are columns for Catalog Number, Collector, Date, and Scientific Name for each record. In the far left column there is a checkbox to select and deselect individual records in the table. This will also select or deselect the record on the map, and add it to, or remove it from, the Selections Tab. The text in the Collector column for each record can be clicked to open a popup window displaying the complete data for that record. Additionally, the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column can be clicked to pan the map to that record's location on the map and add a temporary marker. If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>"
                 }
             ]
         },
@@ -501,7 +501,7 @@
                 },
                 {
                     "header": "Taxa Count and Download Bar",
-                    "html": "<p>Below the symbol key and symbology buttons is the Taxa Count and Download Bar. On the left side of this bar is the total count of distinct taxa represented in the occurrence records returned in the search. The button on the right side of this bar <button class=\\\"icon-button\\\" title=\\\"Download\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-download\\\"></i></button> can be clicked to download a csv files containing all of the distinct taxa in the taxa list in this tab.</p>"
+                    "html": "<p>Below the symbol key and symbology buttons is the Taxa Count and Download Bar. On the left side of this bar is the total count of distinct taxa represented in the occurrence records returned in the search. The button on the right side of this bar <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> can be clicked to download a csv files containing all of the distinct taxa in the taxa list in this tab.</p>"
                 },
                 {
                     "header": "Taxa List",
@@ -518,11 +518,11 @@
                 },
                 {
                     "header": "Download Type Selector and Button",
-                    "html": "<p>In the top-left corner of the Selections Tab is the Download Type drop-down selector followed by the Download button <button class=\\\"icon-button\\\" title=\\\"Download\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-download\\\"></i></button>. These can be used to download the selected occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format. Downloading selected occurrence records will be discussed further in a later topic.</p>"
+                    "html": "<p>In the top-left corner of the Selections Tab is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download the selected occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format. Downloading selected occurrence records will be discussed further in a later topic.</p>"
                 },
                 {
                     "header": "Clear Selections Button",
-                    "html": "<p>Below the Download Type Selector and button is the Clear Selections button <button class=\\\"icon-button\\\" title=\\\"List Display\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-list\\\"></i></button>. This can be clicked to deselect all of the currently selected occurrence records, removing all records from this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all records in the Records Tab.</p>"
+                    "html": "<p>Below the Download Type Selector and button is the Clear Selections button <button class=\"icon-button\" title=\"List Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-list\"></i></button>. This can be clicked to deselect all of the currently selected occurrence records, removing all records from this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all records in the Records Tab.</p>"
                 },
                 {
                     "header": "Zoom to Selections Button",
@@ -534,7 +534,7 @@
                 },
                 {
                     "header": "Selected Occurrence Record Table",
-                    "html": "<p>Below the Show Only Selected Points Checkbox is the Selected Occurrence Record Table displaying a table of all of the currently selected occurrence records. There are columns for Catalog Number, Collector, Date, and Scientific Name for each record. In the far left column there is a checkbox to deselect individual records in the table, which removes them from this table, deselects them on the map, and deselects them in the Records Tab. The text in the Collector column for each record can be clicked to open a popup window displaying the complete data for that record. Additionally, the <i style=\\\"height:20px;width:20px;\\\" class=\\\"fas fa-search-location\\\"></i> icon in the Collector column can be clicked to pan the map to that record's location on the map and add a temporary marker. If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>"
+                    "html": "<p>Below the Show Only Selected Points Checkbox is the Selected Occurrence Record Table displaying a table of all of the currently selected occurrence records. There are columns for Catalog Number, Collector, Date, and Scientific Name for each record. In the far left column there is a checkbox to deselect individual records in the table, which removes them from this table, deselects them on the map, and deselects them in the Records Tab. The text in the Collector column for each record can be clicked to open a popup window displaying the complete data for that record. Additionally, the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column can be clicked to pan the map to that record's location on the map and add a temporary marker. If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>"
                 }
             ]
         },
@@ -573,7 +573,7 @@
                 },
                 {
                     "header": "",
-                    "html": "<p>In either the Records Tab or the Selections Tab, the Download Type Selector can be used to select the download format for the occurrence data. The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click the Download button <button class=\\\"icon-button\\\" title=\\\"Download\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-download\\\"></i></button> to initiate the download.</p>"
+                    "html": "<p>In either the Records Tab or the Selections Tab, the Download Type Selector can be used to select the download format for the occurrence data. The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> to initiate the download.</p>"
                 },
                 {
                     "header": "",
@@ -607,7 +607,7 @@
                 },
                 {
                     "header": "Download Type Selector and Button",
-                    "html": "<p>Below the Selected Area Display on the left side is the Download Type drop-down selector followed by the Download button <button class=\\\"icon-button\\\" title=\\\"Download\\\"><i style=\\\"height:15px;width:15px;\\\" class=\\\"fas fa-download\\\"></i></button>. These can be used to download all of the features currently in the Shapes Layer in a KML or GeoJSON file format. Downloading features from the Shapes Layer will be discussed further in the next topic.</p>"
+                    "html": "<p>Below the Selected Area Display on the left side is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download all of the features currently in the Shapes Layer in a KML or GeoJSON file format. Downloading features from the Shapes Layer will be discussed further in the next topic.</p>"
                 },
                 {
                     "header": "Delete Selected Features Button",
@@ -983,7 +983,7 @@
                 },
                 {
                     "header": "Step 4",
-                    "html": "<p>When occurrence records are loaded on the map, the Records and Taxa Panel should automatically expand with the Records Tab selected. Scroll up and down over the records to view them. Click the <i style=\\\"height:20px;width:20px;\\\" class=\\\"fas fa-search-location\\\"></i> icon in the Collector column of records to pan the map to that record's location on the map and add a temporary marker. Check the checkbox in the far left column of the Occurrence Record Table for a few records to select them.</p>"
+                    "html": "<p>When occurrence records are loaded on the map, the Records and Taxa Panel should automatically expand with the Records Tab selected. Scroll up and down over the records to view them. Click the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column of records to pan the map to that record's location on the map and add a temporary marker. Check the checkbox in the far left column of the Occurrence Record Table for a few records to select them.</p>"
                 },
                 {
                     "header": "Step 5",
@@ -1065,11 +1065,11 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>In this walkthrough we will use <a href=\\\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\\\" target=\\\"_blank\\\">TIGER/Line data from the United States Census Bureau</a> to load US county data onto the map. We will then find all occurrence records that occur within a selected county.</p><p><b>This walkthrough uses external county data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
+                    "html": "<p>In this walkthrough we will use <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a> to load US county data onto the map. We will then find all occurrence records that occur within a selected county.</p><p><b>This walkthrough uses external county data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Download the US county shapefile from the <a href=\\\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\\\" target=\\\"_blank\\\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the COUNTY directory of their <a href=\\\"https://www2.census.gov/geo/tiger/TIGER2021/\\\" target=\\\"_blank\\\">FTP Archive</a>. You can also <a href=\\\"https://www2.census.gov/geo/tiger/TIGER2021/COUNTY/tl_2021_us_county.zip\\\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
+                    "html": "<p>Download the US county shapefile from the <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the COUNTY directory of their <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/\" target=\"_blank\">FTP Archive</a>. You can also <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/COUNTY/tl_2021_us_county.zip\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
                 },
                 {
                     "header": "Step 2",
@@ -1118,15 +1118,15 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>In this walkthrough we will use <a href=\\\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\\\" target=\\\"_blank\\\">TIGER/Line data from the United States Census Bureau</a> and <a href=\\\"https://www.sciencebase.gov/catalog/item/54244abde4b037b608f9e23d\\\" target=\\\"_blank\\\">ecoregion data from the USGS</a> to load US state and ecoregion data onto the map. Using the Intersect Tool we will create a feature representing a selected ecoregion in a selected state. We will then find all occurrence records that occur within the created feature.</p><p><b>This walkthrough uses external state and ecoregion data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
+                    "html": "<p>In this walkthrough we will use <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a> and <a class=\"tutorial-link\" href=\"https://www.sciencebase.gov/catalog/item/54244abde4b037b608f9e23d\" target=\"_blank\">ecoregion data from the USGS</a> to load US state and ecoregion data onto the map. Using the Intersect Tool we will create a feature representing a selected ecoregion in a selected state. We will then find all occurrence records that occur within the created feature.</p><p><b>This walkthrough uses external state and ecoregion data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Download the US state shapefile from the <a href=\\\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\\\" target=\\\"_blank\\\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the STATE directory of their <a href=\\\"https://www2.census.gov/geo/tiger/TIGER2021/\\\" target=\\\"_blank\\\">FTP Archive</a>. You can also <a href=\\\"https://www2.census.gov/geo/tiger/TIGER2021/STATE/tl_2021_us_state.zip\\\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
+                    "html": "<p>Download the US state shapefile from the <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the STATE directory of their <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/\" target=\"_blank\">FTP Archive</a>. You can also <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/STATE/tl_2021_us_state.zip\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
                 },
                 {
                     "header": "Step 2",
-                    "html": "<p>Download the <a href=\\\"https://www.sciencebase.gov/catalog/item/54244abde4b037b608f9e23d\\\" target=\\\"_blank\\\">Bailey's Ecoregions of the Conterminous United States shapefile from the USGS</a>. You can <a href=\\\"https://www.sciencebase.gov/catalog/file/get/54244abde4b037b608f9e23d?facet=Baileys_ecoregions_sgca\\\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
+                    "html": "<p>Download the <a class=\"tutorial-link\" href=\"https://www.sciencebase.gov/catalog/item/54244abde4b037b608f9e23d\" target=\"_blank\">Bailey's Ecoregions of the Conterminous United States shapefile from the USGS</a>. You can <a class=\"tutorial-link\" href=\"https://www.sciencebase.gov/catalog/file/get/54244abde4b037b608f9e23d?facet=Baileys_ecoregions_sgca\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
                 },
                 {
                     "header": "Step 3",
@@ -1215,15 +1215,15 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>In this walkthrough we will use <a href=\\\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\\\" target=\\\"_blank\\\">TIGER/Line data from the United States Census Bureau</a> and <a href=\\\"https://worldclim.org/data/worldclim21.html\\\" target=\\\"_blank\\\">raster elevation data from WorldClim</a> to load US state and elevation data onto the map. Using the Data-Based Vectorize and Grid-Based Vectorize Tools, we will create vector features representing an elevation range in a selected state. We will then find all occurrence records that occur within each created vector feature.</p><p><b>This walkthrough uses external state data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
+                    "html": "<p>In this walkthrough we will use <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a> and <a class=\"tutorial-link\" href=\"https://worldclim.org/data/worldclim21.html\" target=\"_blank\">raster elevation data from WorldClim</a> to load US state and elevation data onto the map. Using the Data-Based Vectorize and Grid-Based Vectorize Tools, we will create vector features representing an elevation range in a selected state. We will then find all occurrence records that occur within each created vector feature.</p><p><b>This walkthrough uses external state data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Download the US state shapefile from the <a href=\\\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\\\" target=\\\"_blank\\\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the STATE directory of their <a href=\\\"https://www2.census.gov/geo/tiger/TIGER2021/\\\" target=\\\"_blank\\\">FTP Archive</a>. You can also <a href=\\\"https://www2.census.gov/geo/tiger/TIGER2021/STATE/tl_2021_us_state.zip\\\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
+                    "html": "<p>Download the US state shapefile from the <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the STATE directory of their <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/\" target=\"_blank\">FTP Archive</a>. You can also <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/STATE/tl_2021_us_state.zip\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
                 },
                 {
                     "header": "Step 2",
-                    "html": "<p>Download the <a href=\\\"https://worldclim.org/data/worldclim21.html\\\" target=\\\"_blank\\\">5 minutes Elevation raster data from WorldClim</a>. You can <a href=\\\"https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_5m_elev.zip\\\">click this link to download it directly</a>. This file will download as a zip archive. Once downloaded, unzip the archive to access the tif file it contains. <b>Be sure to note the location of the unzipped tif file on your computer.</b></p>"
+                    "html": "<p>Download the <a class=\"tutorial-link\" href=\"https://worldclim.org/data/worldclim21.html\" target=\"_blank\">5 minutes Elevation raster data from WorldClim</a>. You can <a class=\"tutorial-link\" href=\"https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_5m_elev.zip\">click this link to download it directly</a>. This file will download as a zip archive. Once downloaded, unzip the archive to access the tif file it contains. <b>Be sure to note the location of the unzipped tif file on your computer.</b></p>"
                 },
                 {
                     "header": "Step 3",

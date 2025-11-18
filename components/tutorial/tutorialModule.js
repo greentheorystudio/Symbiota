@@ -10,7 +10,7 @@ const tutorialModule = {
         }
     },
     template: `
-        <q-dialog v-if="currentSlide" class="z-max" v-model="showTutorial" persistent seamless>
+        <q-dialog v-if="currentSlide" class="z-max" v-model="showTutorial" @keydown.left="goToPreviousSlide" @keydown.right="goToNextSlide" persistent seamless>
             <div v-if="!hideTutorial && (currentSlide.type === 'intro' || currentSlide.type === 'toc')" class="tutorial-center-frame-container">
                 <q-card class="tutorial-frame tutorial-content q-pa-md fit">
                     <template v-if="currentSlide.type === 'intro'">
