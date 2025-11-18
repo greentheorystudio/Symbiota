@@ -1,0 +1,137 @@
+{
+    "title": "Taxonomy Management Module Tutorial",
+    "introHtml": "<p>Welcome to the taxonomy management module tutorial! This tutorial will explain the different processes that can be run within this module and how to use them to improve the accuracy and consistency of scientific names within occurrence records and increase the amount of occurrence records that are linked to the taxonomic thesaurus.</p><p>Use the green arrow buttons located in the bottom-right corner of this screen to progress forwards and backwards and the red x button to close the tutorial. The left and right arrow keys on your keyboard can also be used for progression.</p><p>On any topic slide there will be a Hide Tutorial link in the bottom-left corner of the screen, which can be clicked to hide the tutorial content. Once clicked, a Show Tutorial link in the same location can be clicked to show the tutorial content again.</p>",
+    "sections": [
+        {
+            "title": "Overview",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Taxonomy Management Module can be used to clean and normalize occurrence record scientific names, update the locality security setting for occurrence records based on the portal's Protected Species list, and linking occurrence records to the Taxonomic Thesaurus. It also has the capability to search the Catalogue of Life, the Integrated Taxonomic Information System, and the World Register of Marine Species to find and add new taxa to the Taxonomic Thesaurus, so that occurrence records for taxa not currently in the thesaurus can be linked.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In the top portion of the module, just below the collection name, there are three settings that can be used for controlling some of the processes available within the module on the left side, and both the total amount of occurrence records not linked to the Taxonomic Thesaurus, and the total unique scientific names those occurrence records recpresent, on the right side.</p>"
+                },
+                {
+                    "header": "Target Kingdom Selector",
+                    "html": "<p>The Target Kingdom Selector is located in the top portion of the module on the left side. It is used to select the taxonomic Kingdom from which taxa will be searched in some of the processes available in the module. This setting is necessary when running the Set Taxonomic Thesaurus Linkages, Search Taxonomic Data Sources, and Taxonomic Thesaurus Fuzzy Search processes (all of which be discussed further in the following topics).</p>"
+                },
+                {
+                    "header": "Processing Start Index",
+                    "html": "<p>The Processing Start Index setting is located in the top portion of the module on the left side. When some of the processes available within this module run, they iterate through an alphabetical list of the scientific names found in occurrence records that are not linked to the Taxonomic Thesaurus. This setting can be used to set the alphabetic start point from which to start the iteration through the list of names, if a later start point is desired than the natural alphabetic start. If nothing is entered in this setting, iteration through the list of names will begin at the alphabetic first name.</p>"
+                },
+                {
+                    "header": "Processing Batch Limit",
+                    "html": "<p>The Processing Batch Limit setting is located in the top portion of the module on the left side. When some of the processes available within this module run, they iterate through an alphabetical list of the scientific names found in occurrence records that are not linked to the Taxonomic Thesaurus. This setting can be used to set the amount of names a process will iterate through, if a number less than the total amount of names is desired. If no numeric value is entered in this setting, processes will iterate through the entire list of scientific names.</p>"
+                },
+                {
+                    "header": "Process Control Window",
+                    "html": "<p>The Process Control Window is located below the top portion of the module, on the left side. It contains two expansion panels, Maintenance Utilities and Search Utilities, each of which include the controls for starting and cancelling the processes available in this module. Each of these panels, and the processes they include, will be discussed further in the following topics.</p>"
+                },
+                {
+                    "header": "Process Display Window",
+                    "html": "<p>The Process Display Window is located below the top portion of the module, on the right side. Initially it is a blank window, but it will display feedback, results, and additional options, as each process included in the module is run. Any content displayed in this window while a process is running will remain in the window until another process is started, at which point the window will be cleared.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Maintenance Utilities Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Maintenance Utilities Panel is accessed by clicking on Maintenance Utilities in the Process Control Window to expand the panel (if it isn't already expanded).</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>There are four processes that can be run from this panel. Each will be discussed in the following slides.</p>"
+                },
+                {
+                    "header": "General Cleaning",
+                    "html": "<p>The General Cleaning process performs multiple cleaning actions on the scientific names of occurrence records that are not linked to the taxonomic thesaurus, including: removing question marks, removing unecessary endings (such as sp. or spp.), removing identification qualifiers (such as cf. or aff.) and moving them to the identification qualifier field, normalizing infraspecific rank abbreviations into universally accepted values, and removing double, leading, and trailing spaces. Any occurrence record that is edited during these actions, outside of removing spaces, will have the original scientific name saved in the verbatim scientific name field before any editing takes place.</p>"
+                },
+                {
+                    "header": "General Cleaning",
+                    "html": "<p class=\"heading subheader\">Instructions</p><p>As this process does not iterate through a list of scientific names, there is no need to set the Processing Start Index or Processing Batch Limit before running it. To run this process simply click on the Start button. Once the process has been started, the Cancel button can be clicked to stop it before it has completed.</p>"
+                },
+                {
+                    "header": "General Cleaning",
+                    "html": "<p class=\"heading subheader\">Results</p><p>An indication of each cleaning action as it is being run, and the amount of occurrence records that were edited from that action, will be displayed in the Process Display Window.</p>"
+                },
+                {
+                    "header": "Scientific Name Authorship Cleaning",
+                    "html": "<p>The Scientific Name Authorship Cleaning process finds and removes the taxonomic author names from the scientific names of occurrence records that are not linked to the taxonomic thesaurus. All occurrence records that are edited during this process will have their original scientific names saved in the verbatim scientific name field before editing takes place.</p>"
+                },
+                {
+                    "header": "Scientific Name Authorship Cleaning",
+                    "html": "<p class=\"heading subheader\">Instructions</p><p>As this process iterates through the list of scientific names, the Processing Start Index and the Processing Batch Limit can be set to adjust what scientific name the process starts with, and/or how many scientific names are processed before it completes. To run this process click on the Start button. Once the process has been started, the Cancel button can be clicked to stop it before it has completed.</p>"
+                },
+                {
+                    "header": "Scientific Name Authorship Cleaning",
+                    "html": "<p class=\"heading subheader\">Results</p><p>As this process iterates through the list of unique scientific names, the current name being processed will be displayed in the Process Display Window. If a taxonomic author name is detected within the scietific name, the parsed author, and the cleaned scieitific name without the author are displayed below the current name. Occurrence records containing the original scientific name will then be updated with the cleaned scientific name and the amount of occurrence records updated will be displayed below the cleaned scietifc name. Once the process has completed, through either using the Cancel button or letting it run to completion, an Undo button will activate under each name edited that can be clicked to undo the edits related that specific name, and revert the occurrence records back to their original scientific name.</p>"
+                },
+                {
+                    "header": "Set Taxonomic Thesaurus Linkages",
+                    "html": "<p>The Set Taxonomic Thesaurus Linkages process attempts to match the scientific names of occurrence records that are not currently linked to the taxonomic thesaurus, to those included within the selected Target Kingdom in the Taxonomic Thesaurus. If a match is found, a linkage is established in the associated occurrence records with the Taxonomic Thesaurus. This process can also be set to include the scientific names of occurrence record determinations as well.</p>"
+                },
+                {
+                    "header": "Set Taxonomic Thesaurus Linkages",
+                    "html": "<p class=\"heading subheader\">Instructions</p><p>It is necessary to select a Target Kingdom from the Target Kingdom Selector before running this process. Optionally, the checkbox can be checked to include determination records in the processing. As this process does not iterate through a list of scientific names, there is no need to set the Processing Start Index or Processing Batch Limit before running it. To run the process click on the Start button. Once the process has been started, the Cancel button can be clicked to stop it before it has completed.</p>"
+                },
+                {
+                    "header": "Set Taxonomic Thesaurus Linkages",
+                    "html": "<p class=\"heading subheader\">Results</p><p>An indication the process has started will be displayed in the Process Display Window followed by the amount of occurrence records that had linakges established as a result. If determinations were included, a similar indicator and result will be displayed next, for that process.</p>"
+                },
+                {
+                    "header": "Update Locality Security Settings",
+                    "html": "<p>The Update Locality Security Settings process updates the locality security settings, to obscure locality information, for all occurrence records that contain scientific names matching those included the the portal's Protected Species list.</p>"
+                },
+                {
+                    "header": "Update Locality Security Settings",
+                    "html": "<p class=\"heading subheader\">Instructions</p><p>As this process does not iterate through a list of scientific names, there is no need to set the Processing Start Index or Processing Batch Limit before running it. To run this process click on the Start button. Once the process has been started, the Cancel button can be clicked to stop it before it has completed.</p>"
+                },
+                {
+                    "header": "Update Locality Security Settings",
+                    "html": "<p class=\"heading subheader\">Results</p><p>An indication the process has started will be displayed in the Process Display Window followed by the amount of occurrence records that had locality security settings edited as a result.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Search Utilities Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Search Utilities Panel is accessed by clicking on Search Utilities in the Process Control Window to expand the panel (if it isn't already expanded).</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>There are two processes that can be run from this panel. Both will be discussed in the following slides.</p>"
+                },
+                {
+                    "header": "Search Taxonomic Data Sources",
+                    "html": "<p>The Search Taxonomic Data Sources process iterates through all of the scientific names of occurrence records that are not linked to the taxonomic thesaurus, and searches for scientific names matching from within a selected Target Kingdom in the Catalogue of Life, the Integrated Taxonomic Information System, or the World Register of Marine Species. If a match is found, the matching taxon, and all parent and accepted taxa, that are not currently in the Taxonomic Thesaurus, are added to it. Then all occurrence records for that taxon are linked to the Taxonomic Thesaurus.</p>"
+                },
+                {
+                    "header": "Search Taxonomic Data Sources",
+                    "html": "<p class=\"heading subheader\">Instructions</p><p>To run this process, select a Target Kingdom from the Target Kingdom Selector. Then select the Taxonomic Data Source to be searched during the process. As this process iterates through the list of scientific names, the Processing Start Index and the Processing Batch Limit can be set to adjust what scientific name the process starts with, and/or how many scientific names are processed before it completes. To run this process click on the Start button. Once the process has been started, the Cancel button can be clicked to stop it before it has completed.</p>"
+                },
+                {
+                    "header": "Search Taxonomic Data Sources",
+                    "html": "<p class=\"heading subheader\">Results</p><p>As this process iterates through the list of scientific names, the current name being processed will be displayed in the Process Display Window. If a match is found in the selected Taxonomic Data Source, notifications will follow for every parent or accepted taxon that is added to the Taxonomic Thesaurus, followed by a notification when the matched taxon is added to the taxonomic thesaurus. A final notification will follow indicating how many occurrence records were linked to the newly added taxon in the Taxonomic Thesaurus.</p>"
+                },
+                {
+                    "header": "Taxonomic Thesaurus Fuzzy Search",
+                    "html": "<p>The Taxonomic Thesaurus Fuzzy Search process attempts to match the scientific names of occurrence records that are not currently linked to the taxonomic thesaurus, to those included within the selected Target Kingdom in the Taxonomic Thesaurus that have a difference in spelling within the entered character difference tolerance. For each match that is found, the option to update occurrence records containing the original name with the selected matched name and create linkages for the matched name within those records is provided. This tool is intended to find correctly spelled scientific names for occurrence records that have incorrectly spelled names. All occurrence records that are edited during this process will have their original scientific names saved in the verbatim scientific name field before editing takes place.</p>"
+                },
+                {
+                    "header": "Taxonomic Thesaurus Fuzzy Search",
+                    "html": "<p class=\"heading subheader\">Instructions</p><p>It is necessary to select a Target Kingdom from the Target Kingdom Selector before running this process. Then, if a different value than the default is desired, enter a numeric value for the Character difference tolerance. As this process iterates through the list of scientific names, the Processing Start Index and the Processing Batch Limit can be set to adjust what scientific name the process starts with, and/or how many scientific names are processed before it completes. To run this process click on the Start button. Once the process has been started, the Cancel button can be clicked to stop it before it has completed.</p>"
+                },
+                {
+                    "header": "Taxonomic Thesaurus Fuzzy Search",
+                    "html": "<p class=\"heading subheader\">Results</p><p>As this process iterates through the list of scientific names, the current name being processed will be displayed in the Process Display Window. If matches are found, each match will be listed in rows following, with a Select button next to each. All of the matches will be followed by a Skip Taxon button. Click on the Select button next to any match to update the occurrence records with that taxon. A notification will follow indicating how many occurrence records were updated. If none of the matches are correct, click on the Skip Taxon button to move to the next name in the list and continue the processing. Once the process has completed, through either using the Cancel button or letting it run to completion, an Undo button will activate under each selected matched taxon that can be clicked to undo the edits related that specific taxon, and revert the occurrence records back to their original scientific name.</p>"
+                }
+            ]
+        }
+    ]
+}

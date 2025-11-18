@@ -10,6 +10,7 @@ const useBaseStore = Pinia.defineStore('base', {
         emailConfigured: EMAIL_CONFIGURED,
         glossaryModuleIsActive: GLOSSARY_MOD_IS_ACTIVE,
         imageTagOptions: IMAGE_TAG_OPTIONS,
+        jsVersion: JS_VERSION,
         keyModuleIsActive: KEY_MOD_IS_ACTIVE,
         maxUploadFilesize: MAX_UPLOAD_FILESIZE,
         occurrenceProcessingStatusOptions: PROCESSING_STATUS_OPTIONS,
@@ -65,6 +66,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getImageTagOptions(state) {
             return state.imageTagOptions;
+        },
+        getJsVersion(state) {
+            return state.jsVersion;
         },
         getKeyModuleIsActive(state) {
             return state.keyModuleIsActive;
