@@ -11,22 +11,22 @@ const tutorialModule = {
     },
     template: `
         <q-dialog v-if="currentSlide" class="z-max" v-model="showTutorial" @keydown.left="goToPreviousSlide" @keydown.right="goToNextSlide" persistent seamless>
-            <div v-if="!hideTutorial && (currentSlide.type === 'intro' || currentSlide.type === 'toc')" class="tutorial-center-frame-container">
+            <div v-if="!hideTutorial && currentSlide.type === 'intro'" class="tutorial-intro-frame-container">
                 <q-card class="tutorial-frame tutorial-content q-pa-md fit">
-                    <template v-if="currentSlide.type === 'intro'">
-                        <div v-if="currentSlide.title" class="heading title">{{ currentSlide.title }}</div>
-                        <div v-html="currentSlide.content"></div>
-                    </template>
-                    <template v-else>
-                        <div class="heading title">Index of Topics</div>
-                        <div class="q-ml-md column">
-                            <template v-for="topic in Object.keys(tutorialIndex)">
-                                <div v-if="topic !== 'intro' && topic !== 'toc'">
-                                    <a class="cursor-pointer tutorial-link" @click="goToSection(tutorialIndex[topic].title.toLowerCase());" :aria-label="('Go to ' + tutorialIndex[topic].title + ' section')" tabindex="0">{{ tutorialIndex[topic].title }}</a>
-                                </div>
-                            </template>
-                        </div>
-                    </template>
+                    <div v-if="currentSlide.title" class="heading title">{{ currentSlide.title }}</div>
+                    <div v-html="currentSlide.content"></div>
+                </q-card>
+            </div>
+            <div v-if="!hideTutorial && currentSlide.type === 'toc'" class="tutorial-toc-frame-container" :style="tocOuterStyle">
+                <q-card class="tutorial-frame tutorial-content q-pa-md fit">
+                    <div class="heading title">Index of Topics</div>
+                    <div class="q-ml-md column wrap" :style="tocInnerStyle">
+                        <template v-for="topic in Object.keys(tutorialIndex)">
+                            <div v-if="topic !== 'intro' && topic !== 'toc'">
+                                <a class="cursor-pointer tutorial-link q-mr-md" @click="goToSection(tutorialIndex[topic].title.toLowerCase());" :aria-label="('Go to ' + tutorialIndex[topic].title + ' section')" tabindex="0">{{ tutorialIndex[topic].title }}</a>
+                            </div>
+                        </template>
+                    </div>
                 </q-card>
             </div>
             <div v-if="!hideTutorial && currentSlide.type === 'content'" class="tutorial-content-frame-container">
@@ -35,7 +35,7 @@ const tutorialModule = {
                     <div v-html="currentSlide.content"></div>
                 </q-card>
             </div>
-            <q-card v-if="!hideTutorial" class="tutorial-frame fixed-bottom-right q-mr-sm q-mb-sm">
+            <q-card v-if="!hideTutorial" class="tutorial-frame fixed-bottom-right">
                 <q-card-section class="q-pa-sm row q-gutter-sm no-wrap">
                     <q-btn round color="negative" icon="close" size="md" glossy dense @click="closeTutorial();" aria-label="Close tutorial" tabindex="0">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -54,21 +54,21 @@ const tutorialModule = {
                     </q-btn>
                 </q-card-section>
             </q-card>
-            <q-card v-if="currentSlide.type !== 'intro' && currentSlide.type !== 'toc'" class="tutorial-frame fixed-bottom-left q-ml-sm q-mb-sm">
+            <q-card v-if="currentSlide.type !== 'intro' && currentSlide.type !== 'toc'" class="tutorial-frame fixed-bottom-left">
                 <q-card-section class="q-pa-sm">
                     <template v-if="hideTutorial">
-                        <a class="cursor-pointer toggle-tutorial tutorial-link" @click="hideTutorial = false" aria-label="Show tutorial" tabindex="0">Show Tutorial</a>
+                        <a class="cursor-pointer toggle-tutorial tutorial-link text-bold" @click="hideTutorial = false" aria-label="Show tutorial" tabindex="0">Show Tutorial</a>
                     </template>
                     <template v-else>
-                        <a class="cursor-pointer toggle-tutorial tutorial-link" @click="hideTutorial = true" aria-label="Hide tutorial" tabindex="0">Hide Tutorial</a>
+                        <a class="cursor-pointer toggle-tutorial tutorial-link text-bold" @click="hideTutorial = true" aria-label="Hide tutorial" tabindex="0">Hide Tutorial</a>
                     </template>
                 </q-card-section>
             </q-card>
-            <div v-if="currentSlide.type !== 'intro' && currentSlide.type !== 'toc'" class="tutorial-bottom-nav-container q-mb-sm">
+            <div v-if="!hideTutorial && currentSlide.type !== 'intro' && currentSlide.type !== 'toc'" class="tutorial-bottom-nav-container q-mb-sm">
                 <q-card class="tutorial-frame tutorial-content">
                     <q-card-section class="q-pa-sm column q-gutter-sm">
                         <div class="row justify-center">
-                            <div v-if="currentSlide.section" class="heading title">{{ currentSlide.section }}</div>
+                            <div v-if="currentSlide.section" class="heading title text-center">{{ currentSlide.section }}</div>
                         </div>
                         <div class="row justify-between">
                             <div>
@@ -96,6 +96,8 @@ const tutorialModule = {
         const currentSlideIndex = Vue.ref(0);
         const hideTutorial = Vue.ref(false);
         const jsVersion = baseStore.getJsVersion;
+        const tocInnerStyle = Vue.ref(null);
+        const tocOuterStyle = Vue.ref(null);
         const tutorialData = Vue.ref(null);
         const tutorialIndex = Vue.ref({});
         const tutorialSlides = Vue.computed(() => {
@@ -137,17 +139,26 @@ const tutorialModule = {
             }
             return returnArr;
         });
+        const windowWidth = Vue.ref(0);
+
+        Vue.watch(tutorialSlides, () => {
+            setStyling();
+        });
 
         function closeTutorial() {
             context.emit('close:tutorial');
         }
 
         function goToNextSlide() {
-            currentSlideIndex.value++;
+            if(currentSlideIndex.value < (tutorialSlides.value.length - 1)){
+                currentSlideIndex.value++;
+            }
         }
 
         function goToPreviousSlide() {
-            currentSlideIndex.value--;
+            if(currentSlideIndex.value > 0){
+                currentSlideIndex.value--;
+            }
         }
 
         function goToPreviousTopic() {
@@ -156,6 +167,18 @@ const tutorialModule = {
 
         function goToSection(section) {
             currentSlideIndex.value = tutorialIndex.value[section.toLowerCase()]['index'];
+        }
+
+        function setStyling() {
+            tocInnerStyle.value = null;
+            tocOuterStyle.value = null;
+            windowWidth.value = window.innerWidth;
+            if(tutorialSlides.value.length > 10 && windowWidth.value >= 1220){
+                if(tutorialSlides.value.length > 30){
+                    tocOuterStyle.value = 'width: 90%;height: 80%;';
+                    tocInnerStyle.value = 'width: 100%;height: 90%;overflow: scroll;';
+                }
+            }
         }
 
         function setTutorialData() {
@@ -184,12 +207,16 @@ const tutorialModule = {
 
         Vue.onMounted(() => {
             setTutorialData();
+            window.addEventListener('resize', setStyling);
+            setStyling();
         });
 
         return {
             currentSlide,
             currentSlideIndex,
             hideTutorial,
+            tocInnerStyle,
+            tocOuterStyle,
             tutorialIndex,
             tutorialSlides,
             closeTutorial,
