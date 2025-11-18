@@ -21,8 +21,7 @@ class FileSystemService {
         'services',
         'spatial',
         'stores',
-        'taxa',
-        'tutorial'
+        'taxa'
     );
 
     public static function addFileToZipArchive($zipArchive, $filePath): void

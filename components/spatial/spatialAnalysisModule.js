@@ -51,6 +51,7 @@ const spatialAnalysisModule = {
                 <div id="mapscale_metric"></div>
             </div>
         </div>
+        <tutorial-module tutorial="spatial-module" :show-tutorial="displayTutorial" @close:tutorial="displayTutorial = false"></tutorial-module>
     `,
     components: {
         'occurrence-info-window-popup': occurrenceInfoWindowPopup,
@@ -59,7 +60,8 @@ const spatialAnalysisModule = {
         'spatial-control-panel': spatialControlPanel,
         'spatial-layer-controller-popup': spatialLayerControllerPopup,
         'spatial-layer-query-selector-popup': spatialLayerQuerySelectorPopup,
-        'spatial-side-button-tray': spatialSideButtonTray
+        'spatial-side-button-tray': spatialSideButtonTray,
+        'tutorial-module': tutorialModule
     },
     setup(props, context) {
         const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getCorrectedPolygonCoordArr, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, validatePolygonCoordArr, writeMySQLWktString } = useCore();
@@ -74,6 +76,7 @@ const spatialAnalysisModule = {
         const controlPanelRef = Vue.ref(null);
         const coreLayers = spatialStore.getCoreLayers;
         const displayQueryPopup = Vue.ref(false);
+        const displayTutorial = Vue.ref(false);
         const dragAndDropInteraction = new ol.interaction.DragAndDrop({
             formatConstructors: [
                 ol.format.GPX,
@@ -1485,6 +1488,10 @@ const spatialAnalysisModule = {
             return style;
         }
 
+        function setDisplayTutorial(value) {
+            displayTutorial.value = value;
+        }
+
         function setDragDropTarget() {
             updateMapSettings('dragDropTarget', '');
             if(!mapSettings.dragDrop1){
@@ -2526,6 +2533,10 @@ const spatialAnalysisModule = {
             }
         }
 
+        function showTutorial() {
+            displayTutorial.value = !displayTutorial.value;
+        }
+
         function sortSymbologyArr() {
             for(let key in symbologyArr) {
                 if(key !== 'taxonomy' && key !== 'sciname' && symbologyArr.hasOwnProperty(key)){
@@ -2702,9 +2713,11 @@ const spatialAnalysisModule = {
         Vue.provide('removeUserLayer', removeUserLayer);
         Vue.provide('resetSymbology', resetSymbology);
         Vue.provide('selectInteraction', selectInteraction);
+        Vue.provide('setDisplayTutorial', setDisplayTutorial);
         Vue.provide('setLayersOrder', setLayersOrder);
         Vue.provide('setQueryPopupDisplay', setQueryPopupDisplay);
         Vue.provide('showPopup', showPopup);
+        Vue.provide('showTutorial', showTutorial);
         Vue.provide('symbologyArr', symbologyArr);
         Vue.provide('updateMapSettings', updateMapSettings);
         Vue.provide('updatePointStyle', updatePointStyle);
@@ -2736,6 +2749,7 @@ const spatialAnalysisModule = {
         return {
             controlPanelRef,
             displayQueryPopup,
+            displayTutorial,
             layersInfoObj,
             mapSettings,
             popupCloser,

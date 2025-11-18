@@ -26,7 +26,7 @@ const organismOfTheDay = {
                         </div>
                     </div>
                     <div class="text-body1 text-bold row justify-center">
-                        What is thie {{ type }}?
+                        What is this {{ type }}?
                     </div>
                     <div class="text-body1 text-bold text-blue row justify-center">
                         Click here to test your knowledge

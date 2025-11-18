@@ -44,7 +44,7 @@ const spatialControlPanel = {
                                 </div>
                                 <template v-if="!inputWindowMode">
                                     <div>
-                                        <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');" aria-label="Open Tutorial" tabindex="0">
+                                        <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="showTutorial();" aria-label="Open Tutorial" tabindex="0">
                                             <q-tooltip anchor="center right" self="center left" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 Open Tutorial
                                             </q-tooltip>
@@ -143,7 +143,7 @@ const spatialControlPanel = {
                                         </q-btn>
                                     </div>
                                     <div>
-                                        <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');" aria-label="Open Tutorial" tabindex="0"></q-btn>
+                                        <q-btn class="map-info-window-container control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="showTutorial();" aria-label="Open Tutorial" tabindex="0"></q-btn>
                                     </div>
                                 </div>
                             </template>
@@ -195,7 +195,7 @@ const spatialControlPanel = {
                             </div>
                             <template v-if="!inputWindowMode">
                                 <div>
-                                    <q-btn class="control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="openTutorialWindow('../tutorial/spatial/index.php');" aria-label="Open Tutorial" tabindex="0"></q-btn>
+                                    <q-btn class="control-panel text-bold" size="md" icon="far fa-question-circle" stretch flat dense ripple="false" @click="showTutorial();" aria-label="Open Tutorial" tabindex="0"></q-btn>
                                 </div>
                             </template>
                             <template v-if="inputWindowMode && windowWidth < 600">
@@ -235,7 +235,6 @@ const spatialControlPanel = {
         'spatial-map-settings-popup': spatialMapSettingsPopup
     },
     setup() {
-        const { openTutorialWindow } = useCore();
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
@@ -255,6 +254,7 @@ const spatialControlPanel = {
         const processInputSubmit = Vue.inject('processInputSubmit');
         const processInputPointUncertaintyChange = Vue.inject('processInputPointUncertaintyChange');
         const setQueryPopupDisplay = Vue.inject('setQueryPopupDisplay');
+        const showTutorial = Vue.inject('showTutorial');
         const updateMapSettings = Vue.inject('updateMapSettings');
 
         function changeBaseMap(){
@@ -466,9 +466,9 @@ const spatialControlPanel = {
             changeInputPointUncertainty,
             exportMapPNG,
             goHome,
-            openTutorialWindow,
             processChangeBaseLayer,
             setQueryPopupDisplay,
+            showTutorial,
             updateMapSettings,
             updateRadiusUnits
         }

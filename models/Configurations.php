@@ -17,6 +17,7 @@ class Configurations{
         'CLIENT_ROOT',
         'CSS_VERSION',
         'CSS_VERSION_LOCAL',
+        'CUSTOM_TUTORIAL_JSON',
         'DEFAULT_LANG',
         'DEFAULT_TITLE',
         'DEFAULTCATID',
@@ -90,6 +91,12 @@ class Configurations{
         'USER_DISPLAY_NAME',
         'USER_RIGHTS',
         'USERNAME'
+    );
+
+    public $defaultTutorials = array(
+        'admin-mapping' => 'admin-mapping.json',
+        'collections-taxonomy-management' => 'collections-taxonomy-management.json',
+        'spatial-module' => 'spatial-module.json'
     );
 
     public $rightsTerms = array(
@@ -359,8 +366,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '20251109';
-        $GLOBALS['JS_VERSION'] = '202510171111111111';
+        $GLOBALS['CSS_VERSION'] = '20251111111112';
+        $GLOBALS['JS_VERSION'] = '20251018111111111112212222';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -382,6 +389,7 @@ class Configurations{
         $GLOBALS['PROCESSING_STATUS_OPTIONS'] = array('Unprocessed','Stage 1','Stage 2','Stage 3','Pending Review','Expert Required','Reviewed','Closed');
         $GLOBALS['SECURITY_KEY'] = UuidService::getUuidV4();
         $GLOBALS['SERVER_ROOT'] = FileSystemService::getServerRootPath();
+        $GLOBALS['CUSTOM_TUTORIAL_JSON'] = null;
         $GLOBALS['SPATIAL_LAYER_CONFIG_JSON'] = null;
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_COLOR'] = '#000000';
         $GLOBALS['SPATIAL_DRAGDROP_BORDER_WIDTH'] = '2';
@@ -611,6 +619,9 @@ class Configurations{
         if(!isset($GLOBALS['SOLR_URL']) || $GLOBALS['SOLR_URL'] === ''){
             $GLOBALS['SOLR_FULL_IMPORT_INTERVAL'] = 0;
         }
+        if(!isset($GLOBALS['CUSTOM_TUTORIAL_JSON']) || $GLOBALS['CUSTOM_TUTORIAL_JSON'] === ''){
+            $GLOBALS['CUSTOM_TUTORIAL_JSON'] = null;
+        }
         if(!isset($GLOBALS['SPATIAL_LAYER_CONFIG_JSON']) || $GLOBALS['SPATIAL_LAYER_CONFIG_JSON'] === ''){
             $GLOBALS['SPATIAL_LAYER_CONFIG_JSON'] = null;
         }
@@ -760,6 +771,7 @@ class Configurations{
         if((int)$GLOBALS['MAX_UPLOAD_FILESIZE'] > FileSystemService::getServerMaxPostSize()){
             $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxPostSize();
         }
+        $GLOBALS['DEFAULT_TUTORIAL_JSON'] = json_encode($this->defaultTutorials);
     }
 
     public function validateNewConfNameCore($name): int

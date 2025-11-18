@@ -297,10 +297,6 @@ function useCore() {
         $q.loading.hide();
     }
 
-    function openTutorialWindow(url) {
-        window.open(url, '_blank');
-    }
-
     function parseDate(dateStr){
         const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
         const validformat1 = /^\d{4}-\d{1,2}-\d{1,2}$/;
@@ -609,7 +605,6 @@ function useCore() {
         getSubstringByRegEx,
         hexToRgb,
         hideWorking,
-        openTutorialWindow,
         parseFile,
         parseDate,
         parseScientificName,
