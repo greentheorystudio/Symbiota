@@ -11,7 +11,6 @@ class OccurrenceEditorManager {
     protected $occid;
     protected $collId = 0;
     protected $collMap = array();
-    protected $occurrenceMap = array();
     private $occFieldArr;
     private $sqlWhere;
     private $occIndex;
@@ -19,7 +18,6 @@ class OccurrenceEditorManager {
     private $orderByStr;
     private $qryArr = array();
     private $crowdSourceMode = 0;
-    private $exsiccatiMode = 0;
     protected $errorArr = array();
     protected $isShareConn = false;
 
@@ -569,7 +567,7 @@ class OccurrenceEditorManager {
                     $sqlWhere .= $cao.($cop?' '.$cop:'').' oas.relationship = "host" '.($ccp?$ccp.' ':'');
                 }
             }
-            else if($x > 1 && $ccp){
+            elseif($x > 1 && $ccp){
                 $sqlWhere .= ' '.$ccp.' ';
             }
         }
@@ -622,65 +620,6 @@ class OccurrenceEditorManager {
         $this->sqlWhere = $sqlWhere;
     }
 
-    protected function setOccurArr(): void
-    {
-        $retArr = array();
-        $sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',$this->occFieldArr);
-        if($this->sqlWhere && strpos($this->sqlWhere,'oas.verbatimsciname') !== false){
-            $sql .= ', oas.verbatimsciname';
-        }
-        $sql .= ' FROM omoccurrences AS o ';
-        if($this->sqlWhere && strpos($this->sqlWhere,'oas.verbatimsciname') !== false){
-            $sql .= 'LEFT JOIN omoccurassociations AS oas ON o.occid = oas.occid ';
-        }
-        if($this->occid){
-            $sql .= 'WHERE o.occid = '.$this->occid.' ';
-        }
-        elseif($this->sqlWhere){
-            $sql .= 'INNER JOIN (SELECT o2.occid FROM omoccurrences AS o2 ';
-            $sql = $this->addTableJoins($sql);
-            $sql .= $this->sqlWhere;
-            $sql .= ') AS a ON o.occid = a.occid ';
-            if($this->orderByStr) {
-                $sql .= 'ORDER BY o.' . $this->orderByStr . ' ' . $this->qryArr['orderbydir'] . ' ';
-            }
-            $sql .= 'LIMIT '.($this->occIndex>0?$this->occIndex.',':'').$this->recLimit;
-        }
-        if($sql){
-            //echo '<div>' .$sql. '</div>';
-            $occid = 0;
-            $rs = $this->conn->query($sql);
-            while($row = $rs->fetch_assoc()){
-                if($occid !== $row['occid']){
-                    $occid = $row['occid'];
-                    $retArr[$occid] = array_change_key_case($row);
-                }
-            }
-            $rs->free();
-            if($retArr && count($retArr) === 1){
-                if(!$this->occid) {
-                    $this->occid = $occid;
-                }
-                if(!array_key_exists('institutioncode',$retArr[$occid])) {
-                    $retArr[$occid]['institutioncode'] = $this->collMap['institutioncode'];
-                }
-                if(!array_key_exists('collectioncode',$retArr[$occid])) {
-                    $retArr[$occid]['collectioncode'] = $this->collMap['collectioncode'];
-                }
-                if(!array_key_exists('ownerinstitutioncode',$retArr[$occid])) {
-                    $retArr[$occid]['ownerinstitutioncode'] = $this->collMap['institutioncode'];
-                }
-            }
-            $this->occurrenceMap = SanitizerService::cleanOutArray($retArr);
-            if($this->occid){
-                $this->setLoanData();
-                if($this->exsiccatiMode) {
-                    $this->setExsiccati();
-                }
-            }
-        }
-    }
-
     private function addTableJoins($sql): string
     {
         if(array_key_exists('io',$this->qryArr)){
@@ -700,121 +639,6 @@ class OccurrenceEditorManager {
         }
 
         return $sql;
-    }
-
-    public function addOccurrence($occArr): string
-    {
-        $status = 'SUCCESS: new occurrence record submitted successfully ';
-        if($occArr){
-            $fieldArr = array('basisOfRecord' => 's', 'catalogNumber' => 's', 'otherCatalogNumbers' => 's', 'occurrenceid' => 's',
-                'ownerInstitutionCode' => 's', 'institutionCode' => 's', 'collectionCode' => 's',
-                'family' => 's', 'sciname' => 's', 'tid' => 'n', 'scientificNameAuthorship' => 's', 'identifiedBy' => 's', 'dateIdentified' => 's',
-                'identificationReferences' => 's', 'identificationremarks' => 's', 'taxonRemarks' => 's', 'identificationQualifier' => 's', 'typeStatus' => 's',
-                'recordedBy' => 's', 'recordNumber' => 's', 'associatedCollectors' => 's', 'eventDate' => 'd', 'year' => 'n', 'month' => 'n', 'day' => 'n', 'startDayOfYear' => 'n', 'endDayOfYear' => 'n',
-                'verbatimEventDate' => 's', 'habitat' => 's', 'substrate' => 's', 'fieldnumber' => 's', 'occurrenceRemarks' => 's', 'fieldNotes' => 's', 'associatedTaxa' => 's', 'verbatimattributes' => 's',
-                'dynamicProperties' => 's', 'reproductiveCondition' => 's', 'cultivationStatus' => 's', 'establishmentMeans' => 's',
-                'lifestage' => 's', 'sex' => 's', 'individualcount' => 's', 'samplingprotocol' => 's', 'preparations' => 's', 'locationID' => 's', 'locationRemarks' => 's',
-                'country' => 's', 'stateProvince' => 's', 'county' => 's', 'municipality' => 's', 'locality' => 's', 'localitySecurity' => 'n', 'localitysecurityreason' => 's',
-                'decimalLatitude' => 'n', 'decimalLongitude' => 'n', 'geodeticDatum' => 's', 'coordinateUncertaintyInMeters' => 'n', 'verbatimCoordinates' => 's',
-                'footprintwkt' => 's', 'georeferencedBy' => 's', 'georeferenceProtocol' => 's', 'georeferenceSources' => 's', 'georeferenceVerificationStatus' => 's',
-                'georeferenceRemarks' => 's', 'minimumElevationInMeters' => 'n', 'maximumElevationInMeters' => 'n','verbatimElevation' => 's',
-                'minimumDepthInMeters' => 'n', 'maximumDepthInMeters' => 'n', 'verbatimDepth' => 's','disposition' => 's', 'language' => 's', 'duplicateQuantity' => 'n',
-                'labelProject' => 's','processingstatus' => 's', 'recordEnteredBy' => 's', 'observeruid' => 'n', 'dateentered' => 'd', 'genericcolumn2' => 's');
-            $sql = 'INSERT INTO omoccurrences(collid, '. implode(',', array_keys($fieldArr)) .') '.
-                'VALUES ('.$occArr['collid'];
-            $fieldArr = array_change_key_case($fieldArr);
-            if(!isset($occArr['dateentered']) || !$occArr['dateentered']) {
-                $occArr['dateentered'] = date('Y-m-d H:i:s');
-            }
-            if(!isset($occArr['basisofrecord']) || !$occArr['basisofrecord']) {
-                $occArr['basisofrecord'] = ($this->collMap['colltype'] === 'HumanObservation' ? 'HumanObservation' : 'PreservedSpecimen');
-            }
-            if(isset($occArr['institutionCode']) && $occArr['institutionCode'] === $this->collMap['institutioncode']) {
-                $occArr['institutionCode'] = '';
-            }
-            if(isset($occArr['collectionCode']) && $occArr['collectionCode'] === $this->collMap['collectioncode']) {
-                $occArr['collectionCode'] = '';
-            }
-
-            foreach($fieldArr as $fieldStr => $fieldType){
-                $fieldValue = '';
-                if(array_key_exists($fieldStr,$occArr)) {
-                    $fieldValue = $occArr[$fieldStr];
-                }
-                if($fieldValue){
-                    if($fieldType === 'n'){
-                        if(is_numeric($fieldValue)){
-                            $sql .= ', '.$fieldValue;
-                        }
-                        else{
-                            $sql .= ', NULL';
-                        }
-                    }
-                    else{
-                        $sql .= ', "'.SanitizerService::cleanInStr($this->conn,$fieldValue).'"';
-                    }
-                }
-                else{
-                    $sql .= ', NULL';
-                }
-            }
-            $sql .= ')';
-            //echo "<div>".$sql."</div>";
-            if($this->conn->query($sql)){
-                $this->occid = $this->conn->insert_id;
-                $this->conn->query('UPDATE omcollectionstats SET recordcnt = recordcnt + 1 WHERE collid = '.$this->collId);
-
-                $guid = UuidService::getUuidV4();
-                if(!$this->conn->query('INSERT INTO guidoccurrences(guid,occid) VALUES("'.$guid.'",'.$this->occid.')')){
-                    $status .= '(WARNING: GUID mapping failed) ';
-                }
-                if(isset($occArr['ometid'], $occArr['exsnumber'])){
-                    $ometid = SanitizerService::cleanInStr($this->conn,$occArr['ometid']);
-                    $exsNumber = SanitizerService::cleanInStr($this->conn,$occArr['exsnumber']);
-                    if($ometid && $exsNumber){
-                        $exsNumberId = '';
-                        $sql = 'SELECT omenid FROM omexsiccatinumbers WHERE ometid = '.$ometid.' AND exsnumber = "'.$exsNumber.'"';
-                        $rs = $this->conn->query($sql);
-                        if($r = $rs->fetch_object()){
-                            $exsNumberId = $r->omenid;
-                        }
-                        $rs->free();
-                        if(!$exsNumberId){
-                            $sqlNum = 'INSERT INTO omexsiccatinumbers(ometid,exsnumber) '.
-                                'VALUES('.$ometid.',"'.$exsNumber.'")';
-                            if($this->conn->query($sqlNum)){
-                                $exsNumberId = $this->conn->insert_id;
-                            }
-                            else{
-                                $status .= '(WARNING adding exsiccati number.) ';
-                            }
-                        }
-                        if($exsNumberId){
-                            $sql1 = 'INSERT INTO omexsiccatiocclink(omenid, occid) '.
-                                'VALUES('.$exsNumberId.','.$this->occid.')';
-                            if(!$this->conn->query($sql1)){
-                                $status .= '(WARNING adding exsiccati.) ';
-                            }
-                        }
-                    }
-                }
-                if(array_key_exists('host',$occArr)){
-                    $sql1 = 'INSERT INTO omoccurassociations(occid,relationship,verbatimsciname) '.
-                        'VALUES('.$this->occid.',"host","'.SanitizerService::cleanInStr($this->conn,$occArr['host']).'")';
-                    if(!$this->conn->query($sql1)){
-                        $status .= '(WARNING adding host.) ';
-                    }
-                }
-
-                if(isset($occArr['clidvoucher'], $occArr['tid'])){
-                    $status .= $this->linkChecklistVoucher($occArr['clidvoucher'],$occArr['tid']);
-                }
-            }
-            else{
-                $status = 'ERROR - failed to add occurrence record.';
-            }
-        }
-        return $status;
     }
 
     public function deleteOccurrence($delOccid): bool
@@ -1038,37 +862,6 @@ class OccurrenceEditorManager {
         return $status;
     }
 
-    private function setLoanData(): void
-    {
-        $sql = 'SELECT l.loanid, l.datedue, i.institutioncode '.
-            'FROM omoccurloanslink AS ll INNER JOIN omoccurloans AS l ON ll.loanid = l.loanid '.
-            'INNER JOIN institutions AS i ON l.iidBorrower = i.iid '.
-            'WHERE ISNULL(ll.returndate) AND ISNULL(l.dateclosed) AND occid = '.$this->occid;
-        $rs = $this->conn->query($sql);
-        while($r = $rs->fetch_object()){
-            $this->occurrenceMap[$this->occid]['loan']['id'] = $r->loanid;
-            $this->occurrenceMap[$this->occid]['loan']['date'] = $r->datedue;
-            $this->occurrenceMap[$this->occid]['loan']['code'] = $r->institutioncode;
-        }
-        $rs->free();
-    }
-
-    private function setExsiccati(): void
-    {
-        $sql = 'SELECT l.notes, l.ranking, l.omenid, n.exsnumber, t.ometid, t.title, t.abbreviation, t.editor '.
-            'FROM omexsiccatiocclink AS l INNER JOIN omexsiccatinumbers AS n ON l.omenid = n.omenid '.
-            'INNER JOIN omexsiccatititles AS t ON n.ometid = t.ometid '.
-            'WHERE l.occid = '.$this->occid;
-        //echo $sql;
-        $rs = $this->conn->query($sql);
-        if($r = $rs->fetch_object()){
-            $this->occurrenceMap[$this->occid]['ometid'] = $r->ometid;
-            $this->occurrenceMap[$this->occid]['exstitle'] = $r->title.($r->abbreviation?' ['.$r->abbreviation.']':'');
-            $this->occurrenceMap[$this->occid]['exsnumber'] = $r->exsnumber;
-        }
-        $rs->free();
-    }
-
     public function batchUpdateField($fieldName,$oldValue,$newValue,$buMatch): string
     {
         $statusStr = '';
@@ -1125,26 +918,6 @@ class OccurrenceEditorManager {
         return $statusStr;
     }
 
-    public function getBatchUpdateCount($fieldName,$oldValue,$buMatch): int
-    {
-        $retCnt = 0;
-
-        $fn = SanitizerService::cleanInStr($this->conn,$fieldName);
-        $ov = SanitizerService::cleanInStr($this->conn,$oldValue);
-
-        $sql = 'SELECT COUNT(DISTINCT o2.occid) AS retcnt '.
-            'FROM omoccurrences AS o2 ';
-        $sql = $this->addTableJoins($sql);
-        $sql .= $this->getBatchUpdateWhere($fn,$ov,$buMatch);
-
-        $result = $this->conn->query($sql);
-        while ($row = $result->fetch_object()) {
-            $retCnt = $row->retcnt;
-        }
-        $result->free();
-        return $retCnt;
-    }
-
     private function getBatchUpdateWhere($fn,$ov,$buMatch): string
     {
         $sql = '';
@@ -1157,40 +930,6 @@ class OccurrenceEditorManager {
             $sql .= ' AND (o2.'.$fn.' LIKE "%'.$ov.'%") ';
         }
         return $sql;
-    }
-
-    public function linkChecklistVoucher($clid,$tid): string
-    {
-        $status = '';
-        if(is_numeric($clid) && is_numeric($tid)){
-            $clTid = 0;
-            $sqlCl = 'SELECT cl.tid '.
-                'FROM fmchklsttaxalink AS cl INNER JOIN taxa AS t ON cl.tid = t.tid '.
-                'WHERE t.tidaccepted = '.$tid.' AND cl.clid = '.$clid.' ';
-            $rsCl = $this->conn->query($sqlCl);
-            //echo $sqlCl;
-            if($rowCl = $rsCl->fetch_object()){
-                $clTid = $rowCl->tid;
-            }
-            $rsCl->free();
-            if(!$clTid){
-                $sqlCl1 = 'INSERT INTO fmchklsttaxalink(clid, tid) VALUES('.$clid.','.$tid.') ';
-                if($this->conn->query($sqlCl1)){
-                    $clTid = $tid;
-                }
-                else{
-                    $status .= '(WARNING adding scientific name to checklist.';
-                }
-            }
-            if($clTid){
-                $sqlCl2 = 'INSERT INTO fmvouchers(occid,clid,tid) values('.$this->occid.','.$clid.','.$clTid.')';
-                //echo $sqlCl2;
-                if(!$this->conn->query($sqlCl2)){
-                    $status .= '(WARNING adding voucher link.';
-                }
-            }
-        }
-        return $status;
     }
 
     public function getErrorStr(): ?string

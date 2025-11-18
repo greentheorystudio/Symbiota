@@ -8,7 +8,7 @@ const mapWindowConfigurationsTab = {
                         Then click the Save Settings button to save the settings.
                     </div>
                     <div class="col-1 row justify-end">
-                        <div role="button" class="cursor-pointer" @click="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" @keyup.enter="openTutorialWindow('/tutorial/admin/mappingConfigurationManager/index.php');" aria-label="Open Tutorial Window" tabindex="0">
+                        <div role="button" class="cursor-pointer" @click="showTutorial();" @keyup.enter="showTutorial();" aria-label="Open Tutorial Window" tabindex="0">
                             <q-icon name="far fa-question-circle" size="20px" />
                         </div>
                     </div>
@@ -23,7 +23,7 @@ const mapWindowConfigurationsTab = {
                 <div>
                     <spatial-viewer-element height="625" @change:map-settings="processMapChange"></spatial-viewer-element>
                 </div>
-            </q-card>
+            </div>
         </div>
     `,
     components: {
@@ -36,6 +36,8 @@ const mapWindowConfigurationsTab = {
         const mapBaseLayerValue = Vue.ref(null);
         const mapCenterValue = Vue.ref(null);
         const mapZoomValue = Vue.ref(null);
+
+        const showTutorial = Vue.inject('showTutorial');
 
         function processMapChange(data) {
             mapBaseLayerValue.value = data['baseLayer'];
@@ -62,6 +64,7 @@ const mapWindowConfigurationsTab = {
             mapCenterValue,
             mapZoomValue,
             processMapChange,
+            showTutorial,
             updateConfigurations
         }
     }

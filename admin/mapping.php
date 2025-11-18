@@ -48,7 +48,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
-                            <q-tab-panel name="mapwindow">
+                            <q-tab-panel name="mapwindow" class="map-tab-height">
                                 <map-window-configurations-tab></map-window-configurations-tab>
                             </q-tab-panel>
                             <q-tab-panel name="symbology">
@@ -61,6 +61,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     </q-card>
                 </template>
             </div>
+            <tutorial-module tutorial="admin-mapping" :show-tutorial="displayTutorial" @close:tutorial="displayTutorial = false"></tutorial-module>
         </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
@@ -88,13 +89,14 @@ header('X-Frame-Options: SAMEORIGIN');
                 components: {
                     'layers-configurations-tab': layersConfigurationsTab,
                     'map-window-configurations-tab': mapWindowConfigurationsTab,
-                    'symbology-configurations-tab': symbologyConfigurationsTab
+                    'symbology-configurations-tab': symbologyConfigurationsTab,
+                    'tutorial-module': tutorialModule
                 },
                 setup() {
-                    const { openTutorialWindow } = useCore();
                     const baseStore = useBaseStore();
                     const configurationStore = useConfigurationStore();
 
+                    const displayTutorial = Vue.ref(false);
                     const isAdmin = Vue.ref(false);
                     const tab = Vue.ref('mapwindow');
 
@@ -120,14 +122,20 @@ header('X-Frame-Options: SAMEORIGIN');
                         });
                     }
 
+                    function showTutorial() {
+                        displayTutorial.value = !displayTutorial.value;
+                    }
+
+                    Vue.provide('showTutorial', showTutorial);
+
                     Vue.onMounted(() => {
                         setIsAdmin();
                     });
 
                     return {
+                        displayTutorial,
                         isAdmin,
-                        tab,
-                        openTutorialWindow
+                        tab
                     }
                 }
             });

@@ -106,11 +106,6 @@ function openPopup(url){
     return false;
 }
 
-function openTutorialWindow(url) {
-	url = CLIENT_ROOT + url;
-	window.open(url, '_blank');
-}
-
 function parseDate(dateStr){
 	const dateObj = new Date(dateStr);
 	let dateTokens;
