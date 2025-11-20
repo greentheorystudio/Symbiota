@@ -60,7 +60,7 @@ const taxonFieldModule = {
                 <text-field-input-element label="Source" :value="data.source" @update:value="(value) => updateData('source', value)"></text-field-input-element>
             </div>
         </div>
-        <div v-if="Number(data.tid) === 0" class="row">
+        <div v-if="rareSpEditor" class="row">
             <div class="col-grow">
                 <checkbox-input-element label="Protect Taxon Locations" :value="data.securitystatus" @update:value="(value) => updateData('securitystatus', (Number(value) === 1 ? 1 : null))"></checkbox-input-element>
             </div>
@@ -99,6 +99,7 @@ const taxonFieldModule = {
         ]);
         const acceptedTaxonVal = Vue.ref(null);
         const parentTaxonVal = Vue.ref(null);
+        const rareSpEditor = Vue.ref(false);
         const selectedAcceptanceOption = Vue.ref('accepted');
 
         function processAcceptedTaxonChange(taxonData) {
@@ -173,6 +174,22 @@ const taxonFieldModule = {
             }
         }
 
+        function setRareSpEditor() {
+            const formData = new FormData();
+            formData.append('permission', 'RareSppAdmin');
+            formData.append('action', 'validatePermission');
+            fetch(permissionApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resData) => {
+                rareSpEditor.value = resData.includes('RareSppAdmin');
+            });
+        }
+
         function setScinameFromUnitNames() {
             const unitArr = [];
             if(props.data.unitind1){
@@ -225,10 +242,15 @@ const taxonFieldModule = {
             });
         }
 
+        Vue.onMounted(() => {
+            setRareSpEditor();
+        });
+
         return {
             acceptanceOptions,
             acceptedTaxonVal,
             parentTaxonVal,
+            rareSpEditor,
             selectedAcceptanceOption,
             processAcceptedTaxonChange,
             processParentTaxonChange,
