@@ -91,9 +91,8 @@ const taxonEditorStatusTab = {
 
         const acceptedTaxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
         const acceptedTaxonChangeValid = Vue.computed(() => {
-            return ((isAccepted.value && Number(acceptedTaxonTid.value) > 0) || (!isAccepted.value && !acceptedTaxonTid.value) || (!isAccepted.value && Number(taxon.value['tidaccepted']) !== Number(acceptedTaxonTid.value)));
+            return ((isAccepted.value && acceptedTaxonVal.value) || (!isAccepted.value && !acceptedTaxonTid.value) || (!isAccepted.value && Number(taxon.value['tidaccepted']) !== Number(acceptedTaxonTid.value)));
         });
-        const acceptedTaxonFamily = Vue.ref(null);
         const acceptedTaxonKingdomId = Vue.ref(null);
         const acceptedTaxonTid = Vue.ref(null);
         const acceptedTaxonVal = Vue.ref(null);
@@ -115,24 +114,15 @@ const taxonEditorStatusTab = {
         const setTaxonData = Vue.inject('setTaxonData');
 
         function changeAcceptedTaxon() {
-            const remove = (isAccepted.value && Number(acceptedTaxonTid.value) > 0);
-            taxaStore.updateTaxonEditData('kingdomid', acceptedTaxonKingdomId.value);
-            taxaStore.updateTaxonEditData('tidaccepted', acceptedTaxonTid.value);
-            taxaStore.updateTaxonEditData('family', acceptedTaxonFamily.value);
-            if(taxaStore.getTaxaEditsExist){
-                taxaStore.updateTaxonRecord((res) => {
-                    if(res === 1){
-                        showNotification('positive','Accepted taxon changed.');
-                        quietSetTaxonData(taxon.value['tid']);
-                        if(remove){
-                            taxaStore.removeTaxonFromHierarchyData();
-                        }
-                    }
-                    else{
-                        showNotification('negative', 'There was an error changing the accepted taxon.');
-                    }
-                });
-            }
+            taxaStore.updateTaxonAcceptance(acceptedTaxonTid.value, (res) => {
+                if(res === 1){
+                    showNotification('positive','Accepted taxon changed.');
+                    quietSetTaxonData(taxon.value['tid']);
+                }
+                else{
+                    showNotification('negative', 'There was an error changing the accepted taxon.');
+                }
+            });
         }
 
         function changeUnacceptedToAccepted() {
@@ -166,13 +156,11 @@ const taxonEditorStatusTab = {
             if(taxonData){
                 acceptedTaxonVal.value = taxonData['sciname'];
                 acceptedTaxonTid.value = taxonData['tid'];
-                acceptedTaxonFamily.value = taxonData['family'];
                 acceptedTaxonKingdomId.value = taxonData['kingdomid'];
             }
             else{
                 acceptedTaxonVal.value = null;
                 acceptedTaxonTid.value = null;
-                acceptedTaxonFamily.value = null;
                 acceptedTaxonKingdomId.value = null;
             }
             if(acceptedTaxonKingdomId.value && Number(acceptedTaxonKingdomId.value) !== Number(origAcceptedTaxonKingdomId.value)) {
@@ -220,7 +208,6 @@ const taxonEditorStatusTab = {
             if(Number(taxon.value['tid']) > 0){
                 if(isAccepted.value){
                     acceptedTaxonTid.value = taxon.value['tid'];
-                    acceptedTaxonFamily.value = taxon.value['family'];
                     acceptedTaxonKingdomId.value = taxon.value['kingdomid'];
                     origAcceptedTaxonKingdomId.value = taxon.value['kingdomid'];
                     if(Number(taxon.value['rankid']) > 10){
@@ -234,7 +221,6 @@ const taxonEditorStatusTab = {
                 else{
                     acceptedTaxonVal.value = taxon.value['acceptedTaxon']['sciname'];
                     acceptedTaxonTid.value = taxon.value['acceptedTaxon']['tid'];
-                    acceptedTaxonFamily.value = taxon.value['acceptedTaxon']['family'];
                     acceptedTaxonKingdomId.value = taxon.value['acceptedTaxon']['kingdomid'];
                     origAcceptedTaxonKingdomId.value = taxon.value['acceptedTaxon']['kingdomid'];
                     if(Number(taxon.value['acceptedTaxon']['rankid']) > 10){

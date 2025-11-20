@@ -603,6 +603,23 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 this.setTaxonVernacularArr(this.taxaId);
             });
         },
+        updateTaxonAcceptance(tidaccepted, callback) {
+            const formData = new FormData();
+            formData.append('tid', this.taxaId.toString());
+            formData.append('tidaccepted', tidaccepted.toString());
+            formData.append('kingdom', (Number(this.taxaData['rankid']) === 10 ? '1' : '0'));
+            formData.append('action', 'updateTaxonTidAccepted');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         updateTaxonChildrenKingdomFamily() {
             const formData = new FormData();
             formData.append('tid', this.taxaId.toString());
