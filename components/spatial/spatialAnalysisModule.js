@@ -365,10 +365,10 @@ const spatialAnalysisModule = {
         function coordFormat() {
             return((coords) => {
                 if(coords[0] < -180){
-                    coords[0] = coords[0] + 360;
+                    coords[0] += 360;
                 }
                 if(coords[0] > 180){
-                    coords[0] = coords[0] - 360;
+                    coords[0] -= 360;
                 }
                 const template = 'Lat: {y} Lon: {x}';
                 return ol.coordinate.format(coords,template,5);
@@ -927,6 +927,7 @@ const spatialAnalysisModule = {
                 updateMapSettings('pointActive', true);
             }
             updateMapSettings('loadPointsEvent', false);
+            autoColorSymbologyKeys();
             hideWorking();
         }
 
