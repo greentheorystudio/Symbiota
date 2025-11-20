@@ -103,7 +103,6 @@ const taxonEditorStatusTab = {
         const parentTaxonChangeValid = Vue.computed(() => {
             return (Number(parentTaxonTid.value) > 0 && Number(taxon.value['parentTaxon']['tid']) !== Number(parentTaxonTid.value));
         });
-        const parentTaxonFamily = Vue.ref(null);
         const parentTaxonKingdomId = Vue.ref(null);
         const parentTaxonTid = Vue.ref(null);
         const parentTaxonVal = Vue.ref(null);
@@ -170,7 +169,7 @@ const taxonEditorStatusTab = {
 
         function processParentTaxonChange() {
             showWorking();
-            taxaStore.updateTaxonParent(parentTaxonTid.value, parentTaxonKingdomId.value, parentTaxonFamily.value, (res) => {
+            taxaStore.updateTaxonParent(parentTaxonTid.value, (res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Parent taxon saved.');
@@ -186,13 +185,11 @@ const taxonEditorStatusTab = {
             if(taxonData){
                 parentTaxonVal.value = taxonData['sciname'];
                 parentTaxonTid.value = taxonData['tid'];
-                parentTaxonFamily.value = taxonData['family'];
                 parentTaxonKingdomId.value = taxonData['kingdomid'];
             }
             else{
                 parentTaxonVal.value = null;
                 parentTaxonTid.value = null;
-                parentTaxonFamily.value = null;
                 parentTaxonKingdomId.value = null;
             }
             if(parentTaxonKingdomId.value && Number(parentTaxonKingdomId.value) !== Number(origParentTaxonKingdomId.value)) {
@@ -213,7 +210,6 @@ const taxonEditorStatusTab = {
                     if(Number(taxon.value['rankid']) > 10){
                         parentTaxonVal.value = taxon.value['parentTaxon']['sciname'];
                         parentTaxonTid.value = taxon.value['parentTaxon']['tid'];
-                        parentTaxonFamily.value = taxon.value['parentTaxon']['family'];
                         parentTaxonKingdomId.value = taxon.value['parentTaxon']['kingdomid'];
                         origParentTaxonKingdomId.value = taxon.value['parentTaxon']['kingdomid'];
                     }
@@ -226,7 +222,6 @@ const taxonEditorStatusTab = {
                     if(Number(taxon.value['acceptedTaxon']['rankid']) > 10){
                         parentTaxonVal.value = taxon.value['acceptedTaxon']['parentTaxon']['sciname'];
                         parentTaxonTid.value = taxon.value['acceptedTaxon']['parentTaxon']['tid'];
-                        parentTaxonFamily.value = taxon.value['acceptedTaxon']['parentTaxon']['family'];
                     }
                 }
             }
