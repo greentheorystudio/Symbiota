@@ -72,6 +72,85 @@ class Taxa{
         return $returnVal;
     }
 
+    public function changeTaxonParent($tid, $parentTid): int
+    {
+        $status = 0;
+        if(is_numeric($tid)){
+            $sql = 'SELECT family, kingdomId FROM taxa WHERE TID = ' . (int)$parentTid . ' ';
+            //echo $sql."<br>";
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $kingdomId = (int)$row['kingdomId'];
+                    $family = $row['family'];
+                    $sql2 = 'UPDATE taxa SET parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tid = ' . (int)$tid . ' ';
+                    //echo $sql2;
+                    if($this->conn->query($sql2)) {
+                        $status = 1;
+                        $sqlSyns = 'UPDATE taxa SET parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tidaccepted = ' . (int)$tid . ' ';
+                        if(!$this->conn->query($sqlSyns)){
+                            $status = 0;
+                        }
+                        if($status){
+                            $sqlParent = 'UPDATE taxa SET family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE parenttid = ' . (int)$tid . ' ';
+                            if(!$this->conn->query($sqlParent)){
+                                $status = 0;
+                            }
+                        }
+                        if($status){
+                            $status = (new TaxonHierarchy)->updateHierarchyTable($tid);
+                        }
+                    }
+                }
+            }
+        }
+        return $status;
+    }
+
+    public function changeTaxonToNotAccepted($tid, $tidAccepted, $kingdom): int
+    {
+        $status = 0;
+        if(is_numeric($tid)){
+            $sql = 'SELECT parenttid, family, kingdomId FROM taxa WHERE TID = ' . (int)$tidAccepted . ' ';
+            //echo $sql."<br>";
+            if($result = $this->conn->query($sql)){
+                $row = $result->fetch_array(MYSQLI_ASSOC);
+                $result->free();
+                if($row){
+                    $parentTid = (int)$row['parenttid'];
+                    $kingdomId = (int)$row['kingdomId'];
+                    $family = $row['family'];
+                    $sql2 = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tid = ' . (int)$tid . ' ';
+                    //echo $sql2;
+                    if($this->conn->query($sql2)) {
+                        $status = 1;
+                        $sqlSyns = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tidaccepted = ' . (int)$tid . ' ';
+                        if(!$this->conn->query($sqlSyns)){
+                            $status = 0;
+                        }
+                        if($status){
+                            $sqlParent = 'UPDATE taxa SET parenttid = ' . (int)$tidAccepted . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE parenttid = ' . (int)$tid . ' ';
+                            if(!$this->conn->query($sqlParent)){
+                                $status = 0;
+                            }
+                        }
+                        if($status){
+                            $status = (new TaxonHierarchy)->updateTaxonParentTid($tid, $tidAccepted);
+                        }
+                        if($status && (int)$tid !== (int)$tidAccepted){
+                            $status = (new TaxonHierarchy)->deleteTidFromHierarchyTable($tid);
+                        }
+                        if($kingdom){
+                            (new TaxonKingdoms)->updateKingdomAcceptance($tid, $tidAccepted);
+                        }
+                    }
+                }
+            }
+        }
+        return $status;
+    }
+
     public function createTaxaRecord($data): int
     {
         $newID = 0;
@@ -171,20 +250,6 @@ class Taxa{
             }
         }
         return $retVal;
-    }
-
-    public function editTaxonParent($parentTid, $tId = null): string
-    {
-        $status = '';
-        if($tId && is_numeric($parentTid) && $parentTid){
-            $sql = 'UPDATE taxa '.
-                'SET parenttid = ' . (int)$parentTid . ' '.
-                'WHERE tid = ' . (int)$tId . ' ';
-            if(!$this->conn->query($sql)){
-                $status = 'Unable to edit taxonomic placement.';
-            }
-        }
-        return $status;
     }
 
     public function evaluateTaxonForDeletion($tid): int
@@ -962,55 +1027,6 @@ class Taxa{
             }
         }
         return $retCnt;
-    }
-
-    public function submitChangeToNotAccepted($tid, $tidAccepted, $kingdom): int
-    {
-        $status = 0;
-        if(is_numeric($tid)){
-            $sql = 'SELECT parenttid, family, kingdomId FROM taxa WHERE TID = ' . (int)$tidAccepted . ' ';
-            //echo $sql."<br>";
-            if($result = $this->conn->query($sql)){
-                $row = $result->fetch_array(MYSQLI_ASSOC);
-                $result->free();
-                if($row){
-                    $parentTid = (int)$row['parenttid'];
-                    $kingdomId = (int)$row['kingdomId'];
-                    $family = (int)$row['family'];
-                    $sql2 = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tid = ' . (int)$tid . ' ';
-                    //echo $sql2;
-                    if($this->conn->query($sql2)) {
-                        $status = 1;
-                        $sqlSyns = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tidaccepted = ' . (int)$tid . ' ';
-                        if(!$this->conn->query($sqlSyns)){
-                            $status = 0;
-                        }
-                        if($status){
-                            $sqlParent = 'UPDATE taxa SET parenttid = ' . (int)$tidAccepted . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE parenttid = ' . (int)$tid . ' ';
-                            if(!$this->conn->query($sqlParent)){
-                                $status = 0;
-                            }
-                        }
-                        if($status){
-                            $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = ' . (int)$tidAccepted . ' WHERE parenttid = ' . (int)$tid . ' ';
-                            if(!$this->conn->query($sqlHierarchy)){
-                                $status = 0;
-                            }
-                        }
-                        if($status && (int)$tid !== (int)$tidAccepted){
-                            $sqlHierarchy = 'DELETE FROM taxaenumtree WHERE tid = ' . (int)$tid . ' ';
-                            if(!$this->conn->query($sqlHierarchy)){
-                                $status = 0;
-                            }
-                        }
-                        if($kingdom){
-                            (new TaxonKingdoms)->updateKingdomAcceptance($tid, $tidAccepted);
-                        }
-                    }
-                }
-            }
-        }
-        return $status;
     }
 
     public function taxonHasChildren($tid): bool
