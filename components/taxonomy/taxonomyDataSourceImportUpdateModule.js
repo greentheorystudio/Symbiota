@@ -2193,7 +2193,7 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function updateTaxonParent(parenttid, tid, callback) {
             const formData = new FormData();
-            formData.append('action', 'editTaxonParent');
+            formData.append('action', 'updateTaxonParent');
             formData.append('tid', tid);
             formData.append('parenttid', parenttid);
             fetch(taxaApiUrl, {
@@ -2203,8 +2203,8 @@ const taxonomyDataSourceImportUpdateModule = {
             .then((response) => {
                 if(response.status === 200){
                     response.text().then((res) => {
-                        if(res && res !== ''){
-                            callback(res);
+                        if(Number(res) === 0){
+                            callback('Unable to edit taxonomic placement.');
                         }
                         else{
                             newEditedTidArr.value.push(tid);

@@ -651,25 +651,21 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 }
             });
         },
-        updateTaxonParent(parenttid, kingdomid, family, callback) {
-            this.updateTaxonEditData('kingdomid', kingdomid);
-            this.updateTaxonEditData('parenttid', parenttid);
-            this.updateTaxonEditData('family', family);
-            if(this.getTaxaEditsExist){
-                this.updateTaxonRecord((res) => {
-                    if(Number(res) === 1){
-                        this.updateTaxonHierarchyData(this.taxaId, (res) => {
-                            callback(Number(res));
-                            if(this.taxaChildren.length > 0){
-                                this.updateTaxonChildrenKingdomFamily();
-                            }
-                        });
-                    }
-                    else{
-                        callback(Number(res));
-                    }
-                });
-            }
+        updateTaxonParent(parenttid, callback) {
+            const formData = new FormData();
+            formData.append('tid', this.taxaId.toString());
+            formData.append('parenttid', parenttid.toString());
+            formData.append('action', 'updateTaxonParent');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
         },
         updateTaxonRecord(callback) {
             const formData = new FormData();
