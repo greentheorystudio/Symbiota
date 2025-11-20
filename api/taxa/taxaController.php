@@ -56,7 +56,7 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($taxa->getTaxonFromTid($_POST['tid'], $fullData, $showActual));
     }
     elseif($isEditor && $action === 'updateTaxonTidAccepted' && $tId && array_key_exists('tidaccepted', $_POST) && (int)$_POST['tidaccepted']){
-        $kingdom = array_key_exists('kingdom', $_POST) ? (int)$_POST['kingdom'] : 0;
+        $kingdom = array_key_exists('kingdom', $_POST) && (int)$_POST['kingdom'] === 1;
         echo $taxa->submitChangeToNotAccepted($tId, $_POST['tidaccepted'], $kingdom);
     }
     elseif($isEditor && $action === 'editTaxon' && $tId && array_key_exists('taxonData', $_POST)){

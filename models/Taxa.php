@@ -964,11 +964,11 @@ class Taxa{
         return $retCnt;
     }
 
-    public function submitChangeToNotAccepted($tid, $tidAccepted, $kingdom = false): string
+    public function submitChangeToNotAccepted($tid, $tidAccepted, $kingdom): int
     {
-        $status = '';
+        $status = 0;
         if(is_numeric($tid)){
-            $sql = 'SELECT parenttid, kingdomId FROM taxa WHERE TID = ' . (int)$tidAccepted . ' ';
+            $sql = 'SELECT parenttid, family, kingdomId FROM taxa WHERE TID = ' . (int)$tidAccepted . ' ';
             //echo $sql."<br>";
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -976,34 +976,36 @@ class Taxa{
                 if($row){
                     $parentTid = (int)$row['parenttid'];
                     $kingdomId = (int)$row['kingdomId'];
-                    $sql2 = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', kingdomId = ' . $kingdomId . ' WHERE tid = ' . (int)$tid . ' ';
+                    $family = (int)$row['family'];
+                    $sql2 = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tid = ' . (int)$tid . ' ';
                     //echo $sql2;
                     if($this->conn->query($sql2)) {
-                        $sqlSyns = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', kingdomId = ' . $kingdomId . ' WHERE tidaccepted = ' . (int)$tid . ' ';
+                        $status = 1;
+                        $sqlSyns = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tidaccepted = ' . (int)$tid . ' ';
                         if(!$this->conn->query($sqlSyns)){
-                            $status = 'ERROR: unable to transfer linked synonyms to accepted taxon.';
+                            $status = 0;
                         }
-                        $sqlParent = 'UPDATE taxa SET parenttid = ' . (int)$tidAccepted . ', kingdomId = ' . $kingdomId . ' WHERE parenttid = ' . (int)$tid . ' ';
-                        if(!$this->conn->query($sqlParent)){
-                            $status = 'ERROR: unable to transfer children taxa to accepted taxon.';
+                        if($status){
+                            $sqlParent = 'UPDATE taxa SET parenttid = ' . (int)$tidAccepted . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE parenttid = ' . (int)$tid . ' ';
+                            if(!$this->conn->query($sqlParent)){
+                                $status = 0;
+                            }
                         }
-                        $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = ' . (int)$tidAccepted . ' WHERE parenttid = ' . (int)$tid . ' ';
-                        if(!$this->conn->query($sqlHierarchy)){
-                            $status = 'ERROR: unable to update taxonomic hierarchy with accepted taxon.';
+                        if($status){
+                            $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = ' . (int)$tidAccepted . ' WHERE parenttid = ' . (int)$tid . ' ';
+                            if(!$this->conn->query($sqlHierarchy)){
+                                $status = 0;
+                            }
                         }
-                        if((int)$tid !== (int)$tidAccepted){
+                        if($status && (int)$tid !== (int)$tidAccepted){
                             $sqlHierarchy = 'DELETE FROM taxaenumtree WHERE tid = ' . (int)$tid . ' ';
                             if(!$this->conn->query($sqlHierarchy)){
-                                $status = 'ERROR: unable to remove taxonomic hierarchy for unaccepted taxon.';
+                                $status = 0;
                             }
                         }
                         if($kingdom){
                             (new TaxonKingdoms)->updateKingdomAcceptance($tid, $tidAccepted);
                         }
-                        $this->updateDependentData($tid, $tidAccepted);
-                    }
-                    else {
-                        $status = 'ERROR: unable to switch acceptance.';
                     }
                 }
             }
@@ -1022,19 +1024,6 @@ class Taxa{
         }
         $result->free();
         return $retVal;
-    }
-
-    private function updateDependentData($tid, $tidNew): void
-    {
-        if(is_numeric($tid) && is_numeric($tidNew)){
-            $sqlVerns = 'DELETE v2.* '.
-                'FROM taxavernaculars AS v1 LEFT JOIN taxavernaculars AS v2 ON v1.VernacularName = v2.VernacularName AND v1.langid = v2.langid '.
-                'WHERE v1.TID = ' . (int)$tidNew . ' AND v2.TID = ' . (int)$tid . ' AND v2.VID IS NOT NULL ';
-            $this->conn->query($sqlVerns);
-
-            $sqlVerns = 'UPDATE taxavernaculars SET tid = ' . (int)$tidNew . ' WHERE tid = ' . (int)$tid . ' ';
-            $this->conn->query($sqlVerns);
-        }
     }
 
     public function updateTaxaRecord($tid, $editData): int
