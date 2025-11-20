@@ -333,9 +333,9 @@ const taxonomyDataSourceImportUpdateModule = {
             if(updateAcceptance.value && currentTaxonExternal.value['tidaccepted'] && currentTaxonLocal.value['tidaccepted'] && Number(currentTaxonExternal.value['tidaccepted']) !== Number(currentTaxonLocal.value['tidaccepted'])){
                 const subtext = 'Updating acceptance in Taxonomic Thesaurus';
                 addSubprocessToProcessorDisplay('text',subtext);
-                updateTaxonTidAccepted(Object.assign({}, currentTaxonExternal.value),(errorText = null) => {
-                    if(errorText && errorText !== ''){
-                        processSubprocessErrorResponse(errorText);
+                updateTaxonTidAccepted(Object.assign({}, currentTaxonExternal.value),(res) => {
+                    if(Number(res) === 0){
+                        processSubprocessErrorResponse('An error occurred while changing acceptance');
                         updateTaxonomicHierarchy(() => {
                             adjustUIEnd();
                         });
@@ -1991,9 +1991,9 @@ const taxonomyDataSourceImportUpdateModule = {
             if(targetTaxonLocal.value['sciname'] !== taxonSearchResults.value[0]['accepted_sciname']){
                 targetTaxonLocal.value['tidaccepted'] = nameTidIndex.value[taxonSearchResults.value[0]['accepted_sciname']];
             }
-            updateTaxonTidAccepted(Object.assign({}, targetTaxonLocal.value),(errorText = null) => {
-                if(errorText && errorText !== ''){
-                    processErrorResponse(errorText);
+            updateTaxonTidAccepted(Object.assign({}, targetTaxonLocal.value),(res) => {
+                if(Number(res) === 0){
+                    processErrorResponse('An error occurred while changing acceptance');
                     adjustUIEnd();
                 }
                 else{
@@ -2233,12 +2233,7 @@ const taxonomyDataSourceImportUpdateModule = {
             .then((response) => {
                 if(response.status === 200){
                     response.text().then((res) => {
-                        if(res && res !== ''){
-                            callback(res);
-                        }
-                        else{
-                            callback();
-                        }
+                        callback(res);
                     });
                 }
                 else{
