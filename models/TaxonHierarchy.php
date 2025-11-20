@@ -383,4 +383,16 @@ class TaxonHierarchy{
         }
         return $returnVal;
     }
+
+    public function updateTaxonParentTid($tid, $parentTid): int
+    {
+        $returnVal = 0;
+        if($tid && $parentTid){
+            $sqlHierarchy = 'UPDATE taxaenumtree SET parenttid = ' . (int)$parentTid . ' WHERE parenttid = ' . (int)$tid . ' ';
+            if($this->conn->query($sqlHierarchy)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
 }

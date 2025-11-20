@@ -57,13 +57,13 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($isEditor && $action === 'updateTaxonTidAccepted' && $tId && array_key_exists('tidaccepted', $_POST) && (int)$_POST['tidaccepted']){
         $kingdom = array_key_exists('kingdom', $_POST) && (int)$_POST['kingdom'] === 1;
-        echo $taxa->submitChangeToNotAccepted($tId, $_POST['tidaccepted'], $kingdom);
+        echo $taxa->changeTaxonToNotAccepted($tId, $_POST['tidaccepted'], $kingdom);
+    }
+    elseif($isEditor && $action === 'updateTaxonParent' && $tId && array_key_exists('parenttid', $_POST) && (int)$_POST['parenttid']){
+        echo $taxa->changeTaxonParent($tId, $_POST['parenttid']);
     }
     elseif($isEditor && $action === 'editTaxon' && $tId && array_key_exists('taxonData', $_POST)){
         echo $taxa->updateTaxaRecord($tId, json_decode($_POST['taxonData'], true));
-    }
-    elseif($isEditor && $action === 'editTaxonParent' && $tId && array_key_exists('parenttid',$_POST) && (int)$_POST['parenttid']){
-        echo $taxa->editTaxonParent((int)$_POST['parenttid'], $tId);
     }
     elseif($action === 'getTaxonFromSciname' && array_key_exists('sciname',$_POST)){
         $kingdomId = array_key_exists('kingdomid', $_POST) ? (int)$_POST['kingdomid'] : null;
