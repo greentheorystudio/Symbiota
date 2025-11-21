@@ -7,7 +7,7 @@ $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 $chid = array_key_exists('chid',$_REQUEST) ? (int)$_REQUEST['chid'] : 0;
 
 $isEditor = false;
-if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor', $GLOBALS['USER_RIGHTS'])){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyAdmin', $GLOBALS['USER_RIGHTS'])){
     $isEditor = true;
 }
 
