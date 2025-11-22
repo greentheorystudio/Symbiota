@@ -76,7 +76,33 @@ class KeyCharacterHeadings{
         return $retArr;
     }
 
-    public function getKeyCharacterHeadingsArr($chidArr): array
+    public function getKeyCharacterHeadingsArr($language = null): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM keycharacterheadings ';
+        if($language){
+            $sql .= 'WHERE language  = "' . SanitizerService::cleanInStr($this->conn, $language) . '" ';
+        }
+        $sql .= 'ORDER BY sortsequence, headingname ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getKeyCharacterHeadingsArrByChidArr($chidArr): array
     {
         $retArr = array();
         if(count($chidArr) > 0){

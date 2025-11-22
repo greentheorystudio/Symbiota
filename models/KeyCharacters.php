@@ -100,7 +100,46 @@ class KeyCharacters{
         return $retArr;
     }
 
-    public function getKeyCharactersArr($cidArr, $includeFullKeyData = false): array
+    public function getKeyCharactersArrByChidArr($chidArr): array
+    {
+        $retArr = array();
+        $cidArr = array();
+        $tempArr = array();
+        if(count($chidArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM keycharacters WHERE chid IN(' . implode(',', $chidArr) . ') '.
+                'ORDER BY chid, sortsequence, charactername ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $cidArr[] = $row['cid'];
+                    if(!array_key_exists($row['cid'], $tempArr)){
+                        $tempArr[$row['cid']] = array();
+                    }
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $tempArr[$row['cid']][$name] = $row[$name];
+                    }
+                    unset($rows[$index]);
+                }
+                $depArr = $this->getCharacterDependencies($cidArr);
+                foreach($tempArr as $cid => $cArr){
+                    $cArr['dependencies'] = array_key_exists($cid, $depArr) ? $depArr[$cid] : array();
+                    if(!array_key_exists($cArr['chid'], $retArr)){
+                        $retArr[$cArr['chid']] = array();
+                    }
+                    $retArr[$cArr['chid']][] = $cArr;
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getKeyCharactersArrByCidArr($cidArr, $includeFullKeyData = false): array
     {
         $retArr = array();
         $chidArr = array();
@@ -138,7 +177,7 @@ class KeyCharacters{
                     $retArr['characters'][] = $cArr;
                 }
                 if($includeFullKeyData){
-                    $retArr['character-headings'] = (new KeyCharacterHeadings)->getKeyCharacterHeadingsArr($chidArr);
+                    $retArr['character-headings'] = (new KeyCharacterHeadings)->getKeyCharacterHeadingsArrByChidArr($chidArr);
                 }
             }
         }

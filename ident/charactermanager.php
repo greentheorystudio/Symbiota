@@ -31,24 +31,107 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Identification Character Management</span>
             </div>
-            <div v-if="isTaxonProfileEditor" class="q-pa-md">
+            <div v-if="isEditor" class="q-pa-md column q-gutter-sm">
                 <div class="q-mb-sm text-h5 text-bold">
                     Identification Character Management
                 </div>
-
+                <q-card>
+                    <q-card-section class="row justify-end">
+                        <div>
+                            <q-btn color="primary" @click="openKeyCharacterHeaderEditorPopup(0);" label="Add Header" tabindex="0" />
+                        </div>
+                    </q-card-section>
+                </q-card>
+                <template v-if="headingArr.length > 0">
+                    <template v-for="header in headingArr">
+                        <q-card>
+                            <q-card-section class="column q-gutter-xs">
+                                <div class="row justify-between">
+                                    <div class="text-h6 text-bold q-mb-sm">{{ header.headingname }}</div>
+                                    <div class="row justify-end q-gutter-sm">
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border text-bold" size="sm" @click="openKeyCharacterEditorPopup(header['chid'], 0);" label="Add Character" dense tabindex="0"></q-btn>
+                                        </div>
+                                        <div>
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openKeyCharacterHeaderEditorPopup(header['chid']);" icon="fas fa-edit" dense aria-label="Edit header record" dense tabindex="0">
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    Edit header record
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="q-ml-sm">
+                                    <template v-if="characterData.hasOwnProperty(header['chid']) && characterData[header['chid']].length > 0">
+                                        <template v-for="character in characterData[header['chid']]">
+                                            <div class="row justify-start q-gutter-sm">
+                                                <div class="text-body1">{{ character['charactername'] }}</div>
+                                                <div>
+                                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openKeyCharacterEditorPopup(header['chid'], character['cid']);" icon="fas fa-edit" dense aria-label="Edit character record" tabindex="0">
+                                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                            Edit character record
+                                                        </q-tooltip>
+                                                    </q-btn>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <template v-else>
+                                        <div>There are currently no characters to display</div>
+                                    </template>
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </template>
+                </template>
+                <template v-else>
+                    <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                    <div class="q-pa-md row justify-center text-h6 text-bold">
+                        There is currently no key data to display. Please click the Add Header button to start adding data
+                    </div>
+                </template>
             </div>
         </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
         include(__DIR__ . '/../footer.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/key-character-state.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/key-character.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/key-character-heading.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const characterManagementModule = Vue.createApp({
                 setup() {
                     const baseStore = useBaseStore();
+                    const keyCharacterStore = useKeyCharacterStore();
+                    const keyCharacterHeadingStore = useKeyCharacterHeadingStore();
 
+                    const characterData = Vue.computed(() => keyCharacterStore.getKeyCharacterArrData);
                     const clientRoot = baseStore.getClientRoot;
+                    const headingArr = Vue.computed(() => keyCharacterHeadingStore.getKeyCharacterHeadingArr);
+                    const editCharacterId = Vue.ref(0);
+                    const editCharacterStateId = Vue.ref(0);
+                    const editHeaderId = Vue.ref(0);
                     const isEditor = Vue.ref(false);
+                    const showKeyCharacterEditorPopup = Vue.ref(false);
+                    const showKeyCharacterHeaderEditorPopup = Vue.ref(false);
+                    const showKeyCharacterStateEditorPopup = Vue.ref(false);
+
+                    function openKeyCharacterEditorPopup(headerid, characterid) {
+                        editHeaderId.value = headerid;
+                        editCharacterId.value = characterid;
+                        showKeyCharacterEditorPopup.value = true;
+                    }
+
+                    function openKeyCharacterHeaderEditorPopup(headerid) {
+                        editHeaderId.value = headerid;
+                        showKeyCharacterHeaderEditorPopup.value = true;
+                    }
+
+                    function openKeyCharacterStateEditorPopup(stateid) {
+                        editCharacterStateId.value = stateid;
+                        showKeyCharacterStateEditorPopup.value = true;
+                    }
 
                     function setEditor() {
                         const formData = new FormData();
@@ -71,11 +154,23 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
 
                     Vue.onMounted(() => {
                         setEditor();
+                        keyCharacterHeadingStore.setKeyCharacterHeadingArr();
                     });
                     
                     return {
+                        characterData,
                         clientRoot,
-                        isEditor
+                        editCharacterId,
+                        editCharacterStateId,
+                        editHeaderId,
+                        headingArr,
+                        isEditor,
+                        showKeyCharacterEditorPopup,
+                        showKeyCharacterHeaderEditorPopup,
+                        showKeyCharacterStateEditorPopup,
+                        openKeyCharacterEditorPopup,
+                        openKeyCharacterHeaderEditorPopup,
+                        openKeyCharacterStateEditorPopup
                     }
                 }
             });

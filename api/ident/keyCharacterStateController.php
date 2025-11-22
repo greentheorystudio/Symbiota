@@ -3,8 +3,8 @@ include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../models/KeyCharacterStates.php');
 include_once(__DIR__ . '/../../services/SanitizerService.php');
 
-$action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
-$csid = array_key_exists('csid',$_REQUEST) ? (int)$_REQUEST['csid'] : 0;
+$action = array_key_exists('action', $_REQUEST) ? $_REQUEST['action'] : '';
+$csid = array_key_exists('csid', $_REQUEST) ? (int)$_REQUEST['csid'] : 0;
 
 $isEditor = false;
 if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyAdmin', $GLOBALS['USER_RIGHTS'])){
@@ -16,11 +16,14 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getCharacterStatesFromTidArr' && array_key_exists('tidArr', $_POST)){
         echo json_encode($keyCharacterStates->getCharacterStatesFromTidArr(json_decode($_POST['tidArr'], false)));
     }
-    elseif($action === 'getKeyCharacterStatesArr' && array_key_exists('csidArr', $_POST)){
+    elseif($action === 'getKeyCharacterStatesArrFromCsidArr' && array_key_exists('csidArr', $_POST)){
         $includeFullKeyData = array_key_exists('includeFullKeyData',$_POST) && (int)$_POST['includeFullKeyData'] === 1;
-        echo json_encode($keyCharacterStates->getKeyCharacterStatesArr(json_decode($_POST['csidArr'], false), $includeFullKeyData));
+        echo json_encode($keyCharacterStates->getKeyCharacterStatesArrFromCsidArr(json_decode($_POST['csidArr'], false), $includeFullKeyData));
     }
-    elseif($action === 'createKeyCharacterStateRecord' && $isEditor){
+    elseif($action === 'getKeyCharacterStatesArrFromCid' && array_key_exists('cid', $_POST)){
+        echo json_encode($keyCharacterStates->getKeyCharacterStatesArrFromCid($_POST['cid']));
+    }
+    elseif($action === 'createKeyCharacterStateRecord' && $isEditor && array_key_exists('characterState', $_POST)){
         echo $keyCharacterStates->createKeyCharacterStateRecord(json_decode($_POST['characterState'], true));
     }
     elseif($action === 'updateKeyCharacterStateRecord' && $csid && $isEditor && array_key_exists('characterStateData', $_POST)){

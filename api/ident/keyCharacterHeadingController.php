@@ -13,10 +13,11 @@ if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyAdmin', $GLOBALS['USER_RIGHTS'])
 
 if($action && SanitizerService::validateInternalRequest()){
     $keyCharacterHeadings = new KeyCharacterHeadings();
-    if($action === 'getTaxaKeyCharacterHeadings' && array_key_exists('chidArr', $_POST)){
-        echo json_encode($keyCharacterHeadings->getTaxaKeyCharacterHeadings(json_decode($_POST['chidArr'], false)));
+    if($action === 'getKeyCharacterHeadingsArr'){
+        $language = $_POST['language'] ?? null;
+        echo json_encode($keyCharacterHeadings->getKeyCharacterHeadingsArr($language));
     }
-    elseif($action === 'createKeyCharacterHeadingRecord' && $isEditor){
+    elseif($action === 'createKeyCharacterHeadingRecord' && $isEditor && array_key_exists('heading', $_POST)){
         echo $keyCharacterHeadings->createKeyCharacterHeadingRecord(json_decode($_POST['heading'], true));
     }
     elseif($action === 'updateKeyCharacterHeadingRecord' && $chid && $isEditor && array_key_exists('headingData', $_POST)){
