@@ -59,6 +59,27 @@ class KeyCharacters{
         return $retVal;
     }
 
+    public function getAutocompleteCharacterList($queryString): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT cid, chid, charactername, `language` FROM keycharacters ';
+        $sql .= 'WHERE charactername LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ORDER BY charactername ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['cid'] = $row['cid'];
+                $dataArr['chid'] = $row['chid'];
+                $dataArr['charactername'] = $row['charactername'];
+                $dataArr['language'] = $row['language'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getCharacterDependencies($cidArr): array
     {
         $retArr = array();

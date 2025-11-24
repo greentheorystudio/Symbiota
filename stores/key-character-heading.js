@@ -1,5 +1,6 @@
 const useKeyCharacterHeadingStore = Pinia.defineStore('key-character-heading', {
     state: () => ({
+        baseStore: useBaseStore(),
         blankKeyCharacterHeadingRecord: {
             chid: 0,
             headingname: null,
@@ -32,9 +33,6 @@ const useKeyCharacterHeadingStore = Pinia.defineStore('key-character-heading', {
                 }
             }
             return exist;
-        },
-        getKeyCharacterHeadingID(state) {
-            return state.keyCharacterHeadingId;
         },
         getKeyCharacterHeadingIDArr(state) {
             const returnArr = [];
@@ -89,10 +87,11 @@ const useKeyCharacterHeadingStore = Pinia.defineStore('key-character-heading', {
             this.keyCharacterHeadingId = Number(chid);
             if(this.keyCharacterHeadingId > 0){
                 this.keyCharacterHeadingData = Object.assign({}, this.getCurrentKeyCharacterHeadingData());
-                this.keyCharacterStore.setCurrentKeyCharacterArr(chid);
             }
             else{
                 this.keyCharacterHeadingData = Object.assign({}, this.blankKeyCharacterHeadingRecord);
+                this.keyCharacterHeadingData['language'] = this.baseStore.getDefaultLanguageName;
+                this.keyCharacterHeadingData['langid'] = this.baseStore.getDefaultLanguageId;
             }
             this.keyCharacterHeadingEditData = Object.assign({}, this.keyCharacterHeadingData);
         },

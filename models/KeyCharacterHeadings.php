@@ -55,6 +55,26 @@ class KeyCharacterHeadings{
         return $retVal;
     }
 
+    public function getAutocompleteHeadingList($queryString): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT chid, headingname, `language` FROM keycharacterheadings ';
+        $sql .= 'WHERE headingname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ORDER BY headingname ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['chid'] = $row['chid'];
+                $dataArr['headingname'] = $row['headingname'];
+                $dataArr['language'] = $row['language'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getKeyCharacterHeadingData($chid): array
     {
         $retArr = array();

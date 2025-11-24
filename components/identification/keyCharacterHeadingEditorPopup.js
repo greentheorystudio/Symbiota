@@ -1,12 +1,12 @@
-const taxonProfileEditorVernacularEditorPopup = {
+const keyCharacterHeadingEditorPopup = {
     props: {
+        headingId: {
+            type: Number,
+            default: 0
+        },
         showPopup: {
             type: Boolean,
             default: false
-        },
-        vernacularId: {
-            type: Number,
-            default: 0
         }
     },
     template: `
@@ -22,42 +22,37 @@ const taxonProfileEditorVernacularEditorPopup = {
                         <div class="q-pa-md column q-col-gutter-sm">
                             <div class="row justify-between">
                                 <div>
-                                    <template v-if="vernacularId > 0 && editsExist">
+                                    <template v-if="headingId > 0 && editsExist">
                                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
-                                    <template v-if="vernacularId > 0">
-                                        <q-btn color="secondary" @click="saveVernacularEdits();" label="Save Common Name Edits" :disabled="!editsExist || !vernacularValid" tabindex="0" />
+                                    <template v-if="headingId > 0">
+                                        <q-btn color="secondary" @click="saveHeadingEdits();" label="Save Heading Edits" :disabled="!editsExist || !headingValid" tabindex="0" />
                                     </template>
                                     <template v-else>
-                                        <q-btn color="secondary" @click="addVernacular();" label="Add Common Name" :disabled="!vernacularValid" tabindex="0" />
+                                        <q-btn color="secondary" @click="addHeading();" label="Add Heading" :disabled="!headingValid" tabindex="0" />
                                     </template>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Common Name" :value="vernacularData['vernacularname']" @update:value="(value) => updateVernacularData('vernacularname', value)"></text-field-input-element>
+                                    <text-field-input-element label="Heading" :value="headingData['headingname']" @update:value="(value) => updateHeadingData('headingname', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <single-language-auto-complete label="Language" :language="vernacularData['language']" @update:language="processLanguageChange"></single-language-auto-complete>
+                                    <single-language-auto-complete label="Language" :language="headingData['language']" @update:language="processLanguageChange"></single-language-auto-complete>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element label="Notes" :value="vernacularData['notes']" @update:value="(value) => updateVernacularData('notes', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="headingData['sortsequence']" min-value="1" :clearable="false" @update:value="(value) => updateHeadingData('sortsequence', value)"></text-field-input-element>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-grow">
-                                    <text-field-input-element label="Source" :value="vernacularData['source']" @update:value="(value) => updateVernacularData('source', value)"></text-field-input-element>
-                                </div>
-                            </div>
-                            <div v-if="Number(vernacularId) > 0" class="row justify-end q-gutter-md">
+                            <div v-if="Number(headingId) > 0" class="row justify-end q-gutter-md">
                                 <div>
-                                    <q-btn color="negative" @click="deleteVernacular();" label="Delete Common Name" tabindex="0" />
+                                    <q-btn color="negative" @click="deleteHeading();" label="Delete Heading" :disabled="charactersExist" tabindex="0" />
                                 </div>
                             </div>
                         </div>
@@ -74,27 +69,33 @@ const taxonProfileEditorVernacularEditorPopup = {
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
-        const taxaStore = useTaxaStore();
+        const keyCharacterStore = useKeyCharacterStore();
+        const keyCharacterHeadingStore = useKeyCharacterHeadingStore();
 
+        const characterData = Vue.computed(() => keyCharacterStore.getKeyCharacterArrData);
+        const charactersExist = Vue.computed(() => {
+            return characterData.value.hasOwnProperty(props.headingId) && characterData.value[props.headingId].length > 0;
+        });
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const editsExist = Vue.computed(() => taxaStore.getTaxaVernacularEditsExist);
-        const vernacularData = Vue.computed(() => taxaStore.getTaxaVernacularData);
-        const vernacularValid = Vue.computed(() => taxaStore.getTaxaVernacularValid);
+        const editsExist = Vue.computed(() => keyCharacterHeadingStore.getKeyCharacterHeadingEditsExist);
+        const headingData = Vue.computed(() => keyCharacterHeadingStore.getKeyCharacterHeadingData);
+        const headingValid = Vue.computed(() => keyCharacterHeadingStore.getKeyCharacterHeadingValid);
         
         Vue.watch(contentRef, () => {
             setContentStyle();
         });
 
-        function addVernacular() {
-            taxaStore.createTaxaVernacularRecord((newBlockId) => {
-                if(newBlockId > 0){
-                    showNotification('positive','Common name added successfully.');
+        function addHeading() {
+            keyCharacterHeadingStore.createKeyCharacterHeadingRecord((newHeadingId) => {
+                if(newHeadingId > 0){
+                    showNotification('positive','Heading added successfully.');
+                    context.emit('change:heading');
                     context.emit('close:popup');
                 }
                 else{
-                    showNotification('negative', 'There was an error adding the new common name.');
+                    showNotification('negative', 'There was an error adding the new heading.');
                 }
             });
         }
@@ -103,17 +104,18 @@ const taxonProfileEditorVernacularEditorPopup = {
             context.emit('close:popup');
         }
 
-        function deleteVernacular() {
-            const confirmText = 'Are you sure you want to delete this common name? This action cannot be undone.';
+        function deleteHeading() {
+            const confirmText = 'Are you sure you want to delete this heading? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    taxaStore.deleteTaxaVernacularRecord((res) => {
+                    keyCharacterHeadingStore.deleteKeyCharacterHeadingRecord((res) => {
                         if(res === 1){
-                            showNotification('positive','Common name has been deleted.');
+                            showNotification('positive','Heading has been deleted.');
+                            context.emit('change:heading');
                             context.emit('close:popup');
                         }
                         else{
-                            showNotification('negative', 'There was an error deleting the common name.');
+                            showNotification('negative', 'There was an error deleting the heading.');
                         }
                     });
                 }
@@ -122,24 +124,25 @@ const taxonProfileEditorVernacularEditorPopup = {
 
         function processLanguageChange(langObj) {
             if(langObj){
-                updateVernacularData('language', langObj['name']);
-                updateVernacularData('langid', langObj['id']);
+                updateHeadingData('language', langObj['name']);
+                updateHeadingData('langid', langObj['id']);
             }
             else{
-                updateVernacularData('language', null);
-                updateVernacularData('langid', null);
+                updateHeadingData('language', null);
+                updateHeadingData('langid', null);
             }
         }
 
-        function saveVernacularEdits() {
+        function saveHeadingEdits() {
             showWorking('Saving edits...');
-            taxaStore.updateTaxaVernacularRecord((res) => {
+            keyCharacterHeadingStore.updateKeyCharacterHeadingRecord((res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
+                    context.emit('change:heading');
                 }
                 else{
-                    showNotification('negative', 'There was an error saving the common name edits.');
+                    showNotification('negative', 'There was an error saving the heading edits.');
                 }
                 context.emit('close:popup');
             });
@@ -152,29 +155,30 @@ const taxonProfileEditorVernacularEditorPopup = {
             }
         }
 
-        function updateVernacularData(key, value) {
-            taxaStore.updateTaxaVernacularEditData(key, value);
+        function updateHeadingData(key, value) {
+            keyCharacterHeadingStore.updateKeyCharacterHeadingEditData(key, value);
         }
 
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            taxaStore.setCurrentTaxaVernacularRecord(props.vernacularId);
+            keyCharacterHeadingStore.setCurrentKeyCharacterHeadingRecord(props.headingId);
         });
 
         return {
+            charactersExist,
             confirmationPopupRef,
             contentRef,
             contentStyle,
             editsExist,
-            vernacularData,
-            vernacularValid,
-            addVernacular,
+            headingData,
+            headingValid,
+            addHeading,
             closePopup,
-            deleteVernacular,
+            deleteHeading,
             processLanguageChange,
-            saveVernacularEdits,
-            updateVernacularData
+            saveHeadingEdits,
+            updateHeadingData
         }
     }
 };

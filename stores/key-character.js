@@ -1,5 +1,6 @@
 const useKeyCharacterStore = Pinia.defineStore('key-character', {
     state: () => ({
+        baseStore: useBaseStore(),
         blankKeyCharacterRecord: {
             cid: 0,
             chid: null,
@@ -10,7 +11,6 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
             langid: null,
             sortsequence: null
         },
-        currentKeyCharacterArr: [],
         keyCharacterArrData: {},
         keyCharacterData: {},
         keyCharacterEditData: {},
@@ -19,9 +19,6 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
         keyCharacterUpdateData: {}
     }),
     getters: {
-        getCurrentKeyCharacterArr(state) {
-            return state.currentKeyCharacterArr;
-        },
         getKeyCharacterArrData(state) {
             return state.keyCharacterArrData;
         },
@@ -48,7 +45,6 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
     },
     actions: {
         clearKeyCharacterArr() {
-            this.currentKeyCharacterArr.length = 0;
             this.keyCharacterArrData = Object.assign({}, {});
             this.keyCharacterStateStore.clearKeyCharacterStateArr();
         },
@@ -64,6 +60,11 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
+                if(Number(res) > 0){
+                    this.keyCharacterId = Number(res);
+                    this.keyCharacterData['cid'] = Number(res);
+                    this.keyCharacterEditData['cid'] = Number(res);
+                }
                 callback(Number(res));
             });
         },
@@ -85,9 +86,6 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
         getCurrentKeyCharacterData(chid) {
             return this.keyCharacterArrData[chid].find(character => Number(character.cid) === this.keyCharacterId);
         },
-        setCurrentKeyCharacterArr(chid) {
-            this.currentKeyCharacterArr = this.keyCharacterArrData.hasOwnProperty(chid) ? this.keyCharacterArrData[chid] : [];
-        },
         setCurrentKeyCharacterRecord(chid, cid) {
             this.keyCharacterStateStore.clearKeyCharacterStateArr();
             this.keyCharacterId = Number(cid);
@@ -97,6 +95,8 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
             }
             else{
                 this.keyCharacterData = Object.assign({}, this.blankKeyCharacterRecord);
+                this.keyCharacterData['language'] = this.baseStore.getDefaultLanguageName;
+                this.keyCharacterData['langid'] = this.baseStore.getDefaultLanguageId;
             }
             this.keyCharacterEditData = Object.assign({}, this.keyCharacterData);
         },

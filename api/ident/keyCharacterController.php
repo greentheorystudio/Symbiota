@@ -28,4 +28,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteKeyCharacterRecord' && $cid && $isEditor){
         echo $keyCharacters->deleteKeyCharacterRecord($cid);
     }
+    elseif($action === 'getAutocompleteCharacterList'){
+        echo json_encode($keyCharacters->getAutocompleteCharacterList($_POST['term']));
+    }
 }

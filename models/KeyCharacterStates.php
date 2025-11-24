@@ -51,10 +51,22 @@ class KeyCharacterStates{
 
     public function deleteKeyCharacterStateRecord($csid): int
     {
-        $retVal = 1;
-        $sql = 'DELETE FROM keycharacterstates WHERE csid = ' . (int)$csid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        $retVal = 0;
+        $sql = 'DELETE FROM keycharacterdependence WHERE dcsid = ' . (int)$csid . ' ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE FROM keycharacterstatetaxalink WHERE csid = ' . (int)$csid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        if($retVal){
+            $sql = 'DELETE FROM keycharacterstates WHERE csid = ' . (int)$csid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
         }
         return $retVal;
     }

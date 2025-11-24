@@ -1,5 +1,6 @@
 const useKeyCharacterStateStore = Pinia.defineStore('key-character-state', {
     state: () => ({
+        baseStore: useBaseStore(),
         blankKeyCharacterStateRecord: {
             csid: 0,
             cid: null,
@@ -33,9 +34,6 @@ const useKeyCharacterStateStore = Pinia.defineStore('key-character-state', {
                 }
             }
             return exist;
-        },
-        getKeyCharacterStateID(state) {
-            return state.keyCharacterStateId;
         },
         getKeyCharacterStateValid(state) {
             return (state.keyCharacterStateEditData['characterstatename'] && state.keyCharacterStateEditData['language']);
@@ -85,6 +83,8 @@ const useKeyCharacterStateStore = Pinia.defineStore('key-character-state', {
             }
             else{
                 this.keyCharacterStateData = Object.assign({}, this.blankKeyCharacterStateRecord);
+                this.keyCharacterStateData['language'] = this.baseStore.getDefaultLanguageName;
+                this.keyCharacterStateData['langid'] = this.baseStore.getDefaultLanguageId;
             }
             this.keyCharacterStateEditData = Object.assign({}, this.keyCharacterStateData);
         },

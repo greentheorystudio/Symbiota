@@ -29,4 +29,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteKeyCharacterHeadingRecord' && $chid && $isEditor){
         echo $keyCharacterHeadings->deleteKeyCharacterHeadingRecord($chid);
     }
+    elseif($action === 'getAutocompleteHeadingList'){
+        echo json_encode($keyCharacterHeadings->getAutocompleteHeadingList($_POST['term']));
+    }
 }
