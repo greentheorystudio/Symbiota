@@ -34,7 +34,7 @@ const keyCharacterEditorPopup = {
                                 <key-character-editor-info-tab :heading-id="headingId" @change:character="emitChange" @close:popup="closePopup();"></key-character-editor-info-tab>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" name="states">
-                                <key-character-editor-character-states-tab></key-character-editor-character-states-tab>
+                                <key-character-editor-character-states-tab @open:character-state-popup="openKeyCharacterStateEditorPopup"></key-character-editor-character-states-tab>
                             </q-tab-panel>
                             <q-tab-panel class="q-pa-none" name="dependence">
                                 <key-character-editor-dependence-tab></key-character-editor-dependence-tab>
@@ -48,6 +48,7 @@ const keyCharacterEditorPopup = {
             <key-character-state-editor-popup
                 :state-id="editCharacterStateId"
                 :show-popup="showKeyCharacterStateEditorPopup"
+                @change:state="emitChange"
                 @close:popup="showKeyCharacterStateEditorPopup = false"
             ></key-character-state-editor-popup>
         </template>

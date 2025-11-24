@@ -114,6 +114,7 @@ const keyCharacterStateEditorPopup = {
             keyCharacterStateStore.createKeyCharacterStateRecord((newStateId) => {
                 if(newStateId > 0){
                     showNotification('positive','Character state added successfully.');
+                    context.emit('change:state');
                     context.emit('close:popup');
                 }
                 else{
@@ -133,6 +134,7 @@ const keyCharacterStateEditorPopup = {
                     keyCharacterStateStore.deleteKeyCharacterStateRecord((res) => {
                         if(res === 1){
                             showNotification('positive','Character state has been deleted.');
+                            context.emit('change:state');
                             context.emit('close:popup');
                         }
                         else{
@@ -168,6 +170,7 @@ const keyCharacterStateEditorPopup = {
         function reassociateCharacterState() {
             updateStateData('cid', selectedCharacterId.value);
             saveStateEdits();
+            context.emit('change:state');
         }
 
         function saveStateEdits() {
@@ -176,6 +179,7 @@ const keyCharacterStateEditorPopup = {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
+                    context.emit('change:state');
                 }
                 else{
                     showNotification('negative', 'There was an error saving the character state edits.');
