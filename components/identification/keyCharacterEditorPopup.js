@@ -23,23 +23,28 @@ const keyCharacterEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
-                            <q-tab name="details" label="Info/Admin" no-caps></q-tab>
-                            <q-tab name="states" label="Character States" no-caps></q-tab>
-                            <q-tab name="dependence" label="Dependence" no-caps></q-tab>
-                        </q-tabs>
-                        <q-separator></q-separator>
-                        <q-tab-panels v-model="tab" :style="tabStyle">
-                            <q-tab-panel class="q-pa-none" name="details">
-                                <key-character-editor-info-tab :heading-id="headingId" @change:character="emitChange" @close:popup="closePopup();"></key-character-editor-info-tab>
-                            </q-tab-panel>
-                            <q-tab-panel class="q-pa-none" name="states">
-                                <key-character-editor-character-states-tab @open:character-state-popup="openKeyCharacterStateEditorPopup"></key-character-editor-character-states-tab>
-                            </q-tab-panel>
-                            <q-tab-panel class="q-pa-none" name="dependence">
-                                <key-character-editor-dependence-tab></key-character-editor-dependence-tab>
-                            </q-tab-panel>
-                        </q-tab-panels>
+                        <template v-if="Number(characterId) > 0">
+                            <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
+                                <q-tab name="details" label="Info/Admin" no-caps></q-tab>
+                                <q-tab name="states" label="Character States" no-caps></q-tab>
+                                <q-tab name="dependence" label="Dependence" no-caps></q-tab>
+                            </q-tabs>
+                            <q-separator></q-separator>
+                            <q-tab-panels v-model="tab" :style="tabStyle">
+                                <q-tab-panel class="q-pa-none" name="details">
+                                    <key-character-editor-info-tab :heading-id="headingId" @change:character="emitChange" @close:popup="closePopup();"></key-character-editor-info-tab>
+                                </q-tab-panel>
+                                <q-tab-panel class="q-pa-none" name="states">
+                                    <key-character-editor-character-states-tab @open:character-state-popup="openKeyCharacterStateEditorPopup"></key-character-editor-character-states-tab>
+                                </q-tab-panel>
+                                <q-tab-panel class="q-pa-none" name="dependence">
+                                    <key-character-editor-dependence-tab></key-character-editor-dependence-tab>
+                                </q-tab-panel>
+                            </q-tab-panels>
+                        </template>
+                        <template v-else>
+                            <key-character-editor-info-tab :heading-id="headingId" @change:character="emitChange" @close:popup="closePopup();"></key-character-editor-info-tab>
+                        </template>
                     </div>
                 </div>
             </q-card>

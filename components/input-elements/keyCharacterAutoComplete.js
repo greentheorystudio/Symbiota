@@ -28,12 +28,12 @@ const keyCharacterAutoComplete = {
             </template>
         </q-select>
     `,
-    setup(_, context) {
+    setup(props, context) {
         const autocompleteOptions = Vue.ref([]);
 
         function blurAction(val) {
-            if(val.target.value && val.target.value !== props.sciname){
-                const optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.value.trim().toLowerCase());
+            if(val.target.value && val.target.value !== props.value){
+                const optionObj = autocompleteOptions.value.find(option => option['charactername'].toLowerCase() === val.target.value.trim().toLowerCase());
                 if(optionObj){
                     processChange(optionObj);
                 }
@@ -46,7 +46,7 @@ const keyCharacterAutoComplete = {
 
         function createValue(val, done) {
             if(val.length > 0) {
-                const optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
+                const optionObj = autocompleteOptions.value.find(option => option['charactername'].toLowerCase() === val.trim().toLowerCase());
                 if(optionObj){
                     done(optionObj, 'add');
                 }

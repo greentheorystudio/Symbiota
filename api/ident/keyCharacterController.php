@@ -31,4 +31,13 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getAutocompleteCharacterList'){
         echo json_encode($keyCharacters->getAutocompleteCharacterList($_POST['term']));
     }
+    elseif($action === 'getKeyCharacterDependenceArr' && $cid && $isEditor){
+        echo json_encode($keyCharacters->getCharacterDependencies($cid));
+    }
+    elseif($action === 'addCharacterDependencyRecord' && $cid && $isEditor && array_key_exists('dcid', $_POST) && array_key_exists('dcsid', $_POST)){
+        echo $keyCharacters->addCharacterDependencyRecord($cid, $_POST['dcid'], $_POST['dcsid']);
+    }
+    elseif($action === 'deleteKeyCharacterDependencyRecord' && $isEditor && array_key_exists('cdid', $_POST)){
+        echo $keyCharacters->deleteKeyCharacterDependencyRecord($_POST['cdid']);
+    }
 }

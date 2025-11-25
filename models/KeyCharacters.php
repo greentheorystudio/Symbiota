@@ -27,6 +27,20 @@ class KeyCharacters{
         $this->conn->close();
 	}
 
+    public function addCharacterDependencyRecord($cid, $dcid, $dcsid): int
+    {
+        $newID = 0;
+        if($cid && $dcid){
+            $sql = 'INSERT INTO keycharacterdependence(cid, dcid, dcsid) '.
+                'VALUES (' . (int)$cid . ', ' . (int)$dcid . ', ' . ((int)$dcsid > 0 ? (int)$dcsid : 'NULL') . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+            }
+        }
+        return $newID;
+    }
+
     public function createKeyCharacterRecord($data): int
     {
         $newID = 0;
@@ -49,12 +63,34 @@ class KeyCharacters{
         return $newID;
     }
 
+    public function deleteKeyCharacterDependencyRecord($cdid): int
+    {
+        $retVal = 0;
+        $sql = 'DELETE FROM keycharacterdependence WHERE cdid = ' . (int)$cdid . ' ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        return $retVal;
+    }
+
     public function deleteKeyCharacterRecord($cid): int
     {
-        $retVal = 1;
-        $sql = 'DELETE FROM keycharacters WHERE cid = ' . (int)$cid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        $retVal = 0;
+        $sql = 'DELETE FROM keycharacterdependence WHERE cid = ' . (int)$cid . ' OR dcid = ' . (int)$cid . ' ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE FROM keycharacterstatetaxalink WHERE cid = ' . (int)$cid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        if($retVal){
+            $sql = 'DELETE FROM keycharacters WHERE cid = ' . (int)$cid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
         }
         return $retVal;
     }
@@ -80,19 +116,24 @@ class KeyCharacters{
         return $retArr;
     }
 
-    public function getCharacterDependencies($cidArr): array
+    public function getCharacterDependencies($cid): array
     {
         $retArr = array();
-        $sql = 'SELECT cid, dcid, dcsid '.
-            'FROM keycharacterdependence WHERE cid IN(' . implode(',', $cidArr) . ') ';
+        $sql = 'SELECT cd.cdid, cd.cid, cd.dcid, cd.dcsid, c.charactername, cs.characterstatename '.
+            'FROM keycharacterdependence AS cd LEFT JOIN keycharacters AS c ON cd.dcid = c.cid '.
+            'LEFT JOIN keycharacterstates AS cs ON cd.dcsid = cs.csid '.
+            'WHERE cd.cid IN(' . (is_array($cid) ? implode(',', $cid) : $cid) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
                 $nodeArr = array();
+                $nodeArr['cdid'] = $row['cdid'];
                 $nodeArr['cid'] = $row['dcid'];
                 $nodeArr['csid'] = $row['dcsid'];
+                $nodeArr['charactername'] = $row['charactername'];
+                $nodeArr['characterstatename'] = $row['characterstatename'];
                 $retArr[$row['cid']][] = $nodeArr;
                 unset($rows[$index]);
             }

@@ -50,7 +50,7 @@ const taxonProfileEditorDescriptionsTab = {
                             </template>
                             <template v-else>
                                 <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                                <div class="q-pa-md row justify-center text-h6 text-bold">
+                                <div class="q-pa-md row justify-center text-subtitle1 text-bold">
                                     There are no statements for this description block yet, click the Add Description Statement button above to add the first one
                                 </div>
                             </template>
@@ -60,7 +60,7 @@ const taxonProfileEditorDescriptionsTab = {
             </template>
             <template v-else>
                 <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                <div class="q-pa-md row justify-center text-h6 text-bold">
+                <div class="q-pa-md row justify-center text-subtitle1 text-bold">
                     There are no description blocks for this taxon yet, click the Add Description Block button above to add the first one
                 </div>
             </template>

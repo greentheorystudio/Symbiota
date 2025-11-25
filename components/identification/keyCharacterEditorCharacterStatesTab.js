@@ -1,16 +1,16 @@
 const keyCharacterEditorCharacterStatesTab = {
     template: `
-        <div class="column q-gutter-xs">
+        <div class="q-pa-md column q-gutter-xs">
             <div class="row justify-end">
                 <div>
                     <q-btn color="primary" @click="openKeyCharacterStateEditorPopup(0);" label="Add Character State" dense tabindex="0"></q-btn>
                 </div>
             </div>
-            <div class="q-ml-sm">
+            <div class="q-ml-sm column q-gutter-xs">
                 <template v-if="characterStateArr.length > 0">
                     <template v-for="state in characterStateArr">
                         <div class="row justify-start q-gutter-sm">
-                            <div class="text-body1">{{ state['characterstatename'] }}</div>
+                            <div class="text-subtitle1 text-bold">{{ state['characterstatename'] }}</div>
                             <div>
                                 <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openKeyCharacterStateEditorPopup(state['csid']);" icon="fas fa-edit" dense aria-label="Edit character state record" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -22,7 +22,10 @@ const keyCharacterEditorCharacterStatesTab = {
                     </template>
                 </template>
                 <template v-else>
-                    <div>There are currently no character states to display</div>
+                    <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                    <div class="q-pa-md row justify-center text-subtitle1 text-bold">
+                        There are currently no character states to display
+                    </div>
                 </template>
             </div>
         </div>

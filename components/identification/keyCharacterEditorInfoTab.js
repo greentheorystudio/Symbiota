@@ -47,26 +47,26 @@ const keyCharacterEditorInfoTab = {
                     <text-field-input-element data-type="int" label="Sort Sequence" :value="characterData['sortsequence']" min-value="1" :clearable="false" @update:value="(value) => updateCharacterData('sortsequence', value)"></text-field-input-element>
                 </div>
             </div>
+            <div>
+                <q-card flat bordered>
+                    <q-card-section class="column q-gutter-sm">
+                        <div class="text-subtitle1 text-bold">Associate with different heading</div>
+                        <div class="row justify-between q-col-gutter-sm no-wrap">
+                            <div class="col-4">
+                                <key-character-heading-auto-complete label="Heading" :value="selectedHeadingName" @update:value="processHeadingSelection"></key-character-heading-auto-complete>
+                            </div>
+                            <div>
+                                <q-btn color="negative" @click="reassociateCharacter();" label="Associate" :disabled="!selectedHeadingName || Number(selectedHeadingId) === Number(characterData['chid'])" aria-label="Associate" tabindex="0" />
+                            </div>
+                        </div>
+                    </q-card-section>
+                </q-card>
+            </div>
             <div v-if="Number(characterId) > 0" class="row justify-end q-gutter-md">
                 <div>
                     <q-btn color="negative" @click="deleteCharacter();" label="Delete Character" :disabled="characterStateArr.length > 0" tabindex="0" />
                 </div>
             </div>
-            <q-card flat bordered>
-                <q-card-section class="column q-gutter-sm">
-                    <div class="text-subtitle1 text-bold">Associate with different heading</div>
-                    <div class="row justify-between q-gutter-sm">
-                        <div class="col-8">
-                            <key-character-heading-auto-complete label="Heading" :value="selectedHeadingName" @update:value="processHeadingSelection"></key-character-heading-auto-complete>
-                        </div>
-                        <div class="col-4 row justify-end">
-                            <div>
-                                <q-btn color="negative" @click="reassociateCharacter();" label="Associate" :disabled="!selectedHeadingName || Number(selectedHeadingId) === Number(characterData['chid'])" aria-label="Associate" tabindex="0" />
-                            </div>
-                        </div>
-                    </div>
-                </q-card-section>
-            </q-card>
         </div>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,

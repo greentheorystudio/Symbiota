@@ -50,12 +50,12 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                     <div class="text-h6 text-bold q-mb-sm">{{ header.headingname }}</div>
                                     <div class="row justify-end q-gutter-sm">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border text-bold" size="sm" @click="openKeyCharacterEditorPopup(header['chid'], 0);" label="Add Character" dense tabindex="0"></q-btn>
+                                            <q-btn color="primary" size="sm" @click="openKeyCharacterEditorPopup(header['chid'], 0);" label="Add Character" dense tabindex="0"></q-btn>
                                         </div>
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openKeyCharacterHeaderEditorPopup(header['chid']);" icon="fas fa-edit" dense aria-label="Edit header record" dense tabindex="0">
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openKeyCharacterHeaderEditorPopup(header['chid']);" icon="fas fa-edit" dense aria-label="Edit heading record" dense tabindex="0">
                                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    Edit header record
+                                                    Edit heading record
                                                 </q-tooltip>
                                             </q-btn>
                                         </div>

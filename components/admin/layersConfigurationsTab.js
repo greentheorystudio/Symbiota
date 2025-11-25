@@ -28,7 +28,7 @@ const layersConfigurationsTab = {
                 </draggable>
             </template>
             <template v-else>
-                <div class="q-pa-md row justify-center text-h6 text-bold">
+                <div class="q-pa-md row justify-center text-subtitle1 text-bold">
                     There is currently no layer data to display
                 </div>
             </template>

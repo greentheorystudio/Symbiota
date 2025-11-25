@@ -13,6 +13,7 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
         },
         keyCharacterArrData: {},
         keyCharacterData: {},
+        keyCharacterDependenceArr: [],
         keyCharacterEditData: {},
         keyCharacterId: 0,
         keyCharacterStateStore: useKeyCharacterStateStore(),
@@ -24,6 +25,9 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
         },
         getKeyCharacterData(state) {
             return state.keyCharacterEditData;
+        },
+        getKeyCharacterDependenceArr(state) {
+            return state.keyCharacterDependenceArr;
         },
         getKeyCharacterEditsExist(state) {
             let exist = false;
@@ -44,6 +48,26 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
         }
     },
     actions: {
+        addCharacterDependencyRecord(dcid, dcsid, callback) {
+            const formData = new FormData();
+            formData.append('cid', this.keyCharacterId.toString());
+            formData.append('dcid', dcid.toString());
+            formData.append('dcsid', dcsid.toString());
+            formData.append('action', 'addCharacterDependencyRecord');
+            fetch(keyCharacterApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    this.setKeyCharacterDependenceArr();
+                }
+                callback(Number(res));
+            });
+        },
         clearKeyCharacterArr() {
             this.keyCharacterArrData = Object.assign({}, {});
             this.keyCharacterStateStore.clearKeyCharacterStateArr();
@@ -68,6 +92,21 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
                 callback(Number(res));
             });
         },
+        deleteKeyCharacterDependencyRecord(cdid, callback) {
+            const formData = new FormData();
+            formData.append('cdid', cdid.toString());
+            formData.append('action', 'deleteKeyCharacterDependencyRecord');
+            fetch(keyCharacterApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         deleteKeyCharacterRecord(callback) {
             const formData = new FormData();
             formData.append('cid', this.keyCharacterId.toString());
@@ -87,11 +126,13 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
             return this.keyCharacterArrData[chid].find(character => Number(character.cid) === this.keyCharacterId);
         },
         setCurrentKeyCharacterRecord(chid, cid) {
+            this.keyCharacterDependenceArr.length = 0;
             this.keyCharacterStateStore.clearKeyCharacterStateArr();
             this.keyCharacterId = Number(cid);
             if(this.keyCharacterId > 0){
                 this.keyCharacterData = Object.assign({}, this.getCurrentKeyCharacterData(chid));
                 this.keyCharacterStateStore.setKeyCharacterStateArr(this.keyCharacterId);
+                this.setKeyCharacterDependenceArr();
             }
             else{
                 this.keyCharacterData = Object.assign({}, this.blankKeyCharacterRecord);
@@ -113,6 +154,21 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
             })
             .then((data) => {
                 this.keyCharacterArrData = Object.assign({}, data);
+            });
+        },
+        setKeyCharacterDependenceArr() {
+            const formData = new FormData();
+            formData.append('cid', this.keyCharacterId.toString());
+            formData.append('action', 'getKeyCharacterDependenceArr');
+            fetch(keyCharacterApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.keyCharacterDependenceArr = data[this.keyCharacterId.toString()];
             });
         },
         updateKeyCharacterEditData(key, value) {

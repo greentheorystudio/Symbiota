@@ -60,26 +60,26 @@ const keyCharacterStateEditorPopup = {
                                     <text-field-input-element data-type="int" label="Sort Sequence" :value="stateData['sortsequence']" min-value="1" :clearable="false" @update:value="(value) => updateStateData('sortsequence', value)"></text-field-input-element>
                                 </div>
                             </div>
+                            <div>
+                                <q-card flat bordered>
+                                    <q-card-section class="column q-gutter-sm">
+                                        <div class="text-subtitle1 text-bold">Associate with different character</div>
+                                        <div class="row justify-between q-col-gutter-sm no-wrap">
+                                            <div class="col-4">
+                                                <key-character-auto-complete label="Character" :value="selectedCharacterName" @update:value="processCharacterSelection"></key-character-auto-complete>
+                                            </div>
+                                            <div>
+                                                <q-btn color="negative" @click="reassociateCharacterState();" label="Associate" :disabled="!selectedCharacterName || Number(selectedCharacterId) === Number(stateData['cid'])" aria-label="Associate" tabindex="0" />
+                                            </div>
+                                        </div>
+                                    </q-card-section>
+                                </q-card>
+                            </div>
                             <div v-if="Number(stateId) > 0" class="row justify-end q-gutter-md">
                                 <div>
                                     <q-btn color="negative" @click="deleteState();" label="Delete Character State" tabindex="0" />
                                 </div>
                             </div>
-                            <q-card flat bordered>
-                                <q-card-section class="column q-gutter-sm">
-                                    <div class="text-subtitle1 text-bold">Associate with different character</div>
-                                    <div class="row justify-between q-gutter-sm">
-                                        <div class="col-8">
-                                            <key-character-auto-complete label="Character" :value="selectedCharacterName" @update:value="processCharacterSelection"></key-character-auto-complete>
-                                        </div>
-                                        <div class="col-4 row justify-end">
-                                            <div>
-                                                <q-btn color="negative" @click="reassociateCharacterState();" label="Associate" :disabled="!selectedCharacterName || Number(selectedCharacterId) === Number(stateData['cid'])" aria-label="Associate" tabindex="0" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </q-card-section>
-                            </q-card>
                         </div>
                     </div>
                 </div>
