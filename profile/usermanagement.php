@@ -129,14 +129,6 @@ header('X-Frame-Options: SAMEORIGIN');
                                                                 </div>
                                                             </div>
                                                         </template>
-                                                        <template v-if="userPermissions.hasOwnProperty('KeyEditor')">
-                                                            <div class="q-pl-sm row justify-start q-gutter-sm">
-                                                                <div class="text-bold">Identification Keys Editor</div>
-                                                                <div class="cursor-pointer">
-                                                                    <q-btn icon="far fa-trash-alt" color="grey-4" text-color="black" class="black-border" size="xs" dense @click="deletePermission('KeyEditor', null);" aria-label="Delete permission" tabindex="0"></q-btn>
-                                                                </div>
-                                                            </div>
-                                                        </template>
                                                         <template v-if="userPermissions.hasOwnProperty('PublicChecklist')">
                                                             <div class="q-pl-sm row justify-start q-gutter-sm">
                                                                 <div class="text-bold">Can Create Public Checklists and Biotic Inventory Projects</div>
@@ -260,9 +252,6 @@ header('X-Frame-Options: SAMEORIGIN');
                                             </div>
                                             <div v-if="!userPermissions.hasOwnProperty('KeyAdmin')">
                                                 <checkbox-input-element label="Identification Key Administrator" :value="false" @update:value="addPermissions([{role: 'KeyAdmin', rolepk: null}])"></checkbox-input-element>
-                                            </div>
-                                            <div v-if="!userPermissions.hasOwnProperty('KeyEditor')">
-                                                <checkbox-input-element label="Identification Key Editor" :value="false" @update:value="addPermissions([{role: 'KeyEditor', rolepk: null}])"></checkbox-input-element>
                                             </div>
                                             <div v-if="!userPermissions.hasOwnProperty('RareSppAdmin')">
                                                 <checkbox-input-element label="Rare Species Administrator (add/remove species from list)" :value="false" @update:value="addPermissions([{role: 'RareSppAdmin', rolepk: null}])"></checkbox-input-element>
