@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Languages.php');
 include_once(__DIR__ . '/Users.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/EncryptionService.php');
@@ -366,8 +367,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '20251111111112';
-        $GLOBALS['JS_VERSION'] = '20251018111111111112212222222222';
+        $GLOBALS['CSS_VERSION'] = '20251112';
+        $GLOBALS['JS_VERSION'] = '20251018111111111112212222222222222222222222222222222222222222222222';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -772,6 +773,7 @@ class Configurations{
             $GLOBALS['MAX_UPLOAD_FILESIZE'] = FileSystemService::getServerMaxPostSize();
         }
         $GLOBALS['DEFAULT_TUTORIAL_JSON'] = json_encode($this->defaultTutorials);
+        $GLOBALS['DEFAULT_LANG_JSON'] = (new Languages)->getLanguageByIso($GLOBALS['DEFAULT_LANG']);
     }
 
     public function validateNewConfNameCore($name): int
