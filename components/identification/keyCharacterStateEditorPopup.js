@@ -1,5 +1,9 @@
 const keyCharacterStateEditorPopup = {
     props: {
+        characterId: {
+            type: Number,
+            default: 0
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -111,6 +115,7 @@ const keyCharacterStateEditorPopup = {
         });
 
         function addState() {
+            updateStateData('cid', props.characterId);
             keyCharacterStateStore.createKeyCharacterStateRecord((newStateId) => {
                 if(newStateId > 0){
                     showNotification('positive','Character state added successfully.');
@@ -169,8 +174,10 @@ const keyCharacterStateEditorPopup = {
 
         function reassociateCharacterState() {
             updateStateData('cid', selectedCharacterId.value);
-            saveStateEdits();
-            context.emit('change:state');
+            if(keyCharacterStateStore.getKeyCharacterStateEditsExist){
+                saveStateEdits();
+                context.emit('change:state');
+            }
         }
 
         function saveStateEdits() {

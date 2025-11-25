@@ -145,7 +145,9 @@ const keyCharacterEditorInfoTab = {
 
         function reassociateCharacter() {
             updateCharacterData('chid', selectedHeadingId.value);
-            saveCharacterEdits();
+            if(keyCharacterStore.getKeyCharacterEditsExist){
+                saveCharacterEdits();
+            }
         }
 
         function saveCharacterEdits() {
@@ -180,6 +182,7 @@ const keyCharacterEditorInfoTab = {
             processHeadingSelection,
             processLanguageChange,
             reassociateCharacter,
+            saveCharacterEdits,
             updateCharacterData
         }
     }

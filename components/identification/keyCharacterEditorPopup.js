@@ -25,7 +25,7 @@ const keyCharacterEditorPopup = {
                     <div :style="contentStyle" class="overflow-auto">
                         <template v-if="Number(characterId) > 0">
                             <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
-                                <q-tab name="details" label="Info/Admin" no-caps></q-tab>
+                                <q-tab name="details" label="Details" no-caps></q-tab>
                                 <q-tab name="states" label="Character States" no-caps></q-tab>
                                 <q-tab name="dependence" label="Dependence" no-caps></q-tab>
                             </q-tabs>
@@ -51,6 +51,7 @@ const keyCharacterEditorPopup = {
         </q-dialog>
         <template v-if="showKeyCharacterStateEditorPopup">
             <key-character-state-editor-popup
+                :character-id="characterId"
                 :state-id="editCharacterStateId"
                 :show-popup="showKeyCharacterStateEditorPopup"
                 @change:state="emitChange"

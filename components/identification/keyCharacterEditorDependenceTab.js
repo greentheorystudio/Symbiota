@@ -94,8 +94,14 @@ const keyCharacterEditorDependenceTab = {
         }
 
         function deleteDependency(depid) {
-            editCharacterStateId.value = stateid;
-            showKeyCharacterStateEditorPopup.value = true;
+            keyCharacterStore.deleteKeyCharacterDependencyRecord(depid, (res) => {
+                if(res === 1){
+                    showNotification('positive','Dependence has been deleted.');
+                }
+                else{
+                    showNotification('negative', 'There was an error deleting the dependence.');
+                }
+            });
         }
 
         function processCharacterSelection(charObj) {

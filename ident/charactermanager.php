@@ -35,13 +35,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 <div class="q-mb-sm text-h5 text-bold">
                     Identification Character Management
                 </div>
-                <q-card>
-                    <q-card-section class="row justify-end">
-                        <div>
-                            <q-btn color="primary" @click="openKeyCharacterHeaderEditorPopup(0);" label="Add Heading" tabindex="0" />
-                        </div>
-                    </q-card-section>
-                </q-card>
+                <div class="row justify-end">
+                    <div>
+                        <q-btn color="primary" @click="openKeyCharacterHeaderEditorPopup(0);" label="Add Heading" tabindex="0" />
+                    </div>
+                </div>
                 <template v-if="headingArr.length > 0">
                     <template v-for="header in headingArr">
                         <q-card>
