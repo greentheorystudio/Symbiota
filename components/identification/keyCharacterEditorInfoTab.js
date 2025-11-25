@@ -94,6 +94,7 @@ const keyCharacterEditorInfoTab = {
             updateCharacterData('chid', props.headingId);
             keyCharacterStore.createKeyCharacterRecord((newCharId) => {
                 if(newCharId > 0){
+                    keyCharacterStore.setCurrentKeyCharacterRecord(props.headingId, newCharId);
                     showNotification('positive','Character added successfully.');
                     context.emit('change:character');
                 }

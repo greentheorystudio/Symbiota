@@ -138,6 +138,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const keyCharacterHeadingStore = useKeyCharacterHeadingStore();
 
                     const characterData = Vue.computed(() => keyCharacterStore.getKeyCharacterArrData);
+                    const characterId = Vue.computed(() => keyCharacterStore.getKeyCharacterID);
                     const clientRoot = baseStore.getClientRoot;
                     const headingArr = Vue.computed(() => keyCharacterHeadingStore.getKeyCharacterHeadingArr);
                     const editCharacterId = Vue.ref(0);
@@ -145,6 +146,12 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const isEditor = Vue.ref(false);
                     const showKeyCharacterEditorPopup = Vue.ref(false);
                     const showKeyCharacterHeaderEditorPopup = Vue.ref(false);
+
+                    Vue.watch(characterId, () => {
+                        if(Number(characterId.value) > 0){
+                            editCharacterId.value = characterId.value;
+                        }
+                    });
 
                     function openKeyCharacterEditorPopup(headerid, characterid) {
                         editHeaderId.value = headerid;

@@ -85,9 +85,8 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
             })
             .then((res) => {
                 if(Number(res) > 0){
-                    this.keyCharacterId = Number(res);
-                    this.keyCharacterData['cid'] = Number(res);
-                    this.keyCharacterEditData['cid'] = Number(res);
+                    this.keyCharacterEditData['cid'] = res;
+                    this.keyCharacterArrData[this.keyCharacterEditData['chid']].push(this.keyCharacterEditData);
                 }
                 callback(Number(res));
             });
@@ -168,7 +167,7 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.keyCharacterDependenceArr = data[this.keyCharacterId.toString()];
+                this.keyCharacterDependenceArr = ((data && data.hasOwnProperty(this.keyCharacterId.toString())) ? data[this.keyCharacterId.toString()] : []);
             });
         },
         updateKeyCharacterEditData(key, value) {
