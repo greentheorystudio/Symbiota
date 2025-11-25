@@ -99,8 +99,10 @@ const keyCharacterStateEditorPopup = {
     },
     setup(props, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
+        const keyCharacterStore = useKeyCharacterStore();
         const keyCharacterStateStore = useKeyCharacterStateStore();
 
+        const characterId = Vue.computed(() => keyCharacterStore.getKeyCharacterID);
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
@@ -118,8 +120,8 @@ const keyCharacterStateEditorPopup = {
             updateStateData('cid', props.characterId);
             keyCharacterStateStore.createKeyCharacterStateRecord((newStateId) => {
                 if(newStateId > 0){
+                    keyCharacterStateStore.setKeyCharacterStateArr(characterId.value);
                     showNotification('positive','Character state added successfully.');
-                    context.emit('change:state');
                     context.emit('close:popup');
                 }
                 else{
@@ -139,8 +141,8 @@ const keyCharacterStateEditorPopup = {
                     keyCharacterStateStore.deleteKeyCharacterStateRecord((res) => {
                         if(res === 1){
                             showNotification('positive','Character state has been deleted.');
-                            context.emit('change:state');
                             context.emit('close:popup');
+                            keyCharacterStateStore.setKeyCharacterStateArr(characterId.value);
                         }
                         else{
                             showNotification('negative', 'There was an error deleting the character state.');
@@ -176,7 +178,6 @@ const keyCharacterStateEditorPopup = {
             updateStateData('cid', selectedCharacterId.value);
             if(keyCharacterStateStore.getKeyCharacterStateEditsExist){
                 saveStateEdits();
-                context.emit('change:state');
             }
         }
 
@@ -185,8 +186,8 @@ const keyCharacterStateEditorPopup = {
             keyCharacterStateStore.updateKeyCharacterStateRecord((res) => {
                 hideWorking();
                 if(res === 1){
+                    keyCharacterStateStore.setKeyCharacterStateArr(characterId.value);
                     showNotification('positive','Edits saved.');
-                    context.emit('change:state');
                 }
                 else{
                     showNotification('negative', 'There was an error saving the character state edits.');

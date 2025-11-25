@@ -54,7 +54,6 @@ const keyCharacterEditorPopup = {
                 :character-id="characterId"
                 :state-id="editCharacterStateId"
                 :show-popup="showKeyCharacterStateEditorPopup"
-                @change:state="emitChange"
                 @close:popup="showKeyCharacterStateEditorPopup = false"
             ></key-character-state-editor-popup>
         </template>
