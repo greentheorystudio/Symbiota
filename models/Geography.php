@@ -19,7 +19,7 @@ class Geography {
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT countryid, countryname FROM lkupcountry ';
-        $sql .= 'WHERE countryname LIKE "'.SanitizerService::cleanInStr($this->conn,$queryString).'%" ';
+        $sql .= 'WHERE countryname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();

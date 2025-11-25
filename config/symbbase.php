@@ -37,7 +37,6 @@ $GLOBALS['PUBLIC_CHECKLIST'] = (
     array_key_exists('CollEditor',$GLOBALS['USER_RIGHTS']) ||
     array_key_exists('CollTaxon',$GLOBALS['USER_RIGHTS']) ||
     array_key_exists('KeyAdmin',$GLOBALS['USER_RIGHTS']) ||
-    array_key_exists('KeyEditor',$GLOBALS['USER_RIGHTS']) ||
     array_key_exists('TaxonProfile',$GLOBALS['USER_RIGHTS']) ||
     array_key_exists('Taxonomy',$GLOBALS['USER_RIGHTS']) ||
     array_key_exists('PublicChecklist',$GLOBALS['USER_RIGHTS'])

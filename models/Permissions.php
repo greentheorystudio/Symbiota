@@ -10,7 +10,6 @@ PublicChecklist		Can create public checklists and biotic inventory projects
 RareSppAdmin		Add or remove species from rare species list
 RareSppReadAll		View and map rare species collection data for all collections
 KeyAdmin			Edit identification key characters and character states
-KeyEditor			Edit identification key data
 TaxonProfile		Modify decriptions; add images;
 Taxonomy			Add names; edit name; change taxonomy
 */
@@ -249,7 +248,7 @@ class Permissions{
     {
         $returnArr = array();
         foreach($permissionArr as $permission){
-            if(in_array($permission['role'], array('SuperAdmin', 'PublicChecklist', 'RareSppAdmin', 'RareSppReadAll', 'KeyAdmin', 'KeyEditor', 'TaxonProfile', 'Taxonomy'))){
+            if(in_array($permission['role'], array('SuperAdmin', 'PublicChecklist', 'RareSppAdmin', 'RareSppReadAll', 'KeyAdmin', 'TaxonProfile', 'Taxonomy'))){
                 if($GLOBALS['IS_ADMIN']){
                     $returnArr[] = $permission;
                 }

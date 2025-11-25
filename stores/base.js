@@ -6,6 +6,7 @@ const useBaseStore = Pinia.defineStore('base', {
         clientRoot: CLIENT_ROOT,
         defaultCollectionCategoryId: DEFAULT_COLLECTION_CATEGORY_ID,
         defaultLanguage: DEFAULT_LANG,
+        defaultLanguageData: DEFAULT_LANG_DATA,
         defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
         glossaryModuleIsActive: GLOSSARY_MOD_IS_ACTIVE,
@@ -54,6 +55,12 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getDefaultLanguage(state) {
             return state.defaultLanguage;
+        },
+        getDefaultLanguageId(state) {
+            return state.defaultLanguageData.hasOwnProperty('id') ? state.defaultLanguageData['id'] : null;
+        },
+        getDefaultLanguageName(state) {
+            return state.defaultLanguageData.hasOwnProperty('name') ? state.defaultLanguageData['name'] : null;
         },
         getDefaultTitle(state) {
             return state.defaultTitle;

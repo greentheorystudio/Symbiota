@@ -1,5 +1,6 @@
 const useMediaStore = Pinia.defineStore('media', {
     state: () => ({
+        baseStore: useBaseStore(),
         blankMediaRecord: {
             mediaid: 0,
             tid: null,
@@ -126,6 +127,11 @@ const useMediaStore = Pinia.defineStore('media', {
             this.clearMediaData();
             if(this.mediaId > 0){
                 this.setMediaData();
+            }
+            else{
+                this.mediaData = Object.assign({}, this.blankMediaRecord);
+                this.mediaData['language'] = this.baseStore.getDefaultLanguageName;
+                this.mediaEditData = Object.assign({}, this.mediaData);
             }
         },
         setMediaArr(property, value) {
