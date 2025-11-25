@@ -103,6 +103,9 @@ const useKeyCharacterStore = Pinia.defineStore('key-character', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
+                if(Number(res) > 0){
+                    this.setKeyCharacterDependenceArr();
+                }
                 callback(Number(res));
             });
         },

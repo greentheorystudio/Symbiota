@@ -85,6 +85,9 @@ const keyCharacterEditorDependenceTab = {
         function addDependency() {
             keyCharacterStore.addCharacterDependencyRecord(selectedCharacterId.value, selectedCharacterState.value, (newDepId) => {
                 if(newDepId > 0){
+                    selectedCharacterId.value = null;
+                    selectedCharacterName.value = null;
+                    selectedCharacterState.value = null;
                     showNotification('positive','Dependence added successfully.');
                 }
                 else{
