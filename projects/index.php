@@ -18,9 +18,6 @@ header('X-Frame-Options: SAMEORIGIN');
             div.q-menu.q-position-engine {
                 z-index: 100000000000;
             }
-            div.q-tooltip.q-position-engine {
-                z-index: 9998!important;
-            }
         </style>
     </head>
     <body>

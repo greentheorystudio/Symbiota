@@ -27,6 +27,20 @@ class KeyCharacters{
         $this->conn->close();
 	}
 
+    public function addCharacterDependencyRecord($cid, $dcid, $dcsid): int
+    {
+        $newID = 0;
+        if($cid && $dcid){
+            $sql = 'INSERT INTO keycharacterdependence(cid, dcid, dcsid) '.
+                'VALUES (' . (int)$cid . ', ' . (int)$dcid . ', ' . ((int)$dcsid > 0 ? (int)$dcsid : 'NULL') . ') ';
+            //echo "<div>".$sql."</div>";
+            if($this->conn->query($sql)){
+                $newID = $this->conn->insert_id;
+            }
+        }
+        return $newID;
+    }
+
     public function createKeyCharacterRecord($data): int
     {
         $newID = 0;
@@ -49,29 +63,77 @@ class KeyCharacters{
         return $newID;
     }
 
-    public function deleteKeyCharacterRecord($cid): int
+    public function deleteKeyCharacterDependencyRecord($cdid): int
     {
-        $retVal = 1;
-        $sql = 'DELETE FROM keycharacters WHERE cid = ' . (int)$cid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        $retVal = 0;
+        $sql = 'DELETE FROM keycharacterdependence WHERE cdid = ' . (int)$cdid . ' ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
         }
         return $retVal;
     }
 
-    public function getCharacterDependencies($cidArr): array
+    public function deleteKeyCharacterRecord($cid): int
+    {
+        $retVal = 0;
+        $sql = 'DELETE FROM keycharacterdependence WHERE cid = ' . (int)$cid . ' OR dcid = ' . (int)$cid . ' ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE FROM keycharacterstatetaxalink WHERE cid = ' . (int)$cid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        if($retVal){
+            $sql = 'DELETE FROM keycharacters WHERE cid = ' . (int)$cid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        return $retVal;
+    }
+
+    public function getAutocompleteCharacterList($queryString): array
     {
         $retArr = array();
-        $sql = 'SELECT cid, dcid, dcsid '.
-            'FROM keycharacterdependence WHERE cid IN(' . implode(',', $cidArr) . ') ';
+        $sql = 'SELECT DISTINCT cid, chid, charactername, `language` FROM keycharacters ';
+        $sql .= 'WHERE charactername LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ORDER BY charactername ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['cid'] = $row['cid'];
+                $dataArr['chid'] = $row['chid'];
+                $dataArr['charactername'] = $row['charactername'];
+                $dataArr['language'] = $row['language'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getCharacterDependencies($cid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT cd.cdid, cd.cid, cd.dcid, cd.dcsid, c.charactername, cs.characterstatename '.
+            'FROM keycharacterdependence AS cd LEFT JOIN keycharacters AS c ON cd.dcid = c.cid '.
+            'LEFT JOIN keycharacterstates AS cs ON cd.dcsid = cs.csid '.
+            'WHERE cd.cid IN(' . (is_array($cid) ? implode(',', $cid) : $cid) . ') ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
                 $nodeArr = array();
+                $nodeArr['cdid'] = $row['cdid'];
                 $nodeArr['cid'] = $row['dcid'];
                 $nodeArr['csid'] = $row['dcsid'];
+                $nodeArr['charactername'] = $row['charactername'];
+                $nodeArr['characterstatename'] = $row['characterstatename'];
                 $retArr[$row['cid']][] = $nodeArr;
                 unset($rows[$index]);
             }
@@ -100,7 +162,46 @@ class KeyCharacters{
         return $retArr;
     }
 
-    public function getKeyCharactersArr($cidArr, $includeFullKeyData = false): array
+    public function getKeyCharactersArrByChidArr($chidArr): array
+    {
+        $retArr = array();
+        $cidArr = array();
+        $tempArr = array();
+        if(count($chidArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM keycharacters WHERE chid IN(' . implode(',', $chidArr) . ') '.
+                'ORDER BY chid, sortsequence, charactername ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $cidArr[] = $row['cid'];
+                    if(!array_key_exists($row['cid'], $tempArr)){
+                        $tempArr[$row['cid']] = array();
+                    }
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $tempArr[$row['cid']][$name] = $row[$name];
+                    }
+                    unset($rows[$index]);
+                }
+                $depArr = $this->getCharacterDependencies($cidArr);
+                foreach($tempArr as $cid => $cArr){
+                    $cArr['dependencies'] = array_key_exists($cid, $depArr) ? $depArr[$cid] : array();
+                    if(!array_key_exists($cArr['chid'], $retArr)){
+                        $retArr[$cArr['chid']] = array();
+                    }
+                    $retArr[$cArr['chid']][] = $cArr;
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getKeyCharactersArrByCidArr($cidArr, $includeFullKeyData = false): array
     {
         $retArr = array();
         $chidArr = array();
@@ -138,7 +239,7 @@ class KeyCharacters{
                     $retArr['characters'][] = $cArr;
                 }
                 if($includeFullKeyData){
-                    $retArr['character-headings'] = (new KeyCharacterHeadings)->getKeyCharacterHeadingsArr($chidArr);
+                    $retArr['character-headings'] = (new KeyCharacterHeadings)->getKeyCharacterHeadingsArrByChidArr($chidArr);
                 }
             }
         }

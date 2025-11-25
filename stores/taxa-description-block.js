@@ -1,5 +1,6 @@
 const useTaxaDescriptionBlockStore = Pinia.defineStore('taxa-description-block', {
     state: () => ({
+        baseStore: useBaseStore(),
         blankTaxaDescriptionBlockRecord: {
             tdbid: 0,
             tid: null,
@@ -87,6 +88,8 @@ const useTaxaDescriptionBlockStore = Pinia.defineStore('taxa-description-block',
             }
             else{
                 this.taxaDescriptionBlockData = Object.assign({}, this.blankTaxaDescriptionBlockRecord);
+                this.taxaDescriptionBlockData['language'] = this.baseStore.getDefaultLanguageName;
+                this.taxaDescriptionBlockData['langid'] = this.baseStore.getDefaultLanguageId;
             }
             this.taxaDescriptionBlockEditData = Object.assign({}, this.taxaDescriptionBlockData);
         },

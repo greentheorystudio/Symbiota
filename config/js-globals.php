@@ -5,6 +5,7 @@
     const CLIENT_ROOT = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>';
     const DEFAULT_COLLECTION_CATEGORY_ID = '<?php echo $GLOBALS['DEFAULTCATID']; ?>';
     const DEFAULT_LANG = '<?php echo $GLOBALS['DEFAULT_LANG']; ?>';
+    const DEFAULT_LANG_DATA = JSON.parse('<?php echo json_encode($GLOBALS['DEFAULT_LANG_JSON']); ?>');
     const DEFAULT_TITLE = '<?php echo $GLOBALS['DEFAULT_TITLE']; ?>';
     const EMAIL_CONFIGURED = <?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>;
     const GLOSSARY_MOD_IS_ACTIVE = <?php echo ($GLOBALS['GLOSSARY_MOD_IS_ACTIVE'] ? 'true' : 'false'); ?>;
