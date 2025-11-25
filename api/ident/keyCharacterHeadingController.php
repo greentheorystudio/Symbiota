@@ -7,16 +7,17 @@ $action = array_key_exists('action',$_REQUEST) ? $_REQUEST['action'] : '';
 $chid = array_key_exists('chid',$_REQUEST) ? (int)$_REQUEST['chid'] : 0;
 
 $isEditor = false;
-if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyEditor', $GLOBALS['USER_RIGHTS'])){
+if($GLOBALS['IS_ADMIN'] || array_key_exists('KeyAdmin', $GLOBALS['USER_RIGHTS'])){
     $isEditor = true;
 }
 
 if($action && SanitizerService::validateInternalRequest()){
     $keyCharacterHeadings = new KeyCharacterHeadings();
-    if($action === 'getTaxaKeyCharacterHeadings' && array_key_exists('chidArr', $_POST)){
-        echo json_encode($keyCharacterHeadings->getTaxaKeyCharacterHeadings(json_decode($_POST['chidArr'], false)));
+    if($action === 'getKeyCharacterHeadingsArr'){
+        $language = $_POST['language'] ?? null;
+        echo json_encode($keyCharacterHeadings->getKeyCharacterHeadingsArr($language));
     }
-    elseif($action === 'createKeyCharacterHeadingRecord' && $isEditor){
+    elseif($action === 'createKeyCharacterHeadingRecord' && $isEditor && array_key_exists('heading', $_POST)){
         echo $keyCharacterHeadings->createKeyCharacterHeadingRecord(json_decode($_POST['heading'], true));
     }
     elseif($action === 'updateKeyCharacterHeadingRecord' && $chid && $isEditor && array_key_exists('headingData', $_POST)){
@@ -27,5 +28,8 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'deleteKeyCharacterHeadingRecord' && $chid && $isEditor){
         echo $keyCharacterHeadings->deleteKeyCharacterHeadingRecord($chid);
+    }
+    elseif($action === 'getAutocompleteHeadingList'){
+        echo json_encode($keyCharacterHeadings->getAutocompleteHeadingList($_POST['term']));
     }
 }
