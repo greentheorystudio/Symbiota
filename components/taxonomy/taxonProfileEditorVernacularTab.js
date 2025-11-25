@@ -33,7 +33,7 @@ const taxonProfileEditorVernacularTab = {
             </template>
             <template v-else>
                 <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                <div class="q-pa-md row justify-center text-h6 text-bold">
+                <div class="q-pa-md row justify-center text-subtitle1 text-bold">
                     There are no common names for this taxon yet, click the Add Description Block button above to add the first one
                 </div>
             </template>

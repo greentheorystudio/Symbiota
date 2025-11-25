@@ -1,5 +1,6 @@
 const useTaxaVernacularStore = Pinia.defineStore('taxa-vernacular', {
     state: () => ({
+        baseStore: useBaseStore(),
         blankTaxaVernacularRecord: {
             vid: 0,
             tid: null,
@@ -84,6 +85,8 @@ const useTaxaVernacularStore = Pinia.defineStore('taxa-vernacular', {
             }
             else{
                 this.taxaVernacularData = Object.assign({}, this.blankTaxaVernacularRecord);
+                this.taxaVernacularData['language'] = this.baseStore.getDefaultLanguageName;
+                this.taxaVernacularData['langid'] = this.baseStore.getDefaultLanguageId;
             }
             this.taxaVernacularEditData = Object.assign({}, this.taxaVernacularData);
         },

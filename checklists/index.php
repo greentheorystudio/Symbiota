@@ -20,9 +20,6 @@ header('X-Frame-Options: SAMEORIGIN');
             div.q-menu.q-position-engine {
                 z-index: 100000000000;
             }
-            div.q-tooltip.q-position-engine {
-                z-index: 9998!important;
-            }
         </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>

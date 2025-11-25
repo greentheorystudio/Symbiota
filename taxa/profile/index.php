@@ -24,9 +24,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
             div.q-menu.q-position-engine {
                 z-index: 9998!important;
             }
-            div.q-tooltip.q-position-engine {
-                z-index: 9998!important;
-            }
         </style>
         <script type="text/javascript">
             const TID = <?php echo $tId; ?>;

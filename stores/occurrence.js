@@ -1,5 +1,6 @@
 const useOccurrenceStore = Pinia.defineStore('occurrence', {
     state: () => ({
+        baseStore: useBaseStore(),
         basisOfRecordOptions: [
             {value: 'PreservedSpecimen', label: 'Preserved Specimen'},
             {value: 'HumanObservation', label: 'Observation'},
@@ -933,6 +934,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 else if(this.entryFollowUpAction === 'newrecordevent'){
                     this.transferEditCollectingEventDataToOccurrenceData();
                 }
+                this.occurrenceData['language'] = this.baseStore.getDefaultLanguageName;
                 this.occurrenceEditData = Object.assign({}, this.occurrenceData);
                 if(this.getLocationID > 0){
                     this.mergeLocationOccurrenceData();

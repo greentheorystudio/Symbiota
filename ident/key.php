@@ -596,7 +596,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         const formData = new FormData();
                         formData.append('csidArr', JSON.stringify(csidArr.value));
                         formData.append('includeFullKeyData', '1');
-                        formData.append('action', 'getKeyCharacterStatesArr');
+                        formData.append('action', 'getKeyCharacterStatesArrFromCsidArr');
                         fetch(keyCharacterStateApiUrl, {
                             method: 'POST',
                             body: formData
