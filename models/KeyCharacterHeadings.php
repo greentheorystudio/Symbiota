@@ -55,6 +55,26 @@ class KeyCharacterHeadings{
         return $retVal;
     }
 
+    public function getAutocompleteHeadingList($queryString): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT chid, headingname, `language` FROM keycharacterheadings ';
+        $sql .= 'WHERE headingname LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ORDER BY headingname ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['chid'] = $row['chid'];
+                $dataArr['headingname'] = $row['headingname'];
+                $dataArr['language'] = $row['language'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getKeyCharacterHeadingData($chid): array
     {
         $retArr = array();
@@ -76,7 +96,33 @@ class KeyCharacterHeadings{
         return $retArr;
     }
 
-    public function getKeyCharacterHeadingsArr($chidArr): array
+    public function getKeyCharacterHeadingsArr($language = null): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM keycharacterheadings ';
+        if($language){
+            $sql .= 'WHERE language  = "' . SanitizerService::cleanInStr($this->conn, $language) . '" ';
+        }
+        $sql .= 'ORDER BY sortsequence, headingname ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getKeyCharacterHeadingsArrByChidArr($chidArr): array
     {
         $retArr = array();
         if(count($chidArr) > 0){

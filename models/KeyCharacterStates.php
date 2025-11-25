@@ -51,10 +51,22 @@ class KeyCharacterStates{
 
     public function deleteKeyCharacterStateRecord($csid): int
     {
-        $retVal = 1;
-        $sql = 'DELETE FROM keycharacterstates WHERE csid = ' . (int)$csid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        $retVal = 0;
+        $sql = 'DELETE FROM keycharacterdependence WHERE dcsid = ' . (int)$csid . ' ';
+        if($this->conn->query($sql)){
+            $retVal = 1;
+        }
+        if($retVal){
+            $sql = 'DELETE FROM keycharacterstatetaxalink WHERE csid = ' . (int)$csid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+        }
+        if($retVal){
+            $sql = 'DELETE FROM keycharacterstates WHERE csid = ' . (int)$csid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
         }
         return $retVal;
     }
@@ -138,7 +150,34 @@ class KeyCharacterStates{
         return $retArr;
     }
 
-    public function getKeyCharacterStatesArr($csidArr, $includeFullKeyData = false): array
+    public function getKeyCharacterStatesArrFromCid($cid): array
+    {
+        $retArr = array();
+        if($cid){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
+                'FROM keycharacterstates WHERE cid = ' . (int)$cid . ' '.
+                'ORDER BY sortsequence, characterstatename ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    $retArr[] = $nodeArr;
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getKeyCharacterStatesArrFromCsidArr($csidArr, $includeFullKeyData = false): array
     {
         $retArr = array();
         $cidArr = array();
@@ -165,7 +204,7 @@ class KeyCharacterStates{
                     unset($rows[$index]);
                 }
                 if($includeFullKeyData){
-                    $keyDataArr = (new KeyCharacters)->getKeyCharactersArr($cidArr, $includeFullKeyData);
+                    $keyDataArr = (new KeyCharacters)->getKeyCharactersArrByCidArr($cidArr, $includeFullKeyData);
                     $retArr['characters'] = $keyDataArr['characters'];
                     $retArr['character-headings'] = $keyDataArr['character-headings'];
                 }

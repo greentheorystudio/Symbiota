@@ -1279,3 +1279,6 @@ div.tutorial-bottom-nav-container{
 .tutorial-content .subheader {
 	font-size: 25px;
 }
+div.q-tooltip.q-position-engine {
+	z-index: 9998!important;
+}

@@ -10,11 +10,11 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getAutocompleteCountryList'){
         echo json_encode($geoManager->getAutocompleteCountryList($_POST['term']));
     }
-    else if($action === 'getAutocompleteStateProvinceList'){
+    elseif($action === 'getAutocompleteStateProvinceList'){
         $country = $_POST['country'] ?? null;
         echo json_encode($geoManager->getAutocompleteStateProvinceList($_POST['term'], $country));
     }
-    else if($action === 'getAutocompleteCountyList'){
+    elseif($action === 'getAutocompleteCountyList'){
         $stateProvince = $_POST['stateprovince'] ?? null;
         echo json_encode($geoManager->getAutocompleteCountyList($_POST['term'], $stateProvince));
     }

@@ -85,7 +85,6 @@ const taxonFieldModule = {
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
-        'selector-input-element': selectorInputElement,
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'taxon-rank-selector': taxonRankSelector,
         'text-field-input-element': textFieldInputElement
