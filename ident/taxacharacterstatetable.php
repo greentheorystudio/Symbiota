@@ -71,7 +71,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="index" virtual-scroll v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="changeRecordPage">
+            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="name" virtual-scroll v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" :sort-method="processSort" @request="changeRecordPage">
                 <template v-slot:no-data>
                     <div class="fit row flex-center text-h6 text-bold">
                         <span v-if="Number(taxonomicGroupId) > 0">
@@ -117,6 +117,22 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-4">
                             <span class="text-subtitle1 text-bold">{{ col.label }}</span>
                         </q-th>
+                    </q-tr>
+                </template>
+                <template v-slot:body="props">
+                    <q-tr :props="props">
+                        <q-td key="sciname" :props="props">
+                            <a class="q-ml-sm cursor-pointer" title="Set taxonomic group" aria-label="Set taxonomic group" @click="setTaxon(props.row.tid);" tabindex="0">
+                                <span class="text-subtitle1 text-italic">{{ props.row.sciname }}</span>
+                            </a>
+                        </q-td>
+                        <template v-for="field in characterHeaderArr">
+                            <q-td :key="field.name" :props="props">
+                                <a class="q-ml-sm cursor-pointer" title="Edit character state" aria-label="Edit character state" @click="openTaxonCharacterStateEditorPopup(props.row.tid, field.name);" tabindex="0">
+                                    <span class="text-body1">{{ props.row[field.name] }}</span>
+                                </a>
+                            </q-td>
+                        </template>
                     </q-tr>
                 </template>
                 <template v-slot:pagination="scope">
@@ -169,8 +185,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                     label: (character['headingname'] + ' - ' + character['charactername']),
                                     field: character['cid'].toString(),
                                     align: 'center',
-                                    sortable: true,
-                                    sort: (a, b) => a.localeCompare(b)
+                                    sortable: true
                                 });
                             });
                         }
@@ -196,8 +211,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                     label: character['charactername'],
                                     field: character['cid'].toString(),
                                     align: 'center',
-                                    sortable: true,
-                                    sort: (a, b) => a.localeCompare(b)
+                                    sortable: true
                                 });
                             });
                         }
@@ -247,6 +261,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const perPageCnt = 100;
                     const recordsPageNumber = Vue.ref(1);
                     const showColumnTogglePopup = Vue.ref(false);
+                    const showTaxonCharacterStateEditorPopup = Vue.ref(false);
                     const tableRowArr = Vue.computed(() => {
                         const returnArr = [];
                         const startIndex = (recordsPageNumber.value - 1) * perPageCnt;
@@ -325,6 +340,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         }
                     }
 
+                    function openTaxonCharacterStateEditorPopup(tid, cid) {
+                        console.log(tid);
+                        console.log(cid);
+                    }
+
                     function processIncludeAllSubtaxaChange(value) {
                         clearTaxaData();
                         includeAllSubtaxa.value = (Number(value) === 1);
@@ -341,6 +361,12 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                 setDirectChildTaxaArr();
                             }
                         }
+                    }
+
+                    function processSort(rows, sortBy, descending) {
+                        console.log(rows);
+                        console.log(sortBy);
+                        console.log(descending);
                     }
 
                     function processTaxonomicGroupChange(taxonData) {
@@ -453,6 +479,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     }
 
                     function setTaxon(tid) {
+                        console.log(tid);
                         const formData = new FormData();
                         formData.append('tid', tid.toString());
                         formData.append('action', 'getTaxonFromTid');
@@ -491,6 +518,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         paginationLastPageNumber,
                         paginationLastRecordNumber,
                         showColumnTogglePopup,
+                        showTaxonCharacterStateEditorPopup,
                         tableRowArr,
                         tableStyle,
                         taxonomicGroupId,
@@ -498,7 +526,9 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         taxonomicGroupParentId,
                         visibleColumns,
                         changeRecordPage,
+                        openTaxonCharacterStateEditorPopup,
                         processIncludeAllSubtaxaChange,
+                        processSort,
                         processTaxonomicGroupChange,
                         setTaxon,
                         updateVisibleColumns
