@@ -28,8 +28,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
             .sticky-table th {
                 border-top: 2px solid black;
             }
-            .sticky-table tbody {
+            .sticky-table tbody, .sticky-table tr:first-child th {
                 border-bottom: 2px solid black;
+            }
+            .sticky-table tr th:first-child, .sticky-table tr td:first-child {
+                border-right: 2px solid black;
             }
             .sticky-table tr th {
                 position: sticky;
@@ -109,6 +112,13 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         </div>
                     </div>
                 </template>
+                <template v-slot:header="props">
+                    <q-tr :props="props">
+                        <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-4">
+                            <span class="text-subtitle1 text-bold">{{ col.label }}</span>
+                        </q-th>
+                    </q-tr>
+                </template>
                 <template v-slot:bottom>
                     Bottom
                 </template>
@@ -165,6 +175,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                 name: 'sciname',
                                 label: 'Scientific Name',
                                 field: 'sciname',
+                                align: 'left',
                                 sortable: true
                             }
                         ];
@@ -174,6 +185,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                     name: character['cid'].toString(),
                                     label: character['charactername'],
                                     field: character['cid'].toString(),
+                                    align: 'center',
                                     sortable: true
                                 });
                             });
@@ -376,7 +388,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         let styleStr = '';
                         styleStr += 'width: ' + window.innerWidth + 'px;';
                         if(taxaArr.value.length > 0){
-                            styleStr += 'height: ' + window.innerHeight + 'px;';
+                            styleStr += 'max-height: ' + window.innerHeight + 'px;';
                         }
                         else{
                             styleStr += 'height: 0;';
