@@ -68,7 +68,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="index" virtual-scroll v-model:pagination="pagination" :rows-per-page-options="[0]" separator="cell">
+            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="index" virtual-scroll v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell">
                 <template v-slot:no-data>
                     <div class="fit row flex-center text-h6 text-bold">
                         <span v-if="Number(taxonomicGroupId) > 0">
@@ -85,8 +85,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                             <span class="text-bold">Taxa Character State Management</span>
                         </div>
-                        <div class="full-width justify-between">
-                            <div class="row justify-start q-gutter-md">
+                        <div class="full-width row justify-between">
+                            <div class="col-10 row justify-start q-gutter-md">
                                 <div class="col-4">
                                     <single-scientific-common-name-auto-complete :sciname="taxonomicGroupName" label="Taxonomic Group" :limit-to-options="true" @update:sciname="processTaxonomicGroupChange"></single-scientific-common-name-auto-complete>
                                 </div>
@@ -101,6 +101,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                     <checkbox-input-element label="Include all subtaxa" :value="includeAllSubtaxa" @update:value="processIncludeAllSubtaxaChange"></checkbox-input-element>
                                 </div>
                             </div>
+                            <div class="col-2 row justify-end">
+                                <div v-if="columnHeaderArr.length > 0 && tableRowArr.length > 0">
+                                    <q-btn color="primary" @click="showColumnTogglePopup = true" label="Toggle Columns" tabindex="0" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -108,6 +113,15 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     Bottom
                 </template>
             </q-table>
+            <template v-if="showColumnTogglePopup">
+                <table-column-toggle-popup
+                    :field-arr="characterHeaderArr"
+                    :show-popup="showColumnTogglePopup"
+                    :visible-columns="visibleColumns"
+                    @update:visible-columns="updateVisibleColumns"
+                    @close:popup="showColumnTogglePopup = false"
+                ></table-column-toggle-popup>
+            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
@@ -115,17 +129,33 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/tableColumnTogglePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const taxaCharacterStateManagementModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
-                    'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
+                    'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
+                    'table-column-toggle-popup': tableColumnTogglePopup
                 },
                 setup() {
                     const { hideWorking, showWorking } = useCore();
                     const baseStore = useBaseStore();
 
                     const characterArr = Vue.ref([]);
+                    const characterHeaderArr = Vue.computed(() => {
+                        const returnArr = [];
+                        if(characterArr.value.length > 0){
+                            characterArr.value.forEach((character) => {
+                                returnArr.push({
+                                    name: character['cid'].toString(),
+                                    label: (character['headingname'] + ' - ' + character['charactername']),
+                                    field: character['cid'].toString(),
+                                    sortable: true
+                                });
+                            });
+                        }
+                        return returnArr;
+                    });
                     const characterStateData = Vue.ref({});
                     const characterStateLoadIndex = Vue.ref(1);
                     const clientRoot = baseStore.getClientRoot;
@@ -155,6 +185,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const pagination = Vue.ref({
                         rowsPerPage: 0
                     });
+                    const showColumnTogglePopup = Vue.ref(false);
                     const tableRowArr = Vue.computed(() => {
                         const returnArr = [];
                         taxaArr.value.forEach((taxon) => {
@@ -183,6 +214,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         });
                         return returnArr;
                     });
+                    const visibleColumns = Vue.ref([]);
 
                     function clearTaxaData() {
                         characterStateData.value = Object.assign({}, {});
@@ -297,6 +329,10 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         })
                         .then((resData) => {
                             characterArr.value = resData.slice();
+                            visibleColumns.value.push('sciname');
+                            characterArr.value.forEach((character) => {
+                                visibleColumns.value.push(character['cid'].toString());
+                            });
                         });
                     }
 
@@ -364,6 +400,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         });
                     }
 
+                    function updateVisibleColumns(value) {
+                        visibleColumns.value = value.slice();
+                        visibleColumns.value.push('sciname');
+                    }
+
                     Vue.onMounted(() => {
                         setEditor();
                         window.addEventListener('resize', setTableStyle);
@@ -372,19 +413,23 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     });
                     
                     return {
+                        characterHeaderArr,
                         clientRoot,
                         columnHeaderArr,
                         includeAllSubtaxa,
                         isEditor,
                         pagination,
+                        showColumnTogglePopup,
                         tableRowArr,
                         tableStyle,
                         taxonomicGroupId,
                         taxonomicGroupName,
                         taxonomicGroupParentId,
+                        visibleColumns,
                         processIncludeAllSubtaxaChange,
                         processTaxonomicGroupChange,
-                        setTaxon
+                        setTaxon,
+                        updateVisibleColumns
                     }
                 }
             });
