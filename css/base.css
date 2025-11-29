@@ -6,7 +6,7 @@ body{
 }
 body.full-window-mode{
     background-color: #FFFFFF;
-    padding: 15px;
+	margin: 0;
 }
 @media print {
 	body, #appContainer{

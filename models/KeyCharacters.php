@@ -116,6 +116,31 @@ class KeyCharacters{
         return $retArr;
     }
 
+    public function getCharacterArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'c');
+        $sql = 'SELECT h.headingname, ' . implode(',', $fieldNameArr) . ' '.
+            'FROM keycharacters AS c LEFT JOIN keycharacterheadings AS h ON c.chid = h.chid '.
+            'ORDER BY h.sortsequence, h.headingname, c.sortsequence, c.charactername ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getCharacterDependencies($cid): array
     {
         $retArr = array();

@@ -87,6 +87,9 @@ if($action && SanitizerService::validateInternalRequest()){
         $rankId = array_key_exists('rankid', $_POST) ? (int)$_POST['rankid'] : null;
         echo json_encode($taxa->getAcceptedTaxaByTaxonomicGroup((int)$_POST['parenttid'], (int)$_POST['index'], $rankId));
     }
+    elseif($action === 'getAcceptedChildTaxaByParentTid' && array_key_exists('parenttid', $_POST)){
+        echo json_encode($taxa->getAcceptedChildTaxaByParentTid((int)$_POST['parenttid']));
+    }
     elseif($action === 'evaluateTaxonForDeletion' && $tId){
         echo $taxa->evaluateTaxonForDeletion($tId);
     }
