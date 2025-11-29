@@ -85,12 +85,21 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                             <span class="text-bold">Taxa Character State Management</span>
                         </div>
-                        <div class="row justify-start q-gutter-md">
-                            <div class="col-4">
-                                <single-scientific-common-name-auto-complete :sciname="taxonomicGroupName" label="Taxonomic Group" :limit-to-options="true" @update:sciname="processTaxonomicGroupChange"></single-scientific-common-name-auto-complete>
-                            </div>
-                            <div>
-                                <checkbox-input-element label="Include all subtaxa" :value="includeAllSubtaxa" @update:value="processIncludeAllSubtaxaChange"></checkbox-input-element>
+                        <div class="full-width justify-between">
+                            <div class="row justify-start q-gutter-md">
+                                <div class="col-4">
+                                    <single-scientific-common-name-auto-complete :sciname="taxonomicGroupName" label="Taxonomic Group" :limit-to-options="true" @update:sciname="processTaxonomicGroupChange"></single-scientific-common-name-auto-complete>
+                                </div>
+                                <div v-if="Number(taxonomicGroupParentId) > 0" class="self-center">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="setTaxon(taxonomicGroupParentId);" icon="fas fa-level-up-alt" aria-label="Go to Parent" tabindex="0">
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Go to Parent
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                                <div class="self-center">
+                                    <checkbox-input-element label="Include all subtaxa" :value="includeAllSubtaxa" @update:value="processIncludeAllSubtaxaChange"></checkbox-input-element>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -166,6 +175,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const taxaLoadIndex = Vue.ref(1);
                     const taxonomicGroupId = Vue.ref(null);
                     const taxonomicGroupName = Vue.ref(null);
+                    const taxonomicGroupParentId = Vue.ref(null);
                     const tidArr = Vue.computed(() => {
                         const returnArr = [];
                         taxaArr.value.forEach((taxon) => {
@@ -235,14 +245,16 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
 
                     function processTaxonomicGroupChange(taxonData) {
                         clearTaxaData();
-                        if(taxonData){
+                        if(taxonData && taxonData.hasOwnProperty('tid') && Number(taxonData['tid']) > 0){
                             taxonomicGroupId.value = taxonData['tid'];
                             taxonomicGroupName.value = taxonData['sciname'];
+                            taxonomicGroupParentId.value = taxonData['parenttid'];
                             processSetTaxaArr();
                         }
                         else{
                             taxonomicGroupId.value = null;
                             taxonomicGroupName.value = null;
+                            taxonomicGroupParentId.value = null;
                             setTableStyle();
                         }
                     }
@@ -336,6 +348,22 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         tableStyle.value = styleStr;
                     }
 
+                    function setTaxon(tid) {
+                        const formData = new FormData();
+                        formData.append('tid', tid.toString());
+                        formData.append('action', 'getTaxonFromTid');
+                        fetch(taxaApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.json() : null;
+                        })
+                        .then((resData) => {
+                            processTaxonomicGroupChange(resData);
+                        });
+                    }
+
                     Vue.onMounted(() => {
                         setEditor();
                         window.addEventListener('resize', setTableStyle);
@@ -353,8 +381,10 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         tableStyle,
                         taxonomicGroupId,
                         taxonomicGroupName,
+                        taxonomicGroupParentId,
                         processIncludeAllSubtaxaChange,
-                        processTaxonomicGroupChange
+                        processTaxonomicGroupChange,
+                        setTaxon
                     }
                 }
             });
