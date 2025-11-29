@@ -69,6 +69,16 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
             <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="index" virtual-scroll v-model:pagination="pagination" :rows-per-page-options="[0]" separator="cell">
+                <template v-slot:no-data>
+                    <div class="fit row flex-center text-h6 text-bold">
+                        <span v-if="Number(taxonomicGroupId) > 0">
+                            That taxon does not have any accepted subtaxa to display
+                        </span>
+                        <span v-else>
+                            Please enter a taxon name in the Taxonomic Group field above to load data
+                        </span>
+                    </div>
+                </template>
                 <template v-slot:top>
                     <div class="full-width column q-gutter-sm">
                         <div class="q-mb-sm">
@@ -200,6 +210,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             });
                         }
                         else{
+                            setTableStyle();
                             hideWorking();
                         }
                     }
@@ -232,6 +243,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         else{
                             taxonomicGroupId.value = null;
                             taxonomicGroupName.value = null;
+                            setTableStyle();
                         }
                     }
 
@@ -313,7 +325,15 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     }
 
                     function setTableStyle() {
-                        tableStyle.value = 'width: ' + window.innerWidth + 'px; height: ' + window.innerHeight + 'px;';
+                        let styleStr = '';
+                        styleStr += 'width: ' + window.innerWidth + 'px;';
+                        if(taxaArr.value.length > 0){
+                            styleStr += 'height: ' + window.innerHeight + 'px;';
+                        }
+                        else{
+                            styleStr += 'height: 0;';
+                        }
+                        tableStyle.value = styleStr;
                     }
 
                     Vue.onMounted(() => {
@@ -331,6 +351,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         pagination,
                         tableRowArr,
                         tableStyle,
+                        taxonomicGroupId,
                         taxonomicGroupName,
                         processIncludeAllSubtaxaChange,
                         processTaxonomicGroupChange
