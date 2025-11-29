@@ -28,8 +28,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
             .sticky-table th {
                 border-top: 2px solid black;
             }
-            .sticky-table tbody, .sticky-table tr:first-child th {
-                border-bottom: 2px solid black;
+            .sticky-table tr:first-child th, .sticky-table tr:last-child td {
+                border-bottom: 1px solid black;
             }
             .sticky-table tr th:first-child, .sticky-table tr td:first-child {
                 border-right: 2px solid black;
@@ -71,7 +71,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="index" virtual-scroll v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell">
+            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="index" virtual-scroll v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="changeRecordPage">
                 <template v-slot:no-data>
                     <div class="fit row flex-center text-h6 text-bold">
                         <span v-if="Number(taxonomicGroupId) > 0">
@@ -119,8 +119,16 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         </q-th>
                     </q-tr>
                 </template>
-                <template v-slot:bottom>
-                    Bottom
+                <template v-slot:pagination="scope">
+                    <div class="text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+
+                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
+
+                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
+
+                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
+
+                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
                 </template>
             </q-table>
             <template v-if="showColumnTogglePopup">
@@ -160,7 +168,9 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                     name: character['cid'].toString(),
                                     label: (character['headingname'] + ' - ' + character['charactername']),
                                     field: character['cid'].toString(),
-                                    sortable: true
+                                    align: 'center',
+                                    sortable: true,
+                                    sort: (a, b) => a.localeCompare(b)
                                 });
                             });
                         }
@@ -186,7 +196,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                     label: character['charactername'],
                                     field: character['cid'].toString(),
                                     align: 'center',
-                                    sortable: true
+                                    sortable: true,
+                                    sort: (a, b) => a.localeCompare(b)
                                 });
                             });
                         }
@@ -194,13 +205,53 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     });
                     const includeAllSubtaxa = Vue.ref(false);
                     const isEditor = Vue.ref(false);
-                    const pagination = Vue.ref({
-                        rowsPerPage: 0
+                    const pagination = Vue.computed(() => {
+                        return {
+                            page: recordsPageNumber.value,
+                            lastPage: paginationLastPageNumber.value,
+                            rowsPerPage: perPageCnt,
+                            firstRowNumber: paginationFirstRecordNumber.value,
+                            lastRowNumber: paginationLastRecordNumber.value,
+                            rowsNumber: taxaArr.value.length
+                        };
                     });
+                    const paginationFirstRecordNumber = Vue.computed(() => {
+                        let recordNumber = 1;
+                        if(Number(recordsPageNumber.value) > 1){
+                            recordNumber += ((Number(recordsPageNumber.value) - 1) * Number(perPageCnt));
+                        }
+                        return recordNumber;
+                    });
+                    const paginationLastPageNumber = Vue.computed(() => {
+                        let lastPage = 1;
+                        if(taxaArr.value.length > Number(perPageCnt)){
+                            lastPage = Math.floor(taxaArr.value.length / Number(perPageCnt));
+                        }
+                        if(taxaArr.value.length % Number(perPageCnt)){
+                            lastPage++;
+                        }
+                        return lastPage;
+                    });
+                    const paginationLastRecordNumber = Vue.computed(() => {
+                        let recordNumber = (taxaArr.value.length > Number(perPageCnt)) ? Number(perPageCnt) : taxaArr.value.length;
+                        if(taxaArr.value.length > Number(perPageCnt) && Number(recordsPageNumber.value) > 1){
+                            if(Number(recordsPageNumber.value) === Number(paginationLastPageNumber.value)){
+                                recordNumber = (taxaArr.value.length % Number(perPageCnt)) + ((Number(recordsPageNumber.value) - 1) * Number(perPageCnt));
+                            }
+                            else{
+                                recordNumber = Number(recordsPageNumber.value) * Number(perPageCnt);
+                            }
+                        }
+                        return recordNumber;
+                    });
+                    const perPageCnt = 100;
+                    const recordsPageNumber = Vue.ref(1);
                     const showColumnTogglePopup = Vue.ref(false);
                     const tableRowArr = Vue.computed(() => {
                         const returnArr = [];
-                        taxaArr.value.forEach((taxon) => {
+                        const startIndex = (recordsPageNumber.value - 1) * perPageCnt;
+                        const currentTaxaArr = taxaArr.value.slice(startIndex, (startIndex + perPageCnt));
+                        currentTaxaArr.forEach((taxon) => {
                             const charStateData = characterStateData.value.hasOwnProperty(taxon['tid'].toString()) ? characterStateData.value[taxon['tid'].toString()] : {};
                             const rowData = {
                                 tid: taxon['tid'],
@@ -228,6 +279,10 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     });
                     const visibleColumns = Vue.ref([]);
 
+                    function changeRecordPage(props) {
+                        recordsPageNumber.value = props.pagination.page;
+                    }
+
                     function clearTaxaData() {
                         characterStateData.value = Object.assign({}, {});
                         characterStateLoadIndex.value = 1;
@@ -245,7 +300,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
 
                     function loadCharacterStateData() {
                         const loadingCnt = 200;
-                        const currentTidArr = tidArr.value.length > 0 ? tidArr.value.slice((characterStateLoadIndex.value - 1), loadingCnt) : [];
+                        const startIndex = (characterStateLoadIndex.value - 1) * loadingCnt;
+                        const currentTidArr = tidArr.value.length > 0 ? tidArr.value.slice(startIndex, (startIndex + loadingCnt)) : [];
                         if(currentTidArr.length > 0){
                             const formData = new FormData();
                             formData.append('tidArr', JSON.stringify(currentTidArr));
@@ -431,6 +487,9 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         includeAllSubtaxa,
                         isEditor,
                         pagination,
+                        paginationFirstRecordNumber,
+                        paginationLastPageNumber,
+                        paginationLastRecordNumber,
                         showColumnTogglePopup,
                         tableRowArr,
                         tableStyle,
@@ -438,6 +497,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         taxonomicGroupName,
                         taxonomicGroupParentId,
                         visibleColumns,
+                        changeRecordPage,
                         processIncludeAllSubtaxaChange,
                         processTaxonomicGroupChange,
                         setTaxon,
