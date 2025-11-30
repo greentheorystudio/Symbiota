@@ -71,7 +71,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="tid" virtual-scroll v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" :sort-method="processSort" @request="changeRecordPage">
+            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="tid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" :sort-method="processSort" @request="changeRecordPage">
                 <template v-slot:no-data>
                     <div class="fit row flex-center text-h6 text-bold">
                         <span v-if="Number(taxonomicGroupId) > 0">
