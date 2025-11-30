@@ -28,9 +28,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
             .sticky-table th {
                 border-top: 2px solid black;
             }
-            .sticky-table tr:first-child th, .sticky-table tr:last-child td {
-                border-bottom: 1px solid black;
-            }
             .sticky-table tr th:first-child, .sticky-table tr td:first-child {
                 border-right: 2px solid black;
             }
