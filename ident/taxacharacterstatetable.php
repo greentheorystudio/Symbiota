@@ -71,7 +71,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="tid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" :sort-method="processSort" @request="changeRecordPage">
+            <q-table class="sticky-table" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="tid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="changeRecordPage">
                 <template v-slot:no-data>
                     <div class="fit row flex-center text-h6 text-bold">
                         <span v-if="Number(taxonomicGroupId) > 0">
@@ -221,6 +221,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const isEditor = Vue.ref(false);
                     const pagination = Vue.computed(() => {
                         return {
+                            sortBy: sortField.value,
+                            descending: sortDescending.value,
                             page: recordsPageNumber.value,
                             lastPage: paginationLastPageNumber.value,
                             rowsPerPage: perPageCnt,
@@ -262,11 +264,10 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const recordsPageNumber = Vue.ref(1);
                     const showColumnTogglePopup = Vue.ref(false);
                     const showTaxonCharacterStateEditorPopup = Vue.ref(false);
-                    const tableRowArr = Vue.computed(() => {
+                    const sortDescending = Vue.ref(false);
+                    const sortedTaxaArr = Vue.computed(() => {
                         const returnArr = [];
-                        const startIndex = (recordsPageNumber.value - 1) * perPageCnt;
-                        const currentTaxaArr = taxaArr.value.slice(startIndex, (startIndex + perPageCnt));
-                        currentTaxaArr.forEach((taxon) => {
+                        taxaArr.value.forEach((taxon) => {
                             const charStateData = characterStateData.value.hasOwnProperty(taxon['tid'].toString()) ? characterStateData.value[taxon['tid'].toString()] : {};
                             const rowData = {
                                 tid: taxon['tid'],
@@ -277,7 +278,20 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             });
                             returnArr.push(rowData);
                         });
+                        returnArr.sort((a, b) => {
+                            if(sortDescending.value){
+                                return b[sortField.value].toLowerCase().localeCompare(a[sortField.value].toLowerCase());
+                            }
+                            else{
+                                return a[sortField.value].toLowerCase().localeCompare(b[sortField.value].toLowerCase());
+                            }
+                        });
                         return returnArr;
+                    });
+                    const sortField = Vue.ref('sciname');
+                    const tableRowArr = Vue.computed(() => {
+                        const startIndex = (recordsPageNumber.value - 1) * perPageCnt;
+                        return sortedTaxaArr.value.slice(startIndex, (startIndex + perPageCnt));
                     });
                     const tableStyle = Vue.ref('');
                     const taxaArr = Vue.ref([]);
@@ -295,7 +309,13 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     const visibleColumns = Vue.ref([]);
 
                     function changeRecordPage(props) {
-                        recordsPageNumber.value = props.pagination.page;
+                        if(Number(recordsPageNumber.value) !== Number(props.pagination.page)){
+                            recordsPageNumber.value = props.pagination.page;
+                        }
+                        else{
+                            sortDescending.value = !sortDescending.value;
+                            sortField.value = props.pagination.sortBy;
+                        }
                     }
 
                     function clearTaxaData() {
@@ -361,12 +381,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                 setDirectChildTaxaArr();
                             }
                         }
-                    }
-
-                    function processSort(rows, sortBy, descending) {
-                        console.log(rows);
-                        console.log(sortBy);
-                        console.log(descending);
                     }
 
                     function processTaxonomicGroupChange(taxonData) {
@@ -528,7 +542,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         changeRecordPage,
                         openTaxonCharacterStateEditorPopup,
                         processIncludeAllSubtaxaChange,
-                        processSort,
                         processTaxonomicGroupChange,
                         setTaxon,
                         updateVisibleColumns
