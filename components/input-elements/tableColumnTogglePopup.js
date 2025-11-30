@@ -56,7 +56,6 @@ const tableColumnTogglePopup = {
         function setContentStyle() {
             contentStyle.value = null;
             if(contentRef.value){
-                console.log('here');
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
         }
