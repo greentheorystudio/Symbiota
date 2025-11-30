@@ -22,7 +22,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .sticky-table td:first-child {
-                /* bg color is important for td; just specify one */
                 background-color: white;
             }
             .sticky-table th, .sticky-table div.q-table__bottom {
@@ -33,15 +32,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
             }
             .sticky-table tr th {
                 position: sticky;
-                /* higher than z-index for td below */
                 z-index: 2;
-                /* bg color is important; just specify one */
                 background: white;
             }
             .sticky-table thead tr:last-child th {
-                /* height of all previous header rows */
                 top: 48px;
-                /* highest z-index */
                 z-index: 3;
             }
             .sticky-table thead tr:first-child th {
@@ -49,7 +44,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 z-index: 1;
             }
             .sticky-table tr:first-child th:first-child {
-                /* highest z-index */
                 z-index: 3;
             }
             .sticky-table td:first-child {
@@ -60,7 +54,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 left: 0;
             }
             .sticky-table tbody {
-                /* height of all previous header rows */
                 scroll-margin-top: 48px;
             }
         </style>
