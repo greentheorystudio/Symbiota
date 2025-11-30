@@ -483,7 +483,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     }
 
                     function setTaxon(tid) {
-                        console.log(tid);
                         const formData = new FormData();
                         formData.append('tid', tid.toString());
                         formData.append('action', 'getTaxonFromTid');
