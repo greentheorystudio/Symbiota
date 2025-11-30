@@ -25,7 +25,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 /* bg color is important for td; just specify one */
                 background-color: white;
             }
-            .sticky-table th {
+            .sticky-table th, .sticky-table div.q-table__bottom {
                 border-top: 2px solid black;
             }
             .sticky-table tr th:first-child, .sticky-table tr td:first-child {
