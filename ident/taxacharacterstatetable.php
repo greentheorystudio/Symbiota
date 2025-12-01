@@ -375,6 +375,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             });
                         }
                         else{
+                            characterStateLoadIndex.value = 1;
                             setTableStyle();
                             hideWorking();
                         }
