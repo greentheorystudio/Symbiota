@@ -280,12 +280,36 @@ class Taxa{
         return $retVal;
     }
 
+    public function getAcceptedChildTaxaByParentTid($parentTid): array
+    {
+        $retArr = array();
+        if($parentTid){
+            $sql = 'SELECT DISTINCT tid, sciname, rankid, parenttid FROM taxa WHERE tid = tidaccepted AND parenttid = ' . (int)$parentTid . ' ';
+            $sql .= 'ORDER BY sciname ';
+            //echo $sql;
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
+                    $nodeArr = array();
+                    $nodeArr['tid'] = $row['tid'];
+                    $nodeArr['sciname'] = $row['sciname'];
+                    $nodeArr['rankid'] = $row['rankid'];
+                    $nodeArr['parenttid'] = $row['parenttid'];
+                    $retArr[] = $nodeArr;
+                    unset($rows[$rIndex]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
     public function getAcceptedTaxaByTaxonomicGroup($parentTid, $index, $rankId = null): array
     {
         $retArr = array();
         if($parentTid){
-            $sql = 'SELECT DISTINCT tid, sciname, parenttid FROM taxa '.
-                'WHERE TID = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
+            $sql = 'SELECT DISTINCT tid, sciname, rankid, parenttid FROM taxa '.
+                'WHERE tid = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ')) ';
             if($rankId){
                 $sql .= 'AND rankid = ' . (int)$rankId . ' ';
@@ -300,6 +324,7 @@ class Taxa{
                     $nodeArr = array();
                     $nodeArr['tid'] = $row['tid'];
                     $nodeArr['sciname'] = $row['sciname'];
+                    $nodeArr['rankid'] = $row['rankid'];
                     $nodeArr['parenttid'] = $row['parenttid'];
                     $retArr[] = $nodeArr;
                     unset($rows[$rIndex]);
