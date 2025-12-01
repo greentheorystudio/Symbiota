@@ -153,7 +153,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     :taxon-id="editTaxonId"
                     :taxon-rankid="editTaxonRankid"
                     :show-popup="showTaxonCharacterStateEditorPopup"
-                    @change:character-state="loadCharacterStateData"
+                    @change:character-state="processTaxonCharacterStateChange"
                     @close:popup="closeTaxonCharacterStateEditorPopup"
                 ></taxon-character-state-editor-popup>
             </template>
@@ -409,6 +409,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         }
                     }
 
+                    function processTaxonCharacterStateChange() {
+                        characterStateData.value = Object.assign({}, {});
+                        loadCharacterStateData();
+                    }
+
                     function processTaxonomicGroupChange(taxonData) {
                         clearTaxaData();
                         if(taxonData && taxonData.hasOwnProperty('tid') && Number(taxonData['tid']) > 0){
@@ -573,6 +578,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         loadCharacterStateData,
                         openTaxonCharacterStateEditorPopup,
                         processIncludeAllSubtaxaChange,
+                        processTaxonCharacterStateChange,
                         processTaxonomicGroupChange,
                         setTaxon,
                         updateVisibleColumns
