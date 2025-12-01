@@ -16,6 +16,9 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getCharacterStatesFromTidArr' && array_key_exists('tidArr', $_POST)){
         echo json_encode($keyCharacterStates->getCharacterStatesFromTidArr(json_decode($_POST['tidArr'], false)));
     }
+    elseif($action === 'getCharacterCharacterStateDataFromTid' && array_key_exists('cid', $_POST) && array_key_exists('tid', $_POST)){
+        echo json_encode($keyCharacterStates->getCharacterCharacterStateDataFromTid($_POST['cid'], $_POST['tid']));
+    }
     elseif($action === 'getKeyCharacterStatesArrFromCsidArr' && array_key_exists('csidArr', $_POST)){
         $includeFullKeyData = array_key_exists('includeFullKeyData',$_POST) && (int)$_POST['includeFullKeyData'] === 1;
         echo json_encode($keyCharacterStates->getKeyCharacterStatesArrFromCsidArr(json_decode($_POST['csidArr'], false), $includeFullKeyData));
@@ -34,5 +37,11 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'deleteKeyCharacterStateRecord' && $csid && $isEditor){
         echo $keyCharacterStates->deleteKeyCharacterStateRecord($csid);
+    }
+    elseif($action === 'addTaxonCharacterStateLinkage' && $csid && $isEditor && array_key_exists('cid', $_POST) && array_key_exists('tid', $_POST)){
+        echo $keyCharacterStates->addTaxonCharacterStateLinkage($_POST['cid'], $csid, $_POST['tid']);
+    }
+    elseif($action === 'removeTaxonCharacterStateLinkage' && $csid && $isEditor && array_key_exists('cid', $_POST) && array_key_exists('tid', $_POST)){
+        echo $keyCharacterStates->removeTaxonCharacterStateLinkage($_POST['cid'], $csid, $_POST['tid']);
     }
 }
