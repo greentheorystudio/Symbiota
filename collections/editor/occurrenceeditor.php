@@ -46,7 +46,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             const STARRJSON = '<?php echo $stArrJson; ?>';
         </script>
     </head>
-    <body class="full-window-mode">
+    <body class="q-pa-md full-window-mode">
         <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <div id="mainContainer" class="q-mt-lg">
             <div class="row justify-center">
