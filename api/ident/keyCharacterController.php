@@ -40,4 +40,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'deleteKeyCharacterDependencyRecord' && $isEditor && array_key_exists('cdid', $_POST)){
         echo $keyCharacters->deleteKeyCharacterDependencyRecord($_POST['cdid']);
     }
+    elseif($action === 'getCharacterArr' && $isEditor){
+        echo json_encode($keyCharacters->getCharacterArr());
+    }
 }
