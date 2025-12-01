@@ -146,6 +146,17 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     @close:popup="showColumnTogglePopup = false"
                 ></table-column-toggle-popup>
             </template>
+            <template v-if="showTaxonCharacterStateEditorPopup">
+                <taxon-character-state-editor-popup
+                    :character-id="editCharacterId"
+                    :character-name="editCharacterName"
+                    :taxon-id="editTaxonId"
+                    :taxon-rankid="editTaxonRankid"
+                    :show-popup="showTaxonCharacterStateEditorPopup"
+                    @change:character-state="loadCharacterStateData"
+                    @close:popup="closeTaxonCharacterStateEditorPopup"
+                ></taxon-character-state-editor-popup>
+            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
@@ -154,12 +165,14 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/tableColumnTogglePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/identification/taxonCharacterStateEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const taxaCharacterStateManagementModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
-                    'table-column-toggle-popup': tableColumnTogglePopup
+                    'table-column-toggle-popup': tableColumnTogglePopup,
+                    'taxon-character-state-editor-popup': taxonCharacterStateEditorPopup
                 },
                 setup() {
                     const { hideWorking, showWorking } = useCore();
@@ -207,6 +220,10 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         }
                         return returnArr;
                     });
+                    const editCharacterId = Vue.ref(null);
+                    const editCharacterName = Vue.ref(null);
+                    const editTaxonId = Vue.ref(null);
+                    const editTaxonRankid = Vue.ref(null);
                     const includeAllSubtaxa = Vue.ref(false);
                     const isEditor = Vue.ref(false);
                     const pagination = Vue.computed(() => {
@@ -264,7 +281,12 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                                 sciname: taxon['sciname']
                             };
                             characterArr.value.forEach((character) => {
-                                rowData[character['cid'].toString()] = charStateData.hasOwnProperty(character['cid'].toString()) ? getCharacterStateStrFromData(charStateData[character['cid'].toString()]) : '[No Data]';
+                                let valueStr = '[No Data]';
+                                if(charStateData.hasOwnProperty(character['cid'].toString()) && charStateData[character['cid'].toString()].length > 0) {
+                                    charStateData[character['cid'].toString()].sort((a, b) => a.sortsequence - b.sortsequence);
+                                    valueStr = getCharacterStateStrFromData(charStateData[character['cid'].toString()]);
+                                }
+                                rowData[character['cid'].toString()] = valueStr;
                             });
                             returnArr.push(rowData);
                         });
@@ -315,6 +337,14 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         taxaLoadIndex.value = 1;
                     }
 
+                    function closeTaxonCharacterStateEditorPopup() {
+                        editCharacterId.value = null;
+                        editCharacterName.value = null;
+                        editTaxonId.value = null;
+                        editTaxonRankid.value = null;
+                        showTaxonCharacterStateEditorPopup.value = false;
+                    }
+
                     function getCharacterStateStrFromData(data) {
                         const strArr = [];
                         data.forEach((state) => {
@@ -351,8 +381,13 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                     }
 
                     function openTaxonCharacterStateEditorPopup(tid, cid) {
-                        console.log(tid);
-                        console.log(cid);
+                        const character = characterArr.value.find(char => Number(char.cid) === Number(cid));
+                        const taxon = taxaArr.value.find(taxa => Number(taxa.tid) === Number(tid));
+                        editCharacterId.value = cid;
+                        editCharacterName.value = character['charactername'];
+                        editTaxonId.value = tid;
+                        editTaxonRankid.value = taxon['rankid'];
+                        showTaxonCharacterStateEditorPopup.value = true;
                     }
 
                     function processIncludeAllSubtaxaChange(value) {
@@ -514,6 +549,10 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         characterHeaderArr,
                         clientRoot,
                         columnHeaderArr,
+                        editCharacterId,
+                        editCharacterName,
+                        editTaxonId,
+                        editTaxonRankid,
                         includeAllSubtaxa,
                         isEditor,
                         pagination,
@@ -529,6 +568,8 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         taxonomicGroupParentId,
                         visibleColumns,
                         changeRecordPage,
+                        closeTaxonCharacterStateEditorPopup,
+                        loadCharacterStateData,
                         openTaxonCharacterStateEditorPopup,
                         processIncludeAllSubtaxaChange,
                         processTaxonomicGroupChange,

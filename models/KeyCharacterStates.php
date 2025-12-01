@@ -27,6 +27,18 @@ class KeyCharacterStates{
         $this->conn->close();
 	}
 
+    public function addTaxonCharacterStateLinkage($cid, $csid, $tid): int
+    {
+        $retVal = 0;
+        if($cid && $csid && $tid){
+            $sql = 'INSERT INTO keycharacterstatetaxalink(cid, csid, tid) VALUES ('. (int)$cid . ', ' . (int)$csid . ', ' . (int)$tid . ')';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
     public function createKeyCharacterStateRecord($data): int
     {
         $newID = 0;
@@ -81,17 +93,44 @@ class KeyCharacterStates{
         return $retVal;
     }
 
-    public function getCharacterStatesFromTidArr($tidArr): array
+    public function getCharacterCharacterStateDataFromTid($cid, $tid): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
-        $sql = 'SELECT DISTINCT IFNULL(te.tid, t.tid) AS tid, ' . implode(', ', $fieldNameArr) . ', IFNULL(pt.rankid, t.rankid) AS rankid '.
+        $sql = 'SELECT DISTINCT te.parenttid AS parenttid, pt.sciname AS parentname, IFNULL(te.tid, t.tid) AS tid, ' . implode(', ', $fieldNameArr) . ', IFNULL(pt.rankid, t.rankid) AS rankid '.
             'FROM keycharacterstatetaxalink AS tl LEFT JOIN taxaenumtree AS te ON tl.tid = te.parenttid '.
             'LEFT JOIN taxa AS pt ON te.parenttid = pt.tid '.
             'LEFT JOIN taxa AS t ON tl.tid = t.tid '.
             'LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
-            'WHERE tl.tid IN(' . implode(',', $tidArr) . ') OR te.tid IN(' . implode(',', $tidArr) . ') '.
-            'ORDER BY tid, cs.cid, rankid ';
+            'WHERE cs.cid = ' . (int)$cid . ' AND (tl.tid = ' . (int)$tid . ' OR te.tid = ' . (int)$tid . ') ORDER BY rankid ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getCharacterStatesFromTidArr($tidArr): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'cs');
+        $sql = 'SELECT DISTINCT te.tid, ' . implode(', ', $fieldNameArr) . ', pt.rankid '.
+            'FROM keycharacterstatetaxalink AS tl LEFT JOIN taxaenumtree AS te ON tl.tid = te.parenttid '.
+            'LEFT JOIN taxa AS pt ON te.parenttid = pt.tid '.
+            'LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
+            'WHERE te.tid IN(' . implode(',', $tidArr) . ') '.
+            'ORDER BY te.tid, cs.cid, rankid ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
@@ -123,6 +162,34 @@ class KeyCharacterStates{
                 }
                 $retArr[$row['tid']][$row['cid']][] = $nodeArr;
                 $currentRankId = (int)$row['rankid'];
+                unset($rows[$index]);
+            }
+        }
+        $sql = 'SELECT DISTINCT t.tid, ' . implode(', ', $fieldNameArr) . ', t.rankid '.
+            'FROM keycharacterstatetaxalink AS tl LEFT JOIN taxa AS t ON tl.tid = t.tid '.
+            'LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
+            'WHERE tl.tid IN(' . implode(',', $tidArr) . ') '.
+            'ORDER BY t.tid, cs.cid, rankid ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            $currentTid = 0;
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['tid'], $retArr)){
+                    $retArr[$row['tid']] = array();
+                }
+                if($currentTid !== (int)$row['tid'] && array_key_exists($row['cid'], $retArr[$row['tid']])){
+                    $retArr[$row['tid']][$row['cid']] = array();
+                }
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[$row['tid']][$row['cid']][] = $nodeArr;
+                $currentTid = (int)$row['tid'];
                 unset($rows[$index]);
             }
         }
@@ -219,6 +286,18 @@ class KeyCharacterStates{
         if($tid && $targetTid){
             $sql = 'UPDATE keycharacterstatetaxalink SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
             //echo $sql2;
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+        }
+        return $retVal;
+    }
+
+    public function removeTaxonCharacterStateLinkage($cid, $csid, $tid): int
+    {
+        $retVal = 0;
+        if($cid && $csid && $tid){
+            $sql = 'DELETE FROM keycharacterstatetaxalink WHERE cid = ' . (int)$cid . ' AND csid = ' . (int)$csid . ' AND tid = ' . (int)$tid . ' ';
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

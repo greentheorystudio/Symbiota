@@ -284,7 +284,7 @@ class Taxa{
     {
         $retArr = array();
         if($parentTid){
-            $sql = 'SELECT DISTINCT tid, sciname, parenttid FROM taxa WHERE tid = tidaccepted AND parenttid = ' . (int)$parentTid . ' ';
+            $sql = 'SELECT DISTINCT tid, sciname, rankid, parenttid FROM taxa WHERE tid = tidaccepted AND parenttid = ' . (int)$parentTid . ' ';
             $sql .= 'ORDER BY sciname ';
             //echo $sql;
             if($result = $this->conn->query($sql)){
@@ -294,6 +294,7 @@ class Taxa{
                     $nodeArr = array();
                     $nodeArr['tid'] = $row['tid'];
                     $nodeArr['sciname'] = $row['sciname'];
+                    $nodeArr['rankid'] = $row['rankid'];
                     $nodeArr['parenttid'] = $row['parenttid'];
                     $retArr[] = $nodeArr;
                     unset($rows[$rIndex]);
@@ -307,7 +308,7 @@ class Taxa{
     {
         $retArr = array();
         if($parentTid){
-            $sql = 'SELECT DISTINCT tid, sciname, parenttid FROM taxa '.
+            $sql = 'SELECT DISTINCT tid, sciname, rankid, parenttid FROM taxa '.
                 'WHERE tid = tidaccepted AND (TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'OR parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ')) ';
             if($rankId){
@@ -323,6 +324,7 @@ class Taxa{
                     $nodeArr = array();
                     $nodeArr['tid'] = $row['tid'];
                     $nodeArr['sciname'] = $row['sciname'];
+                    $nodeArr['rankid'] = $row['rankid'];
                     $nodeArr['parenttid'] = $row['parenttid'];
                     $retArr[] = $nodeArr;
                     unset($rows[$rIndex]);
