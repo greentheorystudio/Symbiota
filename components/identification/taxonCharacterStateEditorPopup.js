@@ -40,7 +40,7 @@ const taxonCharacterStateEditorPopup = {
                                     {{ characterName }}
                                 </div>
                                 <template v-for="state in characterStateArr">
-                                    <div class="q-ml-xl">
+                                    <div class="q-ml-md">
                                         <checkbox-input-element :label="state.characterstatename" :value="selectedCsidArr.includes(Number(state.csid)) ? '1' : '0'" @update:value="(value) => processCharacterStateSelectionChange(state, value)"></checkbox-input-element>
                                     </div>
                                 </template>
@@ -111,13 +111,7 @@ const taxonCharacterStateEditorPopup = {
             .then((res) => {
                 if(Number(res) === 1){
                     context.emit('change:character-state');
-                    taxonCharacterStateDataArr.value.push({
-                        parenttid: 0,
-                        parentname: null,
-                        rankid: props.taxonRankid,
-                        csid: state['csid'],
-                        characterstatename: state['characterstatename']
-                    });
+                    setTaxonCharacterStateDataArr();
                 }
             });
         }
@@ -147,9 +141,7 @@ const taxonCharacterStateEditorPopup = {
             .then((res) => {
                 if(Number(res) === 1){
                     context.emit('change:character-state');
-                    const taxonCSObj = taxonCharacterStateDataArr.value.find(tcs => (Number(tcs.rankid) === Number(props.taxonRankid) && Number(tcs.csid) === Number(state['csid'])));
-                    const index = taxonCharacterStateDataArr.value.indexOf(taxonCSObj);
-                    taxonCharacterStateDataArr.value.splice(index, 1);
+                    setTaxonCharacterStateDataArr();
                 }
             });
         }

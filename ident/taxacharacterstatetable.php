@@ -20,43 +20,6 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-        <style>
-            .sticky-table td:first-child {
-                background-color: white;
-            }
-            .sticky-table th, .sticky-table div.q-table__bottom {
-                border-top: 2px solid black;
-            }
-            .sticky-table tr th:first-child, .sticky-table tr td:first-child {
-                border-right: 2px solid black;
-            }
-            .sticky-table tr th {
-                position: sticky;
-                z-index: 2;
-                background: white;
-            }
-            .sticky-table thead tr:last-child th {
-                top: 48px;
-                z-index: 3;
-            }
-            .sticky-table thead tr:first-child th {
-                top: 0;
-                z-index: 1;
-            }
-            .sticky-table tr:first-child th:first-child {
-                z-index: 3;
-            }
-            .sticky-table td:first-child {
-                z-index: 1;
-            }
-            .sticky-table td:first-child, .sticky-table th:first-child {
-                position: sticky;
-                left: 0;
-            }
-            .sticky-table tbody {
-                scroll-margin-top: 48px;
-            }
-        </style>
     </head>
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
@@ -118,9 +81,11 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         </q-td>
                         <template v-for="field in characterHeaderArr">
                             <q-td :key="field.name" :props="props">
-                                <a class="q-ml-sm cursor-pointer" title="Edit character state" aria-label="Edit character state" @click="openTaxonCharacterStateEditorPopup(props.row.tid, field.name);" tabindex="0">
-                                    <span class="text-body1">{{ props.row[field.name] }}</span>
-                                </a>
+                                <div :class="props.row[field.name].length > 100 ? 'table-cell-text-wrapper' : ''">
+                                    <a class="q-ml-sm cursor-pointer" title="Edit character state" aria-label="Edit character state" @click="openTaxonCharacterStateEditorPopup(props.row.tid, field.name);" tabindex="0">
+                                        <span class="text-body1">{{ props.row[field.name] }}</span>
+                                    </a>
+                                </div>
                             </q-td>
                         </template>
                     </q-tr>
