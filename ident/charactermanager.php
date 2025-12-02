@@ -37,7 +37,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 </div>
                 <div class="row justify-end">
                     <div>
-                        <q-btn color="primary" @click="openKeyCharacterHeaderEditorPopup(0);" label="Add Heading" tabindex="0" />
+                        <q-btn color="primary" @click="openKeyCharacterHeaderEditorPopup(0);" label="Add Heading" dense tabindex="0" />
                     </div>
                 </div>
                 <template v-if="headingArr.length > 0">
