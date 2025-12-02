@@ -9,12 +9,12 @@ const keyCharacterEditorInfoTab = {
         <div class="q-pa-md column q-col-gutter-sm">
             <div class="row justify-between">
                 <div>
-                    <template v-if="characterId > 0 && editsExist">
+                    <template v-if="Number(characterId) > 0 && editsExist">
                         <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
                     </template>
                 </div>
                 <div class="row justify-end">
-                    <template v-if="characterId > 0">
+                    <template v-if="Number(characterId) > 0">
                         <q-btn color="secondary" @click="saveCharacterEdits();" label="Save Character Edits" :disabled="!editsExist || !characterValid" tabindex="0" />
                     </template>
                     <template v-else>
@@ -47,7 +47,7 @@ const keyCharacterEditorInfoTab = {
                     <text-field-input-element data-type="int" label="Sort Sequence" :value="characterData['sortsequence']" min-value="1" :clearable="false" @update:value="(value) => updateCharacterData('sortsequence', value)"></text-field-input-element>
                 </div>
             </div>
-            <div>
+            <div v-if="Number(characterId) > 0">
                 <q-card flat bordered>
                     <q-card-section class="column q-gutter-sm">
                         <div class="text-subtitle1 text-bold">Associate with different heading</div>
