@@ -47,7 +47,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     <selector-input-element label="Node Layout" :options="linkLayoutOptions" :value="selectedLinkLayout" @update:value="setLinkLayout"></selector-input-element>
                                 </div>
                                 <div>
-                                    <q-btn color="primary" @click="centerTree();" label="Center Tree" dense tabindex="0" />
+                                    <q-btn color="primary" @click="focusTree();" label="Center Tree" dense tabindex="0" />
                                 </div>
                             </q-card-section>
                         </q-card>
@@ -83,36 +83,6 @@ header('X-Frame-Options: SAMEORIGIN');
                     const containerHeight = Vue.ref(0);
                     const containerWidth = Vue.ref(0);
                     const defsElement = Vue.ref(null);
-                    const gElement = Vue.ref(null);
-                    const gLinkElement = Vue.ref(null);
-                    const gNodeElement = Vue.ref(null);
-                    const initialCenter = Vue.ref(true);
-                    const layoutTypeOptions = [
-                        'Horizontal',
-                        'Vertical',
-                        'Circular'
-                    ];
-                    const linkLayoutOptions = [
-                        'Bezier',
-                        'Orthogonal'
-                    ];
-                    const marginXValue = Vue.ref(1000);
-                    const marginYValue = Vue.ref(5000);
-                    const nodeArr = Vue.ref([]);
-                    const selectedKingdom = Vue.ref(null);
-                    const selectedLayoutType = Vue.ref('Horizontal');
-                    const selectedLinkLayout = Vue.ref('Bezier');
-                    const svgElement = Vue.ref(null);
-                    let treeData = Vue.ref({});
-                    const treeDisplayRef = Vue.ref(null);
-                    const zoom = d3.zoom().on('zoom', zoomed);
-
-                    const cx = Vue.computed(() => {
-                        return (containerWidth.value * 0.5);
-                    });
-                    const cy = Vue.computed(() => {
-                        return (containerHeight.value * 0.59);
-                    });
                     const diagonal = Vue.computed(() => {
                         if(selectedLinkLayout.value === 'Bezier'){
                             if(selectedLayoutType.value === 'Horizontal'){
@@ -137,13 +107,29 @@ header('X-Frame-Options: SAMEORIGIN');
                             }
                         }
                     });
+                    const gElement = Vue.ref(null);
+                    const gLinkElement = Vue.ref(null);
+                    const gNodeElement = Vue.ref(null);
+                    const initialCenter = Vue.ref(true);
+                    const layoutTypeOptions = [
+                        'Horizontal',
+                        'Vertical',
+                        'Circular'
+                    ];
+                    const linkLayoutOptions = [
+                        'Bezier',
+                        'Orthogonal'
+                    ];
+                    const marginXValue = Vue.ref(1000);
+                    const marginYValue = Vue.ref(5000);
+                    const nodeArr = Vue.ref([]);
                     const root = Vue.computed(() => {
                         return d3.hierarchy(treeData.value);
                     });
-                    const treeRadius = Vue.computed(() => {
-                        return ((Math.min(containerWidth.value, containerHeight.value)));
-                    });
-
+                    const selectedKingdom = Vue.ref(null);
+                    const selectedLayoutType = Vue.ref('Horizontal');
+                    const selectedLinkLayout = Vue.ref('Bezier');
+                    const svgElement = Vue.ref(null);
                     const tree = Vue.computed(() => {
                         if(selectedLayoutType.value === 'Circular'){
                             return d3.tree()
@@ -151,14 +137,38 @@ header('X-Frame-Options: SAMEORIGIN');
                                 .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
                         }
                         else{
-                            return d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
+                            return d3.tree()
+                                .size([containerHeight.value, containerWidth.value])
+                                .nodeSize([marginXValue.value, marginYValue.value]);
                         }
                     });
+                    let treeData = Vue.ref({});
+                    const treeDisplayRef = Vue.ref(null);
+                    const treeRadius = Vue.computed(() => {
+                        return ((Math.min(containerWidth.value, containerHeight.value)));
+                    });
+                    const treeScaleRatio = Vue.ref(1);
+                    const zoom = d3.zoom().on('zoom', zoomed);
 
-                    function centerTree() {
-                        d3.select('svg')
-                            .transition()
-                            .call(zoom.translateTo, (0.5 * containerWidth.value), (0.5 * containerHeight.value));
+                    function focusTree() {
+                        const treeWidth = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
+                        const treeHeight = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
+                        if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
+                            if((containerWidth.value / treeWidth) > (containerHeight.value / treeHeight)){
+                                treeScaleRatio.value = containerWidth.value / treeWidth;
+                            }
+                            else{
+                                treeScaleRatio.value = containerHeight.value / treeHeight;
+                            }
+                            console.log(treeScaleRatio.value);
+                            d3.select('svg g').transition()
+                                .duration(250)
+                                .call(zoom.scaleBy, treeScaleRatio.value)
+                                .attr('width', '100%')
+                                .attr('height', '100%')
+                                .attr('viewBox', `0 0 ${containerWidth.value} ${containerHeight.value}`)
+                                .attr('preserveAspectRatio', 'none');
+                        }
                     }
 
                     function getTaxonChildren(id, callback) {
@@ -232,10 +242,10 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setPng() {
                         svgElement.value = d3.create('svg')
-                            .attr('width', containerWidth.value)
-                            .attr('height', containerHeight.value)
-                            .attr('viewBox', [-cx.value, -cy.value, containerWidth.value, containerHeight.value])
-                            .style('user-select', 'none');
+                            .attr('width', '100%')
+                            .attr('height', '100%')
+                            .attr('viewBox', `0 0 ${containerWidth.value} ${containerHeight.value}`)
+                            .attr('preserveAspectRatio', 'none');
                         defsElement.value = svgElement.value.append('defs');
                         gElement.value = svgElement.value.append('g');
                         gLinkElement.value = gElement.value.append('g')
@@ -245,14 +255,13 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('stroke-width', 10);
                         gNodeElement.value = gElement.value.append('g');
                         svgElement.value.call(zoom);
-                        root.value.x0 = marginYValue.value / 2;
+                        root.value.x0 = 0;
                         root.value.y0 = 0;
                         treeDisplayRef.value.append(svgElement.value.node());
                         update(null, root.value);
                     }
 
                     function update(event, source) {
-                        let transition;
                         if(!source.hasOwnProperty('x0') || !source.x0){
                             source.x0 = 0;
                         }
@@ -263,20 +272,6 @@ header('X-Frame-Options: SAMEORIGIN');
                         const links = root.value.links();
 
                         tree.value(root.value);
-
-                        if(Number(source.x0) === 0){
-                            transition = svgElement.value.transition()
-                                .call(zoom.scaleBy, 0.046)
-                                .attr('width', containerWidth.value)
-                                .attr('height', containerHeight.value)
-                                .attr('viewBox', [(-0.5 * containerWidth.value), (-0.5 * containerHeight.value), containerWidth.value, containerHeight.value]);
-                        }
-                        else{
-                            transition = svgElement.value.transition()
-                                .duration(250)
-                                .attr('width', containerWidth.value)
-                                .attr('height', containerHeight.value);
-                        }
 
                         const node = gNodeElement.value.selectAll('g')
                             .data(nodes, d => d.data.tid);
@@ -402,7 +397,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                 window.open(url, '_blank');
                             });
 
-                        node.merge(nodeEnter).transition(transition)
+                        node.merge(nodeEnter).transition()
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'Horizontal'){
                                     return `translate(${d.y}, ${d.x})`
@@ -417,7 +412,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('fill-opacity', 1)
                             .attr('stroke-opacity', 1);
 
-                        node.exit().transition(transition).remove()
+                        node.exit().transition().remove()
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'Horizontal'){
                                     return `translate(${source.y}, ${source.x})`
@@ -441,10 +436,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                 return diagonal.value({source: o, target: o});
                             });
 
-                        link.merge(linkEnter).transition(transition)
+                        link.merge(linkEnter).transition()
                             .attr('d', diagonal.value);
 
-                        link.exit().transition(transition).remove()
+                        link.exit().transition().remove()
                             .attr('d', d => {
                                 const o = {x: source.x, y: source.y};
                                 return diagonal.value({source: o, target: o});
@@ -457,7 +452,7 @@ header('X-Frame-Options: SAMEORIGIN');
 
                         if(initialCenter.value){
                             setTimeout(() => {
-                                centerTree();
+                                focusTree();
                                 initialCenter.value = false;
                             }, 200);
                         }
@@ -509,8 +504,18 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
-                    function zoomed(e) {
-                        d3.select('svg g').attr('transform', e.transform);
+                    function zoomed(event) {
+                        if(event.hasOwnProperty('sourceEvent') && event['sourceEvent']){
+                            if(event['sourceEvent']['type'] === 'mousemove'){
+
+                            }
+                            else if(event['sourceEvent']['type'] === 'wheel'){
+                                treeScaleRatio.value = event.transform.k;
+                            }
+                            event.transform.k = treeScaleRatio.value;
+                            console.log(event.transform);
+                            d3.select('svg g').attr('transform', event.transform);
+                        }
                     }
 
                     Vue.onMounted(() => {
@@ -528,7 +533,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         selectedLayoutType,
                         selectedLinkLayout,
                         treeDisplayRef,
-                        centerTree,
+                        focusTree,
                         setLayoutType,
                         setLinkLayout,
                         updateSelectedKingdom
