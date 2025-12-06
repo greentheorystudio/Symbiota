@@ -145,7 +145,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     let treeData = Vue.ref({});
                     const treeDisplayRef = Vue.ref(null);
                     const treeRadius = Vue.computed(() => {
-                        return ((Math.min(containerWidth.value, containerHeight.value)));
+                        return Math.min(containerWidth.value, containerHeight.value);
                     });
                     const treeScaleRatio = Vue.ref(1);
                     const zoom = d3.zoom().on('zoom', zoomed);
@@ -154,20 +154,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         const treeWidth = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
                         const treeHeight = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
                         if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
-                            if((containerWidth.value / treeWidth) > (containerHeight.value / treeHeight)){
-                                treeScaleRatio.value = containerWidth.value / treeWidth;
+                            if(((containerWidth.value - 150) / treeWidth) > ((containerHeight.value - 150) / treeHeight)){
+                                treeScaleRatio.value = (containerWidth.value - 150) / treeWidth;
                             }
                             else{
-                                treeScaleRatio.value = containerHeight.value / treeHeight;
+                                treeScaleRatio.value = (containerHeight.value - 150) / treeHeight;
                             }
-                            console.log(treeScaleRatio.value);
-                            d3.select('svg g').transition()
-                                .duration(250)
-                                .call(zoom.scaleBy, treeScaleRatio.value)
-                                .attr('width', '100%')
-                                .attr('height', '100%')
-                                .attr('viewBox', `0 0 ${containerWidth.value} ${containerHeight.value}`)
-                                .attr('preserveAspectRatio', 'none');
+                            d3.select('svg g').attr("transform", "translate(" + 50 + "," + (containerHeight.value / 2) + ") scale(" + treeScaleRatio.value + ")");
                         }
                     }
 
