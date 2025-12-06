@@ -151,14 +151,17 @@ header('X-Frame-Options: SAMEORIGIN');
                     const zoom = d3.zoom().on('zoom', zoomed);
 
                     function focusTree() {
-                        const treeWidth = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
-                        const treeHeight = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
+                        const treeHeight = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
+                        const treeWidth = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
+
+                        console.log(treeWidth);
+                        console.log(treeHeight);
                         if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
-                            if(((containerWidth.value - 150) / treeWidth) > ((containerHeight.value - 150) / treeHeight)){
-                                treeScaleRatio.value = (containerWidth.value - 150) / treeWidth;
+                            if((containerWidth.value / (treeWidth + 500)) < (containerHeight.value / (treeHeight + 500))){
+                                treeScaleRatio.value = containerWidth.value / (treeWidth + 500);
                             }
                             else{
-                                treeScaleRatio.value = (containerHeight.value - 150) / treeHeight;
+                                treeScaleRatio.value = containerHeight.value / (treeHeight + 500);
                             }
                             d3.select('svg g').attr("transform", "translate(" + 50 + "," + (containerHeight.value / 2) + ") scale(" + treeScaleRatio.value + ")");
                         }
