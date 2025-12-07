@@ -147,7 +147,20 @@ header('X-Frame-Options: SAMEORIGIN');
                     const treeYValue = Vue.ref(0);
                     const zoom = d3.zoom().on('zoom', zoomed);
 
+                    function clearTreeData() {
+                        while(treeDisplayRef.value.firstChild) {
+                            treeDisplayRef.value.removeChild(treeDisplayRef.value.firstChild);
+                        }
+                        initialCenter.value = true;
+                        treeScaleRatio.value = 1;
+                        treeXValue.value = 0;
+                        treeYValue.value = 0;
+                        d3.select('svg').transition().call(zoom.transform, d3.zoomIdentity.translate(treeXValue.value, treeYValue.value).scale(treeScaleRatio.value));
+                        setDimensions();
+                    }
+
                     function focusTree() {
+                        console.log('focus');
                         const treeHeight = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
                         const treeWidth = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
                         if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
@@ -206,7 +219,7 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function setDimensions() {
                         containerWidth.value = treeDisplayRef.value.clientWidth;
-                        containerHeight.value = containerWidth.value + 250;
+                        containerHeight.value = containerWidth.value;
                         treeStyle.value = 'width: ' + containerWidth.value + 'px; height: ' + containerHeight.value + 'px;';
                     }
 
@@ -453,7 +466,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function updateSelectedKingdom(kingdomObj) {
-                        treeDisplayRef.value.innerHTML = '';
+                        clearTreeData();
                         nodeArr.value.length = 0;
                         treeData.value = Object.assign({}, {});
                         selectedKingdom.value = kingdomObj;
@@ -500,10 +513,6 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function zoomed(event) {
                         if(event.hasOwnProperty('sourceEvent') && event['sourceEvent']){
-                            console.log(event.transform);
-                            console.log(treeXValue.value);
-                            console.log(treeYValue.value);
-                            console.log(treeScaleRatio.value);
                             if(event['sourceEvent']['type'] === 'mousemove'){
                                 treeXValue.value = event.transform.x;
                                 treeYValue.value = event.transform.y;
