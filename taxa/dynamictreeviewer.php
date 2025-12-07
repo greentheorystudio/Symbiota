@@ -160,7 +160,6 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function focusTree() {
-                        console.log('focus');
                         const treeHeight = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
                         const treeWidth = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
                         if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
