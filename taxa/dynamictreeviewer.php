@@ -49,7 +49,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     <div class="col-9 q-pa-sm">
                         <q-card flat bordered>
                             <q-card-section class="q-pa-none">
-                                <div ref="treeDisplayRef" class="overflow-hidden" :style="treeStyle"></div>
+                                <div ref="treeDisplayRef" :style="treeStyle"></div>
                             </q-card-section>
                         </q-card>
                     </div>
@@ -137,6 +137,15 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     });
                     let treeData = Vue.ref({});
+                    const treeDepth = Vue.computed(() => {
+                        let depth = 0;
+                        root.value.descendants().forEach((node) => {
+                            if(Number(node.depth) > depth){
+                                depth = Number(node.depth);
+                            }
+                        });
+                        return depth;
+                    });
                     const treeDisplayRef = Vue.ref(null);
                     const treeRadius = Vue.computed(() => {
                         return Math.min(containerWidth.value, containerHeight.value);
@@ -152,10 +161,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             treeDisplayRef.value.removeChild(treeDisplayRef.value.firstChild);
                         }
                         initialCenter.value = true;
-                        treeScaleRatio.value = 1;
-                        treeXValue.value = 0;
-                        treeYValue.value = 0;
-                        d3.select('svg').transition().call(zoom.transform, d3.zoomIdentity.translate(treeXValue.value, treeYValue.value).scale(treeScaleRatio.value));
+                        resetZoom();
                         setDimensions();
                     }
 
@@ -163,14 +169,17 @@ header('X-Frame-Options: SAMEORIGIN');
                         const treeHeight = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
                         const treeWidth = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
                         if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
-                            treeXValue.value = 50;
+                            const fixedTreeHeight = treeHeight + 500;
+                            const fixedTreeWidth = treeWidth + 500;
+                            resetZoom();
                             treeYValue.value = containerHeight.value / 2;
-                            if((containerWidth.value / (treeWidth + 500)) < (containerHeight.value / (treeHeight + 500))){
-                                treeScaleRatio.value = containerWidth.value / (treeWidth + 500);
+                            if((containerWidth.value / fixedTreeWidth) < (containerHeight.value / fixedTreeHeight)){
+                                treeScaleRatio.value = containerWidth.value / fixedTreeWidth;
                             }
                             else{
-                                treeScaleRatio.value = containerHeight.value / (treeHeight + 500);
+                                treeScaleRatio.value = containerHeight.value / fixedTreeHeight;
                             }
+                            treeXValue.value = (250 * treeScaleRatio.value);
                             d3.select('svg').transition().call(zoom.transform, d3.zoomIdentity.translate(treeXValue.value, treeYValue.value).scale(treeScaleRatio.value));
                             d3.select('svg g').attr('transform', 'translate(' + treeXValue.value + ',' + treeYValue.value + ') scale(' + treeScaleRatio.value + ')');
                         }
@@ -193,6 +202,13 @@ header('X-Frame-Options: SAMEORIGIN');
                                 callback(resObj);
                             });
                         });
+                    }
+
+                    function resetZoom() {
+                        treeScaleRatio.value = 1;
+                        treeXValue.value = 0;
+                        treeYValue.value = 0;
+                        d3.select('svg').transition().call(zoom.transform, d3.zoomIdentity.translate(treeXValue.value, treeYValue.value).scale(treeScaleRatio.value));
                     }
 
                     function setDefs(node) {
@@ -219,7 +235,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     function setDimensions() {
                         containerWidth.value = treeDisplayRef.value.clientWidth;
                         containerHeight.value = containerWidth.value;
-                        treeStyle.value = 'width: ' + containerWidth.value + 'px; height: ' + containerHeight.value + 'px;';
+                        treeStyle.value = 'width: ' + containerWidth.value + 'px; height: ' + containerHeight.value + 'px;overflow: hidden;';
                     }
 
                     function setLayoutType(value) {
