@@ -49,7 +49,9 @@ header('X-Frame-Options: SAMEORIGIN');
                     <div class="col-9 q-pa-sm">
                         <q-card flat bordered>
                             <q-card-section class="q-pa-none">
-                                <div ref="treeDisplayRef" :style="treeStyle"></div>
+                                <div ref="treeContainerRef" class="fit">
+                                    <div ref="treeDisplayRef" :style="treeStyle"></div>
+                                </div>
                             </q-card-section>
                         </q-card>
                     </div>
@@ -118,7 +120,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     const marginYValue = Vue.ref(5000);
                     const nodeArr = Vue.ref([]);
                     const root = Vue.computed(() => {
-                        return d3.hierarchy(treeData.value);
+                        return d3.hierarchy(treeRootData.value);
                     });
                     const selectedKingdom = Vue.ref(null);
                     const selectedLayoutType = Vue.ref('Horizontal');
@@ -136,7 +138,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                 .nodeSize([marginXValue.value, marginYValue.value]);
                         }
                     });
-                    let treeData = Vue.ref({});
+                    const treeContainerRef = Vue.ref(null);
                     const treeDepth = Vue.computed(() => {
                         let depth = 0;
                         root.value.descendants().forEach((node) => {
@@ -147,22 +149,24 @@ header('X-Frame-Options: SAMEORIGIN');
                         return depth;
                     });
                     const treeDisplayRef = Vue.ref(null);
+                    const treeNodeData = Vue.ref([]);
                     const treeRadius = Vue.computed(() => {
                         return Math.min(containerWidth.value, containerHeight.value);
                     });
+                    let treeRootData = Vue.ref({});
                     const treeScaleRatio = Vue.ref(1);
                     const treeStyle = Vue.ref(null);
                     const treeXValue = Vue.ref(0);
                     const treeYValue = Vue.ref(0);
                     const zoom = d3.zoom().on('zoom', zoomed);
 
-                    function clearTreeData() {
+                    function clearTreeDisplayData() {
                         while(treeDisplayRef.value.firstChild) {
                             treeDisplayRef.value.removeChild(treeDisplayRef.value.firstChild);
                         }
                         initialCenter.value = true;
+                        treeStyle.value = null;
                         resetZoom();
-                        setDimensions();
                     }
 
                     function focusTree() {
@@ -204,6 +208,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         });
                     }
 
+                    function processDisplayChange() {
+                        clearTreeDisplayData();
+                        setDimensions();
+                        setPng();
+                        setTreeDisplay();
+                    }
+
                     function resetZoom() {
                         treeScaleRatio.value = 1;
                         treeXValue.value = 0;
@@ -233,7 +244,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function setDimensions() {
-                        containerWidth.value = treeDisplayRef.value.clientWidth;
+                        containerWidth.value = treeContainerRef.value.clientWidth;
                         containerHeight.value = containerWidth.value;
                         treeStyle.value = 'width: ' + containerWidth.value + 'px; height: ' + containerHeight.value + 'px;overflow: hidden;';
                     }
@@ -243,7 +254,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         if(selectedLayoutType.value === 'Circular' && selectedLinkLayout.value === 'Orthogonal'){
                             selectedLinkLayout.value = 'Bezier';
                         }
-                        if(Object.keys(treeData.value).length > 0){
+                        if(Object.keys(treeRootData.value).length > 0){
                             update(null, root.value);
                             d3.select('svg').transition().call(zoom.scaleBy, 1);
                         }
@@ -252,7 +263,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     function setLinkLayout(value) {
                         if(selectedLayoutType.value !== 'Circular' || value !== 'Orthogonal'){
                             selectedLinkLayout.value = value;
-                            if(Object.keys(treeData.value).length > 0){
+                            if(Object.keys(treeRootData.value).length > 0){
                                 update(null, root.value);
                                 d3.select('svg').transition().call(zoom.scaleBy, 1);
                             }
@@ -280,6 +291,17 @@ header('X-Frame-Options: SAMEORIGIN');
                         root.value.x0 = 0;
                         root.value.y0 = 0;
                         treeDisplayRef.value.append(svgElement.value.node());
+                        update(null, root.value);
+                    }
+
+                    function setTreeDisplay() {
+                        nodeArr.value.length = 0;
+                        setDefs(treeRootData.value);
+                        nodeArr.value.push(treeRootData.value);
+                        treeNodeData.value.forEach((node) => {
+                            setDefs(node);
+                            nodeArr.value.push(node);
+                        });
                         update(null, root.value);
                     }
 
@@ -481,13 +503,14 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function updateSelectedKingdom(kingdomObj) {
-                        clearTreeData();
-                        nodeArr.value.length = 0;
-                        treeData.value = Object.assign({}, {});
+                        clearTreeDisplayData();
+                        treeNodeData.value = [];
+                        treeRootData.value = Object.assign({}, {});
                         selectedKingdom.value = kingdomObj;
                         if(selectedKingdom.value){
                             getTaxonChildren(selectedKingdom.value['tid'], (data) => {
                                 if(data.length > 0){
+                                    setDimensions();
                                     setPng();
                                     const formData = new FormData();
                                     formData.append('tidArr', JSON.stringify([selectedKingdom.value['tid'].toString()]));
@@ -512,14 +535,9 @@ header('X-Frame-Options: SAMEORIGIN');
                                             image: (resObj.hasOwnProperty(selectedKingdom.value['tid'].toString()) && resObj[selectedKingdom.value['tid'].toString()].length > 0) ? resObj[selectedKingdom.value['tid'].toString()][0]['url'] : null,
                                             children: data
                                         };
-                                        setDefs(rootObj);
-                                        treeData.value = Object.assign({}, rootObj);
-                                        nodeArr.value.push(rootObj);
-                                        data.forEach((node) => {
-                                            setDefs(node);
-                                            nodeArr.value.push(node);
-                                        });
-                                        update(null, root.value);
+                                        treeNodeData.value = data.slice();
+                                        treeRootData.value = Object.assign({}, rootObj);
+                                        setTreeDisplay();
                                     });
                                 }
                             });
@@ -540,7 +558,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     Vue.onMounted(() => {
-                        window.addEventListener('resize', setDimensions);
+                        window.addEventListener('resize', processDisplayChange);
                         setDimensions();
                     });
 
@@ -553,6 +571,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         selectedKingdom,
                         selectedLayoutType,
                         selectedLinkLayout,
+                        treeContainerRef,
                         treeDisplayRef,
                         treeStyle,
                         focusTree,
