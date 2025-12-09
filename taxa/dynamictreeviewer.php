@@ -183,7 +183,6 @@ header('X-Frame-Options: SAMEORIGIN');
                         if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
                             const fixedTreeHeight = treeHeight + 500;
                             const fixedTreeWidth = treeWidth + 500;
-                            console.log(fixedTreeHeight, fixedTreeWidth);
                             resetZoom();
                             treeScaleRatio.value = containerWidth.value / ((fixedTreeWidth - 500) * 2.1);
                             if(selectedLayoutType.value === 'Horizontal'){
@@ -191,8 +190,8 @@ header('X-Frame-Options: SAMEORIGIN');
                                 treeYValue.value = (containerHeight.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
                             }
                             else if(selectedLayoutType.value === 'Vertical'){
-                                treeXValue.value = (containerWidth.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
-                                treeYValue.value = ((containerHeight.value - (fixedTreeHeight * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
+                                treeXValue.value = (containerHeight.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
+                                treeYValue.value = ((containerWidth.value - (fixedTreeWidth * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
                             }
                             else{
                                 treeXValue.value = containerWidth.value / 2;
