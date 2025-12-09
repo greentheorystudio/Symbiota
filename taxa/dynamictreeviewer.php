@@ -264,7 +264,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                         if(Object.keys(treeRootData.value).length > 0){
                             update(null, root.value);
-                            d3.select('svg').transition().call(zoom.scaleBy, 1);
+                            centerTree();
                         }
                     }
 
