@@ -180,11 +180,19 @@ header('X-Frame-Options: SAMEORIGIN');
                     function centerTree() {
                         const treeHeight = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
                         const treeWidth = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
-                        if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
+                        if(Number(treeWidth) > 0 || Number(treeHeight) > 0){
                             const fixedTreeHeight = treeHeight + 500;
                             const fixedTreeWidth = treeWidth + 500;
                             resetZoom();
-                            treeScaleRatio.value = containerWidth.value / ((fixedTreeWidth - 500) * 2.1);
+                            if(selectedLayoutType.value === 'Circular'){
+                                treeScaleRatio.value = containerWidth.value / ((fixedTreeWidth - 500) * 2.1);
+                            }
+                            else if((containerWidth.value / fixedTreeWidth) < (containerHeight.value / fixedTreeHeight)){
+                                treeScaleRatio.value = containerWidth.value / fixedTreeWidth;
+                            }
+                            else{
+                                treeScaleRatio.value = containerHeight.value / fixedTreeHeight;
+                            }
                             if(selectedLayoutType.value === 'Horizontal'){
                                 treeXValue.value = ((containerWidth.value - (fixedTreeWidth * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
                                 treeYValue.value = (containerHeight.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
