@@ -41,7 +41,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                     <selector-input-element label="Node Layout" :options="linkLayoutOptions" :value="selectedLinkLayout" @update:value="setLinkLayout"></selector-input-element>
                                 </div>
                                 <div>
-                                    <q-btn color="primary" @click="focusTree();" label="Center Tree" dense tabindex="0" />
+                                    <q-btn color="primary" @click="centerTree();" label="Center Tree" dense tabindex="0" />
                                 </div>
                             </q-card-section>
                         </q-card>
@@ -139,16 +139,24 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     });
                     const treeContainerRef = Vue.ref(null);
-                    const treeDepth = Vue.computed(() => {
-                        let depth = 0;
+                    const treeDisplayRef = Vue.ref(null);
+                    const treeHeightCenterDifference = Vue.computed(() => {
+                        let extremeValue = 0;
+                        let evenValue = 0;
                         root.value.descendants().forEach((node) => {
-                            if(Number(node.depth) > depth){
-                                depth = Number(node.depth);
+                            if(Math.abs(node.x) > Math.abs(extremeValue)){
+                                extremeValue = node.x;
+                            }
+                            if(Math.abs(node.x) === Math.abs(extremeValue) && Math.abs(node.x) !== extremeValue){
+                                evenValue = Math.abs(node.x);
                             }
                         });
-                        return depth;
+                        let difference = Math.abs(extremeValue) - evenValue;
+                        if(difference !== 0 && extremeValue > evenValue){
+                            difference *= -1;
+                        }
+                        return difference;
                     });
-                    const treeDisplayRef = Vue.ref(null);
                     const treeNodeData = Vue.ref([]);
                     const treeRadius = Vue.computed(() => {
                         return Math.min(containerWidth.value, containerHeight.value);
@@ -169,21 +177,21 @@ header('X-Frame-Options: SAMEORIGIN');
                         resetZoom();
                     }
 
-                    function focusTree() {
+                    function centerTree() {
                         const treeHeight = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
                         const treeWidth = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
                         if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
                             const fixedTreeHeight = treeHeight + 500;
                             const fixedTreeWidth = treeWidth + 500;
                             resetZoom();
-                            treeYValue.value = containerHeight.value / 2;
                             if((containerWidth.value / fixedTreeWidth) < (containerHeight.value / fixedTreeHeight)){
                                 treeScaleRatio.value = containerWidth.value / fixedTreeWidth;
                             }
                             else{
                                 treeScaleRatio.value = containerHeight.value / fixedTreeHeight;
                             }
-                            treeXValue.value = (250 * treeScaleRatio.value);
+                            treeXValue.value = ((containerWidth.value - (fixedTreeWidth * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
+                            treeYValue.value = (containerHeight.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
                             d3.select('svg').transition().call(zoom.transform, d3.zoomIdentity.translate(treeXValue.value, treeYValue.value).scale(treeScaleRatio.value));
                             d3.select('svg g').attr('transform', 'translate(' + treeXValue.value + ',' + treeYValue.value + ') scale(' + treeScaleRatio.value + ')');
                         }
@@ -457,7 +465,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('stroke-opacity', 1);
 
                         node.exit().transition().remove()
-                            .attr('transform', d => {
+                            .attr('transform', () => {
                                 if(selectedLayoutType.value === 'Horizontal'){
                                     return `translate(${source.y}, ${source.x})`
                                 }
@@ -475,7 +483,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .data(links, d => d.target.data.tid);
 
                         const linkEnter = link.enter().append('path')
-                            .attr('d', d => {
+                            .attr('d', () => {
                                 const o = {x: source.x0, y: source.y0};
                                 return diagonal.value({source: o, target: o});
                             });
@@ -484,7 +492,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('d', diagonal.value);
 
                         link.exit().transition().remove()
-                            .attr('d', d => {
+                            .attr('d', () => {
                                 const o = {x: source.x, y: source.y};
                                 return diagonal.value({source: o, target: o});
                             });
@@ -496,7 +504,7 @@ header('X-Frame-Options: SAMEORIGIN');
 
                         if(initialCenter.value){
                             setTimeout(() => {
-                                focusTree();
+                                centerTree();
                                 initialCenter.value = false;
                             }, 200);
                         }
@@ -547,6 +555,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     function zoomed(event) {
                         if(event.hasOwnProperty('sourceEvent') && event['sourceEvent']){
                             if(event['sourceEvent']['type'] === 'mousemove'){
+                                console.log(event.transform.y);
                                 treeXValue.value = event.transform.x;
                                 treeYValue.value = event.transform.y;
                             }
@@ -574,7 +583,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         treeContainerRef,
                         treeDisplayRef,
                         treeStyle,
-                        focusTree,
+                        centerTree,
                         setLayoutType,
                         setLinkLayout,
                         updateSelectedKingdom
