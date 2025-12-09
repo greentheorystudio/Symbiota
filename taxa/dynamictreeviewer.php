@@ -183,15 +183,21 @@ header('X-Frame-Options: SAMEORIGIN');
                         if(Number(treeWidth) > 0 && Number(treeHeight) > 0){
                             const fixedTreeHeight = treeHeight + 500;
                             const fixedTreeWidth = treeWidth + 500;
+                            console.log(fixedTreeHeight, fixedTreeWidth);
                             resetZoom();
-                            if((containerWidth.value / fixedTreeWidth) < (containerHeight.value / fixedTreeHeight)){
-                                treeScaleRatio.value = containerWidth.value / fixedTreeWidth;
+                            treeScaleRatio.value = containerWidth.value / ((fixedTreeWidth - 500) * 2.1);
+                            if(selectedLayoutType.value === 'Horizontal'){
+                                treeXValue.value = ((containerWidth.value - (fixedTreeWidth * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
+                                treeYValue.value = (containerHeight.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
+                            }
+                            else if(selectedLayoutType.value === 'Vertical'){
+                                treeXValue.value = (containerWidth.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
+                                treeYValue.value = ((containerHeight.value - (fixedTreeHeight * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
                             }
                             else{
-                                treeScaleRatio.value = containerHeight.value / fixedTreeHeight;
+                                treeXValue.value = containerWidth.value / 2;
+                                treeYValue.value = containerHeight.value / 2;
                             }
-                            treeXValue.value = ((containerWidth.value - (fixedTreeWidth * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
-                            treeYValue.value = (containerHeight.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
                             d3.select('svg').transition().call(zoom.transform, d3.zoomIdentity.translate(treeXValue.value, treeYValue.value).scale(treeScaleRatio.value));
                             d3.select('svg g').attr('transform', 'translate(' + treeXValue.value + ',' + treeYValue.value + ') scale(' + treeScaleRatio.value + ')');
                         }
@@ -555,7 +561,6 @@ header('X-Frame-Options: SAMEORIGIN');
                     function zoomed(event) {
                         if(event.hasOwnProperty('sourceEvent') && event['sourceEvent']){
                             if(event['sourceEvent']['type'] === 'mousemove'){
-                                console.log(event.transform.y);
                                 treeXValue.value = event.transform.x;
                                 treeYValue.value = event.transform.y;
                             }
