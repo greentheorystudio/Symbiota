@@ -131,8 +131,8 @@ header('X-Frame-Options: SAMEORIGIN');
                         'Circular'
                     ];
                     const linkLayoutOptions = [
-                        'Bezier',
-                        'Orthogonal'
+                        'Orthogonal',
+                        'Bezier'
                     ];
                     const marginXValue = Vue.ref(1000);
                     const marginYValue = Vue.ref(5000);
@@ -143,7 +143,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     });
                     const selectedKingdom = Vue.ref(null);
                     const selectedLayoutType = Vue.ref('Horizontal');
-                    const selectedLinkLayout = Vue.ref('Bezier');
+                    const selectedLinkLayout = Vue.ref('Orthogonal');
                     const svgElement = Vue.ref(null);
                     const tree = Vue.computed(() => {
                         if(selectedLayoutType.value === 'Circular'){
@@ -229,6 +229,17 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
+                    function getPathColorValue(path) {
+                        let returnVal = '#555';
+                        if(path.source.parent){
+                            const phylaData = phylaKeyArr.value.find(phyla => Number(phyla['phylatid']) === Number(path.source.data.phylatid));
+                            if(phylaData){
+                                return phylaData['color'];
+                            }
+                        }
+                        return returnVal;
+                    }
+
                     function getTaxonChildren(id, phylatid, callback) {
                         showWorking();
                         const formData = new FormData();
@@ -264,7 +275,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         const phylaData = phylaKeyArr.value.find(phyla => Number(phyla['phylatid']) === Number(tid));
                         if(phylaData){
                             phylaData.color = color;
-                            update(null, root.value);
+                            d3.selectAll('path').attr('stroke', d => getPathColorValue(d));
                         }
                     }
 
@@ -542,20 +553,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('stroke-opacity', d => {
                                 return d.source.parent ? 1 : 0.6
                             })
-                            .attr('stroke', d => {
-                                if(!d.source.parent){
-                                    return '#555'
-                                }
-                                else{
-                                    const phylaData = phylaKeyArr.value.find(phyla => Number(phyla['phylatid']) === Number(d.source.data.phylatid));
-                                    if(phylaData){
-                                        return phylaData['color'];
-                                    }
-                                    else{
-                                        return '#555'
-                                    }
-                                }
-                            })
+                            .attr('stroke', d => getPathColorValue(d))
                             .attr('stroke-width', d => {
                                 const level = Number(d.source.depth) + 1;
                                 return 10 + ((1 / level) * 50);
