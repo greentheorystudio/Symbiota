@@ -28,7 +28,7 @@ header('X-Frame-Options: SAMEORIGIN');
             </div>
             <div class="q-pa-md fit">
                 <div class="fit row justify-between q-ma-none q-pa-none q-col-gutter-sm">
-                    <div class="col-3 q-pa-sm">
+                    <div class="col-3 q-pa-sm column q-gutter-sm">
                         <q-card flat bordered>
                             <q-card-section class="column q-gutter-sm q-pa-sm">
                                 <div>
@@ -45,6 +45,22 @@ header('X-Frame-Options: SAMEORIGIN');
                                 </div>
                             </q-card-section>
                         </q-card>
+                        <template v-if="phylaKeyArr.length > 0">
+                            <q-card flat bordered>
+                                <q-card-section class="column q-gutter-sm q-pa-sm">
+                                    <template v-for="phyla in phylaKeyArr">
+                                        <div class="row justify-start">
+                                            <div class="q-mr-lg">
+                                                <color-picker :color-value="phyla.color" @update:color-picker="(value) => processPhylaLineColorChange(value, phyla.tid)"></color-picker>
+                                            </div>
+                                            <div class="text-bold self-center">
+                                                {{ phyla.sciname }}
+                                            </div>
+                                        </div>
+                                    </template>
+                                </q-card-section>
+                            </q-card>
+                        </template>
                     </div>
                     <div class="col-9 q-pa-sm">
                         <q-card flat bordered>
@@ -64,15 +80,17 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/colorPicker.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const dynamicTaxonomicTreeViewer = Vue.createApp({
                 components: {
+                    'color-picker': colorPicker,
                     'selector-input-element': selectorInputElement,
                     'taxa-kingdom-selector': taxaKingdomSelector,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
-                    const { hideWorking, showNotification, showWorking } = useCore();
+                    const { generateRandHexColor, hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
 
                     const clientRoot = baseStore.getClientRoot;
@@ -119,6 +137,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     const marginXValue = Vue.ref(1000);
                     const marginYValue = Vue.ref(5000);
                     const nodeArr = Vue.ref([]);
+                    const phylaKeyArr = Vue.ref([]);
                     const root = Vue.computed(() => {
                         return d3.hierarchy(treeRootData.value);
                     });
@@ -210,7 +229,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
-                    function getTaxonChildren(id, callback) {
+                    function getTaxonChildren(id, phylatid, callback) {
                         showWorking();
                         const formData = new FormData();
                         formData.append('tid', id);
@@ -223,6 +242,11 @@ header('X-Frame-Options: SAMEORIGIN');
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
+                                if(phylatid && resObj.length > 0){
+                                    resObj.forEach((node) => {
+                                        node['phylatid'] = phylatid;
+                                    });
+                                }
                                 hideWorking();
                                 callback(resObj);
                             });
@@ -234,6 +258,14 @@ header('X-Frame-Options: SAMEORIGIN');
                         setDimensions();
                         setPng();
                         setTreeDisplay();
+                    }
+
+                    function processPhylaLineColorChange(color, tid) {
+                        const phylaData = phylaKeyArr.value.find(phyla => Number(phyla['phylatid']) === Number(tid));
+                        if(phylaData){
+                            phylaData.color = color;
+                            update(null, root.value);
+                        }
                     }
 
                     function resetZoom() {
@@ -286,12 +318,19 @@ header('X-Frame-Options: SAMEORIGIN');
                             selectedLinkLayout.value = value;
                             if(Object.keys(treeRootData.value).length > 0){
                                 update(null, root.value);
-                                d3.select('svg').transition().call(zoom.scaleBy, 1);
+                                centerTree();
                             }
                         }
                         else{
                             showNotification('negative', 'Orthogonal node layout is not compatable with a circular layout type.');
                         }
+                    }
+
+                    function setPhylaKeyArr(phylaArr) {
+                        phylaArr.forEach((node) => {
+                            node['color'] = generateRandHexColor();
+                            phylaKeyArr.value.push(node);
+                        });
                     }
 
                     function setPng() {
@@ -303,10 +342,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         defsElement.value = svgElement.value.append('defs');
                         gElement.value = svgElement.value.append('g');
                         gLinkElement.value = gElement.value.append('g')
-                            .attr('fill', 'none')
-                            .attr('stroke', '#555')
-                            .attr('stroke-opacity', 0.6)
-                            .attr('stroke-width', 10);
+                            .attr('fill', 'none');
                         gNodeElement.value = gElement.value.append('g');
                         svgElement.value.call(zoom);
                         root.value.x0 = 0;
@@ -342,7 +378,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             .data(nodes, d => d.data.tid);
 
                         const nodeEnter = node.enter().append('g')
-                            .attr('transform', d => {
+                            .attr('transform', () => {
                                 if(selectedLayoutType.value === 'Horizontal'){
                                     return `translate(${source.y0}, ${source.x0})`
                                 }
@@ -354,7 +390,8 @@ header('X-Frame-Options: SAMEORIGIN');
                                 }
                             })
                             .attr('fill-opacity', 0)
-                            .attr('stroke-opacity', 0);
+                            .attr('stroke-opacity', 0)
+                            .style('opacity', 0);
 
                         nodeEnter.append('circle')
                             .attr('height', 250)
@@ -394,7 +431,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                         update(event, d);
                                     }
                                     else{
-                                        getTaxonChildren(d.data.tid, (data) => {
+                                        getTaxonChildren(d.data.tid, d.data.phylatid, (data) => {
                                             let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
                                             parentNode.children = data;
                                             data.forEach((node) => {
@@ -417,7 +454,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                         update(event, d);
                                     }
                                     else{
-                                        getTaxonChildren(d.data.tid, (data) => {
+                                        getTaxonChildren(d.data.tid, d.data.phylatid, (data) => {
                                             let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
                                             parentNode.children = data;
                                             data.forEach((node) => {
@@ -475,7 +512,9 @@ header('X-Frame-Options: SAMEORIGIN');
                                 }
                             })
                             .attr('fill-opacity', 1)
-                            .attr('stroke-opacity', 1);
+                            .attr('stroke-opacity', 1)
+                            .transition().duration(500)
+                            .style('opacity', 1);
 
                         node.exit().transition().remove()
                             .attr('transform', () => {
@@ -499,10 +538,34 @@ header('X-Frame-Options: SAMEORIGIN');
                             .attr('d', () => {
                                 const o = {x: source.x0, y: source.y0};
                                 return diagonal.value({source: o, target: o});
-                            });
+                            })
+                            .attr('stroke-opacity', d => {
+                                return d.source.parent ? 1 : 0.6
+                            })
+                            .attr('stroke', d => {
+                                if(!d.source.parent){
+                                    return '#555'
+                                }
+                                else{
+                                    const phylaData = phylaKeyArr.value.find(phyla => Number(phyla['phylatid']) === Number(d.source.data.phylatid));
+                                    if(phylaData){
+                                        return phylaData['color'];
+                                    }
+                                    else{
+                                        return '#555'
+                                    }
+                                }
+                            })
+                            .attr('stroke-width', d => {
+                                const level = Number(d.source.depth) + 1;
+                                return 10 + ((1 / level) * 50);
+                            })
+                            .style('opacity', 0);
 
                         link.merge(linkEnter).transition()
-                            .attr('d', diagonal.value);
+                            .attr('d', diagonal.value)
+                            .transition().duration(500)
+                            .style('opacity', 1);
 
                         link.exit().transition().remove()
                             .attr('d', () => {
@@ -525,11 +588,12 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     function updateSelectedKingdom(kingdomObj) {
                         clearTreeDisplayData();
+                        phylaKeyArr.value = [];
                         treeNodeData.value = [];
                         treeRootData.value = Object.assign({}, {});
                         selectedKingdom.value = kingdomObj;
                         if(selectedKingdom.value){
-                            getTaxonChildren(selectedKingdom.value['tid'], (data) => {
+                            getTaxonChildren(selectedKingdom.value['tid'], null, (data) => {
                                 if(data.length > 0){
                                     setDimensions();
                                     setPng();
@@ -556,6 +620,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                             image: (resObj.hasOwnProperty(selectedKingdom.value['tid'].toString()) && resObj[selectedKingdom.value['tid'].toString()].length > 0) ? resObj[selectedKingdom.value['tid'].toString()][0]['url'] : null,
                                             children: data
                                         };
+                                        data.forEach((node) => {
+                                            node['phylatid'] = node['tid'];
+                                        });
+                                        setPhylaKeyArr(data.slice());
                                         treeNodeData.value = data.slice();
                                         treeRootData.value = Object.assign({}, rootObj);
                                         setTreeDisplay();
@@ -589,6 +657,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         linkLayoutOptions,
                         marginXValue,
                         marginYValue,
+                        phylaKeyArr,
                         selectedKingdom,
                         selectedLayoutType,
                         selectedLinkLayout,
@@ -596,6 +665,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         treeDisplayRef,
                         treeStyle,
                         centerTree,
+                        processPhylaLineColorChange,
                         setLayoutType,
                         setLinkLayout,
                         updateSelectedKingdom
