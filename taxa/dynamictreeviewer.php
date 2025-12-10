@@ -14,12 +14,6 @@ header('X-Frame-Options: SAMEORIGIN');
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-        <style>
-            .tree-container {
-                min-height: 600px;
-                overflow: hidden;
-            }
-        </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/d3.v7.js" type="text/javascript"></script>
     </head>
     <body>
@@ -34,7 +28,7 @@ header('X-Frame-Options: SAMEORIGIN');
             </div>
             <div class="q-pa-md fit">
                 <div class="fit row justify-between q-ma-none q-pa-none q-col-gutter-sm">
-                    <div class="col-3 q-pa-sm">
+                    <div class="col-3 q-pa-sm column q-gutter-sm">
                         <q-card flat bordered>
                             <q-card-section class="column q-gutter-sm q-pa-sm">
                                 <div>
@@ -51,11 +45,29 @@ header('X-Frame-Options: SAMEORIGIN');
                                 </div>
                             </q-card-section>
                         </q-card>
+                        <template v-if="phylaKeyArr.length > 0">
+                            <q-card flat bordered>
+                                <q-card-section class="column q-gutter-sm q-pa-sm">
+                                    <template v-for="phyla in phylaKeyArr">
+                                        <div class="row justify-start">
+                                            <div class="q-mr-lg">
+                                                <color-picker :color-value="phyla.color" @update:color-picker="(value) => processPhylaLineColorChange(value, phyla.tid)"></color-picker>
+                                            </div>
+                                            <div class="text-bold self-center">
+                                                {{ phyla.sciname }}
+                                            </div>
+                                        </div>
+                                    </template>
+                                </q-card-section>
+                            </q-card>
+                        </template>
                     </div>
                     <div class="col-9 q-pa-sm">
                         <q-card flat bordered>
-                            <q-card-section class="q-pa-sm">
-                                <div ref="treeDisplayRef" class="tree-container"></div>
+                            <q-card-section class="q-pa-none">
+                                <div ref="treeContainerRef" class="fit">
+                                    <div ref="treeDisplayRef" :style="treeStyle"></div>
+                                </div>
                             </q-card-section>
                         </q-card>
                     </div>
@@ -68,51 +80,23 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/colorPicker.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const dynamicTaxonomicTreeViewer = Vue.createApp({
                 components: {
+                    'color-picker': colorPicker,
                     'selector-input-element': selectorInputElement,
                     'taxa-kingdom-selector': taxaKingdomSelector,
                     'text-field-input-element': textFieldInputElement
                 },
                 setup() {
-                    const { hideWorking, showNotification, showWorking } = useCore();
+                    const { generateRandHexColor, hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
 
                     const clientRoot = baseStore.getClientRoot;
                     const containerHeight = Vue.ref(0);
                     const containerWidth = Vue.ref(0);
                     const defsElement = Vue.ref(null);
-                    const gElement = Vue.ref(null);
-                    const gLinkElement = Vue.ref(null);
-                    const gNodeElement = Vue.ref(null);
-                    const initialCenter = Vue.ref(true);
-                    const layoutTypeOptions = [
-                        'Horizontal',
-                        'Vertical',
-                        'Circular'
-                    ];
-                    const linkLayoutOptions = [
-                        'Bezier',
-                        'Orthogonal'
-                    ];
-                    const marginXValue = Vue.ref(1000);
-                    const marginYValue = Vue.ref(5000);
-                    const nodeArr = Vue.ref([]);
-                    const selectedKingdom = Vue.ref(null);
-                    const selectedLayoutType = Vue.ref('Horizontal');
-                    const selectedLinkLayout = Vue.ref('Bezier');
-                    const svgElement = Vue.ref(null);
-                    let treeData = Vue.ref({});
-                    const treeDisplayRef = Vue.ref(null);
-                    const zoom = d3.zoom().on('zoom', zoomed);
-
-                    const cx = Vue.computed(() => {
-                        return (containerWidth.value * 0.5);
-                    });
-                    const cy = Vue.computed(() => {
-                        return (containerHeight.value * 0.59);
-                    });
                     const diagonal = Vue.computed(() => {
                         if(selectedLinkLayout.value === 'Bezier'){
                             if(selectedLayoutType.value === 'Horizontal'){
@@ -137,13 +121,30 @@ header('X-Frame-Options: SAMEORIGIN');
                             }
                         }
                     });
+                    const gElement = Vue.ref(null);
+                    const gLinkElement = Vue.ref(null);
+                    const gNodeElement = Vue.ref(null);
+                    const initialCenter = Vue.ref(true);
+                    const layoutTypeOptions = [
+                        'Horizontal',
+                        'Vertical',
+                        'Circular'
+                    ];
+                    const linkLayoutOptions = [
+                        'Orthogonal',
+                        'Bezier'
+                    ];
+                    const marginXValue = Vue.ref(1000);
+                    const marginYValue = Vue.ref(5000);
+                    const nodeArr = Vue.ref([]);
+                    const phylaKeyArr = Vue.ref([]);
                     const root = Vue.computed(() => {
-                        return d3.hierarchy(treeData.value);
+                        return d3.hierarchy(treeRootData.value);
                     });
-                    const treeRadius = Vue.computed(() => {
-                        return ((Math.min(containerWidth.value, containerHeight.value)));
-                    });
-
+                    const selectedKingdom = Vue.ref(null);
+                    const selectedLayoutType = Vue.ref('Horizontal');
+                    const selectedLinkLayout = Vue.ref('Orthogonal');
+                    const svgElement = Vue.ref(null);
                     const tree = Vue.computed(() => {
                         if(selectedLayoutType.value === 'Circular'){
                             return d3.tree()
@@ -151,17 +152,95 @@ header('X-Frame-Options: SAMEORIGIN');
                                 .separation((a, b) => (a.parent === b.parent ? 1 : 2) / a.depth);
                         }
                         else{
-                            return d3.tree().nodeSize([marginXValue.value, marginYValue.value]);
+                            return d3.tree()
+                                .size([containerHeight.value, containerWidth.value])
+                                .nodeSize([marginXValue.value, marginYValue.value]);
                         }
                     });
+                    const treeContainerRef = Vue.ref(null);
+                    const treeDisplayRef = Vue.ref(null);
+                    const treeHeightCenterDifference = Vue.computed(() => {
+                        let extremeValue = 0;
+                        let evenValue = 0;
+                        root.value.descendants().forEach((node) => {
+                            if(Math.abs(node.x) > Math.abs(extremeValue)){
+                                extremeValue = node.x;
+                            }
+                            if(Math.abs(node.x) === Math.abs(extremeValue) && Math.abs(node.x) !== extremeValue){
+                                evenValue = Math.abs(node.x);
+                            }
+                        });
+                        let difference = Math.abs(extremeValue) - evenValue;
+                        if(difference !== 0 && extremeValue > evenValue){
+                            difference *= -1;
+                        }
+                        return difference;
+                    });
+                    const treeNodeData = Vue.ref([]);
+                    const treeRadius = Vue.computed(() => {
+                        return Math.min(containerWidth.value, containerHeight.value);
+                    });
+                    let treeRootData = Vue.ref({});
+                    const treeScaleRatio = Vue.ref(1);
+                    const treeStyle = Vue.ref(null);
+                    const treeXValue = Vue.ref(0);
+                    const treeYValue = Vue.ref(0);
+                    const zoom = d3.zoom().on('zoom', zoomed);
 
-                    function centerTree() {
-                        d3.select('svg')
-                            .transition()
-                            .call(zoom.translateTo, (0.5 * containerWidth.value), (0.5 * containerHeight.value));
+                    function clearTreeDisplayData() {
+                        while(treeDisplayRef.value.firstChild) {
+                            treeDisplayRef.value.removeChild(treeDisplayRef.value.firstChild);
+                        }
+                        initialCenter.value = true;
+                        treeStyle.value = null;
+                        resetZoom();
                     }
 
-                    function getTaxonChildren(id, callback) {
+                    function centerTree() {
+                        const treeHeight = d3.max(root.value.descendants(), d => d.x) - d3.min(root.value.descendants(), d => d.x);
+                        const treeWidth = d3.max(root.value.descendants(), d => d.y) - d3.min(root.value.descendants(), d => d.y);
+                        if(Number(treeWidth) > 0 || Number(treeHeight) > 0){
+                            const fixedTreeHeight = treeHeight + 500;
+                            const fixedTreeWidth = treeWidth + 500;
+                            resetZoom();
+                            if(selectedLayoutType.value === 'Circular'){
+                                treeScaleRatio.value = containerWidth.value / ((fixedTreeWidth - 500) * 2.1);
+                            }
+                            else if((containerWidth.value / fixedTreeWidth) < (containerHeight.value / fixedTreeHeight)){
+                                treeScaleRatio.value = containerWidth.value / fixedTreeWidth;
+                            }
+                            else{
+                                treeScaleRatio.value = containerHeight.value / fixedTreeHeight;
+                            }
+                            if(selectedLayoutType.value === 'Horizontal'){
+                                treeXValue.value = ((containerWidth.value - (fixedTreeWidth * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
+                                treeYValue.value = (containerHeight.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
+                            }
+                            else if(selectedLayoutType.value === 'Vertical'){
+                                treeXValue.value = (containerHeight.value / 2) + ((treeHeightCenterDifference.value * treeScaleRatio.value) / 2);
+                                treeYValue.value = ((containerWidth.value - (fixedTreeWidth * treeScaleRatio.value)) / 2) + (250 * treeScaleRatio.value);
+                            }
+                            else{
+                                treeXValue.value = containerWidth.value / 2;
+                                treeYValue.value = containerHeight.value / 2;
+                            }
+                            d3.select('svg').transition().call(zoom.transform, d3.zoomIdentity.translate(treeXValue.value, treeYValue.value).scale(treeScaleRatio.value));
+                            d3.select('svg g').attr('transform', 'translate(' + treeXValue.value + ',' + treeYValue.value + ') scale(' + treeScaleRatio.value + ')');
+                        }
+                    }
+
+                    function getPathColorValue(path) {
+                        let returnVal = '#555';
+                        if(path.source.parent){
+                            const phylaData = phylaKeyArr.value.find(phyla => Number(phyla['phylatid']) === Number(path.source.data.phylatid));
+                            if(phylaData){
+                                return phylaData['color'];
+                            }
+                        }
+                        return returnVal;
+                    }
+
+                    function getTaxonChildren(id, phylatid, callback) {
                         showWorking();
                         const formData = new FormData();
                         formData.append('tid', id);
@@ -174,10 +253,37 @@ header('X-Frame-Options: SAMEORIGIN');
                         })
                         .then((response) => {
                             response.json().then((resObj) => {
+                                if(phylatid && resObj.length > 0){
+                                    resObj.forEach((node) => {
+                                        node['phylatid'] = phylatid;
+                                    });
+                                }
                                 hideWorking();
                                 callback(resObj);
                             });
                         });
+                    }
+
+                    function processDisplayChange() {
+                        clearTreeDisplayData();
+                        setDimensions();
+                        setPng();
+                        setTreeDisplay();
+                    }
+
+                    function processPhylaLineColorChange(color, tid) {
+                        const phylaData = phylaKeyArr.value.find(phyla => Number(phyla['phylatid']) === Number(tid));
+                        if(phylaData){
+                            phylaData.color = color;
+                            d3.selectAll('path').attr('stroke', d => getPathColorValue(d));
+                        }
+                    }
+
+                    function resetZoom() {
+                        treeScaleRatio.value = 1;
+                        treeXValue.value = 0;
+                        treeYValue.value = 0;
+                        d3.select('svg').transition().call(zoom.transform, d3.zoomIdentity.translate(treeXValue.value, treeYValue.value).scale(treeScaleRatio.value));
                     }
 
                     function setDefs(node) {
@@ -202,8 +308,9 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function setDimensions() {
-                        containerHeight.value = treeDisplayRef.value.clientHeight;
-                        containerWidth.value = treeDisplayRef.value.clientWidth;
+                        containerWidth.value = treeContainerRef.value.clientWidth;
+                        containerHeight.value = containerWidth.value;
+                        treeStyle.value = 'width: ' + containerWidth.value + 'px; height: ' + containerHeight.value + 'px;overflow: hidden;';
                     }
 
                     function setLayoutType(value) {
@@ -211,18 +318,18 @@ header('X-Frame-Options: SAMEORIGIN');
                         if(selectedLayoutType.value === 'Circular' && selectedLinkLayout.value === 'Orthogonal'){
                             selectedLinkLayout.value = 'Bezier';
                         }
-                        if(Object.keys(treeData.value).length > 0){
+                        if(Object.keys(treeRootData.value).length > 0){
                             update(null, root.value);
-                            d3.select('svg').transition().call(zoom.scaleBy, 1);
+                            centerTree();
                         }
                     }
 
                     function setLinkLayout(value) {
                         if(selectedLayoutType.value !== 'Circular' || value !== 'Orthogonal'){
                             selectedLinkLayout.value = value;
-                            if(Object.keys(treeData.value).length > 0){
+                            if(Object.keys(treeRootData.value).length > 0){
                                 update(null, root.value);
-                                d3.select('svg').transition().call(zoom.scaleBy, 1);
+                                centerTree();
                             }
                         }
                         else{
@@ -230,29 +337,43 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
+                    function setPhylaKeyArr(phylaArr) {
+                        phylaArr.forEach((node) => {
+                            node['color'] = generateRandHexColor();
+                            phylaKeyArr.value.push(node);
+                        });
+                    }
+
                     function setPng() {
                         svgElement.value = d3.create('svg')
-                            .attr('width', containerWidth.value)
-                            .attr('height', containerHeight.value)
-                            .attr('viewBox', [-cx.value, -cy.value, containerWidth.value, containerHeight.value])
-                            .style('user-select', 'none');
+                            .attr('width', '100%')
+                            .attr('height', '100%')
+                            .attr('viewBox', `0 0 ${containerWidth.value} ${containerHeight.value}`)
+                            .attr('preserveAspectRatio', 'none');
                         defsElement.value = svgElement.value.append('defs');
                         gElement.value = svgElement.value.append('g');
                         gLinkElement.value = gElement.value.append('g')
-                            .attr('fill', 'none')
-                            .attr('stroke', '#555')
-                            .attr('stroke-opacity', 0.6)
-                            .attr('stroke-width', 10);
+                            .attr('fill', 'none');
                         gNodeElement.value = gElement.value.append('g');
                         svgElement.value.call(zoom);
-                        root.value.x0 = marginYValue.value / 2;
+                        root.value.x0 = 0;
                         root.value.y0 = 0;
                         treeDisplayRef.value.append(svgElement.value.node());
                         update(null, root.value);
                     }
 
+                    function setTreeDisplay() {
+                        nodeArr.value.length = 0;
+                        setDefs(treeRootData.value);
+                        nodeArr.value.push(treeRootData.value);
+                        treeNodeData.value.forEach((node) => {
+                            setDefs(node);
+                            nodeArr.value.push(node);
+                        });
+                        update(null, root.value);
+                    }
+
                     function update(event, source) {
-                        let transition;
                         if(!source.hasOwnProperty('x0') || !source.x0){
                             source.x0 = 0;
                         }
@@ -264,25 +385,11 @@ header('X-Frame-Options: SAMEORIGIN');
 
                         tree.value(root.value);
 
-                        if(Number(source.x0) === 0){
-                            transition = svgElement.value.transition()
-                                .call(zoom.scaleBy, 0.046)
-                                .attr('width', containerWidth.value)
-                                .attr('height', containerHeight.value)
-                                .attr('viewBox', [(-0.5 * containerWidth.value), (-0.5 * containerHeight.value), containerWidth.value, containerHeight.value]);
-                        }
-                        else{
-                            transition = svgElement.value.transition()
-                                .duration(250)
-                                .attr('width', containerWidth.value)
-                                .attr('height', containerHeight.value);
-                        }
-
                         const node = gNodeElement.value.selectAll('g')
                             .data(nodes, d => d.data.tid);
 
                         const nodeEnter = node.enter().append('g')
-                            .attr('transform', d => {
+                            .attr('transform', () => {
                                 if(selectedLayoutType.value === 'Horizontal'){
                                     return `translate(${source.y0}, ${source.x0})`
                                 }
@@ -294,7 +401,8 @@ header('X-Frame-Options: SAMEORIGIN');
                                 }
                             })
                             .attr('fill-opacity', 0)
-                            .attr('stroke-opacity', 0);
+                            .attr('stroke-opacity', 0)
+                            .style('opacity', 0);
 
                         nodeEnter.append('circle')
                             .attr('height', 250)
@@ -334,7 +442,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                         update(event, d);
                                     }
                                     else{
-                                        getTaxonChildren(d.data.tid, (data) => {
+                                        getTaxonChildren(d.data.tid, d.data.phylatid, (data) => {
                                             let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
                                             parentNode.children = data;
                                             data.forEach((node) => {
@@ -357,7 +465,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                         update(event, d);
                                     }
                                     else{
-                                        getTaxonChildren(d.data.tid, (data) => {
+                                        getTaxonChildren(d.data.tid, d.data.phylatid, (data) => {
                                             let parentNode = nodeArr.value.find((node) => Number(node.tid) === Number(d.data.tid));
                                             parentNode.children = data;
                                             data.forEach((node) => {
@@ -402,7 +510,7 @@ header('X-Frame-Options: SAMEORIGIN');
                                 window.open(url, '_blank');
                             });
 
-                        node.merge(nodeEnter).transition(transition)
+                        node.merge(nodeEnter).transition()
                             .attr('transform', d => {
                                 if(selectedLayoutType.value === 'Horizontal'){
                                     return `translate(${d.y}, ${d.x})`
@@ -415,10 +523,12 @@ header('X-Frame-Options: SAMEORIGIN');
                                 }
                             })
                             .attr('fill-opacity', 1)
-                            .attr('stroke-opacity', 1);
+                            .attr('stroke-opacity', 1)
+                            .transition().duration(500)
+                            .style('opacity', 1);
 
-                        node.exit().transition(transition).remove()
-                            .attr('transform', d => {
+                        node.exit().transition().remove()
+                            .attr('transform', () => {
                                 if(selectedLayoutType.value === 'Horizontal'){
                                     return `translate(${source.y}, ${source.x})`
                                 }
@@ -436,16 +546,27 @@ header('X-Frame-Options: SAMEORIGIN');
                             .data(links, d => d.target.data.tid);
 
                         const linkEnter = link.enter().append('path')
-                            .attr('d', d => {
+                            .attr('d', () => {
                                 const o = {x: source.x0, y: source.y0};
                                 return diagonal.value({source: o, target: o});
-                            });
+                            })
+                            .attr('stroke-opacity', d => {
+                                return d.source.parent ? 1 : 0.6
+                            })
+                            .attr('stroke', d => getPathColorValue(d))
+                            .attr('stroke-width', d => {
+                                const level = Number(d.source.depth) + 1;
+                                return 10 + ((1 / level) * 50);
+                            })
+                            .style('opacity', 0);
 
-                        link.merge(linkEnter).transition(transition)
-                            .attr('d', diagonal.value);
+                        link.merge(linkEnter).transition()
+                            .attr('d', diagonal.value)
+                            .transition().duration(500)
+                            .style('opacity', 1);
 
-                        link.exit().transition(transition).remove()
-                            .attr('d', d => {
+                        link.exit().transition().remove()
+                            .attr('d', () => {
                                 const o = {x: source.x, y: source.y};
                                 return diagonal.value({source: o, target: o});
                             });
@@ -464,13 +585,15 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function updateSelectedKingdom(kingdomObj) {
-                        treeDisplayRef.value.innerHTML = '';
-                        nodeArr.value.length = 0;
-                        treeData.value = Object.assign({}, {});
+                        clearTreeDisplayData();
+                        phylaKeyArr.value = [];
+                        treeNodeData.value = [];
+                        treeRootData.value = Object.assign({}, {});
                         selectedKingdom.value = kingdomObj;
                         if(selectedKingdom.value){
-                            getTaxonChildren(selectedKingdom.value['tid'], (data) => {
+                            getTaxonChildren(selectedKingdom.value['tid'], null, (data) => {
                                 if(data.length > 0){
+                                    setDimensions();
                                     setPng();
                                     const formData = new FormData();
                                     formData.append('tidArr', JSON.stringify([selectedKingdom.value['tid'].toString()]));
@@ -495,26 +618,34 @@ header('X-Frame-Options: SAMEORIGIN');
                                             image: (resObj.hasOwnProperty(selectedKingdom.value['tid'].toString()) && resObj[selectedKingdom.value['tid'].toString()].length > 0) ? resObj[selectedKingdom.value['tid'].toString()][0]['url'] : null,
                                             children: data
                                         };
-                                        setDefs(rootObj);
-                                        treeData.value = Object.assign({}, rootObj);
-                                        nodeArr.value.push(rootObj);
                                         data.forEach((node) => {
-                                            setDefs(node);
-                                            nodeArr.value.push(node);
+                                            node['phylatid'] = node['tid'];
                                         });
-                                        update(null, root.value);
+                                        setPhylaKeyArr(data.slice());
+                                        treeNodeData.value = data.slice();
+                                        treeRootData.value = Object.assign({}, rootObj);
+                                        setTreeDisplay();
                                     });
                                 }
                             });
                         }
                     }
 
-                    function zoomed(e) {
-                        d3.select('svg g').attr('transform', e.transform);
+                    function zoomed(event) {
+                        if(event.hasOwnProperty('sourceEvent') && event['sourceEvent']){
+                            if(event['sourceEvent']['type'] === 'mousemove'){
+                                treeXValue.value = event.transform.x;
+                                treeYValue.value = event.transform.y;
+                            }
+                            else if(event['sourceEvent']['type'] === 'wheel'){
+                                treeScaleRatio.value = event.transform.k;
+                            }
+                            d3.select('svg g').attr('transform', 'translate(' + treeXValue.value + ',' + treeYValue.value + ') scale(' + treeScaleRatio.value + ')');
+                        }
                     }
 
                     Vue.onMounted(() => {
-                        window.addEventListener('resize', setDimensions);
+                        window.addEventListener('resize', processDisplayChange);
                         setDimensions();
                     });
 
@@ -524,11 +655,15 @@ header('X-Frame-Options: SAMEORIGIN');
                         linkLayoutOptions,
                         marginXValue,
                         marginYValue,
+                        phylaKeyArr,
                         selectedKingdom,
                         selectedLayoutType,
                         selectedLinkLayout,
+                        treeContainerRef,
                         treeDisplayRef,
+                        treeStyle,
                         centerTree,
+                        processPhylaLineColorChange,
                         setLayoutType,
                         setLinkLayout,
                         updateSelectedKingdom
