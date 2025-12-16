@@ -32,10 +32,8 @@ const mofDataFieldModule = {
                 </template>
             </div>
         </div>
-        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
-        'confirmation-popup': confirmationPopup,
         'mof-data-field-row': mofDataFieldRow,
         'mof-data-field-row-group': mofDataFieldRowGroup
     },
@@ -75,7 +73,6 @@ const mofDataFieldModule = {
                 return occurrenceStore.getOccurrenceMofDataLabel;
             }
         });
-        const confirmationPopupRef = Vue.ref(null);
         const editsExist = Vue.computed(() => {
             if(props.dataType === 'event'){
                 return occurrenceStore.getEventMofEditsExist;
@@ -132,23 +129,11 @@ const mofDataFieldModule = {
             }
         }
 
-        Vue.onBeforeUnmount(() => {
-            if(editsExist.value){
-                const confirmText = 'There are unsaved edits. Would you like to save them?';
-                confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
-                    if(val){
-                        saveConfiguredDataEdits();
-                    }
-                }});
-            }
-        });
-
         return {
             configuredData,
             configuredDataFields,
             configuredDataFieldsLayoutData,
             configuredDataLabel,
-            confirmationPopupRef,
             editsExist,
             processSaveDataEdits,
             updateConfiguredEditData
