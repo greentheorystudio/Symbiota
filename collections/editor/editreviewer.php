@@ -263,17 +263,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
                         </div>
                         <?php
-                        if($reviewManager->hasRevisionRecords() && !$reviewManager->getObsUid()){
-                            ?>
+                        /*if($reviewManager->hasRevisionRecords() && !$reviewManager->getObsUid()){
+                            */?><!--
                             <div style="margin:3px;">
                                 Editing Source:
                                 <select name="display">
                                     <option value="1">Internal</option>
-                                    <option value="2" <?php echo (($displayMode === 2)?'SELECTED':''); ?>>External</option>
+                                    <option value="2" <?php /*echo (($displayMode === 2)?'SELECTED':''); */?>>External</option>
                                 </select>
                             </div>
-                            <?php
-                        }
+                            --><?php
+/*                        }*/
                         ?>
                     </fieldset>
                 </form>
