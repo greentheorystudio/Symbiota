@@ -32,13 +32,15 @@ const mofDataFieldModule = {
                 </template>
             </div>
         </div>
+        <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
+        'confirmation-popup': confirmationPopup,
         'mof-data-field-row': mofDataFieldRow,
         'mof-data-field-row-group': mofDataFieldRowGroup
     },
     setup(props) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { showNotification } = useCore();
         const occurrenceStore = useOccurrenceStore();
 
         const configuredData = Vue.computed(() => {
@@ -73,6 +75,7 @@ const mofDataFieldModule = {
                 return occurrenceStore.getOccurrenceMofDataLabel;
             }
         });
+        const confirmationPopupRef = Vue.ref(null);
         const editsExist = Vue.computed(() => {
             if(props.dataType === 'event'){
                 return occurrenceStore.getEventMofEditsExist;
@@ -111,7 +114,6 @@ const mofDataFieldModule = {
         function saveConfiguredDataEdits() {
             newEventRecord.value = false;
             occurrenceStore.processMofEditData(props.dataType, (res) => {
-                hideWorking();
                 if(Number(res) === 1){
                     showNotification('positive','Edits saved.');
                 }
@@ -130,11 +132,23 @@ const mofDataFieldModule = {
             }
         }
 
+        Vue.onBeforeUnmount(() => {
+            if(editsExist.value){
+                const confirmText = 'There are unsaved edits. Would you like to save them?';
+                confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
+                    if(val){
+                        saveConfiguredDataEdits();
+                    }
+                }});
+            }
+        });
+
         return {
             configuredData,
             configuredDataFields,
             configuredDataFieldsLayoutData,
             configuredDataLabel,
+            confirmationPopupRef,
             editsExist,
             processSaveDataEdits,
             updateConfiguredEditData
