@@ -11,7 +11,6 @@ if(!$GLOBALS['SYMB_UID']) {
 }
 
 $collid = (int)$_REQUEST['collid'];
-$displayMode = array_key_exists('display',$_REQUEST)?(int)$_REQUEST['display']:1;
 $faStatus = array_key_exists('fastatus',$_REQUEST)?$_REQUEST['fastatus']:'';
 $frStatus = array_key_exists('frstatus',$_REQUEST)?$_REQUEST['frstatus']:'1,2';
 $editor = array_key_exists('editor',$_REQUEST)?$_REQUEST['editor']:'';
@@ -23,7 +22,6 @@ $limitCnt = array_key_exists('limitcnt',$_REQUEST)?(int)$_REQUEST['limitcnt']:10
 
 $reviewManager = new OccurrenceEditReview();
 $collName = $reviewManager->setCollId($collid);
-$reviewManager->setDisplay($displayMode);
 if(is_numeric($queryOccid)){
 	$reviewManager->setQueryOccidFilter($queryOccid);
 	$faStatus = '';
@@ -89,7 +87,7 @@ $subCnt = $limitCnt*($pageNum + 1);
 if($subCnt > $recCnt) {
     $subCnt = $recCnt;
 }
-$navPageBase = 'editreviewer.php?collid='.$collid.'&display='.$displayMode.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor;
+$navPageBase = 'editreviewer.php?collid='.$collid.'&fastatus='.$faStatus.'&frstatus='.$frStatus.'&editor='.$editor;
 
 $navStr = '<div class="navbarDiv" style="float:right;">';
 if($pageNum){
@@ -262,19 +260,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                             <button name="submitbutton" type="submit" value="submitfilter">Submit Filter</button>
                             <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
                         </div>
-                        <?php
-                        /*if($reviewManager->hasRevisionRecords() && !$reviewManager->getObsUid()){
-                            */?><!--
-                            <div style="margin:3px;">
-                                Editing Source:
-                                <select name="display">
-                                    <option value="1">Internal</option>
-                                    <option value="2" <?php /*echo (($displayMode === 2)?'SELECTED':''); */?>>External</option>
-                                </select>
-                            </div>
-                            --><?php
-/*                        }*/
-                        ?>
                     </fieldset>
                 </form>
             </div>
@@ -305,7 +290,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                 <input name="occid" type="hidden" value="<?php echo $queryOccid; ?>" />
                                 <input name="pagenum" type="hidden" value="<?php echo $pageNum; ?>" />
                                 <input name="limitcnt" type="hidden" value="<?php echo $limitCnt; ?>" />
-                                <input name="display" type="hidden" value="<?php echo $displayMode; ?>" />
                             </div>
                         </div>
                         <div style="clear:both;margin:15px 0;">
@@ -426,14 +410,6 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
                                                     if($displayAll){
                                                         $editorStr = $edObj['editor'];
-                                                        if($displayMode === 2){
-                                                            if(!$editorStr) {
-                                                                $editorStr = $edObj['exeditor'];
-                                                            }
-                                                            if($edObj['exsource']) {
-                                                                $editorStr = $edObj['exsource'] . ($editorStr ? ': ' . $editorStr : '');
-                                                            }
-                                                        }
                                                         echo $editorStr;
                                                     }
                                                     ?>
