@@ -18,7 +18,7 @@ const occurrenceEditorCollectingEventModule = {
                                 <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" tabindex="0" />
                             </template>
                         </template>
-                        <template v-if="Object.keys(configuredDataFields).length > 0">
+                        <template v-if="Number(eventId) > 0 && Object.keys(configuredDataFields).length > 0">
                             <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" tabindex="0" />
                         </template>
                         <template v-if="Number(eventId) === 0">
