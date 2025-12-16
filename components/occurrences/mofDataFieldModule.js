@@ -38,7 +38,7 @@ const mofDataFieldModule = {
         'mof-data-field-row-group': mofDataFieldRowGroup
     },
     setup(props) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { showNotification } = useCore();
         const occurrenceStore = useOccurrenceStore();
 
         const configuredData = Vue.computed(() => {
@@ -111,7 +111,6 @@ const mofDataFieldModule = {
         function saveConfiguredDataEdits() {
             newEventRecord.value = false;
             occurrenceStore.processMofEditData(props.dataType, (res) => {
-                hideWorking();
                 if(Number(res) === 1){
                     showNotification('positive','Edits saved.');
                 }

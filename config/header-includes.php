@@ -6,6 +6,9 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/pinia.js?ver=2.1.7" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
 <?php
+if(array_key_exists('GOOGLE_ANALYTICS_KEY', $GLOBALS) && $GLOBALS['GOOGLE_ANALYTICS_KEY']){
+ echo '<script async src="https://www.googletagmanager.com/gtag/js?id=' . $GLOBALS['GOOGLE_ANALYTICS_KEY'] . '"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "' . $GLOBALS['GOOGLE_ANALYTICS_KEY'] . '"); </script>';
+}
 include_once(__DIR__ . '/js-globals.php');
 ?>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/base.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
