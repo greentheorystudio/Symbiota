@@ -300,7 +300,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 this.collectingEventData['repcount'] = defaultRepCount ? Number(defaultRepCount) : 0;
                 this.collectingEventEditData = Object.assign({}, this.collectingEventData);
                 if(callback){
-                    callback();
+                    callback(this.collectingEventId);
                 }
             }
         },
