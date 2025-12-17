@@ -248,7 +248,6 @@ class OccurrenceCollectingEvents{
     {
         $retVal = 0;
         $sqlPartArr = array();
-        $occSqlPartArr = array();
         if($eventId && $editData){
             foreach($this->fields as $field => $fieldArr){
                 if(array_key_exists($field, $editData)){
@@ -265,23 +264,7 @@ class OccurrenceCollectingEvents{
                 'WHERE eventid = ' . (int)$eventId . ' ';
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
-                $retVal = 1;
-                foreach($this->fields as $field => $fieldArr){
-                    if($field !== 'repcount' && array_key_exists($field, $editData)){
-                        if($field === 'year' || $field === 'month' || $field === 'day'){
-                            $fieldStr = '`' . $field . '`';
-                        }
-                        else{
-                            $fieldStr = $field;
-                        }
-                        $occSqlPartArr[] = $fieldStr . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
-                        $occSql = 'UPDATE omoccurrences SET ' . implode(', ', $occSqlPartArr) . ' '.
-                            'WHERE eventid = ' . (int)$eventId . ' ';
-                        if(!$this->conn->query($occSql)){
-                            $retVal = 0;
-                        }
-                    }
-                }
+                $retVal = $this->updateOccurrencesFromCollectingEventData($eventId);
             }
         }
         return $retVal;
@@ -294,7 +277,13 @@ class OccurrenceCollectingEvents{
         if($eventId){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'eventtype' && $field !== 'repcount'){
-                    $sqlPartArr[] = 'o.' . $field . ' = e.' . $field . ' ';
+                    if($field === 'year' || $field === 'month' || $field === 'day'){
+                        $fieldStr = '`' . $field . '`';
+                    }
+                    else{
+                        $fieldStr = $field;
+                    }
+                    $sqlPartArr[] = 'o.' . $fieldStr . ' = e.' . $fieldStr . ' ';
                 }
             }
             $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
