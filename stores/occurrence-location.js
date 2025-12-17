@@ -90,9 +90,8 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
             })
             .then((response) => {
                 response.text().then((res) => {
-                    callback(Number(res));
                     if(res && Number(res) > 0){
-                        this.setCurrentLocationRecord(Number(res), collid);
+                        this.setCurrentLocationRecord(Number(res), collid, callback);
                     }
                 });
             });
@@ -161,6 +160,9 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
             else{
                 this.clearLocationData();
                 this.locationEditData = Object.assign({}, this.locationData);
+                if(callback){
+                    callback(this.locationId);
+                }
             }
         },
         setLocationData(collid, callback) {
@@ -179,7 +181,7 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
                 this.locationData = Object.assign({}, data);
                 this.locationEditData = Object.assign({}, this.locationData);
                 if(callback){
-                    callback();
+                    callback(this.locationId);
                 }
             });
         },
