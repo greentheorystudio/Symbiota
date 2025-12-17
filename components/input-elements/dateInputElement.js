@@ -146,10 +146,6 @@ const dateInputElement = {
                     else if(!props.allowPastDates && testDate < today){
                         showNotification('negative', 'Date cannot be in the past.');
                     }
-                    else if(diffYears > 99){
-                        popupText.value = 'That date was ' + diffYears.toString() + ' years ago, are you sure it\'s correct?';
-                        showPopup.value = true;
-                    }
                     else{
                         emitValue();
                     }

@@ -167,9 +167,8 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
             })
             .then((response) => {
                 response.text().then((res) => {
-                    callback(Number(res));
                     if(res && Number(res) > 0){
-                        this.setCurrentCollectingEventRecord(Number(res), entryFormat, defaultRepCount, fields);
+                        this.setCurrentCollectingEventRecord(Number(res), entryFormat, defaultRepCount, fields, callback);
                         if(locationid > 0){
                             this.getLocationCollectingEvents(collid, locationid);
                         }
@@ -269,7 +268,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                     this.setCollectingEventCollectionsArr();
                 }
                 if(callback){
-                    callback();
+                    callback(this.collectingEventId);
                 }
             });
         },
@@ -300,6 +299,9 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 this.clearCollectingEventData();
                 this.collectingEventData['repcount'] = defaultRepCount ? Number(defaultRepCount) : 0;
                 this.collectingEventEditData = Object.assign({}, this.collectingEventData);
+                if(callback){
+                    callback(this.collectingEventId);
+                }
             }
         },
         setEventMofData(fields) {
