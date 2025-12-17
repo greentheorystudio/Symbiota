@@ -279,23 +279,7 @@ class OccurrenceLocations{
                 'WHERE locationid = ' . (int)$locationId . ' ';
             //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
-                $retVal = 1;
-                foreach($this->fields as $field => $fieldArr){
-                    if($retVal && $field !== 'locationname' && $field !== 'locationcode' && array_key_exists($field, $editData)){
-                        if(in_array($field, $this->collectingEventOverlapFields)){
-                            $sqlOcc = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
-                                'SET o.' . $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
-                                'WHERE o.locationid = ' . (int)$locationId . ' AND (ISNULL(o.eventid) OR ISNULL(e.' . $field . ')) ';
-                        }
-                        else{
-                            $sqlOcc = 'UPDATE omoccurrences SET ' . $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']) . ' '.
-                                'WHERE locationid = ' . (int)$locationId . ' ';
-                        }
-                        if(!$this->conn->query($sqlOcc)){
-                            $retVal = 0;
-                        }
-                    }
-                }
+                $retVal = $this->updateOccurrencesFromLocationData($locationId);
             }
         }
         return $retVal;
