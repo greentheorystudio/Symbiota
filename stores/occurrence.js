@@ -421,7 +421,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     if(this.getEventMofEditsExist){
                         this.processMofEditData('event', null, Number(newEventId));
                     }
-                    this.updateOccurrenceEditData('eventid', Number(newEventId));
+                    this.mergeEventOccurrenceData();
                 }
                 callback(Number(newEventId));
             }, eventData);
@@ -429,7 +429,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         createLocationRecord(callback, locationData = null) {
             this.locationStore.createLocationRecord(this.getCollId, (newLocationId) => {
                 if(newLocationId && Number(newLocationId) > 0){
-                    this.updateOccurrenceEditData('locationid', Number(newLocationId));
+                    this.mergeLocationOccurrenceData();
                 }
                 callback(Number(newLocationId));
             }, locationData);
