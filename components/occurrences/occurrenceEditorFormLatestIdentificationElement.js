@@ -21,7 +21,7 @@ const occurrenceEditorFormLatestIdentificationElement = {
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-7">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['identifiedby']" label="Identified By" :maxlength="occurrenceFields['identifiedby'] ? occurrenceFields['identifiedby']['length'] : 0" :value="occurrenceData.identifiedby" @update:value="(value) => updateOccurrenceData('identifiedby', value)"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['identifiedby']" label="Identified By" field="identifiedby" :maxlength="occurrenceFields['identifiedby'] ? occurrenceFields['identifiedby']['length'] : 0" :value="occurrenceData.identifiedby" @update:value="(value) => updateOccurrenceData('identifiedby', value)"></text-field-input-element>
                     </div>
                     <div class="col-11 col-sm-4">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['dateidentified']" label="Date Identified" :maxlength="occurrenceFields['dateidentified'] ? occurrenceFields['dateidentified']['length'] : 0" :value="occurrenceData.dateidentified" @update:value="(value) => updateOccurrenceData('dateidentified', value)"></text-field-input-element>
