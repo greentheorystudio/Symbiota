@@ -5,7 +5,6 @@ const occurrenceEditorFormMiscElement = {
                 <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
                     Occurrence
                 </div>
-                <q-form>
                 <div class="row justify-between">
                     <div class="col-grow">
                         <occurrence-associated-taxa-input-element :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" field="associatedtaxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></occurrence-associated-taxa-input-element>
