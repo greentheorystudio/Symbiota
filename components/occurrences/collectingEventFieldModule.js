@@ -122,7 +122,7 @@ const collectingEventFieldModule = {
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['habitat']" label="Habitat" :value="data.habitat" @update:value="(value) => updateData('habitat', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['habitat']" label="Habitat" field="habitat" :value="data.habitat" @update:value="(value) => updateData('habitat', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
