@@ -903,10 +903,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             });
         },
         setCurrentCollectingEventRecord(eventid) {
-            this.collectingEventStore.setCurrentCollectingEventRecord(eventid, this.occurrenceEntryFormat, this.getCollectionData['defaultrepcount'], this.getEventMofDataFields, () => {
-                this.setCurrentOccurrenceRecord(this.occId);
-                this.updateOccurrenceEditData('eventid', (Number(this.getCollectingEventID) > 0 ? this.getCollectingEventID.toString() : null));
-            });
+            if(Number(eventid) > 0){
+                this.collectingEventStore.setCurrentCollectingEventRecord(eventid, this.occurrenceEntryFormat, this.getCollectionData['defaultrepcount'], this.getEventMofDataFields, () => {
+                    this.setCurrentOccurrenceRecord(this.occId);
+                    this.updateOccurrenceEditData('eventid', (Number(this.getCollectingEventID) > 0 ? this.getCollectingEventID.toString() : null));
+                });
+            }
         },
         setCurrentDeterminationRecord(detid) {
             this.determinationStore.setCurrentDeterminationRecord(detid);
