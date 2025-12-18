@@ -7,7 +7,7 @@ const occurrenceEditorFormMiscElement = {
                 </div>
                 <div class="row justify-between">
                     <div class="col-grow">
-                        <occurrence-associated-taxa-input-element :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></occurrence-associated-taxa-input-element>
+                        <occurrence-associated-taxa-input-element :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" field="associatedtaxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></occurrence-associated-taxa-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
@@ -16,7 +16,7 @@ const occurrenceEditorFormMiscElement = {
                             <selector-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :options="controlledVocabularies['lifestage']" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)" :clearable="true"></selector-input-element>
                         </template>
                         <template v-else>
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" field="lifestage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
                         </template>
                     </div>
                     <div class="col-12 col-sm-6 col-md-grow">
@@ -24,7 +24,7 @@ const occurrenceEditorFormMiscElement = {
                             <selector-input-element :definition="occurrenceFieldDefinitions['sex']" label="Sex" :options="controlledVocabularies['sex']" :value="occurrenceData.sex" @update:value="(value) => updateOccurrenceData('sex', value)" :clearable="true"></selector-input-element>
                         </template>
                         <template v-else>
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['sex']" label="Sex" :maxlength="occurrenceFields['sex'] ? occurrenceFields['sex']['length'] : 0" :value="occurrenceData.sex" @update:value="(value) => updateOccurrenceData('sex', value)"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['sex']" label="Sex" field="sex" :maxlength="occurrenceFields['sex'] ? occurrenceFields['sex']['length'] : 0" :value="occurrenceData.sex" @update:value="(value) => updateOccurrenceData('sex', value)"></text-field-input-element>
                         </template>
                     </div>
                     <template v-if="occurrenceEntryFormat === 'benthic'">
@@ -43,7 +43,7 @@ const occurrenceEditorFormMiscElement = {
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['occurrenceremarks']" label="Occurrence Remarks" :value="occurrenceData.occurrenceremarks" @update:value="(value) => updateOccurrenceData('occurrenceremarks', value)"></text-field-input-element>
+                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['occurrenceremarks']" label="Occurrence Remarks" field="occurrenceremarks" :value="occurrenceData.occurrenceremarks" @update:value="(value) => updateOccurrenceData('occurrenceremarks', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
@@ -67,10 +67,10 @@ const occurrenceEditorFormMiscElement = {
                 <template v-if="showExtendedForm">
                     <div class="row justify-between q-col-gutter-sm">
                         <div class="col-12 col-sm-6 col-md-5">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['reproductivecondition']" label="Reproductive Condition" :maxlength="occurrenceFields['reproductivecondition'] ? occurrenceFields['reproductivecondition']['length'] : 0" :value="occurrenceData.reproductivecondition" @update:value="(value) => updateOccurrenceData('reproductivecondition', value)"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['reproductivecondition']" label="Reproductive Condition" field="reproductivecondition" :maxlength="occurrenceFields['reproductivecondition'] ? occurrenceFields['reproductivecondition']['length'] : 0" :value="occurrenceData.reproductivecondition" @update:value="(value) => updateOccurrenceData('reproductivecondition', value)"></text-field-input-element>
                         </div>
                         <div class="col-12 col-sm-6 col-md-5">
-                            <text-field-input-element :definition="occurrenceFieldDefinitions['establishmentmeans']" label="Establishment Means" :maxlength="occurrenceFields['establishmentmeans'] ? occurrenceFields['establishmentmeans']['length'] : 0" :value="occurrenceData.establishmentmeans" @update:value="(value) => updateOccurrenceData('establishmentmeans', value)"></text-field-input-element>
+                            <text-field-input-element :definition="occurrenceFieldDefinitions['establishmentmeans']" label="Establishment Means" field="establishmentmeans" :maxlength="occurrenceFields['establishmentmeans'] ? occurrenceFields['establishmentmeans']['length'] : 0" :value="occurrenceData.establishmentmeans" @update:value="(value) => updateOccurrenceData('establishmentmeans', value)"></text-field-input-element>
                         </div>
                         <div class="col-12 col-sm-6 col-md-2">
                             <checkbox-input-element :definition="occurrenceFieldDefinitions['cultivationstatus']" label="Cultivated" :value="occurrenceData.cultivationstatus" @update:value="updateCultivationStatusSetting"></checkbox-input-element>
@@ -78,12 +78,12 @@ const occurrenceEditorFormMiscElement = {
                     </div>
                     <div class="row">
                         <div class="col-grow">
-                            <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['dynamicproperties']" label="Dynamic Properties" :maxlength="occurrenceFields['dynamicproperties'] ? occurrenceFields['dynamicproperties']['length'] : 0" :value="occurrenceData.dynamicproperties" @update:value="(value) => updateOccurrenceData('dynamicproperties', value)"></text-field-input-element>
+                            <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['dynamicproperties']" label="Dynamic Properties" field="dynamicproperties" :maxlength="occurrenceFields['dynamicproperties'] ? occurrenceFields['dynamicproperties']['length'] : 0" :value="occurrenceData.dynamicproperties" @update:value="(value) => updateOccurrenceData('dynamicproperties', value)"></text-field-input-element>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-grow">
-                            <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['verbatimattributes']" label="Verbatim Attributes" :maxlength="occurrenceFields['verbatimattributes'] ? occurrenceFields['verbatimattributes']['length'] : 0" :value="occurrenceData.verbatimattributes" @update:value="(value) => updateOccurrenceData('verbatimattributes', value)"></text-field-input-element>
+                            <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['verbatimattributes']" label="Verbatim Attributes" field="verbatimattributes" :maxlength="occurrenceFields['verbatimattributes'] ? occurrenceFields['verbatimattributes']['length'] : 0" :value="occurrenceData.verbatimattributes" @update:value="(value) => updateOccurrenceData('verbatimattributes', value)"></text-field-input-element>
                         </div>
                     </div>
                 </template>
