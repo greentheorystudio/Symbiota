@@ -223,13 +223,11 @@ const occurrenceEditorImageTranscriberPopup = {
                             <template v-else>
                                 <div class="q-pa-sm column q-gutter-sm">
                                     <template v-if="showDeterminationEditorBlock">
-                                        <q-card flat bordered>
-                                            <q-card-section class="q-pa-none">
-                                                <determination-editor-module :determination-id="editDeterminationId" :single-column="true" @close:popup="showDeterminationEditorBlock = false"></determination-editor-module>
-                                            </q-card-section>
-                                        </q-card>
+                                        <determination-editor-module :determination-id="editDeterminationId" :single-column="true" @close:popup="showDeterminationEditorBlock = false"></determination-editor-module>
                                     </template>
-                                    <occurrence-editor-determination-history-block @open:determination-editor="openDeterminationEditorBlock"></occurrence-editor-determination-history-block>
+                                    <template v-else>
+                                        <occurrence-editor-determination-history-block @open:determination-editor="openDeterminationEditorBlock"></occurrence-editor-determination-history-block>
+                                    </template>
                                 </div>
                             </template>
                         </div>
