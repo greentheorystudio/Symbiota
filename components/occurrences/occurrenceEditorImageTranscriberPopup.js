@@ -55,9 +55,6 @@ const occurrenceEditorImageTranscriberPopup = {
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimdepth']" label="Verbatim Depth" :maxlength="occurrenceFields['verbatimdepth'] ? occurrenceFields['verbatimdepth']['length'] : 0" :value="occurrenceData.verbatimdepth" @update:value="(value) => updateOccurrenceData('verbatimdepth', value)"></text-field-input-element>
                                 </div>
                                 <div>
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['habitat']" label="Habitat" :value="occurrenceData.habitat" @update:value="(value) => updateOccurrenceData('habitat', value)"></text-field-input-element>
-                                </div>
-                                <div>
                                     <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['substrate']" label="Substrate" :value="occurrenceData.substrate" @update:value="(value) => updateOccurrenceData('substrate', value)"></text-field-input-element>
                                 </div>
                                 <div>
@@ -65,9 +62,6 @@ const occurrenceEditorImageTranscriberPopup = {
                                 </div>
                                 <div>
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['samplingprotocol']" label="Sampling Protocol" :maxlength="occurrenceFields['samplingprotocol'] ? occurrenceFields['samplingprotocol']['length'] : 0" :value="occurrenceData.samplingprotocol" @update:value="(value) => updateOccurrenceData('samplingprotocol', value)"></text-field-input-element>
-                                </div>
-                                <div>
-                                    <text-field-input-element :definition="occurrenceFieldDefinitions['samplingeffort']" label="Sampling Effort" :maxlength="occurrenceFields['samplingeffort'] ? occurrenceFields['samplingeffort']['length'] : 0" :value="occurrenceData.samplingeffort" @update:value="(value) => updateOccurrenceData('samplingeffort', value)"></text-field-input-element>
                                 </div>
                                 <div>
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['samplingeffort']" label="Sampling Effort" :maxlength="occurrenceFields['samplingeffort'] ? occurrenceFields['samplingeffort']['length'] : 0" :value="occurrenceData.samplingeffort" @update:value="(value) => updateOccurrenceData('samplingeffort', value)"></text-field-input-element>
@@ -178,7 +172,13 @@ const occurrenceEditorImageTranscriberPopup = {
                                     <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['locationremarks']" label="Location Remarks" :value="occurrenceData.locationremarks" @update:value="(value) => updateOccurrenceData('locationremarks', value)"></text-field-input-element>
                                 </div>
                                 <div>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['habitat']" label="Habitat" :value="occurrenceData.habitat" @update:value="(value) => updateOccurrenceData('habitat', value)"></text-field-input-element>
+                                </div>
+                                <div>
                                     <occurrence-associated-taxa-input-element :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></occurrence-associated-taxa-input-element>
+                                </div>
+                                <div>
+                                    <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['verbatimattributes']" label="Verbatim Attributes" :maxlength="occurrenceFields['verbatimattributes'] ? occurrenceFields['verbatimattributes']['length'] : 0" :value="occurrenceData.verbatimattributes" @update:value="(value) => updateOccurrenceData('verbatimattributes', value)"></text-field-input-element>
                                 </div>
                                 <div>
                                     <text-field-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :maxlength="occurrenceFields['lifestage'] ? occurrenceFields['lifestage']['length'] : 0" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)"></text-field-input-element>
@@ -206,9 +206,6 @@ const occurrenceEditorImageTranscriberPopup = {
                                 </div>
                                 <div>
                                     <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['dynamicproperties']" label="Dynamic Properties" :maxlength="occurrenceFields['dynamicproperties'] ? occurrenceFields['dynamicproperties']['length'] : 0" :value="occurrenceData.dynamicproperties" @update:value="(value) => updateOccurrenceData('dynamicproperties', value)"></text-field-input-element>
-                                </div>
-                                <div>
-                                    <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['verbatimattributes']" label="Verbatim Attributes" :maxlength="occurrenceFields['verbatimattributes'] ? occurrenceFields['verbatimattributes']['length'] : 0" :value="occurrenceData.verbatimattributes" @update:value="(value) => updateOccurrenceData('verbatimattributes', value)"></text-field-input-element>
                                 </div>
                             </div>
                         </div>
