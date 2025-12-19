@@ -233,6 +233,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getEditArr(state) {
             return state.editArr;
         },
+        getEditorHideFields(state) {
+            return state.collectionStore.getEditorHideFields;
+        },
         getEmbeddedOccurrenceRecord(state) {
             return (state.occurrenceEntryFormat !== 'benthic' && state.occurrenceEntryFormat !== 'lot');
         },
@@ -381,6 +384,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getOccurrenceValid(state) {
             return (state.occurrenceEditData['sciname']);
+        },
+        getTranscriberHideFields(state) {
+            return state.collectionStore.getTranscriberHideFields;
         }
     },
     actions: {
