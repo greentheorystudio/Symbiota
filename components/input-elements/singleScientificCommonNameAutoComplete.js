@@ -85,7 +85,7 @@ const singleScientificCommonNameAutoComplete = {
             </template>
         </q-select>
         <template v-if="definition">
-            <q-dialog class="z-max" v-model="displayDefinitionPopup" persistent>
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent>
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>

@@ -520,7 +520,8 @@ function useCore() {
             message: text,
             multiLine: true,
             position: 'top',
-            timeout: duration
+            timeout: duration,
+            classes: 'z-max'
         });
     }
 
