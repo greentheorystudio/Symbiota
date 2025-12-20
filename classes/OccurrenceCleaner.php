@@ -48,17 +48,21 @@ class OccurrenceCleaner extends Manager{
 		$rs->free();
 
 		if($type === 'cat'){
-			$sql = 'SELECT o.catalognumber AS dupid, o.occid, o.catalognumber, o.dbpk, o.othercatalognumbers, o.family, o.sciname, '.
+			$sql = 'SELECT o.catalognumber AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
 				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
-				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified '.
+				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified, '.
+                'o.identifiedby, o.dateidentified, o.habitat, o.occurrenceremarks, o.associatedtaxa, o.lifestage, '.
+                'o.sex, o.individualcount, o.preparations, o.dateentered '.
 				'FROM omoccurrences AS o '.
 				'WHERE o.collid = '.$this->collid.' AND o.catalognumber IN("'.implode('","',array_keys($dupArr)).'") '.
 				'ORDER BY o.catalognumber';
 		}
 		else{
-			$sql = 'SELECT o.otherCatalogNumbers AS dupid, o.occid, o.catalognumber, o.dbpk, o.othercatalognumbers, o.family, o.sciname, '.
+			$sql = 'SELECT o.otherCatalogNumbers AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
 				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
-				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified '.
+				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified, '.
+                'o.identifiedby, o.dateidentified, o.habitat, o.occurrenceremarks, o.associatedtaxa, o.lifestage, '.
+                'o.sex, o.individualcount, o.preparations, o.dateentered '.
 				'FROM omoccurrences AS o '.
 				'WHERE o.collid = '.$this->collid.' AND o.otherCatalogNumbers IN("'.implode('","',array_keys($dupArr)).'") '.
 				'ORDER BY o.otherCatalogNumbers';
@@ -105,8 +109,10 @@ class OccurrenceCleaner extends Manager{
 				foreach($arr2 as $ln => $dupArr){
 					if(count($dupArr) > 1){
 						if($cnt >= $start){
-							$sql = 'SELECT '.$cnt.' AS dupid, o.occid, o.dbpk, o.catalognumber, o.othercatalognumbers, o.othercatalognumbers, o.family, o.sciname, o.recordedby, o.recordnumber, '.
-								'o.associatedcollectors, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.municipality, o.locality, datelastmodified '.
+							$sql = 'SELECT '.$cnt.' AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.othercatalognumbers, o.family, o.sciname, o.recordedby, o.recordnumber, '.
+								'o.associatedcollectors, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.municipality, o.locality, datelastmodified, '.
+                                'o.identifiedby, o.dateidentified, o.habitat, o.occurrenceremarks, o.associatedtaxa, o.lifestage, '.
+                                'o.sex, o.individualcount, o.preparations, o.dateentered '.
 								'FROM omoccurrences AS o '.
 								'WHERE occid IN('.implode(',',$dupArr).') ';
 							//echo $sql;
@@ -571,43 +577,7 @@ class OccurrenceCleaner extends Manager{
 		return $retArr;
 	}
 
-	private function unitsEqual($osmTerm, $dbTerm): bool
-	{
-        $osmTerm = strtolower(trim($osmTerm));
-		$dbTerm = strtolower(trim($dbTerm));
-
-		return $osmTerm === $dbTerm;
-	}
-
-	private function countryUnitsEqual($countryOSM,$countryDb): bool
-	{
-        $status = false;
-		if(!$this->unitsEqual($countryOSM,$countryDb)) {
-            $countryOSM = strtolower(trim($countryOSM));
-            $countryDb = strtolower(trim($countryDb));
-
-            $synonymArr = array();
-            $synonymArr[] = array('united states','usa','united states of america','u.s.a.');
-
-            foreach($synonymArr as $synArr){
-                if(in_array($countryOSM, $synArr, true) && in_array($countryDb, $synArr, true)) {
-                    $status = true;
-                }
-            }
-		}
-        return $status;
-	}
-
-	private function countyUnitsEqual($countyOSM,$countyDb): bool
-	{
-        $countyOSM = strtolower(trim($countyOSM));
-		$countyDb = strtolower(trim($countyDb));
-
-        $countyOSM = trim(str_replace(array('county','parish'), '', $countyOSM));
-		return strpos($countyDb, $countyOSM) !== false;
-	}
-
-	public function updateField($fieldName, $oldValue, $newValue, $conditionArr = null): bool
+    public function updateField($fieldName, $oldValue, $newValue, $conditionArr = null): bool
 	{
 		if(is_numeric($this->collid) && $fieldName && $newValue){
 			$editorManager = new OccurrenceEditorManager($this->conn);
@@ -644,14 +614,7 @@ class OccurrenceCleaner extends Manager{
 		}
 	}
 
-    public function setObsuid($obsUid): void
-    {
-        if(is_numeric($obsUid)){
-            $this->obsUid = $obsUid;
-        }
-    }
-
-	public function getFeatureCount(): int
+    public function getFeatureCount(): int
 	{
 		return $this->featureCount;
 	}
