@@ -5,25 +5,25 @@ const occurrenceEditorFormLatestIdentificationElement = {
                 <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
                     Determination
                 </div>
-                <div class="row justify-between q-col-gutter-sm">
-                    <div class="col-12 col-sm-4">
+                <div v-if="!editorHideFields.includes('sciname') || !editorHideFields.includes('scientificnameauthorship') || !editorHideFields.includes('identificationqualifier') || !editorHideFields.includes('family')" class="row justify-between q-col-gutter-sm">
+                    <div v-if="!editorHideFields.includes('sciname')" class="col-12 col-sm-4">
                         <single-scientific-common-name-auto-complete :disabled="occurrenceEntryFormat === 'benthic'" :definition="occurrenceFieldDefinitions['sciname']" :sciname="occurrenceData.sciname" label="Scientific Name" :limit-to-options="limitIdsToThesaurus" @update:sciname="updateScientificNameValue"></single-scientific-common-name-auto-complete>
                     </div>
-                    <div class="col-12 col-sm-3">
+                    <div v-if="!editorHideFields.includes('scientificnameauthorship')" class="col-12 col-sm-3">
                         <text-field-input-element :disabled="occurrenceEntryFormat === 'benthic'" :definition="occurrenceFieldDefinitions['scientificnameauthorship']" label="Author" :maxlength="occurrenceFields['scientificnameauthorship'] ? occurrenceFields['scientificnameauthorship']['length'] : 0" :value="occurrenceData.scientificnameauthorship" @update:value="(value) => updateOccurrenceData('scientificnameauthorship', value)"></text-field-input-element>
                     </div>
-                    <div class="col-12 col-sm-2">
+                    <div v-if="!editorHideFields.includes('identificationqualifier')" class="col-12 col-sm-2">
                         <text-field-input-element :disabled="occurrenceEntryFormat === 'benthic'" :definition="occurrenceFieldDefinitions['identificationqualifier']" label="ID Qualifier" :maxlength="occurrenceFields['identificationqualifier'] ? occurrenceFields['identificationqualifier']['length'] : 0" :value="occurrenceData.identificationqualifier" @update:value="(value) => updateOccurrenceData('identificationqualifier', value)"></text-field-input-element>
                     </div>
-                    <div class="col-12 col-sm-3">
+                    <div v-if="!editorHideFields.includes('family')" class="col-12 col-sm-3">
                         <text-field-input-element :disabled="occurrenceEntryFormat === 'benthic'" :definition="occurrenceFieldDefinitions['family']" label="Family" :maxlength="occurrenceFields['family'] ? occurrenceFields['family']['length'] : 0" :value="occurrenceData.family" @update:value="(value) => updateOccurrenceData('family', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
-                    <div class="col-12 col-sm-7">
+                    <div v-if="!editorHideFields.includes('identifiedby')" class="col-12 col-sm-7">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['identifiedby']" label="Identified By" field="identifiedby" :maxlength="occurrenceFields['identifiedby'] ? occurrenceFields['identifiedby']['length'] : 0" :value="occurrenceData.identifiedby" @update:value="(value) => updateOccurrenceData('identifiedby', value)"></text-field-input-element>
                     </div>
-                    <div class="col-11 col-sm-4">
+                    <div v-if="!editorHideFields.includes('dateidentified')" class="col-11 col-sm-4">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['dateidentified']" label="Date Identified" :maxlength="occurrenceFields['dateidentified'] ? occurrenceFields['dateidentified']['length'] : 0" :value="occurrenceData.dateidentified" @update:value="(value) => updateOccurrenceData('dateidentified', value)"></text-field-input-element>
                     </div>
                     <div class="col-1 row justify-end self-center">
@@ -38,22 +38,22 @@ const occurrenceEditorFormLatestIdentificationElement = {
                     </div>
                 </div>
                 <template v-if="showExtendedForm">
-                    <div class="row">
+                    <div v-if="!editorHideFields.includes('verbatimscientificname')" class="row">
                         <div class="col-grow">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['verbatimscientificname']" label="Verbatim Scientific Name" :maxlength="occurrenceFields['verbatimscientificname'] ? occurrenceFields['verbatimscientificname']['length'] : 0" :value="occurrenceData.verbatimscientificname" @update:value="(value) => updateOccurrenceData('verbatimscientificname', value)"></text-field-input-element>
                         </div>
                     </div>
-                    <div class="row">
+                    <div v-if="!editorHideFields.includes('identificationreferences')" class="row">
                         <div class="col-grow">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['identificationreferences']" label="ID References" :maxlength="occurrenceFields['identificationreferences'] ? occurrenceFields['identificationreferences']['length'] : 0" :value="occurrenceData.identificationreferences" @update:value="(value) => updateOccurrenceData('identificationreferences', value)"></text-field-input-element>
                         </div>
                     </div>
-                    <div class="row">
+                    <div v-if="!editorHideFields.includes('identificationremarks')" class="row">
                         <div class="col-grow">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['identificationremarks']" label="ID Remarks" :maxlength="occurrenceFields['identificationremarks'] ? occurrenceFields['identificationremarks']['length'] : 0" :value="occurrenceData.identificationremarks" @update:value="(value) => updateOccurrenceData('identificationremarks', value)"></text-field-input-element>
                         </div>
                     </div>
-                    <div class="row">
+                    <div v-if="!editorHideFields.includes('taxonremarks')" class="row">
                         <div class="col-grow">
                             <text-field-input-element :definition="occurrenceFieldDefinitions['taxonremarks']" label="Taxon Remarks" :maxlength="occurrenceFields['taxonremarks'] ? occurrenceFields['taxonremarks']['length'] : 0" :value="occurrenceData.taxonremarks" @update:value="(value) => updateOccurrenceData('taxonremarks', value)"></text-field-input-element>
                         </div>
@@ -69,6 +69,7 @@ const occurrenceEditorFormLatestIdentificationElement = {
     setup() {
         const occurrenceStore = useOccurrenceStore();
 
+        const editorHideFields = Vue.computed(() => occurrenceStore.getEditorHideFields);
         const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
@@ -91,6 +92,7 @@ const occurrenceEditorFormLatestIdentificationElement = {
         }
 
         return {
+            editorHideFields,
             limitIdsToThesaurus,
             occurrenceData,
             occurrenceEntryFormat,

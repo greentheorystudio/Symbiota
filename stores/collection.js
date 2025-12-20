@@ -46,6 +46,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
         collectionPermissions: [],
         collectionUpdateData: {},
         configuredDataDownloads: [],
+        editorHideFields: [],
         eventMofData: {},
         eventMofDataFields: {},
         eventMofDataFieldsLayoutData: {},
@@ -54,7 +55,8 @@ const useCollectionStore = Pinia.defineStore('collection', {
         occurrenceMofData: {},
         occurrenceMofDataFields: {},
         occurrenceMofDataFieldsLayoutData: {},
-        occurrenceMofDataLabel: 'Measurement or Fact Data'
+        occurrenceMofDataLabel: 'Measurement or Fact Data',
+        transcriberHideFields: [],
     }),
     getters: {
         getClientRoot() {
@@ -92,6 +94,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getDatasetKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('datasetKey')) ? state.collectionData['aggkeysstr']['datasetKey'] : null);
+        },
+        getEditorHideFields(state) {
+            return state.editorHideFields;
         },
         getEndpointKey(state) {
             return ((state.collectionData.hasOwnProperty('aggkeysstr') && state.collectionData['aggkeysstr'].hasOwnProperty('endpointKey')) ? state.collectionData['aggkeysstr']['endpointKey'] : null);
@@ -164,6 +169,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
             }
             percent = percent > 1 ? percent.toFixed() : percent.toFixed(2);
             return percent;
+        },
+        getTranscriberHideFields(state) {
+            return state.transcriberHideFields;
         }
     },
     actions: {
@@ -380,6 +388,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
                         }
                         if(this.collectionData['configuredData'].hasOwnProperty('occurrenceFieldControlledVocabularies') && this.collectionData['configuredData']['occurrenceFieldControlledVocabularies']){
                             this.occurrenceFieldControlledVocabularies = Object.assign({}, this.collectionData['configuredData']['occurrenceFieldControlledVocabularies']);
+                        }
+                        if(this.collectionData['configuredData'].hasOwnProperty('editorHideFields') && this.collectionData['configuredData']['editorHideFields']){
+                            this.editorHideFields = this.collectionData['configuredData']['editorHideFields'];
+                        }
+                        if(this.collectionData['configuredData'].hasOwnProperty('transcriberHideFields') && this.collectionData['configuredData']['transcriberHideFields']){
+                            this.transcriberHideFields = this.collectionData['configuredData']['transcriberHideFields'];
                         }
                     }
                     if(callback){
