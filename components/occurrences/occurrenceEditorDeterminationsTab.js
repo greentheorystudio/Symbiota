@@ -1,23 +1,6 @@
 const occurrenceEditorDeterminationsTab = {
     template: `
-        <div class="column q-gutter-sm">
-            <div class="row justify-between q-gutter-sm">
-                <div class="text-h6 text-bold">Determination History</div>
-                <div>
-                    <q-btn color="secondary" @click="openDeterminationEditorPopup(0);" label="Add New Determination" tabindex="0" />
-                </div>
-            </div>
-            <div class="q-mt-sm column q-gutter-sm">
-                <template v-if="determinationArr.length > 0">
-                    <template v-for="determination in determinationArr">
-                        <determination-record-info-block :determination-data="determination" :editor="true" @open:determination-editor="openDeterminationEditorPopup"></determination-record-info-block>
-                    </template>
-                </template>
-                <template v-else>
-                    <span class="text-body1 text-bold">There are no previous determinations for this record.</span>
-                </template>
-            </div>
-        </div>
+        <occurrence-editor-determination-history-block @open:determination-editor="openDeterminationEditorPopup"></occurrence-editor-determination-history-block>
         <template v-if="showDeterminationEditorPopup">
             <occurrence-determination-editor-popup
                 :determination-id="editDeterminationId"
@@ -27,13 +10,10 @@ const occurrenceEditorDeterminationsTab = {
         </template>
     `,
     components: {
-        'determination-record-info-block': determinationRecordInfoBlock,
-        'occurrence-determination-editor-popup': occurrenceDeterminationEditorPopup
+        'occurrence-determination-editor-popup': occurrenceDeterminationEditorPopup,
+        'occurrence-editor-determination-history-block': occurrenceEditorDeterminationHistoryBlock,
     },
     setup() {
-        const occurrenceStore = useOccurrenceStore();
-
-        const determinationArr = Vue.computed(() => occurrenceStore.getDeterminationArr);
         const editDeterminationId = Vue.ref(0);
         const showDeterminationEditorPopup = Vue.ref(false);
 
@@ -43,7 +23,6 @@ const occurrenceEditorDeterminationsTab = {
         }
 
         return {
-            determinationArr,
             editDeterminationId,
             showDeterminationEditorPopup,
             openDeterminationEditorPopup
