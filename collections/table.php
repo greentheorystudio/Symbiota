@@ -44,65 +44,67 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <div id="breadcrumbs">
-                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
-                <template v-if="Number(searchTermsCollId) > 0 && isEditor">
-                    <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + searchTermsCollId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
-                    <span class="text-bold">View/Edit Existing Records</span>
-                </template>
-                <template v-else>
-                    <span class="text-bold">Search Collections Table Display</span>
-                </template>
-            </div>
-            <div v-if="Number(searchTermsCollId) > 0 && collInfo" class="row justify-start text-h6 text-weight-bold">
-                <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
-                <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
-            </div>
-            <div class="q-mb-sm row justify-start q-col-gutter-sm">
-                <div class="col-3">
-                    <selector-input-element label="Sort by" :options="fieldOptions" option-value="field" option-label="label" :value="sortField" @update:value="processSortFieldChange"></selector-input-element>
-                </div>
-                <div class="col-2">
-                    <selector-input-element :options="sortDirectionOptions" :value="sortDirection" @update:value="processSortDirectionChange"></selector-input-element>
-                </div>
-                <div>
-                    <q-btn color="secondary" @click="loadRecords()" label="Sort" aria-label="Sort records" tabindex="0" />
-                </div>
-            </div>
-            <div class="q-mb-sm row justify-start q-col-gutter-md self-center">
-                <div class="q-mr-lg row justify-start q-gutter-sm">
-                    <div class="row justify-start self-center q-mr-lg">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
-                    </div>
-                    <div v-if="recordDataArr.length > 0">
-                        <search-data-downloader :spatial="false"></search-data-downloader>
-                    </div>
-                    <div v-if="recordDataArr.length > 0 && Number(searchTermsCollId) > 0 && isEditor" class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
-                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                Batch Update Tool
-                            </q-tooltip>
-                        </q-btn>
-                    </div>
-                </div>
-                <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
-                    <list-display-button></list-display-button>
-                    <spatial-display-button></spatial-display-button>
-                    <image-display-button></image-display-button>
-                    <template v-if="searchTermsJson.length <= 1800">
-                        <copy-url-button></copy-url-button>
+            <div class="q-pa-sm">
+                <div id="breadcrumbs">
+                    <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                    <template v-if="Number(searchTermsCollId) > 0 && isEditor">
+                        <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + searchTermsCollId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
+                        <span class="text-bold">View/Edit Existing Records</span>
+                    </template>
+                    <template v-else>
+                        <span class="text-bold">Search Collections Table Display</span>
                     </template>
                 </div>
-                <div v-if="recordDataArr.length > 0" class="row justify-start">
-                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
+                <div v-if="Number(searchTermsCollId) > 0 && collInfo" class="row justify-start text-h6 text-weight-bold">
+                    <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
+                    <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
+                </div>
+                <div class="q-mb-sm row justify-start q-col-gutter-sm">
+                    <div class="col-3">
+                        <selector-input-element label="Sort by" :options="fieldOptions" option-value="field" option-label="label" :value="sortField" @update:value="processSortFieldChange"></selector-input-element>
+                    </div>
+                    <div class="col-2">
+                        <selector-input-element :options="sortDirectionOptions" :value="sortDirection" @update:value="processSortDirectionChange"></selector-input-element>
+                    </div>
+                    <div>
+                        <q-btn color="secondary" @click="loadRecords()" label="Sort" aria-label="Sort records" tabindex="0" />
+                    </div>
+                </div>
+                <div class="q-mb-sm row justify-start q-col-gutter-md self-center">
+                    <div class="q-mr-lg row justify-start q-gutter-sm">
+                        <div class="row justify-start self-center q-mr-lg">
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
+                        </div>
+                        <div v-if="recordDataArr.length > 0">
+                            <search-data-downloader :spatial="false"></search-data-downloader>
+                        </div>
+                        <div v-if="recordDataArr.length > 0 && Number(searchTermsCollId) > 0 && isEditor" class="self-center">
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
+                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                    Batch Update Tool
+                                </q-tooltip>
+                            </q-btn>
+                        </div>
+                    </div>
+                    <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
+                        <list-display-button></list-display-button>
+                        <spatial-display-button></spatial-display-button>
+                        <image-display-button></image-display-button>
+                        <template v-if="searchTermsJson.length <= 1800">
+                            <copy-url-button></copy-url-button>
+                        </template>
+                    </div>
+                    <div v-if="recordDataArr.length > 0" class="row justify-start">
+                        <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
 
-                    <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);" aria-label="Go to first record page" tabindex="0"></q-btn>
+                        <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);" aria-label="Go to previous record page" tabindex="0"></q-btn>
+                        <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);" aria-label="Go to next record page" tabindex="0"></q-btn>
+                        <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);" aria-label="Go to last record page" tabindex="0"></q-btn>
+                        <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);" aria-label="Go to last record page" tabindex="0"></q-btn>
+                    </div>
                 </div>
             </div>
             <template v-if="recordDataArr.length > 0">
@@ -143,7 +145,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     There are no records to display. Click the Search button to enter search criteria.
                 </div>
             </template>
-            <div v-if="recordDataArr.length > 0" class="q-mt-xs row justify-start q-col-gutter-md self-center">
+            <div v-if="recordDataArr.length > 0" class="q-pa-sm row justify-start q-col-gutter-md self-center">
                 <div class="q-mr-lg row justify-start q-gutter-sm">
                     <div class="row justify-start self-center q-mr-lg">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
