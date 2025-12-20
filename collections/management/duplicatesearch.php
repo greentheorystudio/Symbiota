@@ -143,17 +143,26 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 								<th><input type="checkbox" name="batchswitch" onclick="batchSwitchTargetSpecimens(this)" title="Batch switch target occurrences" /></th>
 								<th style="width:40px;">Catalog Number</th>
 								<th style="width:40px;">Other Catalog Numbers</th>
-                                <th>Source ID</th>
-								<th>Scientific Name</th>
+                                <th>Scientific Name</th>
+                                <th>Collection Date</th>
 								<th>Collector</th>
 								<th>Collection Number</th>
+                                <th>Locality</th>
 								<th>Associated Collectors</th>
-								<th>Collection Date</th>
 								<th>Verbatim Date</th>
 								<th>Country</th>
 								<th>State</th>
 								<th>County</th>
-								<th>Locality</th>
+                                <th>Identified By</th>
+                                <th>Date Identified</th>
+                                <th>Habitat</th>
+                                <th>Occurrence Remarks</th>
+                                <th>Associated Taxa</th>
+                                <th>Lifestage</th>
+                                <th>Sex</th>
+                                <th>Individual Count</th>
+                                <th>Preparations</th>
+                                <th>Date Entered</th>
 								<th>Date Last Modified</th>
 							</tr>
 							<?php
@@ -168,17 +177,26 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 									echo '<td><input name="dup'.$dupKey.'target" type="radio" value="'.$occId.'" '.($first?'checked':'').'/></td>'."\n";
 									echo '<td>'.$occArr['catalognumber'].'</td>'."\n";
 									echo '<td>'.$occArr['othercatalognumbers'].'</td>'."\n";
-                                    echo '<td>'.$occArr['dbpk'].'</td>'."\n";
-									echo '<td>'.$occArr['sciname'].'</td>'."\n";
+                                    echo '<td>'.$occArr['sciname'].'</td>'."\n";
+                                    echo '<td>'.$occArr['eventdate'].'</td>'."\n";
 									echo '<td>'.$occArr['recordedby'].'</td>'."\n";
 									echo '<td>'.$occArr['recordnumber'].'</td>'."\n";
+                                    echo '<td>'.$occArr['locality'].'</td>'."\n";
 									echo '<td>'.$occArr['associatedcollectors'].'</td>'."\n";
-									echo '<td>'.$occArr['eventdate'].'</td>'."\n";
 									echo '<td>'.$occArr['verbatimeventdate'].'</td>'."\n";
 									echo '<td>'.$occArr['country'].'</td>'."\n";
 									echo '<td>'.$occArr['stateprovince'].'</td>'."\n";
 									echo '<td>'.$occArr['county'].'</td>'."\n";
-									echo '<td>'.$occArr['locality'].'</td>'."\n";
+                                    echo '<td>'.$occArr['identifiedby'].'</td>'."\n";
+                                    echo '<td>'.$occArr['dateidentified'].'</td>'."\n";
+                                    echo '<td>'.$occArr['habitat'].'</td>'."\n";
+                                    echo '<td>'.$occArr['occurrenceremarks'].'</td>'."\n";
+                                    echo '<td>'.$occArr['associatedtaxa'].'</td>'."\n";
+                                    echo '<td>'.$occArr['lifestage'].'</td>'."\n";
+                                    echo '<td>'.$occArr['sex'].'</td>'."\n";
+                                    echo '<td>'.$occArr['individualcount'].'</td>'."\n";
+                                    echo '<td>'.$occArr['preparations'].'</td>'."\n";
+                                    echo '<td>'.$occArr['dateentered'].'</td>'."\n";
 									echo '<td>'.$occArr['datelastmodified'].'</td>'."\n";
 									echo '</tr>';
 									$first = false;
