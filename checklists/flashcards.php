@@ -155,7 +155,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     </div>
                 </template>
             </div>
-            <q-dialog class="z-max" v-model="displayInstructionsPopup" persistent>
+            <q-dialog class="z-top" v-model="displayInstructionsPopup" persistent>
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>
