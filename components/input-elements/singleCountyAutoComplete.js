@@ -67,7 +67,7 @@ const singleCountyAutoComplete = {
             </q-select>
         </template>
         <template v-if="definition">
-            <q-dialog class="z-max" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
+            <q-dialog class="z-top" v-model="displayDefinitionPopup" persistent aria-label="Definition pop up">
                 <q-card class="sm-popup">
                     <div class="row justify-end items-start map-sm-popup">
                         <div>

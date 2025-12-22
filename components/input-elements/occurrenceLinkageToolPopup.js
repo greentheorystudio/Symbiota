@@ -26,7 +26,7 @@ const occurrenceLinkageToolPopup = {
         }
     },
     template: `
-        <q-dialog class="z-max" v-model="showPopup" persistent>
+        <q-dialog class="z-top" v-model="showPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
