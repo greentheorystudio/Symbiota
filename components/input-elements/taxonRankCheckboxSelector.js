@@ -31,7 +31,7 @@ const taxonRankCheckboxSelector = {
     },
     template: `
         <div class="text-bold text-h6 cursor-pointer" @click="rankSelectDialog = true">{{ linkLabel }}</div>
-        <q-dialog v-model="rankSelectDialog">
+        <q-dialog v-model="rankSelectDialog" class="z-top">
             <q-card>
                 <div class="row justify-end q-pb-none">
                     <q-btn icon="close" flat round dense v-close-popup aria-label="Close pop up" :tabindex="tabindex"></q-btn>

@@ -87,7 +87,7 @@
             <template v-else>
                 <taxa-profile-not-found></taxa-profile-not-found>
             </template>
-            <q-dialog v-model="imageCarousel" persistent full-width full-height>
+            <q-dialog v-model="imageCarousel" class="z-top" persistent full-width full-height>
                 <taxa-profile-image-carousel :image-arr="taxaImageArr" :image-index="imageCarouselSlide" @update:show-image-carousel="toggleImageCarousel" @update:current-image="updateImageCarousel"></taxa-profile-image-carousel>
             </q-dialog>
         `,

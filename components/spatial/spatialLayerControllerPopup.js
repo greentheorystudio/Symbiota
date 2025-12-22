@@ -1,6 +1,6 @@
 const spatialLayerControllerPopup = {
     template: `
-        <q-dialog class="z-max" v-model="mapSettings.showLayerController" persistent>
+        <q-dialog class="z-top" v-model="mapSettings.showLayerController" persistent>
             <q-card class="lg-popup">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
