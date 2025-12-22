@@ -10,7 +10,7 @@ const layerConfigurationsLayerEditorPopup = {
         }
     },
     template: `
-        <q-dialog v-if="layer" class="z-max" v-model="showPopup" v-if="!showConfirmation" persistent>
+        <q-dialog v-if="layer" class="z-top" v-model="showPopup" v-if="!showConfirmation" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
