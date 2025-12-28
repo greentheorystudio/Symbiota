@@ -86,6 +86,25 @@ class TaxonDescriptionBlocks{
         return $retVal;
     }
 
+    public function getAutocompleteCaptionList($queryString): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT tdbid, caption FROM taxadescrblock ';
+        $sql .= 'WHERE caption LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['id'] = $row['tdbid'];
+                $dataArr['name'] = $row['caption'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getTaxonDescriptionBlockData($tdbid): array
     {
         $retArr = array();

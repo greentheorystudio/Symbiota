@@ -296,6 +296,9 @@ CREATE TABLE `keycharacterstatetaxalink` (
     CONSTRAINT `kcstl_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
+ALTER TABLE `taxadescrblock`
+    ADD INDEX `INDEX_taxadescrblock_caption`(`caption`);
+
 ALTER TABLE `uploaddetermtemp`
     ADD COLUMN `updid` int(50) NOT NULL AUTO_INCREMENT FIRST,
     ADD COLUMN `tid` int(10) UNSIGNED NULL AFTER `sciname`,

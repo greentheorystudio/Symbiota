@@ -564,6 +564,14 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         setDisplayVouchers(value) {
             this.displayVouchers = value;
         },
+        updateChecklistEditAppConfigData(key, value) {
+            let newSettings = {};
+            if(this.checklistEditData['appconfigjson']){
+                newSettings = Object.assign({}, this.checklistEditData['appconfigjson']);
+            }
+            newSettings[key] = value;
+            this.checklistEditData['appconfigjson'] = Object.assign({}, newSettings);
+        },
         updateChecklistEditData(key, value) {
             this.checklistEditData[key] = value;
         },
