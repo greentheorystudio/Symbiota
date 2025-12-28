@@ -21,7 +21,7 @@ const spatialSidePanel = {
                     <template v-else>
                         <q-list bordered>
                             <template v-if="searchRecordCnt > 0">
-                                <q-separator ></q-separator>
+                                <q-separator></q-separator>
                                 <q-expansion-item v-model="recordsExpanded" group="sidepanelexpansiongroup" label="Records and Symbology" header-class="bg-grey-3 text-body1 text-bold" @before-show="() => processExpand('records')">
                                     <q-card class="scroll" :style="expansionTabCardStyle">
                                         <q-card-section class="q-pa-none">
@@ -30,7 +30,7 @@ const spatialSidePanel = {
                                     </q-card>
                                 </q-expansion-item>
                             </template>
-                            <q-separator ></q-separator>
+                            <q-separator></q-separator>
                             <q-expansion-item v-model="vectorExpanded" group="sidepanelexpansiongroup" label="Vector Tools" header-class="bg-grey-3 text-body1 text-bold" @before-show="() => processExpand('vector')">
                                 <q-card class="scroll" :style="expansionTabCardStyle">
                                     <q-card-section class="q-pa-none">
@@ -38,7 +38,7 @@ const spatialSidePanel = {
                                     </q-card-section>
                                 </q-card>
                             </q-expansion-item>
-                            <q-separator ></q-separator>
+                            <q-separator></q-separator>
                             <q-expansion-item v-model="rasterExpanded" group="sidepanelexpansiongroup" label="Raster Tools" header-class="bg-grey-3 text-body1 text-bold" @before-show="() => processExpand('raster')">
                                 <q-card class="scroll" :style="expansionCardStyle">
                                     <q-card-section>

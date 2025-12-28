@@ -198,7 +198,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </template>
                     </template>
                     <div class="q-mb-sm full-width">
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                     </div>
                     <div class="q-mb-xs full-width row justify-between q-gutter-sm">
                         <div class="col-8 column q-gutter-xs">
@@ -254,14 +254,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </div>
                     </div>
                     <div class="q-mb-sm full-width">
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                     </div>
                     <template v-if="activeTaxaArr.length > taxaPerPage">
                         <div class="q-mb-sm q-px-md full-width row justify-end">
                             <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Checklist page navigation"></q-pagination>
                         </div>
                         <div class="q-mb-sm full-width">
-                            <q-separator ></q-separator>
+                            <q-separator></q-separator>
                         </div>
                     </template>
                     <template v-if="displayImagesVal">
@@ -293,13 +293,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     </template>
                     <template v-if="activeTaxaArr.length > taxaPerPage">
                         <div class="q-mb-sm full-width">
-                            <q-separator ></q-separator>
+                            <q-separator></q-separator>
                         </div>
                         <div class="q-mb-sm q-px-md full-width row justify-end">
                             <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Checklist page navigation"></q-pagination>
                         </div>
                         <div class="q-mb-sm full-width">
-                            <q-separator ></q-separator>
+                            <q-separator></q-separator>
                         </div>
                     </template>
                 </template>
@@ -312,7 +312,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 </div>
                             </div>
                         </div>
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                         <div class="q-pa-md row justify-center text-h6 text-bold">
                             There are no taxa to display. Click the Search button to enter search criteria to build the taxa checklist.
                         </div>

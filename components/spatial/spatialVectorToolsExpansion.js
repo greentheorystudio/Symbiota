@@ -1,7 +1,7 @@
 const spatialVectorToolsExpansion = {
     template: `
         <div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <q-tabs v-model="tab" active-bg-color="grey-4" align="left">
                 <q-tab name="vector" class="bg-grey-3" label="Shapes" no-caps />
                 <q-tab name="point" class="bg-grey-3" label="Points" no-caps />

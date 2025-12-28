@@ -25,7 +25,7 @@ const spatialSymbologyTab = {
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="saveSymbologyImage();" label="Save Symbology" dense aria-label="Save Symbology PNG Image" tabindex="0" />
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div v-if="selectedSymbologyOption" class="q-py-sm">
                 <template v-if="selectedSymbologyOption.field !== 'sciname'">
                     <div ref="symbologyRef">

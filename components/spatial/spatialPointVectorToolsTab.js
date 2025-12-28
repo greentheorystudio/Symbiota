@@ -4,7 +4,7 @@ const spatialPointVectorToolsTab = {
             <div class="q-mb-sm">
                 <q-select bg-color="white" outlined v-model="selectedScope" :options="processScopeOptions" :option-value="value" :option-label="label" label="Create Polygon For:" popup-content-class="z-max" behavior="menu" @update:model-value="processScopeChange" dense options-dense tabindex="0" />
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-my-sm column">
                 <div>
                     <span class="text-bold">Concave Hull Polygon:</span> Creates a concave hull polygon or multipolygon for the occurrence 
@@ -25,7 +25,7 @@ const spatialPointVectorToolsTab = {
                     </div>
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-my-sm column">
                 <div>
                     <span class="text-bold">Convex Hull Polygon:</span> Creates a convex hull polygon for the occurrence points on the 
@@ -41,7 +41,7 @@ const spatialPointVectorToolsTab = {
                     </div>
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
         </div>
     `,
     setup() {
