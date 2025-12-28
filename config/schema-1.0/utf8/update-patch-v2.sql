@@ -204,6 +204,7 @@ ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
 
 ALTER TABLE `fmchecklists`
+    ADD COLUMN `appConfigJson` longtext NULL AFTER `defaultSettings`,
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`,
     MODIFY COLUMN `SortSequence` int(10) UNSIGNED NULL DEFAULT 50 AFTER `uid`,

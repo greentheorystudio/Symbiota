@@ -21,6 +21,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             percenteffort: null,
             access: null,
             defaultsettings: null,
+            appconfigjson: null,
             iconurl: null,
             headerurl: null,
             uid: null,

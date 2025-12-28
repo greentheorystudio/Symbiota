@@ -28,7 +28,8 @@ class Checklists{
         'footprintwkt' => array('dataType' => 'text', 'length' => 0),
         'percenteffort' => array('dataType' => 'number', 'length' => 11),
         'access' => array('dataType' => 'string', 'length' => 45),
-        'defaultsettings' => array('dataType' => 'json', 'length' => 250),
+        'defaultsettings' => array('dataType' => 'json', 'length' => 0),
+        'appconfigjson' => array('dataType' => 'json', 'length' => 0),
         'iconurl' => array('dataType' => 'string', 'length' => 150),
         'headerurl' => array('dataType' => 'string', 'length' => 150),
         'uid' => array('dataType' => 'number', 'length' => 10),
@@ -70,7 +71,7 @@ class Checklists{
                 else{
                     $fieldNameArr[] = $field;
                 }
-                if(($field === 'defaultsettings' || $field === 'searchterms') && $data[$field]){
+                if(($field === 'defaultsettings' || $field === 'appconfigjson' || $field === 'searchterms') && $data[$field]){
                     $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, json_encode($data[$field]), $fieldArr['dataType']);
                 }
                 else{
@@ -181,7 +182,7 @@ class Checklists{
                 $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings')){
+                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings' || $name === 'appconfigjson')){
                         $nodeArr[$name] = json_decode($row[$name], true);
                     }
                     else{
@@ -235,7 +236,7 @@ class Checklists{
                 }
                 foreach($fields as $val){
                     $name = $val->name;
-                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings')){
+                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings' || $name === 'appconfigjson')){
                         $nodeArr[$name] = json_decode($row[$name], true);
                     }
                     else{
@@ -289,7 +290,7 @@ class Checklists{
             if($row && ($privateOverride || $row['expiration'] || $row['access'] === 'public' || $GLOBALS['IS_ADMIN'] || in_array((int)$row['clid'], $GLOBALS['PERMITTED_CHECKLISTS'], true))){
                 foreach($fields as $val){
                     $name = $val->name;
-                    if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms')){
+                    if($row[$name] && ($name === 'defaultsettings' || $name === 'searchterms' || $name === 'appconfigjson')){
                         $retArr[$name] = json_decode($row[$name], true);
                     }
                     else{
@@ -333,6 +334,21 @@ class Checklists{
         return $retArr;
     }
 
+    public function getChecklistPermissionLabels($permissionArr): array
+    {
+        $idStr = implode(',', array_keys($permissionArr));
+        $sql = 'SELECT clid, `name` FROM fmchecklists WHERE clid IN(' . $idStr . ') ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $permissionArr[$row['clid']] = $row['name'];
+                unset($rows[$index]);
+            }
+        }
+        return $permissionArr;
+    }
+
     public function saveTemporaryChecklist($clid, $searchTerms): int
     {
         $retVal = 0;
@@ -368,7 +384,7 @@ class Checklists{
                     else{
                         $fieldName = $field;
                     }
-                    if($field === 'defaultsettings' || $field === 'searchterms'){
+                    if($field === 'defaultsettings' || $field === 'appconfigjson' || $field === 'searchterms'){
                         $sqlPartArr[] = $fieldName . ' = ' . SanitizerService::getSqlValueString($this->conn, json_encode($editData[$field]), $fieldArr['dataType']);
                     }
                     else{
@@ -385,20 +401,5 @@ class Checklists{
             }
         }
         return $retVal;
-    }
-
-    public function getChecklistPermissionLabels($permissionArr): array
-    {
-        $idStr = implode(',', array_keys($permissionArr));
-        $sql = 'SELECT clid, `name` FROM fmchecklists WHERE clid IN(' . $idStr . ') ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $permissionArr[$row['clid']] = $row['name'];
-                unset($rows[$index]);
-            }
-        }
-        return $permissionArr;
     }
 }
