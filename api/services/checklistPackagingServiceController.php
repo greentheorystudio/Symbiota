@@ -35,4 +35,18 @@ if($action && SanitizerService::validateInternalRequest()){
         $tidArr = json_decode($_POST['tidArr'], false);
         echo json_encode($checklistPackagingService->packageChecklistImages($tidArr, $_POST['imageMaxCnt'], $_POST['archiveFile']));
     }
+    elseif($action === 'packageChecklistTaxaData' && $clidArr && array_key_exists('index', $_POST) && array_key_exists('reccnt', $_POST) && array_key_exists('archiveFile', $_POST)){
+        $descTab = $_POST['descTab'] ?? null;
+        echo json_encode($checklistPackagingService->packageChecklistTaxaData($clidArr, $_POST['index'], $_POST['reccnt'], $descTab, $_POST['archiveFile']));
+    }
+    elseif($action === 'processCompletedTaxaDataPackaging' && array_key_exists('archiveFile', $_POST)){
+        echo json_encode($checklistPackagingService->processCompletedTaxaDataPackaging($_POST['archiveFile']));
+    }
+    elseif($action === 'processCompletedDataPackaging' && array_key_exists('archiveFile', $_POST)){
+        echo json_encode($checklistPackagingService->processCompletedDataPackaging($_POST['archiveFile']));
+    }
+    elseif($action === 'packageChecklistCharacterData' && array_key_exists('csidArr', $_POST) && array_key_exists('archiveFile', $_POST)){
+        $csidArr = json_decode($_POST['csidArr'], false);
+        echo $checklistPackagingService->packageChecklistCharacterData($csidArr, $_POST['archiveFile']);
+    }
 }

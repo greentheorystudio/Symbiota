@@ -4,7 +4,7 @@ const checklistTaxaAddEditModule = {
             <div class="row justify-between">
                 <div>
                     <template v-if="checklistTaxaId > 0 && editsExist">
-                        <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
+                        <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
                     </template>
                 </div>
                 <div class="row justify-end">

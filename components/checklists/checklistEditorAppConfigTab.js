@@ -1,12 +1,19 @@
 const checklistEditorAppConfigTab = {
     template: `
         <div class="q-pa-md column q-gutter-sm">
-            <div class="row justify-end q-gutter-sm">
-                <div v-if="dataArchiveFilename">
-                    <q-btn color="negative" @click="deleteAppData();" label="Delete App Data" aria-label="Delete App Data" tabindex="0" />
-                </div>
+            <div class="row justify-between">
                 <div>
-                    <q-btn color="secondary" @click="initializePrepareAppData();" label="Prepare/Update App Data" :disabled="!checklistData['appconfigjson'] || !checklistData['appconfigjson'].hasOwnProperty('descSourceTab') || !checklistData['appconfigjson']['descSourceTab']" aria-label="Prepare and Update App Data" tabindex="0" />
+                    <template v-if="lastPublishedStr">
+                        <span class="q-ml-md text-h6 text-bold self-center">Last published: {{ lastPublishedStr }}</span>
+                    </template>
+                </div>
+                <div class="row justify-end q-gutter-sm">
+                    <div v-if="dataArchiveFilename">
+                        <q-btn color="negative" @click="deleteAppData();" label="Delete App Data" aria-label="Delete App Data" tabindex="0" />
+                    </div>
+                    <div>
+                        <q-btn color="secondary" @click="initializePrepareAppData();" label="Prepare/Update App Data" :disabled="!checklistData['appconfigjson'] || !checklistData['appconfigjson'].hasOwnProperty('descSourceTab') || !checklistData['appconfigjson']['descSourceTab']" aria-label="Prepare and Update App Data" tabindex="0" />
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -32,11 +39,21 @@ const checklistEditorAppConfigTab = {
         const checklistData = Vue.computed(() => checklistStore.getChecklistData);
         const checklistId = Vue.computed(() => checklistStore.getChecklistID);
         const clidArr = Vue.computed(() => checklistStore.getClidArr);
+        const csidArr = Vue.ref([]);
         const dataArchiveFilename = Vue.computed(() => {
             return (checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']) ? checklistData.value['appconfigjson']['dataArchiveFilename'] : null;
         });
         const editsExist = Vue.computed(() => checklistStore.getChecklistEditsExist);
+        const lastPublishedStr = Vue.computed(() => {
+            let returnStr = null;
+            if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('datePublished') && checklistData.value['appconfigjson']['datePublished']){
+                const lastPubDate = new Date(checklistData.value['appconfigjson']['datePublished']);
+                returnStr = lastPubDate.toString();
+            }
+            return returnStr;
+        });
         const targetImageTidArr = Vue.ref([]);
+        const taxonLoadingIndex = Vue.ref(0);
         const tidAcceptedArr = Vue.computed(() => checklistStore.getChecklistTaxaTidAcceptedArr);
 
         function deleteAppData() {
@@ -64,7 +81,9 @@ const checklistEditorAppConfigTab = {
         }
 
         function initializePrepareAppData() {
+            csidArr.value.length = 0;
             targetImageTidArr.value.length = 0;
+            taxonLoadingIndex.value = 0;
             if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']){
                 showWorking('Removing previous data archive');
                 processDeleteAppDataArchive((res) => {
@@ -97,6 +116,7 @@ const checklistEditorAppConfigTab = {
             .then((res) => {
                 if(res !== ''){
                     updateAppConfigData('dataArchiveFilename', res);
+                    updateAppConfigData('datePublished', Math.floor(Date.now()));
                     if(editsExist.value){
                         checklistStore.updateChecklistRecord((res) => {
                             hideWorking();
@@ -117,6 +137,30 @@ const checklistEditorAppConfigTab = {
                             showNotification('negative', 'There was an error creating the new app data archive.');
                         });
                     }
+                }
+            });
+        }
+
+        function packageChecklistCharacterData() {
+            showWorking('Packaging character data');
+            const formData = new FormData();
+            formData.append('csidArr', JSON.stringify(csidArr.value));
+            formData.append('archiveFile', dataArchiveFilename.value);
+            formData.append('action', 'packageChecklistCharacterData');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processCompletedDataPackaging();
+                }
+                else{
+                    hideWorking();
+                    showNotification('negative', 'There was an error while packaging the character data.');
                 }
             });
         }
@@ -181,6 +225,60 @@ const checklistEditorAppConfigTab = {
             });
         }
 
+        function packageChecklistTaxaData() {
+            const loadingCnt = 100;
+            showWorking('Packaging taxa data');
+            const formData = new FormData();
+            formData.append('clidArr', JSON.stringify(clidArr.value));
+            formData.append('index', taxonLoadingIndex.value.toString());
+            formData.append('reccnt', loadingCnt.toString());
+            formData.append('descTab', checklistData.value['appconfigjson']['descSourceTab']);
+            formData.append('archiveFile', dataArchiveFilename.value);
+            formData.append('action', 'packageChecklistTaxaData');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(data['csidArr'].length > 0){
+                    csidArr.value = csidArr.value.concat(data['csidArr']);
+                }
+                if(Number(data['reccnt']) < loadingCnt){
+                    csidArr.value = [...new Set(csidArr.value)];
+                    processCompletedTaxaDataPackaging();
+                }
+                else{
+                    taxonLoadingIndex.value++;
+                    packageChecklistTaxaData();
+                }
+            });
+        }
+
+        function processCompletedDataPackaging() {
+            const formData = new FormData();
+            formData.append('archiveFile', dataArchiveFilename.value);
+            formData.append('action', 'processCompletedDataPackaging');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                hideWorking();
+                if(Number(res) === 1){
+                    showNotification('positive','Packaging process complete!');
+                }
+                else{
+                    showNotification('negative', 'There was an error completing the data packaging.');
+                }
+            });
+        }
+
         function processCompletedImageDataPackaging() {
             const formData = new FormData();
             formData.append('archiveFile', dataArchiveFilename.value);
@@ -194,7 +292,34 @@ const checklistEditorAppConfigTab = {
             })
             .then((res) => {
                 if(Number(res) === 1){
-                    packageTaxaData();
+                    packageChecklistTaxaData();
+                }
+                else{
+                    hideWorking();
+                    showNotification('negative', 'There was an error completing the image data packaging.');
+                }
+            });
+        }
+
+        function processCompletedTaxaDataPackaging() {
+            const formData = new FormData();
+            formData.append('archiveFile', dataArchiveFilename.value);
+            formData.append('action', 'processCompletedTaxaDataPackaging');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    if(csidArr.value.length > 0){
+                        packageChecklistCharacterData();
+                    }
+                    else{
+                        processCompletedDataPackaging();
+                    }
                 }
                 else{
                     hideWorking();
@@ -226,6 +351,7 @@ const checklistEditorAppConfigTab = {
         return {
             checklistData,
             dataArchiveFilename,
+            lastPublishedStr,
             deleteAppData,
             initializePrepareAppData,
             updateAppConfigData
