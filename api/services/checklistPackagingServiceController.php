@@ -28,4 +28,11 @@ if($action && SanitizerService::validateInternalRequest()){
         $tidArr = json_decode($_POST['tidArr'], false);
         echo json_encode($checklistPackagingService->packageChecklistTaggedImages($clidArr, $tidArr, $_POST['archiveFile']));
     }
+    elseif($action === 'processCompletedImageDataPackaging' && array_key_exists('archiveFile', $_POST)){
+        echo json_encode($checklistPackagingService->processCompletedImageDataPackaging($_POST['archiveFile']));
+    }
+    elseif($action === 'packageChecklistImages' && array_key_exists('tidArr', $_POST) && array_key_exists('imageMaxCnt', $_POST) && array_key_exists('archiveFile', $_POST)){
+        $tidArr = json_decode($_POST['tidArr'], false);
+        echo json_encode($checklistPackagingService->packageChecklistImages($tidArr, $_POST['imageMaxCnt'], $_POST['archiveFile']));
+    }
 }

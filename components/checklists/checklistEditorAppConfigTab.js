@@ -2,7 +2,7 @@ const checklistEditorAppConfigTab = {
     template: `
         <div class="q-pa-md column q-gutter-sm">
             <div class="row justify-end q-gutter-sm">
-                <div v-if="checklistData['appconfigjson'] && checklistData['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData['appconfigjson']['dataArchiveFilename']">
+                <div v-if="dataArchiveFilename">
                     <q-btn color="negative" @click="deleteAppData();" label="Delete App Data" aria-label="Delete App Data" tabindex="0" />
                 </div>
                 <div>
@@ -32,8 +32,11 @@ const checklistEditorAppConfigTab = {
         const checklistData = Vue.computed(() => checklistStore.getChecklistData);
         const checklistId = Vue.computed(() => checklistStore.getChecklistID);
         const clidArr = Vue.computed(() => checklistStore.getClidArr);
-        const dataArchiveFilename = Vue.ref(null);
+        const dataArchiveFilename = Vue.computed(() => {
+            return (checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']) ? checklistData.value['appconfigjson']['dataArchiveFilename'] : null;
+        });
         const editsExist = Vue.computed(() => checklistStore.getChecklistEditsExist);
+        const targetImageTidArr = Vue.ref([]);
         const tidAcceptedArr = Vue.computed(() => checklistStore.getChecklistTaxaTidAcceptedArr);
 
         function deleteAppData() {
@@ -61,8 +64,9 @@ const checklistEditorAppConfigTab = {
         }
 
         function initializePrepareAppData() {
-            showWorking();
+            targetImageTidArr.value.length = 0;
             if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']){
+                showWorking('Removing previous data archive');
                 processDeleteAppDataArchive((res) => {
                     if(res === 1){
                         initializeAppDataArchive();
@@ -79,7 +83,7 @@ const checklistEditorAppConfigTab = {
         }
 
         function initializeAppDataArchive() {
-            console.log('initializeAppDataArchive');
+            showWorking('Initializing app data archive');
             const formData = new FormData();
             formData.append('clid', checklistId.value.toString());
             formData.append('action', 'initializeAppDataArchive');
@@ -92,18 +96,64 @@ const checklistEditorAppConfigTab = {
             })
             .then((res) => {
                 if(res !== ''){
-                    dataArchiveFilename.value = res;
-                    packageChecklistTaggedImages();
+                    updateAppConfigData('dataArchiveFilename', res);
+                    if(editsExist.value){
+                        checklistStore.updateChecklistRecord((res) => {
+                            hideWorking();
+                            if(res === 1){
+                                packageChecklistTaggedImages();
+                            }
+                            else{
+                                showNotification('negative', 'There was an error saving the app configurations.');
+                            }
+                        });
+                    }
+                }
+                else{
+                    checklistStore.updateChecklistEditData('appconfigjson', null);
+                    if(editsExist.value){
+                        checklistStore.updateChecklistRecord(() => {
+                            hideWorking();
+                            showNotification('negative', 'There was an error creating the new app data archive.');
+                        });
+                    }
+                }
+            });
+        }
+
+        function packageChecklistImages() {
+            showWorking('Packaging images');
+            const targetArr = targetImageTidArr.value.splice(0, 50);
+            const formData = new FormData();
+            formData.append('tidArr', JSON.stringify(targetArr));
+            formData.append('imageMaxCnt', checklistData.value['appconfigjson']['maxImagesPerTaxon']);
+            formData.append('archiveFile', dataArchiveFilename.value);
+            formData.append('action', 'packageChecklistImages');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    if(targetImageTidArr.value.length > 0){
+                        packageChecklistImages();
+                    }
+                    else{
+                        processCompletedImageDataPackaging();
+                    }
                 }
                 else{
                     hideWorking();
-                    showNotification('negative', 'There was an error creating the new app data archive.');
+                    showNotification('negative', 'An error occurred while packaging images');
                 }
             });
         }
 
         function packageChecklistTaggedImages() {
-            console.log(dataArchiveFilename.value);
+            showWorking('Packaging tagged images');
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr.value));
             formData.append('tidArr', JSON.stringify(tidAcceptedArr.value));
@@ -117,8 +167,39 @@ const checklistEditorAppConfigTab = {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                console.log(data);
-                hideWorking();
+                tidAcceptedArr.value.forEach(tid => {
+                    if(!data.includes(Number(tid))){
+                        targetImageTidArr.value.push(tid);
+                    }
+                });
+                if(targetImageTidArr.value.length > 0){
+                    packageChecklistImages();
+                }
+                else{
+                    processCompletedImageDataPackaging();
+                }
+            });
+        }
+
+        function processCompletedImageDataPackaging() {
+            const formData = new FormData();
+            formData.append('archiveFile', dataArchiveFilename.value);
+            formData.append('action', 'processCompletedImageDataPackaging');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    packageTaxaData();
+                }
+                else{
+                    hideWorking();
+                    showNotification('negative', 'There was an error completing the image data packaging.');
+                }
             });
         }
 
@@ -144,6 +225,7 @@ const checklistEditorAppConfigTab = {
 
         return {
             checklistData,
+            dataArchiveFilename,
             deleteAppData,
             initializePrepareAppData,
             updateAppConfigData

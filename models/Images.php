@@ -361,7 +361,7 @@ class Images{
     public function getChecklistImageDataBatch($retArr, $tidArr, $matchField, $taxonLimit): array
     {
         if(count($tidArr) > 0){
-            $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl, i.alttext '.
+            $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl, i.alttext, i.photographer, i.owner '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'WHERE t.' . $matchField . ' IN(' . implode(',', $tidArr) . ') AND i.sortsequence < 500 ORDER BY i.sortsequence ';
             //echo '<div>'.$sql.'</div>';
@@ -378,6 +378,8 @@ class Images{
                         $nodeArr['url'] = $row['url'];
                         $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
                         $nodeArr['alttext'] = $row['alttext'];
+                        $nodeArr['photographer'] = $row['photographer'];
+                        $nodeArr['owner'] = $row['owner'];
                         $retArr[$row[$matchField]][] = $nodeArr;
                     }
                     unset($rows[$index]);
