@@ -24,11 +24,23 @@ class FileSystemService {
         'taxa'
     );
 
-    public static function addFileToZipArchive($zipArchive, $filePath): void
+    public static function addFileFromStringToZipArchive($zipArchive, $string, $filename): void
+    {
+        if($zipArchive && $string && $filename) {
+            $zipArchive->addFromString($filename, $string);
+        }
+    }
+
+    public static function addFileToZipArchive($zipArchive, $filePath, $filename = null): void
     {
         if(file_exists($filePath)) {
             $zipArchive->addFile($filePath);
-            $zipArchive->renameName($filePath, basename($filePath));
+            if($filename){
+                $zipArchive->renameName($filePath, $filename);
+            }
+            else{
+                $zipArchive->renameName($filePath, basename($filePath));
+            }
         }
     }
 
@@ -86,7 +98,7 @@ class FileSystemService {
         return (is_dir($directoryPath) === false);
 	}
 
-    public static function deleteFile($filePath, $cleanParentFolder = false): void
+    public static function deleteFile($filePath, $cleanParentFolder = null): void
     {
         if(file_exists($filePath)) {
             unlink($filePath);
@@ -310,6 +322,20 @@ class FileSystemService {
     public static function openFileHandler($filePath)
     {
         return fopen($filePath, 'wb');
+    }
+
+    public static function openZipArchive($zipArchivePath): ?ZipArchive
+    {
+        $zipArchive = new ZipArchive;
+        if($zipArchive->open($zipArchivePath) === true){
+            return $zipArchive;
+        }
+        return null;
+    }
+
+    public static function openZipArchiveFile($zipArchive, $filename)
+    {
+        return $zipArchive->getFromName($filename);
     }
 
     public static function processImageDerivatives($imageData, $targetPath, $targetFilename, $origFilename): array

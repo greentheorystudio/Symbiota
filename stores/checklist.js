@@ -133,6 +133,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         getChecklistVoucherData(state) {
             return state.checklistVoucherData;
         },
+        getClidArr(state) {
+            return state.clidArr;
+        },
         getDisplayAcceptedNames(state) {
             return state.displayAcceptedNames;
         },

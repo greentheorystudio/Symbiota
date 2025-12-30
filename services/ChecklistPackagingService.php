@@ -26,6 +26,17 @@ class ChecklistPackagingService {
         $this->conn->close();
     }
 
+    public function deleteAppDataArchive($clid): int
+    {
+        $returnVal = 0;
+        if((int)$clid > 0){
+            $fullPath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/cl-' . $clid . '.zip';
+            FileSystemService::deleteFile($fullPath);
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
     public function filterTaxaArr($filter, $taxaArr): array
     {
         $returnArr = array();
@@ -121,11 +132,66 @@ class ChecklistPackagingService {
         return $returnArr;
     }
 
+    public function initializeAppDataArchive($clid): string
+    {
+        $returnVal = '';
+        if((int)$clid > 0){
+            $archiveFileName = 'cl-' . $clid . '.zip';
+            $archiveFilePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFileName;
+            $zipArchive = FileSystemService::initializeNewZipArchive();
+            if(FileSystemService::createNewZipArchive($zipArchive, $archiveFilePath)){
+                FileSystemService::addFileFromStringToZipArchive($zipArchive, '{"images":[', 'data.json');
+                FileSystemService::closeZipArchive($zipArchive);
+                $returnVal = $archiveFileName;
+            }
+        }
+        return $returnVal;
+    }
+
     public function mergeDataArr($returnArr, $newArr): array
     {
         $keys = array_keys($newArr);
         foreach($keys as $key){
             $returnArr[$key] = $newArr[$key];
+        }
+        return $returnArr;
+    }
+
+    public function packageChecklistTaggedImages($clidArr, $tidArr, $archiveFile): array
+    {
+        $returnArr = array();
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($zipArchive && $dataFileContent){
+            $imageArr = (new Images)->getChecklistTaggedImageData($clidArr, 0, $tidArr);
+            foreach($imageArr as $tid => $tidImgArr){
+                foreach($tidImgArr as $image){
+                    $fileType = substr($image['url'], (strrpos($image['url'], '.') ?: -1) + 1);
+                    if($fileType === 'jpg' || $fileType === 'jpeg' || $fileType === 'png'){
+                        $loaded = false;
+                        $fileName = $image['imgid'] . '.' . $fileType;
+                        $data = array('filename' => $fileName, 'tid'   => $tid, 'photographer'   => $image['photographer'], 'owner'   => $image['owner']);
+                        if(strncmp($image['url'], '/', 1) === 0){
+                            FileSystemService::addFileToZipArchive($zipArchive, FileSystemService::getServerPathFromUrlPath($image['url']), $fileName);
+                            $loaded = true;
+                        }
+                        else{
+                            $fileData = file_get_contents($image['url']);
+                            if($fileData){
+                                FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
+                                $loaded = true;
+                            }
+                        }
+                        if($loaded){
+                            $dataFileContent .= json_encode($data) . ',';
+                            $returnArr[] = $tid;
+                        }
+                    }
+                }
+            }
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            FileSystemService::closeZipArchive($zipArchive);
         }
         return $returnArr;
     }

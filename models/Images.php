@@ -418,11 +418,11 @@ class Images{
                     $sqlWhereArr[] = 't.keyvalue LIKE "CLID-' . (int)$clid . '-%"';
                 }
             }
-            $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.alttext, t.keyvalue '.
+            $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.alttext, i.photographer, i.owner, t.keyvalue '.
                 'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.
                 'WHERE ' . implode(' OR ', $sqlWhereArr) . ' '.
                 'ORDER BY t.keyvalue ';
-            //echo '<div>'.$sql.'</div>';
+            //error_log('SQL: ' . $sql);
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -441,12 +441,14 @@ class Images{
                         if(!array_key_exists($tid, $retArr)){
                             $retArr[$tid] = array();
                         }
-                        if(count($retArr[$tid]) < $taxonLimit){
+                        if((int)$taxonLimit === 0 || count($retArr[$tid]) < $taxonLimit){
                             $nodeArr = array();
                             $nodeArr['imgid'] = $row['imgid'];
                             $nodeArr['url'] = $row['url'];
                             $nodeArr['thumbnailurl'] = $row['thumbnailurl'];
                             $nodeArr['alttext'] = $row['alttext'];
+                            $nodeArr['photographer'] = $row['photographer'];
+                            $nodeArr['owner'] = $row['owner'];
                             $retArr[$tid][] = $nodeArr;
                         }
                     }
