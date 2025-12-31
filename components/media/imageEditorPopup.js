@@ -31,7 +31,7 @@ const imageEditorPopup = {
                             <div v-if="Number(imageId) > 0" class="row justify-between">
                                 <div>
                                     <template v-if="editsExist">
-                                        <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
+                                        <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
                                     </template>
                                 </div>
                                 <div class="row justify-end">
