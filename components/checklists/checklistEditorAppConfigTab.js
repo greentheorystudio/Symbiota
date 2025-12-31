@@ -72,6 +72,7 @@ const checklistEditorAppConfigTab = {
         const publishValid = Vue.computed(() => {
             return checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('descSourceTab') && checklistData.value['appconfigjson']['descSourceTab'];
         });
+        const taggedTargetImageTidArr = Vue.ref([]);
         const targetImageTidArr = Vue.ref([]);
         const taxonLoadingIndex = Vue.ref(0);
         const tidAcceptedArr = Vue.computed(() => checklistStore.getChecklistTaxaTidAcceptedArr);
@@ -104,6 +105,7 @@ const checklistEditorAppConfigTab = {
             csidArr.value.length = 0;
             targetImageTidArr.value.length = 0;
             taxonLoadingIndex.value = 0;
+            taggedTargetImageTidArr.value = tidAcceptedArr.value.slice();
             if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']){
                 showWorking('Removing previous data archive');
                 checklistStore.deleteAppDataArchive((res) => {
@@ -212,9 +214,10 @@ const checklistEditorAppConfigTab = {
 
         function packageChecklistTaggedImages() {
             showWorking('Packaging tagged images');
+            const targetArr = taggedTargetImageTidArr.value.splice(0, 5);
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr.value));
-            formData.append('tidArr', JSON.stringify(tidAcceptedArr.value));
+            formData.append('tidArr', JSON.stringify(targetArr));
             formData.append('archiveFile', dataArchiveFilename.value);
             formData.append('action', 'packageChecklistTaggedImages');
             fetch(checklistPackagingServiceApiUrl, {
@@ -225,16 +228,21 @@ const checklistEditorAppConfigTab = {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                tidAcceptedArr.value.forEach(tid => {
+                targetArr.forEach(tid => {
                     if(!data.includes(Number(tid))){
                         targetImageTidArr.value.push(tid);
                     }
                 });
-                if(targetImageTidArr.value.length > 0 && Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) > 0){
-                    packageChecklistImages();
+                if(taggedTargetImageTidArr.value.length > 0){
+                    packageChecklistTaggedImages();
                 }
                 else{
-                    processCompletedImageDataPackaging();
+                    if(targetImageTidArr.value.length > 0 && Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) > 0){
+                        packageChecklistImages();
+                    }
+                    else{
+                        processCompletedImageDataPackaging();
+                    }
                 }
             });
         }
