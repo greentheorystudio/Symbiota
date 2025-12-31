@@ -140,11 +140,9 @@ const taxonomyDataSourceImportUpdateModule = {
     },
     setup(props, context) {
         const { getErrorResponseText, showNotification } = useCore();
-        const baseStore = useBaseStore();
 
         let abortController = null;
         const childrenSearchPrimingArr = Vue.ref([]);
-        const clientRoot = baseStore.getClientRoot;
         const colInitialSearchResults = Vue.ref([]);
         const commonNameFormattingOptions = [
             { label: 'First letter of each word uppercase', value: 'upper-each' },

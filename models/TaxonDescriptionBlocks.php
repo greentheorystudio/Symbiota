@@ -86,6 +86,61 @@ class TaxonDescriptionBlocks{
         return $retVal;
     }
 
+    public function getAutocompleteCaptionList($queryString): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT tdbid, caption FROM taxadescrblock ';
+        $sql .= 'WHERE caption LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $dataArr = array();
+                $dataArr['id'] = $row['tdbid'];
+                $dataArr['name'] = $row['caption'];
+                $retArr[] = $dataArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getTaxaDescriptionBlockStatementsFromTidArr($tidArr, $caption): array
+    {
+        $retArr = array();
+        if($caption && count($tidArr) > 0){
+            $sql = 'SELECT b.tdbid, b.tid, b.caption, b.source, s.heading, s.statement, s.displayheader, s.sortsequence '.
+                'FROM taxadescrblock AS b LEFT JOIN taxadescrstmts AS s ON b.tdbid = s.tdbid '.
+                'WHERE b.tid IN(' . implode(',', $tidArr) . ') AND b.caption = "' . SanitizerService::cleanInStr($this->conn, $caption) . '" AND s.statement IS NOT NULL '.
+                'ORDER BY b.tdbid, s.sortsequence ';
+            //echo '<div>'.$sql.'</div>';
+            if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if(!array_key_exists($row['tid'], $retArr)){
+                        $retArr[$row['tid']] = array();
+                        $retArr[$row['tid']]['tdbid'] = $row['tdbid'];
+                        $retArr[$row['tid']]['caption'] = $row['caption'];
+                        $retArr[$row['tid']]['source'] = $row['source'];
+                        $retArr[$row['tid']]['statements'] = array();
+                    }
+                    $nodeArr = array();
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        if($name !== 'tid' && $name !== 'tdbid' && $name !== 'caption' && $name !== 'source'){
+                            $nodeArr[$name] = $row[$name];
+                        }
+                    }
+                    $retArr[$row['tid']]['statements'][] = $nodeArr;
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
     public function getTaxonDescriptionBlockData($tdbid): array
     {
         $retArr = array();

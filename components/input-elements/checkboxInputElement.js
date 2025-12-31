@@ -68,7 +68,6 @@ const checkboxInputElement = {
     setup(props, context) {
         const checkboxValue = Vue.ref(false);
         const displayDefinitionPopup = Vue.ref(false);
-        const inputType = Vue.ref('text');
         const propsRefs = Vue.toRefs(props);
 
         Vue.watch(propsRefs.value, () => {
@@ -95,7 +94,6 @@ const checkboxInputElement = {
         return {
             checkboxValue,
             displayDefinitionPopup,
-            inputType,
             openDefinitionPopup,
             processValueChange
         }

@@ -32,6 +32,7 @@
       "@php -r \"file_exists('./css/main.css') || copy('./css/main_template.css', './css/main.css');\"",
       "@php -r \"file_exists('./misc/usagepolicy.php') || copy('./misc/usagepolicy_template.php', './misc/usagepolicy.php');\"",
       "@php -r \"file_exists('./content') || mkdir('./content');\"",
+      "@php -r \"file_exists('./content/checklist') || mkdir('./content/checklist');\"",
       "@php -r \"file_exists('./content/collicon') || mkdir('./content/collicon');\"",
       "@php -r \"file_exists('./content/css') || mkdir('./content/css');\"",
       "@php -r \"file_exists('./content/dwca') || mkdir('./content/dwca');\"",
@@ -49,6 +50,7 @@
       "@php -r \"file_exists('./temp/report') || mkdir('./temp/report');\""
     ],
     "post-update-cmd": [
+      "chmod -R 777 ./content/checklist",
       "chmod -R 777 ./content/collicon",
       "chmod -R 777 ./content/css",
       "chmod -R 777 ./content/dwca",

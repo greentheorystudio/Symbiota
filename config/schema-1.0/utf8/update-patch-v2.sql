@@ -204,6 +204,7 @@ ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
 
 ALTER TABLE `fmchecklists`
+    ADD COLUMN `appConfigJson` longtext NULL AFTER `defaultSettings`,
     CHANGE COLUMN `dynamicsql` `searchterms` text NULL AFTER `politicalDivision`,
     MODIFY COLUMN `expiration` datetime NULL DEFAULT NULL AFTER `SortSequence`,
     MODIFY COLUMN `SortSequence` int(10) UNSIGNED NULL DEFAULT 50 AFTER `uid`,
@@ -294,6 +295,9 @@ CREATE TABLE `keycharacterstatetaxalink` (
     CONSTRAINT `kcstl_csid` FOREIGN KEY (`csid`) REFERENCES `keycharacterstates` (`csid`) ON DELETE CASCADE ON UPDATE NO ACTION,
     CONSTRAINT `kcstl_tid` FOREIGN KEY (`tid`) REFERENCES `taxa` (`TID`) ON DELETE CASCADE ON UPDATE NO ACTION
 );
+
+ALTER TABLE `taxadescrblock`
+    ADD INDEX `INDEX_taxadescrblock_caption`(`caption`);
 
 ALTER TABLE `uploaddetermtemp`
     ADD COLUMN `updid` int(50) NOT NULL AUTO_INCREMENT FIRST,

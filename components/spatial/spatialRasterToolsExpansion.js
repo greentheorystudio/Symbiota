@@ -10,7 +10,7 @@ const spatialRasterToolsExpansion = {
             <div class="q-mb-sm">
                 <q-select bg-color="white" outlined v-model="selectedTarget" :options="rasterLayersArr" :option-value="value" :option-label="label" label="Target Raster Layer" popup-content-class="z-max" @update:model-value="changeTargetRaster" behavior="menu" dense options-dense tabindex="0" />
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-my-sm column">
                 <div>
                     <span class="text-bold">Data-Based Vectorize:</span> Process creates vector features for regions within the selected 
@@ -33,7 +33,7 @@ const spatialRasterToolsExpansion = {
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="vectorizeRasterByData();" label="Start Process" :disabled="selectedTargetRaster === 'none' || mapSettings.polyCount !== 1" dense tabindex="0" />
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-my-sm">
                 <div>
                     <span class="text-bold">Grid-Based Vectorize:</span> Process creates vector features within the bounds of the Target Polygon 
@@ -71,7 +71,7 @@ const spatialRasterToolsExpansion = {
                     </div>
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
         </div>
     `,
     setup(props) {
