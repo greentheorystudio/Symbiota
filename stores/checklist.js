@@ -451,9 +451,11 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                callback(Number(res));
                 if(res && Number(res) === 1){
-                    this.setChecklist(this.checklistId);
+                    this.setChecklist(this.checklistId, callback);
+                }
+                else{
+                    callback(Number(res));
                 }
             });
         },

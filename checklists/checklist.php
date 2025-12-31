@@ -794,9 +794,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function saveTemporaryChecklist() {
                         checklistStore.saveTemporaryChecklist(searchStore.getSearchTermsJson, (res) => {
-                            if(Number(res) === 1){
-                                showNotification('positive','Checklist saved.');
+                            if(Number(res) > 0){
                                 setEditor();
+                                setChecklistTaxa();
+                                showNotification('positive','Checklist saved.');
                             }
                             else{
                                 showNotification('negative', 'An error occurred while saving the checklist.');

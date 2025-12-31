@@ -29,21 +29,21 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($checklistPackagingService->packageChecklistTaggedImages($clidArr, $tidArr, $_POST['archiveFile']));
     }
     elseif($action === 'processCompletedImageDataPackaging' && array_key_exists('archiveFile', $_POST)){
-        echo json_encode($checklistPackagingService->processCompletedImageDataPackaging($_POST['archiveFile']));
+        echo $checklistPackagingService->processCompletedImageDataPackaging($_POST['archiveFile']);
     }
     elseif($action === 'packageChecklistImages' && array_key_exists('tidArr', $_POST) && array_key_exists('imageMaxCnt', $_POST) && array_key_exists('archiveFile', $_POST)){
         $tidArr = json_decode($_POST['tidArr'], false);
-        echo json_encode($checklistPackagingService->packageChecklistImages($tidArr, $_POST['imageMaxCnt'], $_POST['archiveFile']));
+        echo $checklistPackagingService->packageChecklistImages($tidArr, $_POST['imageMaxCnt'], $_POST['archiveFile']);
     }
     elseif($action === 'packageChecklistTaxaData' && $clidArr && array_key_exists('index', $_POST) && array_key_exists('reccnt', $_POST) && array_key_exists('archiveFile', $_POST)){
         $descTab = $_POST['descTab'] ?? null;
         echo json_encode($checklistPackagingService->packageChecklistTaxaData($clidArr, $_POST['index'], $_POST['reccnt'], $descTab, $_POST['archiveFile']));
     }
     elseif($action === 'processCompletedTaxaDataPackaging' && array_key_exists('archiveFile', $_POST)){
-        echo json_encode($checklistPackagingService->processCompletedTaxaDataPackaging($_POST['archiveFile']));
+        echo $checklistPackagingService->processCompletedTaxaDataPackaging($_POST['archiveFile']);
     }
     elseif($action === 'processCompletedDataPackaging' && array_key_exists('archiveFile', $_POST)){
-        echo json_encode($checklistPackagingService->processCompletedDataPackaging($_POST['archiveFile']));
+        echo $checklistPackagingService->processCompletedDataPackaging($_POST['archiveFile']);
     }
     elseif($action === 'packageChecklistCharacterData' && array_key_exists('csidArr', $_POST) && array_key_exists('archiveFile', $_POST)){
         $csidArr = json_decode($_POST['csidArr'], false);

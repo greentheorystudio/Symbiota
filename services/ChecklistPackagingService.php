@@ -176,9 +176,9 @@ class ChecklistPackagingService {
         return $returnVal;
     }
 
-    public function packageChecklistImages($tidArr, $imageMaxCnt, $archiveFile): array
+    public function packageChecklistImages($tidArr, $imageMaxCnt, $archiveFile): int
     {
-        $returnArr = array();
+        $returnVal = 0;
         $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
         $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
         $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
@@ -191,12 +191,20 @@ class ChecklistPackagingService {
                         $loaded = false;
                         $fileName = $image['imgid'] . '.' . $fileType;
                         $data = array('filename' => $fileName, 'tid'   => $tid, 'photographer'   => $image['photographer'], 'owner'   => $image['owner']);
-                        if(strncmp($image['url'], '/', 1) === 0){
-                            FileSystemService::addFileToZipArchive($zipArchive, FileSystemService::getServerPathFromUrlPath($image['url']), $fileName);
+                        $url = $image['thumbnailurl'] ?: $image['url'];
+                        if(strncmp($url, '/', 1) === 0){
+                            FileSystemService::addFileToZipArchive($zipArchive, FileSystemService::getServerPathFromUrlPath($url), $fileName);
                             $loaded = true;
                         }
                         else{
-                            $fileData = file_get_contents($image['url']);
+                            $ch = curl_init($url);
+                            curl_setopt_array($ch, [
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_CONNECTTIMEOUT => 20
+                            ]);
+                            $fileData = @curl_exec($ch);
+                            curl_close($ch);
                             if($fileData){
                                 FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
                                 $loaded = true;
@@ -204,15 +212,15 @@ class ChecklistPackagingService {
                         }
                         if($loaded){
                             $dataFileContent .= json_encode($data) . ',';
-                            $returnArr[] = (int)$tid;
                         }
                     }
                 }
             }
             FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
             FileSystemService::closeZipArchive($zipArchive);
+            $returnVal = 1;
         }
-        return $returnArr;
+        return $returnVal;
     }
 
     public function packageChecklistTaggedImages($clidArr, $tidArr, $archiveFile): array

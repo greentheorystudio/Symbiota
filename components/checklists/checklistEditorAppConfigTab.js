@@ -1,19 +1,12 @@
 const checklistEditorAppConfigTab = {
     template: `
         <div class="q-pa-md column q-gutter-sm">
-            <div class="row justify-between">
-                <div>
-                    <template v-if="lastPublishedStr">
-                        <span class="q-ml-md text-h6 text-bold self-center">Last published: {{ lastPublishedStr }}</span>
-                    </template>
+            <div class="row justify-end q-gutter-sm">
+                <div v-if="dataArchiveFilename">
+                    <q-btn color="negative" @click="deleteAppData();" label="Delete App Data" aria-label="Delete App Data" tabindex="0" />
                 </div>
-                <div class="row justify-end q-gutter-sm">
-                    <div v-if="dataArchiveFilename">
-                        <q-btn color="negative" @click="deleteAppData();" label="Delete App Data" aria-label="Delete App Data" tabindex="0" />
-                    </div>
-                    <div>
-                        <q-btn color="secondary" @click="initializePrepareAppData();" label="Prepare/Update App Data" :disabled="!checklistData['appconfigjson'] || !checklistData['appconfigjson'].hasOwnProperty('descSourceTab') || !checklistData['appconfigjson']['descSourceTab']" aria-label="Prepare and Update App Data" tabindex="0" />
-                    </div>
+                <div>
+                    <q-btn color="secondary" @click="initializePrepareAppData();" label="Prepare/Update App Data" :disabled="!publishValid" aria-label="Prepare and Update App Data" tabindex="0" />
                 </div>
             </div>
             <div class="row">
@@ -25,6 +18,9 @@ const checklistEditorAppConfigTab = {
                 <div class="col-grow">
                     <text-field-input-element data-type="int" label="Max Amount of Autoload Images Per Taxon" :value="(checklistData['appconfigjson'] && checklistData['appconfigjson'].hasOwnProperty('maxImagesPerTaxon')) ? checklistData['appconfigjson']['maxImagesPerTaxon'] : null" min-value="0"  @update:value="(value) => updateAppConfigData('maxImagesPerTaxon', value)"></text-field-input-element>
                 </div>
+            </div>
+            <div v-if="lastPublishedStr" class="q-mt-sm text-subtitle1 text-bold">
+                Last published: {{ lastPublishedStr }}
             </div>
         </div>
     `,
@@ -51,6 +47,9 @@ const checklistEditorAppConfigTab = {
                 returnStr = lastPubDate.toString();
             }
             return returnStr;
+        });
+        const publishValid = Vue.computed(() => {
+            return checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('descSourceTab') && checklistData.value['appconfigjson'].hasOwnProperty('maxImagesPerTaxon') && checklistData.value['appconfigjson']['descSourceTab'] && Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) > 0;
         });
         const targetImageTidArr = Vue.ref([]);
         const taxonLoadingIndex = Vue.ref(0);
@@ -167,7 +166,7 @@ const checklistEditorAppConfigTab = {
 
         function packageChecklistImages() {
             showWorking('Packaging images');
-            const targetArr = targetImageTidArr.value.splice(0, 50);
+            const targetArr = targetImageTidArr.value.splice(0, 7);
             const formData = new FormData();
             formData.append('tidArr', JSON.stringify(targetArr));
             formData.append('imageMaxCnt', checklistData.value['appconfigjson']['maxImagesPerTaxon']);
@@ -180,18 +179,12 @@ const checklistEditorAppConfigTab = {
             .then((response) => {
                 return response.ok ? response.text() : null;
             })
-            .then((res) => {
-                if(Number(res) === 1){
-                    if(targetImageTidArr.value.length > 0){
-                        packageChecklistImages();
-                    }
-                    else{
-                        processCompletedImageDataPackaging();
-                    }
+            .then(() => {
+                if(targetImageTidArr.value.length > 0){
+                    packageChecklistImages();
                 }
                 else{
-                    hideWorking();
-                    showNotification('negative', 'An error occurred while packaging images');
+                    processCompletedImageDataPackaging();
                 }
             });
         }
@@ -226,7 +219,7 @@ const checklistEditorAppConfigTab = {
         }
 
         function packageChecklistTaxaData() {
-            const loadingCnt = 100;
+            const loadingCnt = 25;
             showWorking('Packaging taxa data');
             const formData = new FormData();
             formData.append('clidArr', JSON.stringify(clidArr.value));
@@ -290,14 +283,8 @@ const checklistEditorAppConfigTab = {
             .then((response) => {
                 return response.ok ? response.text() : null;
             })
-            .then((res) => {
-                if(Number(res) === 1){
-                    packageChecklistTaxaData();
-                }
-                else{
-                    hideWorking();
-                    showNotification('negative', 'There was an error completing the image data packaging.');
-                }
+            .then(() => {
+                packageChecklistTaxaData();
             });
         }
 
@@ -352,6 +339,7 @@ const checklistEditorAppConfigTab = {
             checklistData,
             dataArchiveFilename,
             lastPublishedStr,
+            publishValid,
             deleteAppData,
             initializePrepareAppData,
             updateAppConfigData
