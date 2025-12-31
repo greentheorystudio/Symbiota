@@ -243,7 +243,14 @@ class ChecklistPackagingService {
                             $loaded = true;
                         }
                         else{
-                            $fileData = file_get_contents($image['url']);
+                            $ch = curl_init($image['url']);
+                            curl_setopt_array($ch, [
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_CONNECTTIMEOUT => 20
+                            ]);
+                            $fileData = @curl_exec($ch);
+                            curl_close($ch);
                             if($fileData){
                                 FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
                                 $loaded = true;

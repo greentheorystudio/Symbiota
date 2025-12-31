@@ -18,7 +18,7 @@ const checklistEditorPopup = {
                         <template v-if="Number(checklistId) > 0">
                             <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                                 <q-tab name="details" label="Info" no-caps></q-tab>
-                                <q-tab v-if="appEnabled" name="app" label="Mobile Checklist" no-caps></q-tab>
+                                <q-tab v-if="appEnabled && checklistData['access'] === 'public'" name="app" label="Mobile Checklist" no-caps></q-tab>
                                 <q-tab name="admin" label="Admin" no-caps></q-tab>
                             </q-tabs>
                             <q-separator></q-separator>
@@ -26,7 +26,7 @@ const checklistEditorPopup = {
                                 <q-tab-panel class="q-pa-none" name="details">
                                     <checklist-field-module @open:spatial-popup="openSpatialPopup" @close:popup="closePopup();"></checklist-field-module>
                                 </q-tab-panel>
-                                <q-tab-panel v-if="appEnabled" class="q-pa-none" name="app">
+                                <q-tab-panel v-if="appEnabled && checklistData['access'] === 'public'" class="q-pa-none" name="app">
                                     <checklist-editor-app-config-tab></checklist-editor-app-config-tab>
                                 </q-tab-panel>
                                 <q-tab-panel class="q-pa-none" name="admin">
@@ -144,6 +144,7 @@ const checklistEditorPopup = {
 
         return {
             appEnabled,
+            checklistData,
             checklistId,
             contentRef,
             contentStyle,

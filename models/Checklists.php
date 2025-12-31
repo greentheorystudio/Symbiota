@@ -157,6 +157,35 @@ class Checklists{
         return $retVal;
     }
 
+    public function getAppChecklistArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM fmchecklists WHERE access = "public" AND appconfigjson IS NOT NULL ORDER BY `name` ';
+        //echo $sql;
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    if($row[$name] && ($name === 'searchterms' || $name === 'defaultsettings' || $name === 'appconfigjson')){
+                        $nodeArr[$name] = json_decode($row[$name], true);
+                    }
+                    else{
+                        $nodeArr[$name] = $row[$name];
+                    }
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getChecklistArr(): array
     {
         $retArr = array();
