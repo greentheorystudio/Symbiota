@@ -15,7 +15,7 @@ const spatialSelectionsTab = {
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="zoomToSelections();" label="Zoom to Selections" dense tabindex="0" />
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div>
                 <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" :columns="columns" row-key="name" :loading="tableLoading" separator="cell" selection="multiple" :rows-per-page-options="[0]" wrap-cells hide-pagination dense>
                     <template v-slot:header="props">
