@@ -1,7 +1,7 @@
 const spatialRecordsSymbologyExpansion = {
     template: `
         <div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <q-tabs v-model="mapSettings.selectedRecordsSelectionsSymbologyTab" active-bg-color="grey-4" align="left" @update:model-value="(value) => changeSelectedTab(value)">
                 <q-tab name="records" class="bg-grey-3" label="Records" no-caps />
                 <template v-if="selections.length > 0">

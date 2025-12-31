@@ -88,7 +88,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 </q-card>
                             </div>
                             <div>
-                                <q-separator ></q-separator>
+                                <q-separator></q-separator>
                             </div>
                             <template v-for="heading in keyDataArr">
                                 <template v-if="activeChidArr.includes(Number(heading.chid))">
@@ -159,7 +159,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 </div>
                             </div>
                         </div>
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                         <div class="q-pa-md row justify-center text-h6 text-bold">
                             There are no taxa to display. Click the Search button to enter search criteria to build the taxa checklist for the key.
                         </div>
