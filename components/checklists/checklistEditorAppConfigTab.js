@@ -70,7 +70,7 @@ const checklistEditorAppConfigTab = {
             return returnStr;
         });
         const publishValid = Vue.computed(() => {
-            return checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('descSourceTab') && checklistData.value['appconfigjson'].hasOwnProperty('maxImagesPerTaxon') && checklistData.value['appconfigjson']['descSourceTab'] && Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) > 0;
+            return checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('descSourceTab') && checklistData.value['appconfigjson']['descSourceTab'];
         });
         const targetImageTidArr = Vue.ref([]);
         const taxonLoadingIndex = Vue.ref(0);
