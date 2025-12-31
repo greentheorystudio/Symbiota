@@ -5,13 +5,13 @@ const spatialVectorToolsTab = {
                 <div class="text-bold row justify-center">Total area of selected features (sq/km):</div>
                 <div class="text-h6 text-bold row justify-center">{{ mapSettings.polyArea }}</div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-py-sm row justify-center">
                 <div>
                     <q-btn color="grey-4" size="md" text-color="black" class="black-border" @click="deleteSelections();" label="Delete Selected Features" dense tabindex="0" />
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-py-sm row justify-between q-gutter-sm">
                 <div class="col-6">
                     <q-select bg-color="white" outlined v-model="selectedDownloadType" :options="downloadTypeOptions" :option-value="value" :option-label="label" label="Download Type" popup-content-class="z-max" behavior="menu" dense options-dense tabindex="0" />
@@ -20,7 +20,7 @@ const spatialVectorToolsTab = {
                     <q-btn color="grey-4" size="md" text-color="black" class="black-border" icon="fas fa-download" @click="downloadShapesLayer();" dense aria-label="Download shapes layer features" tabindex="0" />
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-my-sm column">
                 <div>
                     <span class="text-bold">Buffer:</span> Creates a buffer polygon of the entered width in km around each of the selected features.
@@ -37,7 +37,7 @@ const spatialVectorToolsTab = {
                     </div>
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-my-sm column">
                 <div>
                     <span class="text-bold">Difference:</span> Creates a new polygon with the area of the polygon, box, or circle selected first, 
@@ -52,7 +52,7 @@ const spatialVectorToolsTab = {
                     </div>
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-my-sm column">
                 <div>
                     <span class="text-bold">Intersect:</span> Creates a new polygon with the overlapping area of two selected polygons, boxes, or circles.
@@ -66,7 +66,7 @@ const spatialVectorToolsTab = {
                     </div>
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div class="q-my-sm column">
                 <div>
                     <span class="text-bold">Union:</span> Creates a new polygon with the combined area of two or more selected polygons, boxes, 
@@ -81,7 +81,7 @@ const spatialVectorToolsTab = {
                     </div>
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
         </div>
     `,
     setup() {

@@ -75,7 +75,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                             </div>
                                         </div>
                                     </div>
-                                    <q-separator ></q-separator>
+                                    <q-separator></q-separator>
                                     <template v-if="recordDataArr.length > 0">
                                         <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" row-key="occid" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
                                             <template v-slot:top="scope">
@@ -237,7 +237,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                             </div>
                                         </div>
                                     </div>
-                                    <q-separator ></q-separator>
+                                    <q-separator></q-separator>
                                     <div class="q-pa-md">
                                         <div class="text-h6 text-bold">
                                             {{ 'Taxa Count: ' + taxaCnt }}

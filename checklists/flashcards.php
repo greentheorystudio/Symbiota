@@ -57,7 +57,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </div>
                     </div>
                     <div class="q-mb-sm full-width">
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                     </div>
                     <div class="q-py-sm full-width row">
                         <div class="col-12 col-sm-6">
@@ -71,7 +71,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </div>
                     </div>
                     <div class="q-mb-sm full-width">
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                     </div>
                     <div class="q-py-sm full-width row justify-between">
                         <div class="row justify-start q-gutter-md">
@@ -99,7 +99,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </div>
                     </div>
                     <div class="q-mb-sm full-width">
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                     </div>
                     <div ref="containerRef" class="q-mt-lg full-width row justify-center">
                         <q-card v-if="currentImage" :style="cardStyle">

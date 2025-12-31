@@ -28,4 +28,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'updateTaxonDescriptionBlockRecord' && $isEditor && $tdbid && array_key_exists('descriptionData', $_POST)){
         echo $taxonDescriptionBlocks->updateTaxonDescriptionBlockRecord($tdbid, json_decode($_POST['descriptionData'], true));
     }
+    elseif($action === 'getAutocompleteCaptionList'){
+        echo json_encode($taxonDescriptionBlocks->getAutocompleteCaptionList($_POST['term']));
+    }
 }
