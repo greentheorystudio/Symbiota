@@ -31,9 +31,13 @@ const checklistEditorAdminTab = {
         const baseStore = useBaseStore();
         const checklistStore = useChecklistStore();
 
+        const checklistData = Vue.computed(() => checklistStore.getChecklistData);
         const checklistId = Vue.computed(() => checklistStore.getChecklistID);
         const clientRoot = baseStore.getClientRoot;
         const confirmationPopupRef = Vue.ref(null);
+        const dataArchiveFilename = Vue.computed(() => {
+            return (checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']) ? checklistData.value['appconfigjson']['dataArchiveFilename'] : null;
+        });
         const deleteValid = Vue.computed(() => {
             let returnVal = false;
             if((managerUserArr.value.length === 1 && Number(managerUserArr.value[0]['uid']) === Number(symbUid)) || managerUserArr.value.length === 0){
@@ -48,16 +52,30 @@ const checklistEditorAdminTab = {
             const confirmText = 'Are you sure you want to delete this checklist? This action cannot be undone';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    checklistStore.deleteChecklistRecord((res) => {
-                        if(res === 1){
-                            window.location.href = (clientRoot + '/checklists/index.php');
-                        }
-                        else{
-                            showNotification('negative', 'There was an error deleting the checklist');
-                        }
-                    });
+                    if(dataArchiveFilename.value){
+                        checklistStore.deleteAppDataArchive((res) => {
+                            if(res === 0){
+                                showNotification('negative', 'There was an error deleting the app data archive.');
+                            }
+                            processDeleteChecklist();
+                        });
+                    }
+                    else{
+                        processDeleteChecklist();
+                    }
                 }
             }});
+        }
+
+        function processDeleteChecklist() {
+            checklistStore.deleteChecklistRecord((res) => {
+                if(res === 1){
+                    window.location.href = (clientRoot + '/checklists/index.php');
+                }
+                else{
+                    showNotification('negative', 'There was an error deleting the checklist');
+                }
+            });
         }
 
         return {

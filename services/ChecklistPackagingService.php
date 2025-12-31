@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../models/Checklists.php');
 include_once(__DIR__ . '/../models/ChecklistTaxa.php');
 include_once(__DIR__ . '/../models/ChecklistVouchers.php');
 include_once(__DIR__ . '/../models/Images.php');
+include_once(__DIR__ . '/../models/KeyCharacterStates.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/DataDownloadService.php');
 include_once(__DIR__ . '/FileSystemService.php');
@@ -24,6 +25,17 @@ class ChecklistPackagingService {
 
     public function __destruct(){
         $this->conn->close();
+    }
+
+    public function deleteAppDataArchive($clid): int
+    {
+        $returnVal = 0;
+        if((int)$clid > 0){
+            $fullPath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/cl-' . $clid . '.zip';
+            FileSystemService::deleteFile($fullPath);
+            $returnVal = 1;
+        }
+        return $returnVal;
     }
 
     public function filterTaxaArr($filter, $taxaArr): array
@@ -121,6 +133,22 @@ class ChecklistPackagingService {
         return $returnArr;
     }
 
+    public function initializeAppDataArchive($clid): string
+    {
+        $returnVal = '';
+        if((int)$clid > 0){
+            $archiveFileName = 'cl-' . $clid . '.zip';
+            $archiveFilePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFileName;
+            $zipArchive = FileSystemService::initializeNewZipArchive();
+            if(FileSystemService::createNewZipArchive($zipArchive, $archiveFilePath)){
+                FileSystemService::addFileFromStringToZipArchive($zipArchive, '{"images":[', 'data.json');
+                FileSystemService::closeZipArchive($zipArchive);
+                $returnVal = $archiveFileName;
+            }
+        }
+        return $returnVal;
+    }
+
     public function mergeDataArr($returnArr, $newArr): array
     {
         $keys = array_keys($newArr);
@@ -128,6 +156,188 @@ class ChecklistPackagingService {
             $returnArr[$key] = $newArr[$key];
         }
         return $returnArr;
+    }
+
+    public function packageChecklistCharacterData($csidArr, $archiveFile): int
+    {
+        $returnVal = 0;
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($zipArchive && $dataFileContent){
+            $dataArr = (new KeyCharacterStates)->getKeyCharacterStatesArrFromCsidArr($csidArr, true);
+            $dataFileContent .= ',"character-states":' . json_encode($dataArr['character-states']);
+            $dataFileContent .= ',"characters":' . json_encode($dataArr['characters']);
+            $dataFileContent .= ',"character-headings":' . json_encode($dataArr['character-headings']);
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            FileSystemService::closeZipArchive($zipArchive);
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
+    public function packageChecklistImages($tidArr, $imageMaxCnt, $archiveFile): int
+    {
+        $returnVal = 0;
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($zipArchive && $dataFileContent){
+            $imageArr = (new Images)->getChecklistImageData($tidArr, $imageMaxCnt);
+            foreach($imageArr as $tid => $tidImgArr){
+                foreach($tidImgArr as $image){
+                    $fileType = substr($image['url'], (strrpos($image['url'], '.') ?: -1) + 1);
+                    if($fileType === 'jpg' || $fileType === 'jpeg' || $fileType === 'png'){
+                        $loaded = false;
+                        $fileName = $image['imgid'] . '.' . $fileType;
+                        $data = array('filename' => $fileName, 'tid'   => $tid, 'photographer'   => $image['photographer'], 'owner'   => $image['owner']);
+                        $url = $image['thumbnailurl'] ?: $image['url'];
+                        if(strncmp($url, '/', 1) === 0){
+                            FileSystemService::addFileToZipArchive($zipArchive, FileSystemService::getServerPathFromUrlPath($url), $fileName);
+                            $loaded = true;
+                        }
+                        else{
+                            $ch = curl_init($url);
+                            curl_setopt_array($ch, [
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_CONNECTTIMEOUT => 20
+                            ]);
+                            $fileData = @curl_exec($ch);
+                            curl_close($ch);
+                            if($fileData){
+                                FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
+                                $loaded = true;
+                            }
+                        }
+                        if($loaded){
+                            $dataFileContent .= json_encode($data) . ',';
+                        }
+                    }
+                }
+            }
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            FileSystemService::closeZipArchive($zipArchive);
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
+    public function packageChecklistTaggedImages($clidArr, $tidArr, $archiveFile): array
+    {
+        $returnArr = array();
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($zipArchive && $dataFileContent){
+            $imageArr = (new Images)->getChecklistTaggedImageData($clidArr, 0, $tidArr);
+            foreach($imageArr as $tid => $tidImgArr){
+                foreach($tidImgArr as $image){
+                    $fileType = substr($image['url'], (strrpos($image['url'], '.') ?: -1) + 1);
+                    if($fileType === 'jpg' || $fileType === 'jpeg' || $fileType === 'png'){
+                        $loaded = false;
+                        $fileName = $image['imgid'] . '.' . $fileType;
+                        $data = array('filename' => $fileName, 'tid'   => $tid, 'photographer'   => $image['photographer'], 'owner'   => $image['owner']);
+                        if(strncmp($image['url'], '/', 1) === 0){
+                            FileSystemService::addFileToZipArchive($zipArchive, FileSystemService::getServerPathFromUrlPath($image['url']), $fileName);
+                            $loaded = true;
+                        }
+                        else{
+                            $ch = curl_init($image['url']);
+                            curl_setopt_array($ch, [
+                                CURLOPT_RETURNTRANSFER => true,
+                                CURLOPT_FOLLOWLOCATION => true,
+                                CURLOPT_CONNECTTIMEOUT => 20
+                            ]);
+                            $fileData = @curl_exec($ch);
+                            curl_close($ch);
+                            if($fileData){
+                                FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
+                                $loaded = true;
+                            }
+                        }
+                        if($loaded){
+                            $dataFileContent .= json_encode($data) . ',';
+                            $returnArr[] = (int)$tid;
+                        }
+                    }
+                }
+            }
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            FileSystemService::closeZipArchive($zipArchive);
+        }
+        return $returnArr;
+    }
+
+    public function packageChecklistTaxaData($clidArr, $index, $reccnt, $descTab, $archiveFile): array
+    {
+        $returnArr = array();
+        $csidArr = array();
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($zipArchive && $dataFileContent){
+            $taxaArr = (new ChecklistTaxa)->getChecklistTaxa($clidArr, true, true, true, false, 'family', $index, $reccnt, $descTab);
+            $returnArr['reccnt'] = count($taxaArr);
+            foreach($taxaArr as $taxon){
+                if(array_key_exists('keyData', $taxon) && $taxon['keyData']){
+                    foreach($taxon['keyData'] as $cidArr){
+                        foreach($cidArr as $keyData){
+                            if(!in_array($keyData['csid'], $csidArr, true)) {
+                                $csidArr[] = $keyData['csid'];
+                            }
+                        }
+                    }
+                }
+                $dataFileContent .= json_encode($taxon) . ',';
+            }
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            FileSystemService::closeZipArchive($zipArchive);
+        }
+        $returnArr['csidArr'] = $csidArr;
+        return $returnArr;
+    }
+
+    public function processCompletedDataPackaging($archiveFile): int
+    {
+        $returnVal = 0;
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($dataFileContent){
+            $dataFileContent .= '}';
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
+    public function processCompletedImageDataPackaging($archiveFile): int
+    {
+        $returnVal = 0;
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($dataFileContent){
+            $dataFileContent = substr($dataFileContent, 0, -1) . '],"taxa":[';
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
+    public function processCompletedTaxaDataPackaging($archiveFile): int
+    {
+        $returnVal = 0;
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($dataFileContent){
+            $dataFileContent = substr($dataFileContent, 0, -1) . ']';
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            $returnVal = 1;
+        }
+        return $returnVal;
     }
 
     public function processCsvDownload($clidArr, $options, $filename): void

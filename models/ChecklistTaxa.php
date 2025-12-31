@@ -3,6 +3,7 @@ include_once(__DIR__ . '/Checklists.php');
 include_once(__DIR__ . '/Images.php');
 include_once(__DIR__ . '/KeyCharacterStates.php');
 include_once(__DIR__ . '/Taxa.php');
+include_once(__DIR__ . '/TaxonDescriptionBlocks.php');
 include_once(__DIR__ . '/TaxonVernaculars.php');
 include_once(__DIR__ . '/../services/DbService.php');
 
@@ -107,10 +108,11 @@ class ChecklistTaxa{
         return $retVal;
     }
 
-    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $useAcceptedNames, $taxonSort = null, $index = null, $recCnt = null): array
+    public function getChecklistTaxa($clidArr, $includeKeyData, $includeSynonymyData, $includeVernacularData, $useAcceptedNames, $taxonSort = null, $index = null, $recCnt = null, $descTab = null): array
     {
         $retArr = array();
         $tempArr = array();
+        $descDataArr = array();
         $keyDataArr = array();
         $synonymyDataArr = array();
         $vernacularDataArr = array();
@@ -169,7 +171,7 @@ class ChecklistTaxa{
                     }
                     unset($rows[$rowIndex]);
                 }
-                if(($includeKeyData || $includeSynonymyData || $includeVernacularData) && count($tidArr) > 0){
+                if(($includeKeyData || $includeSynonymyData || $includeVernacularData || $descTab) && count($tidArr) > 0){
                     if($includeKeyData){
                         $keyDataArr = (new KeyCharacterStates)->getCharacterStatesFromTidArr($tidArr);
                     }
@@ -179,7 +181,10 @@ class ChecklistTaxa{
                     if($includeVernacularData){
                         $vernacularDataArr = (new TaxonVernaculars)->getVernacularArrFromTidArr($tidArr);
                     }
-                    if($keyDataArr || $synonymyDataArr || $vernacularDataArr){
+                    if($descTab){
+                        $descDataArr = (new TaxonDescriptionBlocks)->getTaxaDescriptionBlockStatementsFromTidArr($tidArr, $descTab);
+                    }
+                    if($keyDataArr || $synonymyDataArr || $vernacularDataArr || $descTab){
                         foreach($tempArr as $taxonArr){
                             if($includeSynonymyData){
                                 $taxonArr['synonymyData'] = $synonymyDataArr[$taxonArr['tidaccepted']] ?? null;
@@ -187,15 +192,13 @@ class ChecklistTaxa{
                             if($includeVernacularData){
                                 $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tidaccepted']] ?? null;
                             }
-                            if($includeKeyData){
-                                if(array_key_exists($taxonArr['tidaccepted'], $keyDataArr)){
-                                    $taxonArr['keyData'] = $keyDataArr[$taxonArr['tidaccepted']];
-                                    $retArr[] = $taxonArr;
-                                }
+                            if($includeKeyData && array_key_exists($taxonArr['tidaccepted'], $keyDataArr)){
+                                $taxonArr['keyData'] = $keyDataArr[$taxonArr['tidaccepted']];
                             }
-                            else{
-                                $retArr[] = $taxonArr;
+                            if($descTab && array_key_exists($taxonArr['tidaccepted'], $descDataArr)){
+                                $taxonArr['descData'] = $descDataArr[$taxonArr['tidaccepted']];
                             }
+                            $retArr[] = $taxonArr;
                         }
                     }
                     else{

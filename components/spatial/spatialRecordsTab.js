@@ -16,7 +16,7 @@ const spatialRecordsTab = {
                     </div>
                 </div>
             </div>
-            <q-separator ></q-separator>
+            <q-separator></q-separator>
             <div>
                 <q-table flat bordered class="spatial-record-table" :rows="recordDataArr" :columns="columns" row-key="name" :loading="tableLoading" v-model:pagination="pagination" separator="cell" selection="multiple" @request="changeRecordPage" :rows-per-page-options="[0]" wrap-cells dense>
                     <template v-slot:top="scope">
