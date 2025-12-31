@@ -21,6 +21,7 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             percenteffort: null,
             access: null,
             defaultsettings: null,
+            appconfigjson: null,
             iconurl: null,
             headerurl: null,
             uid: null,
@@ -131,6 +132,9 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         getChecklistVoucherData(state) {
             return state.checklistVoucherData;
+        },
+        getClidArr(state) {
+            return state.clidArr;
         },
         getDisplayAcceptedNames(state) {
             return state.displayAcceptedNames;
@@ -248,6 +252,21 @@ const useChecklistStore = Pinia.defineStore('checklist', {
             formData.append('tidArr', JSON.stringify(tidArr));
             formData.append('action', 'createTemporaryChecklistFromTidArr');
             fetch(checklistApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
+        deleteAppDataArchive(callback) {
+            const formData = new FormData();
+            formData.append('clid', this.checklistId.toString());
+            formData.append('action', 'deleteAppDataArchive');
+            fetch(checklistPackagingServiceApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -447,9 +466,11 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                callback(Number(res));
                 if(res && Number(res) === 1){
-                    this.setChecklist(this.checklistId);
+                    this.setChecklist(this.checklistId, callback);
+                }
+                else{
+                    callback(Number(res));
                 }
             });
         },
@@ -562,6 +583,14 @@ const useChecklistStore = Pinia.defineStore('checklist', {
         },
         setDisplayVouchers(value) {
             this.displayVouchers = value;
+        },
+        updateChecklistEditAppConfigData(key, value) {
+            let newSettings = {};
+            if(this.checklistEditData['appconfigjson']){
+                newSettings = Object.assign({}, this.checklistEditData['appconfigjson']);
+            }
+            newSettings[key] = value;
+            this.checklistEditData['appconfigjson'] = Object.assign({}, newSettings);
         },
         updateChecklistEditData(key, value) {
             this.checklistEditData[key] = value;

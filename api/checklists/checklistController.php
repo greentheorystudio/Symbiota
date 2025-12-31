@@ -13,12 +13,15 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin', $GLOBALS['USER_RIGHTS'])
 
 if($action){
     $checklists = new Checklists();
-    if($action === 'getChecklistArr'){
+    if($action === 'getAppChecklistArr'){
         header('Access-Control-Allow-Origin: *');
-        echo json_encode($checklists->getChecklistArr());
+        echo json_encode($checklists->getAppChecklistArr());
     }
     elseif(SanitizerService::validateInternalRequest()){
-        if($action === 'getChecklistListByUid' && array_key_exists('uid', $_POST)){
+        if($action === 'getChecklistArr'){
+            echo json_encode($checklists->getChecklistArr());
+        }
+        elseif($action === 'getChecklistListByUid' && array_key_exists('uid', $_POST)){
             echo json_encode($checklists->getChecklistListByUid($_POST['uid']));
         }
         elseif($action === 'createChecklistRecord' && $GLOBALS['VALID_USER'] && array_key_exists('checklist', $_POST)){

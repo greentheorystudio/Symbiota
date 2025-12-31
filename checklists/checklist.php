@@ -198,7 +198,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </template>
                     </template>
                     <div class="q-mb-sm full-width">
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                     </div>
                     <div class="q-mb-xs full-width row justify-between q-gutter-sm">
                         <div class="col-8 column q-gutter-xs">
@@ -254,14 +254,14 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         </div>
                     </div>
                     <div class="q-mb-sm full-width">
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                     </div>
                     <template v-if="activeTaxaArr.length > taxaPerPage">
                         <div class="q-mb-sm q-px-md full-width row justify-end">
                             <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Checklist page navigation"></q-pagination>
                         </div>
                         <div class="q-mb-sm full-width">
-                            <q-separator ></q-separator>
+                            <q-separator></q-separator>
                         </div>
                     </template>
                     <template v-if="displayImagesVal">
@@ -293,13 +293,13 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     </template>
                     <template v-if="activeTaxaArr.length > taxaPerPage">
                         <div class="q-mb-sm full-width">
-                            <q-separator ></q-separator>
+                            <q-separator></q-separator>
                         </div>
                         <div class="q-mb-sm q-px-md full-width row justify-end">
                             <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Checklist page navigation"></q-pagination>
                         </div>
                         <div class="q-mb-sm full-width">
-                            <q-separator ></q-separator>
+                            <q-separator></q-separator>
                         </div>
                     </template>
                 </template>
@@ -312,7 +312,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                 </div>
                             </div>
                         </div>
-                        <q-separator ></q-separator>
+                        <q-separator></q-separator>
                         <div class="q-pa-md row justify-center text-h6 text-bold">
                             There are no taxa to display. Click the Search button to enter search criteria to build the taxa checklist.
                         </div>
@@ -384,6 +384,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonDescriptionSourceTabAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceSelectorInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceLinkageToolPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -793,9 +794,10 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
 
                     function saveTemporaryChecklist() {
                         checklistStore.saveTemporaryChecklist(searchStore.getSearchTermsJson, (res) => {
-                            if(Number(res) === 1){
-                                showNotification('positive','Checklist saved.');
+                            if(Number(res) > 0){
                                 setEditor();
+                                setChecklistTaxa();
+                                showNotification('positive','Checklist saved.');
                             }
                             else{
                                 showNotification('negative', 'An error occurred while saving the checklist.');

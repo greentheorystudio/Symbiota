@@ -33,7 +33,7 @@ const viewProfileAccountModule = {
                     <div class="row justify-between q-mt-md">
                         <div>
                             <template v-if="editsExist">
-                                <span class="q-ml-md text-h6 text-bold text-red text-h6 self-center">Unsaved Edits</span>
+                                <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
                             </template>
                         </div>
                         <div class="row justify-end">
