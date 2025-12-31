@@ -262,6 +262,21 @@ const useChecklistStore = Pinia.defineStore('checklist', {
                 callback(Number(res));
             });
         },
+        deleteAppDataArchive(callback) {
+            const formData = new FormData();
+            formData.append('clid', this.checklistId.toString());
+            formData.append('action', 'deleteAppDataArchive');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(Number(res));
+            });
+        },
         deleteChecklistRecord(callback) {
             const formData = new FormData();
             formData.append('clid', this.checklistId.toString());

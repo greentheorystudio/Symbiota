@@ -16,7 +16,7 @@ const checklistEditorAppConfigTab = {
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element data-type="int" label="Max Amount of Autoload Images Per Taxon" :value="(checklistData['appconfigjson'] && checklistData['appconfigjson'].hasOwnProperty('maxImagesPerTaxon')) ? checklistData['appconfigjson']['maxImagesPerTaxon'] : null" min-value="0"  @update:value="(value) => updateAppConfigData('maxImagesPerTaxon', value)"></text-field-input-element>
+                    <text-field-input-element data-type="int" label="Max Amount of Autoload Images Per Taxon" :value="(checklistData['appconfigjson'] && checklistData['appconfigjson'].hasOwnProperty('maxImagesPerTaxon')) ? checklistData['appconfigjson']['maxImagesPerTaxon'] : null" min-value="0" max-value="5"  @update:value="(value) => updateAppConfigData('maxImagesPerTaxon', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="lastPublishedStr" class="q-mt-sm text-subtitle1 text-bold">
@@ -40,6 +40,27 @@ const checklistEditorAppConfigTab = {
             return (checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']) ? checklistData.value['appconfigjson']['dataArchiveFilename'] : null;
         });
         const editsExist = Vue.computed(() => checklistStore.getChecklistEditsExist);
+        const imageUploadBatchSize = Vue.computed(() => {
+            let returnVal;
+            if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('maxImagesPerTaxon') && Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) > 0){
+                if(Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) === 5){
+                    returnVal = 4;
+                }
+                else if(Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) === 4){
+                    returnVal = 5;
+                }
+                else if(Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) === 3){
+                    returnVal = 7;
+                }
+                else if(Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) === 2){
+                    returnVal = 10;
+                }
+                else{
+                    returnVal = 20;
+                }
+            }
+            return returnVal;
+        });
         const lastPublishedStr = Vue.computed(() => {
             let returnStr = null;
             if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('datePublished') && checklistData.value['appconfigjson']['datePublished']){
@@ -57,7 +78,7 @@ const checklistEditorAppConfigTab = {
 
         function deleteAppData() {
             showWorking();
-            processDeleteAppDataArchive((res) => {
+            checklistStore.deleteAppDataArchive((res) => {
                 if(res === 1){
                     checklistStore.updateChecklistEditData('appconfigjson', null);
                     if(editsExist.value){
@@ -85,7 +106,7 @@ const checklistEditorAppConfigTab = {
             taxonLoadingIndex.value = 0;
             if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']){
                 showWorking('Removing previous data archive');
-                processDeleteAppDataArchive((res) => {
+                checklistStore.deleteAppDataArchive((res) => {
                     if(res === 1){
                         initializeAppDataArchive();
                     }
@@ -166,7 +187,7 @@ const checklistEditorAppConfigTab = {
 
         function packageChecklistImages() {
             showWorking('Packaging images');
-            const targetArr = targetImageTidArr.value.splice(0, 7);
+            const targetArr = targetImageTidArr.value.splice(0, imageUploadBatchSize.value);
             const formData = new FormData();
             formData.append('tidArr', JSON.stringify(targetArr));
             formData.append('imageMaxCnt', checklistData.value['appconfigjson']['maxImagesPerTaxon']);
@@ -209,7 +230,7 @@ const checklistEditorAppConfigTab = {
                         targetImageTidArr.value.push(tid);
                     }
                 });
-                if(targetImageTidArr.value.length > 0){
+                if(targetImageTidArr.value.length > 0 && Number(checklistData.value['appconfigjson']['maxImagesPerTaxon']) > 0){
                     packageChecklistImages();
                 }
                 else{
@@ -312,22 +333,6 @@ const checklistEditorAppConfigTab = {
                     hideWorking();
                     showNotification('negative', 'There was an error completing the image data packaging.');
                 }
-            });
-        }
-
-        function processDeleteAppDataArchive(callback) {
-            const formData = new FormData();
-            formData.append('clid', checklistId.value.toString());
-            formData.append('action', 'deleteAppDataArchive');
-            fetch(checklistPackagingServiceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                callback(Number(res));
             });
         }
 
