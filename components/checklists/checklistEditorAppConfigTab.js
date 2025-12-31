@@ -6,7 +6,7 @@ const checklistEditorAppConfigTab = {
                     <q-btn color="negative" @click="deleteAppData();" label="Delete App Data" aria-label="Delete App Data" tabindex="0" />
                 </div>
                 <div>
-                    <q-btn color="secondary" @click="initializePrepareAppData();" label="Prepare/Update App Data" :disabled="!publishValid" aria-label="Prepare and Update App Data" tabindex="0" />
+                    <q-btn color="secondary" @click="initializePrepareAppData();" label="Prepare/Update App Data" aria-label="Prepare and Update App Data" tabindex="0" />
                 </div>
             </div>
             <div class="row">
@@ -68,9 +68,6 @@ const checklistEditorAppConfigTab = {
                 returnStr = lastPubDate.toString();
             }
             return returnStr;
-        });
-        const publishValid = Vue.computed(() => {
-            return checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('descSourceTab') && checklistData.value['appconfigjson']['descSourceTab'];
         });
         const taggedTargetImageTidArr = Vue.ref([]);
         const targetImageTidArr = Vue.ref([]);
@@ -254,7 +251,7 @@ const checklistEditorAppConfigTab = {
             formData.append('clidArr', JSON.stringify(clidArr.value));
             formData.append('index', taxonLoadingIndex.value.toString());
             formData.append('reccnt', loadingCnt.toString());
-            formData.append('descTab', checklistData.value['appconfigjson']['descSourceTab']);
+            formData.append('descTab', ((checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('descSourceTab') && checklistData.value['appconfigjson']['descSourceTab']) ? checklistData.value['appconfigjson']['descSourceTab'] : null));
             formData.append('archiveFile', dataArchiveFilename.value);
             formData.append('action', 'packageChecklistTaxaData');
             fetch(checklistPackagingServiceApiUrl, {
@@ -352,7 +349,6 @@ const checklistEditorAppConfigTab = {
             checklistData,
             dataArchiveFilename,
             lastPublishedStr,
-            publishValid,
             deleteAppData,
             initializePrepareAppData,
             updateAppConfigData
