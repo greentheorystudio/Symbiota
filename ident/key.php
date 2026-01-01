@@ -308,7 +308,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                                     }
                                 });
                             }
-                            else if(!returnArr.includes(taxon)){
+                            else{
                                 includeTaxon = true;
                             }
                             selectedCidArr.value.forEach(cid => {
