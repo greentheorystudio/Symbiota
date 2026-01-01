@@ -319,7 +319,7 @@ class ChecklistPackagingService {
         $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
         $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
         if($dataFileContent){
-            $dataFileContent = substr($dataFileContent, 0, -1) . '],"taxa":[';
+            $dataFileContent = (substr($dataFileContent, -1) === ',' ? substr($dataFileContent, 0, -1) : $dataFileContent) . '],"taxa":[';
             FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
             $returnVal = 1;
         }
@@ -333,7 +333,7 @@ class ChecklistPackagingService {
         $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
         $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
         if($dataFileContent){
-            $dataFileContent = substr($dataFileContent, 0, -1) . ']';
+            $dataFileContent = (substr($dataFileContent, -1) === ',' ? substr($dataFileContent, 0, -1) : $dataFileContent) . ']';
             FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
             $returnVal = 1;
         }
