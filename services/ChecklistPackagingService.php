@@ -503,6 +503,14 @@ class ChecklistPackagingService {
         return $returnArr;
     }
 
+    public function streamChecklistDataFile($clid): void
+    {
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/cl-' . $clid . '.zip';
+        if(FileSystemService::fileExists($fullArchivePath)){
+            (new DataDownloadService)->streamDownload('application/zip', $fullArchivePath, true);
+        }
+    }
+
     public function writeDocxImageSection($section, $dataArr, $options): void
     {
         $imageCnt = 0;
