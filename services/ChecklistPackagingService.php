@@ -510,7 +510,7 @@ class ChecklistPackagingService {
             if(ob_get_level()){
                 ob_end_clean();
             }
-            header('Content-Type: application/zip');
+            //header('Content-Type: application/zip');
             //header('Content-Disposition: attachment; filename=' . basename($fullArchivePath));
             //header('Content-Transfer-Encoding: binary');
             //header('Expires: 0');
