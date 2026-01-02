@@ -77,6 +77,18 @@ class DataDownloadService {
         header('Content-Length: ' . filesize($content));
     }
 
+    public function streamChecklistDataArchive($archivePath): void
+    {
+        if(ob_get_level()){
+            ob_end_clean();
+        }
+        header('Content-Type: application/zip');
+        header('Content-Disposition: inline');
+        header('Content-Length: ' . filesize($archivePath));
+        readfile($archivePath);
+        flush();
+    }
+
     public function streamDownload($contentType, $outputFilePath, $keepFile = null): void
     {
         if(ob_get_level()){
