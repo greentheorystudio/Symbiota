@@ -13,6 +13,7 @@ $clid = array_key_exists('clid', $_REQUEST) ? (int)$_REQUEST['clid'] : 0;
 if($action){
     $checklistPackagingService = new ChecklistPackagingService();
     if($action === 'getAppChecklistData' && $clid){
+        header('Access-Control-Allow-Origin: *');
         $checklistPackagingService->streamChecklistDataFile($clid);
     }
     elseif(SanitizerService::validateInternalRequest()){
