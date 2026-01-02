@@ -507,7 +507,18 @@ class ChecklistPackagingService {
     {
         $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/cl-' . $clid . '.zip';
         if(FileSystemService::fileExists($fullArchivePath)){
-            (new DataDownloadService)->streamDownload('application/zip', $fullArchivePath, true);
+            if(ob_get_level()){
+                ob_end_clean();
+            }
+            header('Content-Type: application/zip');
+            //header('Content-Disposition: attachment; filename=' . basename($fullArchivePath));
+            //header('Content-Transfer-Encoding: binary');
+            //header('Expires: 0');
+            //header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            //header('Pragma: public');
+            header('Content-Length: ' . filesize($fullArchivePath));
+            readfile($fullArchivePath);
+            flush();
         }
     }
 
