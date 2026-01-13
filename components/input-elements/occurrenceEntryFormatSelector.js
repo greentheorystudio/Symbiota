@@ -10,7 +10,7 @@ const occurrenceEntryFormatSelector = {
         }
     },
     template: `
-        <q-select class="selector-input-spacer" bg-color="white" outlined v-model="selectedOption" :options="formatSelectorOptions" option-value="value" option-label="label" label="Entry Format" popup-content-class="z-max" @update:model-value="changeEntryFormat" behavior="menu" :tabindex="tabindex" dense options-dense />
+        <q-select class="selector-input-spacer" bg-color="white" outlined v-model="selectedOption" :options="formatSelectorOptions" option-value="value" option-label="label" label="Entry Format" popup-content-class="z-top" @update:model-value="changeEntryFormat" behavior="menu" :tabindex="tabindex" dense options-dense />
     `,
     setup(props, context) {
         const formatSelectorOptions = [
