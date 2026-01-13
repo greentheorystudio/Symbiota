@@ -14,7 +14,7 @@ const occurrenceCoordinateToolPopup = {
         }
     },
     template: `
-        <q-card class="z-max">
+        <q-card class="z-top">
             <q-tabs v-model="tab" dense class="text-grey" active-color="primary" indicator-color="primary" align="justify" narrow-indicator>
                 <q-tab name="dms" label="DMS"></q-tab>
                 <q-tab name="ddm" label="DDM"></q-tab>
@@ -39,7 +39,7 @@ const occurrenceCoordinateToolPopup = {
                             <q-input outlined v-model="latSecondValue" label="Seconds" dense :tabindex="tabindex">
                         </div>
                         <div class="self-center">
-                            <q-select bg-color="white" outlined v-model="latNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
+                            <q-select bg-color="white" outlined v-model="latNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
@@ -56,7 +56,7 @@ const occurrenceCoordinateToolPopup = {
                             <q-input outlined v-model="longSecondValue" label="Seconds" dense :tabindex="tabindex">
                         </div>
                         <div class="self-center">
-                            <q-select bg-color="white" outlined v-model="longWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
+                            <q-select bg-color="white" outlined v-model="longWestEastValue" :options="weSelectorOptions" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
@@ -77,7 +77,7 @@ const occurrenceCoordinateToolPopup = {
                             <q-input outlined v-model="latDDMMinuteValue" label="Decimal Minutes" dense :tabindex="tabindex">
                         </div>
                         <div class="self-center">
-                            <q-select bg-color="white" outlined v-model="latDDMNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
+                            <q-select bg-color="white" outlined v-model="latDDMNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
@@ -91,7 +91,7 @@ const occurrenceCoordinateToolPopup = {
                             <q-input outlined v-model="longDDMMinuteValue" label="Decimal Minutes" dense :tabindex="tabindex">
                         </div>
                         <div class="self-center">
-                            <q-select bg-color="white" outlined v-model="longDDMWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
+                            <q-select bg-color="white" outlined v-model="longDDMWestEastValue" :options="weSelectorOptions" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
@@ -111,7 +111,7 @@ const occurrenceCoordinateToolPopup = {
                         <q-input outlined v-model="utmNorthingValue" label="UTM Northing" dense :tabindex="tabindex">
                     </div>
                     <div >
-                        <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
+                        <q-select bg-color="white" outlined v-model="utmHemisphereValue" :options="northSouthSelectorOptions" label="Hemisphere" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
                         <q-btn color="negative" @click="closePopup();" label="Close" dense :tabindex="tabindex"></q-btn>
@@ -125,13 +125,13 @@ const occurrenceCoordinateToolPopup = {
                             <q-input outlined v-model="trsTownshipValue" label="Township" dense :tabindex="tabindex">
                         </div>
                         <div class="col">
-                            <q-select bg-color="white" outlined v-model="trsTownshipNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
+                            <q-select bg-color="white" outlined v-model="trsTownshipNorthSouthValue" :options="nsSelectorOptions" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                         <div class="col">
                             <q-input outlined v-model="trsRangeValue" label="Range" dense :tabindex="tabindex">
                         </div>
                         <div>
-                            <q-select bg-color="white" outlined v-model="trsRangeWestEastValue" :options="weSelectorOptions" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
+                            <q-select bg-color="white" outlined v-model="trsRangeWestEastValue" :options="weSelectorOptions" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
@@ -144,7 +144,7 @@ const occurrenceCoordinateToolPopup = {
                     </div>
                     <div class="row justify-between q-col-gutter-xs">
                         <div class="col-12">
-                            <q-select bg-color="white" outlined v-model="trsMerideanValue" :options="trsMerideanOptions" :option-value="value" :option-label="label" label="Meridian Selection" popup-content-class="z-max" behavior="menu" dense options-dense :tabindex="tabindex" />
+                            <q-select bg-color="white" outlined v-model="trsMerideanValue" :options="trsMerideanOptions" :option-value="value" :option-label="label" label="Meridian Selection" popup-content-class="z-top" behavior="menu" dense options-dense :tabindex="tabindex" />
                         </div>
                     </div>
                     <div class="q-mt-md row justify-end q-gutter-sm">
@@ -482,7 +482,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Tools for converting additional formats
                         </q-tooltip>
-                        <q-menu v-model="displayCoordinateToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-max">
+                        <q-menu v-model="displayCoordinateToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-top">
                             <occurrence-coordinate-tool-popup
                                 :geodetic-datum="geodeticDatum"
                                 :verbatim-coordinates="value"
@@ -516,7 +516,7 @@ const occurrenceVerbatimCoordinatesInputElement = {
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Tools for converting additional formats
                         </q-tooltip>
-                        <q-menu v-model="displayCoordinateToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-max">
+                        <q-menu v-model="displayCoordinateToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-top">
                             <occurrence-coordinate-tool-popup
                                 :geodetic-datum="geodeticDatum"
                                 :verbatim-coordinates="value"

@@ -12,7 +12,7 @@ const colorPicker = {
     template: `
         <div>
             <q-btn size="sm" :style="css" aria-label="Open color picker" :tabindex="tabindex">
-                <q-popup-proxy class="z-max" cover transition-show="scale" transition-hide="scale">
+                <q-popup-proxy class="z-top" cover transition-show="scale" transition-hide="scale">
                     <q-color v-model="colorValue" format-model="hex" default-view="palette" @update:model-value="processColorChange"></q-color>
                 </q-popup-proxy>
             </q-btn>

@@ -17,7 +17,7 @@ const imageTagSelector = {
         }
     },
     template: `
-        <q-select ref="inputRef" v-model="tagArr" outlined dense options-dense clearable multiple use-chips popup-content-class="z-max" behavior="menu" bg-color="white" :options="imageTagOptions" @clear="clearAction" @update:model-value="processChange" :label="label" :tabindex="tabindex" :disable="disable"></q-select>
+        <q-select ref="inputRef" v-model="tagArr" outlined dense options-dense clearable multiple use-chips popup-content-class="z-top" behavior="menu" bg-color="white" :options="imageTagOptions" @clear="clearAction" @update:model-value="processChange" :label="label" :tabindex="tabindex" :disable="disable"></q-select>
     `,
     setup(props, context) {
         const baseStore = useBaseStore();

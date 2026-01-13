@@ -1,6 +1,6 @@
 const spatialSideButtonTray = {
     template: `
-        <div class="map-side-panel-button-tray column justify-around side-panel-button-tray">
+        <div class="column justify-around side-panel-button-tray">
             <template v-if="windowWidth < 875 || inputWindowMode">
                 <spatial-control-panel-left-show-button></spatial-control-panel-left-show-button>
             </template>
