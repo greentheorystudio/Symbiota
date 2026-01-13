@@ -10,7 +10,7 @@ const spatialRasterColorScaleSelect = {
         }
     },
     template: `
-        <q-select bg-color="white" outlined v-model="selectedOption" popup-content-class="z-max" :options="rasterColorScales" option-value="value" option-label="label" label="Color scale" @update:model-value="changeRasterColorScale" behavior="menu" :tabindex="tabindex" dense options-dense />
+        <q-select bg-color="white" outlined v-model="selectedOption" popup-content-class="z-top" :options="rasterColorScales" option-value="value" option-label="label" label="Color scale" @update:model-value="changeRasterColorScale" behavior="menu" :tabindex="tabindex" dense options-dense />
     `,
     setup(props, context) {
         const spatialStore = useSpatialStore();

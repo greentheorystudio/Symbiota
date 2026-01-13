@@ -5,7 +5,7 @@ const useTaxaDescriptionStatementStore = Pinia.defineStore('taxa-description-sta
             tdbid: null,
             heading: null,
             statement: null,
-            displayheader: null,
+            displayheader: 0,
             notes: null,
             sortsequence: 1
         },
