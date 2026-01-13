@@ -26,7 +26,7 @@ const userAutoComplete = {
         }
     },
     template: `
-        <q-select v-model="currentValue" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" :options="autocompleteOptions" @filter="getOptions" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
+        <q-select v-model="currentValue" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-top" behavior="menu" input-debounce="0" bg-color="white" :options="autocompleteOptions" @filter="getOptions" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
             <template v-if="!disabled && (currentValue || definition)" v-slot:append>
                 <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
