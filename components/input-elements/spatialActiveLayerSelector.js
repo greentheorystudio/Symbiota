@@ -6,7 +6,7 @@ const spatialActiveLayerSelector = {
         }
     },
     template: `
-        <q-select bg-color="white" outlined v-model="selectedOption" :options="dropdownOptions" :option-value="value" :option-label="label" label="Active Layer" popup-content-class="z-max" @update:model-value="changeActiveLayer" behavior="menu" :tabindex="tabindex" dense options-dense />
+        <q-select bg-color="white" outlined v-model="selectedOption" :options="dropdownOptions" :option-value="value" :option-label="label" label="Active Layer" popup-content-class="z-top" @update:model-value="changeActiveLayer" behavior="menu" :tabindex="tabindex" dense options-dense />
     `,
     setup(props) {
         const activeLayerSelectorOptions = Vue.inject('activeLayerSelectorOptions');

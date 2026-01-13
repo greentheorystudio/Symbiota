@@ -38,7 +38,7 @@ const selectorInputElement = {
         }
     },
     template: `
-        <q-select ref="selectorRef" v-model="value" class="selector-input-spacer" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-max" behavior="menu" input-class="z-max" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
+        <q-select ref="selectorRef" v-model="selectedOption" class="selector-input-spacer" outlined dense options-dense input-debounce="500" bg-color="white" popup-content-class="z-top" behavior="menu" input-class="z-top" :options="selectorOptions" option-value="value" option-label="label" @filter="checkFilter" @update:model-value="processValueChange" :label="label" :tabindex="tabindex" :disable="disabled">
             <template v-if="!disabled && (definition || (clearable && value))" v-slot:append>
                 <q-icon role="button" v-if="definition" name="help" class="cursor-pointer" @click="openDefinitionPopup();" @keyup.enter="openDefinitionPopup();" aria-label="See field definition" :tabindex="tabindex">
                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">

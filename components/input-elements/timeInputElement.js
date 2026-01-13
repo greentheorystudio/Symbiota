@@ -35,7 +35,7 @@ const timeInputElement = {
                     </q-tooltip>
                 </q-icon>
                 <q-icon role="button" name="access_time" class="cursor-pointer" aria-label="Open time picker" :tabindex="tabindex">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-top">
                         <q-time v-model="displayValue" @update:model-value="processValueChange" format24h>
                             <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="Close" color="primary" flat :tabindex="tabindex"></q-btn>

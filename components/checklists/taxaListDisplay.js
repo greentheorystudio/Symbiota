@@ -120,9 +120,12 @@ const taxaListDisplay = {
                         <div v-if="displaySynonyms && taxon['synonymyData'] && taxon['synonymyData'].length > 0" class="q-ml-md text-italic">
                             {{ getSynonymStrFromArr(taxon['synonymyData']) }}
                         </div>
-                        <template v-if="displayVouchers && (taxon['notes'] || (voucherData.hasOwnProperty(taxon['tid']) && voucherData[taxon['tid']].length > 0))">
-                            <div v-if="taxon['notes']" class="q-ml-md">
-                                {{ getTaxonNotesStr(taxon) }}
+                        <template v-if="displayVouchers">
+                            <div v-if="taxon['habitat'] || taxon['abundance'] || taxon['notes'] || taxon['source']" class="q-ml-md">
+                                <span v-if="taxon['habitat']">{{ taxon['habitat'] + ((taxon['abundance'] || taxon['notes'] || taxon['source']) ? ', ' : '') }}</span>
+                                <span v-if="taxon['abundance']">{{ taxon['abundance'] + ((taxon['notes'] || taxon['source']) ? ', ' : '') }}</span>
+                                <span v-if="taxon['notes']">{{ taxon['notes'] + (taxon['source'] ? ', ' : '') }}</span>
+                                <span v-if="taxon['source']"><span class="text-bold">Source: </span> {{ taxon['source'] }}</span>
                             </div>
                             <div v-if="voucherData.hasOwnProperty(taxon['tid']) && voucherData[taxon['tid']].length > 0" class="q-ml-md">
                                 <template v-for="voucher in getAdjustedVoucherArr(taxon['tid'], voucherData[taxon['tid']])">
@@ -183,10 +186,6 @@ const taxaListDisplay = {
             return nameArr.length > 0 ? ('[' + nameArr.join(', ') + ']') : '';
         }
 
-        function getTaxonNotesStr(taxon) {
-            return taxon['notes'];
-        }
-
         function getVernacularStrFromArr(vernacularArr) {
             const nameArr = [];
             vernacularArr.forEach(vernacular => {
@@ -220,7 +219,6 @@ const taxaListDisplay = {
             closeRecordInfoWindow,
             getAdjustedVoucherArr,
             getSynonymStrFromArr,
-            getTaxonNotesStr,
             getVernacularStrFromArr,
             openEditorPopup,
             openRecordInfoWindow,
