@@ -10,8 +10,8 @@ const occurrenceEditorAssociatedTaxaToolPopup = {
         }
     },
     template: `
-        <q-card class="z-max input-tool-popup">
-            <q-card-section class="column q-col-gutter-sm input-tool-popup z-max">
+        <q-card class="z-top input-tool-popup">
+            <q-card-section class="column q-col-gutter-sm input-tool-popup z-top">
                 <div>
                     <single-scientific-common-name-auto-complete :sciname="scientificNameStr" label="Scientific Name" @update:sciname="updateScientificNameValue" @click:enter="addTaxon"></single-scientific-common-name-auto-complete>
                 </div>
@@ -130,7 +130,7 @@ const occurrenceAssociatedTaxaInputElement = {
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Associated Taxa Entry Tool
                         </q-tooltip>
-                        <q-menu v-model="showAssociatedTaxaToolPopup" anchor="top middle" self="bottom middle" max-width="700px" cover transition-show="scale" transition-hide="scale" class="z-max">
+                        <q-menu v-model="showAssociatedTaxaToolPopup" anchor="top middle" self="bottom middle" max-width="700px" cover transition-show="scale" transition-hide="scale" class="z-top">
                             <occurrence-editor-associated-taxa-tool-popup
                                 :associated-taxa-value="value"
                                 @close:popup="showAssociatedTaxaToolPopup = false"
@@ -157,7 +157,7 @@ const occurrenceAssociatedTaxaInputElement = {
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             Open Associated Taxa Entry Tool
                         </q-tooltip>
-                        <q-menu v-model="showAssociatedTaxaToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-max">
+                        <q-menu v-model="showAssociatedTaxaToolPopup" anchor="bottom end" self="top left" cover transition-show="scale" transition-hide="scale" class="z-top">
                             <occurrence-editor-associated-taxa-tool-popup
                                 :associated-taxa-value="value"
                                 @close:popup="showAssociatedTaxaToolPopup = false"
