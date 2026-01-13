@@ -26,7 +26,7 @@ const taxonRankSelector = {
         }
     },
     template: `
-        <q-select outlined v-model="selectedOption" popup-content-class="z-max" behavior="menu" :options="rankOptions" option-value="rankid" option-label="rankname" :label="label" @update:model-value="processChange" :tabindex="tabindex" :readonly="disabled" dense options-dense />
+        <q-select outlined v-model="selectedOption" popup-content-class="z-top" behavior="menu" :options="rankOptions" option-value="rankid" option-label="rankname" :label="label" @update:model-value="processChange" :tabindex="tabindex" :readonly="disabled" dense options-dense />
     `,
     setup(props, context) {
         const propsRefs = Vue.toRefs(props);

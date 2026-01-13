@@ -32,11 +32,13 @@ class TaxonDescriptionStatements{
         $fieldNameArr = array();
         $fieldValueArr = array();
         foreach($this->fields as $field => $fieldArr){
-            if($field !== 'tdsid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
+            if($field !== 'tdsid' && $field !== 'initialtimestamp' && $field !== 'displayheader' && array_key_exists($field, $data)){
                 $fieldNameArr[] = $field;
                 $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
             }
         }
+        $fieldNameArr[] = 'displayheader';
+        $fieldValueArr[] = (int)$data['displayheader'] === 1 ? '1' : '0';
         $fieldNameArr[] = 'initialtimestamp';
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO taxadescrstmts(' . implode(',', $fieldNameArr) . ') '.
@@ -93,10 +95,11 @@ class TaxonDescriptionStatements{
         $sqlPartArr = array();
         if($tdsid && $editData){
             foreach($this->fields as $field => $fieldArr){
-                if($field !== 'tdsid' && $field !== 'initialtimestamp' && array_key_exists($field, $editData)){
+                if($field !== 'tdsid' && $field !== 'initialtimestamp' && $field !== 'displayheader' && array_key_exists($field, $editData)){
                     $sqlPartArr[] = $field . ' = ' . SanitizerService::getSqlValueString($this->conn, $editData[$field], $fieldArr['dataType']);
                 }
             }
+            $sqlPartArr[] = 'displayheader = ' . ((int)$editData['displayheader'] === 1 ? '1' : '0');
             $sql = 'UPDATE taxadescrstmts SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE tdsid = ' . (int)$tdsid . ' ';
             //echo "<div>".$sql."</div>";

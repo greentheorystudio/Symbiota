@@ -43,7 +43,7 @@ const dateInputElement = {
                     </q-tooltip>
                 </q-icon>
                 <q-icon role="button" name="event" class="cursor-pointer" aria-label="Open date picker" :tabindex="tabindex">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-max">
+                    <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-top">
                         <q-date v-model="displayValue" mask="YYYY-MM-DD" @update:model-value="processValueChange" minimal>
                             <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="Close" color="primary" flat aria-label="Close date picker" :tabindex="tabindex"></q-btn>
