@@ -1,4 +1,4 @@
-const occurrenceCollectingEventBenthicTaxaEditorPopup = {
+const occurrenceCollectingEventReplicateTaxaEditorPopup = {
     props: {
         editTaxon: {
             type: Object,
@@ -90,7 +90,6 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
         const occurrenceStore = useOccurrenceStore();
         const searchStore = useSearchStore();
 
-        const benthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
         const confirmationPopupRef = Vue.ref(null);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
@@ -117,6 +116,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
         const processingDeleteArr = [];
         const processingUpdateArr = [];
         const repData = Vue.reactive([]);
+        const replicateData = Vue.computed(() => occurrenceStore.getCollectingEventReplicateData);
         const tableColumns = Vue.ref([]);
         const tablePagination = {
             rowsPerPage: 0
@@ -156,18 +156,18 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             setContentStyle();
         });
 
-        Vue.watch(benthicData, () => {
+        Vue.watch(replicateData, () => {
             setTableData();
         });
 
         function checkExistingTaxon() {
             if(!editMode.value){
-                if(!props.editTaxon && taxonDataKey.value && benthicData.value && benthicData.value.hasOwnProperty(taxonDataKey.value)){
+                if(!props.editTaxon && taxonDataKey.value && replicateData.value && replicateData.value.hasOwnProperty(taxonDataKey.value)){
                     const confirmText = 'That taxon is already included in the data. Would you like to edit those records?';
                     confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                         if(val){
                             editMode.value = true;
-                            editTaxon.value = Object.assign({}, benthicData.value[taxonDataKey.value]);
+                            editTaxon.value = Object.assign({}, replicateData.value[taxonDataKey.value]);
                             setRepData();
                         }
                         else{
@@ -313,7 +313,7 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             }
             else{
                 hideWorking();
-                occurrenceStore.setCollectingEventBenthicData();
+                occurrenceStore.setCollectingEventReplicateData();
                 context.emit('close:popup');
             }
         }
@@ -371,11 +371,11 @@ const occurrenceCollectingEventBenthicTaxaEditorPopup = {
             tableColumns.value.forEach(repColumn => {
                 newRowObj[repColumn.field] = {};
                 existingData.value[repColumn.field] = {};
-                if(taxonDataKey.value && benthicData.value && benthicData.value.hasOwnProperty(taxonDataKey.value) && benthicData.value[taxonDataKey.value].hasOwnProperty(repColumn.field)){
-                    newRowObj[repColumn.field]['cnt'] = benthicData.value[taxonDataKey.value][repColumn.field]['cnt'];
-                    existingData.value[repColumn.field]['cnt'] = benthicData.value[taxonDataKey.value][repColumn.field]['cnt'];
-                    newRowObj[repColumn.field]['occid'] = benthicData.value[taxonDataKey.value][repColumn.field]['occid'];
-                    existingData.value[repColumn.field]['occid'] = benthicData.value[taxonDataKey.value][repColumn.field]['occid'];
+                if(taxonDataKey.value && replicateData.value && replicateData.value.hasOwnProperty(taxonDataKey.value) && replicateData.value[taxonDataKey.value].hasOwnProperty(repColumn.field)){
+                    newRowObj[repColumn.field]['cnt'] = replicateData.value[taxonDataKey.value][repColumn.field]['cnt'];
+                    existingData.value[repColumn.field]['cnt'] = replicateData.value[taxonDataKey.value][repColumn.field]['cnt'];
+                    newRowObj[repColumn.field]['occid'] = replicateData.value[taxonDataKey.value][repColumn.field]['occid'];
+                    existingData.value[repColumn.field]['occid'] = replicateData.value[taxonDataKey.value][repColumn.field]['occid'];
                 }
                 else{
                     newRowObj[repColumn.field]['cnt'] = 0;

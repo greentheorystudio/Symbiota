@@ -52,7 +52,7 @@ const occurrenceDataUploadModule = {
                                                     <div class="text-body1 text-bold self-center">Source Primary ID</div> 
                                                     <selector-input-element :disabled="currentTab !== 'mapping' || !!currentProcess" :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('occurrence', value)"></selector-input-element>
                                                 </div>
-                                                <template v-if="collectionData['datarecordingmethod'] === 'lot' || collectionData['datarecordingmethod'] === 'benthic' || Object.keys(eventMofDataFields).length > 0">
+                                                <template v-if="collectionData['datarecordingmethod'] === 'lot' || collectionData['datarecordingmethod'] === 'replicate' || Object.keys(eventMofDataFields).length > 0">
                                                     <div class="q-mb-sm row q-gutter-sm">
                                                         <div class="text-body1 text-bold self-center">Source Event Primary ID</div> 
                                                         <selector-input-element :disabled="currentTab !== 'mapping' || !!currentProcess" :options="sourceDataFieldNamesFlatFile" :value="occurrenceSourcePrimaryKeyField" @update:value="(value) => setSourceDataPrimaryIdentifier('event', value)"></selector-input-element>
@@ -545,7 +545,7 @@ const occurrenceDataUploadModule = {
         });
         const mappingValid = Vue.computed(() => {
             let valid = false;
-            if((collectionData.value['datarecordingmethod'] === 'lot' || collectionData.value['datarecordingmethod'] === 'benthic' || Object.keys(eventMofDataFields.value).length > 0) && occurrenceSourcePrimaryKeyField.value && occurrenceSourceEventPrimaryKeyField.value){
+            if((collectionData.value['datarecordingmethod'] === 'lot' || collectionData.value['datarecordingmethod'] === 'replicate' || Object.keys(eventMofDataFields.value).length > 0) && occurrenceSourcePrimaryKeyField.value && occurrenceSourceEventPrimaryKeyField.value){
                 valid = true;
             }
             if(occurrenceSourcePrimaryKeyField.value){

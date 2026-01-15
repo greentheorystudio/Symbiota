@@ -106,38 +106,6 @@ class OccurrenceCollectingEvents{
         return $retVal;
     }
 
-    public function getCollectingEventBenthicData($eventid): array
-    {
-        $retArr = array();
-        $sql = 'SELECT occid, tid, sciname, family, scientificnameauthorship, identificationremarks, identificationqualifier, rep, individualcount '.
-            'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' '.
-            'ORDER BY sciname, identificationqualifier, identificationremarks, rep ';
-        //echo '<div>'.$sql.'</div>';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                if($row['rep'] && $row['individualcount'] && (int)$row['individualcount'] > 0){
-                    $key = $row['sciname'] . ($row['identificationqualifier'] ? '-' . $row['identificationqualifier'] : '') . ($row['identificationremarks'] ? '-' . $row['identificationremarks'] : '');
-                    $repLabel = 'rep' . (int)$row['rep'];
-                    if(!array_key_exists($key, $retArr)){
-                        $retArr[$key] = array();
-                        $retArr[$key]['tid'] = $row['tid'];
-                        $retArr[$key]['sciname'] = $row['sciname'];
-                        $retArr[$key]['family'] = $row['family'];
-                        $retArr[$key]['scientificnameauthorship'] = $row['scientificnameauthorship'];
-                        $retArr[$key]['identificationqualifier'] = $row['identificationqualifier'];
-                        $retArr[$key]['identificationremarks'] = $row['identificationremarks'];
-                    }
-                    $retArr[$key][$repLabel]['occid'] = $row['occid'];
-                    $retArr[$key][$repLabel]['cnt'] = $row['individualcount'];
-                }
-                unset($rows[$index]);
-            }
-        }
-        return $retArr;
-    }
-
     public function getCollectingEventCollectionsArr($eventid): array
     {
         $retArr = array();
@@ -187,6 +155,38 @@ class OccurrenceCollectingEvents{
     public function getCollectingEventFields(): array
     {
         return $this->fields;
+    }
+
+    public function getCollectingEventReplicateData($eventid): array
+    {
+        $retArr = array();
+        $sql = 'SELECT occid, tid, sciname, family, scientificnameauthorship, identificationremarks, identificationqualifier, rep, individualcount '.
+            'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' '.
+            'ORDER BY sciname, identificationqualifier, identificationremarks, rep ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if($row['rep'] && $row['individualcount'] && (int)$row['individualcount'] > 0){
+                    $key = $row['sciname'] . ($row['identificationqualifier'] ? '-' . $row['identificationqualifier'] : '') . ($row['identificationremarks'] ? '-' . $row['identificationremarks'] : '');
+                    $repLabel = 'rep' . (int)$row['rep'];
+                    if(!array_key_exists($key, $retArr)){
+                        $retArr[$key] = array();
+                        $retArr[$key]['tid'] = $row['tid'];
+                        $retArr[$key]['sciname'] = $row['sciname'];
+                        $retArr[$key]['family'] = $row['family'];
+                        $retArr[$key]['scientificnameauthorship'] = $row['scientificnameauthorship'];
+                        $retArr[$key]['identificationqualifier'] = $row['identificationqualifier'];
+                        $retArr[$key]['identificationremarks'] = $row['identificationremarks'];
+                    }
+                    $retArr[$key][$repLabel]['occid'] = $row['occid'];
+                    $retArr[$key][$repLabel]['cnt'] = $row['individualcount'];
+                }
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 
     public function getLocationCollectingEventArr($collid, $locationid): array

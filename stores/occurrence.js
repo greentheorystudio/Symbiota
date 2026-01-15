@@ -176,12 +176,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getCollectingEventAutoSearch(state) {
             return state.collectingEventAutoSearch;
         },
-        getCollectingEventBenthicData(state) {
-            return state.collectingEventStore.getCollectingEventBenthicData;
-        },
-        getCollectingEventBenthicTaxaCnt(state) {
-            return state.collectingEventStore.getCollectingEventBenthicTaxaCnt;
-        },
         getCollectingEventCollectionArr(state) {
             return state.collectingEventStore.getCollectingEventCollectionArr;
         },
@@ -196,6 +190,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getCollectingEventID(state) {
             return state.collectingEventStore.getCollectingEventID;
+        },
+        getCollectingEventReplicateData(state) {
+            return state.collectingEventStore.getCollectingEventReplicateData;
+        },
+        getCollectingEventReplicateTaxaCnt(state) {
+            return state.collectingEventStore.getCollectingEventReplicateTaxaCnt;
         },
         getCollectingEventValid(state) {
             return state.collectingEventStore.getCollectingEventValid;
@@ -237,7 +237,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             return state.collectionStore.getEditorHideFields;
         },
         getEmbeddedOccurrenceRecord(state) {
-            return (state.occurrenceEntryFormat !== 'benthic' && state.occurrenceEntryFormat !== 'lot');
+            return (state.occurrenceEntryFormat !== 'replicate' && state.occurrenceEntryFormat !== 'lot');
         },
         getEntryFollowUpAction(state) {
             return state.entryFollowUpAction;
@@ -875,14 +875,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setCollectingEventAutoSearch(value) {
             this.collectingEventAutoSearch = value;
         },
-        setCollectingEventBenthicData() {
-            this.collectingEventStore.setCollectingEventBenthicData();
-        },
         setCollectingEventCollectionsArr() {
             this.collectingEventStore.setCollectingEventCollectionsArr();
         },
         setCollectingEventFields() {
             this.collectingEventStore.setCollectingEventFields();
+        },
+        setCollectingEventReplicateData() {
+            this.collectingEventStore.setCollectingEventReplicateData();
         },
         setCollection(collid, forceEditor = true, callback = null) {
             this.collectionStore.setCollection(collid, () => {

@@ -43,12 +43,12 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
             repcount: null,
             labelproject: null
         },
-        collectingEventBenthicData: {},
         collectingEventCollectionArr: [],
         collectingEventData: {},
         collectingEventEditData: {},
         collectingEventFields: {},
         collectingEventId: 0,
+        collectingEventReplicateData: {},
         collectingEventUpdateData: {},
         eventMofData: {},
         eventMofEditData: {},
@@ -58,12 +58,6 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
     getters: {
         getBlankCollectingEventRecord(state) {
             return state.blankEventRecord;
-        },
-        getCollectingEventBenthicData(state) {
-            return state.collectingEventBenthicData;
-        },
-        getCollectingEventBenthicTaxaCnt(state) {
-            return Object.keys(state.collectingEventBenthicData).length;
         },
         getCollectingEventCollectionArr(state) {
             return state.collectingEventCollectionArr;
@@ -87,6 +81,12 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
         },
         getCollectingEventID(state) {
             return state.collectingEventId;
+        },
+        getCollectingEventReplicateData(state) {
+            return state.collectingEventReplicateData;
+        },
+        getCollectingEventReplicateTaxaCnt(state) {
+            return Object.keys(state.collectingEventReplicateData).length;
         },
         getCollectingEventValid(state) {
             return (!!state.collectingEventEditData['eventdate']);
@@ -136,7 +136,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
             this.eventMofData = Object.assign({}, {});
             this.eventMofEditData = Object.assign({}, {});
             this.collectingEventData = Object.assign({}, this.blankEventRecord);
-            this.collectingEventBenthicData = Object.assign({}, {});
+            this.collectingEventReplicateData = Object.assign({}, {});
             this.collectingEventCollectionArr.length = 0;
         },
         clearLocationData() {
@@ -214,21 +214,6 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
         revertCollectingEventEditData() {
             this.collectingEventEditData = Object.assign({}, this.collectingEventData);
         },
-        setCollectingEventBenthicData() {
-            const formData = new FormData();
-            formData.append('eventid', this.collectingEventId.toString());
-            formData.append('action', 'getCollectingEventBenthicData');
-            fetch(occurrenceCollectingEventApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.json() : null;
-            })
-            .then((data) => {
-                this.collectingEventBenthicData = Object.assign({}, data);
-            });
-        },
         setCollectingEventCollectionsArr() {
             const formData = new FormData();
             formData.append('eventid', this.collectingEventId.toString());
@@ -261,8 +246,8 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
                 this.collectingEventData = Object.assign({}, data);
                 this.collectingEventEditData = Object.assign({}, this.collectingEventData);
                 this.setEventMofData(fields);
-                if(entryFormat === 'benthic'){
-                    this.setCollectingEventBenthicData();
+                if(entryFormat === 'replicate'){
+                    this.setCollectingEventReplicateData();
                 }
                 else{
                     this.setCollectingEventCollectionsArr();
@@ -284,6 +269,21 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
             })
             .then((data) => {
                 this.collectingEventFields = Object.assign({}, data);
+            });
+        },
+        setCollectingEventReplicateData() {
+            const formData = new FormData();
+            formData.append('eventid', this.collectingEventId.toString());
+            formData.append('action', 'getCollectingEventReplicateData');
+            fetch(occurrenceCollectingEventApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.collectingEventReplicateData = Object.assign({}, data);
             });
         },
         setCurrentCollectingEventRecord(eventid, entryFormat, defaultRepCount, fields, callback = null) {
