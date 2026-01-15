@@ -229,14 +229,14 @@ const collectingEventFieldModule = {
         }
 
         function updateDateData(dateData) {
-            if(props.eventMode){
-                occurrenceStore.updateCollectingEventEditDataDate(dateData);
-            }
-            else{
-                occurrenceStore.updateOccurrenceEditDataDate(dateData);
-                if(props.autoSearch){
-                    processCollectingEventSearch();
-                }
+            context.emit('update:collecting-event-data', {key: 'eventdate', value: (dateData ? dateData['date'] : null)});
+            context.emit('update:collecting-event-data', {key: 'year', value: (dateData ? dateData['year'] : null)});
+            context.emit('update:collecting-event-data', {key: 'month', value: (dateData ? dateData['month'] : null)});
+            context.emit('update:collecting-event-data', {key: 'day', value: (dateData ? dateData['day'] : null)});
+            context.emit('update:collecting-event-data', {key: 'startdayofyear', value: (dateData ? dateData['startdayofyear'] : null)});
+            context.emit('update:collecting-event-data', {key: 'enddayofyear', value: (dateData ? dateData['enddayofyear'] : null)});
+            if(!props.eventMode && props.autoSearch){
+                processCollectingEventSearch();
             }
         }
 
