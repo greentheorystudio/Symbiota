@@ -138,7 +138,7 @@ class ChecklistTaxa{
                 $sql .= 'ORDER BY t.sciname ';
             }
             if((int)$recCnt > 0){
-                $startIndex = 1 + ((int)$index * (int)$recCnt);
+                $startIndex = (int)$index * (int)$recCnt;
                 $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
             }
             //echo '<div>'.$sql.'</div>';
