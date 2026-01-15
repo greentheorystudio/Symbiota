@@ -287,27 +287,27 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
         },
         setTaxaFilterOptions() {
             this.checklistTaxaArr.forEach(taxon => {
-                if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === taxon['sciname'])){
+                if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'].toLowerCase() === taxon['sciname'].toLowerCase())){
                     this.taxaFilterOptions.push({sciname: taxon['sciname'], label: taxon['sciname'], rankid: taxon['rankid']});
                 }
                 if(taxon['family'] && taxon['family'] !== '[Incertae Sedis]'){
-                    if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === taxon['family'])){
+                    if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'].toLowerCase() === taxon['family'].toLowerCase())){
                         this.taxaFilterOptions.push({sciname: taxon['family'], label: taxon['family'], rankid: 140});
                     }
                 }
                 if(taxon.hasOwnProperty('vernacularData') && taxon['vernacularData'] && taxon['vernacularData'].length > 0){
                     taxon['vernacularData'].forEach(vernacular => {
-                        if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === vernacular['vernacularname'])){
+                        if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'].toLowerCase() === vernacular['vernacularname'].toLowerCase())){
                             this.taxaFilterOptions.push({sciname: vernacular['vernacularname'], label: vernacular['vernacularname'], rankid: 0});
                         }
                     });
                 }
                 if(Number(taxon['rankid']) >= 220){
                     const unitNameArr = taxon['sciname'].split(' ');
-                    if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === unitNameArr[0])){
+                    if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'].toLowerCase() === unitNameArr[0].toLowerCase())){
                         this.taxaFilterOptions.push({sciname: unitNameArr[0], label: unitNameArr[0], rankid: 180});
                     }
-                    if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === (unitNameArr[0] + ' ' + unitNameArr[1]))){
+                    if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'].toLowerCase() === (unitNameArr[0].toLowerCase() + ' ' + unitNameArr[1].toLowerCase()))){
                         this.taxaFilterOptions.push({sciname: (unitNameArr[0] + ' ' + unitNameArr[1]), label: (unitNameArr[0] + ' ' + unitNameArr[1]), rankid: 220});
                     }
                 }
