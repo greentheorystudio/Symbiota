@@ -217,7 +217,7 @@ const taxonomyDataSourceImportUpdateModule = {
         }
 
         function addTaxonCommonName(tid, commonname) {
-            if(Number(data['tid'] > 0 && data['name'] && data['language'])){
+            if(Number(commonname['tid'] > 0 && commonname['name'] && commonname['language'])){
                 const vernacularData = {
                     tid: tid.toString(),
                     vernacularname: commonname['name'],
@@ -355,7 +355,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 addSubprocessToProcessorDisplay('text',subtext);
                 currentTaxonExternal.value['children'].forEach((child) => {
                     child['parenttid'] = currentTaxonExternal.value['tid'];
-                    child['family'] = currentTaxonExternal.value['family'] !== '' ? currentTaxonExternal.value['family'] : '';
+                    child['family'] = currentTaxonExternal.value['family'] === '' ? '' : currentTaxonExternal.value['family'];
                     if(child['family'] === ''){
                         if(Number(child['rankid']) === 140){
                             child['family'] = child['sciname'];
@@ -366,7 +366,7 @@ const taxonomyDataSourceImportUpdateModule = {
                     }
                     child['tid'] = null;
                     child['tidaccepted'] = null;
-                    const localChild = currentTaxonLocal.value['children'].find(lchild => lchild['sciname'] === child['sciname']);
+                    const localChild = (currentTaxonLocal.value.hasOwnProperty('children') && currentTaxonLocal.value['children'] && Array.isArray(currentTaxonLocal.value['children'])) ? currentTaxonLocal.value['children'].find(lchild => lchild['sciname'] === child['sciname']) : null;
                     if(localChild){
                         child['tid'] = localChild['tid'];
                         child['tidaccepted'] = localChild['tid'];
@@ -407,7 +407,7 @@ const taxonomyDataSourceImportUpdateModule = {
                 const subtext = 'Adding common names';
                 addSubprocessToProcessorDisplay('text',subtext);
                 currentTaxonExternal.value['commonnames'].forEach((commonname) => {
-                    const existingName = currentTaxonLocal.value['commonnames'].length > 0 ? currentTaxonLocal.value['commonnames'].find(name => (name['commonname'].toLowerCase() === commonname['name'].toLowerCase() && Number(name['langid']) === Number(commonname['langid']))) : null;
+                    const existingName = currentTaxonLocal.value['commonnames'].length > 0 ? currentTaxonLocal.value['commonnames'].find(name => (name['vernacularname'].toLowerCase() === commonname['name'].toLowerCase() && Number(name['langid']) === Number(commonname['langid']))) : null;
                     if(!existingName){
                         addTaxonCommonName(currentTaxonExternal.value['tid'], commonname);
                     }
