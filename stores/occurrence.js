@@ -1218,14 +1218,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         updateCollectingEventEditData(key, value) {
             this.collectingEventStore.updateCollectingEventEditData(key, value);
         },
-        updateCollectingEventEditDataDate(dateData) {
-            this.collectingEventStore.updateCollectingEventEditData('eventdate', (dateData ? dateData['date'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('year', (dateData ? dateData['year'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('month', (dateData ? dateData['month'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('day', (dateData ? dateData['day'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('startdayofyear', (dateData ? dateData['startDayOfYear'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('enddayofyear', (dateData ? dateData['endDayOfYear'] : null));
-        },
         updateCollectingEventLocation(locationid, callback) {
             this.collectingEventStore.updateCollectingEventLocation(this.getCollId, locationid, (res) => {
                 if(Number(res) === 1){
