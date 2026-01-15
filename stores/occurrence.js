@@ -1222,8 +1222,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.collectingEventStore.updateCollectingEventLocation(this.getCollId, locationid, (res) => {
                 if(Number(res) === 1){
                     this.setCurrentLocationRecord(locationid);
-                    this.occurrenceData['locationid'] = locationid;
-                    this.occurrenceEditData['locationid'] = locationid;
                 }
                 callback(Number(res));
             });
