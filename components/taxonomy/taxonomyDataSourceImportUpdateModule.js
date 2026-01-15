@@ -275,7 +275,7 @@ const taxonomyDataSourceImportUpdateModule = {
                             name: dataSource.value,
                             identifier: taxon['id']
                         }];
-                        taxon['tidaccepted'] = newTaxonObj['tidaccepted'] !== '' ? Number(newTaxonObj['tidaccepted']) : taxon['tid'];
+                        taxon['tidaccepted'] = newTaxonObj['tidaccepted'] === '' ? taxon['tid'] : Number(newTaxonObj['tidaccepted']);
                         taxon['commonnames'] = [];
                         taxon['children'] = [];
                         callback(taxon);
@@ -504,7 +504,7 @@ const taxonomyDataSourceImportUpdateModule = {
 
         function currentTaxonValidate() {
             if(currentTaxonExternal.value['tid']){
-                const dataSourceIdObj = currentTaxonLocal.value['identifiers'].find(obj => obj['name'] === dataSource.value);
+                const dataSourceIdObj = (currentTaxonLocal.value.hasOwnProperty('identifiers') && currentTaxonLocal.value['identifiers'] && Array.isArray(currentTaxonLocal.value['identifiers'])) ? currentTaxonLocal.value['identifiers'].find(obj => obj['name'] === dataSource.value) : null;
                 if(!dataSourceIdObj){
                     addTaxonIdentifier(currentTaxonLocal.value['tid'], currentTaxonExternal.value['id']);
                 }
@@ -780,7 +780,7 @@ const taxonomyDataSourceImportUpdateModule = {
             .then((response) => {
                 if(response.status === 200){
                     response.json().then((resObj) => {
-                        if(importCommonNames.value){
+                        if(importCommonNames.value && resObj.hasOwnProperty('tid')){
                             setTaxonCommonNames(resObj, callback);
                         }
                         else{
@@ -789,7 +789,7 @@ const taxonomyDataSourceImportUpdateModule = {
                     });
                 }
                 else{
-                    const text = getErrorResponseText(response.status,response.statusText);
+                    const text = getErrorResponseText(response.status, response.statusText);
                     callback(null,text);
                 }
             });
@@ -806,7 +806,7 @@ const taxonomyDataSourceImportUpdateModule = {
             .then((response) => {
                 if(response.status === 200){
                     response.json().then((resObj) => {
-                        if(importCommonNames.value){
+                        if(importCommonNames.value && resObj.hasOwnProperty('tid')){
                             setTaxonCommonNames(resObj, callback);
                         }
                         else{
@@ -1986,8 +1986,9 @@ const taxonomyDataSourceImportUpdateModule = {
             const text = 'Updating target taxonomic group accepted parent taxon';
             currentProcess.value = 'updateTargetAcceptedParent';
             addProcessToProcessorDisplay(getNewProcessObject('single',text));
-            if(targetTaxonLocal.value['sciname'] !== taxonSearchResults.value[0]['accepted_sciname']){
-                targetTaxonLocal.value['tidaccepted'] = nameTidIndex.value[taxonSearchResults.value[0]['accepted_sciname']];
+            const acceptedName = taxonSearchResults.value[0]['accepted'] ? taxonSearchResults.value[0]['sciname'] : taxonSearchResults.value[0]['accepted_sciname'];
+            if(targetTaxonLocal.value['sciname'] !== acceptedName){
+                targetTaxonLocal.value['tidaccepted'] = nameTidIndex.value[acceptedName];
             }
             updateTaxonTidAccepted(Object.assign({}, targetTaxonLocal.value),(res) => {
                 if(Number(res) === 0){
