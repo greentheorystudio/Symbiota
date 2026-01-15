@@ -176,12 +176,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getCollectingEventAutoSearch(state) {
             return state.collectingEventAutoSearch;
         },
-        getCollectingEventBenthicData(state) {
-            return state.collectingEventStore.getCollectingEventBenthicData;
-        },
-        getCollectingEventBenthicTaxaCnt(state) {
-            return state.collectingEventStore.getCollectingEventBenthicTaxaCnt;
-        },
         getCollectingEventCollectionArr(state) {
             return state.collectingEventStore.getCollectingEventCollectionArr;
         },
@@ -196,6 +190,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getCollectingEventID(state) {
             return state.collectingEventStore.getCollectingEventID;
+        },
+        getCollectingEventReplicateData(state) {
+            return state.collectingEventStore.getCollectingEventReplicateData;
+        },
+        getCollectingEventReplicateTaxaCnt(state) {
+            return state.collectingEventStore.getCollectingEventReplicateTaxaCnt;
         },
         getCollectingEventValid(state) {
             return state.collectingEventStore.getCollectingEventValid;
@@ -237,7 +237,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             return state.collectionStore.getEditorHideFields;
         },
         getEmbeddedOccurrenceRecord(state) {
-            return (state.occurrenceEntryFormat !== 'benthic' && state.occurrenceEntryFormat !== 'lot');
+            return (state.occurrenceEntryFormat !== 'replicate' && state.occurrenceEntryFormat !== 'lot');
         },
         getEntryFollowUpAction(state) {
             return state.entryFollowUpAction;
@@ -875,14 +875,14 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         setCollectingEventAutoSearch(value) {
             this.collectingEventAutoSearch = value;
         },
-        setCollectingEventBenthicData() {
-            this.collectingEventStore.setCollectingEventBenthicData();
-        },
         setCollectingEventCollectionsArr() {
             this.collectingEventStore.setCollectingEventCollectionsArr();
         },
         setCollectingEventFields() {
             this.collectingEventStore.setCollectingEventFields();
+        },
+        setCollectingEventReplicateData() {
+            this.collectingEventStore.setCollectingEventReplicateData();
         },
         setCollection(collid, forceEditor = true, callback = null) {
             this.collectionStore.setCollection(collid, () => {
@@ -912,7 +912,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             if(Number(eventid) > 0){
                 this.collectingEventStore.setCurrentCollectingEventRecord(eventid, this.occurrenceEntryFormat, this.getCollectionData['defaultrepcount'], this.getEventMofDataFields, () => {
                     this.setCurrentOccurrenceRecord(this.occId);
-                    this.updateOccurrenceEditData('eventid', (Number(this.getCollectingEventID) > 0 ? this.getCollectingEventID.toString() : null));
+                    this.mergeEventOccurrenceData();
                 });
             }
         },
@@ -924,7 +924,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         setCurrentLocationRecord(locationid) {
             this.locationStore.setCurrentLocationRecord(locationid, this.getCollId, () => {
-                this.updateOccurrenceEditData('locationid', (Number(this.getLocationID) > 0 ? this.getLocationID.toString() : null));
+                this.mergeLocationOccurrenceData();
                 this.collectingEventStore.getLocationCollectingEvents(this.getCollId, locationid);
             });
         },
@@ -1218,20 +1218,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         updateCollectingEventEditData(key, value) {
             this.collectingEventStore.updateCollectingEventEditData(key, value);
         },
-        updateCollectingEventEditDataDate(dateData) {
-            this.collectingEventStore.updateCollectingEventEditData('eventdate', (dateData ? dateData['date'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('year', (dateData ? dateData['year'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('month', (dateData ? dateData['month'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('day', (dateData ? dateData['day'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('startdayofyear', (dateData ? dateData['startDayOfYear'] : null));
-            this.collectingEventStore.updateCollectingEventEditData('enddayofyear', (dateData ? dateData['endDayOfYear'] : null));
-        },
         updateCollectingEventLocation(locationid, callback) {
             this.collectingEventStore.updateCollectingEventLocation(this.getCollId, locationid, (res) => {
                 if(Number(res) === 1){
                     this.setCurrentLocationRecord(locationid);
-                    this.occurrenceData['locationid'] = locationid;
-                    this.occurrenceEditData['locationid'] = locationid;
                 }
                 callback(Number(res));
             });

@@ -470,11 +470,19 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         taxaDataArr.value.forEach(taxon => {
                             let includeTaxon = false;
                             if(taxonFilterVal.value){
-                                if(Number(taxonFilterVal.value['rankid']) === 140 && taxon['family'] === taxonFilterVal.value['sciname']){
-                                    includeTaxon = true;
+                                if(Number(taxonFilterVal.value['rankid']) > 0){
+                                    if(Number(taxonFilterVal.value['rankid']) === 140 && taxon['family'] === taxonFilterVal.value['sciname']){
+                                        includeTaxon = true;
+                                    }
+                                    else if(Number(taxonFilterVal.value['rankid']) > 140 && (taxon['sciname'] === taxonFilterVal.value['sciname'] || taxon['sciname'].startsWith((taxonFilterVal.value['sciname'] + ' ')))){
+                                        includeTaxon = true;
+                                    }
                                 }
-                                else if(Number(taxonFilterVal.value['rankid']) > 140 && (taxon['sciname'] === taxonFilterVal.value['sciname'] || taxon['sciname'].startsWith((taxonFilterVal.value['sciname'] + ' ')))){
-                                    includeTaxon = true;
+                                else if(taxon.hasOwnProperty('vernacularData') && taxon['vernacularData'] && taxon['vernacularData'].length > 0){
+                                    const vernacularMatch = taxon['vernacularData'].find(vernacular => vernacular['vernacularname'] === taxonFilterVal.value['sciname']);
+                                    if(vernacularMatch){
+                                        includeTaxon = true;
+                                    }
                                 }
                             }
                             else{

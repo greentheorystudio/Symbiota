@@ -1,4 +1,4 @@
-const occurrenceCollectingEventBenthicTaxaListPopup = {
+const occurrenceCollectingEventReplicateTaxaListPopup = {
     props: {
         showPopup: {
             type: Boolean,
@@ -66,10 +66,10 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
     setup(props, context) {
         const occurrenceStore = useOccurrenceStore();
 
-        const benthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
+        const replicateData = Vue.computed(() => occurrenceStore.getCollectingEventReplicateData);
         const showQualifierColumn = Vue.ref(false);
         const showRemarksColumn = Vue.ref(false);
         const tableColumns = Vue.ref([]);
@@ -84,8 +84,8 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
             setContentStyle();
         });
 
-        Vue.watch(benthicData, () => {
-            if(benthicData.value){
+        Vue.watch(replicateData, () => {
+            if(replicateData.value){
                 setTableColumns();
                 setTableRows();
             }
@@ -112,12 +112,12 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
         }
 
         function setTableColumns() {
-            for(let key in benthicData.value) {
-                if(benthicData.value.hasOwnProperty(key)){
-                    if(benthicData.value[key].hasOwnProperty('identificationqualifier') && benthicData.value[key]['identificationqualifier']){
+            for(let key in replicateData.value) {
+                if(replicateData.value.hasOwnProperty(key)){
+                    if(replicateData.value[key].hasOwnProperty('identificationqualifier') && replicateData.value[key]['identificationqualifier']){
                         showQualifierColumn.value = true;
                     }
-                    if(benthicData.value[key].hasOwnProperty('identificationremarks') && benthicData.value[key]['identificationremarks']){
+                    if(replicateData.value[key].hasOwnProperty('identificationremarks') && replicateData.value[key]['identificationremarks']){
                         showRemarksColumn.value = true;
                     }
                 }
@@ -141,22 +141,22 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
         }
 
         function setTableRows() {
-            const taxaArr = Object.keys(benthicData.value);
+            const taxaArr = Object.keys(replicateData.value);
             taxaArr.forEach(taxon => {
                 const newRowObj = {};
                 newRowObj['occidData'] = {};
-                newRowObj['taxon'] = benthicData.value[taxon];
+                newRowObj['taxon'] = replicateData.value[taxon];
                 if(showQualifierColumn.value){
-                    newRowObj['qualifier'] = benthicData.value[taxon]['identificationqualifier'];
+                    newRowObj['qualifier'] = replicateData.value[taxon]['identificationqualifier'];
                 }
-                newRowObj['sciname'] = benthicData.value[taxon]['sciname'];
+                newRowObj['sciname'] = replicateData.value[taxon]['sciname'];
                 if(showRemarksColumn.value){
-                    newRowObj['remarks'] = benthicData.value[taxon]['identificationremarks'];
+                    newRowObj['remarks'] = replicateData.value[taxon]['identificationremarks'];
                 }
                 tableColumnsReps.forEach(repColumn => {
-                    if(benthicData.value[taxon].hasOwnProperty(repColumn.field)){
-                        newRowObj[repColumn.field] = benthicData.value[taxon][repColumn.field]['cnt'];
-                        newRowObj['occidData'][repColumn.field] = benthicData.value[taxon][repColumn.field]['occid'];
+                    if(replicateData.value[taxon].hasOwnProperty(repColumn.field)){
+                        newRowObj[repColumn.field] = replicateData.value[taxon][repColumn.field]['cnt'];
+                        newRowObj['occidData'][repColumn.field] = replicateData.value[taxon][repColumn.field]['occid'];
                     }
                     else{
                         newRowObj[repColumn.field] = 0;
@@ -169,7 +169,7 @@ const occurrenceCollectingEventBenthicTaxaListPopup = {
         Vue.onMounted(() => {
             setContentStyle();
             window.addEventListener('resize', setContentStyle);
-            if(benthicData.value){
+            if(replicateData.value){
                 setTableColumns();
                 setTableRows();
             }
