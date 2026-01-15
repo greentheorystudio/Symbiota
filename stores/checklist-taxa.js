@@ -295,6 +295,13 @@ const useChecklistTaxaStore = Pinia.defineStore('checklist-taxa', {
                         this.taxaFilterOptions.push({sciname: taxon['family'], label: taxon['family'], rankid: 140});
                     }
                 }
+                if(taxon.hasOwnProperty('vernacularData') && taxon['vernacularData'] && taxon['vernacularData'].length > 0){
+                    taxon['vernacularData'].forEach(vernacular => {
+                        if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === vernacular['vernacularname'])){
+                            this.taxaFilterOptions.push({sciname: vernacular['vernacularname'], label: vernacular['vernacularname'], rankid: 0});
+                        }
+                    });
+                }
                 if(Number(taxon['rankid']) >= 220){
                     const unitNameArr = taxon['sciname'].split(' ');
                     if(!this.taxaFilterOptions.find(taxonObj => taxonObj['sciname'] === unitNameArr[0])){

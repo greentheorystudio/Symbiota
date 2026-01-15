@@ -61,8 +61,8 @@ const taxaListDisplay = {
                                             </q-btn>
                                         </span>
                                     </template>
-                                    <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
-                                        <span>{{ getVernacularStrFromArr(taxon['vernacularData']) }}</span>
+                                    <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0 && getVernacularStrFromArr(taxon['vernacularData'], taxon['tidaccepted'])">
+                                        <span>{{ getVernacularStrFromArr(taxon['vernacularData'], taxon['tidaccepted']) }}</span>
                                     </template>
                                 </div>
                                 <div v-if="displaySynonyms && taxon['synonymyData'] && taxon['synonymyData'].length > 0" class="q-ml-md text-italic">
@@ -113,8 +113,8 @@ const taxaListDisplay = {
                                     </q-btn>
                                 </span>
                             </template>
-                            <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
-                                <span>{{ getVernacularStrFromArr(taxon['vernacularData']) }}</span>
+                            <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0 && getVernacularStrFromArr(taxon['vernacularData'], taxon['tidaccepted'])">
+                                <span>{{ getVernacularStrFromArr(taxon['vernacularData'], taxon['tidaccepted']) }}</span>
                             </template>
                         </div>
                         <div v-if="displaySynonyms && taxon['synonymyData'] && taxon['synonymyData'].length > 0" class="q-ml-md text-italic">
@@ -186,14 +186,14 @@ const taxaListDisplay = {
             return nameArr.length > 0 ? ('[' + nameArr.join(', ') + ']') : '';
         }
 
-        function getVernacularStrFromArr(vernacularArr) {
+        function getVernacularStrFromArr(vernacularArr, tid) {
             const nameArr = [];
             vernacularArr.forEach(vernacular => {
-                if(vernacular['vernacularname']){
+                if(vernacular['vernacularname'] && Number(tid) === Number(vernacular['vernaculartid'])){
                     nameArr.push(vernacular['vernacularname']);
                 }
             });
-            return nameArr.length > 0 ? (' - ' + nameArr.join(', ')) : '';
+            return nameArr.length > 0 ? (' - ' + nameArr.join(', ')) : null;
         }
 
         function openEditorPopup(id) {
