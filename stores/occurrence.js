@@ -912,7 +912,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             if(Number(eventid) > 0){
                 this.collectingEventStore.setCurrentCollectingEventRecord(eventid, this.occurrenceEntryFormat, this.getCollectionData['defaultrepcount'], this.getEventMofDataFields, () => {
                     this.setCurrentOccurrenceRecord(this.occId);
-                    this.updateOccurrenceEditData('eventid', (Number(this.getCollectingEventID) > 0 ? this.getCollectingEventID.toString() : null));
+                    this.mergeEventOccurrenceData();
                 });
             }
         },
@@ -924,7 +924,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         setCurrentLocationRecord(locationid) {
             this.locationStore.setCurrentLocationRecord(locationid, this.getCollId, () => {
-                this.updateOccurrenceEditData('locationid', (Number(this.getLocationID) > 0 ? this.getLocationID.toString() : null));
+                this.mergeLocationOccurrenceData();
                 this.collectingEventStore.getLocationCollectingEvents(this.getCollId, locationid);
             });
         },
