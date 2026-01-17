@@ -210,7 +210,6 @@ const collectingEventFieldModule = {
         function setExtendedView() {
             if(props.data.fieldnotes ||
                 props.data.fieldnumber ||
-                props.data.habitat ||
                 props.data.substrate ||
                 props.data.minimumdepthinmeters ||
                 props.data.maximumdepthinmeters ||

@@ -702,7 +702,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['startdayofyear'] = eventData['startdayofyear'];
             this.occurrenceEditData['enddayofyear'] = eventData['enddayofyear'];
             this.occurrenceEditData['verbatimeventdate'] = eventData['verbatimeventdate'];
-            this.occurrenceEditData['habitat'] = eventData['habitat'];
             this.occurrenceEditData['substrate'] = eventData['substrate'];
             if(Number(this.occurrenceEditData['localitysecurity']) !== 1 && Number(eventData['localitysecurity']) === 1){
                 this.occurrenceEditData['localitysecurity'] = eventData['localitysecurity'];
@@ -997,7 +996,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.collectingEventStore.updateCollectingEventEditData('startdayofyear', this.occurrenceEditData['startdayofyear']);
             this.collectingEventStore.updateCollectingEventEditData('enddayofyear', this.occurrenceEditData['enddayofyear']);
             this.collectingEventStore.updateCollectingEventEditData('verbatimeventdate', this.occurrenceEditData['verbatimeventdate']);
-            this.collectingEventStore.updateCollectingEventEditData('habitat', this.occurrenceEditData['habitat']);
             this.collectingEventStore.updateCollectingEventEditData('substrate', this.occurrenceEditData['substrate']);
             this.collectingEventStore.updateCollectingEventEditData('localitysecurity', this.occurrenceEditData['localitysecurity']);
             this.collectingEventStore.updateCollectingEventEditData('localitysecurityreason', this.occurrenceEditData['localitysecurityreason']);
@@ -1159,7 +1157,6 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceData['startdayofyear'] = this.occurrenceEditData['startdayofyear'];
             this.occurrenceData['enddayofyear'] = this.occurrenceEditData['enddayofyear'];
             this.occurrenceData['verbatimeventdate'] = this.occurrenceEditData['verbatimeventdate'];
-            this.occurrenceData['habitat'] = this.occurrenceEditData['habitat'];
             this.occurrenceData['substrate'] = this.occurrenceEditData['substrate'];
             this.occurrenceData['minimumdepthinmeters'] = this.occurrenceEditData['minimumdepthinmeters'];
             this.occurrenceData['maximumdepthinmeters'] = this.occurrenceEditData['maximumdepthinmeters'];
