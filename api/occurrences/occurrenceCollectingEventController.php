@@ -38,8 +38,8 @@ if($action && SanitizerService::validateInternalRequest()){
         $locationid = (int)$_POST['locationid'];
         echo json_encode($occurrenceCollectingEvents->getLocationCollectingEventArr($collid, $locationid));
     }
-    elseif($action === 'getCollectingEventBenthicData' && $eventid){
-        echo json_encode($occurrenceCollectingEvents->getCollectingEventBenthicData($eventid));
+    elseif($action === 'getCollectingEventReplicateData' && $eventid){
+        echo json_encode($occurrenceCollectingEvents->getCollectingEventReplicateData($eventid));
     }
     elseif($action === 'getCollectingEventCollectionsArr' && $eventid){
         echo json_encode($occurrenceCollectingEvents->getCollectingEventCollectionsArr($eventid));
