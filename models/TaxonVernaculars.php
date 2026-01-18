@@ -84,7 +84,7 @@ class TaxonVernaculars{
             $limit = array_key_exists('limit', $opts) ? (int)$opts['limit'] : null;
             $sql = 'SELECT DISTINCT v.vernacularname '.
                 'FROM taxavernaculars AS v '.
-                'WHERE v.vernacularname LIKE "%' . $term . '%" '.
+                'WHERE v.vernacularname LIKE "' . $term . '%" '.
                 'ORDER BY v.vernacularname ';
             if($limit){
                 $sql .= 'LIMIT ' . $limit . ' ';
@@ -159,8 +159,9 @@ class TaxonVernaculars{
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT t.tidaccepted, v.vernacularname '.
-            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid '.
-            'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ORDER BY t.tidaccepted, v.vernacularname ';
+            'FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.tid = t.tid '.
+            'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') '.
+            'ORDER BY t.tidaccepted, v.vernacularname ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -171,7 +172,28 @@ class TaxonVernaculars{
                 }
                 $nodeArr = array();
                 $nodeArr['vernacularname'] = $row['vernacularname'];
+                $nodeArr['vernaculartid'] = $row['tidaccepted'];
                 $retArr[$row['tidaccepted']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+
+        $sql = 'SELECT DISTINCT te.tid, v.tid AS vernaculartid, v.vernacularname '.
+            'FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid '.
+            'WHERE te.tid IN(' . implode(',', $tidArr) . ') '.
+            'ORDER BY te.tid, v.vernacularname ';
+        //echo '<div>'.$sql.'</div>';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['tid'], $retArr)){
+                    $retArr[$row['tid']] = array();
+                }
+                $nodeArr = array();
+                $nodeArr['vernacularname'] = $row['vernacularname'];
+                $nodeArr['vernaculartid'] = $row['vernaculartid'];
+                $retArr[$row['tid']][] = $nodeArr;
                 unset($rows[$index]);
             }
         }
@@ -234,15 +256,17 @@ class TaxonVernaculars{
     public function setSciNameSearchDataByVernaculars($searchData, $vernaculars): array
     {
         $whereStr = '';
-        $sql = 'SELECT DISTINCT t.tid, t.sciname ' .
-            'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid ';
+        $sql = 'SELECT DISTINCT t.tid, t.sciname FROM taxa AS t ';
         foreach($vernaculars as $name){
-            $whereStr .= "OR v.vernacularname LIKE '%" . SanitizerService::cleanInStr($this->conn, $name) . "%' ";
+            $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, $name) . "' ";
+            $whereStr .= "OR v.vernacularname LIKE '" . SanitizerService::cleanInStr($this->conn, $name) . " %' ";
             if(strpos($name, '-') !== false){
-                $whereStr .= "OR v.vernacularname LIKE '%" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $name)) . "%' ";
+                $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $name)) . "' ";
+                $whereStr .= "OR v.vernacularname LIKE '" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $name)) . " %' ";
             }
         }
-        $sql .= 'WHERE ' . substr($whereStr,3) . ' ';
+        $sql .= 'WHERE tid IN(SELECT v.tid FROM taxavernaculars AS v WHERE ' . substr($whereStr,3) . ') ';
+        $sql .= 'OR tid IN(SELECT te.tid FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid WHERE ' . substr($whereStr,3) . ') ';
         //echo "<div>sql: ".$sql."</div>";
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);

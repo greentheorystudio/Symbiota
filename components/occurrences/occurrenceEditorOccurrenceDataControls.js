@@ -5,7 +5,7 @@ const occurrenceEditorOccurrenceDataControls = {
                 <template v-if="Number(occId) === 0">
                     <div class="row q-gutter-sm">
                         <occurrence-entry-follow-up-action-selector :selected-action="entryFollowUpAction" @change-occurrence-entry-follow-up-action="changeEntryFollowUpAction"></occurrence-entry-follow-up-action-selector>
-                        <div v-if="Object.keys(configuredEventMofDataFields).length === 0 && occurrenceEntryFormat !== 'lot' && occurrenceEntryFormat !== 'benthic'">
+                        <div v-if="Object.keys(configuredEventMofDataFields).length === 0 && occurrenceEntryFormat !== 'lot' && occurrenceEntryFormat !== 'replicate'">
                             <q-toggle v-model="collectionEventAutoSearch" checked-icon="check" color="green" unchecked-icon="clear" label="Event Auto Search" @update:model-value="setCollectingEventAutoSearch"></q-toggle>
                         </div>
                     </div>
@@ -22,7 +22,7 @@ const occurrenceEditorOccurrenceDataControls = {
                     <q-btn color="secondary" @click="createOccurrenceRecord();" label="Create Occurrence Record" :disabled="!occurrenceValid" tabindex="0" />
                 </template>
                 <template v-else>
-                    <template v-if="occurrenceEntryFormat === 'lot' || occurrenceEntryFormat === 'benthic'">
+                    <template v-if="occurrenceEntryFormat === 'lot' || occurrenceEntryFormat === 'replicate'">
                         <q-btn color="secondary" @click="showEventLocationTransferPopup = true" label="Change Event/Location" tabindex="0" />
                     </template>
                     <q-btn color="secondary" @click="saveOccurrenceEdits();" label="Save Occurrence Edits" :disabled="!editsExist || !occurrenceValid" tabindex="0" />
