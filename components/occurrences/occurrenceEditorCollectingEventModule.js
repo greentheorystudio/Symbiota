@@ -8,11 +8,11 @@ const occurrenceEditorCollectingEventModule = {
                     </div>
                     <div class="row justify-end q-gutter-sm">
                         <template v-if="Number(eventId) > 0">
-                            <template v-if="occurrenceEntryFormat === 'benthic' && Number(eventData.repcount) > 0">
-                                <template v-if="collectingEventBenthicTaxaCnt > 0">
-                                    <q-btn color="secondary" @click="showBenthicTaxaListPopup = true" label="View Taxa" tabindex="0" />
+                            <template v-if="occurrenceEntryFormat === 'replicate' && Number(eventData.repcount) > 0">
+                                <template v-if="collectingEventReplicateTaxaCnt > 0">
+                                    <q-btn color="secondary" @click="showReplicateTaxaListPopup = true" label="View Taxa" tabindex="0" />
                                 </template>
-                                <q-btn color="secondary" @click="showBenthicTaxaEditorPopup = true" label="Add Taxa" tabindex="0" />
+                                <q-btn color="secondary" @click="showReplicateTaxaEditorPopup = true" label="Add Taxa" tabindex="0" />
                             </template>
                             <template v-else-if="collectingEventCollectionArr.length > 0">
                                 <q-btn color="secondary" @click="showCollectionListPopup = true" label="View Collections" tabindex="0" />
@@ -47,19 +47,19 @@ const occurrenceEditorCollectingEventModule = {
                 @close:popup="showCollectionListPopup = false"
             ></occurrence-collection-list-popup>
         </template>
-        <template v-if="showBenthicTaxaListPopup">
-            <occurrence-collecting-event-benthic-taxa-list-popup
-                :show-popup="showBenthicTaxaListPopup"
+        <template v-if="showReplicateTaxaListPopup">
+            <occurrence-collecting-event-replicate-taxa-list-popup
+                :show-popup="showReplicateTaxaListPopup"
                 @update:edit-taxon="processEditTaxonRequest"
-                @close:popup="showBenthicTaxaListPopup = false"
-            ></occurrence-collecting-event-benthic-taxa-list-popup>
+                @close:popup="showReplicateTaxaListPopup = false"
+            ></occurrence-collecting-event-replicate-taxa-list-popup>
         </template>
-        <template v-if="showBenthicTaxaEditorPopup">
-            <occurrence-collecting-event-benthic-taxa-editor-popup
+        <template v-if="showReplicateTaxaEditorPopup">
+            <occurrence-collecting-event-replicate-taxa-editor-popup
                 :edit-taxon="editTaxonPopupTaxonData"
-                :show-popup="showBenthicTaxaEditorPopup"
-                @close:popup="closeBenthicTaxaEditorPopup();"
-            ></occurrence-collecting-event-benthic-taxa-list-popup>
+                :show-popup="showReplicateTaxaEditorPopup"
+                @close:popup="closeReplicateTaxaEditorPopup();"
+            ></occurrence-collecting-event-replicate-taxa-list-popup>
         </template>
         <template v-if="showEventEditorPopup">
             <occurrence-collecting-event-editor-popup
@@ -81,8 +81,8 @@ const occurrenceEditorCollectingEventModule = {
         'collecting-event-field-module': collectingEventFieldModule,
         'confirmation-popup': confirmationPopup,
         'mof-data-editor-popup': mofDataEditorPopup,
-        'occurrence-collecting-event-benthic-taxa-editor-popup': occurrenceCollectingEventBenthicTaxaEditorPopup,
-        'occurrence-collecting-event-benthic-taxa-list-popup': occurrenceCollectingEventBenthicTaxaListPopup,
+        'occurrence-collecting-event-replicate-taxa-editor-popup': occurrenceCollectingEventReplicateTaxaEditorPopup,
+        'occurrence-collecting-event-replicate-taxa-list-popup': occurrenceCollectingEventReplicateTaxaListPopup,
         'occurrence-collecting-event-editor-popup': occurrenceCollectingEventEditorPopup,
         'occurrence-collection-list-popup': occurrenceCollectionListPopup,
         'text-field-input-element': textFieldInputElement
@@ -91,9 +91,9 @@ const occurrenceEditorCollectingEventModule = {
         const { showNotification } = useCore();
         const occurrenceStore = useOccurrenceStore();
 
-        const collectingEventBenthicData = Vue.computed(() => occurrenceStore.getCollectingEventBenthicData);
-        const collectingEventBenthicTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventBenthicTaxaCnt);
         const collectingEventCollectionArr = Vue.computed(() => occurrenceStore.getCollectingEventCollectionArr);
+        const collectingEventReplicateData = Vue.computed(() => occurrenceStore.getCollectingEventReplicateData);
+        const collectingEventReplicateTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventReplicateTaxaCnt);
         const configuredDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
         const configuredDataLabel = Vue.computed(() => occurrenceStore.getEventMofDataLabel);
         const confirmationPopupRef = Vue.ref(null);
@@ -106,15 +106,15 @@ const occurrenceEditorCollectingEventModule = {
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
-        const showBenthicTaxaEditorPopup = Vue.ref(false);
-        const showBenthicTaxaListPopup = Vue.ref(false);
         const showCollectionListPopup = Vue.ref(false);
         const showConfiguredDataEditorPopup = Vue.ref(false);
         const showEventEditorPopup = Vue.ref(false);
+        const showReplicateTaxaEditorPopup = Vue.ref(false);
+        const showReplicateTaxaListPopup = Vue.ref(false);
 
-        function closeBenthicTaxaEditorPopup() {
+        function closeReplicateTaxaEditorPopup() {
             editTaxonPopupTaxonData.value = null;
-            showBenthicTaxaEditorPopup.value = false;
+            showReplicateTaxaEditorPopup.value = false;
         }
 
         function createCollectingEventRecord() {
@@ -130,8 +130,8 @@ const occurrenceEditorCollectingEventModule = {
 
         function processEditTaxonRequest(taxon) {
             editTaxonPopupTaxonData.value = taxon;
-            showBenthicTaxaListPopup.value = false;
-            showBenthicTaxaEditorPopup.value = true;
+            showReplicateTaxaListPopup.value = false;
+            showReplicateTaxaEditorPopup.value = true;
         }
 
         function processOpenEditor() {
@@ -158,9 +158,9 @@ const occurrenceEditorCollectingEventModule = {
         });
 
         return {
-            collectingEventBenthicData,
-            collectingEventBenthicTaxaCnt,
             collectingEventCollectionArr,
+            collectingEventReplicateData,
+            collectingEventReplicateTaxaCnt,
             configuredDataFields,
             configuredDataLabel,
             confirmationPopupRef,
@@ -172,12 +172,12 @@ const occurrenceEditorCollectingEventModule = {
             occId,
             occurrenceEntryFormat,
             occurrenceFieldDefinitions,
-            showBenthicTaxaEditorPopup,
-            showBenthicTaxaListPopup,
             showCollectionListPopup,
             showConfiguredDataEditorPopup,
             showEventEditorPopup,
-            closeBenthicTaxaEditorPopup,
+            showReplicateTaxaEditorPopup,
+            showReplicateTaxaListPopup,
+            closeReplicateTaxaEditorPopup,
             createCollectingEventRecord,
             processEditTaxonRequest,
             processOpenEditor,
