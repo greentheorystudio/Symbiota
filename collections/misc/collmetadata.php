@@ -221,7 +221,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
         function processDataCollectionMethodChange(){
             const selectedValue = document.getElementById("datarecordingmethod").value;
-            if(selectedValue === 'benthic'){
+            if(selectedValue === 'replicate'){
                 document.getElementById('defaultRepCountBlock').style.display = "block";
             }
             else{
@@ -464,11 +464,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                                         <option value="observation" <?php echo ($collid && $collData['datarecordingmethod'] === 'observation'?'SELECTED':''); ?>>Observation</option>
                                         <option value="skeletal" <?php echo ($collid && $collData['datarecordingmethod'] === 'skeletal'?'SELECTED':''); ?>>Skeletal</option>
                                         <option value="lot" <?php echo ($collid && $collData['datarecordingmethod'] === 'lot'?'SELECTED':''); ?>>Lot</option>
-                                        <option value="benthic" <?php echo ($collid && $collData['datarecordingmethod'] === 'benthic'?'SELECTED':''); ?>>Benthic</option>
+                                        <option value="replicate" <?php echo ($collid && $collData['datarecordingmethod'] === 'replicate'?'SELECTED':''); ?>>Replicate</option>
                                     </select>
                                 </span>
                             </div>
-                            <div class="field-block" id="defaultRepCountBlock" style="display:<?php echo (($collid && $collData['datarecordingmethod'] === 'benthic')?'block':'none'); ?>;">
+                            <div class="field-block" id="defaultRepCountBlock" style="display:<?php echo (($collid && $collData['datarecordingmethod'] === 'replicate')?'block':'none'); ?>;">
                                 <span class="field-label">Default Rep Count:</span>
                                 <span class="field-elem">
                                     <input type="text" name="defaultRepCount" id="defaultRepCount" value="<?php echo ($collid?$collData['defaultRepCount']:'');?>" />

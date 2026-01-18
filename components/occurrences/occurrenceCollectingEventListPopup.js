@@ -95,11 +95,6 @@ const occurrenceCollectingEventListPopup = {
                                             {{ event.habitat }}
                                         </span>
                                     </div>
-                                    <div v-if="event.substrate">
-                                        <span>
-                                            {{ event.substrate }}
-                                        </span>
-                                    </div>
                                     <div v-if="event.fieldnumber || event.fieldnotes">
                                         <template v-if="event.fieldnumber">
                                             <span>

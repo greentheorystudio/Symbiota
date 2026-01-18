@@ -23,7 +23,7 @@ const occurrenceCollectingEventEditorPopup = {
                                     </template>
                                 </div>
                                 <div class="row justify-end q-gutter-xs">
-                                    <q-btn color="negative" @click="deleteEvent();" label="Delete Event" :disabled="eventId === 0 || collectingEventBenthicTaxaCnt > 0 || collectingEventCollectionArr.length > 0" tabindex="0" />
+                                    <q-btn color="negative" @click="deleteEvent();" label="Delete Event" :disabled="eventId === 0 || collectingEventReplicateTaxaCnt > 0 || collectingEventCollectionArr.length > 0" tabindex="0" />
                                     <q-btn color="secondary" @click="showEventTransferPopup = true" label="Change Location" tabindex="0" />
                                     <q-btn color="secondary" @click="saveEventEdits();" label="Save Event Edits" :disabled="!editsExist || !eventValid" tabindex="0" />
                                 </div>
@@ -59,8 +59,8 @@ const occurrenceCollectingEventEditorPopup = {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = useOccurrenceStore();
 
-        const collectingEventBenthicTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventBenthicTaxaCnt);
         const collectingEventCollectionArr = Vue.computed(() => occurrenceStore.getCollectingEventCollectionArr);
+        const collectingEventReplicateTaxaCnt = Vue.computed(() => occurrenceStore.getCollectingEventReplicateTaxaCnt);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
         const editsExist = Vue.computed(() => occurrenceStore.getCollectingEventEditsExist);
@@ -125,8 +125,8 @@ const occurrenceCollectingEventEditorPopup = {
         });
 
         return {
-            collectingEventBenthicTaxaCnt,
             collectingEventCollectionArr,
+            collectingEventReplicateTaxaCnt,
             contentRef,
             contentStyle,
             editsExist,

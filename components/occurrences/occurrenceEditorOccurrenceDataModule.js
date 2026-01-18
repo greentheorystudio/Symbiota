@@ -1,7 +1,7 @@
 const occurrenceEditorOccurrenceDataModule = {
     template: `
         <div>
-            <template v-if="occurrenceEntryFormat === 'benthic' || occurrenceEntryFormat === 'lot'">
+            <template v-if="occurrenceEntryFormat === 'replicate' || occurrenceEntryFormat === 'lot'">
                 <div class="q-pa-md column q-gutter-md">
                     <div>
                         <div class="row justify-between q-col-gutter-sm">

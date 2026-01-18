@@ -5,7 +5,7 @@ const occurrenceEditorFormMiscElement = {
                 <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
                     Occurrence
                 </div>
-                <div v-if="!editorHideFields.includes('habitat')" class="row">
+                <div v-if="occurrenceEntryFormat !== 'replicate' && !editorHideFields.includes('habitat')" class="row">
                     <div class="col-grow">
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['habitat']" label="Habitat" field="habitat" :value="occurrenceData.habitat" @update:value="(value) => updateOccurrenceData('habitat', value)"></text-field-input-element>
                     </div>
@@ -20,7 +20,7 @@ const occurrenceEditorFormMiscElement = {
                         <occurrence-associated-taxa-input-element :definition="occurrenceFieldDefinitions['associatedtaxa']" label="Associated Taxa" field="associatedtaxa" :maxlength="occurrenceFields['associatedtaxa'] ? occurrenceFields['associatedtaxa']['length'] : 0" :value="occurrenceData.associatedtaxa" @update:value="(value) => updateOccurrenceData('associatedtaxa', value)"></occurrence-associated-taxa-input-element>
                     </div>
                 </div>
-                <div v-if="!editorHideFields.includes('lifestage') || !editorHideFields.includes('sex') || (occurrenceEntryFormat === 'benthic' && !editorHideFields.includes('rep')) || !editorHideFields.includes('individualcount')" class="row justify-between q-col-gutter-sm">
+                <div v-if="!editorHideFields.includes('lifestage') || !editorHideFields.includes('sex') || (occurrenceEntryFormat === 'replicate' && !editorHideFields.includes('rep')) || !editorHideFields.includes('individualcount')" class="row justify-between q-col-gutter-sm">
                     <div v-if="!editorHideFields.includes('lifestage')" class="col-12 col-sm-6 col-md-grow">
                         <template v-if="controlledVocabularies.hasOwnProperty('lifestage') && controlledVocabularies['lifestage'] && controlledVocabularies['lifestage'].length > 0 && (!occurrenceData.lifestage || controlledVocabularies['lifestage'].includes(occurrenceData.lifestage))">
                             <selector-input-element :definition="occurrenceFieldDefinitions['lifestage']" label="Life Stage" :options="controlledVocabularies['lifestage']" :value="occurrenceData.lifestage" @update:value="(value) => updateOccurrenceData('lifestage', value)" :clearable="true"></selector-input-element>
@@ -37,13 +37,13 @@ const occurrenceEditorFormMiscElement = {
                             <text-field-input-element :definition="occurrenceFieldDefinitions['sex']" label="Sex" field="sex" :maxlength="occurrenceFields['sex'] ? occurrenceFields['sex']['length'] : 0" :value="occurrenceData.sex" @update:value="(value) => updateOccurrenceData('sex', value)"></text-field-input-element>
                         </template>
                     </div>
-                    <template v-if="occurrenceEntryFormat === 'benthic' && !editorHideFields.includes('rep')">
+                    <template v-if="occurrenceEntryFormat === 'replicate' && !editorHideFields.includes('rep')">
                         <div class="col-12 col-sm-6 col-md-grow">
                             <text-field-input-element :disabled="true" data-type="int" :definition="occurrenceFieldDefinitions['rep']" label="Rep" :maxlength="occurrenceFields['rep'] ? occurrenceFields['rep']['length'] : 0" min-value="1" :max-value="eventData.repcount" :value="occurrenceData.rep" @update:value="(value) => updateOccurrenceData('rep', value)"></text-field-input-element>
                         </div>
                     </template>
                     <div v-if="!editorHideFields.includes('individualcount')" class="col-12 col-sm-6 col-md-grow">
-                        <template v-if="occurrenceEntryFormat === 'benthic'">
+                        <template v-if="occurrenceEntryFormat === 'replicate'">
                             <text-field-input-element :disabled="true" data-type="int" :definition="occurrenceFieldDefinitions['individualcount']" label="Individual Count" :maxlength="occurrenceFields['individualcount'] ? occurrenceFields['individualcount']['length'] : 0" :value="occurrenceData.individualcount" min-value="0" @update:value="(value) => updateOccurrenceData('individualcount', value)"></text-field-input-element>
                         </template>
                         <template v-else>
@@ -57,7 +57,7 @@ const occurrenceEditorFormMiscElement = {
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
-                    <div v-if="!editorHideFields.includes('labelproject')" class="col-11">
+                    <div v-if="occurrenceEntryFormat !== 'replicate' && !editorHideFields.includes('labelproject')" class="col-11">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['labelproject']" label="Label Project" :maxlength="occurrenceFields['labelproject'] ? occurrenceFields['labelproject']['length'] : 0" :value="occurrenceData.labelproject" @update:value="(value) => updateOccurrenceData('labelproject', value)"></text-field-input-element>
                     </div>
                     <div class="col-1 row justify-end self-center">
@@ -146,7 +146,7 @@ const occurrenceEditorFormMiscElement = {
                             }
                             else{
                                 searchStore.removeOccidFromOccidArrs(occId.value);
-                                occurrenceStore.setCollectingEventBenthicData();
+                                occurrenceStore.setCollectingEventReplicateData();
                             }
                         });
                     }

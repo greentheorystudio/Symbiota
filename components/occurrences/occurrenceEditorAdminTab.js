@@ -42,7 +42,7 @@ const occurrenceEditorAdminTab = {
                     </div>
                 </q-card-section>
             </q-card>
-            <q-card v-if="profileCollectionOptions.length > 0 && occurrenceEntryFormat !== 'benthic' && occurrenceEntryFormat !== 'lot'" flat bordered class="black-border">
+            <q-card v-if="profileCollectionOptions.length > 0 && occurrenceEntryFormat !== 'replicate' && occurrenceEntryFormat !== 'lot'" flat bordered class="black-border">
                 <q-card-section>
                     <div class="text-h6 text-bold">Transfer Record</div>
                     <div class="q-mt-xs q-pl-sm row justify-between">
