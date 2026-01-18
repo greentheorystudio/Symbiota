@@ -5,7 +5,7 @@ const occurrenceEditorFormMiscElement = {
                 <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
                     Occurrence
                 </div>
-                <div v-if="!editorHideFields.includes('habitat')" class="row">
+                <div v-if="occurrenceEntryFormat !== 'replicate' && !editorHideFields.includes('habitat')" class="row">
                     <div class="col-grow">
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['habitat']" label="Habitat" field="habitat" :value="occurrenceData.habitat" @update:value="(value) => updateOccurrenceData('habitat', value)"></text-field-input-element>
                     </div>
@@ -57,7 +57,7 @@ const occurrenceEditorFormMiscElement = {
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
-                    <div v-if="!editorHideFields.includes('labelproject')" class="col-11">
+                    <div v-if="occurrenceEntryFormat !== 'replicate' && !editorHideFields.includes('labelproject')" class="col-11">
                         <text-field-input-element :definition="occurrenceFieldDefinitions['labelproject']" label="Label Project" :maxlength="occurrenceFields['labelproject'] ? occurrenceFields['labelproject']['length'] : 0" :value="occurrenceData.labelproject" @update:value="(value) => updateOccurrenceData('labelproject', value)"></text-field-input-element>
                     </div>
                     <div class="col-1 row justify-end self-center">

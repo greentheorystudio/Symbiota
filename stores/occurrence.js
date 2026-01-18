@@ -702,6 +702,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['startdayofyear'] = eventData['startdayofyear'];
             this.occurrenceEditData['enddayofyear'] = eventData['enddayofyear'];
             this.occurrenceEditData['verbatimeventdate'] = eventData['verbatimeventdate'];
+            if(this.occurrenceEntryFormat === 'replicate'){
+                this.occurrenceEditData['habitat'] = eventData['habitat'];
+            }
             this.occurrenceEditData['substrate'] = eventData['substrate'];
             if(Number(this.occurrenceEditData['localitysecurity']) !== 1 && Number(eventData['localitysecurity']) === 1){
                 this.occurrenceEditData['localitysecurity'] = eventData['localitysecurity'];
@@ -742,7 +745,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['verbatimdepth'] = eventData['verbatimdepth'];
             this.occurrenceEditData['samplingprotocol'] = eventData['samplingprotocol'];
             this.occurrenceEditData['samplingeffort'] = eventData['samplingeffort'];
-            this.occurrenceEditData['labelproject'] = eventData['labelproject'];
+            if(this.occurrenceEntryFormat === 'replicate'){
+                this.occurrenceEditData['labelproject'] = eventData['labelproject'];
+            }
         },
         mergeLocationOccurrenceData() {
             const locationData = this.getLocationData;
@@ -996,6 +1001,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.collectingEventStore.updateCollectingEventEditData('startdayofyear', this.occurrenceEditData['startdayofyear']);
             this.collectingEventStore.updateCollectingEventEditData('enddayofyear', this.occurrenceEditData['enddayofyear']);
             this.collectingEventStore.updateCollectingEventEditData('verbatimeventdate', this.occurrenceEditData['verbatimeventdate']);
+            if(this.occurrenceEntryFormat === 'replicate'){
+                this.collectingEventStore.updateCollectingEventEditData('habitat', this.occurrenceEditData['habitat']);
+            }
             this.collectingEventStore.updateCollectingEventEditData('substrate', this.occurrenceEditData['substrate']);
             this.collectingEventStore.updateCollectingEventEditData('localitysecurity', this.occurrenceEditData['localitysecurity']);
             this.collectingEventStore.updateCollectingEventEditData('localitysecurityreason', this.occurrenceEditData['localitysecurityreason']);
@@ -1014,7 +1022,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.collectingEventStore.updateCollectingEventEditData('verbatimdepth', this.occurrenceEditData['verbatimdepth']);
             this.collectingEventStore.updateCollectingEventEditData('samplingprotocol', this.occurrenceEditData['samplingprotocol']);
             this.collectingEventStore.updateCollectingEventEditData('samplingeffort', this.occurrenceEditData['samplingeffort']);
-            this.collectingEventStore.updateCollectingEventEditData('labelproject', this.occurrenceEditData['labelproject']);
+            if(this.occurrenceEntryFormat === 'replicate'){
+                this.collectingEventStore.updateCollectingEventEditData('labelproject', this.occurrenceEditData['labelproject']);
+            }
         },
         setOccurrenceCollectionData() {
             this.occurrenceEditData['basisofrecord'] = this.getCollectionData['colltype'];
@@ -1157,13 +1167,18 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceData['startdayofyear'] = this.occurrenceEditData['startdayofyear'];
             this.occurrenceData['enddayofyear'] = this.occurrenceEditData['enddayofyear'];
             this.occurrenceData['verbatimeventdate'] = this.occurrenceEditData['verbatimeventdate'];
+            if(this.occurrenceEntryFormat === 'replicate'){
+                this.occurrenceData['habitat'] = this.occurrenceEditData['habitat'];
+            }
             this.occurrenceData['substrate'] = this.occurrenceEditData['substrate'];
             this.occurrenceData['minimumdepthinmeters'] = this.occurrenceEditData['minimumdepthinmeters'];
             this.occurrenceData['maximumdepthinmeters'] = this.occurrenceEditData['maximumdepthinmeters'];
             this.occurrenceData['verbatimdepth'] = this.occurrenceEditData['verbatimdepth'];
             this.occurrenceData['samplingprotocol'] = this.occurrenceEditData['samplingprotocol'];
             this.occurrenceData['samplingeffort'] = this.occurrenceEditData['samplingeffort'];
-            this.occurrenceData['labelproject'] = this.occurrenceEditData['labelproject'];
+            if(this.occurrenceEntryFormat === 'replicate'){
+                this.occurrenceData['labelproject'] = this.occurrenceEditData['labelproject'];
+            }
         },
         transferEditLocationDataToOccurrenceData() {
             this.occurrenceData['locationid'] = this.occurrenceEditData['locationid'];

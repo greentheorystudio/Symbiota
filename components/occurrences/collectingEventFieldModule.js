@@ -120,6 +120,11 @@ const collectingEventFieldModule = {
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimdepth']" label="Verbatim Depth" :maxlength="fields['verbatimdepth'] ? fields['verbatimdepth']['length'] : 0" :value="data.verbatimdepth" @update:value="(value) => updateData('verbatimdepth', value)"></text-field-input-element>
                 </div>
             </div>
+            <div v-if="occurrenceEntryFormat === 'replicate' && !editorHideFields.includes('habitat')" class="row">
+                <div class="col-grow">
+                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['habitat']" label="Habitat" field="habitat" :value="data.habitat" @update:value="(value) => updateData('habitat', value)"></text-field-input-element>
+                </div>
+            </div>
             <div v-if="!editorHideFields.includes('fieldnumber') || !editorHideFields.includes('samplingprotocol') || !editorHideFields.includes('samplingeffort')" class="row justify-between q-col-gutter-sm">
                 <div v-if="!editorHideFields.includes('fieldnumber')" class="col-12 col-sm-6 col-md-4">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['fieldnumber']" label="Field Number" :maxlength="fields['fieldnumber'] ? fields['fieldnumber']['length'] : 0" :value="data.fieldnumber" @update:value="(value) => updateData('fieldnumber', value)"></text-field-input-element>
@@ -134,6 +139,11 @@ const collectingEventFieldModule = {
             <div v-if="!editorHideFields.includes('fieldnotes')" class="row">
                 <div class="col-grow">
                     <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['fieldnotes']" label="Field Notes" :value="data.fieldnotes" @update:value="(value) => updateData('fieldnotes', value)"></text-field-input-element>
+                </div>
+            </div>
+            <div v-if="occurrenceEntryFormat === 'replicate' && !editorHideFields.includes('labelproject')" class="row">
+                <div class="col-grow">
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['labelproject']" label="Label Project" :maxlength="fields['labelproject'] ? fields['labelproject']['length'] : 0" :value="data.labelproject" @update:value="(value) => updateData('labelproject', value)"></text-field-input-element>
                 </div>
             </div>
             <template v-if="imageCount === 0">
@@ -193,6 +203,7 @@ const collectingEventFieldModule = {
 
         const editorHideFields = Vue.computed(() => occurrenceStore.getEditorHideFields);
         const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
+        const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const propsRefs = Vue.toRefs(props);
         const showExtendedForm = Vue.ref(false);
         const showLocationForm = Vue.ref(false);
@@ -210,7 +221,7 @@ const collectingEventFieldModule = {
         function setExtendedView() {
             if(props.data.fieldnotes ||
                 props.data.fieldnumber ||
-                props.data.substrate ||
+                props.data.habitat ||
                 props.data.minimumdepthinmeters ||
                 props.data.maximumdepthinmeters ||
                 props.data.verbatimdepth ||
@@ -248,6 +259,7 @@ const collectingEventFieldModule = {
         return {
             editorHideFields,
             imageCount,
+            occurrenceEntryFormat,
             showExtendedForm,
             showLocationForm,
             updateData,
