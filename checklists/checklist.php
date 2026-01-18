@@ -75,16 +75,16 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                             <div>
                                 <h1>{{ checklistName }}</h1>
                             </div>
-                            <div class="row q-gutter-sm">
+                            <div class="row q-gutter-sm items-center">
                                 <div v-if="keyActive && taxaDataArr.length > 0">
-                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="fas fa-key" dense unelevated :ripple="false" aria-label="Open Interactive Key" tabindex="0">
+                                    <q-btn text-color="black" size="md" :href="(clientRoot + '/ident/key.php?clid=' + clId + '&pid=' + pId)" icon="key" dense unelevated :ripple="false" aria-label="Open Interactive Key" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Interactive Key
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
                                 <div v-if="taxaDataArr.length > 0">
-                                    <q-btn text-color="black" size="sm" :href="(clientRoot + '/checklists/flashcards.php?clid=' + clId)" icon="style" dense unelevated :ripple="false" aria-label="Open Flashcard Game" tabindex="0">
+                                    <q-btn text-color="black" size="md" :href="(clientRoot + '/checklists/flashcards.php?clid=' + clId)" icon="style" dense unelevated :ripple="false" aria-label="Open Flashcard Game" tabindex="0">
                                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                             Open Flashcard Game
                                         </q-tooltip>
@@ -470,11 +470,19 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                         taxaDataArr.value.forEach(taxon => {
                             let includeTaxon = false;
                             if(taxonFilterVal.value){
-                                if(Number(taxonFilterVal.value['rankid']) === 140 && taxon['family'] === taxonFilterVal.value['sciname']){
-                                    includeTaxon = true;
+                                if(Number(taxonFilterVal.value['rankid']) > 0){
+                                    if(Number(taxonFilterVal.value['rankid']) === 140 && taxon['family'] === taxonFilterVal.value['sciname']){
+                                        includeTaxon = true;
+                                    }
+                                    else if(Number(taxonFilterVal.value['rankid']) > 140 && (taxon['sciname'] === taxonFilterVal.value['sciname'] || taxon['sciname'].startsWith((taxonFilterVal.value['sciname'] + ' ')))){
+                                        includeTaxon = true;
+                                    }
                                 }
-                                else if(Number(taxonFilterVal.value['rankid']) > 140 && (taxon['sciname'] === taxonFilterVal.value['sciname'] || taxon['sciname'].startsWith((taxonFilterVal.value['sciname'] + ' ')))){
-                                    includeTaxon = true;
+                                else if(taxon.hasOwnProperty('vernacularData') && taxon['vernacularData'] && taxon['vernacularData'].length > 0){
+                                    const vernacularMatch = taxon['vernacularData'].find(vernacular => vernacular['vernacularname'] === taxonFilterVal.value['sciname']);
+                                    if(vernacularMatch){
+                                        includeTaxon = true;
+                                    }
                                 }
                             }
                             else{
