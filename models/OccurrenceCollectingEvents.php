@@ -28,7 +28,6 @@ class OccurrenceCollectingEvents{
         'enddayofyear' => array('dataType' => 'number', 'length' => 10),
         'verbatimeventdate' => array('dataType' => 'string', 'length' => 255),
         'habitat' => array('dataType' => 'text', 'length' => 0),
-        'substrate' => array('dataType' => 'string', 'length' => 500),
         'localitysecurity' => array('dataType' => 'number', 'length' => 10),
         'localitysecurityreason' => array('dataType' => 'string', 'length' => 100),
         'decimallatitude' => array('dataType' => 'number', 'length' => 0),
