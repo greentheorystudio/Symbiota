@@ -75,8 +75,8 @@ const taxaImageDisplay = {
                                                     </span>
                                                 </template>
                                             </div>
-                                            <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
-                                                <div class="text-body1">{{ getVernacularStrFromArr(taxon['vernacularData']) }}</div>
+                                            <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0 && getVernacularStrFromArr(taxon['vernacularData'], taxon['tidaccepted'])">
+                                                <div class="text-body1">{{ getVernacularStrFromArr(taxon['vernacularData'], taxon['tidaccepted']) }}</div>
                                             </template>
                                             <div v-if="displaySynonyms && taxon['synonymyData'] && taxon['synonymyData'].length > 0" class="text-italic">
                                                 {{ getSynonymStrFromArr(taxon['synonymyData']) }}
@@ -135,8 +135,8 @@ const taxaImageDisplay = {
                                         </span>
                                     </template>
                                 </div>
-                                <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0">
-                                    <div class="text-body1">{{ getVernacularStrFromArr(taxon['vernacularData']) }}</div>
+                                <template v-if="displayCommonNames && taxon['vernacularData'] && taxon['vernacularData'].length > 0 && getVernacularStrFromArr(taxon['vernacularData'], taxon['tidaccepted'])">
+                                    <div class="text-body1">{{ getVernacularStrFromArr(taxon['vernacularData'], taxon['tidaccepted']) }}</div>
                                 </template>
                                 <div v-if="displaySynonyms && taxon['synonymyData'] && taxon['synonymyData'].length > 0" class="text-italic">
                                     {{ getSynonymStrFromArr(taxon['synonymyData']) }}
@@ -217,14 +217,14 @@ const taxaImageDisplay = {
             return nameArr.length > 0 ? ('[' + nameArr.join(', ') + ']') : '';
         }
 
-        function getVernacularStrFromArr(vernacularArr) {
+        function getVernacularStrFromArr(vernacularArr, tid) {
             const nameArr = [];
             vernacularArr.forEach(vernacular => {
-                if(vernacular['vernacularname']){
+                if(vernacular['vernacularname'] && Number(tid) === Number(vernacular['vernaculartid'])){
                     nameArr.push(vernacular['vernacularname']);
                 }
             });
-            return nameArr.length > 0 ? nameArr.join(', ') : '';
+            return nameArr.length > 0 ? nameArr.join(', ') : null;
         }
 
         function openEditorPopup(id) {
