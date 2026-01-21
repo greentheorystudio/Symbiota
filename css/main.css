@@ -992,3 +992,24 @@ a.header-home-link, a.header-home-link:hover, a.header-home-link:visited {
 	width: 100%;
 	background-color: #173753;
 }
+.homepage-text {
+	font-family: 'Whitney A','Whitney B',Helvetica,Arial,sans-serif;
+	color: gray;
+	font-weight: 300;
+	text-align: center;
+}
+.homepage-totals-header {
+	font-size: 3.5em;
+}
+.homepage-totals-text {
+	font-size: 2.1em;
+}
+.homepage-link-card-header {
+	font-size: 2.1em;
+	color: #1599AB;
+	font-weight: 800;
+}
+.homepage-link-card-text {
+	font-weight: 400;
+	font-size: 1.5em;
+}
