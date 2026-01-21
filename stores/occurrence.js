@@ -894,8 +894,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     this.occurrenceEntryFormat = this.getCollectionData['datarecordingmethod'];
                     if(this.occurrenceData.hasOwnProperty('occid')){
                         this.occurrenceEditData = Object.assign({}, this.occurrenceData);
-                        this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
-                        this.setCurrentCollectingEventRecord(this.occurrenceEditData['eventid'] ? this.occurrenceEditData['eventid'] : 0);
+                        if(this.occurrenceEntryFormat === 'lot' || this.occurrenceEntryFormat === 'replicate'){
+                            this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
+                            this.setCurrentCollectingEventRecord(this.occurrenceEditData['eventid'] ? this.occurrenceEditData['eventid'] : 0);
+                        }
                         if(Number(this.occurrenceData.occid) > 0){
                             this.setOccurrenceMofData();
                         }
@@ -1070,8 +1072,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             }
                             else{
                                 this.occurrenceEditData = Object.assign({}, this.occurrenceData);
-                                this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
-                                this.setCurrentCollectingEventRecord(this.occurrenceEditData['eventid'] ? this.occurrenceEditData['eventid'] : 0);
+                                if(this.occurrenceEntryFormat === 'lot' || this.occurrenceEntryFormat === 'replicate'){
+                                    this.setCurrentLocationRecord(this.occurrenceEditData['locationid'] ? this.occurrenceEditData['locationid'] : 0);
+                                    this.setCurrentCollectingEventRecord(this.occurrenceEditData['eventid'] ? this.occurrenceEditData['eventid'] : 0);
+                                }
                                 this.setOccurrenceMofData();
                                 if(callback){
                                     callback();
