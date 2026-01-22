@@ -112,12 +112,17 @@ class TaxonMaps{
 
     public function getTaxonMaps($tid, $includeSubtaxa): array
     {
-        $retArr = array();
         $tidArr = array();
         if($includeSubtaxa){
             $tidArr = (new TaxonHierarchy)->getSubtaxaTidArrFromTid($tid);
         }
         $tidArr[] = $tid;
+        return $this->getTaxonMapsFromTidArr($tidArr);
+    }
+
+    public function getTaxonMapsFromTidArr($tidArr): array
+    {
+        $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM taxamaps WHERE tid IN(' . implode(',', $tidArr) . ') ';
