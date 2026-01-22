@@ -672,10 +672,10 @@ class Taxa{
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
                 }
-                $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted']) : null;
+                $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted'], false) : null;
                 $acceptedTid = (int)$row['tidaccepted'];
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
-                $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
+                $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid, false) : null;
                 $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
                 $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($showActual ? $row['tid'] : $acceptedTid);
                 $retArr['children'] = $this->getChildTaxaFromTid($showActual ? $row['tid'] : $acceptedTid);
@@ -701,11 +701,11 @@ class Taxa{
                     $name = $val->name;
                     $retArr[$name] = $row[$name];
                 }
-                $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted']) : null;
+                $retArr['acceptedTaxon'] = (int)$row['tid'] !== (int)$row['tidaccepted'] ? $this->getTaxonFromTid($row['tidaccepted'], false) : null;
                 $acceptedTid = (int)$row['tidaccepted'];
                 $parentTid = (int)$row['tid'] === (int)$row['tidaccepted'] ? (int)$row['parenttid'] : (int)$retArr['acceptedTaxon']['parenttid'];
                 if($fullData){
-                    $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid) : null;
+                    $retArr['parentTaxon'] = $parentTid > 0 ? $this->getTaxonFromTid($parentTid, false) : null;
                     $retArr['identifiers'] = $this->getTaxonIdentifiersFromTid($showActual ? $row['tid'] : $acceptedTid);
                     $retArr['synonyms'] = $this->getTaxonSynonymsFromTid($showActual ? $row['tid'] : $acceptedTid);
                     $retArr['children'] = $this->getChildTaxaFromTid($showActual ? $row['tid'] : $acceptedTid);
