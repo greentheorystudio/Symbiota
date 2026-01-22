@@ -54,5 +54,12 @@ if($action){
             $csidArr = json_decode($_POST['csidArr'], false);
             echo $checklistPackagingService->packageChecklistCharacterData($csidArr, $_POST['archiveFile']);
         }
+        elseif($action === 'processCompletedMapImageDataPackaging' && array_key_exists('archiveFile', $_POST)){
+            echo $checklistPackagingService->processCompletedMapImageDataPackaging($_POST['archiveFile']);
+        }
+        elseif($action === 'packageChecklistMapImages' && array_key_exists('tidArr', $_POST) && array_key_exists('archiveFile', $_POST)){
+            $tidArr = json_decode($_POST['tidArr'], false);
+            echo json_encode($checklistPackagingService->packageChecklistMapImages($tidArr, $_POST['archiveFile']));
+        }
     }
 }

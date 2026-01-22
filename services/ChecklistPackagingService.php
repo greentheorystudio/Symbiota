@@ -4,6 +4,7 @@ include_once(__DIR__ . '/../models/ChecklistTaxa.php');
 include_once(__DIR__ . '/../models/ChecklistVouchers.php');
 include_once(__DIR__ . '/../models/Images.php');
 include_once(__DIR__ . '/../models/KeyCharacterStates.php');
+include_once(__DIR__ . '/../models/TaxonMaps.php');
 include_once(__DIR__ . '/DbService.php');
 include_once(__DIR__ . '/DataDownloadService.php');
 include_once(__DIR__ . '/FileSystemService.php');
@@ -223,6 +224,50 @@ class ChecklistPackagingService {
         return $returnVal;
     }
 
+    public function packageChecklistMapImages($tidArr, $archiveFile): array
+    {
+        $returnArr = array();
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($zipArchive && $dataFileContent){
+            $imageArr = (new TaxonMaps)->getTaxonMapsFromTidArr($tidArr);
+            foreach($imageArr as $tid => $image){
+                $fileType = substr($image['url'], (strrpos($image['url'], '.') ?: -1) + 1);
+                if($fileType === 'jpg' || $fileType === 'jpeg' || $fileType === 'png'){
+                    $loaded = false;
+                    $fileName = 'map-' . $tid . '.' . $fileType;
+                    $data = array('filename' => $fileName, 'tid'   => $tid, 'title'   => $image['title']);
+                    if(strncmp($image['url'], '/', 1) === 0){
+                        FileSystemService::addFileToZipArchive($zipArchive, FileSystemService::getServerPathFromUrlPath($image['url']), $fileName);
+                        $loaded = true;
+                    }
+                    else{
+                        $ch = curl_init($image['url']);
+                        curl_setopt_array($ch, [
+                            CURLOPT_RETURNTRANSFER => true,
+                            CURLOPT_FOLLOWLOCATION => true,
+                            CURLOPT_CONNECTTIMEOUT => 20
+                        ]);
+                        $fileData = @curl_exec($ch);
+                        curl_close($ch);
+                        if($fileData){
+                            FileSystemService::addFileFromStringToZipArchive($zipArchive, $fileData, $fileName);
+                            $loaded = true;
+                        }
+                    }
+                    if($loaded){
+                        $dataFileContent .= json_encode($data) . ',';
+                        $returnArr[] = (int)$tid;
+                    }
+                }
+            }
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            FileSystemService::closeZipArchive($zipArchive);
+        }
+        return $returnArr;
+    }
+
     public function packageChecklistTaggedImages($clidArr, $tidArr, $archiveFile): array
     {
         $returnArr = array();
@@ -313,6 +358,20 @@ class ChecklistPackagingService {
     }
 
     public function processCompletedImageDataPackaging($archiveFile): int
+    {
+        $returnVal = 0;
+        $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
+        $zipArchive = FileSystemService::openZipArchive($fullArchivePath);
+        $dataFileContent = FileSystemService::openZipArchiveFile($zipArchive, 'data.json');
+        if($dataFileContent){
+            $dataFileContent = (substr($dataFileContent, -1) === ',' ? substr($dataFileContent, 0, -1) : $dataFileContent) . '],"map-images":[';
+            FileSystemService::addFileFromStringToZipArchive($zipArchive, $dataFileContent, 'data.json');
+            $returnVal = 1;
+        }
+        return $returnVal;
+    }
+
+    public function processCompletedMapImageDataPackaging($archiveFile): int
     {
         $returnVal = 0;
         $fullArchivePath = $GLOBALS['SERVER_ROOT'] . '/content/checklist/' . $archiveFile;
