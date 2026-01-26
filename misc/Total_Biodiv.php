@@ -275,7 +275,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                     const graphWidth = Vue.ref(0);
                     const marginBottom = 20;
                     const marginLeft = 40;
-                    const yearArr = [1850, 1860, 1870, 1880, 1890, 1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
+                    const yearArr = [1860, 1870, 1880, 1890, 1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
 
                     function processData(rawData) {
                         kingdomArr.forEach(kingdom => {
@@ -309,13 +309,11 @@ header('Content-Type: text/html; charset=UTF-8' );
                     }
 
                     function setGraph() {
-                        // Determine the series that need to be stacked.
                         const series = d3.stack()
-                            .keys(d3.union(data.value.map(d => d.kingdom))) // distinct series keys, in input order
-                            .value(([, D], key) => D.get(key).count) // get value for each series key and stack
-                            (d3.index(data.value, d => d.year, d => d.kingdom)); // group by stack then series key
+                            .keys(d3.union(data.value.map(d => d.kingdom)))
+                            .value(([, D], key) => D.get(key).count)
+                            (d3.index(data.value, d => d.year, d => d.kingdom));
 
-                        // Prepare the scales for positional and color encodings.
                         const x = d3.scaleBand()
                             .domain(d3.groupSort(data.value, D => d3.sum(D, d => d.year), d => d.year))
                             .range([marginLeft, graphWidth.value - marginRight])
@@ -330,7 +328,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                             .range(d3.schemeSpectral[series.length])
                             .unknown("#ccc");
 
-                        // A function to format the value in the tooltip.
                         const formatValue = x => isNaN(x) ? "N/A" : x.toLocaleString("en");
 
                         const svg = d3.create("svg")
@@ -339,7 +336,17 @@ header('Content-Type: text/html; charset=UTF-8' );
                             .attr("viewBox", [0, 0, graphWidth.value, graphHeight.value])
                             .attr("style", "max-width: 100%; height: auto;");
 
-                        // Append a group for each series, and a rect for each element in the series.
+                        const legendSvg = d3.create("svg")
+                            .attr("width", graphWidth.value)
+                            .attr("height", 75)
+                            .attr("viewBox", [0, 0, graphWidth.value, 75])
+                            .attr("style", "max-width: 100%; height: auto;");
+
+                        const legendLinear = d3.legendColor()
+                            .shapeWidth(100)
+                            .orient('horizontal')
+                            .scale(color);
+
                         svg.append("g")
                             .selectAll()
                             .data(series)
@@ -355,21 +362,26 @@ header('Content-Type: text/html; charset=UTF-8' );
                             .append("title")
                             .text(d => `${d.data[0]} ${d.key}\n${formatValue(d.data[1].get(d.key).count)}`);
 
-                        // Append the horizontal axis.
                         svg.append("g")
                             .attr("transform", `translate(0,${graphHeight.value - marginBottom})`)
                             .call(d3.axisBottom(x).tickSizeOuter(0))
                             .call(g => g.selectAll(".domain").remove());
 
-                        // Append the vertical axis.
                         svg.append("g")
                             .attr("transform", `translate(${marginLeft},0)`)
                             .call(d3.axisLeft(y).ticks(null, "s"))
                             .call(g => g.selectAll(".domain").remove());
 
+                        legendSvg.append("g")
+                            .attr("class", "legendLinear")
+                            .attr("transform", "translate(20,20)");
 
+                        graphDisplayRef.value.append(legendSvg.node());
 
                         graphDisplayRef.value.append(svg.node());
+
+                        legendSvg.select(".legendLinear")
+                            .call(legendLinear);
                     }
                     
                     function setGraphSize(size) {
