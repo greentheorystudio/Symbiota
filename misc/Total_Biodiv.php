@@ -119,7 +119,11 @@ header('Content-Type: text/html; charset=UTF-8' );
                     <div class="full-width">
                         <q-resize-observer @resize="setGraphSize" />
                     </div>
-                    <div ref="graphDisplayRef"></div>
+                    <p ref="graphDisplayRef" class="relative-position" :style="graphContainerStyle">
+                        <q-inner-loading :showing="graphLoading">
+                            <q-spinner-gears size="50px" color="primary"></q-spinner-gears>
+                        </q-inner-loading>
+                    </p>
                     <p>
                         The original IRL Species Inventory, first compiled in 1995, listed a total of 2,493 different species of plants, animals and
                         protists. Of these, animals comprised the greatest proportion of species in the inventory (71.4 percent), with 1,779 species
@@ -265,10 +269,11 @@ header('Content-Type: text/html; charset=UTF-8' );
                     const baseStore = useBaseStore();
 
                     const clientRoot = baseStore.getClientRoot;
-                    //"state","age","population"
                     const data = Vue.ref([]);
+                    const graphContainerStyle = Vue.ref(null);
                     const graphDisplayRef = Vue.ref(null);
                     const graphHeight = Vue.ref(0);
+                    const graphLoading = Vue.ref(true);
                     const kingdomArr = ['Animalia', 'Bacteria', 'Protozoa', 'Chromista', 'Fungi', 'Plantae'];
                     const marginTop = 10;
                     const marginRight = 10;
@@ -290,6 +295,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                             });
                         });
                         setGraph();
+                        graphLoading.value = false;
                     }
 
                     function setData() {
@@ -387,6 +393,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                     function setGraphSize(size) {
                         graphWidth.value = size.width;
                         graphHeight.value = graphWidth.value / 1.856;
+                        graphContainerStyle.value = 'width:' + graphWidth.value + 'px;height:' + (graphHeight.value + 75) + 'px;';
                     }
 
                     Vue.onMounted(() => {
@@ -395,7 +402,9 @@ header('Content-Type: text/html; charset=UTF-8' );
                     });
 
                     return {
+                        graphContainerStyle,
                         graphDisplayRef,
+                        graphLoading,
                         setGraphSize
                     }
                 }
