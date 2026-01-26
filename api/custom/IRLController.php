@@ -26,4 +26,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getProjectRScriptData' && $collid){
         echo json_encode($irlManager->getProjectRScriptData($collid));
     }
+    elseif($action === 'getOccurrencceTaxaCntsByKingdomDecade'){
+        echo json_encode($irlManager->getOccurrencceTaxaCntsByKingdomDecade());
+    }
 }
