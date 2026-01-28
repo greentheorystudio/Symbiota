@@ -7,36 +7,68 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>In this tutorial, we will walk you through each tool on the screen to get a sense of where panels are located. Let's go through the <b>locations of the control panels</b> that are available to use.</p>"
-                },
-                {
-                    "header": "Side Panel Toggle",
-                    "html": "<p>Located in the left side of this window is a <b>collapsed side panel</b>.</p> <p>Click on the small tab to access the Vector tools and Raster tools. You can click on the Vector tools title at the top of the panel to collapse the Vector tools and open the Raster tools.</p> <p> If viewing this page on a small screen, the side panel will be the bottom collapsed tab.</p>"
-                },
-                {
-                    "header": "Control Panel",
-                    "html": "<p>Located along the center top edge of this window, or as a collapsed tab to the side if viewing on a small window, is the <b>control panel</b>. </p> <p>You can use this panel to draw polygons on the map, change map appearance, select your uploaded layers, search for species, et cetera. More detail on how to use this panel will be covered later in this tutorial.</p>"
+                    "html": "<p>In this tutorial, we will walk you through each tool on the screen to get a sense of where panels are located. First we will go through how to interact with the map.</p>"
                 },
                 {
                     "header": "Full Screen Toggle and Zoom Slider",
-                    "html": "<p>Located in the top-right corner of this window is the Zoom Slider, and above it is the Full Screen Toggle. Click the full screen toggle to make the map full screen, then the x button to exit full screen, and drag the handle in the middle of the Zoom Slider or click the plus or minus buttons to adjust the zoom level of the map.</p>"
-                },
-                {
-                    "header": "Location and Distance Panel",
-                    "html": "<p>In the bottom-right corner of this window is the Location and Distance Panel. This panel displays the coordinates of the current mouse position on the map (if the mouse cursor is on the map) and scale bars displaying distance in both miles and kilometers according to the current zoom level of the map.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Exploring the Map",
-            "slides": [
-                {
-                    "header": "Zoom",
-                    "html": "<p>The zoom level of the map can be adjusted by either using the Zoom Slider, or scrolling on your mouse or touchpad while hovering over the map.</p>"
+                    "html": "<p>Located in the top-right corner of this window is the <b>Zoom Slider</b>, and above it is the <b>Full Screen Toggle.</b></p> <p>Click the full screen toggle to make the map full screen, then the x button to exit full screen. Drag the handle in the middle of the Zoom Slider, click the plus or minus buttons, or scroll on your mouse or touchpad while hovering over the map to adjust the zoom level of the map.</p>"
                 },
                 {
                     "header": "Pan",
                     "html": "<p>To pan the map in any direction, simply click and drag on any area of the map to move it in the direction you wish.</p>"
+                },
+                {
+                    "header": "Location and Distance Panel",
+                    "html": "<p>In the bottom-right corner of this window is the <b>Location and Distance Panel.</b> This panel displays the coordinates of the current mouse position on the map (if the mouse cursor is on the map) and scale bars displaying distance in both miles and kilometers according to the current zoom level of the map.</p>"
+                },
+                {
+                    "header": "Main Control Panel",
+                    "html": "<p>Next let's go through the <b>locations of the control panels</b> that are available to use. Located along the center top edge of this window, or as a collapsed tab to the side if viewing on a small window, is the <b>main control panel</b>. </p> <p>You can use this panel to draw polygons on the map, change map appearance, select your uploaded layers, search for species, et cetera.</p>"
+                },
+                {
+                    "header": "Side Panel Toggle",
+                    "html": "<p>Located in the left side of this window is a <b>collapsed Side Panel</b>.</p> <p>Click on the small tab to access the Vector tools and Raster tools. You can click on the Vector tools title at the top of the panel to collapse the Vector tools and open the Raster tools.</p> <p> If viewing this page on a small screen, the side panel will be the bottom collapsed tab.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Main Control Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Now we will go over the function of the <b>Main Control Panel.</b> This panel has three dropdown features, in addition to buttons for customization and search, the home button to take you back to the home page, and a camera icon to download the current screen.</p>"
+                },
+                {
+                    "header": "Draw Selector",
+                    "html": "<p>Located on the very left side (or the top if viewed on a small window) of the Main Control Panel. Clicking on the dropdown menu and selecting one of the draw tools will let you <b>draw new polygons, boxes, circles, lines, or point features on the map.</b> Select the draw tool you want to use, then click on the map to draw the features you want, then click again or double click to complete the shape. </p> <p>To deactivate the draw tool, click on the drop-down and select None. To delete features you have drawn, you can open the side panel, click on the feature you want to delete, and click 'Delete Selected Features'. </p> <p>For more detail on how to create shapes on the map, see the 'Using the Draw Tool' tutorial.</p>"
+                },
+                {
+                    "header": "Base Layer Selector",
+                    "html": "<p>Located between the other two dropdown selectors in the Main Control Panel. Use this dropdown to change the appearance of the map to any of the publically available base layers that are included. To use this selector, click on the drop-down and select the base layer of your choice. The map will immediately load the new base layer when you make a selection. </p> <p>It is important to note that these layers have different minimum zoom threshholds and therefore some may not display properly when the map is set to a high zoom level. These layers are provided for reference purposes only and cannot be interacted with or used with any of the analysis tools.</p>"
+                },
+                {
+                    "header": "Active Layer Selector",
+                    "html": "<p>Located to the right of the Base Layer Selector (or under it if viewing on a small window) on the Main Control Panel. When you have multiple layers on the map, for example if you have drawn polygons or points, your active layer must be the layer that includes the features you want to interact with in order to inspect data or select and edit said features. Once you have added layers, click on the drop-down and select the layer with the features you would like to interact with.</p> <p>For more detail on the type of layers you can add to the map, see the 'Map Layers' tutorial, and to upload and explore map layers, see the 'Loading and Exploring Map Layers' tutorial. </p>"
+                },
+                {
+                    "header": "Settings Button",
+                    "html": "<p>Located on the most left side (or at the top if viewed on a small window) of the five buttons on the Main Control Panel. Click this button to open the Settings Panel. The Settings Panel can customize how occurrence data is displayed on the map. For more detail on how to use the Setting Panel, see the 'Settings Panel' tutorial.</p>"
+                },
+                {
+                    "header": "Layers Button",
+                    "html": "<p>Located between the Settings and Search Button on the Main Control Panel. This button can be clicked to open the Layers Panel, which will show you information and allow you to edit the layers. For more detail on how to use the Layers Panel, see the 'Layers Panel' tutorial.</p>"
+                },
+                {
+                    "header": "Search Button",
+                    "html": "<p>Located between the Layer Button and the Home Button on the Main Control Panel. This button can be clicked to open the Search Panel, which can help you search for occurrence data of species through selecting criteria, collections, or the advanced query search accessible through the three tabs at the top of the panel. For more detail on how to use the Search Panel, see the 'Search Panel' tutorial.</p>"
+                },
+                {
+                    "header": "Download Map Image Button",
+                    "html": "<p>Located between the Home Button and the Tutorial button on the Main Control Panel. This button can be clicked to download a png image of the map as it currently appears, including all layers and data that are currently loaded onto it and with the current symbology settings for each layer.</p>"
+                },
+                {
+                    "header": "Tutorial Button",
+                    "html": "<p>Located on the very right side (or the bottom if viewed on a smaller window) of the Main Control Panel. This button can be clicked to open the Mapping Tutorial!</p>"
                 }
             ]
         },
@@ -44,7 +76,7 @@
             "title": "Map Layers",
             "slides": [
                 {
-                    "header": "",
+                    "header": "Layers",
                     "html": "<p>The map initially loads without any additional layers included. As layers get added to the map, they are added in a stacking fashion, much like sheets being stacked on a pile of paper.</p>"
                 },
                 {
@@ -74,48 +106,11 @@
             ]
         },
         {
-            "title": "Control Panel",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Located along the center top edge of this window. This panel has three rows of features:</p>"
-                },
-                {
-                    "header": "Draw Selector",
-                    "html": "<p>Located on the left side of the top row of the Control Panel. This selector can be used to activate the draw tool for adding new polygon, box, circle, line, and point features on the map. To use this selector, simply click on the drop-down and select the type of feature that you would like to draw on the map. This will activate the draw tool. To deactivate the draw tool, simply click on the drop-down and select None. Using the draw tool to create new map features will be discussed in greater depth in a later topic in this tutorial.</p>"
-                },
-                {
-                    "header": "Base Layer Selector",
-                    "html": "<p>Located on the right side of the top row of the Control Panel. This selector can be used to change the base layer of the map to any of the publically available base layers that are included. These layers are provided for reference purposes only and cannot be interacted with or used with any of the analysis tools. To use this selector, simply click on the drop-down and select the base layer of your choice. The map will immediately load the new base layer when you make a selection. It is important to note that these layers have different minimum zoom threshholds and therefore some may not display properly when the map is set to a high zoom level.</p>"
-                },
-                {
-                    "header": "Active Layer Selector",
-                    "html": "<p>Located in the middle row of the Control Panel. When additional layers are loaded onto the map, this selector is used to activate any loaded layer in order to inspect data within that layer, select features within that layer, or edit selected features. While this selector is empty when no additional layers are loaded n the map, once they are, it can be used by simply clicking on the drop-down and selecting the layer you would like to activate. The use of this selector is explained more in later topics in this tutorial.</p>"
-                },
-                {
-                    "header": "Settings Toggle",
-                    "html": "<p>Located on the left side of the bottom row of the Control Panel. This toggle can be clicked to open the Settings Panel. The Settings Panel will be discussed further in the next topic in this tutorial.</p>"
-                },
-                {
-                    "header": "Layers Toggle",
-                    "html": "<p>Located in the left middle of the bottom row of the Control Panel. This toggle can be clicked to open the Layers Panel. The Layers Panel will be discussed further in a later topic in this tutorial.</p>"
-                },
-                {
-                    "header": "Download Map Image Button",
-                    "html": "<p>Located in the right middle of the bottom row of the Control Panel. This button can be clicked to download a png image of the map as it currently appears, including all layers and data that are currently loaded onto it and with the current symbology settings for each layer.</p>"
-                },
-                {
-                    "header": "Tutorial Toggle",
-                    "html": "<p>Located on the right side of the bottom row of the Control Panel. This toggle can be clicked to open the Mapping Tutorial.</p>"
-                }
-            ]
-        },
-        {
             "title": "Settings Panel",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Settings Panel is accessed by clicking on the Settings Toggle in the Control Panel. This panel includes settings for how loaded occurrence data will be displayed on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings included in the Settings Panel are:</p>"
+                    "html": "<p>The Settings Panel is accessed by clicking on the Settings Toggle in the Main Control Panel. This panel includes settings for how loaded occurrence data will be displayed on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings included in the Settings Panel are:</p>"
                 },
                 {
                     "header": "Cluster Points",
@@ -144,7 +139,7 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Draw Tool is activated through the Draw Selector in the Control Panel. To activate this tool simply click on the drop-down and select the type of feature that you would like to draw on the map. To deactivate the draw tool, simply click on the drop-down and select None. The Draw Tool can be used to create new polygon, box, circle, line, and point features on the map. Once the Draw Tool has been activated, follow these steps to create each feature type:</p>"
+                    "html": "<p>The Draw Tool is activated through the Draw Selector in the Main Control Panel. To activate this tool simply click on the drop-down and select the type of feature that you would like to draw on the map. To deactivate the draw tool, simply click on the drop-down and select None. The Draw Tool can be used to create new polygon, box, circle, line, and point features on the map. Once the Draw Tool has been activated, follow these steps to create each feature type:</p>"
                 },
                 {
                     "header": "Polygon",
@@ -202,7 +197,7 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>In order to explore the data or select features from any layer loaded onto the map, the layer must first be activated through the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>In order to explore the data or select features from any layer loaded onto the map, the layer must first be activated through the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "",
@@ -227,7 +222,7 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Layers Panel is accessed by clicking on the Layers Toggle in the Control Panel. This panel includes controls for any layer that has been loaded onto the map as well as layers that have been preconfigured. The types of controls available for any layer can vary depending on whether the layer is currently loaded on the map, whether the layer has raster or vector type data, and whether if it is a preconfigured layer or if it is either the Shapes or Points Layers (to be discussed further in a later topic).</p>"
+                    "html": "<p>The Layers Panel is accessed by clicking on the Layers Toggle in the Main Control Panel. This panel includes controls for any layer that has been loaded onto the map as well as layers that have been preconfigured. The types of controls available for any layer can vary depending on whether the layer is currently loaded on the map, whether the layer has raster or vector type data, and whether if it is a preconfigured layer or if it is either the Shapes or Points Layers (to be discussed further in a later topic).</p>"
                 },
                 {
                     "header": "",
@@ -288,7 +283,7 @@
                 },
                 {
                     "header": "",
-                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the approprite boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
+                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the appropriate boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
                 },
                 {
                     "header": "",
@@ -556,7 +551,7 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>A png image of the map in the current view, including all layers that have been loaded, all occurrence data that has been loaded, and all symbology adjustments that have been made, can be downloaded at any time by clicking the Download Map Image button in the Control Panel.</p>"
+                    "html": "<p>A png image of the map in the current view, including all layers that have been loaded, all occurrence data that has been loaded, and all symbology adjustments that have been made, can be downloaded at any time by clicking the Download Map Image button in the Main Control Panel.</p>"
                 }
             ]
         },
@@ -649,7 +644,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -686,7 +681,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -723,7 +718,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -756,7 +751,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -881,7 +876,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -1024,7 +1019,7 @@
                 },
                 {
                     "header": "Step 3",
-                    "html": "<p>In the Draw Selector in the Control Panel, select Point to activate the Point Draw Tool.</p>"
+                    "html": "<p>In the Draw Selector in the Main Control Panel, select Point to activate the Point Draw Tool.</p>"
                 },
                 {
                     "header": "Step 4",
@@ -1085,7 +1080,7 @@
                 },
                 {
                     "header": "Step 6",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 7",
@@ -1101,7 +1096,7 @@
                 },
                 {
                     "header": "Step 10",
-                    "html": "<p>Select the US county data layer in the Active Layer Selector (this should be tl_2021_us_county if you downloaded the file specified in step 1) in the Control Panel to activate it.</p>"
+                    "html": "<p>Select the US county data layer in the Active Layer Selector (this should be tl_2021_us_county if you downloaded the file specified in step 1) in the Main Control Panel to activate it.</p>"
                 },
                 {
                     "header": "Step 11",
@@ -1142,7 +1137,7 @@
                 },
                 {
                     "header": "Step 7",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 8",
@@ -1166,7 +1161,7 @@
                 },
                 {
                     "header": "Step 13",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 14",
@@ -1178,7 +1173,7 @@
                 },
                 {
                     "header": "Step 16",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 17",
@@ -1239,7 +1234,7 @@
                 },
                 {
                     "header": "Step 7",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 8",
@@ -1271,7 +1266,7 @@
                 },
                 {
                     "header": "Step 15",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 16",
@@ -1299,7 +1294,7 @@
                 },
                 {
                     "header": "Step 22",
-                    "html": "<p>Select the elevation data layer in the Active Layer Selector in the Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
+                    "html": "<p>Select the elevation data layer in the Active Layer Selector in the Main Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
                 },
                 {
                     "header": "Step 23",
@@ -1307,7 +1302,7 @@
                 },
                 {
                     "header": "Step 24",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 25",
@@ -1319,7 +1314,7 @@
                 },
                 {
                     "header": "Step 27",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 28",
@@ -1367,7 +1362,7 @@
                 },
                 {
                     "header": "Step 39",
-                    "html": "<p>Once the vectorization process is complete, select the elevation data layer in the Active Layer Selector in the Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
+                    "html": "<p>Once the vectorization process is complete, select the elevation data layer in the Active Layer Selector in the Main Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
                 },
                 {
                     "header": "Step 40",
@@ -1383,7 +1378,7 @@
                 },
                 {
                     "header": "Step 43",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 44",
@@ -1395,7 +1390,7 @@
                 },
                 {
                     "header": "Step 46",
-                    "html": "<p>Select state feature layer that you added to the map in step 32 in the Active Layer Selector in the Control Panel to activate it. It will be named the same as the filename in the Active Layer Selector.</p>"
+                    "html": "<p>Select state feature layer that you added to the map in step 32 in the Active Layer Selector in the Main Control Panel to activate it. It will be named the same as the filename in the Active Layer Selector.</p>"
                 },
                 {
                     "header": "Step 47",
@@ -1403,7 +1398,7 @@
                 },
                 {
                     "header": "Step 48",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 49",
