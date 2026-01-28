@@ -1,33 +1,29 @@
 {
     "title": "Mapping Tutorial",
-    "introHtml": "<p>Welcome to the mapping tutorial! This tutorial will explain the different components included within this module, how to load and work with different types of map layers, and how to use the vector and raster analysis tools. This tutorial is meant to be interactive, so be sure to test each component and tool explained as you progress through the topics.</p><p>Use the green arrow buttons located in the bottom-right corner of this screen to progress forwards and backwards and the red x button to close the tutorial. The left and right arrow keys on your keyboard can also be used for progression.</p><p>On any topic slide there will be a Hide Tutorial link in the bottom-left corner of the screen, which can be clicked to hide the tutorial content. Once clicked, a Show Tutorial link in the same location can be clicked to show the tutorial content again.</p>",
+    "introHtml": "<p>Welcome to the mapping tutorial! This is an interactive tutorial that will walk you through what this page can do, including how to load and work with different types of map layers, and how to use the vector and raster analysis tools. Follow along and test each component and tool explained as you progress through the topics.</p><p>Use the green arrow buttons in the bottom-right corner of this screen or your left and right arrow keys to progress forwards and backwards in the tutorial. The red x button will close the tutorial. </p><p>There will be a Hide Tutorial button in the bottom-left corner of the screen to temporarily hide the tutorial panel. To re-open the panel, click the Show Tutorial button in the same location.</p>",
     "sections": [
         {
             "title": "Main Map Window",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The main map window is the primary location to view map data, access tools and controls, and load new data onto the map. Let's go through the components of the map window that are available to use for these purposes.</p>"
+                    "html": "<p>In this tutorial, we will walk you through each tool on the screen to get a sense of where panels are located. Let's go through the <b>locations of the control panels</b> that are available to use.</p>"
                 },
                 {
                     "header": "Side Panel Toggle",
-                    "html": "<p>Located in the left side of this window. Click on this to open the Side Panel.</p>"
+                    "html": "<p>Located in the left side of this window is a <b>collapsed side panel</b>.</p> <p>Click on the small tab to access the Vector tools and Raster tools. You can click on the Vector tools title at the top of the panel to collapse the Vector tools and open the Raster tools.</p> <p> If viewing this page on a small screen, the side panel will be the bottom collapsed tab.</p>"
                 },
                 {
                     "header": "Control Panel",
-                    "html": "<p>Located along the center top edge of this window. This panel contains controls and access to settings that will be covered in much further detail later in this tutorial.</p>"
+                    "html": "<p>Located along the center top edge of this window, or as a collapsed tab to the side if viewing on a small window, is the <b>control panel</b>. </p> <p>You can use this panel to draw polygons on the map, change map appearance, select your uploaded layers, search for species, et cetera. More detail on how to use this panel will be covered later in this tutorial.</p>"
                 },
                 {
-                    "header": "Full Screen Toggle",
-                    "html": "<p>Located in the top-right corner of this window, above the Zoom Slider. Click this button to toggle the full screen display of the map. Once the full screen display has been toggled, the esc key can be pressed to exit back to normal display.</p>"
-                },
-                {
-                    "header": "Zoom Slider",
-                    "html": "<p>Located along the top-right edge of this window, just below the Full Screen Toggle. Click on either the plus or minus buttons at the top and bottom of the slider, or click and drag the handle in the middle, to adjust the zoom level of the map.</p>"
+                    "header": "Full Screen Toggle and Zoom Slider",
+                    "html": "<p>Located in the top-right corner of this window is the Zoom Slider, and above it is the Full Screen Toggle. Click the full screen toggle to make the map full screen, then the x button to exit full screen, and drag the handle in the middle of the Zoom Slider or click the plus or minus buttons to adjust the zoom level of the map.</p>"
                 },
                 {
                     "header": "Location and Distance Panel",
-                    "html": "<p>Located in the bottom-right corner of this window. This panel displays the coordinates of the current mouse position on the map (if the mouse cursor is on the map) and scale bars displaying distance in both miles and kilometers according to the current zoom level of the map.</p>"
+                    "html": "<p>In the bottom-right corner of this window is the Location and Distance Panel. This panel displays the coordinates of the current mouse position on the map (if the mouse cursor is on the map) and scale bars displaying distance in both miles and kilometers according to the current zoom level of the map.</p>"
                 }
             ]
         },
