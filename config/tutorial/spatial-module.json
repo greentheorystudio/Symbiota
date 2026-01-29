@@ -40,7 +40,11 @@
                 },
                 {
                     "header": "Draw Selector",
-                    "html": "<p>Located on the very left side (or the top if viewed on a small window) of the Main Control Panel. Clicking on the dropdown menu and selecting one of the draw tools will let you <b>draw new polygons, boxes, circles, lines, or point features on the map.</b> Select the draw tool you want to use, then click on the map to draw the features you want, then click again or double click to complete the shape. </p> <p>To deactivate the draw tool, click on the drop-down and select None. To delete features you have drawn, you can open the side panel, click on the feature you want to delete, and click 'Delete Selected Features'. </p> <p>For more detail on how to create shapes on the map, see the 'Using the Draw Tool' tutorial.</p>"
+                    "html": "<p>Located on the very left side (or the top if viewed on a small window) of the Main Control Panel. Clicking on the dropdown menu and selecting one of the draw tools will let you <b>draw new polygons, boxes, circles, lines, or point features on the map.</b> Select the draw tool you want to use, then click on the map to draw the features you want, then click again or double click to complete the shape. </p> "
+                },
+                {
+                    "header": "Draw Selector",
+                    "html": "<p>To draw lines in Freehand Mode instead of as straight lines, open the Settings Button, and check the box next to 'Set Draw Tool to Freehand Mode.' To deactivate the draw tool, click on the drop-down and select None. To delete features you have drawn, you can open the side panel, click on the feature you want to delete, and click 'Delete Selected Features'. </p> <p>For more detail on how to create shapes on the map, see the 'Using the Draw Tool' tutorial.</p>"
                 },
                 {
                     "header": "Base Layer Selector",
@@ -60,7 +64,7 @@
                 },
                 {
                     "header": "Search Button",
-                    "html": "<p>Located between the Layer Button and the Home Button on the Main Control Panel. This button can be clicked to open the Search Panel, which can help you search for occurrence data of species through selecting criteria, collections, or the advanced query search accessible through the three tabs at the top of the panel. For more detail on how to use the Search Panel, see the 'Search Panel' tutorial.</p>"
+                    "html": "<p>Located between the Layer Button and the Home Button on the Main Control Panel. This button can be clicked to open the Search Panel, which can help you search for occurrence data of species through selecting criteria, collections, or the advanced query search accessible through the three tabs at the top of the panel. For more detail on how to use the Search Panel, see the 'Loading Occurrence Data with the Search Panel' tutorial.</p>"
                 },
                 {
                     "header": "Download Map Image Button",
@@ -73,40 +77,23 @@
             ]
         },
         {
-            "title": "Search Criteria Panel",
+            "title": "Loading Occurrence Data with the Search Panel",
             "slides": [
                 {
-                    "header": "",
-                    "html": "<p>The Search Criteria Panel is accessed by opening the Side Panel and clicking on Search Criteria to expand the panel (if it isn't already expanded).</p>"
+                    "header": "Search Panel",
+                    "html": "<p>The Search Panel is located between the Layers Button and the Home Button on the Main Control Panel.</p> <p>The Search Panel has three tabs at top: Criteria, Collections, and Advanced to aid you in your search of occurrence data. Each tab has a SEARCH RECORDS button and a CLEAR button on the left side to load the occurrence search, and clear your selections.</p>"
                 },
                 {
-                    "header": "",
-                    "html": "<p>The Search Criteria Panel has two tabs: Criteria and Collections, each with a Reset button, to reset the module to its initial state, and a Load Records button to initiate an occurrence search based on any criteria entered or selected in either tab, and/or features that may be selected in the Shapes Layer.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Loading Occurrence Records",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>A search for occurrence records can be run when at least one polygon, box, or circle feature is selected in the Shapes Layer, or search criteria has been entered in either the Criteria or Collections tabs in the Search Criteria Panel in the Side Panel, or both.</p>"
+                    "header": "Occurrence Data",
+                    "html": "<p>You can search for occurrence records in two ways: Through narrowing your search through the Criteria Tab, Collections Tab, or the Advanced Tab, and/or when at least one polygon, box, or circle feature is selected in the Shapes Layer. Through selecting shapes you have drawn or uploaded, you can search for occurrence records within those areas. </p>"
                 },
                 {
-                    "header": "",
-                    "html": "<p>If polygon, box, or circle features are selected in the Shapes Layer the search will find occurrence records occurring within all selected features.</p>"
+                    "header": "The Criteria and Collections Tab",
+                    "html": "<p>In the <b>Criteria Tab</b>, you can search for occurrence data depending on the criteria you enter by filling out the form, and pressing the SEARCH RECORDS button. In the <b>Collections tab</b>, you can select records depending on the dataset it belongs to by checking or unchecking the boxes and clicking the SEARCH RECORDS button. See the 'Advanced Query Builder' tutorial on how to use the Advanced Tab.</p>"
                 },
                 {
-                    "header": "",
-                    "html": "<p>To run an occurrence search, click the Load Records button in either the Criteria or Collections tabs in the Search Criteria Panel of the Side Panel.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Occurrence records loaded onto the map are automatically added to the Points Layer.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>When occurrence records are loaded, the Records and Taxa Panel (to be discussed in a later topic) becomes available in the Side Panel with tabs showing the collections and taxa represented in the search return, and the occurrence records themselves.</p>"
+                    "header": "Loaded Occurrence Data",
+                    "html": "<p> Occurrence records loaded onto the map are automatically added to the Points Layer. When occurrence records are loaded, the Records and Taxa Panel becomes available in the Side Panel with tabs showing the collections and taxa represented in the search return, and the occurrence records themselves. To learn how to use the Records and Taxa Panel, see the 'Records and Taxa Panel' tutorial.</p>"
                 },
                 {
                     "header": "",
@@ -123,7 +110,7 @@
                 },
                 {
                     "header": "",
-                    "html": "<p>The Records and Taxa Panel includes the tabs: Records, Collections, Taxa, and Selections (when occurrence records are selected). Each of these tabs will be discussed more thouroughly in the following topics.</p>"
+                    "html": "<p>The Records and Taxa Panel includes the tabs: Records, Collections, Taxa, and Selections (when occurrence records are selected). We will go through these three tabs in the following tutorial.</p>"
                 }
             ]
         },
@@ -160,7 +147,7 @@
                 },
                 {
                     "header": "Select/Deselect All Checkbox",
-                    "html": "<p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can be used to select and deselect all of the occurrence records in the current table. When selected, records will be both added to the Selections Tab as well as selected on the map. Deselecting records will both remove them from the Selections Tab and delselect them on the map.</p>"
+                    "html": "<p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can be used to select and deselect all of the occurrence records in the current table. When selected, records will be both added to the Selections Tab as well as selected on the map. Deselecting records will both remove them from the Selections Tab and deselect them on the map.</p>"
                 },
                 {
                     "header": "Occurrence Record Table",
@@ -260,6 +247,35 @@
             ]
         },
         {
+            "title": "Settings Panel (and Heat Map)",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Settings Panel is accessed by clicking on the Settings Toggle in the Main Control Panel. This panel includes settings for how loaded occurrence data will be displayed on the map, in addition to displaying a heat map. The panel can be closed by clicking the close icon in the top-right corner.</p>"
+                },
+                {
+                    "header": "Cluster Points",
+                    "html": "<p>When checked, occurrence points loaded onto the map are clustered, based on the cluster distance setting, into clusters of like records. When not checked, all occurrence records are loaded as individual points on the map, regardless of proximity.</p>"
+                },
+                {
+                    "header": "Cluster Distance",
+                    "html": "<p>This setting controls the minimum distance threshold (in pixels) between points or clusters which determine whether they are clustered when Cluster Points is checked.</p>"
+                },
+                {
+                    "header": "Display Heat Map",
+                    "html": "<p>When checked, occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map Radius and Heat Map Blur settings. When not checked occurrence records are displayed on the map as individual points, or clusters of like points.</p>"
+                },
+                {
+                    "header": "Heat Map Radius",
+                    "html": "<p>This setting controls the radius (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
+                },
+                {
+                    "header": "Heat Map Blur",
+                    "html": "<p>This setting controls the blur size (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
+                }
+            ]
+        },
+        {
             "title": "Map Layers",
             "slides": [
                 {
@@ -289,35 +305,6 @@
                 {
                     "header": "Points Layer",
                     "html": "<p>The Points Layer is a vector layer that is automatically added to the map when occurrence records are loaded from a search. The point features included in this layer can be rendered as individual points, clustered points, or as a heat map. Additionally they allow for a greater degree of symbology options based on the collections and taxonomy of the associated occurrence data. Point features in this layer can be individually selected, and downloads can be prepared of either the entire dataset, or a selected subset, in a variety of export formats.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Settings Panel",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Settings Panel is accessed by clicking on the Settings Toggle in the Main Control Panel. This panel includes settings for how loaded occurrence data will be displayed on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings included in the Settings Panel are:</p>"
-                },
-                {
-                    "header": "Cluster Points",
-                    "html": "<p>When checked, occurrence points loaded onto the map are clustered, based on the cluster distance setting, into clusters of like records. When not checked, all occurrence records are loaded as individual points on the map, regardless of proximity.</p>"
-                },
-                {
-                    "header": "Cluster Distance",
-                    "html": "<p>This setting controls the minimum distance threshold (in pixels) between points or clusters which determine whether they are clustered when Cluster Points is checked.</p>"
-                },
-                {
-                    "header": "Display Heat Map",
-                    "html": "<p>When checked, occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map Radius and Heat Map Blur settings. When not checked occurrence records are displayed on the map as individual points, or clusters of like points.</p>"
-                },
-                {
-                    "header": "Heat Map Radius",
-                    "html": "<p>This setting controls the radius (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
-                },
-                {
-                    "header": "Heat Map Blur",
-                    "html": "<p>This setting controls the blur size (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
                 }
             ]
         },
@@ -416,31 +403,6 @@
             ]
         },
         {
-            "title": "Using the Query Selector",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Query Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>The Select attribute drop-down contains all of the attributes applied to features within that layer. Select the attribute you would like to use to base your selection query.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>In the next drop-down select the comparator you would like to use in your query, out of EQUALS, CONTAINS, GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS comparators can compare text or numeric values, but the remaining comparators can only compare numeric values.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the appropriate boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Finally click the Run Query button to actually run the selection query. All features within the target layer that match the criteria you have specified will automatically be added to the Shapes Layer.</p>"
-                }
-            ]
-        },
-        {
             "title": "Working With the Shapes Layer",
             "slides": [
                 {
@@ -475,32 +437,6 @@
                 {
                     "header": "Viewing Record Data",
                     "html": "<p>Holding the alt key (option key on Mac) and clicking on any individual occurrence record will open an info window displaying all of the data for that record.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Using the Heat Map Display",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>When occurrence records have been loaded on the map, the heat map display can be activated to display the occurrence data as a heat map instead of points.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>To activate or deactivate the heat map display, check or uncheck Display Heat Map in the Settings Panel.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Adjusting the Heat Map Radius and Heat Map Blur settings, also in the Settings Panel, will further adjust how occurrence points are rendered in the heat map display.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Downloading a Map Image",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>A png image of the map in the current view, including all layers that have been loaded, all occurrence data that has been loaded, and all symbology adjustments that have been made, can be downloaded at any time by clicking the Download Map Image button in the Main Control Panel.</p>"
                 }
             ]
         },
@@ -936,6 +872,57 @@
             ]
         },
         {
+            "title": "Advanced Query Builder",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Query Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Select attribute drop-down contains all of the attributes applied to features within that layer. Select the attribute you would like to use to base your selection query.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In the next drop-down select the comparator you would like to use in your query, out of EQUALS, CONTAINS, GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS comparators can compare text or numeric values, but the remaining comparators can only compare numeric values.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the appropriate boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Finally click the Run Query button to actually run the selection query. All features within the target layer that match the criteria you have specified will automatically be added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Downloading a Map Image",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>A png image of the map in the current view, including all layers that have been loaded, all occurrence data that has been loaded, and all symbology adjustments that have been made, can be downloaded at any time by clicking the Download Map Image button in the Main Control Panel.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Using the Heat Map Display",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>When occurrence records have been loaded on the map, the heat map display can be activated to display the occurrence data as a heat map instead of points.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To activate or deactivate the heat map display, check or uncheck Display Heat Map in the Settings Panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Adjusting the Heat Map Radius and Heat Map Blur settings, also in the Settings Panel, will further adjust how occurrence points are rendered in the heat map display.</p>"
+                }
+            ]
+        },
+        {
             "title": "Side Panel",
             "slides": [
                 {
@@ -949,11 +936,11 @@
             ]
         },
         {
-            "title": "Walkthrough #1",
+            "title": "Searching and Loading Occurrence Data Walkthrough",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>In this walkthrough we will use the the Search Criteria Panel in the Side Panel to enter search criteria for occurrence records and load them on the map.</p>"
+                    "html": "<p>In this walkthrough we will use the the Search Panel in the Main Control Panel to enter search criteria for occurrence records and load them on the map.</p>"
                 },
                 {
                     "header": "Step 1",
@@ -998,7 +985,7 @@
             ]
         },
         {
-            "title": "Walkthrough #2",
+            "title": "Loading Occurrence Data Around a Buffer Polygon Walkthrough",
             "slides": [
                 {
                     "header": "",
@@ -1047,7 +1034,7 @@
             ]
         },
         {
-            "title": "Walkthrough #3",
+            "title": "Loading Occurrence Data Within a U.S. County Walkthrough",
             "slides": [
                 {
                     "header": "",
@@ -1100,7 +1087,7 @@
             ]
         },
         {
-            "title": "Walkthrough #4",
+            "title": "Using Intersect Tool Walkthrough #4",
             "slides": [
                 {
                     "header": "",
@@ -1197,7 +1184,7 @@
             ]
         },
         {
-            "title": "Walkthrough #5",
+            "title": "Using Vector Tools Walkthrough #5",
             "slides": [
                 {
                     "header": "",
