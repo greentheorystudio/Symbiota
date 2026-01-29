@@ -180,17 +180,18 @@ class Occurrences{
                 $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence', false);
                 $sql = str_replace('FROM', 'UPDATE', $fromStr);
                 if($matchType === 'part'){
-                    $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = REPLACE(' . SanitizerService::cleanInStr($this->conn, $field) . ', "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '", ' . ($newValue ? SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) : '""') . ') ';
+                    $sql .= 'SET o.' . SanitizerService::cleanInStr($this->conn, $field) . ' = REPLACE(' . SanitizerService::cleanInStr($this->conn, $field) . ', "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '", ' . ($newValue ? SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) : '""') . ') ';
                 }
                 else{
-                    $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ' ';
+                    $sql .= 'SET o.' . SanitizerService::cleanInStr($this->conn, $field) . ' = ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ' ';
                 }
                 if($matchType === 'part'){
-                    $sql .= $whereStr . ' AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
+                    $sql .= 'WHERE o.' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
                 }
                 else{
-                    $sql .= $whereStr . ' AND ' . ($oldValue ? (SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ') : ('ISNULL(' . SanitizerService::cleanInStr($this->conn, $field) . ') '));
+                    $sql .= 'WHERE ' . ($oldValue ? (SanitizerService::cleanInStr($this->conn, ('o.' . $field)) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ') : ('ISNULL(' . SanitizerService::cleanInStr($this->conn, ('o.' . $field)) . ') '));
                 }
+                $sql .= 'AND ' . substr($whereStr, 6);
                 if($this->conn->query($sql)){
                     $returnVal = 1;
                 }
