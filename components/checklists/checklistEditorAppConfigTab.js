@@ -104,7 +104,7 @@ const checklistEditorAppConfigTab = {
             targetImageTidArr.value.length = 0;
             taxonLoadingIndex.value = 0;
             taggedTargetImageTidArr.value = tidAcceptedArr.value.slice();
-            targetMapImageTidArr.value.length = tidAcceptedArr.value.slice();
+            targetMapImageTidArr.value = tidAcceptedArr.value.slice();
             if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']){
                 showWorking('Removing previous data archive');
                 checklistStore.deleteAppDataArchive((res) => {
