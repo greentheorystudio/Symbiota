@@ -189,7 +189,7 @@ class Occurrences{
                     $sql .= 'WHERE o.' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
                 }
                 else{
-                    $sql .= 'WHERE o.' . ($oldValue ? (SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ') : ('ISNULL(' . SanitizerService::cleanInStr($this->conn, $field) . ') '));
+                    $sql .= 'WHERE ' . ($oldValue ? (SanitizerService::cleanInStr($this->conn, ('o.' . $field)) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ') : ('ISNULL(' . SanitizerService::cleanInStr($this->conn, ('o.' . $field)) . ') '));
                 }
                 $sql .= 'AND ' . substr($whereStr, 6);
                 if($this->conn->query($sql)){
