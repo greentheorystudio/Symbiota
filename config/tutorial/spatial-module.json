@@ -358,7 +358,7 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Layers Panel is accessed by clicking on the Layers Toggle in the Main Control Panel. This panel includes controls for any layer that has been loaded onto the map as well as layers that have been preconfigured. The types of controls available for any layer can vary depending on whether the layer is currently loaded on the map, whether the layer has raster or vector type data, and whether if it is a preconfigured layer or if it is either the Shapes or Points Layers (to be discussed further in a later topic).</p>"
+                    "html": "<p>The Layers Panel is accessed by clicking on the Layers Button in the Main Control Panel. This panel includes controls for any layer that has been loaded onto the map as well as layers that have been preconfigured. The types of controls available for any layer can vary depending on whether the layer is currently loaded on the map, whether the layer has raster or vector type data, and whether if it is a preconfigured layer or if it is either the Shapes or Points Layers (to be discussed further in a later topic).</p>"
                 },
                 {
                     "header": "",
