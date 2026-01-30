@@ -5,14 +5,14 @@ const occurrenceEditorFormMiscElement = {
                 <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
                     Occurrence
                 </div>
-                <div v-if="!editorHideFields.includes('habitat')" class="row">
+                <div v-if="occurrenceEntryFormat !== 'replicate' && !editorHideFields.includes('habitat')" class="row">
                     <div class="col-grow">
                         <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['habitat']" label="Habitat" field="habitat" :value="occurrenceData.habitat" @update:value="(value) => updateOccurrenceData('habitat', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div v-if="!editorHideFields.includes('substrate')" class="row">
                     <div class="col-grow">
-                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['substrate']" label="Substrate" :value="occurrenceData.substrate" @update:value="(value) => updateOccurrenceData('substrate', value)"></text-field-input-element>
+                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['substrate']" label="Substrate" field="substrate" :value="occurrenceData.substrate" @update:value="(value) => updateOccurrenceData('substrate', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div v-if="!editorHideFields.includes('associatedtaxa')" class="row">
@@ -51,14 +51,14 @@ const occurrenceEditorFormMiscElement = {
                         </template>
                     </div>
                 </div>
-                <div v-if="!editorHideFields.includes('occurrenceremarks')" class="row">
+                <div v-if="occurrenceEntryFormat !== 'replicate' && !editorHideFields.includes('labelproject')" class="row">
                     <div class="col-grow">
-                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['occurrenceremarks']" label="Occurrence Remarks" field="occurrenceremarks" :value="occurrenceData.occurrenceremarks" @update:value="(value) => updateOccurrenceData('occurrenceremarks', value)"></text-field-input-element>
+                        <text-field-input-element :definition="occurrenceFieldDefinitions['labelproject']" label="Label Project" field="labelproject" :maxlength="occurrenceFields['labelproject'] ? occurrenceFields['labelproject']['length'] : 0" :value="occurrenceData.labelproject" @update:value="(value) => updateOccurrenceData('labelproject', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
-                    <div v-if="!editorHideFields.includes('labelproject')" class="col-11">
-                        <text-field-input-element :definition="occurrenceFieldDefinitions['labelproject']" label="Label Project" :maxlength="occurrenceFields['labelproject'] ? occurrenceFields['labelproject']['length'] : 0" :value="occurrenceData.labelproject" @update:value="(value) => updateOccurrenceData('labelproject', value)"></text-field-input-element>
+                    <div v-if="!editorHideFields.includes('occurrenceremarks')" class="col-11">
+                        <text-field-input-element data-type="textarea" :definition="occurrenceFieldDefinitions['occurrenceremarks']" label="Occurrence Remarks" field="occurrenceremarks" :value="occurrenceData.occurrenceremarks" @update:value="(value) => updateOccurrenceData('occurrenceremarks', value)"></text-field-input-element>
                     </div>
                     <div class="col-1 row justify-end self-center">
                         <div>

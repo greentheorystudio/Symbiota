@@ -21,7 +21,6 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
             enddayofyear: null,
             verbatimeventdate: null,
             habitat: null,
-            substrate: null,
             localitysecurity: null,
             localitysecurityreason: null,
             decimallatitude: null,

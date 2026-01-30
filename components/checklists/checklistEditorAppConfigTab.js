@@ -71,6 +71,7 @@ const checklistEditorAppConfigTab = {
         });
         const taggedTargetImageTidArr = Vue.ref([]);
         const targetImageTidArr = Vue.ref([]);
+        const targetMapImageTidArr = Vue.ref([]);
         const taxonLoadingIndex = Vue.ref(0);
         const tidAcceptedArr = Vue.computed(() => checklistStore.getChecklistTaxaTidAcceptedArr);
 
@@ -103,6 +104,7 @@ const checklistEditorAppConfigTab = {
             targetImageTidArr.value.length = 0;
             taxonLoadingIndex.value = 0;
             taggedTargetImageTidArr.value = tidAcceptedArr.value.slice();
+            targetMapImageTidArr.value = tidAcceptedArr.value.slice();
             if(checklistData.value['appconfigjson'] && checklistData.value['appconfigjson'].hasOwnProperty('dataArchiveFilename') && checklistData.value['appconfigjson']['dataArchiveFilename']){
                 showWorking('Removing previous data archive');
                 checklistStore.deleteAppDataArchive((res) => {
@@ -209,6 +211,30 @@ const checklistEditorAppConfigTab = {
             });
         }
 
+        function packageChecklistMapImages() {
+            showWorking('Packaging taxa map images');
+            const targetArr = targetMapImageTidArr.value.splice(0, 5);
+            const formData = new FormData();
+            formData.append('tidArr', JSON.stringify(targetArr));
+            formData.append('archiveFile', dataArchiveFilename.value);
+            formData.append('action', 'packageChecklistMapImages');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then(() => {
+                if(targetMapImageTidArr.value.length > 0){
+                    packageChecklistMapImages();
+                }
+                else{
+                    processCompletedMapImageDataPackaging();
+                }
+            });
+        }
+
         function packageChecklistTaggedImages() {
             showWorking('Packaging tagged images');
             const targetArr = taggedTargetImageTidArr.value.splice(0, 5);
@@ -302,6 +328,22 @@ const checklistEditorAppConfigTab = {
             const formData = new FormData();
             formData.append('archiveFile', dataArchiveFilename.value);
             formData.append('action', 'processCompletedImageDataPackaging');
+            fetch(checklistPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then(() => {
+                packageChecklistMapImages();
+            });
+        }
+
+        function processCompletedMapImageDataPackaging() {
+            const formData = new FormData();
+            formData.append('archiveFile', dataArchiveFilename.value);
+            formData.append('action', 'processCompletedMapImageDataPackaging');
             fetch(checklistPackagingServiceApiUrl, {
                 method: 'POST',
                 body: formData

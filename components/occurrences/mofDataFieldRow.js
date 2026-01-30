@@ -53,6 +53,7 @@ const mofDataFieldRow = {
                                 :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
                                 :data-type="configuredDataFields[field.fieldName]['dataType']" 
                                 :label="configuredDataFields[field.fieldName]['label']" 
+                                :field="field.fieldName"
                                 :max-value="configuredDataFields[field.fieldName]['maxValue'] ? configuredDataFields[field.fieldName]['maxValue'] : null" 
                                 :min-value="configuredDataFields[field.fieldName]['minValue'] ? configuredDataFields[field.fieldName]['minValue'] : null" 
                                 :value="configuredData[field.fieldName]" 

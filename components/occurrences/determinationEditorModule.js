@@ -39,17 +39,17 @@ const determinationEditorModule = {
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <text-field-input-element label="ID Qualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
+                        <text-field-input-element label="ID Qualifier" field="identificationqualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <text-field-input-element label="Identified By" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
+                        <text-field-input-element label="Identified By" field="identifiedby" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <text-field-input-element label="Date Identified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
+                        <text-field-input-element label="Date Identified" field="dateidentified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
                     </div>
                 </div>
             </template>
@@ -62,26 +62,26 @@ const determinationEditorModule = {
                         <text-field-input-element label="Author" :value="determinationData['scientificnameauthorship']" @update:value="(value) => updateDeterminationData('scientificnameauthorship', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-3">
-                        <text-field-input-element label="ID Qualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
+                        <text-field-input-element label="ID Qualifier" field="identificationqualifier" :value="determinationData['identificationqualifier']" @update:value="(value) => updateDeterminationData('identificationqualifier', value)"></text-field-input-element>
                     </div>
                 </div>
                 <div class="row justify-between q-col-gutter-sm">
                     <div class="col-12 col-sm-8">
-                        <text-field-input-element label="Identified By" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
+                        <text-field-input-element label="Identified By" field="identifiedby" :value="determinationData['identifiedby']" @update:value="(value) => updateDeterminationData('identifiedby', value)"></text-field-input-element>
                     </div>
                     <div class="col-12 col-sm-4">
-                        <text-field-input-element label="Date Identified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
+                        <text-field-input-element label="Date Identified" field="dateidentified" :value="determinationData['dateidentified']" @update:value="(value) => updateDeterminationData('dateidentified', value)"></text-field-input-element>
                     </div>
                 </div>
             </template>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="ID References" :value="determinationData['identificationreferences']" @update:value="(value) => updateDeterminationData('identificationreferences', value)"></text-field-input-element>
+                    <text-field-input-element label="ID References" field="identificationreferences" :value="determinationData['identificationreferences']" @update:value="(value) => updateDeterminationData('identificationreferences', value)"></text-field-input-element>
                 </div>
             </div>
             <div class="row">
                 <div class="col-grow">
-                    <text-field-input-element label="ID Remarks" :value="determinationData['identificationremarks']" @update:value="(value) => updateDeterminationData('identificationremarks', value)"></text-field-input-element>
+                    <text-field-input-element label="ID Remarks" field="identificationremarks" :value="determinationData['identificationremarks']" @update:value="(value) => updateDeterminationData('identificationremarks', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="Number(determinationId) === 0" class="row justify-start">

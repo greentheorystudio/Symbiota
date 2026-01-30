@@ -28,7 +28,7 @@ const collectingEventFieldModule = {
     template: `
         <div v-if="!editorHideFields.includes('recordedby') || !editorHideFields.includes('recordnumber')" class="row justify-between q-gutter-sm">
             <div v-if="!editorHideFields.includes('recordedby')" class="col-12 col-sm-6 col-md-grow">
-                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordedby']" label="Collector/Observer" :maxlength="fields['recordedby'] ? fields['recordedby']['length'] : 0" :value="data.recordedby" @update:value="(value) => updateData('recordedby', value)"></text-field-input-element>
+                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordedby']" field="recordedby" label="Collector/Observer" :maxlength="fields['recordedby'] ? fields['recordedby']['length'] : 0" :value="data.recordedby" @update:value="(value) => updateData('recordedby', value)"></text-field-input-element>
             </div>
             <div v-if="!editorHideFields.includes('recordnumber')" class="col-12 col-sm-6 col-md-3">
                 <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['recordnumber']" label="Number" :maxlength="fields['recordnumber'] ? fields['recordnumber']['length'] : 0" :value="data.recordnumber" @update:value="(value) => updateData('recordnumber', value)"></text-field-input-element>
@@ -36,7 +36,7 @@ const collectingEventFieldModule = {
         </div>
         <div v-if="!editorHideFields.includes('associatedcollectors')" class="row justify-between q-col-gutter-sm">
             <div class="col-grow">
-                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['associatedcollectors']" label="Associated Collectors" :maxlength="fields['associatedcollectors'] ? fields['associatedcollectors']['length'] : 0" :value="data.associatedcollectors" @update:value="(value) => updateData('associatedcollectors', value)"></text-field-input-element>
+                <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['associatedcollectors']" label="Associated Collectors" field="associatedcollectors" :maxlength="fields['associatedcollectors'] ? fields['associatedcollectors']['length'] : 0" :value="data.associatedcollectors" @update:value="(value) => updateData('associatedcollectors', value)"></text-field-input-element>
             </div>
         </div>
         <template v-if="imageCount === 0">
@@ -48,7 +48,7 @@ const collectingEventFieldModule = {
                     <time-input-element :disabled="disabled" :definition="fieldDefinitions['eventtime']" label="Time" :value="data.eventtime" @update:value="(value) => updateData('eventtime', value)"></time-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('verbatimeventdate')" class="col-10 col-sm-6 col-md-3">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimeventdate']" label="Verbatim Date" :maxlength="fields['verbatimeventdate'] ? fields['verbatimeventdate']['length'] : 0" :value="data.verbatimeventdate" @update:value="(value) => updateData('verbatimeventdate', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimeventdate']" label="Verbatim Date" field="verbatimeventdate" :maxlength="fields['verbatimeventdate'] ? fields['verbatimeventdate']['length'] : 0" :value="data.verbatimeventdate" @update:value="(value) => updateData('verbatimeventdate', value)"></text-field-input-element>
                 </div>
                 <div class="col-2 row justify-end q-col-gutter-sm self-center">
                     <div v-if="eventMode">
@@ -81,7 +81,7 @@ const collectingEventFieldModule = {
             </div>
             <div class="row justify-between q-col-gutter-sm">
                 <div v-if="!editorHideFields.includes('verbatimeventdate')" class="col-10 col-sm-7">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimeventdate']" label="Verbatim Date" :maxlength="fields['verbatimeventdate'] ? fields['verbatimeventdate']['length'] : 0" :value="data.verbatimeventdate" @update:value="(value) => updateData('verbatimeventdate', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimeventdate']" label="Verbatim Date" field="verbatimeventdate" :maxlength="fields['verbatimeventdate'] ? fields['verbatimeventdate']['length'] : 0" :value="data.verbatimeventdate" @update:value="(value) => updateData('verbatimeventdate', value)"></text-field-input-element>
                 </div>
                 <div class="col-5 row justify-end q-col-gutter-sm self-center">
                     <div v-if="eventMode">
@@ -120,20 +120,30 @@ const collectingEventFieldModule = {
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['verbatimdepth']" label="Verbatim Depth" :maxlength="fields['verbatimdepth'] ? fields['verbatimdepth']['length'] : 0" :value="data.verbatimdepth" @update:value="(value) => updateData('verbatimdepth', value)"></text-field-input-element>
                 </div>
             </div>
+            <div v-if="occurrenceEntryFormat === 'replicate' && !editorHideFields.includes('habitat')" class="row">
+                <div class="col-grow">
+                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['habitat']" label="Habitat" field="habitat" :value="data.habitat" @update:value="(value) => updateData('habitat', value)"></text-field-input-element>
+                </div>
+            </div>
             <div v-if="!editorHideFields.includes('fieldnumber') || !editorHideFields.includes('samplingprotocol') || !editorHideFields.includes('samplingeffort')" class="row justify-between q-col-gutter-sm">
                 <div v-if="!editorHideFields.includes('fieldnumber')" class="col-12 col-sm-6 col-md-4">
                     <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['fieldnumber']" label="Field Number" :maxlength="fields['fieldnumber'] ? fields['fieldnumber']['length'] : 0" :value="data.fieldnumber" @update:value="(value) => updateData('fieldnumber', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('samplingprotocol')" class="col-12 col-sm-6 col-md-4">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['samplingprotocol']" label="Sampling Protocol" :maxlength="fields['samplingprotocol'] ? fields['samplingprotocol']['length'] : 0" :value="data.samplingprotocol" @update:value="(value) => updateData('samplingprotocol', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['samplingprotocol']" label="Sampling Protocol" field="samplingprotocol" :maxlength="fields['samplingprotocol'] ? fields['samplingprotocol']['length'] : 0" :value="data.samplingprotocol" @update:value="(value) => updateData('samplingprotocol', value)"></text-field-input-element>
                 </div>
                 <div v-if="!editorHideFields.includes('samplingeffort')" class="col-12 col-sm-6 col-md-4">
-                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['samplingeffort']" label="Sampling Effort" :maxlength="fields['samplingeffort'] ? fields['samplingeffort']['length'] : 0" :value="data.samplingeffort" @update:value="(value) => updateData('samplingeffort', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['samplingeffort']" label="Sampling Effort" field="samplingeffort" :maxlength="fields['samplingeffort'] ? fields['samplingeffort']['length'] : 0" :value="data.samplingeffort" @update:value="(value) => updateData('samplingeffort', value)"></text-field-input-element>
                 </div>
             </div>
             <div v-if="!editorHideFields.includes('fieldnotes')" class="row">
                 <div class="col-grow">
-                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['fieldnotes']" label="Field Notes" :value="data.fieldnotes" @update:value="(value) => updateData('fieldnotes', value)"></text-field-input-element>
+                    <text-field-input-element :disabled="disabled" data-type="textarea" :definition="fieldDefinitions['fieldnotes']" label="Field Notes" field="fieldnotes" :value="data.fieldnotes" @update:value="(value) => updateData('fieldnotes', value)"></text-field-input-element>
+                </div>
+            </div>
+            <div v-if="occurrenceEntryFormat === 'replicate' && !editorHideFields.includes('labelproject')" class="row">
+                <div class="col-grow">
+                    <text-field-input-element :disabled="disabled" :definition="fieldDefinitions['labelproject']" label="Label Project" field="labelproject" :maxlength="fields['labelproject'] ? fields['labelproject']['length'] : 0" :value="data.labelproject" @update:value="(value) => updateData('labelproject', value)"></text-field-input-element>
                 </div>
             </div>
             <template v-if="imageCount === 0">
@@ -193,6 +203,7 @@ const collectingEventFieldModule = {
 
         const editorHideFields = Vue.computed(() => occurrenceStore.getEditorHideFields);
         const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
+        const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const propsRefs = Vue.toRefs(props);
         const showExtendedForm = Vue.ref(false);
         const showLocationForm = Vue.ref(false);
@@ -211,7 +222,6 @@ const collectingEventFieldModule = {
             if(props.data.fieldnotes ||
                 props.data.fieldnumber ||
                 props.data.habitat ||
-                props.data.substrate ||
                 props.data.minimumdepthinmeters ||
                 props.data.maximumdepthinmeters ||
                 props.data.verbatimdepth ||
@@ -249,6 +259,7 @@ const collectingEventFieldModule = {
         return {
             editorHideFields,
             imageCount,
+            occurrenceEntryFormat,
             showExtendedForm,
             showLocationForm,
             updateData,
