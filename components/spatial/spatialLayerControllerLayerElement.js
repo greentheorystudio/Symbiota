@@ -191,7 +191,7 @@ const spatialLayerControllerLayerElement = {
         const mapDataType = Vue.computed(() => {
             let returnVal = '';
             if(props.layer){
-                returnVal = (props.layer.file.endsWith('.tif') || props.layer.file.endsWith('.tiff')) ? 'raster' : 'vector';
+                returnVal = (props.layer.hasOwnProperty('file') && (props.layer.file.endsWith('.tif') || props.layer.file.endsWith('.tiff'))) ? 'raster' : 'vector';
             }
             return returnVal;
         });
