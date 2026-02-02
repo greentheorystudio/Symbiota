@@ -144,7 +144,7 @@ include_once(__DIR__ . '/config/header-includes.php');
     </div>
     <div id="mainContainer" style="padding: 10px 15px 15px;">
         <div class="q-mt-md row justify-evenly q-gutter-md">
-            <a class="col-12 col-sm-6 col-md-4 col-lg-3" href="/misc/getting-started.php" tabindex="0">
+            <a class="col-12 col-md-3" href="/misc/getting-started.php" tabindex="0">
                 <q-card bordered>
                     <q-card-section class="column items-center">
                         <q-resize-observer @resize="setImageSize"></q-resize-observer>
@@ -154,7 +154,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                     </q-card-section>
                 </q-card>
             </a>
-            <a class="col-12 col-sm-6 col-md-4 col-lg-3" href="/taxa/index.php?taxon=3204" tabindex="0">
+            <a class="col-12 col-md-3" href="/taxa/index.php?taxon=3204" tabindex="0">
                 <q-card bordered>
                     <q-card-section class="column items-center">
                         <q-resize-observer @resize="setImageSize"></q-resize-observer>
@@ -164,7 +164,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                     </q-card-section>
                 </q-card>
             </a>
-            <a class="col-12 col-sm-6 col-md-4 col-lg-3" href="https://naturalhistory.us18.list-manage.com/subscribe?u=f1cbc7232ea2938e9252c5886&id=9ca1d0073b" target="_blank" aria-label="External link: Newsletter signup - Opens in separate tab" tabindex="0">
+            <a class="col-12 col-md-3" href="https://naturalhistory.us18.list-manage.com/subscribe?u=f1cbc7232ea2938e9252c5886&id=9ca1d0073b" target="_blank" aria-label="External link: Newsletter signup - Opens in separate tab" tabindex="0">
                 <q-card bordered>
                     <q-card-section class="column items-center">
                         <q-resize-observer @resize="setImageSize"></q-resize-observer>
@@ -176,21 +176,21 @@ include_once(__DIR__ . '/config/header-includes.php');
             </a>
         </div>
         <div class="q-mt-md row justify-evenly q-gutter-md">
-            <q-card class="col-12 col-sm-6 col-md-4 col-lg-3" bordered>
+            <q-card class="col-12 col-md-3" bordered>
                 <q-card-section class="q-pa-lg column items-center">
                     <i style="height:60px;width:60px;" class="fas fa-leaf"></i>
                     <div class="homepage-text homepage-totals-header"><?php echo $totalTaxaWithDesc; ?></div>
                     <div class="homepage-text homepage-totals-text">Species Reports</div>
                 </q-card-section>
             </q-card>
-            <q-card class="col-12 col-sm-6 col-md-4 col-lg-3" bordered>
+            <q-card class="col-12 col-md-3" bordered>
                 <q-card-section class="q-pa-lg column items-center">
                     <i style="height:60px;width:60px;background-image: url('/content/imglib/layout/fat_tree.svg');background-size:cover;filter: drop-shadow(10px 10px 4px lightgrey);"></i>
                     <div class="homepage-text homepage-totals-header"><?php echo $totalTaxa; ?></div>
                     <div class="homepage-text homepage-totals-text"> Total Taxa</div>
                 </q-card-section>
             </q-card>
-            <q-card class="col-12 col-sm-6 col-md-4 col-lg-3" bordered>
+            <q-card class="col-12 col-md-3" bordered>
                 <q-card-section class="q-pa-lg column items-center">
                     <i style="height:60px;width:60px;" class="fas fa-map-marked-alt"></i>
                     <div class="homepage-text homepage-totals-header"><?php echo $totalOccurrenceRecords; ?></div>
@@ -218,7 +218,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                 const imageWidth = Vue.ref(null);
 
                 function setImageSize(cardSize) {
-                    imageWidth.value = (cardSize.width - 75) + 'px';
+                    imageWidth.value = (cardSize.width - 25) + 'px';
                 }
 
                 return {
