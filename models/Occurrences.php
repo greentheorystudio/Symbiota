@@ -1311,13 +1311,12 @@ class Occurrences{
         $fieldNameArr = array();
         $sqlPartArr = array();
         if($occId && $editData){
-            if(!$determinationUpdate && (array_key_exists('sciname', $editData) || array_key_exists('tid', $editData))){
+            if(!$determinationUpdate && array_key_exists('sciname', $editData) && array_key_exists('tid', $editData)){
                 $determinationData = array();
                 $determinationFields = (new OccurrenceDeterminations)->getDeterminationFields();
                 foreach($editData as $field => $value){
                     if(array_key_exists($field, $determinationFields)){
                         $determinationData[$field] = $value;
-                        unset($editData[$field]);
                     }
                 }
                 $determinationData['occid'] = $occId;
