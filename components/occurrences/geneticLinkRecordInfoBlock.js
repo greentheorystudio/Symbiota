@@ -28,8 +28,14 @@ const geneticLinkRecordInfoBlock = {
                     <div v-if="geneticLinkageData['identifier']">
                         <span class="text-bold q-mr-sm">Identifier:</span>{{ geneticLinkageData['identifier'] }}
                     </div>
+                    <div v-if="geneticLinkageData['definition']">
+                        <span class="text-bold q-mr-sm">Definition:</span>{{ geneticLinkageData['definition'] }}
+                    </div>
                     <div v-if="geneticLinkageData['locus']">
                         <span class="text-bold q-mr-sm">Locus:</span>{{ geneticLinkageData['locus'] }}
+                    </div>
+                    <div v-if="geneticLinkageData['origin']">
+                        <span class="text-bold q-mr-sm">Origin:</span>{{ geneticLinkageData['origin'] }}
                     </div>
                     <div v-if="geneticLinkageData['resourceurl']">
                         <span class="text-bold q-mr-sm">URL:</span> <a :href="geneticLinkageData['resourceurl']" target="_blank" aria-label="External link: View resource - Opens in separate tab" tabindex="0">{{ geneticLinkageData['resourceurl'] }}</a>
