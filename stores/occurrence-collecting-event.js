@@ -154,6 +154,7 @@ const useOccurrenceCollectingEventStore = Pinia.defineStore('occurrence-collecti
             const formData = new FormData();
             formData.append('collid', collid.toString());
             if(eventData){
+                eventData['collid'] = collid;
                 formData.append('event', JSON.stringify(eventData));
             }
             else{
