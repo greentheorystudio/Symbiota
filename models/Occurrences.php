@@ -1287,7 +1287,18 @@ class Occurrences{
             if($this->conn->query($sql)){
                 $retVal = 1;
                 if($updateData){
-                    $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($locationId);
+                    $sql = 'SELECT eventid FROM omoccurrences WHERE occid = ' . (int)$occId . ' ';
+                    //echo '<div>'.$sql.'</div>';
+                    if($result = $this->conn->query($sql)){
+                        $row = $result->fetch_array(MYSQLI_ASSOC);
+                        $result->free();
+                        if((int)$row['eventid'] > 0){
+                            $retVal = (new OccurrenceCollectingEvents)->updateCollectingEventLocation((int)$row['eventid'], $locationId);
+                        }
+                    }
+                    if($retVal){
+                        $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($locationId);
+                    }
                 }
             }
         }
@@ -1300,13 +1311,12 @@ class Occurrences{
         $fieldNameArr = array();
         $sqlPartArr = array();
         if($occId && $editData){
-            if(!$determinationUpdate && (array_key_exists('sciname', $editData) || array_key_exists('tid', $editData))){
+            if(!$determinationUpdate && array_key_exists('sciname', $editData) && array_key_exists('tid', $editData)){
                 $determinationData = array();
                 $determinationFields = (new OccurrenceDeterminations)->getDeterminationFields();
                 foreach($editData as $field => $value){
                     if(array_key_exists($field, $determinationFields)){
                         $determinationData[$field] = $value;
-                        unset($editData[$field]);
                     }
                 }
                 $determinationData['occid'] = $occId;
