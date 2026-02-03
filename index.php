@@ -145,7 +145,7 @@ include_once(__DIR__ . '/config/header-includes.php');
     <div id="mainContainer" style="padding: 10px 15px 15px;">
         <div class="q-mt-md row justify-evenly q-gutter-md">
             <a class="col-12 col-md-3" href="/misc/getting-started.php" tabindex="0">
-                <q-card bordered>
+                <q-card bordered class="full-height">
                     <q-card-section class="column items-center">
                         <q-resize-observer @resize="setImageSize"></q-resize-observer>
                         <div class="homepage-text homepage-link-card-header">Explore</div>
@@ -155,7 +155,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                 </q-card>
             </a>
             <a class="col-12 col-md-3" href="/taxa/index.php?taxon=3204" tabindex="0">
-                <q-card bordered>
+                <q-card bordered class="full-height">
                     <q-card-section class="column items-center">
                         <q-resize-observer @resize="setImageSize"></q-resize-observer>
                         <div class="homepage-text homepage-link-card-header">Examine</div>
@@ -165,7 +165,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                 </q-card>
             </a>
             <a class="col-12 col-md-3" href="https://naturalhistory.us18.list-manage.com/subscribe?u=f1cbc7232ea2938e9252c5886&id=9ca1d0073b" target="_blank" aria-label="External link: Newsletter signup - Opens in separate tab" tabindex="0">
-                <q-card bordered>
+                <q-card bordered class="full-height">
                     <q-card-section class="column items-center">
                         <q-resize-observer @resize="setImageSize"></q-resize-observer>
                         <div class="homepage-text homepage-link-card-header">Engage</div>
