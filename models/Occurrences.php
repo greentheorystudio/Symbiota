@@ -180,17 +180,18 @@ class Occurrences{
                 $whereStr = (new SearchService)->setWhereSql($sqlWhere, 'occurrence', false);
                 $sql = str_replace('FROM', 'UPDATE', $fromStr);
                 if($matchType === 'part'){
-                    $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = REPLACE(' . SanitizerService::cleanInStr($this->conn, $field) . ', "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '", ' . ($newValue ? SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) : '""') . ') ';
+                    $sql .= 'SET o.' . SanitizerService::cleanInStr($this->conn, $field) . ' = REPLACE(' . SanitizerService::cleanInStr($this->conn, $field) . ', "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '", ' . ($newValue ? SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) : '""') . ') ';
                 }
                 else{
-                    $sql .= 'SET ' . SanitizerService::cleanInStr($this->conn, $field) . ' = ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ' ';
+                    $sql .= 'SET o.' . SanitizerService::cleanInStr($this->conn, $field) . ' = ' . SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $newValue), $this->fields[$field]['dataType']) . ' ';
                 }
                 if($matchType === 'part'){
-                    $sql .= $whereStr . ' AND ' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
+                    $sql .= 'WHERE o.' . SanitizerService::cleanInStr($this->conn, $field) . ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $oldValue) . '%" ';
                 }
                 else{
-                    $sql .= $whereStr . ' AND ' . ($oldValue ? (SanitizerService::cleanInStr($this->conn, $field) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ') : ('ISNULL(' . SanitizerService::cleanInStr($this->conn, $field) . ') '));
+                    $sql .= 'WHERE ' . ($oldValue ? (SanitizerService::cleanInStr($this->conn, ('o.' . $field)) . ' = "' . SanitizerService::cleanInStr($this->conn, $oldValue) . '" ') : ('ISNULL(' . SanitizerService::cleanInStr($this->conn, ('o.' . $field)) . ') '));
                 }
+                $sql .= 'AND ' . substr($whereStr, 6);
                 if($this->conn->query($sql)){
                     $returnVal = 1;
                 }
@@ -1286,7 +1287,18 @@ class Occurrences{
             if($this->conn->query($sql)){
                 $retVal = 1;
                 if($updateData){
-                    $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($locationId);
+                    $sql = 'SELECT eventid FROM omoccurrences WHERE occid = ' . (int)$occId . ' ';
+                    //echo '<div>'.$sql.'</div>';
+                    if($result = $this->conn->query($sql)){
+                        $row = $result->fetch_array(MYSQLI_ASSOC);
+                        $result->free();
+                        if((int)$row['eventid'] > 0){
+                            $retVal = (new OccurrenceCollectingEvents)->updateCollectingEventLocation((int)$row['eventid'], $locationId);
+                        }
+                    }
+                    if($retVal){
+                        $retVal = (new OccurrenceLocations)->updateOccurrencesFromLocationData($locationId);
+                    }
                 }
             }
         }
@@ -1299,13 +1311,12 @@ class Occurrences{
         $fieldNameArr = array();
         $sqlPartArr = array();
         if($occId && $editData){
-            if(!$determinationUpdate && (array_key_exists('sciname', $editData) || array_key_exists('tid', $editData))){
+            if(!$determinationUpdate && array_key_exists('sciname', $editData) && array_key_exists('tid', $editData)){
                 $determinationData = array();
                 $determinationFields = (new OccurrenceDeterminations)->getDeterminationFields();
                 foreach($editData as $field => $value){
                     if(array_key_exists($field, $determinationFields)){
                         $determinationData[$field] = $value;
-                        unset($editData[$field]);
                     }
                 }
                 $determinationData['occid'] = $occId;

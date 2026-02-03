@@ -1,395 +1,103 @@
 {
     "title": "Mapping Tutorial",
-    "introHtml": "<p>Welcome to the mapping tutorial! This tutorial will explain the different components included within this module, how to load and work with different types of map layers, and how to use the vector and raster analysis tools. This tutorial is meant to be interactive, so be sure to test each component and tool explained as you progress through the topics.</p><p>Use the green arrow buttons located in the bottom-right corner of this screen to progress forwards and backwards and the red x button to close the tutorial. The left and right arrow keys on your keyboard can also be used for progression.</p><p>On any topic slide there will be a Hide Tutorial link in the bottom-left corner of the screen, which can be clicked to hide the tutorial content. Once clicked, a Show Tutorial link in the same location can be clicked to show the tutorial content again.</p>",
+    "introHtml": "<p>Welcome to the mapping tutorial! This is an interactive tutorial that will walk you through what this page can do, including how to load and work with different types of map layers, and how to use the vector and raster analysis tools. Follow along and test each component and tool explained as you progress through the topics.</p><p>Use the green arrow buttons in the bottom-right corner of this screen or your left and right arrow keys to progress forwards and backwards in the tutorial. The red x button will close the tutorial. </p><p>There will be a Hide Tutorial button in the bottom-left corner of the screen to temporarily hide the tutorial panel. To re-open the panel, click the Show Tutorial button in the same location.</p>",
     "sections": [
         {
             "title": "Main Map Window",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The main map window is the primary location to view map data, access tools and controls, and load new data onto the map. Let's go through the components of the map window that are available to use for these purposes.</p>"
+                    "html": "<p>In this tutorial, we will walk you through each tool on the screen to get a sense of where panels are located. First we will go through how to interact with the map.</p>"
                 },
                 {
-                    "header": "Side Panel Toggle",
-                    "html": "<p>Located in the left side of this window. Click on this to open the Side Panel.</p>"
-                },
-                {
-                    "header": "Control Panel",
-                    "html": "<p>Located along the center top edge of this window. This panel contains controls and access to settings that will be covered in much further detail later in this tutorial.</p>"
-                },
-                {
-                    "header": "Full Screen Toggle",
-                    "html": "<p>Located in the top-right corner of this window, above the Zoom Slider. Click this button to toggle the full screen display of the map. Once the full screen display has been toggled, the esc key can be pressed to exit back to normal display.</p>"
-                },
-                {
-                    "header": "Zoom Slider",
-                    "html": "<p>Located along the top-right edge of this window, just below the Full Screen Toggle. Click on either the plus or minus buttons at the top and bottom of the slider, or click and drag the handle in the middle, to adjust the zoom level of the map.</p>"
-                },
-                {
-                    "header": "Location and Distance Panel",
-                    "html": "<p>Located in the bottom-right corner of this window. This panel displays the coordinates of the current mouse position on the map (if the mouse cursor is on the map) and scale bars displaying distance in both miles and kilometers according to the current zoom level of the map.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Exploring the Map",
-            "slides": [
-                {
-                    "header": "Zoom",
-                    "html": "<p>The zoom level of the map can be adjusted by either using the Zoom Slider, or scrolling on your mouse or touchpad while hovering over the map.</p>"
+                    "header": "Full Screen Toggle and Zoom Slider",
+                    "html": "<p>Located in the top-right corner of this window is the <b>Zoom Slider</b>, and above it is the <b>Full Screen Toggle.</b></p> <p>Click the full screen toggle to make the map full screen, then the x button to exit full screen. Drag the handle in the middle of the Zoom Slider, click the plus or minus buttons, or scroll on your mouse or touchpad while hovering over the map to adjust the zoom level of the map.</p>"
                 },
                 {
                     "header": "Pan",
                     "html": "<p>To pan the map in any direction, simply click and drag on any area of the map to move it in the direction you wish.</p>"
+                },
+                {
+                    "header": "Location and Distance Panel",
+                    "html": "<p>In the bottom-right corner of this window is the <b>Location and Distance Panel.</b> This panel displays the coordinates of the current mouse position on the map (if the mouse cursor is on the map) and scale bars displaying distance in both miles and kilometers according to the current zoom level of the map.</p>"
+                },
+                {
+                    "header": "Main Control Panel",
+                    "html": "<p>Next let's go through the <b>locations of the control panels</b> that are available to use. Located along the center top edge of this window, or as a collapsed tab to the side if viewing on a small window, is the <b>main control panel</b>. </p> <p>You can use this panel to draw polygons on the map, change map appearance, select your uploaded layers, search for species, et cetera.</p>"
+                },
+                {
+                    "header": "Side Panel Toggle",
+                    "html": "<p>Located in the left side of this window is a <b>collapsed Side Panel</b>.</p> <p>Click on the small tab to access the Vector tools and Raster tools. You can click on the Vector tools title at the top of the panel to collapse the Vector tools and open the Raster tools.</p> <p> If viewing this page on a small screen, the side panel will be the bottom collapsed tab.</p>"
                 }
             ]
         },
         {
-            "title": "Map Layers",
+            "title": "Main Control Panel",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The map initially loads without any additional layers included. As layers get added to the map, they are added in a stacking fashion, much like sheets being stacked on a pile of paper.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Additional layers of two data types can be optionally loaded onto the map: <b>vector</b> layers can be added, which include data based on discrete features (points, lines, or polygons), that can have any number of data attributes associated with them; and <b>raster</b> layers can be added, which include data arranged in a grid with each grid cell (or pixel) associated with a single data value.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>While there are tools for analyzing both raster and vector data, only vector data can be used as search criteria for occurrence records. Raster data can be used however to create vector features based on a value, or value range.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Each additional layer loaded onto the map can be interacted with individually. For most layers interaction is limited to exploring the data they contain, whether it be viewing the data attributes of specific features within a vector layer, or viewing the data value at a specific point in a raster layer.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>There are two additional layers that are added automatically to the map, and allow for a greater amount of interaction. These two layers are relied upon for creating, editing, and using vector data to search for occurrence records, and to further analyze points assocated with occurrence records returned from a search. Both layers will be introduced here, but will be discussed in greater depth in further topics in this tutorial:</p>"
-                },
-                {
-                    "header": "Shapes Layer",
-                    "html": "<p>The Shapes Layer is a vector layer that is automatically added to the map when new features are created using the Draw Tool (to be discussed in a later topic), or vector features are selected from an additional layer added to the map. Features included in the Shapes Layer can be edited, selected, deleted, processed further using the Vector Tools, or used to search for occurrence records. The contents of the Shapes Layer can also be downloaded in multiple geospatial formats for further use.</p>"
-                },
-                {
-                    "header": "Points Layer",
-                    "html": "<p>The Points Layer is a vector layer that is automatically added to the map when occurrence records are loaded from a search. The point features included in this layer can be rendered as individual points, clustered points, or as a heat map. Additionally they allow for a greater degree of symbology options based on the collections and taxonomy of the associated occurrence data. Point features in this layer can be individually selected, and downloads can be prepared of either the entire dataset, or a selected subset, in a variety of export formats.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Control Panel",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Located along the center top edge of this window. This panel has three rows of features:</p>"
+                    "html": "<p>Now we will go over the function of the <b>Main Control Panel.</b> This panel has three dropdown features, in addition to buttons for customization and search, the home button to take you back to the home page, and a camera icon to download the current screen.</p>"
                 },
                 {
                     "header": "Draw Selector",
-                    "html": "<p>Located on the left side of the top row of the Control Panel. This selector can be used to activate the draw tool for adding new polygon, box, circle, line, and point features on the map. To use this selector, simply click on the drop-down and select the type of feature that you would like to draw on the map. This will activate the draw tool. To deactivate the draw tool, simply click on the drop-down and select None. Using the draw tool to create new map features will be discussed in greater depth in a later topic in this tutorial.</p>"
+                    "html": "<p>Located on the very left side (or the top if viewed on a small window) of the Main Control Panel. Clicking on the dropdown menu and selecting one of the draw tools will let you <b>draw new polygons, boxes, circles, lines, or point features on the map.</b> Select the draw tool you want to use, then click on the map to draw the features you want, then click again or double click to complete the shape. </p> "
+                },
+                {
+                    "header": "Draw Selector",
+                    "html": "<p>To draw lines in Freehand Mode instead of as straight lines, open the Settings Button, and check the box next to 'Set Draw Tool to Freehand Mode.' To deactivate the draw tool, click on the drop-down and select None. To delete features you have drawn, you can open the side panel, click on the feature you want to delete, and click 'Delete Selected Features'. </p> <p>For more detail on how to create shapes on the map, see the 'Using the Draw Tool' tutorial.</p>"
                 },
                 {
                     "header": "Base Layer Selector",
-                    "html": "<p>Located on the right side of the top row of the Control Panel. This selector can be used to change the base layer of the map to any of the publically available base layers that are included. These layers are provided for reference purposes only and cannot be interacted with or used with any of the analysis tools. To use this selector, simply click on the drop-down and select the base layer of your choice. The map will immediately load the new base layer when you make a selection. It is important to note that these layers have different minimum zoom threshholds and therefore some may not display properly when the map is set to a high zoom level.</p>"
+                    "html": "<p>Located between the other two dropdown selectors in the Main Control Panel. Use this dropdown to change the appearance of the map to any of the publically available base layers that are included. To use this selector, click on the drop-down and select the base layer of your choice. The map will immediately load the new base layer when you make a selection. </p> <p>It is important to note that these layers have different minimum zoom threshholds and therefore some may not display properly when the map is set to a high zoom level. These layers are provided for reference purposes only and cannot be interacted with or used with any of the analysis tools.</p>"
                 },
                 {
                     "header": "Active Layer Selector",
-                    "html": "<p>Located in the middle row of the Control Panel. When additional layers are loaded onto the map, this selector is used to activate any loaded layer in order to inspect data within that layer, select features within that layer, or edit selected features. While this selector is empty when no additional layers are loaded n the map, once they are, it can be used by simply clicking on the drop-down and selecting the layer you would like to activate. The use of this selector is explained more in later topics in this tutorial.</p>"
+                    "html": "<p>Located to the right of the Base Layer Selector (or under it if viewing on a small window) on the Main Control Panel. When you have multiple layers on the map, for example if you have drawn polygons or points, your active layer must be the layer that includes the features you want to interact with in order to inspect data or select and edit said features. Once you have added layers, click on the drop-down and select the layer with the features you would like to interact with.</p> <p>For more detail on the type of layers you can add to the map, see the 'Map Layers' tutorial, and to upload and explore map layers, see the 'Loading and Exploring Map Layers' tutorial. </p>"
                 },
                 {
-                    "header": "Settings Toggle",
-                    "html": "<p>Located on the left side of the bottom row of the Control Panel. This toggle can be clicked to open the Settings Panel. The Settings Panel will be discussed further in the next topic in this tutorial.</p>"
+                    "header": "Settings Button",
+                    "html": "<p>Located on the most left side (or at the top if viewed on a small window) of the five buttons on the Main Control Panel. Click this button to open the Settings Panel. The Settings Panel can customize how occurrence data is displayed on the map. For more detail on how to use the Setting Panel, see the 'Settings Panel' tutorial.</p>"
                 },
                 {
-                    "header": "Layers Toggle",
-                    "html": "<p>Located in the left middle of the bottom row of the Control Panel. This toggle can be clicked to open the Layers Panel. The Layers Panel will be discussed further in a later topic in this tutorial.</p>"
+                    "header": "Layers Button",
+                    "html": "<p>Located between the Settings and Search Button on the Main Control Panel. This button can be clicked to open the Layers Panel, which will show you information and allow you to edit the layers. For more detail on how to use the Layers Panel, see the 'Layers Panel' tutorial.</p>"
+                },
+                {
+                    "header": "Search Button",
+                    "html": "<p>Located between the Layer Button and the Home Button on the Main Control Panel. This button can be clicked to open the Search Panel, which can help you search for occurrence data of species through selecting criteria, collections, or the advanced query search accessible through the three tabs at the top of the panel. For more detail on how to use the Search Panel, see the 'Loading Occurrence Data with the Search Panel' tutorial.</p>"
                 },
                 {
                     "header": "Download Map Image Button",
-                    "html": "<p>Located in the right middle of the bottom row of the Control Panel. This button can be clicked to download a png image of the map as it currently appears, including all layers and data that are currently loaded onto it and with the current symbology settings for each layer.</p>"
+                    "html": "<p>Located between the Home Button and the Tutorial button on the Main Control Panel. This button can be clicked to download a png image of the map as it currently appears, including all layers and data that are currently loaded onto it and with the current symbology settings for each layer.</p>"
                 },
                 {
-                    "header": "Tutorial Toggle",
-                    "html": "<p>Located on the right side of the bottom row of the Control Panel. This toggle can be clicked to open the Mapping Tutorial.</p>"
+                    "header": "Tutorial Button",
+                    "html": "<p>Located on the very right side (or the bottom if viewed on a smaller window) of the Main Control Panel. This button can be clicked to open the Mapping Tutorial!</p>"
                 }
             ]
         },
         {
-            "title": "Settings Panel",
+            "title": "Loading Occurrence Data with the Search Panel",
             "slides": [
                 {
-                    "header": "",
-                    "html": "<p>The Settings Panel is accessed by clicking on the Settings Toggle in the Control Panel. This panel includes settings for how loaded occurrence data will be displayed on the map. The panel can be closed by clicking the close icon in the top-right corner. The settings included in the Settings Panel are:</p>"
+                    "header": "Search Panel",
+                    "html": "<p>The Search Panel is located between the Layers Button and the Home Button on the Main Control Panel.</p> <p>The Search Panel has three tabs at top: Criteria, Collections, and Advanced to aid you in your search of occurrence data. Each tab has a SEARCH RECORDS button and a CLEAR button on the left side to load the occurrence search, and clear your selections.</p>"
                 },
                 {
-                    "header": "Cluster Points",
-                    "html": "<p>When checked, occurrence points loaded onto the map are clustered, based on the cluster distance setting, into clusters of like records. When not checked, all occurrence records are loaded as individual points on the map, regardless of proximity.</p>"
+                    "header": "Occurrence Data",
+                    "html": "<p>You can search for occurrence records in two ways: Through narrowing your search through the Criteria Tab, Collections Tab, or the Advanced Tab, and/or when at least one polygon, box, or circle feature is selected in the Shapes Layer. Through selecting shapes you have drawn or uploaded, you can search for occurrence records within those areas. </p>"
                 },
                 {
-                    "header": "Cluster Distance",
-                    "html": "<p>This setting controls the minimum distance threshold (in pixels) between points or clusters which determine whether they are clustered when Cluster Points is checked.</p>"
+                    "header": "The Criteria and Collections Tab",
+                    "html": "<p>In the <b>Criteria Tab</b>, you can search for occurrence data depending on the criteria you enter by filling out the form, and pressing the SEARCH RECORDS button. In the <b>Collections tab</b>, you can select records depending on the dataset it belongs to by checking or unchecking the boxes and clicking the SEARCH RECORDS button. See the 'Advanced Query Builder' tutorial on how to use the Advanced Tab.</p>"
                 },
                 {
-                    "header": "Display Heat Map",
-                    "html": "<p>When checked, occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map Radius and Heat Map Blur settings. When not checked occurrence records are displayed on the map as individual points, or clusters of like points.</p>"
-                },
-                {
-                    "header": "Heat Map Radius",
-                    "html": "<p>This setting controls the radius (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
-                },
-                {
-                    "header": "Heat Map Blur",
-                    "html": "<p>This setting controls the blur size (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Using the Draw Tool",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Draw Tool is activated through the Draw Selector in the Control Panel. To activate this tool simply click on the drop-down and select the type of feature that you would like to draw on the map. To deactivate the draw tool, simply click on the drop-down and select None. The Draw Tool can be used to create new polygon, box, circle, line, and point features on the map. Once the Draw Tool has been activated, follow these steps to create each feature type:</p>"
-                },
-                {
-                    "header": "Polygon",
-                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional vertices in the polygon. Click on the original vertex to complete the feature.</p>"
-                },
-                {
-                    "header": "Box",
-                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the box. Click again to complete the feature.</p>"
-                },
-                {
-                    "header": "Circle",
-                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the circle. Click again to complete the feature.</p>"
-                },
-                {
-                    "header": "Line",
-                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional vertices in the line. Click twice on the last vertex to complete the feature.</p>"
-                },
-                {
-                    "header": "Point",
-                    "html": "<p>Click once on the map to create features.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>All features created with the Draw Tool are automatically added to the Shapes Layer on the map, which will be discussed further in a later topic in this tutorial.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Loading Map Data Files Onto the Map",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Map data files can be added to the map from the following file formats: KML (.kml), GeoJSON (.geojson), Shapefile (.zip), and GeoTIFF (.tif or .tiff).</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>All map data loaded onto the map must be in either WGS84 or NAD83 projections.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>To load a map data file onto the map, simply drag and drop the file anywhere over the map window.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Each layer file added to the map is added to both the Active Layer Selector and Layers Panel under the filename of the original map data file.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>No more than 3 vector files (KML, GeoJSON, or Shapefile) and 3 raster files (GeoTIFF) can be loaded onto the map at any one time.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Exploring Map Layer Data",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>In order to explore the data or select features from any layer loaded onto the map, the layer must first be activated through the Active Layer Selector in the Control Panel.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>When a vector layer is activated on the map, holding the alt key (option key on Mac) and clicking on any feature in that layer will open an info window displaying all of the metadata of that feature.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>When a raster layer is activated on the map, holding the alt key (option key on Mac) and clicking anywhere that layer will open an info window displaying the raster value for the point clicked.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>When a vector layer is activated on the map, clicking on any feature in that layer will add it to the Shapes Layer where it can be used for further processing or searching, which will be discussed further in a later topic in this tutorial.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>When there are no layers activated on the map, and the Active Layer Selector is set to None, hovering over any feature or raster data on the map will open an info window displaying the source layer for that feature or data.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Layers Panel",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Layers Panel is accessed by clicking on the Layers Toggle in the Control Panel. This panel includes controls for any layer that has been loaded onto the map as well as layers that have been preconfigured. The types of controls available for any layer can vary depending on whether the layer is currently loaded on the map, whether the layer has raster or vector type data, and whether if it is a preconfigured layer or if it is either the Shapes or Points Layers (to be discussed further in a later topic).</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Preconfigured layers may be arranged individually or in groups. If layer groups have been configured, there will be an expansion bar in the Layers Panel with the layer group name, which can be clicked to view all of the layers included in the group.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Layers are arranged in the Layers Panel in the following order: the Shapes and Points Layers (if loaded on the map) appear at the top, any layers that you have loaded onto the map appear next, and then all preconfigured layers and layer groups appear last. If no layers have been loaded on the map, and no layers have been preconfigured, there will be no layers in the Layers Panel.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Each layer is depicted in a box within the Layers Panel. In the top-left of the box is the layer name, which corresponds with the layer name in the Active Layer Selector if the layer is visible. Any metadata that has been configured with layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of the box will be an icon to indicate whether the layer contains vector or raster data, with <i style=\"height:20px;width:20px;\" class=\"fas fa-vector-square\"></i> for vector data and <i style=\"height:20px;width:20px;\" class=\"fas fa-border-all\"></i> for raster data.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Each layer's information and controls are enclosed within individual frames within the Layers Panel. In the top-left of each frame is the layer name, which corresponds with the layer name in the Active Layer Selector, if the layer is visible. Any metadata that has been configured with the layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of each frame will be an icon to indicate whether the layer contains vector or raster data, with <i style=\"height:20px;width:20px;\" class=\"fas fa-vector-square\"></i> for vector data and <i style=\"height:20px;width:20px;\" class=\"fas fa-border-all\"></i> for raster data.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>The layer controls are found in the bottom-right of each layer frame. If the layer is currently not visible, the controls may be limited to one or two, but more will be available once the layer's visibility is changed. We will go through each control that is available, what layers it is available for, and how to use each. We will start with the control in the far bottom-right corner of each layer frame and address each control to the left:</p>"
-                },
-                {
-                    "header": "Visibility Toggle",
-                    "html": "<p><b>Available for every layer, both when visible and hidden.</b> In the far bottom-right corner of each layer frame is the Visibility Toggle checkbox, which toggles whether the layer is visible on the map. Checking this checkbox will show the layer on the map, and unchecking it will hide the layer. It is important to note that this checkbox simply toggles the visibility of a layer and does not affect the layer data.</p>"
-                },
-                {
-                    "header": "Delete Layer Button",
-                    "html": "<p><b>Available for the Shapes and Points Layers and any layers that you have loaded onto the map, both when visible and hidden.</b> Clicking this button will completely remove the layer, and all of its data, from the map. If this layer is the Shapes Layer, this means that all features included in that layer will be deleted. If this layer is the Points Layer, this means that all search results will be removed from the map and the Records Panel. Clicing this button cannot be undone.</p>"
-                },
-                {
-                    "header": "Query Selector Toggle Button",
-                    "html": "<p><b>Available for vector layers when visible.</b> Clicking this will close the Layers Panel and open the Query Selector for the layer. The Query Selector allows you to select features within a given layer based on their attribute values and will be discussed further in a later topic.</p>"
-                },
-                {
-                    "header": "Symbology Toggle Button",
-                    "html": "<p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> Clicking this button will open and close the layer's symbology settings, where you can adjust how the layer is symbolized on the map. For vector layers, these settings include: border color, fill color, border width, point radius (for point features), and opacity. To adjust border color and fill color, simply click on the color indicator box next to each, and then select the color you would like from the color picker that opens. For raster layers, you can select one of the several predefined color scales for symbolizing raster data. All symbology adjustments made for any layer are immediately reflected on the map.</p>"
-                },
-                {
-                    "header": "Order Adjuster",
-                    "html": "<p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> This will indicate, and allow you to adjust, the order in which the layer is located within the stack of layers currently visible on the map. As layers are added to the map, they are added over previously added layers and have incrementally higher order numbers in the stack of layers. Layers with lower order numbers apeear underneath layers of higher order numbers on the map. You can use this adjuster to either move a layer higher or lower within the layer stack, and therefore make it appear above or below other layers on the map.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Using the Query Selector",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Query Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>The Select attribute drop-down contains all of the attributes applied to features within that layer. Select the attribute you would like to use to base your selection query.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>In the next drop-down select the comparator you would like to use in your query, out of EQUALS, CONTAINS, GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS comparators can compare text or numeric values, but the remaining comparators can only compare numeric values.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the approprite boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Finally click the Run Query button to actually run the selection query. All features within the target layer that match the criteria you have specified will automatically be added to the Shapes Layer.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Working With the Shapes Layer",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Features included in the Shapes Layer can be both edited and selected for further processing, use in a search, or to be deleted. In order to edit or select features in the Shapes Layer, be sure that Shapes is selected in the Active Layer Selector first.</p>"
-                },
-                {
-                    "header": "Editing Features",
-                    "html": "<p>To edit any feature in the Shapes Layer, hold down the shift key and click on the feature to activate it for editing. A red dashed bounding box will appear over the feature with arrow and box handles for scaling, moving, and rotating that feature. While holding down the shift key, click and drag on any of the arrow or box handles to scale, move, and rotate the feature. While holding down the shift key, click anywhere outside of the red dashed bounding box to finish editing.</p>"
-                },
-                {
-                    "header": "Selecting Features",
-                    "html": "<p>Selecting (or deselecting) any feature in the Shapes Layer can be done by simply clicking on the feature. It is necessary to select features that are to be used as criteria in a occurrence search, or used with any of the processing tools.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Side Panel",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Side Panel is accessed by clicking on the Side Panel Toggle. Once opened, clicking along the right border of the panel will close it.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>The Side Panel contains expansion panels for Search Criteria, Records and Taxa (when occurrence records have been loaded), Vector Tools, and Raster Tools. Clicking on the name of any of the expansion panels will either expand or contract the panel.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Search Criteria Panel",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Search Criteria Panel is accessed by opening the Side Panel and clicking on Search Criteria to expand the panel (if it isn't already expanded).</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>The Search Criteria Panel has two tabs: Criteria and Collections, each with a Reset button, to reset the module to its initial state, and a Load Records button to initiate an occurrence search based on any criteria entered or selected in either tab, and/or features that may be selected in the Shapes Layer.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Loading Occurrence Records",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>A search for occurrence records can be run when at least one polygon, box, or circle feature is selected in the Shapes Layer, or search criteria has been entered in either the Criteria or Collections tabs in the Search Criteria Panel in the Side Panel, or both.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>If polygon, box, or circle features are selected in the Shapes Layer the search will find occurrence records occurring within all selected features.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>To run an occurrence search, click the Load Records button in either the Criteria or Collections tabs in the Search Criteria Panel of the Side Panel.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Occurrence records loaded onto the map are automatically added to the Points Layer.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>When occurrence records are loaded, the Records and Taxa Panel (to be discussed in a later topic) becomes available in the Side Panel with tabs showing the collections and taxa represented in the search return, and the occurrence records themselves.</p>"
+                    "header": "Loaded Occurrence Data",
+                    "html": "<p> Occurrence records loaded onto the map are automatically added to the Points Layer. When occurrence records are loaded, the Records and Taxa Panel becomes available in the Side Panel with tabs showing the collections and taxa represented in the search return, and the occurrence records themselves. To learn how to use the Records and Taxa Panel, see the 'Records and Taxa Panel' tutorial.</p>"
                 },
                 {
                     "header": "",
                     "html": "<p>Occurrence records are initially loaded symbolized based on the collection they represent and all collections being symbolized with the same color. The symbology for occurrence records can be changed in either the Collections Tab or Taxa Tab in the Records and Taxa Panel in the Side Panel.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Working With the Points Layer",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Occurrence records loaded on the map are automatically added into the Points Layer. In order to work with occurrence records in the Points Layer, be sure that Points is selected in the Active Layer Selector first.</p>"
-                },
-                {
-                    "header": "Clusters",
-                    "html": "<p>When Cluster Points is activated in the Settings Panel, occurrence clusters will appear as wider circles on the map with a number indicating the amount of records included in that cluster. Click on any cluster to zoom further in to see the individual occurrence records included.</p>"
-                },
-                {
-                    "header": "Selecting Records",
-                    "html": "<p>Selecting or deselecting any occurrence record in the Points Layer can be done by simply clicking on the individual occurrence record. Selecting occurrence records on the map both adds them to the Selections Tab, and selects them in the Records Tab, in the Records and Taxa Panel in the Side Panel. Deselecting occurrence records on the map both removes them from the Selections Tab, and deselects them in the Records Tab, in the Records and Taxa Panel in the Side Panel.</p>"
-                },
-                {
-                    "header": "Viewing Record Data",
-                    "html": "<p>Holding the alt key (option key on Mac) and clicking on any individual occurrence record will open an info window displaying all of the data for that record.</p>"
                 }
             ]
         },
@@ -402,7 +110,7 @@
                 },
                 {
                     "header": "",
-                    "html": "<p>The Records and Taxa Panel includes the tabs: Records, Collections, Taxa, and Selections (when occurrence records are selected). Each of these tabs will be discussed more thouroughly in the following topics.</p>"
+                    "html": "<p>The Records and Taxa Panel includes the tabs: Records, Collections, Taxa, and Selections (when occurrence records are selected). We will go through these three tabs in the following tutorial.</p>"
                 }
             ]
         },
@@ -439,7 +147,7 @@
                 },
                 {
                     "header": "Select/Deselect All Checkbox",
-                    "html": "<p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can be used to select and deselect all of the occurrence records in the current table. When selected, records will be both added to the Selections Tab as well as selected on the map. Deselecting records will both remove them from the Selections Tab and delselect them on the map.</p>"
+                    "html": "<p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can be used to select and deselect all of the occurrence records in the current table. When selected, records will be both added to the Selections Tab as well as selected on the map. Deselecting records will both remove them from the Selections Tab and deselect them on the map.</p>"
                 },
                 {
                     "header": "Occurrence Record Table",
@@ -539,28 +247,196 @@
             ]
         },
         {
-            "title": "Using the Heat Map Display",
+            "title": "Settings Panel (and Heat Map)",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>When occurrence records have been loaded on the map, the heat map display can be activated to display the occurrence data as a heat map instead of points.</p>"
+                    "html": "<p>The Settings Panel is accessed by clicking on the Settings Toggle in the Main Control Panel. This panel includes settings for how loaded occurrence data will be displayed on the map, in addition to displaying a heat map. The panel can be closed by clicking the close icon in the top-right corner.</p>"
                 },
                 {
-                    "header": "",
-                    "html": "<p>To activate or deactivate the heat map display, check or uncheck Display Heat Map in the Settings Panel.</p>"
+                    "header": "Cluster Points",
+                    "html": "<p>When checked, occurrence points loaded onto the map are clustered, based on the cluster distance setting, into clusters of like records. When not checked, all occurrence records are loaded as individual points on the map, regardless of proximity.</p>"
                 },
                 {
-                    "header": "",
-                    "html": "<p>Adjusting the Heat Map Radius and Heat Map Blur settings, also in the Settings Panel, will further adjust how occurrence points are rendered in the heat map display.</p>"
+                    "header": "Cluster Distance",
+                    "html": "<p>This setting controls the minimum distance threshold (in pixels) between points or clusters which determine whether they are clustered when Cluster Points is checked.</p>"
+                },
+                {
+                    "header": "Display Heat Map",
+                    "html": "<p>When checked, occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map Radius and Heat Map Blur settings. When not checked occurrence records are displayed on the map as individual points, or clusters of like points.</p>"
+                },
+                {
+                    "header": "Heat Map Radius",
+                    "html": "<p>This setting controls the radius (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
+                },
+                {
+                    "header": "Heat Map Blur",
+                    "html": "<p>This setting controls the blur size (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
                 }
             ]
         },
         {
-            "title": "Downloading a Map Image",
+            "title": "Map Layers",
+            "slides": [
+                {
+                    "header": "Layers",
+                    "html": "<p>The map initially loads without any additional layers included. As layers get added to the map, they are added in a stacking fashion, much like sheets being stacked on a pile of paper.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Additional layers of two data types can be optionally loaded onto the map: <b>vector</b> layers can be added, which include data based on discrete features (points, lines, or polygons), that can have any number of data attributes associated with them; and <b>raster</b> layers can be added, which include data arranged in a grid with each grid cell (or pixel) associated with a single data value.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>While there are tools for analyzing both raster and vector data, only vector data can be used as search criteria for occurrence records. Raster data can be used however to create vector features based on a value, or value range.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Each additional layer loaded onto the map can be interacted with individually. For most layers interaction is limited to exploring the data they contain, whether it be viewing the data attributes of specific features within a vector layer, or viewing the data value at a specific point in a raster layer.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>There are two additional layers that are added automatically to the map, and allow for a greater amount of interaction. These two layers are relied upon for creating, editing, and using vector data to search for occurrence records, and to further analyze points assocated with occurrence records returned from a search. Both layers will be introduced here, but will be discussed in greater depth in further topics in this tutorial:</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p>The Shapes Layer is a vector layer that is automatically added to the map when new features are created using the Draw Tool (to be discussed in a later topic), or vector features are selected from an additional layer added to the map. Features included in the Shapes Layer can be edited, selected, deleted, processed further using the Vector Tools, or used to search for occurrence records. The contents of the Shapes Layer can also be downloaded in multiple geospatial formats for further use.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p>The Points Layer is a vector layer that is automatically added to the map when occurrence records are loaded from a search. The point features included in this layer can be rendered as individual points, clustered points, or as a heat map. Additionally they allow for a greater degree of symbology options based on the collections and taxonomy of the associated occurrence data. Point features in this layer can be individually selected, and downloads can be prepared of either the entire dataset, or a selected subset, in a variety of export formats.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Uploading and Exploring Map Data Files",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>A png image of the map in the current view, including all layers that have been loaded, all occurrence data that has been loaded, and all symbology adjustments that have been made, can be downloaded at any time by clicking the Download Map Image button in the Control Panel.</p>"
+                    "html": "<p>Map data files can be added to the map from the following file formats: KML (.kml), GeoJSON (.geojson), Shapefile (.zip), and GeoTIFF (.tif or .tiff).</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>All map data loaded onto the map must be in either WGS84 or NAD83 projections.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To load a map data file onto the map, simply drag and drop the file anywhere over the map window.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Each layer file added to the map is added to both the Active Layer Selector and Layers Panel under the filename of the original map data file.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>No more than 3 vector files (KML, GeoJSON, or Shapefile) and 3 raster files (GeoTIFF) can be loaded onto the map at any one time.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In order to explore the data or select features from any layer loaded onto the map, the layer must first be activated through the Active Layer Selector in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>When a vector layer is activated on the map, holding the alt key (option key on Mac) and clicking on any feature in that layer will open an info window displaying all of the metadata of that feature.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>When a raster layer is activated on the map, holding the alt key (option key on Mac) and clicking anywhere that layer will open an info window displaying the raster value for the point clicked.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>When a vector layer is activated on the map, clicking on any feature in that layer will add it to the Shapes Layer where it can be used for further processing or searching, which will be discussed further in a later topic in this tutorial.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>When there are no layers activated on the map, and the Active Layer Selector is set to None, hovering over any feature or raster data on the map will open an info window displaying the source layer for that feature or data.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Layers Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Layers Panel is accessed by clicking on the Layers Button in the Main Control Panel. This panel includes controls for any layer that has been loaded onto the map as well as layers that have been preconfigured. The types of controls available for any layer can vary depending on whether the layer is currently loaded on the map, whether the layer has raster or vector type data, and whether if it is a preconfigured layer or if it is either the Shapes or Points Layers (to be discussed further in a later topic).</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Preconfigured layers may be arranged individually or in groups. If layer groups have been configured, there will be an expansion bar in the Layers Panel with the layer group name, which can be clicked to view all of the layers included in the group.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Layers are arranged in the Layers Panel in the following order: the Shapes and Points Layers (if loaded on the map) appear at the top, any layers that you have loaded onto the map appear next, and then all preconfigured layers and layer groups appear last. If no layers have been loaded on the map, and no layers have been preconfigured, there will be no layers in the Layers Panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Each layer is depicted in a box within the Layers Panel. In the top-left of the box is the layer name, which corresponds with the layer name in the Active Layer Selector if the layer is visible. Any metadata that has been configured with layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of the box will be an icon to indicate whether the layer contains vector or raster data, with <i style=\"height:20px;width:20px;\" class=\"fas fa-vector-square\"></i> for vector data and <i style=\"height:20px;width:20px;\" class=\"fas fa-border-all\"></i> for raster data.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Each layer's information and controls are enclosed within individual frames within the Layers Panel. In the top-left of each frame is the layer name, which corresponds with the layer name in the Active Layer Selector, if the layer is visible. Any metadata that has been configured with the layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of each frame will be an icon to indicate whether the layer contains vector or raster data, with <i style=\"height:20px;width:20px;\" class=\"fas fa-vector-square\"></i> for vector data and <i style=\"height:20px;width:20px;\" class=\"fas fa-border-all\"></i> for raster data.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The layer controls are found in the bottom-right of each layer frame. If the layer is currently not visible, the controls may be limited to one or two, but more will be available once the layer's visibility is changed. We will go through each control that is available, what layers it is available for, and how to use each. We will start with the control in the far bottom-right corner of each layer frame and address each control to the left:</p>"
+                },
+                {
+                    "header": "Visibility Toggle",
+                    "html": "<p><b>Available for every layer, both when visible and hidden.</b> In the far bottom-right corner of each layer frame is the Visibility Toggle checkbox, which toggles whether the layer is visible on the map. Checking this checkbox will show the layer on the map, and unchecking it will hide the layer. It is important to note that this checkbox simply toggles the visibility of a layer and does not affect the layer data.</p>"
+                },
+                {
+                    "header": "Delete Layer Button",
+                    "html": "<p><b>Available for the Shapes and Points Layers and any layers that you have loaded onto the map, both when visible and hidden.</b> Clicking this button will completely remove the layer, and all of its data, from the map. If this layer is the Shapes Layer, this means that all features included in that layer will be deleted. If this layer is the Points Layer, this means that all search results will be removed from the map and the Records Panel. Clicing this button cannot be undone.</p>"
+                },
+                {
+                    "header": "Query Selector Toggle Button",
+                    "html": "<p><b>Available for vector layers when visible.</b> Clicking this will close the Layers Panel and open the Query Selector for the layer. The Query Selector allows you to select features within a given layer based on their attribute values and will be discussed further in a later topic.</p>"
+                },
+                {
+                    "header": "Symbology Toggle Button",
+                    "html": "<p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> Clicking this button will open and close the layer's symbology settings, where you can adjust how the layer is symbolized on the map. For vector layers, these settings include: border color, fill color, border width, point radius (for point features), and opacity. To adjust border color and fill color, simply click on the color indicator box next to each, and then select the color you would like from the color picker that opens. For raster layers, you can select one of the several predefined color scales for symbolizing raster data. All symbology adjustments made for any layer are immediately reflected on the map.</p>"
+                },
+                {
+                    "header": "Order Adjuster",
+                    "html": "<p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> This will indicate, and allow you to adjust, the order in which the layer is located within the stack of layers currently visible on the map. As layers are added to the map, they are added over previously added layers and have incrementally higher order numbers in the stack of layers. Layers with lower order numbers apeear underneath layers of higher order numbers on the map. You can use this adjuster to either move a layer higher or lower within the layer stack, and therefore make it appear above or below other layers on the map.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Working With the Shapes Layer",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Features included in the Shapes Layer can be both edited and selected for further processing, use in a search, or to be deleted. In order to edit or select features in the Shapes Layer, be sure that Shapes is selected in the Active Layer Selector first.</p>"
+                },
+                {
+                    "header": "Editing Features",
+                    "html": "<p>To edit any feature in the Shapes Layer, hold down the shift key and click on the feature to activate it for editing. A red dashed bounding box will appear over the feature with arrow and box handles for scaling, moving, and rotating that feature. While holding down the shift key, click and drag on any of the arrow or box handles to scale, move, and rotate the feature. While holding down the shift key, click anywhere outside of the red dashed bounding box to finish editing.</p>"
+                },
+                {
+                    "header": "Selecting Features",
+                    "html": "<p>Selecting (or deselecting) any feature in the Shapes Layer can be done by simply clicking on the feature. It is necessary to select features that are to be used as criteria in a occurrence search, or used with any of the processing tools.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Working With the Points Layer",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Occurrence records loaded on the map are automatically added into the Points Layer. In order to work with occurrence records in the Points Layer, be sure that Points is selected in the Active Layer Selector first.</p>"
+                },
+                {
+                    "header": "Clusters",
+                    "html": "<p>When Cluster Points is activated in the Settings Panel, occurrence clusters will appear as wider circles on the map with a number indicating the amount of records included in that cluster. Click on any cluster to zoom further in to see the individual occurrence records included.</p>"
+                },
+                {
+                    "header": "Selecting Records",
+                    "html": "<p>Selecting or deselecting any occurrence record in the Points Layer can be done by simply clicking on the individual occurrence record. Selecting occurrence records on the map both adds them to the Selections Tab, and selects them in the Records Tab, in the Records and Taxa Panel in the Side Panel. Deselecting occurrence records on the map both removes them from the Selections Tab, and deselects them in the Records Tab, in the Records and Taxa Panel in the Side Panel.</p>"
+                },
+                {
+                    "header": "Viewing Record Data",
+                    "html": "<p>Holding the alt key (option key on Mac) and clicking on any individual occurrence record will open an info window displaying all of the data for that record.</p>"
                 }
             ]
         },
@@ -653,7 +529,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -690,7 +566,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -727,7 +603,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -760,7 +636,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -885,7 +761,7 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Control Panel.</p>"
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 2",
@@ -963,11 +839,108 @@
             ]
         },
         {
-            "title": "Walkthrough #1",
+            "title": "Using the Draw Tool",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>In this walkthrough we will use the the Search Criteria Panel in the Side Panel to enter search criteria for occurrence records and load them on the map.</p>"
+                    "html": "<p>The Draw Tool is activated through the Draw Selector in the Main Control Panel. To activate this tool simply click on the drop-down and select the type of feature that you would like to draw on the map. To deactivate the draw tool, simply click on the drop-down and select None. The Draw Tool can be used to create new polygon, box, circle, line, and point features on the map. Once the Draw Tool has been activated, follow these steps to create each feature type:</p>"
+                },
+                {
+                    "header": "Polygon",
+                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional vertices in the polygon. Click on the original vertex to complete the feature.</p>"
+                },
+                {
+                    "header": "Box",
+                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the box. Click again to complete the feature.</p>"
+                },
+                {
+                    "header": "Circle",
+                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the circle. Click again to complete the feature.</p>"
+                },
+                {
+                    "header": "Line",
+                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional vertices in the line. Click twice on the last vertex to complete the feature.</p>"
+                },
+                {
+                    "header": "Point",
+                    "html": "<p>Click once on the map to create features.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>All features created with the Draw Tool are automatically added to the Shapes Layer on the map, which will be discussed further in a later topic in this tutorial.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Advanced Query Builder",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Query Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Select attribute drop-down contains all of the attributes applied to features within that layer. Select the attribute you would like to use to base your selection query.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In the next drop-down select the comparator you would like to use in your query, out of EQUALS, CONTAINS, GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS comparators can compare text or numeric values, but the remaining comparators can only compare numeric values.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the appropriate boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Finally click the Run Query button to actually run the selection query. All features within the target layer that match the criteria you have specified will automatically be added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Downloading a Map Image",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>A png image of the map in the current view, including all layers that have been loaded, all occurrence data that has been loaded, and all symbology adjustments that have been made, can be downloaded at any time by clicking the Download Map Image button in the Main Control Panel.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Using the Heat Map Display",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>When occurrence records have been loaded on the map, the heat map display can be activated to display the occurrence data as a heat map instead of points.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To activate or deactivate the heat map display, check or uncheck Display Heat Map in the Settings Panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Adjusting the Heat Map Radius and Heat Map Blur settings, also in the Settings Panel, will further adjust how occurrence points are rendered in the heat map display.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Side Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Now we will go over what we can do with the <b>Side Panel.</b> The Side Panel is accessed by clicking on the collapsed Side Panel tab. Once opened, clicking along the right border of the panel will close it.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Side Panel contains expansion panels for Search Criteria, Records and Taxa (when occurrence records have been loaded), Vector Tools, and Raster Tools. Clicking on the name of any of the expansion panels will either expand or contract the panel.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Searching and Loading Occurrence Data Walkthrough",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>In this walkthrough we will use the the Search Panel in the Main Control Panel to enter search criteria for occurrence records and load them on the map.</p>"
                 },
                 {
                     "header": "Step 1",
@@ -1012,7 +985,7 @@
             ]
         },
         {
-            "title": "Walkthrough #2",
+            "title": "Loading Occurrence Data Around a Buffer Polygon Walkthrough",
             "slides": [
                 {
                     "header": "",
@@ -1028,7 +1001,7 @@
                 },
                 {
                     "header": "Step 3",
-                    "html": "<p>In the Draw Selector in the Control Panel, select Point to activate the Point Draw Tool.</p>"
+                    "html": "<p>In the Draw Selector in the Main Control Panel, select Point to activate the Point Draw Tool.</p>"
                 },
                 {
                     "header": "Step 4",
@@ -1061,7 +1034,7 @@
             ]
         },
         {
-            "title": "Walkthrough #3",
+            "title": "Loading Occurrence Data Within a U.S. County Walkthrough",
             "slides": [
                 {
                     "header": "",
@@ -1089,7 +1062,7 @@
                 },
                 {
                     "header": "Step 6",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 7",
@@ -1105,7 +1078,7 @@
                 },
                 {
                     "header": "Step 10",
-                    "html": "<p>Select the US county data layer in the Active Layer Selector (this should be tl_2021_us_county if you downloaded the file specified in step 1) in the Control Panel to activate it.</p>"
+                    "html": "<p>Select the US county data layer in the Active Layer Selector (this should be tl_2021_us_county if you downloaded the file specified in step 1) in the Main Control Panel to activate it.</p>"
                 },
                 {
                     "header": "Step 11",
@@ -1114,7 +1087,7 @@
             ]
         },
         {
-            "title": "Walkthrough #4",
+            "title": "Using Intersect Tool Walkthrough #4",
             "slides": [
                 {
                     "header": "",
@@ -1146,7 +1119,7 @@
                 },
                 {
                     "header": "Step 7",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 8",
@@ -1170,7 +1143,7 @@
                 },
                 {
                     "header": "Step 13",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 14",
@@ -1182,7 +1155,7 @@
                 },
                 {
                     "header": "Step 16",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 17",
@@ -1211,7 +1184,7 @@
             ]
         },
         {
-            "title": "Walkthrough #5",
+            "title": "Using Vector Tools Walkthrough #5",
             "slides": [
                 {
                     "header": "",
@@ -1243,7 +1216,7 @@
                 },
                 {
                     "header": "Step 7",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 8",
@@ -1275,7 +1248,7 @@
                 },
                 {
                     "header": "Step 15",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 16",
@@ -1303,7 +1276,7 @@
                 },
                 {
                     "header": "Step 22",
-                    "html": "<p>Select the elevation data layer in the Active Layer Selector in the Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
+                    "html": "<p>Select the elevation data layer in the Active Layer Selector in the Main Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
                 },
                 {
                     "header": "Step 23",
@@ -1311,7 +1284,7 @@
                 },
                 {
                     "header": "Step 24",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 25",
@@ -1323,7 +1296,7 @@
                 },
                 {
                     "header": "Step 27",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 28",
@@ -1371,7 +1344,7 @@
                 },
                 {
                     "header": "Step 39",
-                    "html": "<p>Once the vectorization process is complete, select the elevation data layer in the Active Layer Selector in the Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
+                    "html": "<p>Once the vectorization process is complete, select the elevation data layer in the Active Layer Selector in the Main Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
                 },
                 {
                     "header": "Step 40",
@@ -1387,7 +1360,7 @@
                 },
                 {
                     "header": "Step 43",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 44",
@@ -1399,7 +1372,7 @@
                 },
                 {
                     "header": "Step 46",
-                    "html": "<p>Select state feature layer that you added to the map in step 32 in the Active Layer Selector in the Control Panel to activate it. It will be named the same as the filename in the Active Layer Selector.</p>"
+                    "html": "<p>Select state feature layer that you added to the map in step 32 in the Active Layer Selector in the Main Control Panel to activate it. It will be named the same as the filename in the Active Layer Selector.</p>"
                 },
                 {
                     "header": "Step 47",
@@ -1407,7 +1380,7 @@
                 },
                 {
                     "header": "Step 48",
-                    "html": "<p>Select Shapes in the Active Layer Selector in the Control Panel to activate the Shapes Layer.</p>"
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 49",
