@@ -120,6 +120,7 @@ const occurrenceEditorEventLocationTransferPopup = {
         });
         const locationData = Vue.reactive({});
         const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
+        const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const locationValid = Vue.computed(() => {
             return (locationData['country'] && locationData['stateprovince']);
         });
@@ -139,11 +140,14 @@ const occurrenceEditorEventLocationTransferPopup = {
         }
 
         function processChangeEvent() {
-            eventData['locationid'] = locationData['locationid'];
             if(Number(eventData['eventid']) > 0){
+                if(Number(locationData['locationid']) > 0){
+                    eventData['locationid'] = Number(locationData['locationid']);
+                }
                 transferOccurrenceEvent();
             }
             else{
+                eventData['locationid'] = Number(locationData['locationid']) > 0 ? Number(locationData['locationid']) : locationId.value;
                 occurrenceStore.createCollectingEventRecord((newEventId) => {
                     if(newEventId > 0){
                         eventData['eventid'] = newEventId;
@@ -165,6 +169,7 @@ const occurrenceEditorEventLocationTransferPopup = {
                 occurrenceStore.createLocationRecord((newLocationId) => {
                     if(newLocationId > 0){
                         locationData['locationid'] = newLocationId;
+                        eventData['locationid'] = newLocationId;
                         transferOccurrenceLocation();
                     }
                     else{
