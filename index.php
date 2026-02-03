@@ -159,7 +159,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                     <q-card-section class="column items-center">
                         <q-resize-observer @resize="setImageSize"></q-resize-observer>
                         <div class="homepage-text homepage-link-card-header">Examine</div>
-                        <q-img class="rounded-borders" :width="imageWidth" src="https://content.eol.org/data/media/d6/45/31/542.356f94bf9d9775e6fd1fcc71d059ca63.jpg" fit="contain" alt="Cracked earth of a dried riverbed at sunset, with grasses along the edges and a clear sky."></q-img>
+                        <q-img class="rounded-borders" :width="imageWidth" src="/content/imglib/general/202602/542.356f94bf9d9775e6fd1fcc71d059ca63_1.jpg" fit="contain" alt="Cracked earth of a dried riverbed at sunset, with grasses along the edges and a clear sky."></q-img>
                         <div class="homepage-text homepage-link-card-text">Meet the star of the moment! Check out the latest Species Spotlight.</div>
                     </q-card-section>
                 </q-card>
@@ -169,7 +169,7 @@ include_once(__DIR__ . '/config/header-includes.php');
                     <q-card-section class="column items-center">
                         <q-resize-observer @resize="setImageSize"></q-resize-observer>
                         <div class="homepage-text homepage-link-card-header">Engage</div>
-                        <q-img class="rounded-borders" :width="imageWidth" src="/content/imglib/static/11_ReynoldsJ1.jpg" fit="contain" alt="Black and yellow butterfly perched on bright yellow flowers with blurred green foliage in the background."></q-img>
+                        <q-img class="rounded-borders" :width="imageWidth" src="/content/imglib/static/11_ReynoldsJ1_cropped.jpg" fit="contain" alt="Black and yellow butterfly perched on bright yellow flowers with blurred green foliage in the background."></q-img>
                         <div class="homepage-text homepage-link-card-text">Stay in the loop. Subscribe to our periodic newsletter.</div>
                     </q-card-section>
                 </q-card>
