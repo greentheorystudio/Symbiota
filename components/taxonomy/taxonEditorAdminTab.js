@@ -1,21 +1,6 @@
 const taxonEditorAdminTab = {
     template: `
         <div class="column q-gutter-md">
-            <q-card v-if="!deleteValid" flat bordered>
-                <q-card-section class="column q-gutter-sm">
-                    <div class="text-subtitle1 text-bold">Remap Resources to Another Taxon</div>
-                    <div class="row">
-                        <div class="col-grow">
-                            <single-scientific-common-name-auto-complete :sciname="remapTaxonVal" label="Taxon" :limit-to-options="true" @update:sciname="processRemapTaxonNameChange"></single-scientific-common-name-auto-complete>
-                        </div>
-                    </div>
-                    <div class="row justify-end q-gutter-sm">
-                        <div>
-                            <q-btn color="primary" @click="processRemap();" label="Remap Resources" :disabled="Number(remapTaxonTid) > 0" tabindex="0" />
-                        </div>
-                    </div>
-                </q-card-section>
-            </q-card>
             <q-card v-if="taxonUseData.hasOwnProperty('children')" flat bordered>
                 <q-card-section class="column q-gutter-sm">
                     <div class="text-subtitle1 text-bold">Delete Taxon</div>
@@ -106,7 +91,7 @@ const taxonEditorAdminTab = {
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
     },
     setup() {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { showNotification } = useCore();
         const baseStore = useBaseStore();
         const taxaStore = useTaxaStore();
 
@@ -125,10 +110,7 @@ const taxonEditorAdminTab = {
                 Number(taxonUseData.value['determinations']) === 0
             );
         });
-        const remapTaxonTid = Vue.ref(null);
-        const remapTaxonVal = Vue.ref(null);
         const synonymArr = Vue.computed(() => taxaStore.getTaxaSynonyms);
-        const taxon = Vue.computed(() => taxaStore.getTaxaData);
         const taxonUseData = Vue.computed(() => taxaStore.getTaxaUseData);
 
         const setTaxonData = Vue.inject('setTaxonData');
@@ -150,51 +132,13 @@ const taxonEditorAdminTab = {
             }});
         }
 
-        function quietSetTaxonData(tid) {
-            taxaStore.setTaxon(tid, true);
-        }
-
-        function processRemap() {
-            showWorking();
-            taxaStore.remapTaxonResources(remapTaxonTid.value, (res) => {
-                hideWorking();
-                if(res === 1){
-                    showNotification('positive','Recources remapped successfully.');
-                    taxaStore.setTaxaUseData();
-                    quietSetTaxonData(taxon.value['tid']);
-                    remapTaxonVal.value = null;
-                    remapTaxonTid.value = null;
-                }
-                else{
-                    showNotification('negative', 'There was an error remapping the resources.');
-                }
-            });
-        }
-
-        function processRemapTaxonNameChange(taxonData) {
-            if(taxonData){
-                remapTaxonVal.value = taxonData['sciname'];
-                remapTaxonTid.value = taxonData['tid'];
-            }
-            else{
-                remapTaxonVal.value = null;
-                remapTaxonTid.value = null;
-            }
-            if(remapTaxonTid.value && Number(taxonData['kingdomid']) !== Number(taxon.value['kingdomid'])) {
-                showNotification('negative', 'The taxon you entered is in a different kingdom than the current taxon. Please ensure it is correct.');
-            }
-        }
-
         return {
             clientRoot,
             confirmationPopupRef,
             deleteValid,
-            remapTaxonVal,
             synonymArr,
             taxonUseData,
             deleteTaxon,
-            processRemap,
-            processRemapTaxonNameChange,
             setTaxonData
         }
     }

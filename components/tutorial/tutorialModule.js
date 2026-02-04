@@ -30,7 +30,7 @@ const tutorialModule = {
                 </q-card>
             </div>
             <div v-if="!hideTutorial && currentSlide.type === 'content'" class="tutorial-content-frame-container">
-                <q-card class="tutorial-frame tutorial-content q-pa-md q-mt-md q-mr-md fixed-top-right tutorial-content-frame-container">
+                <q-card class="tutorial-frame tutorial-content q-pa-md q-mt-xl q-mr-xl fixed-top-right tutorial-content-frame-container">
                     <p v-if="currentSlide.header" class="heading header">{{ currentSlide.header }}</p>
                     <div v-html="currentSlide.content"></div>
                 </q-card>
