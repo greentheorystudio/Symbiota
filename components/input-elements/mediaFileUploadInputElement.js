@@ -793,7 +793,6 @@ const mediaFileUploadInputElement = {
                                 }
                                 file['uploadMetadata']['scientificname'] = sciname;
                                 file['uploadMetadata']['tid'] = tid;
-                                file['uploadMetadata']['sortsequence'] = 20;
                             }
                             if(!file.hasOwnProperty('copyToServer')){
                                 file['copyToServer'] = false;
