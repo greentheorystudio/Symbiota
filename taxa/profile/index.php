@@ -101,6 +101,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             <q-tab v-if="isAccepted" name="tag" label="Tag Primary Image" no-caps></q-tab>
                             <q-tab name="common" label="Common Names" no-caps></q-tab>
                             <q-tab v-if="isAccepted || taxonMap" name="map" label="Taxon Map" no-caps></q-tab>
+                            <q-tab name="admin" label="Admin" no-caps></q-tab>
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
@@ -118,6 +119,9 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             </q-tab-panel>
                             <q-tab-panel v-if="isAccepted || taxonMap" name="map" class="main-container-height">
                                 <taxon-profile-editor-taxon-map-tab></taxon-profile-editor-taxon-map-tab>
+                            </q-tab-panel>
+                            <q-tab-panel name="admin" class="main-container-height">
+                                <taxon-profile-editor-admin-tab></taxon-profile-editor-admin-tab>
                             </q-tab-panel>
                         </q-tab-panels>
                     </q-card>
@@ -172,6 +176,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorVernacularEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorDescriptionsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorMediaTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorAdminTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorPrimaryImageTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorTaxonMapTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonProfileEditorVernacularTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -180,6 +185,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                 components: {
                     'new-taxon-editor-popup': newTaxonEditorPopup,
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
+                    'taxon-profile-editor-admin-tab': taxonProfileEditorAdminTab,
                     'taxon-profile-editor-descriptions-tab': taxonProfileEditorDescriptionsTab,
                     'taxon-profile-editor-media-tab': taxonProfileEditorMediaTab,
                     'taxon-profile-editor-primary-image-tab': taxonProfileEditorPrimaryImageTab,

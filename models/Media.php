@@ -270,7 +270,7 @@ class Media{
         $returnArr = array();
         if($tidArr && is_array($tidArr) && count($tidArr) > 0){
             $sql = 'SELECT DISTINCT m.mediaid, t.tidaccepted AS tid, m.occid, m.accessuri, m.descriptivetranscripturi, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
-                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                'm.sortsequence, t.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
                 'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
@@ -305,7 +305,7 @@ class Media{
             }
 
             $sql = 'SELECT DISTINCT m.mediaid, te.parenttid AS tid, m.occid, m.accessuri, m.descriptivetranscripturi, m.title, m.creator, m.`type`, m.format, m.owner, m.description, '.
-                't.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                'm.sortsequence, t.securitystatus, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM media AS m LEFT JOIN taxa AS t ON m.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
                 'LEFT JOIN taxaenumtree AS te ON t.tidaccepted = te.tid '.

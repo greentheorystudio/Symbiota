@@ -117,6 +117,10 @@ CREATE TABLE `omoccurcollectingevents` (
     CONSTRAINT `FK_eventcollid` FOREIGN KEY (`collid`) REFERENCES `omcollections` (`CollID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+ALTER TABLE `omoccurgenetic`
+    ADD COLUMN `definition` varchar(500) NULL AFTER `title`,
+    ADD COLUMN `origin` longtext NULL AFTER `locus`;
+
 CREATE TABLE `omoccurlocations` (
     `locationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `collid` int(10) unsigned NOT NULL,
