@@ -8,7 +8,7 @@ const occurrenceEditorMediaTab = {
                         <div class="q-mt-sm column q-gutter-sm">
                             <div class="text-h6 text-bold">Images</div>
                             <template v-for="image in imageArr">
-                                <image-record-info-block :image-data="image" :editor="true" @open:image-editor="openImageEditorPopup"></image-record-info-block>
+                                <image-record-info-block :coll-id="collId" :image-data="image" :editor="true" @image:updated="processMediaUpdate" @open:image-editor="openImageEditorPopup"></image-record-info-block>
                             </template>
                         </div>
                     </template>
@@ -16,7 +16,7 @@ const occurrenceEditorMediaTab = {
                         <div class="q-mt-sm column q-gutter-sm">
                             <div class="text-h6 text-bold">Media</div>
                             <template v-for="media in mediaArr">
-                                <media-record-info-block :media-data="media" :editor="true" @open:media-editor="openMediaEditorPopup"></media-record-info-block>
+                                <media-record-info-block :coll-id="collId" :media-data="media" :editor="true" @media:updated="processMediaUpdate" @open:media-editor="openMediaEditorPopup"></media-record-info-block>
                             </template>
                         </div>
                     </template>

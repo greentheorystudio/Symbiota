@@ -6,7 +6,9 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
             identifier: null,
             resourcename: null,
             title: null,
+            definition: null,
             locus: null,
+            origin: null,
             resourceurl: null,
             notes: null
         },

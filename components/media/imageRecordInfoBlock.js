@@ -1,5 +1,9 @@
 const imageRecordInfoBlock = {
     props: {
+        collId: {
+            type: Number,
+            default: 0
+        },
         imageData: {
             type: Object,
             default: null
@@ -36,8 +40,10 @@ const imageRecordInfoBlock = {
                     </div>
                     <div class="col-8 column no-wrap">
                         <template v-if="editor">
-                            <div v-if="imageData.sortsequence">
-                                <span class="text-bold">Sort Sequence: </span>{{ imageData.sortsequence }}
+                            <div class="q-mb-xs row">
+                                <div class="col-2">
+                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="imageData.sortsequence" min-value="1" :clearable="false" @update:value="processSortSequenceChange"></text-field-input-element>
+                                </div>
                             </div>
                             <div v-if="imageData.url">
                                 <span class="text-bold">URL: </span>{{ imageData.url }}
@@ -105,8 +111,12 @@ const imageRecordInfoBlock = {
             </q-card-section>
         </q-card>
     `,
-    setup(_, context) {
+    components: {
+        'text-field-input-element': textFieldInputElement
+    },
+    setup(props, context) {
         const baseStore = useBaseStore();
+        const imageStore = useImageStore();
 
         const clientRoot = baseStore.getClientRoot;
 
@@ -114,9 +124,20 @@ const imageRecordInfoBlock = {
             context.emit('open:image-editor', id);
         }
 
+        function processSortSequenceChange(value) {
+            if(props.editor){
+                imageStore.updateImageSortSequence(props.collId, props.imageData['imgid'], value, (res) => {
+                    if(res === 1){
+                        context.emit('image:updated');
+                    }
+                });
+            }
+        }
+
         return {
             clientRoot,
-            openEditorPopup
+            openEditorPopup,
+            processSortSequenceChange
         }
     }
 };

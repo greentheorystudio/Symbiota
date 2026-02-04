@@ -194,6 +194,22 @@ const useMediaStore = Pinia.defineStore('media', {
                 }
             });
         },
+        updateMediaSortSequence(collid, mediaid, sortsequenceVal, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('mediaid', mediaid.toString());
+            formData.append('mediaData', JSON.stringify({sortsequence: sortsequenceVal}));
+            formData.append('action', 'updateMediaRecord');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                });
+            });
+        },
         uploadDescriptiveTranscriptFromFile(collid, file, uploadPath, callback) {
             const formData = new FormData();
             formData.append('collid', collid.toString());
