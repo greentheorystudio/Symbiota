@@ -48,7 +48,7 @@ const mediaFileUploadInputElement = {
                     <div class="text-h6 text-bold">{{ label }}</div>
                     <div class="row justify-end q-gutter-sm">
                         <div class="col-5">
-                            <text-field-input-element data-type="int" label="Batch Sort Sequence" :value="batchSortSequenceVal" min-value="1" :clearable="false" @update:value="(value) => updateData('sortsequence', value)"></text-field-input-element>
+                            <text-field-input-element data-type="int" label="Batch Sort Sequence" :value="batchSortSequenceVal" min-value="1" :clearable="false" @update:value="processBatchSortSequenceChange"></text-field-input-element>
                         </div>
                         <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
                     </div>
@@ -362,6 +362,15 @@ const mediaFileUploadInputElement = {
                 }
             }
             setTaxaData([adjustedFileName], fileName);
+        }
+
+        function processBatchSortSequenceChange(value) {
+            batchSortSequenceVal.value = value;
+            if(fileArr.length > 0){
+                fileArr.forEach((file) => {
+                    file['uploadMetadata']['sortsequence'] = batchSortSequenceVal.value;
+                });
+            }
         }
 
         function processCsvFileData() {
@@ -845,6 +854,7 @@ const mediaFileUploadInputElement = {
             getFileErrorMessage,
             getFileUploadMessage,
             openDataEditor,
+            processBatchSortSequenceChange,
             processExternalUrl,
             removePickedFile,
             updateFileMetadata,
