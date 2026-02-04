@@ -46,7 +46,10 @@ const mediaFileUploadInputElement = {
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
                 <div class="full-width row justify-between">
                     <div class="text-h6 text-bold">{{ label }}</div>
-                    <div>
+                    <div class="row justify-end q-gutter-sm">
+                        <div class="col-5">
+                            <text-field-input-element data-type="int" label="Batch Sort Sequence" :value="batchSortSequenceVal" min-value="1" :clearable="false" @update:value="(value) => updateData('sortsequence', value)"></text-field-input-element>
+                        </div>
                         <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
                     </div>
                 </div>
@@ -222,6 +225,7 @@ const mediaFileUploadInputElement = {
             {extension: 'wav', type: 'Sound', mimetype: 'audio/wav'},
             {extension: 'mp3', type: 'Sound', mimetype: 'audio/mpeg'}
         ];
+        const batchSortSequenceVal = Vue.ref(0);
         const collId = Vue.computed(() => {
             return props.collection ? Number(props.collection.collid) : 0;
         });
@@ -770,12 +774,7 @@ const mediaFileUploadInputElement = {
                             if(Number(props.taxonId) > 0){
                                 file['uploadMetadata']['tid'] = props.taxonId;
                             }
-                            if(props.collection){
-                                file['uploadMetadata']['sortsequence'] = 50;
-                            }
-                            else{
-                                file['uploadMetadata']['sortsequence'] = 20;
-                            }
+                            file['uploadMetadata']['sortsequence'] = batchSortSequenceVal.value;
                             if(Number(file['uploadMetadata']['tid']) === 0){
                                 let tid = null;
                                 let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
@@ -813,7 +812,17 @@ const mediaFileUploadInputElement = {
             return fileArr;
         }
 
+        Vue.onMounted(() => {
+            if(props.collection){
+                batchSortSequenceVal.value = 50;
+            }
+            else{
+                batchSortSequenceVal.value = 20;
+            }
+        });
+
         return {
+            batchSortSequenceVal,
             csvFileDataUploaded,
             editData,
             fileArr,
