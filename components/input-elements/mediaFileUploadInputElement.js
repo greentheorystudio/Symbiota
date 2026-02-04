@@ -774,6 +774,9 @@ const mediaFileUploadInputElement = {
                                 file['uploadMetadata']['sortsequence'] = 50;
                             }
                             else{
+                                file['uploadMetadata']['sortsequence'] = 20;
+                            }
+                            if(Number(file['uploadMetadata']['tid']) === 0){
                                 let tid = null;
                                 let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                                 if(!csvData){
