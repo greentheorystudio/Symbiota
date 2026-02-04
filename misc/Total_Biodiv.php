@@ -278,6 +278,8 @@ header('Content-Type: text/html; charset=UTF-8' );
                     const marginTop = 10;
                     const marginRight = 10;
                     const graphWidth = Vue.ref(0);
+                    const labelMarginBottom = 15;
+                    const labelMarginLeft = 10;
                     const marginBottom = 20;
                     const marginLeft = 40;
                     const yearArr = [1860, 1870, 1880, 1890, 1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
@@ -338,8 +340,8 @@ header('Content-Type: text/html; charset=UTF-8' );
 
                         const svg = d3.create("svg")
                             .attr("width", graphWidth.value)
-                            .attr("height", graphHeight.value)
-                            .attr("viewBox", [0, 0, graphWidth.value, graphHeight.value])
+                            .attr("height", (graphHeight.value + marginBottom + labelMarginBottom))
+                            .attr("viewBox", [0, 0, graphWidth.value, (graphHeight.value + marginBottom + labelMarginBottom)])
                             .attr("style", "max-width: 100%; height: auto;");
 
                         const legendSvg = d3.create("svg")
@@ -366,17 +368,35 @@ header('Content-Type: text/html; charset=UTF-8' );
                             .attr("height", d => y(d[0]) - y(d[1]))
                             .attr("width", x.bandwidth())
                             .append("title")
-                            .text(d => `${d.data[0]} ${d.key}\n${formatValue(d.data[1].get(d.key).count)}`);
+                            .text(d => `${d.data[0]}: ${formatValue(d.data[1].get(d.key).count)} ${d.key} taxa`);
 
                         svg.append("g")
                             .attr("transform", `translate(0,${graphHeight.value - marginBottom})`)
+                            .style("font", "14px sans-serif")
                             .call(d3.axisBottom(x).tickSizeOuter(0))
                             .call(g => g.selectAll(".domain").remove());
 
                         svg.append("g")
-                            .attr("transform", `translate(${marginLeft},0)`)
+                            .attr("transform", `translate(${marginLeft + labelMarginLeft},0)`)
+                            .style("font", "14px sans-serif")
                             .call(d3.axisLeft(y).ticks(null, "s"))
                             .call(g => g.selectAll(".domain").remove());
+
+                        svg.append("text")
+                            .style("font", "18px sans-serif")
+                            .attr("text-anchor", "middle")
+                            .attr("x", graphWidth.value / 2)
+                            .attr("y", graphHeight.value + ((marginBottom + labelMarginBottom) / 2))
+                            .text("Decade");
+
+                        svg.append("text")
+                            .style("font", "18px sans-serif")
+                            .attr("text-anchor", "middle")
+                            .attr("transform", "rotate(-90)")
+                            .attr("y", 0)
+                            .attr("x", -(graphHeight.value / 2))
+                            .attr("dy", "1em")
+                            .text("Total number of species in occurrence data");
 
                         legendSvg.append("g")
                             .attr("class", "legendLinear")
@@ -393,7 +413,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                     function setGraphSize(size) {
                         graphWidth.value = size.width;
                         graphHeight.value = graphWidth.value / 1.856;
-                        graphContainerStyle.value = 'width:' + graphWidth.value + 'px;height:' + (graphHeight.value + 75) + 'px;';
+                        graphContainerStyle.value = 'width:' + graphWidth.value + 'px;height:' + (graphHeight.value + marginBottom + labelMarginBottom + 18 + 14 + 24) + 'px;';
                     }
 
                     Vue.onMounted(() => {
