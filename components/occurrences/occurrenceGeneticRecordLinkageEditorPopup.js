@@ -47,7 +47,17 @@ const occurrenceGeneticRecordLinkageEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
+                                    <text-field-input-element label="Definition" field="definition" :value="geneticLinkageData['definition']" @update:value="(value) => updateGeneticLinkageData('definition', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
                                     <text-field-input-element data-type="textarea" field="locus" label="Locus" :value="geneticLinkageData['locus']" @update:value="(value) => updateGeneticLinkageData('locus', value)"></text-field-input-element>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-grow">
+                                    <text-field-input-element data-type="textarea" label="Origin" field="origin" :value="geneticLinkageData['origin']" @update:value="(value) => updateGeneticLinkageData('origin', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">

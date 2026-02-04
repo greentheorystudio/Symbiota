@@ -361,7 +361,7 @@ class Images{
     public function getChecklistImageDataBatch($retArr, $tidArr, $matchField, $taxonLimit): array
     {
         if(count($tidArr) > 0){
-            $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl, i.alttext, i.photographer, i.owner '.
+            $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl, i.alttext, i.photographer, i.owner, i.sortsequence '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'WHERE t.' . $matchField . ' IN(' . implode(',', $tidArr) . ') AND i.sortsequence < 500 ORDER BY i.sortsequence ';
             //echo '<div>'.$sql.'</div>';
@@ -380,6 +380,7 @@ class Images{
                         $nodeArr['alttext'] = $row['alttext'];
                         $nodeArr['photographer'] = $row['photographer'];
                         $nodeArr['owner'] = $row['owner'];
+                        $nodeArr['sortsequence'] = $row['sortsequence'];
                         $retArr[$row[$matchField]][] = $nodeArr;
                     }
                     unset($rows[$index]);
@@ -420,7 +421,7 @@ class Images{
                     $sqlWhereArr[] = 't.keyvalue LIKE "CLID-' . (int)$clid . '-%"';
                 }
             }
-            $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.alttext, i.photographer, i.owner, t.keyvalue '.
+            $sql = 'SELECT i.imgid, i.url, i.thumbnailurl, i.alttext, i.photographer, i.owner, i.sortsequence, t.keyvalue '.
                 'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.
                 'WHERE ' . implode(' OR ', $sqlWhereArr) . ' '.
                 'ORDER BY t.keyvalue ';
@@ -451,6 +452,7 @@ class Images{
                             $nodeArr['alttext'] = $row['alttext'];
                             $nodeArr['photographer'] = $row['photographer'];
                             $nodeArr['owner'] = $row['owner'];
+                            $nodeArr['sortsequence'] = $row['sortsequence'];
                             $retArr[$tid][] = $nodeArr;
                         }
                     }
@@ -590,7 +592,7 @@ class Images{
             }
             if(count($targetTidArr) > 0){
                 $sql = 'SELECT DISTINCT i.imgid, t.tidaccepted AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.alttext, i.caption, i.photographer, i.owner, '.
-                    't.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                    'i.sortsequence, t.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                     'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                     'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                     'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
@@ -637,7 +639,7 @@ class Images{
                 }
                 if(count($targetTidArr) > 0){
                     $sql = 'SELECT DISTINCT i.imgid, te.parenttid AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.alttext, i.caption, i.photographer, i.owner, '.
-                        't.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                        'i.sortsequence, t.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                         'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                         'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                         'LEFT JOIN taxaenumtree AS te ON t.tidaccepted = te.tid '.
@@ -706,7 +708,7 @@ class Images{
             }
             $sqlWhereArr[] = 'it.keyvalue IN(' . implode(',', $keyValueArr)  . ')';
             $sql = 'SELECT i.imgid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.alttext, i.caption, i.photographer, i.owner, it.keyvalue, '.
-                't.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                'i.sortsequence, t.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                 'FROM images AS i LEFT JOIN imagetag AS it ON i.imgid = it.imgid '.
                 'LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.

@@ -136,6 +136,9 @@ function useCore() {
                 if(row){
                     const dataObjPattern = new RegExp("(,|\\r?\\n|\\r|^)(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^\",\\r\\n]*))",'gi');
                     const values = [];
+                    if(row.startsWith(',')) {
+                        values.push('');
+                    }
                     let dataMatch = null;
                     while(dataMatch = dataObjPattern.exec(row)){
                         let dataValue = '';
