@@ -46,7 +46,10 @@ const mediaFileUploadInputElement = {
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
                 <div class="full-width row justify-between">
                     <div class="text-h6 text-bold">{{ label }}</div>
-                    <div>
+                    <div class="row justify-end q-gutter-sm">
+                        <div class="col-5">
+                            <text-field-input-element data-type="int" label="Batch Sort Sequence" :value="batchSortSequenceVal" min-value="1" :clearable="false" @update:value="processBatchSortSequenceChange"></text-field-input-element>
+                        </div>
                         <q-btn-toggle v-model="selectedUploadMethod" :options="uploadMethodOptions" class="black-border" size="sm" rounded unelevated toggle-color="primary" color="white" text-color="primary" aria-label="Upload method" tabindex="0"></q-btn-toggle>
                     </div>
                 </div>
@@ -120,7 +123,7 @@ const mediaFileUploadInputElement = {
                                                         {{ file.name.split('.').pop() + ' file' }}
                                                     </div>
                                                 </div>
-                                                <div class="col-8 column q-pl-md">
+                                                <div class="col-8 column q-pl-md overflow-hidden ellipsis">
                                                     <div class="row full-width justify-between">
                                                         <div class="ellipsis">
                                                             {{ file.name }}
@@ -129,21 +132,19 @@ const mediaFileUploadInputElement = {
                                                             {{ file.correctedSizeLabel }}
                                                         </div>
                                                     </div>
-                                                    <div>
-                                                        <div caption>
-                                                            <template v-if="file['filenameRecordIdentifier']">
-                                                                <span class="q-mr-xs">
-                                                                    <span class="text-bold">{{ identifierField }}:</span> {{ file['filenameRecordIdentifier'] }}
-                                                                </span>
+                                                    <div caption class="overflow-hidden">
+                                                        <template v-if="file['filenameRecordIdentifier']">
+                                                            <span class="q-mr-xs">
+                                                                <span class="text-bold">{{ identifierField }}:</span> {{ file['filenameRecordIdentifier'] }}
+                                                            </span>
+                                                        </template>
+                                                        <template v-for="key in Object.keys(file['uploadMetadata'])">
+                                                            <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== ''">
+                                                                <div class="q-mr-xs">
+                                                                    <span class="text-bold">{{ key }}:</span> {{ key === 'tagArr' ? JSON.stringify(file['uploadMetadata'][key]) : file['uploadMetadata'][key] }}
+                                                                </div>
                                                             </template>
-                                                            <template v-for="key in Object.keys(file['uploadMetadata'])">
-                                                                <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== ''">
-                                                                    <span class="q-mr-xs">
-                                                                        <span class="text-bold">{{ key }}:</span> {{ key === 'tagArr' ? JSON.stringify(file['uploadMetadata'][key]) : file['uploadMetadata'][key] }}
-                                                                    </span>
-                                                                </template>
-                                                            </template>
-                                                        </div>
+                                                        </template>
                                                     </div>
                                                     <template v-if="!file['uploadErrorMessage']">
                                                         <div v-if="getFileErrorMessage(file)" class="text-bold text-red">
@@ -222,6 +223,7 @@ const mediaFileUploadInputElement = {
             {extension: 'wav', type: 'Sound', mimetype: 'audio/wav'},
             {extension: 'mp3', type: 'Sound', mimetype: 'audio/mpeg'}
         ];
+        const batchSortSequenceVal = Vue.ref(0);
         const collId = Vue.computed(() => {
             return props.collection ? Number(props.collection.collid) : 0;
         });
@@ -242,6 +244,7 @@ const mediaFileUploadInputElement = {
         const identifierData = Vue.ref({});
         const maxUploadFilesize = baseStore.getMaxUploadFilesize;
         const processingArr = Vue.ref([]);
+        const processingCsvData = Vue.ref(false);
         const propsRefs = Vue.toRefs(props);
         const queueSize = Vue.ref(0);
         const queueSizeLabel = Vue.ref('');
@@ -284,10 +287,49 @@ const mediaFileUploadInputElement = {
         });
         const urlMethodCopyFile = Vue.ref(true);
         const urlMethodUrl = Vue.ref(null);
+        const urlProcessingArr = Vue.ref([]);
 
         Vue.watch(propsRefs.occId, () => {
             setOccid();
         });
+
+        function addExternalFileToQueue(url, copyToServer) {
+            const imageFile = ((url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg') || url.toLowerCase().endsWith('.png')) ? '1' : '0');
+            const file = {
+                name: url.split('/').pop(),
+                size: 0,
+                externalUrl: url,
+                copyToServer: copyToServer
+            };
+            if(copyToServer){
+                urlProcessingArr.value.push(url);
+                const formData = new FormData();
+                formData.append('url', url);
+                formData.append('image', imageFile);
+                formData.append('action', 'getFileInfoFromUrl');
+                fetch(proxyServiceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((resObj) => {
+                    file.height = resObj['fileHeight'];
+                    file.size = resObj['fileSize'];
+                    file.width = resObj['fileWidth'];
+                    validateFiles([file]);
+                    const index = urlProcessingArr.value.indexOf(url);
+                    urlProcessingArr.value.splice(index, 1);
+                    if(urlProcessingArr.value.length === 0){
+                        hideWorking();
+                    }
+                });
+            }
+            else{
+                validateFiles([file]);
+            }
+        }
 
         function cancelUpload() {
             csvFileData.length = 0;
@@ -360,6 +402,15 @@ const mediaFileUploadInputElement = {
             setTaxaData([adjustedFileName], fileName);
         }
 
+        function processBatchSortSequenceChange(value) {
+            batchSortSequenceVal.value = value;
+            if(fileArr.length > 0){
+                fileArr.forEach((file) => {
+                    file['uploadMetadata']['sortsequence'] = batchSortSequenceVal.value;
+                });
+            }
+        }
+
         function processCsvFileData() {
             if(csvFileData.length > 0){
                 taxaArr.value = [];
@@ -375,47 +426,29 @@ const mediaFileUploadInputElement = {
                             identifierArr.value.push(dataObj[props.identifierField]);
                         }
                     }
+                    else if(dataObj && dataObj.hasOwnProperty('sourceurl') && dataObj['sourceurl']){
+                        dataObj['filename'] = dataObj['sourceurl'].split('/').pop();
+                        addExternalFileToQueue(dataObj['sourceurl'], true);
+                    }
                     else{
                         csvFileData.splice(index,1);
                     }
                 });
+                processingCsvData.value = false;
                 setFileIdentifierData();
+            }
+            else{
+                processingCsvData.value = false;
+                if(urlProcessingArr.value.length === 0){
+                    hideWorking();
+                }
             }
         }
 
         function processExternalUrl() {
             if(urlMethodUrl.value){
-                const imageFile = ((urlMethodUrl.value.toLowerCase().endsWith('.jpg') || urlMethodUrl.value.toLowerCase().endsWith('.jpeg') || urlMethodUrl.value.toLowerCase().endsWith('.png')) ? '1' : '0');
-                const file = {
-                    name: urlMethodUrl.value.split('/').pop(),
-                    size: 0,
-                    externalUrl: urlMethodUrl.value,
-                    copyToServer: urlMethodCopyFile.value
-                };
-                if(urlMethodCopyFile.value){
-                    const formData = new FormData();
-                    formData.append('url', urlMethodUrl.value);
-                    formData.append('image', imageFile);
-                    formData.append('action', 'getFileInfoFromUrl');
-                    fetch(proxyServiceApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        return response.ok ? response.json() : null;
-                    })
-                    .then((resObj) => {
-                        file.height = resObj['fileHeight'];
-                        file.size = resObj['fileSize'];
-                        file.width = resObj['fileWidth'];
-                        validateFiles([file]);
-                        resetUrlMethodSettings();
-                    });
-                }
-                else{
-                    validateFiles([file]);
-                    resetUrlMethodSettings();
-                }
+                addExternalFileToQueue(urlMethodUrl.value, urlMethodCopyFile.value);
+                resetUrlMethodSettings();
             }
         }
 
@@ -519,7 +552,9 @@ const mediaFileUploadInputElement = {
                     }
                 });
             }
-            hideWorking();
+            if(!processingCsvData.value && urlProcessingArr.value.length === 0){
+                hideWorking();
+            }
         }
 
         function setFileIdentifierData() {
@@ -613,7 +648,7 @@ const mediaFileUploadInputElement = {
             fileArr.forEach((file) => {
                 size += file.size;
             });
-            const sizeMb = (Math.round((size / 1000000) * 10 ) / 100);
+            const sizeMb = (size / 1000000).toFixed(2);
             queueSize.value = size;
             queueSizeLabel.value = sizeMb.toString() + 'MB';
             setUploaderStyle();
@@ -733,6 +768,7 @@ const mediaFileUploadInputElement = {
             files.forEach((file) => {
                 const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
                 if(file.name.endsWith('.csv')){
+                    processingCsvData.value = true;
                     parseFile(file, (fileContents) => {
                         csvToArray(fileContents).then((csvData) => {
                             csvFileData = csvData;
@@ -770,10 +806,8 @@ const mediaFileUploadInputElement = {
                             if(Number(props.taxonId) > 0){
                                 file['uploadMetadata']['tid'] = props.taxonId;
                             }
-                            if(props.collection){
-                                file['uploadMetadata']['sortsequence'] = 50;
-                            }
-                            else{
+                            file['uploadMetadata']['sortsequence'] = batchSortSequenceVal.value;
+                            if(Number(file['uploadMetadata']['tid']) === 0){
                                 let tid = null;
                                 let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
                                 if(!csvData){
@@ -790,7 +824,6 @@ const mediaFileUploadInputElement = {
                                 }
                                 file['uploadMetadata']['scientificname'] = sciname;
                                 file['uploadMetadata']['tid'] = tid;
-                                file['uploadMetadata']['sortsequence'] = 20;
                             }
                             if(!file.hasOwnProperty('copyToServer')){
                                 file['copyToServer'] = false;
@@ -811,7 +844,17 @@ const mediaFileUploadInputElement = {
             return fileArr;
         }
 
+        Vue.onMounted(() => {
+            if(props.collection){
+                batchSortSequenceVal.value = 50;
+            }
+            else{
+                batchSortSequenceVal.value = 20;
+            }
+        });
+
         return {
+            batchSortSequenceVal,
             csvFileDataUploaded,
             editData,
             fileArr,
@@ -834,6 +877,7 @@ const mediaFileUploadInputElement = {
             getFileErrorMessage,
             getFileUploadMessage,
             openDataEditor,
+            processBatchSortSequenceChange,
             processExternalUrl,
             removePickedFile,
             updateFileMetadata,

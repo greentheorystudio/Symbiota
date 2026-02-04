@@ -1,5 +1,9 @@
 const mediaRecordInfoBlock = {
     props: {
+        collId: {
+            type: Number,
+            default: 0
+        },
         mediaData: {
             type: Object,
             default: null
@@ -40,8 +44,10 @@ const mediaRecordInfoBlock = {
                     </div>
                     <div class="col-8 column no-wrap">
                         <template v-if="editor">
-                            <div v-if="mediaData.sortsequence">
-                                <span class="text-bold">Sort Sequence: </span>{{ mediaData.sortsequence }}
+                            <div class="q-mb-xs row">
+                                <div class="col-2">
+                                    <text-field-input-element data-type="int" label="Sort Sequence" :value="mediaData.sortsequence" min-value="1" :clearable="false" @update:value="processSortSequenceChange"></text-field-input-element>
+                                </div>
                             </div>
                             <div v-if="mediaData.accessuri">
                                 <span class="text-bold">URL: </span>{{ mediaData.accessuri }}
@@ -100,8 +106,12 @@ const mediaRecordInfoBlock = {
             </q-card-section>
         </q-card>
     `,
-    setup(_, context) {
+    components: {
+        'text-field-input-element': textFieldInputElement
+    },
+    setup(props, context) {
         const baseStore = useBaseStore();
+        const mediaStore = useMediaStore();
 
         const clientRoot = baseStore.getClientRoot;
 
@@ -109,9 +119,20 @@ const mediaRecordInfoBlock = {
             context.emit('open:media-editor', id);
         }
 
+        function processSortSequenceChange(value) {
+            if(props.editor){
+                mediaStore.updateMediaSortSequence(props.collId, props.mediaData['mediaid'], value, (res) => {
+                    if(res === 1){
+                        context.emit('media:updated');
+                    }
+                });
+            }
+        }
+
         return {
             clientRoot,
-            openEditorPopup
+            openEditorPopup,
+            processSortSequenceChange
         }
     }
 };
