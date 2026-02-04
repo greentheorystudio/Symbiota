@@ -273,6 +273,22 @@ const useImageStore = Pinia.defineStore('image', {
             else{
                 callback(1);
             }
+        },
+        updateImageSortSequence(collid, imgid, sortsequenceVal, callback) {
+            const formData = new FormData();
+            formData.append('collid', collid.toString());
+            formData.append('imgid', imgid.toString());
+            formData.append('imageData', JSON.stringify({sortsequence: sortsequenceVal}));
+            formData.append('action', 'updateImageRecord');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                response.text().then((res) => {
+                    callback(Number(res));
+                });
+            });
         }
     }
 });

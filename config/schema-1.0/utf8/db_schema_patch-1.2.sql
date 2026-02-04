@@ -100,7 +100,7 @@ UPDATE omoccuredits e INNER JOIN (SELECT initialtimestamp, uid, count (DISTINCT 
     FROM omoccuredits
     GROUP BY initialtimestamp, uid
     HAVING cnt > 2) as inntab
-ON e.initialtimestamp = inntab.initialtimestamp AND e.uid = inntab.uid
+    ON e.initialtimestamp = inntab.initialtimestamp AND e.uid = inntab.uid
     SET edittype = 1;
 
 ALTER TABLE `omoccurgenetic`
