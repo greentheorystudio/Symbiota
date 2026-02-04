@@ -441,6 +441,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             });
         },
         setTaxaImageArr(tid, includeOccurrence = true) {
+            this.taxaImageArr.length = 0;
             const formData = new FormData();
             formData.append('tidArr', JSON.stringify([Number(tid)]));
             formData.append('includeoccurrence', (includeOccurrence ? '1' : '0'));
@@ -461,6 +462,7 @@ const useTaxaStore = Pinia.defineStore('taxa', {
             });
         },
         setTaxaMediaArr(tid, includeOccurrence = true) {
+            this.taxaMediaArr.length = 0;
             const formData = new FormData();
             formData.append('tidArr', JSON.stringify([Number(tid)]));
             formData.append('includeoccurrence', (includeOccurrence ? '1' : '0'));
