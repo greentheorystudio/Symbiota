@@ -12,7 +12,9 @@ class OccurrenceGeneticLinks{
         'identifier' => array('dataType' => 'string', 'length' => 150),
         'resourcename' => array('dataType' => 'string', 'length' => 150),
         'title' => array('dataType' => 'string', 'length' => 150),
+        'definition' => array('dataType' => 'string', 'length' => 500),
         'locus' => array('dataType' => 'string', 'length' => 500),
+        'origin' => array('dataType' => 'text', 'length' => 0),
         'resourceurl' => array('dataType' => 'string', 'length' => 500),
         'notes' => array('dataType' => 'string', 'length' => 250),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
