@@ -397,7 +397,6 @@ header('Content-Type: text/html; charset=UTF-8' );
                     }
 
                     Vue.onMounted(() => {
-                        yearArr.push(new Date().getFullYear());
                         setData();
                     });
 

@@ -55,12 +55,11 @@ class IRLDataService {
     {
         $returnArr = array();
         $decadeArr = [1860, 1870, 1880, 1890, 1900, 1910, 1920, 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
-        $decadeArr[] = date('Y');
         foreach($decadeArr as $year){
             $sql = 'SELECT k.kingdom_id, k.kingdom_name, COUNT(DISTINCT o.tid) AS cnt '.
                 'FROM omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
                 'LEFT JOIN taxonkingdoms AS k ON t.kingdomId = k.kingdom_id '.
-                'WHERE o.tid IS NOT NULL AND o.`year` IS NOT NULL AND o.`year` > 1800 AND o.`year` <= '. $year . ' '.
+                'WHERE o.tid IS NOT NULL AND o.`year` IS NOT NULL AND o.`year` > 1800 AND o.`year` <= '. ($year + 9) . ' '.
                 'GROUP BY k.kingdom_id ';
             //echo $sql;
             if($result = $this->conn->query($sql)){
