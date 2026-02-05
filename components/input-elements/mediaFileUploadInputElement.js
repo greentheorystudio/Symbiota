@@ -454,8 +454,8 @@ const mediaFileUploadInputElement = {
 
         function processUpload(file) {
             let action;
-            processingArr.value.push({file: file['uploadMetadata']['filename'], status: 'processing'});
             if(file['uploadMetadata']['sourceurl']){
+                processingArr.value.push({file: file['uploadMetadata']['sourceurl'], status: 'processing'});
                 if(file['copyToServer']){
                     action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImageFromUrl' : 'addMediaFromUrl';
                 }
@@ -464,6 +464,7 @@ const mediaFileUploadInputElement = {
                 }
             }
             else{
+                processingArr.value.push({file: file['uploadMetadata']['filename'], status: 'processing'});
                 action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImageFromFile' : 'addMediaFromFile';
             }
             if(file['uploadMetadata']['type'] === 'StillImage'){
@@ -520,9 +521,15 @@ const mediaFileUploadInputElement = {
         function setFileData() {
             if(fileArr.length > 0){
                 fileArr.forEach((file) => {
-                    let csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
-                    if(!csvData){
-                        csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
+                    let csvData;
+                    if(file.hasOwnProperty('externalUrl') && file['externalUrl']){
+                        csvData = csvFileData.find((obj) => obj.sourceurl.toLowerCase() === file['externalUrl'].toLowerCase());
+                    }
+                    else{
+                        csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.toLowerCase());
+                        if(!csvData){
+                            csvData = csvFileData.find((obj) => obj.filename.toLowerCase() === file.name.substring(0, file.name.lastIndexOf('.')).toLowerCase());
+                        }
                     }
                     if(csvData){
                         const dataKeys = Object.keys(csvData);
@@ -749,7 +756,13 @@ const mediaFileUploadInputElement = {
             if(id && Number(id) > 0){
                 removePickedFile(file);
             }
-            const fileProcess = processingArr.value.find(proc => proc['file'] === file['uploadMetadata']['filename']);
+            let fileProcess;
+            if(file['uploadMetadata']['sourceurl']){
+                fileProcess = processingArr.value.find(proc => proc['file'] === file['uploadMetadata']['sourceurl']);
+            }
+            else{
+                fileProcess = processingArr.value.find(proc => proc['file'] === file['uploadMetadata']['filename']);
+            }
             if(fileProcess){
                 fileProcess['status'] = 'complete';
             }
@@ -766,7 +779,13 @@ const mediaFileUploadInputElement = {
         function validateFiles(files) {
             showWorking();
             files.forEach((file) => {
-                const existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
+                let existingData;
+                if(file.hasOwnProperty('externalUrl') && file['externalUrl']){
+                    existingData = fileArr.find((obj) => obj['externalUrl'].toLowerCase() === file['externalUrl'].toLowerCase());
+                }
+                else{
+                    existingData = fileArr.find((obj) => obj.name.toLowerCase() === file.name.toLowerCase());
+                }
                 if(file.name.endsWith('.csv')){
                     processingCsvData.value = true;
                     parseFile(file, (fileContents) => {
