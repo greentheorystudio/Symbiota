@@ -17,10 +17,10 @@ const taxaProfileCentralImage = {
                         <q-img :src="(centralImage.url.startsWith('/') ? (clientRoot + centralImage.url) : centralImage.url)" :fit="contain" :title="centralImage.caption" :alt="(centralImage.alttext ? centralImage.alttext : centralImage.sciname)"></q-img>
                         <template v-if="centralImage.photographer || centralImage.caption">
                             <div class="photographer">
-                                <template v-if="taxon.sciname !== centralImage.sciname">
+                                <template v-if="centralImage.sciname && taxon.sciname !== centralImage.sciname">
                                     <a :href="(clientRoot + '/taxa/index.php?taxon=' + centralImage.tid)" aria-label="Go to taxon" tabindex="0"><span class="text-italic">{{ centralImage.sciname }}</span>. </a>
                                 </template>
-                                <span v-if="centralImage.photographer">Photo by: {{ centralImage.photographer }}. </span><span v-html="centralImage.caption"></span>
+                                <span v-if="centralImage.photographer">Photo by: {{ centralImage.photographer }} </span><span v-html="centralImage.caption"></span>
                             </div>
                         </template>
                     </a>
