@@ -949,6 +949,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 else if(this.entryFollowUpAction === 'newrecordevent'){
                     this.transferEditCollectingEventDataToOccurrenceData();
                 }
+                else if(this.entryFollowUpAction === 'newrecordclone'){
+                    this.occurrenceData = Object.assign({}, this.occurrenceEditData);
+                    this.occurrenceData['collid'] = this.getCollId;
+                }
                 this.occurrenceData['language'] = this.baseStore.getDefaultLanguageName;
                 this.occurrenceEditData = Object.assign({}, this.occurrenceData);
                 if(this.getLocationID > 0){
