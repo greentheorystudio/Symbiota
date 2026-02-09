@@ -191,6 +191,23 @@
             ]
         },
         {
+            "title": "Downloading Occurrence Data",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Occurrence data can be downloaded from both the Records Tab and the Selections Tab in the Records and Symbology Panel in the Side Panel. Downloading occurrence data from the Records Tab will download all of the records returned in a search. Downloading occurrence data from the Selections Tab will download only the selected records from a search.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In either the Records Tab or the Selections Tab, the Download Type Selector can be used to select the download format for the occurrence data. The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> to initiate the download.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>If the download type CSV/ZIP is selected, an additional window will open allowing for further options as to the structure and formatting of the download. These options include whether the structure the data in the Native or Darwin Core format, whether to include determination or image extensions, whether the file be an archive, and other file formatting. Once these further options have been set, or if the default settings are preferred, click the Download Data button to proceed with the download.</p>"
+                }
+            ]
+        },
+        {
             "title": "Settings Panel (and Heat Map)",
             "slides": [
                 {
@@ -381,23 +398,6 @@
                 {
                     "header": "Viewing Record Data",
                     "html": "<p>Holding the alt key (option key on Mac) and clicking on any individual occurrence record will open an info window displaying all of the data for that record.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Downloading Occurrence Data",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Occurrence data can be downloaded from both the Records Tab and the Selections Tab in the Records and Taxa Panel in the Side Panel. Downloading occurrence data from the Records Tab will download all of the records returned in a search. Downloading occurrence data from the Selections Tab will download only the selected records from a search.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>In either the Records Tab or the Selections Tab, the Download Type Selector can be used to select the download format for the occurrence data. The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> to initiate the download.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>If the download type CSV/ZIP is selected, an additional window will open allowing for further options as to the structure and formatting of the download. These options include whether the structure the data in the Native or Darwin Core format, whether to include determination or image extensions, whether the file be an archive, and other file formatting. Once these further options have been set, or if the default settings are preferred, click the Download Data button to proceed with the download.</p>"
                 }
             ]
         },
@@ -841,15 +841,6 @@
             ]
         },
         {
-            "title": "Downloading a Map Image",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>A png image of the map in the current view, including all layers that have been loaded, all occurrence data that has been loaded, and all symbology adjustments that have been made, can be downloaded at any time by clicking the Download Map Image button in the Main Control Panel.</p>"
-                }
-            ]
-        },
-        {
             "title": "Using the Heat Map Display",
             "slides": [
                 {
@@ -867,20 +858,7 @@
             ]
         },
         {
-            "title": "Side Panel",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Now we will go over what we can do with the <b>Side Panel.</b> The Side Panel is accessed by clicking on the collapsed Side Panel tab. Once opened, clicking along the right border of the panel will close it.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>The Side Panel contains expansion panels for Search Criteria, Records and Taxa (when occurrence records have been loaded), Vector Tools, and Raster Tools. Clicking on the name of any of the expansion panels will either expand or contract the panel.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Searching and Loading Occurrence Data Walkthrough",
+            "title": "Walkthrough: Searching and Loading Occurrence Data",
             "slides": [
                 {
                     "header": "",
@@ -929,7 +907,7 @@
             ]
         },
         {
-            "title": "Loading Occurrence Data Around a Buffer Polygon Walkthrough",
+            "title": "Walkthrough: Loading Occurrence Data Around a Buffer Polygon",
             "slides": [
                 {
                     "header": "",
@@ -978,7 +956,7 @@
             ]
         },
         {
-            "title": "Loading Occurrence Data Within a U.S. County Walkthrough",
+            "title": "Walkthrough: Loading Occurrence Data Within a U.S. County",
             "slides": [
                 {
                     "header": "",
@@ -1031,7 +1009,7 @@
             ]
         },
         {
-            "title": "Using Intersect Tool Walkthrough #4",
+            "title": "Walkthrough: Using Intersect Tool",
             "slides": [
                 {
                     "header": "",
@@ -1128,7 +1106,7 @@
             ]
         },
         {
-            "title": "Using Vector Tools Walkthrough #5",
+            "title": "Walkthrough: Using Vector Tools",
             "slides": [
                 {
                     "header": "",
