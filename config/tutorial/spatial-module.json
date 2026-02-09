@@ -166,60 +166,27 @@
                 },
                 {
                     "header": "Symbology Tab",
-                    "html": "<p>The Symbology Tab is accessed in the Records and Symbology Panel in the Side Panel. It contains a list of the collections represented in the occurrence records returned in the search and options for symbolizing the associated occurrence points on the map according to the collection it represents. To go through each part of this tab:</p>"
+                    "html": "<p>The Symbology Tab is accessed in the Records and Symbology Panel in the Side Panel. You can change the color of the points of occurrence in the map depending on the taxa or the collection the record belongs to.</p>"
                 },
                 {
-                    "header": "Occurrence Symbol Key",
-                    "html": "<p>In the top-left corner of the Collections Tab is the Occurrence Symbol Key, which simply shows the symbols used to distinguish individual records representing specimens, from those representing observations.</p>"
+                    "header": "Symbology Dropdown and Symbol Key",
+                    "html": "<p>In the top-left corner of the Symbology Tab is the Symbology Dropdown where you can select between viewing the records on the map by taxa or by collections. Under that is the Symbol Key that distinguishes individual records representing specimens from those representing observations.</p>"
+                },
+                {
+                    "header": "Assigning Colors to Groups",
+                    "html": "<p>The colored box to the left of each taxon or collection in this list indicates the color that is being used to represent records on the map identified to that group. Each box can be clicked to open a color picker to select a different color to represent that group. Changing the color for any group immediately sets the symbology for all of the occurrence records on the map to be symbolized based on the group they represent, if they are not already, and updates the symbology to include the newly selected color.,</p>"
                 },
                 {
                     "header": "Reset Symbology button",
-                    "html": "<p>In the top-right corner of the Collections Tab is the Reset Symbology button. Clicking this button will reset the symbology for all of the occurrence records on the map back to the original, default state of being symbolized based on the collection they represent and all collections being symbolized with the same color.</p>"
+                    "html": "<p>In the top-right corner of the Collections Tab is the 'RESET SYMBOLOGY' button. Clicking this button will reset the symbology for all of the occurrence records on the map back to the original, default state of being symbolized based on the collection or taxa they are part of.</p>"
                 },
                 {
                     "header": "Auto Color Button",
-                    "html": "<p>Below the Reset Symbology button is the Auto Color button. Clicking this button will set the symbology for all of the occurrence records on the map to be symbolized based on the collection they represent, if they are not already, and will assign each collection a random, unique color for its symbology.</p>"
+                    "html": "<p>Below the Reset Symbology button is the Auto Color button. Clicking this button will set the symbology for all of the occurrence records on the map to be symbolized based on the collection and taxa they represent, if they are not already, and will assign each collection a random, unique color for its symbology.</p>"
                 },
                 {
                     "header": "Save Symbology Button",
-                    "html": "<p>Below the Auto Color button is the Save Symbology button. Clicking this button will generate a png image file of the collection list in this tab and all of the symbology colors assigned to each collection.</p>"
-                },
-                {
-                    "header": "Collection List",
-                    "html": "<p>Below the symbol key and symbology buttons is the Collection List. This list includes all of the collections represented in the occurrence records returned in the search. If the occurrence records on the map are being symbolized based on the collection they represent, the colored box to the left of each collection in this list indicates the color that is being used to represent that collection's records on the map. Each box can be clicked to open a color picker to select a different color to represent that collection. Changing the color for any collection immediately sets the symbology for all of the occurrence records on the map to be symbolized based on the collection they represent, if they are not already, and updates the symbology to include the newly selected color.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Taxa Tab",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Taxa Tab is accessed in the Records and Taxa Panel in the Side Panel. It contains a list of the distinct taxa represented in the occurrence records returned in the search and options for symbolizing the associated occurrence points on the map according to the taxon it represents. To go through each part of this tab:</p>"
-                },
-                {
-                    "header": "Occurrence Symbol Key",
-                    "html": "<p>In the top-left corner of the Taxa Tab is the Occurrence Symbol Key, which simply shows the symbols used to distinguish individual records representing specimens, from those representing observations.</p>"
-                },
-                {
-                    "header": "Reset Symbology Button",
-                    "html": "<p>In the top-right corner of the Taxa Tab is the Reset Symbology button. Clicking this button will reset the symbology for all of the occurrence records on the map back to the original, default state of being symbolized based on the collection they represent and all collections being symbolized with the same color.</p>"
-                },
-                {
-                    "header": "Auto Color Button",
-                    "html": "<p>Below the Reset Symbology button is the Auto Color button. Clicking this button will set the symbology for all of the occurrence records on the map to be symbolized based on the taxon they represent, if they are not already, and will assign each taxon a random, unique color for its symbology.</p>"
-                },
-                {
-                    "header": "Save Symbology Button",
-                    "html": "<p>Below the Auto Color button is the Save Symbology button. Clicking this button will generate a png image file of the taxa list in this tab and all of the symbology colors assigned to each taxon.</p>"
-                },
-                {
-                    "header": "Taxa Count and Download Bar",
-                    "html": "<p>Below the symbol key and symbology buttons is the Taxa Count and Download Bar. On the left side of this bar is the total count of distinct taxa represented in the occurrence records returned in the search. The button on the right side of this bar <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> can be clicked to download a csv files containing all of the distinct taxa in the taxa list in this tab.</p>"
-                },
-                {
-                    "header": "Taxa List",
-                    "html": "<p>Below the Taxa Count and Download Bar is the Taxa List. This list includes all of the distinct taxa represented in the occurrence records returned in the search, arranged taxonomically by family. If the occurrence records on the map are being symbolized based on the taxon they represent, the colored box to the left of each taxon in this list indicates the color that is being used to represent records on the map identified to that taxon. Each box can be clicked to open a color picker to select a different color to represent that taxon. Changing the color for any taxon immediately sets the symbology for all of the occurrence records on the map to be symbolized based on the taxon they represent, if they are not already, and updates the symbology to include the newly selected color.</p>"
+                    "html": "<p>Below the Auto Color button is the Save Symbology button. Clicking this button will generate a png image file of the collection list in this tab and all of the symbology colors assigned to each collection or taxa.</p>"
                 }
             ]
         },
