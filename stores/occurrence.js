@@ -209,6 +209,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getCrowdSourceQueryFieldOptions(state) {
             return state.crowdSourceQueryFieldOptions;
         },
+        getCurrentOccurrenceData(state) {
+            return state.occurrenceData;
+        },
         getDeterminationArr(state) {
             return state.determinationStore.getDeterminationArr;
         },
@@ -460,11 +463,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
             });
         },
-        createOccurrenceRecord(callback) {
+        createOccurrenceRecord(callback, data = null) {
             this.setOccurrenceCollectionData();
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());
-            formData.append('occurrence', JSON.stringify(this.occurrenceEditData));
+            formData.append('occurrence', (data ? JSON.stringify(data) : JSON.stringify(this.occurrenceEditData)));
             formData.append('action', 'createOccurrenceRecord');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
