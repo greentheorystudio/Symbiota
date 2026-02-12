@@ -17,7 +17,7 @@ const occurrenceCloneRecordModule = {
                     </div>
                     <div class="col-12 col-sm-6 col-md-2 row justify-end">
                         <div>
-                            <q-btn color="secondary" @click="createClonedRecords();" label="Create Records" tabindex="0" />
+                            <q-btn color="secondary" @click="processCloneRecord();" label="Create Records" tabindex="0" dense />
                         </div>
                     </div>
                 </div>
@@ -53,6 +53,9 @@ const occurrenceCloneRecordModule = {
             return returnData;
         });
         const cloneQuantity = Vue.ref(1);
+        const currentImageIndex = Vue.ref(0);
+        const currentMediaIndex = Vue.ref(0);
+        const currentOccurrenceIndex = Vue.ref(0);
         const imageArr = Vue.computed(() => occurrenceStore.getImageArr);
         const includeDataOptions = [
             {value: 'event', label: 'Event and Location Data'},
@@ -66,14 +69,65 @@ const occurrenceCloneRecordModule = {
         const selectedIncludeDataOption = Vue.ref('event');
 
         Vue.watch(occId, () => {
-            cloneQuantity.value = 1;
+            resetCounts();
         });
+
+        function processCloneImageAssociations(occid) {
+            if(imageArr.value.length > 0 || imageArr.value.length > currentImageIndex.value){
+
+            }
+            else{
+                processCloneMediaAssociations();
+            }
+        }
+
+        function processCloneMediaAssociations() {
+            if(imageArr.value.length > 0){
+
+            }
+        }
+
+        function processCloneRecord() {
+            showWorking();
+            console.log(imageArr.value);
+            occurrenceStore.createOccurrenceRecord((newOccid) => {
+                if(newOccid > 0){
+                    if(includeMediaLinkages.value){
+                        resetMediaCounts();
+                        processCloneImageAssociations(newOccid);
+                    }
+                    else{
+                        currentOccurrenceIndex.value++;
+                        if(currentOccurrenceIndex.value < cloneQuantity.value){
+                            processCloneRecord();
+                        }
+                        else{
+                            hideWorking();
+                        }
+                    }
+                }
+                else{
+                    showNotification('negative', 'There was an error creating the cloned occurrence record.');
+                }
+            }, cloneData.value);
+        }
+
+        function resetCounts() {
+            cloneQuantity.value = 1;
+            currentOccurrenceIndex.value = 0;
+        }
+
+        function resetMediaCounts() {
+            currentImageIndex.value = 0;
+            currentMediaIndex.value = 0;
+        }
 
         return {
             cloneQuantity,
             includeDataOptions,
             includeMediaLinkages,
-            selectedIncludeDataOption
+            selectedIncludeDataOption,
+            processCloneRecord
         }
     }
 };
