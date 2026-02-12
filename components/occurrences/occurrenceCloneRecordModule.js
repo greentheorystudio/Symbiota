@@ -32,6 +32,7 @@ const occurrenceCloneRecordModule = {
     setup() {
         const { hideWorking, showNotification, showWorking } = useCore();
         const occurrenceStore = useOccurrenceStore();
+        const searchStore = useSearchStore();
 
         const blankCollectingEventRecord = Vue.computed(() => occurrenceStore.getBlankCollectingEventRecord);
         const blankLocationRecord = Vue.computed(() => occurrenceStore.getBlankLocationRecord);
@@ -53,6 +54,7 @@ const occurrenceCloneRecordModule = {
             return returnData;
         });
         const cloneQuantity = Vue.ref(1);
+        const collId = Vue.computed(() => occurrenceStore.getCollId);
         const currentImageIndex = Vue.ref(0);
         const currentMediaIndex = Vue.ref(0);
         const currentOccurrenceIndex = Vue.ref(0);
@@ -72,26 +74,97 @@ const occurrenceCloneRecordModule = {
             resetCounts();
         });
 
+        function createImageRecord(imageData, callback) {
+            const formData = new FormData();
+            formData.append('collid', collId.value.toString());
+            formData.append('image', JSON.stringify(imageData));
+            formData.append('action', 'addImage');
+            fetch(imageApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    callback(res);
+                });
+        }
+
+        function createMediaRecord(mediaData, callback) {
+            const formData = new FormData();
+            formData.append('collid', collId.value.toString());
+            formData.append('media', JSON.stringify(mediaData));
+            formData.append('action', 'addMedia');
+            fetch(mediaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    callback(res);
+                });
+        }
         function processCloneImageAssociations(occid) {
             if(imageArr.value.length > 0 || imageArr.value.length > currentImageIndex.value){
-
+                const imageData = Object.assign({}, imageArr.value[currentImageIndex.value]);
+                delete imageData.imgid;
+                delete imageData.initialtimestamp;
+                delete imageData.tagArr;
+                imageData.sortsequence = Number(imageData.sortsequence) > 0 ? imageData.sortsequence : 50;
+                imageData.occid = occid;
+                createImageRecord(imageData, (id) => {
+                    if(Number(id) > 0){
+                        currentImageIndex.value++;
+                        processCloneImageAssociations(occid);
+                    }
+                    else{
+                        hideWorking();
+                        showNotification('negative', 'There was an error associating image records with the newly cloned occurrence record.');
+                    }
+                });
             }
             else{
-                processCloneMediaAssociations();
+                processCloneMediaAssociations(occid);
             }
         }
 
-        function processCloneMediaAssociations() {
-            if(imageArr.value.length > 0){
-
+        function processCloneMediaAssociations(occid) {
+            if(mediaArr.value.length > 0 || mediaArr.value.length > currentMediaIndex.value){
+                const mediaData = Object.assign({}, mediaArr.value[currentMediaIndex.value]);
+                delete mediaData.mediaid;
+                mediaData.sortsequence = Number(mediaData.sortsequence) > 0 ? mediaData.sortsequence : 50;
+                mediaData.occid = occid;
+                createMediaRecord(mediaData, (id) => {
+                    if(Number(id) > 0){
+                        currentMediaIndex.value++;
+                        processCloneMediaAssociations(occid);
+                    }
+                    else{
+                        hideWorking();
+                        showNotification('negative', 'There was an error associating media records with the newly cloned occurrence record.');
+                    }
+                });
+            }
+            else{
+                currentOccurrenceIndex.value++;
+                if(currentOccurrenceIndex.value < cloneQuantity.value){
+                    processCloneRecord();
+                }
+                else{
+                    hideWorking();
+                    showNotification('positive','Cloned successfully');
+                }
             }
         }
 
         function processCloneRecord() {
             showWorking();
-            console.log(imageArr.value);
             occurrenceStore.createOccurrenceRecord((newOccid) => {
                 if(newOccid > 0){
+                    searchStore.addNewOccidToOccidArrs(newOccid);
                     if(includeMediaLinkages.value){
                         resetMediaCounts();
                         processCloneImageAssociations(newOccid);
@@ -103,10 +176,12 @@ const occurrenceCloneRecordModule = {
                         }
                         else{
                             hideWorking();
+                            showNotification('positive','Cloned successfully');
                         }
                     }
                 }
                 else{
+                    hideWorking();
                     showNotification('negative', 'There was an error creating the cloned occurrence record.');
                 }
             }, cloneData.value);
