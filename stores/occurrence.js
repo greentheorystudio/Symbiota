@@ -209,6 +209,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         getCrowdSourceQueryFieldOptions(state) {
             return state.crowdSourceQueryFieldOptions;
         },
+        getCurrentOccurrenceData(state) {
+            return state.occurrenceData;
+        },
         getDeterminationArr(state) {
             return state.determinationStore.getDeterminationArr;
         },
@@ -460,11 +463,11 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
             });
         },
-        createOccurrenceRecord(callback) {
+        createOccurrenceRecord(callback, data = null) {
             this.setOccurrenceCollectionData();
             const formData = new FormData();
             formData.append('collid', this.getCollId.toString());
-            formData.append('occurrence', JSON.stringify(this.occurrenceEditData));
+            formData.append('occurrence', (data ? JSON.stringify(data) : JSON.stringify(this.occurrenceEditData)));
             formData.append('action', 'createOccurrenceRecord');
             fetch(occurrenceApiUrl, {
                 method: 'POST',
@@ -948,6 +951,10 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 }
                 else if(this.entryFollowUpAction === 'newrecordevent'){
                     this.transferEditCollectingEventDataToOccurrenceData();
+                }
+                else if(this.entryFollowUpAction === 'newrecordclone'){
+                    this.occurrenceData = Object.assign({}, this.occurrenceEditData);
+                    this.occurrenceData['collid'] = this.getCollId;
                 }
                 this.occurrenceData['language'] = this.baseStore.getDefaultLanguageName;
                 this.occurrenceEditData = Object.assign({}, this.occurrenceData);

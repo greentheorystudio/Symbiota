@@ -77,7 +77,7 @@
             ]
         },
         {
-            "title": "Loading Occurrence Data with the Search Panel",
+            "title": "Loading Occurrence Data",
             "slides": [
                 {
                     "header": "Search Panel",
@@ -85,7 +85,7 @@
                 },
                 {
                     "header": "Occurrence Data",
-                    "html": "<p>You can search for occurrence records in two ways: Through narrowing your search through the Criteria Tab, Collections Tab, or the Advanced Tab, and/or when at least one polygon, box, or circle feature is selected in the Shapes Layer. Through selecting shapes you have drawn or uploaded, you can search for occurrence records within those areas. </p>"
+                    "html": "<p>You can search for occurrence records through narrowing your search using the Criteria Tab, Collections Tab, or the Advanced Tab, and/or when at least one polygon, box, or circle feature is selected in the Shapes Layer. Through selecting shapes you have drawn or uploaded, you can search for occurrence records within those areas. </p>"
                 },
                 {
                     "header": "The Criteria and Collections Tab",
@@ -93,148 +93,68 @@
                 },
                 {
                     "header": "Loaded Occurrence Data",
-                    "html": "<p> Occurrence records loaded onto the map are automatically added to the Points Layer. When occurrence records are loaded, the Records and Taxa Panel becomes available in the Side Panel with tabs showing the collections and taxa represented in the search return, and the occurrence records themselves. To learn how to use the Records and Taxa Panel, see the 'Records and Taxa Panel' tutorial.</p>"
+                    "html": "<p> Occurrence records loaded onto the map are automatically added to the Points Layer. When occurrence records are loaded, the Records and Symbology Panel becomes available in the Side Panel showing each occurrence record under the Records tab.</p>"
                 },
                 {
                     "header": "",
-                    "html": "<p>Occurrence records are initially loaded symbolized based on the collection they represent and all collections being symbolized with the same color. The symbology for occurrence records can be changed in either the Collections Tab or Taxa Tab in the Records and Taxa Panel in the Side Panel.</p>"
+                    "html": "<p>Occurrence records are initially colored by the collection they represent. The symbology for occurrence records can be changed in the Symbology tab.  To learn how to use the Records and Symbology Panel, see the 'Records and Symbology Panel' tutorial.</p>"
                 }
             ]
         },
         {
-            "title": "Records and Taxa Panel",
+            "title": "Records and Symbology Panel",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Records and Taxa Panel becomes available in the Side Panel when occurrence records are loaded. It is accessed by opening the Side Panel and clicking on Records and Taxa to expand the panel, if it isn't already expanded.</p>"
+                    "html": "<p>The Records and Symbology Panel becomes available in the Side Panel when occurrence records are loaded. We will go through the Records tab and Symbology tab in the following tutorial.</p>"
                 },
                 {
-                    "header": "",
-                    "html": "<p>The Records and Taxa Panel includes the tabs: Records, Collections, Taxa, and Selections (when occurrence records are selected). We will go through these three tabs in the following tutorial.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Records Tab",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Records Tab is accessed in the Records and Taxa Panel in the Side Panel. It contains download options for the occurrence records returned in a search, links to other options to view the records, and a paginated list of the records themselves, with the ability for selecting records of interest. To go through each part of this tab:</p>"
+                    "header": "Records Tab",
+                    "html": "<p>The Records Tab is accessed through the Records and Symbology Panel in the Side Panel. It contains download options for the occurrence records returned in a search, links to other options to view the records, and a list of the records themselves, with the ability for selecting records of interest.</p>"
                 },
                 {
                     "header": "Download Type Selector and Button",
-                    "html": "<p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download the occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format. Downloading occurrence records will be discussed further in a later topic.</p>"
+                    "html": "<p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download the occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format. For more detail, see the 'Download Occurance Data' tutorial.</p>"
                 },
                 {
-                    "header": "List Display Button",
-                    "html": "<p>To the right of the Download Type Selector and button is the List Display button <button class=\"icon-button\" title=\"List Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-list\"></i></button>. This can be clicked to go to the list display for the occurrence records search.</p>"
-                },
-                {
-                    "header": "Table Display Button",
-                    "html": "<p>To the right of the List Display button is the Table Display button <button class=\"icon-button\" title=\"Table Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-table\"></i></button>. This can be clicked to go to the table display for the occurrence records search.</p>"
+                    "header": "List and Table Buttons",
+                    "html": "<p>Click the List Display button <button class=\"icon-button\" title=\"List Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-list\"></i></button> or the Table Display button <button class=\"icon-button\" title=\"Table Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-table\"></i></button> to go to the list or table display for the occurrence records search.</p>"
                 },
                 {
                     "header": "Image Display Button",
-                    "html": "<p>To the right of the Table Display button is the Image Display button <button class=\"icon-button\" title=\"Image Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-camera\"></i></button>. This can be clicked to go to the image display for the occurrence records search.</p>"
+                    "html": "<p>Click the Image Display button <button class=\"icon-button\" title=\"Image Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-camera\"></i></button> to go to the image search page.</p>"
                 },
                 {
                     "header": "Copy Search URL Button",
-                    "html": "<p>When the search does not include a complex shape, to the right of the Image Display button is the Copy Search URL button <button class=\"icon-button\" title=\"Copy Search URL\"><i style=\"height:15px;width:15px;\" class=\"fas fa-link\"></i></button>. This can be clicked to copy a url to your computer's clipboard that will load the same search. This url can be used at any time to quickly reload the same search at a different time.</p>"
+                    "html": "<p>When the search does not include a complex shape, clicking the Copy Search URL button <button class=\"icon-button\" title=\"Copy Search URL\"><i style=\"height:15px;width:15px;\" class=\"fas fa-link\"></i></button> will copy a url to your computer's clipboard that will load the same search. This url can be used at any time to quickly reload the same search at a different time.</p>"
                 },
                 {
-                    "header": "Pagination and Record Count Bar",
-                    "html": "<p>Below the options and display links is the Pagination and Record Count Bar. If more than 100 occurrence records are returned in a search, the records will be divided into pages of 100 and this bar will have links to each record page in the top row, and indicate the current page and record range in the bottom row. If 100 occurrence records or less are returned in a search, this bar will simply indicate the amount of records returned. This same bar is also displayed at the bottom of the Records Tab.</p>"
+                    "header": "Occurrence Record Table and Record Count Bar",
+                    "html": "<p>Below the options and display links is the Occurrence Records table and Record Count Bar. If more than 100 occurrence records are returned in a search, the Occurrence Record Table will show 100 records at a time, and you can and use the arrows on the Record Count Bar above the table to navigate to other records.</p>"
                 },
                 {
                     "header": "Select/Deselect All Checkbox",
-                    "html": "<p>Below the Pagination and Record Count Bar is the Select/Deselect All Checkbox. This checkbox can be used to select and deselect all of the occurrence records in the current table. When selected, records will be both added to the Selections Tab as well as selected on the map. Deselecting records will both remove them from the Selections Tab and deselect them on the map.</p>"
+                    "html": "<p>The first row of the left most column in the Occurrence Records Table is the Select/Deselect All Checkbox. This checkbox can be used to select and deselect all of the occurrence records in the current table. You can use this button, individually select records through the left most column of the Occurrence Records Table, or select records on the map to be highlighted and added to the Selections Tab. Deselecting records will both remove them from the Selections Tab and deselect them on the map.</p>"
                 },
                 {
                     "header": "Occurrence Record Table",
-                    "html": "<p>Below the Select/Deselect All Checkbox is the Occurrence Record Table displaying a paginated table of the occurrence records returned from the search. There are columns for Catalog Number, Collector, Date, and Scientific Name for each record. In the far left column there is a checkbox to select and deselect individual records in the table. This will also select or deselect the record on the map, and add it to, or remove it from, the Selections Tab. The text in the Collector column for each record can be clicked to open a popup window displaying the complete data for that record. Additionally, the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column can be clicked to pan the map to that record's location on the map and add a temporary marker. If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Collections Tab",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Collections Tab is accessed in the Records and Taxa Panel in the Side Panel. It contains a list of the collections represented in the occurrence records returned in the search and options for symbolizing the associated occurrence points on the map according to the collection it represents. To go through each part of this tab:</p>"
+                    "html": "<p>Below the Select/Deselect All Checkbox is the Occurrence Record Table with the occurrence records returned from the search. There are columns for Catalog Number, Collector, Date, and Scientific Name for each record. The text in the Collector column for each record can be clicked to open a popup window displaying the complete data for that record. Additionally, the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column can be clicked to pan the map to that record's location on the map and add a temporary marker. If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>"
                 },
                 {
-                    "header": "Occurrence Symbol Key",
-                    "html": "<p>In the top-left corner of the Collections Tab is the Occurrence Symbol Key, which simply shows the symbols used to distinguish individual records representing specimens, from those representing observations.</p>"
-                },
-                {
-                    "header": "Reset Symbology button",
-                    "html": "<p>In the top-right corner of the Collections Tab is the Reset Symbology button. Clicking this button will reset the symbology for all of the occurrence records on the map back to the original, default state of being symbolized based on the collection they represent and all collections being symbolized with the same color.</p>"
-                },
-                {
-                    "header": "Auto Color Button",
-                    "html": "<p>Below the Reset Symbology button is the Auto Color button. Clicking this button will set the symbology for all of the occurrence records on the map to be symbolized based on the collection they represent, if they are not already, and will assign each collection a random, unique color for its symbology.</p>"
-                },
-                {
-                    "header": "Save Symbology Button",
-                    "html": "<p>Below the Auto Color button is the Save Symbology button. Clicking this button will generate a png image file of the collection list in this tab and all of the symbology colors assigned to each collection.</p>"
-                },
-                {
-                    "header": "Collection List",
-                    "html": "<p>Below the symbol key and symbology buttons is the Collection List. This list includes all of the collections represented in the occurrence records returned in the search. If the occurrence records on the map are being symbolized based on the collection they represent, the colored box to the left of each collection in this list indicates the color that is being used to represent that collection's records on the map. Each box can be clicked to open a color picker to select a different color to represent that collection. Changing the color for any collection immediately sets the symbology for all of the occurrence records on the map to be symbolized based on the collection they represent, if they are not already, and updates the symbology to include the newly selected color.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Taxa Tab",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Taxa Tab is accessed in the Records and Taxa Panel in the Side Panel. It contains a list of the distinct taxa represented in the occurrence records returned in the search and options for symbolizing the associated occurrence points on the map according to the taxon it represents. To go through each part of this tab:</p>"
-                },
-                {
-                    "header": "Occurrence Symbol Key",
-                    "html": "<p>In the top-left corner of the Taxa Tab is the Occurrence Symbol Key, which simply shows the symbols used to distinguish individual records representing specimens, from those representing observations.</p>"
-                },
-                {
-                    "header": "Reset Symbology Button",
-                    "html": "<p>In the top-right corner of the Taxa Tab is the Reset Symbology button. Clicking this button will reset the symbology for all of the occurrence records on the map back to the original, default state of being symbolized based on the collection they represent and all collections being symbolized with the same color.</p>"
-                },
-                {
-                    "header": "Auto Color Button",
-                    "html": "<p>Below the Reset Symbology button is the Auto Color button. Clicking this button will set the symbology for all of the occurrence records on the map to be symbolized based on the taxon they represent, if they are not already, and will assign each taxon a random, unique color for its symbology.</p>"
-                },
-                {
-                    "header": "Save Symbology Button",
-                    "html": "<p>Below the Auto Color button is the Save Symbology button. Clicking this button will generate a png image file of the taxa list in this tab and all of the symbology colors assigned to each taxon.</p>"
-                },
-                {
-                    "header": "Taxa Count and Download Bar",
-                    "html": "<p>Below the symbol key and symbology buttons is the Taxa Count and Download Bar. On the left side of this bar is the total count of distinct taxa represented in the occurrence records returned in the search. The button on the right side of this bar <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> can be clicked to download a csv files containing all of the distinct taxa in the taxa list in this tab.</p>"
-                },
-                {
-                    "header": "Taxa List",
-                    "html": "<p>Below the Taxa Count and Download Bar is the Taxa List. This list includes all of the distinct taxa represented in the occurrence records returned in the search, arranged taxonomically by family. If the occurrence records on the map are being symbolized based on the taxon they represent, the colored box to the left of each taxon in this list indicates the color that is being used to represent records on the map identified to that taxon. Each box can be clicked to open a color picker to select a different color to represent that taxon. Changing the color for any taxon immediately sets the symbology for all of the occurrence records on the map to be symbolized based on the taxon they represent, if they are not already, and updates the symbology to include the newly selected color.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Selections Tab",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Selections Tab is available whenever occurrence records are selected. It is accessed in the Records and Taxa Panel in the Side Panel. It contains download options for the selected occurrence records, a list of the records themselves, the ability to clear the current record selections, and the ability adjust the map to show the selections. To go through each part of this tab:</p>"
+                    "header": "Selections Tab",
+                    "html": "<p>The Selections Tab is available whenever occurrence records are selected. It is accessed in the Records and Symbology dropdown in the Side Panel. It contains download options for the selected occurrence records, a list of the records themselves, a button to clear the current record selections, and a button to adjust the map to show the selections.</p>"
                 },
                 {
                     "header": "Download Type Selector and Button",
-                    "html": "<p>In the top-left corner of the Selections Tab is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download the selected occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format. Downloading selected occurrence records will be discussed further in a later topic.</p>"
+                    "html": "<p>You can use the same Download Type Selector and Button as the Records tab to download data of the selected occurrence data. </p>"
                 },
                 {
                     "header": "Clear Selections Button",
-                    "html": "<p>Below the Download Type Selector and button is the Clear Selections button <button class=\"icon-button\" title=\"List Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-list\"></i></button>. This can be clicked to deselect all of the currently selected occurrence records, removing all records from this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all records in the Records Tab.</p>"
+                    "html": "<p>The 'CLEAR SELECTIONS' Button can be clicked to deselect all of the currently selected occurrence records, removing all records from this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all records in the Records Tab.</p>"
                 },
                 {
                     "header": "Zoom to Selections Button",
-                    "html": "<p>To the right of the Clear Selections button is the Zoom to Selections button. This can be clicked to automatically zoom and pan the map so that all of the selected records are visible on the map.</p>"
+                    "html": "<p>The 'ZOOM TO SELECTIONS' button can be clicked to automatically zoom and pan the map so that all of the selected records are visible on the map.</p>"
                 },
                 {
                     "header": "Show Only Selected Points Checkbox",
@@ -242,7 +162,48 @@
                 },
                 {
                     "header": "Selected Occurrence Record Table",
-                    "html": "<p>Below the Show Only Selected Points Checkbox is the Selected Occurrence Record Table displaying a table of all of the currently selected occurrence records. There are columns for Catalog Number, Collector, Date, and Scientific Name for each record. In the far left column there is a checkbox to deselect individual records in the table, which removes them from this table, deselects them on the map, and deselects them in the Records Tab. The text in the Collector column for each record can be clicked to open a popup window displaying the complete data for that record. Additionally, the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column can be clicked to pan the map to that record's location on the map and add a temporary marker. If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>"
+                    "html": "<p>Below the Show Only Selected Points Checkbox is the Selected Occurrence Record Table displaying all of the currently selected occurrence records in the same format as the Occurrence Record Table.</p>"
+                },
+                {
+                    "header": "Symbology Tab",
+                    "html": "<p>The Symbology Tab is accessed in the Records and Symbology Panel in the Side Panel. You can change the color of the points of occurrence in the map depending on the taxa or the collection the record belongs to.</p>"
+                },
+                {
+                    "header": "Symbology Dropdown and Symbol Key",
+                    "html": "<p>In the top-left corner of the Symbology Tab is the Symbology Dropdown where you can select between viewing the records on the map by taxa or by collections. Under that is the Symbol Key that distinguishes individual records representing specimens from those representing observations.</p>"
+                },
+                {
+                    "header": "Assigning Colors to Groups",
+                    "html": "<p>The colored box to the left of each taxon or collection in this list indicates the color that is being used to represent records on the map identified to that group. Each box can be clicked to open a color picker to select a different color to represent that group. Changing the color for any group immediately sets the symbology for all of the occurrence records on the map to be symbolized based on the group they represent, if they are not already, and updates the symbology to include the newly selected color.,</p>"
+                },
+                {
+                    "header": "Reset Symbology button",
+                    "html": "<p>In the top-right corner of the Collections Tab is the 'RESET SYMBOLOGY' button. Clicking this button will reset the symbology for all of the occurrence records on the map back to the original, default state of being symbolized based on the collection or taxa they are part of.</p>"
+                },
+                {
+                    "header": "Auto Color Button",
+                    "html": "<p>Below the Reset Symbology button is the Auto Color button. Clicking this button will set the symbology for all of the occurrence records on the map to be symbolized based on the collection and taxa they represent, if they are not already, and will assign each collection a random, unique color for its symbology.</p>"
+                },
+                {
+                    "header": "Save Symbology Button",
+                    "html": "<p>Below the Auto Color button is the Save Symbology button. Clicking this button will generate a png image file of the collection list in this tab and all of the symbology colors assigned to each collection or taxa.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Downloading Occurrence Data",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Occurrence data can be downloaded from both the Records Tab and the Selections Tab in the Records and Symbology Panel in the Side Panel. Downloading occurrence data from the Records Tab will download all of the records returned in a search. Downloading occurrence data from the Selections Tab will download only the selected records from a search.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In either the Records Tab or the Selections Tab, the Download Type Selector can be used to select the download format for the occurrence data. The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> to initiate the download.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>If the download type CSV/ZIP is selected, an additional window will open allowing for further options as to the structure and formatting of the download. These options include whether the structure the data in the Native or Darwin Core format, whether to include determination or image extensions, whether the file be an archive, and other file formatting. Once these further options have been set, or if the default settings are preferred, click the Download Data button to proceed with the download.</p>"
                 }
             ]
         },
@@ -437,23 +398,6 @@
                 {
                     "header": "Viewing Record Data",
                     "html": "<p>Holding the alt key (option key on Mac) and clicking on any individual occurrence record will open an info window displaying all of the data for that record.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Downloading Occurrence Data",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Occurrence data can be downloaded from both the Records Tab and the Selections Tab in the Records and Taxa Panel in the Side Panel. Downloading occurrence data from the Records Tab will download all of the records returned in a search. Downloading occurrence data from the Selections Tab will download only the selected records from a search.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>In either the Records Tab or the Selections Tab, the Download Type Selector can be used to select the download format for the occurrence data. The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> to initiate the download.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>If the download type CSV/ZIP is selected, an additional window will open allowing for further options as to the structure and formatting of the download. These options include whether the structure the data in the Native or Darwin Core format, whether to include determination or image extensions, whether the file be an archive, and other file formatting. Once these further options have been set, or if the default settings are preferred, click the Download Data button to proceed with the download.</p>"
                 }
             ]
         },
@@ -897,15 +841,6 @@
             ]
         },
         {
-            "title": "Downloading a Map Image",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>A png image of the map in the current view, including all layers that have been loaded, all occurrence data that has been loaded, and all symbology adjustments that have been made, can be downloaded at any time by clicking the Download Map Image button in the Main Control Panel.</p>"
-                }
-            ]
-        },
-        {
             "title": "Using the Heat Map Display",
             "slides": [
                 {
@@ -923,20 +858,7 @@
             ]
         },
         {
-            "title": "Side Panel",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>Now we will go over what we can do with the <b>Side Panel.</b> The Side Panel is accessed by clicking on the collapsed Side Panel tab. Once opened, clicking along the right border of the panel will close it.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>The Side Panel contains expansion panels for Search Criteria, Records and Taxa (when occurrence records have been loaded), Vector Tools, and Raster Tools. Clicking on the name of any of the expansion panels will either expand or contract the panel.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Searching and Loading Occurrence Data Walkthrough",
+            "title": "Walkthrough: Searching and Loading Occurrence Data",
             "slides": [
                 {
                     "header": "",
@@ -985,7 +907,7 @@
             ]
         },
         {
-            "title": "Loading Occurrence Data Around a Buffer Polygon Walkthrough",
+            "title": "Walkthrough: Loading Occurrence Data Around a Buffer Polygon",
             "slides": [
                 {
                     "header": "",
@@ -1034,7 +956,7 @@
             ]
         },
         {
-            "title": "Loading Occurrence Data Within a U.S. County Walkthrough",
+            "title": "Walkthrough: Loading Occurrence Data Within a U.S. County",
             "slides": [
                 {
                     "header": "",
@@ -1087,7 +1009,7 @@
             ]
         },
         {
-            "title": "Using Intersect Tool Walkthrough #4",
+            "title": "Walkthrough: Using Intersect Tool",
             "slides": [
                 {
                     "header": "",
@@ -1184,7 +1106,7 @@
             ]
         },
         {
-            "title": "Using Vector Tools Walkthrough #5",
+            "title": "Walkthrough: Using Vector Tools",
             "slides": [
                 {
                     "header": "",
