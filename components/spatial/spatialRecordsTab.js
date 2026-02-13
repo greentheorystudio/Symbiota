@@ -35,7 +35,7 @@ const spatialRecordsTab = {
                     <template v-slot:header="props">
                         <q-tr :props='props' class="bg-blue-grey-2">
                             <q-th>
-                                <q-checkbox v-model="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
+                                <q-checkbox :model-value="selectedRecordSelectAllVal" @update:model-value="processSelectAllChange" dense aria-label="Select all records" tabindex="0" />
                             </q-th>
                             <q-th v-for="col in props.cols" :key="col.name" :props="props">
                                 {{ col.label }}
@@ -99,6 +99,7 @@ const spatialRecordsTab = {
         </div>
     `,
     components: {
+        'checkbox-input-element': checkboxInputElement,
         'copy-url-button': copyURLButton,
         'image-display-button': imageDisplayButton,
         'list-display-button': listDisplayButton,
@@ -165,7 +166,15 @@ const spatialRecordsTab = {
         const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
         const selectedRecordCount = Vue.computed(() => searchStore.getSearchRecordSelectedCount);
         const selectedRecordSelectAllVal = Vue.computed(() => {
-            return (selectedRecordCount.value > 0 && selectedRecordCount.value < 100) ? null : selectedRecordCount.value !== 0;
+            if(selectedRecordCount.value > 0 && selectedRecordCount.value === recordDataArr.value.length){
+                return true;
+            }
+            else if(selectedRecordCount.value > 0 && selectedRecordCount.value < recordDataArr.value.length){
+                return null;
+            }
+            else{
+                return false;
+            }
         });
         const tableLoading = Vue.computed(() => (recordDataArr.value.length === 0));
 

@@ -383,8 +383,8 @@ class UploadOccurrenceTemp{
 
             if($returnVal === 1){
                 $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
-                    'SET u.family = t.family '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND t.family IS NOT NULL ';
+                    'SET u.family = t.family, u.scientificnameauthorship = t.author '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL ';
                 if(!$this->conn->query($sql)){
                     $returnVal = 0;
                 }
