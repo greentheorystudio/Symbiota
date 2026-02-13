@@ -755,11 +755,11 @@ const occurrenceInfoTabModule = {
             occurrenceMofDataFields,
             occurrenceMofDataLabel,
             occurrenceMofLayoutData,
+            redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId,
             selectedTab,
             tabCardStyle,
             tabMapPanelStyle,
-            tabPanelStyle,
-            redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId,
+            tabPanelStyle
         }
     }
 };
