@@ -1,6 +1,6 @@
 const occurrenceCloneRecordModule = {
     template: `
-        <q-card flat bordered class="q-mt-sm black-border">
+        <q-card flat bordered>
             <q-card-section class="q-pa-sm column q-col-gutter-sm">
                 <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
                     Clone Record
@@ -83,12 +83,12 @@ const occurrenceCloneRecordModule = {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    callback(res);
-                });
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res);
+            });
         }
 
         function createMediaRecord(mediaData, callback) {
@@ -100,12 +100,12 @@ const occurrenceCloneRecordModule = {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    callback(res);
-                });
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                callback(res);
+            });
         }
         function processCloneImageAssociations(occid) {
             if(imageArr.value.length > 0 || imageArr.value.length > currentImageIndex.value){
