@@ -49,6 +49,9 @@ const occurrenceEditorOccurrenceDataModule = {
                         <occurrence-editor-form-curation-element></occurrence-editor-form-curation-element>
                         <template v-if="occId > 0">
                             <occurrence-editor-record-footer-element></occurrence-editor-record-footer-element>
+                            <template v-if="occurrenceEntryFormat === 'specimen' || occurrenceEntryFormat === 'observation' || occurrenceEntryFormat === 'skeletal'">
+                                <occurrence-clone-record-module></occurrence-clone-record-module>
+                            </template>
                         </template>
                     </q-card-section>
                 </q-card>
@@ -57,6 +60,7 @@ const occurrenceEditorOccurrenceDataModule = {
     `,
     components: {
         'image-carousel': imageCarousel,
+        'occurrence-clone-record-module': occurrenceCloneRecordModule,
         'occurrence-editor-form-collecting-event-element': occurrenceEditorFormCollectingEventElement,
         'occurrence-editor-form-curation-element': occurrenceEditorFormCurationElement,
         'occurrence-editor-form-identifier-element': occurrenceEditorFormIdentifierElement,

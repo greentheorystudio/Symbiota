@@ -118,4 +118,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'remapTaxonResources' && $isEditor && $tId && array_key_exists('targettid',$_POST)){
         echo $taxa->remapTaxonResources($tId, $_POST['targettid']);
     }
+    elseif($action === 'getTaxaByRankArr' && array_key_exists('rankIdArr', $_POST)){
+        $rankIdArr = json_decode($_POST['rankIdArr'], false);
+        echo json_encode($taxa->getTaxaByRankArr($rankIdArr));
+    }
 }

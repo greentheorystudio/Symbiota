@@ -17,7 +17,8 @@ const occurrenceEntryFollowUpActionSelector = {
             {value: 'remain', label: 'Remain on editing page'},
             {value: 'newrecord', label: 'Go to new record'},
             {value: 'newrecordlocation', label: 'Go to new record at same location'},
-            {value: 'newrecordevent', label: 'Go to new record at same event'}
+            {value: 'newrecordevent', label: 'Go to new record at same event'},
+            {value: 'newrecordclone', label: 'Go to new cloned record'}
         ];
         const propsRefs = Vue.toRefs(props);
         const selectedOption = Vue.ref({});
