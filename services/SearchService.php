@@ -899,7 +899,7 @@ class SearchService {
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM images))';
         }
         if(array_key_exists('withoutimages',$searchTermsArr) && $searchTermsArr['withoutimages']){
-            $sqlWherePartsArr[] = '(o.occid NOT IN(SELECT occid FROM images))';
+            $sqlWherePartsArr[] = '(o.occid NOT IN(SELECT DISTINCT occid FROM images WHERE occid IS NOT NULL))';
         }
         if(array_key_exists('hasvideo',$searchTermsArr) && $searchTermsArr['hasvideo']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format REGEXP "^video/"))';

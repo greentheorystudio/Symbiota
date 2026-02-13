@@ -596,6 +596,29 @@ class Taxa{
         return $retArr;
     }
 
+    public function getTaxaByRankArr($rankIdArr): array
+    {
+        $retArr = array();
+        if(count($rankIdArr) > 0){
+            $sql = 'SELECT t.tid, t.rankid, t.sciname, v.vernacularname '.
+                'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid '.
+                'WHERE t.rankid IN(' . implode(',', $rankIdArr) . ') '.
+                'ORDER BY t.rankid, t.sciname ';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    $retArr[$row->rankid][$row->tid]['sciname'] = $row->sciname;
+                    if($row->vernacularname){
+                        $retArr[$row->rankid][$row->tid]['vernacularArr'][] = $row->vernacularname;
+                    }
+                    unset($rows[$index]);
+                }
+            }
+        }
+        return $retArr;
+    }
+
     public function getTaxaSynonymArrFromTidArr($tidArr): array
     {
         $retArr = array();
