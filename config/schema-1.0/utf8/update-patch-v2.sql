@@ -436,6 +436,9 @@ ALTER TABLE `omcolldatauploadparameters`
 ALTER TABLE `omcollmediauploadparameters`
     MODIFY COLUMN `configjson` longtext NULL AFTER `patternmatchfield`;
 
+ALTER TABLE `taxaidentifiers`
+    MODIFY COLUMN `identifier` varchar(255) NULL AFTER `name`;
+
 ALTER TABLE `taxamaps`
     ADD COLUMN `altText` varchar(355) NULL AFTER `title`;
 
