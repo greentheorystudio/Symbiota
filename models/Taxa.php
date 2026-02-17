@@ -538,7 +538,7 @@ class Taxa{
                 $startIndex = (int)$index * (int)$recCnt;
                 $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
             }
-            error_log($sql);
+            //error_log($sql);
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
