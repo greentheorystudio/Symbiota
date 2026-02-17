@@ -53,16 +53,21 @@ class TaxonHierarchy{
         return $returnArr;
     }
 
-    public function getParentTidArr($tid): array
+    public function getParentTidDataFromTidArr($tidArr): array
     {
         $returnArr = array();
-        $sql = 'SELECT parenttid FROM taxaenumtree WHERE tid = ' . (int)$tid . ' ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $returnArr[] = $row['parenttid'];
-                unset($rows[$index]);
+        if(count($tidArr) > 0){
+            $sql = 'SELECT tid, parenttid FROM taxaenumtree WHERE tid IN(' . implode(',', $tidArr) . ') ';
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $index => $row){
+                    if(!array_key_exists($row['tid'], $returnArr)){
+                        $returnArr[$row['tid']] = array();
+                    }
+                    $returnArr[$row['tid']][] = $row['parenttid'];
+                    unset($rows[$index]);
+                }
             }
         }
         return $returnArr;
