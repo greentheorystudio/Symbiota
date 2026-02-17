@@ -97,6 +97,7 @@ class TaxonVernaculars{
                     $scinameArr['tid'] = '';
                     $scinameArr['label'] = $row['vernacularname'];
                     $scinameArr['name'] = $row['vernacularname'];
+                    $scinameArr['sciname'] = $row['vernacularname'];
                     $retArr[] = $scinameArr;
                     unset($rows[$index]);
                 }
@@ -225,6 +226,31 @@ class TaxonVernaculars{
             $result->free();
         }
         return $retVal;
+    }
+
+    public function getTidArrFromVernacular($vernacular): array
+    {
+        $retArr = array();
+        $whereStr = '';
+        $sql = 'SELECT DISTINCT t.tid, t.sciname FROM taxa AS t ';
+        $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, $vernacular) . "' ";
+        $whereStr .= "OR v.vernacularname LIKE '" . SanitizerService::cleanInStr($this->conn, $vernacular) . " %' ";
+        if(strpos($vernacular, '-') !== false){
+            $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $vernacular)) . "' ";
+            $whereStr .= "OR v.vernacularname LIKE '" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $vernacular)) . " %' ";
+        }
+        $sql .= 'WHERE tid IN(SELECT v.tid FROM taxavernaculars AS v WHERE ' . substr($whereStr,3) . ') ';
+        $sql .= 'OR tid IN(SELECT te.tid FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid WHERE ' . substr($whereStr,3) . ') ';
+        //echo "<div>sql: ".$sql."</div>";
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[] = $row['tid'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 
     public function remapTaxonVernaculars($tid, $targetTid): int

@@ -52,7 +52,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <template v-if="keyModuleIsActive">
                             <li><a :href="(clientRoot + '/ident/key.php')" tabindex="0">Dynamic Key</a></li>
                         </template>
-                        <li><a :href="(clientRoot + '/taxa/dynamictaxalist.php')" tabindex="0">Dynamic Taxonomy List</a></li>
+                        <li><a :href="(clientRoot + '/taxa/dynamictaxalist.php')" tabindex="0">Dynamic Taxa List</a></li>
                         <template v-if="glossaryModuleIsActive">
                             <li><a :href="(clientRoot + '/glossary/index.php')" tabindex="0">Glossary</a></li>
                         </template>
