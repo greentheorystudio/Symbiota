@@ -44,6 +44,10 @@ const singleScientificCommonNameAutoComplete = {
             type: Array,
             default: null
         },
+        parentTid: {
+            type: Number,
+            default: null
+        },
         rankHigh: {
             type: Number,
             default: null
@@ -241,6 +245,7 @@ const singleScientificCommonNameAutoComplete = {
             formData.append('hideauth', props.hideAuthor);
             formData.append('hideprotected', props.hideProtected);
             formData.append('acceptedonly', props.acceptedTaxaOnly);
+            formData.append('parenttid', props.parentTid);
             formData.append('rlimit', rankLimit);
             formData.append('rlow', rankLow);
             formData.append('rhigh', rankHigh);

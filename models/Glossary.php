@@ -101,11 +101,11 @@ class Glossary{
         $retArr = array();
         if($tid){
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'g');
-            $tidArr = (new TaxonHierarchy)->getParentTidArr($tid);
-            $tidArr[] = $tid;
+            $tidArr = (new TaxonHierarchy)->getParentTidDataFromTidArr(array($tid));
+            $tidArr[$tid][] = $tid;
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM glossary AS g LEFT JOIN glossarytaxalink AS gt ON g.glossid = gt.glossid '.
-                'WHERE gt.tid IN('.implode(',', $tidArr).') '.
+                'WHERE gt.tid IN('.implode(',', $tidArr[$tid]).') '.
                 'ORDER BY g.term ';
             //echo $sql; exit;
             if($result = $this->conn->query($sql)){

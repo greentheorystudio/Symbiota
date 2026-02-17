@@ -373,6 +373,7 @@ class Taxa{
             $hideProtected = array_key_exists('hideprotected', $opts) && (($opts['hideprotected'] === 'true' || (int)$opts['hideprotected'] === 1));
             $kingdomId = (array_key_exists('kingdomid', $opts) && (int)$opts['kingdomid'] > 0) ? (int)$opts['kingdomid'] : null;
             $limit = array_key_exists('limit', $opts) ? (int)$opts['limit'] : null;
+            $parentTid = (array_key_exists('parenttid', $opts) && (int)$opts['parenttid'] > 0) ? (int)$opts['parenttid'] : null;
             $rankHigh = array_key_exists('rhigh', $opts) ? (int)$opts['rhigh'] : null;
             $rankLimit = array_key_exists('rlimit', $opts) ? (int)$opts['rlimit'] : null;
             $rankLow = array_key_exists('rlow', $opts) ? (int)$opts['rlow'] : null;
@@ -389,6 +390,9 @@ class Taxa{
                 if($rankHigh){
                     $sql .= 'AND rankid <= ' . $rankHigh . ' ';
                 }
+            }
+            if($parentTid){
+                $sql .= 'AND tid IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ') ';
             }
             if($hideProtected){
                 $sql .= 'AND securitystatus <> 1 ';
@@ -496,6 +500,96 @@ class Taxa{
         return $retArr;
     }
 
+    public function getDynamicTaxaListDataArr($parentIdentifier, $parentIdType, $limitToDescriptions, $index = null, $recCnt = null): array
+    {
+        $returnArr = array();
+        $tempArr = array();
+        $parentTaxonArr = array();
+        $targetTidArr = array();
+        $tidArr = array();
+        if($parentIdType === 'parenttid'){
+            $targetTidArr = (new TaxonHierarchy)->getSubtaxaTidArrFromTid($parentIdentifier);
+            $targetTidArr[] = $parentIdentifier;
+        }
+        elseif($parentIdType === 'vernacular'){
+            $targetTidArr = (new TaxonVernaculars)->getTidArrFromVernacular($parentIdentifier);
+        }
+        if(count($targetTidArr) > 0){
+            $parentTaxonSql = 'SELECT DISTINCT te.tid, t.TID AS parentTid, t.RankId, t.SciName '.
+                'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
+                'WHERE te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted AND t.RankId IN(10,30,60,100,140) ';
+            if($result = $this->conn->query($parentTaxonSql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
+                    $parentTaxonArr[$row['tid']][$row['RankId']]['id'] = $row['parentTid'];
+                    $parentTaxonArr[$row['tid']][$row['RankId']]['sciname'] = $row['SciName'];
+                    unset($rows[$rIndex]);
+                }
+            }
+            $sql = 'SELECT DISTINCT t.TID, t.SciName '.
+                'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
+                'WHERE (te.tid IN(' . implode(',', $targetTidArr) . ') AND t.RankId > 10 AND t.tid = t.tidaccepted) '.
+                'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT DISTINCT parenttid FROM taxa)) ';
+            if($limitToDescriptions){
+                $sql .= 'AND t.TID IN(SELECT tid FROM taxadescrblock) ';
+            }
+            if((int)$recCnt > 0){
+                $startIndex = (int)$index * (int)$recCnt;
+                $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
+            }
+            error_log($sql);
+            if($result = $this->conn->query($sql)){
+                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                $result->free();
+                foreach($rows as $rIndex => $row){
+                    if($row['TID']){
+                        if(!in_array($row['TID'], $tidArr, true)){
+                            $tidArr[] = $row['TID'];
+                        }
+                        $recordArr = array();
+                        $parentArr = (array_key_exists($row['TID'], $parentTaxonArr) ? $parentTaxonArr[$row['TID']] : array());
+                        $recordArr['tid'] = $row['TID'];
+                        $recordArr['sciname'] = $row['SciName'];
+                        $recordArr['kingdomtid'] = (array_key_exists('10', $parentArr) ? $parentArr['10']['id'] : '0');
+                        $recordArr['kingdomname'] = (array_key_exists('10', $parentArr) ? $parentArr['10']['sciname'] : '');
+                        $recordArr['phylumtid'] = (array_key_exists('30', $parentArr) ? $parentArr['30']['id'] : '0');
+                        $recordArr['phylumname'] = (array_key_exists('30', $parentArr) ? $parentArr['30']['sciname'] : '');
+                        $recordArr['classtid'] = (array_key_exists('60', $parentArr) ? $parentArr['60']['id'] : '0');
+                        $recordArr['classname'] = (array_key_exists('60', $parentArr) ? $parentArr['60']['sciname'] : '');
+                        $recordArr['ordertid'] = (array_key_exists('100', $parentArr) ? $parentArr['100']['id'] : '0');
+                        $recordArr['ordername'] = (array_key_exists('100', $parentArr) ? $parentArr['100']['sciname'] : '');
+                        $recordArr['familytid'] = (array_key_exists('140', $parentArr) ? $parentArr['140']['id'] : '0');
+                        $recordArr['familyname'] = (array_key_exists('140', $parentArr) ? $parentArr['140']['sciname'] : '');
+                        $recordArr['vernacularData'] = array();
+                        $recordArr['identifierData'] = array();
+                        $tempArr[] = $recordArr;
+                    }
+                    unset($rows[$rIndex]);
+                }
+                if(count($tidArr) > 0){
+                    $vernacularDataArr = (new TaxonVernaculars)->getVernacularArrFromTidArr($tidArr);
+                    $identifierDataArr = $this->getIdentifiersFromTidArr($tidArr);
+                    if($identifierDataArr || $vernacularDataArr){
+                        foreach($tempArr as $taxonArr){
+                            if(array_key_exists($taxonArr['tid'], $identifierDataArr)){
+                                $taxonArr['identifierData'] = $identifierDataArr[$taxonArr['tid']];
+                            }
+                            if(array_key_exists($taxonArr['tid'], $vernacularDataArr)){
+                                $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tid']];
+                            }
+                            $returnArr[] = $taxonArr;
+                        }
+                    }
+                    else{
+                        $returnArr[] = $tempArr;
+                    }
+                }
+            }
+        }
+        return $returnArr;
+    }
+
     public function getIdentifiersForTaxonomicGroup($tid, $index, $source): array
     {
         $retArr = array();
@@ -513,6 +607,27 @@ class Taxa{
                 $resultArr['identifier'] = $row['identifier'];
                 $retArr[] = $resultArr;
                 unset($rows[$rIndex]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getIdentifiersFromTidArr($tidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT tid, name, identifier FROM taxaidentifiers WHERE tid IN(' . implode(',', $tidArr) . ') ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!array_key_exists($row['tid'], $retArr)){
+                    $retArr[$row['tid']] = array();
+                }
+                $resultArr = array();
+                $resultArr['name'] = $row['name'];
+                $resultArr['identifier'] = $row['identifier'];
+                $retArr[$row['tid']][] = $resultArr;
+                unset($rows[$index]);
             }
         }
         return $retArr;
@@ -542,6 +657,30 @@ class Taxa{
                 $resultArr['cnt'] = $row['cnt'];
                 $retArr[] = $resultArr;
                 unset($rows[$rIndex]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getParentTaxaFromTid($tid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 't');
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.tid '.
+            'WHERE te.tid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
         }
         return $retArr;
@@ -596,23 +735,59 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxaByRankArr($rankIdArr): array
+    public function getTaxaArrByRankIdArr($rankIdArr, $includeVernacular, $includeParentTids): array
     {
         $retArr = array();
-        if(count($rankIdArr) > 0){
-            $sql = 'SELECT t.tid, t.rankid, t.sciname, v.vernacularname '.
-                'FROM taxa AS t LEFT JOIN taxavernaculars AS v ON t.tid = v.tid '.
-                'WHERE t.rankid IN(' . implode(',', $rankIdArr) . ') '.
-                'ORDER BY t.rankid, t.sciname ';
+        $tempArr = array();
+        $tidArr = array();
+        $parentTidDataArr = array();
+        $vernacularDataArr = array();
+        if($rankIdArr && count($rankIdArr) > 0){
+            $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+            $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' FROM taxa '.
+                'WHERE tid = tidaccepted AND rankid IN(' . implode(',', $rankIdArr) . ') ORDER BY rankid, sciname ';
             if($result = $this->conn->query($sql)){
+                $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    $retArr[$row->rankid][$row->tid]['sciname'] = $row->sciname;
-                    if($row->vernacularname){
-                        $retArr[$row->rankid][$row->tid]['vernacularArr'][] = $row->vernacularname;
+                    $nodeArr = array();
+                    if(!in_array($row['tidaccepted'], $tidArr, true)){
+                        $tidArr[] = $row['tidaccepted'];
+                    }
+                    foreach($fields as $val){
+                        $name = $val->name;
+                        $nodeArr[$name] = $row[$name];
+                    }
+                    if($includeVernacular || $includeParentTids){
+                        $tempArr[] = $nodeArr;
+                    }
+                    else{
+                        $retArr[] = $nodeArr;
                     }
                     unset($rows[$index]);
+                }
+                if(($includeVernacular || $includeParentTids) && count($tidArr) > 0){
+                    if($includeParentTids){
+                        $parentTidDataArr = (new TaxonHierarchy)->getParentTidDataFromTidArr($tidArr);
+                    }
+                    if($includeVernacular){
+                        $vernacularDataArr = (new TaxonVernaculars)->getVernacularArrFromTidArr($tidArr);
+                    }
+                    if($parentTidDataArr || $vernacularDataArr){
+                        foreach($tempArr as $taxonArr){
+                            if($includeParentTids){
+                                $taxonArr['parentTidArr'] = $parentTidDataArr[$taxonArr['tidaccepted']] ?? null;
+                            }
+                            if($includeVernacular){
+                                $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tidaccepted']] ?? null;
+                            }
+                            $retArr[] = $taxonArr;
+                        }
+                    }
+                    else{
+                        $retArr[] = $tempArr;
+                    }
                 }
             }
         }
