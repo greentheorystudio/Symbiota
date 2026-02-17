@@ -118,8 +118,19 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'remapTaxonResources' && $isEditor && $tId && array_key_exists('targettid',$_POST)){
         echo $taxa->remapTaxonResources($tId, $_POST['targettid']);
     }
-    elseif($action === 'getTaxaByRankArr' && array_key_exists('rankIdArr', $_POST)){
+    elseif($action === 'getTaxaArrByRankIdArr' && array_key_exists('rankIdArr', $_POST)){
         $rankIdArr = json_decode($_POST['rankIdArr'], false);
-        echo json_encode($taxa->getTaxaByRankArr($rankIdArr));
+        $includeVernacular = array_key_exists('includeVernacular', $_POST) && (int)$_POST['includeVernacular'] === 1;
+        $includeParentTids = array_key_exists('includeParentTids', $_POST) && (int)$_POST['includeParentTids'] === 1;
+        echo json_encode($taxa->getTaxaArrByRankIdArr($rankIdArr, $includeVernacular, $includeParentTids));
+    }
+    elseif($action === 'getParentTaxaFromTid' && $tId){
+        echo json_encode($taxa->getParentTaxaFromTid($tId));
+    }
+    elseif($action === 'getDynamicTaxaListDataArr' && array_key_exists('parentIdentifier', $_POST) && array_key_exists('parentIdType', $_POST)){
+        $limitToDescriptions = array_key_exists('limitToDescriptions', $_POST) && (int)$_POST['limitToDescriptions'] === 1;
+        $index = array_key_exists('index', $_POST) ? (int)$_POST['index'] : null;
+        $recCnt = (array_key_exists('reccnt', $_POST) && (int)$_POST['reccnt'] > 0) ? (int)$_POST['reccnt'] : null;
+        echo json_encode($taxa->getDynamicTaxaListDataArr($_POST['parentIdentifier'], $_POST['parentIdType'], $limitToDescriptions, $index, $recCnt));
     }
 }
