@@ -47,4 +47,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($isEditor && $action === 'updateTaxonHierarchyData' && $tId){
         echo $taxonHierarchy->updateHierarchyTable($tId);
     }
+    elseif($action === 'getParentTidDataFromTidArr' && array_key_exists('tidArr', $_POST)){
+        $tidArr = json_decode($_POST['tidArr'], false);
+        echo json_encode($taxonHierarchy->getParentTidDataFromTidArr($tidArr));
+    }
 }
