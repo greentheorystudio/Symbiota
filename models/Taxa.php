@@ -515,22 +515,21 @@ class Taxa{
             $targetTidArr = (new TaxonVernaculars)->getTidArrFromVernacular($parentIdentifier);
         }
         if(count($targetTidArr) > 0){
-            $parentTaxonSql = 'SELECT DISTINCT te.tid, t.TID AS parentTid, t.RankId, t.SciName '.
-                'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.TID '.
-                'WHERE te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted AND t.RankId IN(10,30,60,100,140) ';
+            $parentTaxonSql = 'SELECT DISTINCT te.tid, t.tid AS parenttid, t.rankid, t.sciname '.
+                'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.tid '.
+                'WHERE te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted AND t.rankid IN(10,30,60,100,140) ';
             if($result = $this->conn->query($parentTaxonSql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $rIndex => $row){
-                    $parentTaxonArr[$row['tid']][$row['RankId']]['id'] = $row['parentTid'];
-                    $parentTaxonArr[$row['tid']][$row['RankId']]['sciname'] = $row['SciName'];
+                    $parentTaxonArr[$row['tid']][$row['rankid']]['id'] = $row['parenttid'];
+                    $parentTaxonArr[$row['tid']][$row['rankid']]['sciname'] = $row['sciname'];
                     unset($rows[$rIndex]);
                 }
             }
-            $sql = 'SELECT DISTINCT t.TID, t.SciName '.
-                'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.TID '.
-                'WHERE (te.tid IN(' . implode(',', $targetTidArr) . ') AND t.RankId > 10 AND t.tid = t.tidaccepted) '.
-                'AND (t.SciName LIKE "% %" OR t.TID NOT IN(SELECT DISTINCT parenttid FROM taxa)) ';
+            $sql = 'SELECT DISTINCT t.tid, t.sciname FROM taxa AS t '.
+                'WHERE t.tid IN(' . implode(',', $targetTidArr) . ') AND t.rankid > 10 AND t.tid = t.tidaccepted '.
+                'AND (t.sciname LIKE "% %" OR t.tid NOT IN(SELECT DISTINCT parenttid FROM taxa WHERE parenttid IS NOT NULL)) ';
             if($limitToDescriptions){
                 $sql .= 'AND t.TID IN(SELECT tid FROM taxadescrblock) ';
             }
@@ -543,14 +542,14 @@ class Taxa{
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $rIndex => $row){
-                    if($row['TID']){
-                        if(!in_array($row['TID'], $tidArr, true)){
-                            $tidArr[] = $row['TID'];
+                    if($row['tid']){
+                        if(!in_array($row['tid'], $tidArr, true)){
+                            $tidArr[] = $row['tid'];
                         }
                         $recordArr = array();
-                        $parentArr = (array_key_exists($row['TID'], $parentTaxonArr) ? $parentTaxonArr[$row['TID']] : array());
-                        $recordArr['tid'] = $row['TID'];
-                        $recordArr['sciname'] = $row['SciName'];
+                        $parentArr = (array_key_exists($row['tid'], $parentTaxonArr) ? $parentTaxonArr[$row['tid']] : array());
+                        $recordArr['tid'] = $row['tid'];
+                        $recordArr['sciname'] = $row['sciname'];
                         $recordArr['kingdomtid'] = (array_key_exists('10', $parentArr) ? $parentArr['10']['id'] : '0');
                         $recordArr['kingdomname'] = (array_key_exists('10', $parentArr) ? $parentArr['10']['sciname'] : '');
                         $recordArr['phylumtid'] = (array_key_exists('30', $parentArr) ? $parentArr['30']['id'] : '0');
