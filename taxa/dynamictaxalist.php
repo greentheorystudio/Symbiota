@@ -179,7 +179,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         const returnArr = [];
                         let classTaxa;
                         if(Number(selectedPhylumTid.value) > 0){
-                            classTaxa = higherTaxaArr.value.filter(taxon => (Number(taxon['rankid']) === 60 && taxon['parentTidArr'].includes(selectedPhylumTid.value)));
+                            classTaxa = higherTaxaArr.value.filter(taxon => (Number(taxon['rankid']) === 60 && taxon['parentTidArr'] && taxon['parentTidArr'].includes(selectedPhylumTid.value)));
                         }
                         else{
                             classTaxa = higherTaxaArr.value.filter(taxon => Number(taxon['rankid']) === 60);
@@ -328,7 +328,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         const returnArr = [];
                         let phylumTaxa;
                         if(Number(selectedKingdomTid.value) > 0){
-                            phylumTaxa = higherTaxaArr.value.filter(taxon => (Number(taxon['rankid']) === 30 && taxon['parentTidArr'].includes(selectedKingdomTid.value)));
+                            phylumTaxa = higherTaxaArr.value.filter(taxon => (Number(taxon['rankid']) === 30 && taxon['parentTidArr'] && taxon['parentTidArr'].includes(selectedKingdomTid.value)));
                         }
                         else{
                             phylumTaxa = higherTaxaArr.value.filter(taxon => Number(taxon['rankid']) === 30);
