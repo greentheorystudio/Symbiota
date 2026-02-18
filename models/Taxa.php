@@ -757,6 +757,8 @@ class Taxa{
                     foreach($fields as $val){
                         $name = $val->name;
                         $nodeArr[$name] = $row[$name];
+                        $nodeArr['parentTidArr'] = array();
+                        $nodeArr['vernacularData'] = array();
                     }
                     if($includeVernacular || $includeParentTids){
                         $tempArr[] = $nodeArr;
