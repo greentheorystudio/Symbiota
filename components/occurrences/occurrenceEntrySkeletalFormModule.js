@@ -89,8 +89,8 @@ const occurrenceEntrySkeletalFormModule = {
         const collectionData = Vue.computed(() => occurrenceStore.getCollectionData);
         const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-        const occurrenceFields = Vue.inject('occurrenceFields');
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const processingStatusOptions = Vue.computed(() => baseStore.getOccurrenceProcessingStatusOptions);
 
         function updateDateData(dateData) {
