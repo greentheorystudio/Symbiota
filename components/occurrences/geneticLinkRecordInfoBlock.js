@@ -14,10 +14,7 @@ const geneticLinkRecordInfoBlock = {
             <q-card-section>
                 <div class="column">
                     <q-resize-observer @resize="setLineStyle" />
-                    <div class="row justify-between">
-                        <div>
-                            {{ geneticLinkageData['sourcename'] ? geneticLinkageData['sourcename'] : '' }}
-                        </div>
+                    <div class="row justify-end">
                         <div v-if="editor" class="row justify-end">
                             <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(geneticLinkageData['idoccurgenetic']);" icon="fas fa-edit" dense aria-label="Edit genetic record linkage" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -25,6 +22,9 @@ const geneticLinkRecordInfoBlock = {
                                 </q-tooltip>
                             </q-btn>
                         </div>
+                    </div>
+                    <div v-if="geneticLinkageData['sourcename']">
+                        <span class="text-bold q-mr-sm">Source Name:</span>{{ geneticLinkageData['sourcename'] }}
                     </div>
                     <div v-if="geneticLinkageData['sourceidentifier']">
                         <span class="text-bold q-mr-sm">Source Identifier:</span>{{ geneticLinkageData['sourceidentifier'] }}
