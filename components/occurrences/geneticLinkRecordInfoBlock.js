@@ -13,7 +13,6 @@ const geneticLinkRecordInfoBlock = {
         <q-card>
             <q-card-section>
                 <div class="column">
-                    <q-resize-observer @resize="setLineStyle" />
                     <div class="row justify-end">
                         <div v-if="editor" class="row justify-end">
                             <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openEditorPopup(geneticLinkageData['idoccurgenetic']);" icon="fas fa-edit" dense aria-label="Edit genetic record linkage" tabindex="0">
@@ -62,20 +61,17 @@ const geneticLinkRecordInfoBlock = {
     `,
     setup(_, context) {
         const containerWidth = Vue.inject('containerWidth');
-        const lineStyle = Vue.ref(null);
+        const lineStyle = Vue.computed(() => {
+            return 'width: ' + (containerWidth.value - 200) + 'px;';
+        });
 
         function openEditorPopup(id) {
             context.emit('open:genetic-link-editor', id);
         }
 
-        function setLineStyle() {
-            lineStyle.value = 'width: ' + (containerWidth.value - 200) + 'px;';
-        }
-
         return {
             lineStyle,
-            openEditorPopup,
-            setLineStyle
+            openEditorPopup
         }
     }
 };

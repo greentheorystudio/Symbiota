@@ -236,7 +236,7 @@ const occurrenceInfoTabModule = {
                     <template v-if="determinationArr.length > 0">
                         <q-tab-panel name="determination" :style="tabPanelStyle">
                             <div class="text-h6 text-bold">Determination History</div>
-                            <div class="q-mt-sm column q-gutter-sm">
+                            <div class="q-mt-sm q-pa-sm column q-gutter-sm">
                                 <template v-for="determination in determinationArr">
                                     <determination-record-info-block :determination-data="determination"></determination-record-info-block>
                                 </template>
@@ -246,7 +246,7 @@ const occurrenceInfoTabModule = {
                     <template v-if="imageArr.length > 0 || mediaArr.length > 0">
                         <q-tab-panel name="media" :style="tabPanelStyle">
                             <template v-if="imageArr.length > 0">
-                                <div class="q-mt-sm column q-gutter-sm">
+                                <div class="q-mt-sm q-pb-sm column q-gutter-sm">
                                     <div class="text-h6 text-bold">Images</div>
                                     <template v-for="image in imageArr">
                                         <image-record-info-block :image-data="image"></image-record-info-block>
@@ -254,7 +254,7 @@ const occurrenceInfoTabModule = {
                                 </div>
                             </template>
                             <template v-if="mediaArr.length > 0">
-                                <div class="q-mt-sm column q-gutter-sm">
+                                <div class="q-mt-sm q-pb-sm column q-gutter-sm">
                                     <div class="text-h6 text-bold">Media</div>
                                     <template v-for="media in mediaArr">
                                         <media-record-info-block :media-data="media"></media-record-info-block>
@@ -287,7 +287,7 @@ const occurrenceInfoTabModule = {
                             </template>
                             <template v-if="geneticLinkArr.length > 0">
                                 <div class="text-h6 text-bold">Genetic Record Linkages</div>
-                                <div class="q-mt-sm column q-gutter-sm">
+                                <div class="q-mt-sm q-pb-sm column q-gutter-sm">
                                     <template v-for="linkage in geneticLinkArr">
                                         <genetic-link-record-info-block :genetic-linkage-data="linkage"></genetic-link-record-info-block>
                                     </template>
@@ -367,6 +367,7 @@ const occurrenceInfoTabModule = {
             return nameStr;
         });
         const collectionPermissions = Vue.ref([]);
+        const containerWidth = Vue.ref(0);
         const contentContainerRef = Vue.ref(null);
         const coordinateArr = Vue.computed(() => {
             if(occurrenceData.value.hasOwnProperty('decimallatitude') && occurrenceData.value.hasOwnProperty('decimallongitude')){
@@ -709,6 +710,7 @@ const occurrenceInfoTabModule = {
 
         function setTabPanelHeights() {
             if(contentContainerRef.value){
+                containerWidth.value = contentContainerRef.value.clientWidth;
                 const clientHeight = contentContainerRef.value.clientHeight;
                 tabCardStyle.value = 'height: ' + clientHeight + 'px;';
                 if(props.fullWindowMode){
@@ -720,6 +722,8 @@ const occurrenceInfoTabModule = {
                 }
             }
         }
+
+        Vue.provide('containerWidth', containerWidth);
 
         Vue.onMounted(() => {
             window.addEventListener('resize', setTabPanelHeights);
