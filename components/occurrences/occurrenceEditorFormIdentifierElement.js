@@ -34,8 +34,8 @@ const occurrenceEditorFormIdentifierElement = {
         const duplicateArr = Vue.ref([]);
         const editorHideFields = Vue.computed(() => occurrenceStore.getEditorHideFields);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-        const occurrenceFields = Vue.inject('occurrenceFields');
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showCollectionListPopup = Vue.ref(false);
         const showElement = Vue.computed(() => {
             return (!editorHideFields.value.includes('catalognumber') || !editorHideFields.value.includes('othercatalognumbers'));

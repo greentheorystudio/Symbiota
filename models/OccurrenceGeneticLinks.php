@@ -9,14 +9,17 @@ class OccurrenceGeneticLinks{
     private $fields = array(
         'idoccurgenetic' => array('dataType' => 'number', 'length' => 11),
         'occid' => array('dataType' => 'number', 'length' => 10),
-        'identifier' => array('dataType' => 'string', 'length' => 150),
-        'resourcename' => array('dataType' => 'string', 'length' => 150),
-        'title' => array('dataType' => 'string', 'length' => 150),
-        'definition' => array('dataType' => 'string', 'length' => 500),
-        'locus' => array('dataType' => 'string', 'length' => 500),
-        'origin' => array('dataType' => 'text', 'length' => 0),
-        'resourceurl' => array('dataType' => 'string', 'length' => 500),
-        'notes' => array('dataType' => 'string', 'length' => 250),
+        'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
+        'sourcename' => array('dataType' => 'string', 'length' => 150),
+        'description' => array('dataType' => 'string', 'length' => 500),
+        'targetgene' => array('dataType' => 'string', 'length' => 500),
+        'targetsubfragment' => array('dataType' => 'string', 'length' => 500),
+        'dnasequence' => array('dataType' => 'text', 'length' => 0),
+        'url' => array('dataType' => 'text', 'length' => 0),
+        'notes' => array('dataType' => 'string', 'length' => 1000),
+        'authors' => array('dataType' => 'string', 'length' => 500),
+        'authorinstitution' => array('dataType' => 'string', 'length' => 500),
+        'reference' => array('dataType' => 'string', 'length' => 750),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -35,8 +38,7 @@ class OccurrenceGeneticLinks{
         $fieldNameArr = array();
         $fieldValueArr = array();
         $occId = array_key_exists('occid', $data) ? (int)$data['occid'] : 0;
-        $name = array_key_exists('resourcename', $data) ? SanitizerService::cleanInStr($this->conn, $data['resourcename']) : '';
-        if($occId && $name){
+        if($occId){
             foreach($this->fields as $field => $fieldArr){
                 if($field !== 'idoccurgenetic' && array_key_exists($field, $data)){
                     $fieldNameArr[] = $field;
@@ -93,7 +95,7 @@ class OccurrenceGeneticLinks{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurgenetic '.
-            'WHERE occid = ' . (int)$occid . ' ORDER BY resourcename ';
+            'WHERE occid = ' . (int)$occid . ' ORDER BY sourcename ';
         //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
