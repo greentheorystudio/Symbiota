@@ -557,15 +557,13 @@ class Collections {
             }
         }
 
-        $sql = 'SELECT COUNT(CASE WHEN g.resourceurl LIKE "http://www.boldsystems%" THEN o.occid ELSE NULL END) AS boldcnt, '.
-            'COUNT(CASE WHEN g.resourceurl LIKE "http://www.ncbi%" THEN o.occid ELSE NULL END) AS gencnt '.
+        $sql = 'SELECT COUNT(DISTINCT o.occid) AS gencnt '.
             'FROM omoccurrences AS o LEFT JOIN omoccurgenetic AS g ON o.occid = g.occid '.
-            'WHERE o.collid IN(' . $collidStr . ') ';
+            'WHERE o.collid IN(' . $collidStr . ') AND g.idoccurgenetic IS NOT NULL ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $statsArr['boldcnt'] = $row['boldcnt'];
                 $statsArr['gencnt'] = $row['gencnt'];
                 unset($rows[$index]);
             }

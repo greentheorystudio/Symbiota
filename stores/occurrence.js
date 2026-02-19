@@ -148,6 +148,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         occurrenceEntryFormat: 'specimen',
         occurrenceFields: {},
         occurrenceFieldDefinitions: {},
+        occurrenceGeneticFieldDefinitions: {},
         occurrenceMofData: {},
         occurrenceMofEditData: {},
         occurrenceMofUpdateData: {},
@@ -342,6 +343,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getOccurrenceFieldDefinitions(state) {
             return state.occurrenceFieldDefinitions;
+        },
+        getOccurrenceGeneticFieldDefinitions(state) {
+            return state.occurrenceGeneticFieldDefinitions;
         },
         getOccurrenceMofData(state) {
             return state.occurrenceMofEditData;
@@ -1132,6 +1136,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             .then((data) => {
                 if(data.hasOwnProperty('occurrence')){
                     this.occurrenceFieldDefinitions = Object.assign({}, data['occurrence']);
+                    this.occurrenceGeneticFieldDefinitions = Object.assign({}, data['occurrence-genetic']);
                 }
             });
         },

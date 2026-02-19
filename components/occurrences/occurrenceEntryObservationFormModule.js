@@ -85,8 +85,8 @@ const occurrenceEntryObservationFormModule = {
         const mediaUploaderRef = Vue.ref(null);
         const newOccid = Vue.ref(0);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-        const occurrenceFields = Vue.inject('occurrenceFields');
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
 
         function processMediaUpdate() {
             if(entryFollowUpAction.value === 'remain' || entryFollowUpAction.value === 'none'){

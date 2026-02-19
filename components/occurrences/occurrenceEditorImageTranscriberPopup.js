@@ -298,8 +298,8 @@ const occurrenceEditorImageTranscriberPopup = {
         const instructionRef = Vue.ref(null);
         const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-        const occurrenceFields = Vue.inject('occurrenceFields');
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const panzoomInitialized = Vue.ref(false);
         const selectedDataDisplay = Vue.ref('occurrence');
         const selectedImageResolution = Vue.ref('high');
