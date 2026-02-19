@@ -39,7 +39,7 @@ const geneticLinkRecordInfoBlock = {
                         <span class="text-bold q-mr-sm">Target Subfragment:</span>{{ geneticLinkageData['targetsubfragment'] }}
                     </div>
                     <div v-if="geneticLinkageData['dnasequence']" class="inner-text-wrap" :style="lineStyle">
-                        <span class="text-bold q-mr-sm">DNA Sequence:</span>{{ geneticLinkageData['dnasequence'] }}
+                        <span class="text-bold q-mr-sm">DNA Sequence:</span> {{ geneticLinkageData['dnasequence'] }}
                     </div>
                     <div v-if="geneticLinkageData['url']">
                         <span class="text-bold q-mr-sm">URL:</span> <a :href="geneticLinkageData['url']" target="_blank" aria-label="External link: View resource - Opens in separate tab" tabindex="0">{{ geneticLinkageData['url'] }}</a>
