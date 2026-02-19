@@ -64,18 +64,8 @@ const occurrenceEditorTabModule = {
         const isLocked = Vue.computed(() => occurrenceStore.getIsLocked);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const selectedTab = Vue.ref('data');
-        const tabPanelStyle = Vue.ref('');
-
-        Vue.watch(containerWidth, () => {
-            setTabModuleWidth();
-        });
-
-        function setTabModuleWidth() {
-            tabPanelStyle.value = 'width: ' + (containerWidth.value - 34) + 'px;';
-        }
-
-        Vue.onMounted(() => {
-            setTabModuleWidth();
+        const tabPanelStyle = Vue.computed(() => {
+            return 'width: ' + (containerWidth.value - 34) + 'px;';
         });
 
         return {
