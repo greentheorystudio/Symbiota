@@ -427,5 +427,68 @@
             "definition": "The four-digit year in which the dwc:Event occurred, according to the Common Era Calendar.",
             "examples": "1160 | 2008"
         }
+    },
+    "occurrence-genetic": {
+        "sourceidentifier": {
+            "source": "",
+            "definition": "",
+            "comments": "",
+            "examples": ""
+        },
+        "sourcename": {
+            "source": "",
+            "definition": "",
+            "comments": "",
+            "examples": ""
+        },
+        "description": {
+            "source": "",
+            "definition": "",
+            "comments": "",
+            "examples": ""
+        },
+        "targetgene": {
+            "source": "https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#target_gene",
+            "definition": "Targeted gene or locus name for marker gene studies",
+            "examples": "16S rRNA, 18S rRNA, nif, amoA, rpo"
+        },
+        "targetsubfragment": {
+            "source": "https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#target_subfragment",
+            "definition": "Name of subfragment of a gene or locus. Important to e.g. identify special regions on marker genes like V6 on 16S rRNA",
+            "examples": "V6, V9, ITS"
+        },
+        "dnasequence": {
+            "source": "https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#DNA_sequence",
+            "definition": "The DNA sequence",
+            "examples": "TCTATCCTCAATTATAGGTCATAATTCACCATCAGTAGATTTAGG..."
+        },
+        "url": {
+            "source": "https://rs.gbif.org/extension/gbif/1.0/dna_derived_data_2024-07-11.xml#url",
+            "examples": "http://www.earthmicrobiome.org/"
+        },
+        "notes": {
+            "source": "",
+            "definition": "",
+            "comments": "",
+            "examples": ""
+        },
+        "authors": {
+            "source": "",
+            "definition": "",
+            "comments": "",
+            "examples": ""
+        },
+        "authorinstitution": {
+            "source": "",
+            "definition": "",
+            "comments": "",
+            "examples": ""
+        },
+        "reference": {
+            "source": "",
+            "definition": "",
+            "comments": "",
+            "examples": ""
+        }
     }
 }

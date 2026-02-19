@@ -110,8 +110,8 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const existingData = Vue.ref({});
         const limitIdsToThesaurus = Vue.computed(() => occurrenceStore.getLimitIdsToThesaurus);
-        const occurrenceFields = Vue.inject('occurrenceFields');
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const processingAddArr = [];
         const processingDeleteArr = [];
         const processingUpdateArr = [];

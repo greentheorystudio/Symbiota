@@ -3,14 +3,17 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
         blankGeneticLinkRecord: {
             idoccurgenetic: 0,
             occid: null,
-            identifier: null,
-            resourcename: null,
-            title: null,
-            definition: null,
-            locus: null,
-            origin: null,
-            resourceurl: null,
-            notes: null
+            sourceidentifier: null,
+            sourcename: null,
+            description: null,
+            targetgene: null,
+            targetsubfragment: null,
+            dnasequence: null,
+            url: null,
+            notes: null,
+            authors: null,
+            authorinstitution: null,
+            reference: null
         },
         geneticLinkArr: [],
         geneticLinkData: {},
@@ -41,7 +44,17 @@ const useOccurrenceGeneticLinkStore = Pinia.defineStore('occurrence-genetic-link
         },
         getGeneticLinkValid(state) {
             return (
-                !!state.geneticLinkEditData['resourcename']
+                state.geneticLinkEditData['sourceidentifier'] ||
+                state.geneticLinkEditData['sourcename'] ||
+                state.geneticLinkEditData['description'] ||
+                state.geneticLinkEditData['targetgene'] ||
+                state.geneticLinkEditData['targetsubfragment'] ||
+                state.geneticLinkEditData['dnasequence'] ||
+                state.geneticLinkEditData['url'] ||
+                state.geneticLinkEditData['notes'] ||
+                state.geneticLinkEditData['authors'] ||
+                state.geneticLinkEditData['authorinstitution'] ||
+                state.geneticLinkEditData['reference']
             );
         }
     },

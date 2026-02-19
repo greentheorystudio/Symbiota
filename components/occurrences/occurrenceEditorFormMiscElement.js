@@ -114,8 +114,8 @@ const occurrenceEditorFormMiscElement = {
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
-        const occurrenceFields = Vue.inject('occurrenceFields');
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showElement = Vue.computed(() => {
             return (
                 !editorHideFields.value.includes('habitat') ||

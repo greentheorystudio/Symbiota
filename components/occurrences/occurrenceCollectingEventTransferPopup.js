@@ -62,7 +62,7 @@ const occurrenceCollectingEventTransferPopup = {
         const locationValid = Vue.computed(() => {
             return (locationData['country'] && locationData['stateprovince']);
         });
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showLocationLinkageToolPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {

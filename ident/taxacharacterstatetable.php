@@ -81,7 +81,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         </q-td>
                         <template v-for="field in characterHeaderArr">
                             <q-td :key="field.name" :props="props">
-                                <div :class="props.row[field.name].length > 100 ? 'table-cell-text-wrapper' : ''">
+                                <div :class="props.row[field.name].length > 100 ? 'inner-text-wrap' : ''">
                                     <a class="q-ml-sm cursor-pointer" title="Edit character state" aria-label="Edit character state" @click="openTaxonCharacterStateEditorPopup(props.row.tid, field.name);" tabindex="0">
                                         <span class="text-body1">{{ props.row[field.name] }}</span>
                                     </a>
