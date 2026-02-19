@@ -67,8 +67,8 @@ const occurrenceEditorFormCollectingEventElement = {
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-        const occurrenceFields = Vue.inject('occurrenceFields');
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showCollectingEventListPopup = Vue.ref(false);
         const showConfiguredDataEditorPopup = Vue.ref(false);
 

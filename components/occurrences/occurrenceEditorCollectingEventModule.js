@@ -105,7 +105,7 @@ const occurrenceEditorCollectingEventModule = {
         const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showCollectionListPopup = Vue.ref(false);
         const showConfiguredDataEditorPopup = Vue.ref(false);
         const showEventEditorPopup = Vue.ref(false);
