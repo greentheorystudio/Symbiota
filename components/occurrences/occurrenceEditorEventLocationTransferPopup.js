@@ -126,7 +126,7 @@ const occurrenceEditorEventLocationTransferPopup = {
         });
         const newLocationCollectingEventArr = Vue.ref([]);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const selectedChangeType = Vue.ref('samelocation');
         const showCollectingEventListPopup = Vue.ref(false);
         const showLocationLinkageToolPopup = Vue.ref(false);

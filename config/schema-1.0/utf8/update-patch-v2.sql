@@ -118,8 +118,22 @@ CREATE TABLE `omoccurcollectingevents` (
 );
 
 ALTER TABLE `omoccurgenetic`
-    ADD COLUMN `definition` varchar(500) NULL AFTER `title`,
-    ADD COLUMN `origin` longtext NULL AFTER `locus`;
+    CHANGE COLUMN `identifier` `sourceidentifier` varchar(150) NULL DEFAULT NULL AFTER `occid`,
+    CHANGE COLUMN `resourcename` `sourcename` varchar(150) NULL AFTER `sourceidentifier`,
+    CHANGE COLUMN `locus` `targetgene` varchar(500) NULL DEFAULT NULL AFTER `title`,
+    CHANGE COLUMN `resourceurl` `url` text NULL AFTER `targetgene`,
+    ADD COLUMN `description` varchar(500) NULL AFTER `title`,
+    ADD COLUMN `dnasequence` longtext NULL AFTER `targetgene`,
+    ADD COLUMN `targetsubfragment` varchar(500) NULL AFTER `targetgene`,
+    ADD COLUMN `authors` varchar(500) NULL AFTER `url`,
+    ADD COLUMN `authorinstitution` varchar(500) NULL AFTER `authors`,
+    ADD COLUMN `reference` varchar(750) NULL AFTER `authorinstitution`,
+    MODIFY COLUMN `notes` varchar(1000) NULL DEFAULT NULL AFTER `url`,
+    DROP INDEX `INDEX_omoccurgenetic_name`,
+    ADD INDEX `INDEX_omoccurgenetic_sourcename`(`sourcename`),
+    ADD INDEX `INDEX_omoccurgenetic_sourceidentifier`(`sourceidentifier`),
+    ADD INDEX `INDEX_omoccurgenetic_targetgene`(`targetgene`),
+    ADD INDEX `INDEX_omoccurgenetic_targetsubfragment`(`targetsubfragment`);
 
 CREATE TABLE `omoccurlocations` (
     `locationID` int(11) unsigned NOT NULL AUTO_INCREMENT,

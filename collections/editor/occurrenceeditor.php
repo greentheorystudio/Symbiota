@@ -343,8 +343,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const moduleContainerRef = Vue.ref(null);
                     const occId = Vue.computed(() => occurrenceStore.getOccId);
                     const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
-                    const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
-                    const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
@@ -469,8 +467,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     Vue.provide('containerWidth', containerWidth);
-                    Vue.provide('occurrenceFields', occurrenceFields);
-                    Vue.provide('occurrenceFieldDefinitions', occurrenceFieldDefinitions);
                     Vue.provide('validateCoordinates', validateCoordinates);
 
                     Vue.onMounted(() => {

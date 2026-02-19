@@ -71,8 +71,8 @@ const occurrenceEditorFormCurationElement = {
         const controlledVocabularies = Vue.computed(() => occurrenceStore.getOccurrenceFieldControlledVocabularies);
         const editorHideFields = Vue.computed(() => occurrenceStore.getEditorHideFields);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
-        const occurrenceFields = Vue.inject('occurrenceFields');
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const processingStatusOptions = Vue.computed(() => baseStore.getOccurrenceProcessingStatusOptions);
         const showElement = Vue.computed(() => {
             return (

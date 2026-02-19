@@ -58,7 +58,7 @@ const occurrenceLocationEditorPopup = {
         const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const locationValid = Vue.computed(() => occurrenceStore.getLocationValid);
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
 
         Vue.watch(contentRef, () => {
             setContentStyle();
