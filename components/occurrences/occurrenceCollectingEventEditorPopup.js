@@ -68,7 +68,7 @@ const occurrenceCollectingEventEditorPopup = {
         const eventFields = Vue.computed(() => occurrenceStore.getCollectingEventFields);
         const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
         const eventValid = Vue.computed(() => occurrenceStore.getCollectingEventValid);
-        const occurrenceFieldDefinitions = Vue.inject('occurrenceFieldDefinitions');
+        const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showEventTransferPopup = Vue.ref(false);
 
         Vue.watch(contentRef, () => {
