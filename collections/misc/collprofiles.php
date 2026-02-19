@@ -134,10 +134,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                                             with images
                                         </div>
                                         <div v-if="collectionData['dynamicproperties']['gencnt'] && Number(collectionData['dynamicproperties']['gencnt']) > 0">
-                                            {{ collectionData['dynamicproperties']['gencnt'] + ' with GenBank references' }}
-                                        </div>
-                                        <div v-if="collectionData['dynamicproperties']['boldcnt'] && Number(collectionData['dynamicproperties']['boldcnt']) > 0">
-                                            {{ collectionData['dynamicproperties']['boldcnt'] + ' with BOLD references' }}
+                                            {{ collectionData['dynamicproperties']['gencnt'] + ' with associated genetic data' }}
                                         </div>
                                         <div v-if="collectionData['dynamicproperties']['refcnt'] && Number(collectionData['dynamicproperties']['refcnt']) > 0">
                                             {{ collectionData['dynamicproperties']['refcnt'] + ' with publication references' }}
