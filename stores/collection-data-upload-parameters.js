@@ -1,5 +1,6 @@
 const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-data-upload-parameters', {
     state: () => ({
+        baseStore: useBaseStore(),
         blankCollectionDataUploadParameterRecord: {
             uspid: 0,
             collid: null,
@@ -21,22 +22,25 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             createPolygonCentroidCoordinates: false,
             matchOnRecordId: false,
             matchOnCatalogNumber: false,
-            removeUnmatchedRecords: false
+            removeUnmatchedRecords: false,
+            gbifPredicateJson: null,
+            gbifDownloadKey: null,
+            gbifDownloadKeyTimestamp: null
         },
         collectionDataUploadParametersArr: [],
         collectionDataUploadParametersData: {},
         collectionDataUploadParametersEditData: {},
         collectionDataUploadParametersId: null,
         collectionDataUploadParametersUpdateData: {},
+        collectionId: 0,
+        gbifDwcaDownloadPath: null,
         eventMofDataFields: {},
-        occurrenceMofDataFields: {},
-        uploadTypeOptions: [
-            {value: 6, label: 'File Upload (DwC-A (zip), csv, txt, geojson, json)'},
-            {value: 8, label: 'IPT/DwC-A Provider'},
-            {value: 10, label: 'Symbiota Portal'}
-        ]
+        occurrenceMofDataFields: {}
     }),
     getters: {
+        getAdminEmail(state) {
+            return state.baseStore.getAdminEmail;
+        },
         getCleanSqlArr(state) {
             if(state.collectionDataUploadParametersEditData.hasOwnProperty('cleansql') && state.collectionDataUploadParametersEditData.cleansql && state.collectionDataUploadParametersEditData.cleansql.length > 0){
                 return state.collectionDataUploadParametersEditData.cleansql;
@@ -78,11 +82,34 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                 return state.blankConfigurations;
             }
         },
-        getUploadTypeOptions(state) {
-            return state.uploadTypeOptions;
+        getGbifCredentialsConfigured(state) {
+            return state.baseStore.getGbifCredentialsConfigured;
+        },
+        getGbifDwcaDownloadPath(state) {
+            return state.gbifDwcaDownloadPath;
+        },
+        getUploadTypeOptions() {
+            const returnArr = [
+                {value: 6, label: 'File Upload (DwC-A (zip), csv, txt, geojson, json)'},
+                {value: 8, label: 'IPT/DwC-A Provider'},
+                {value: 10, label: 'Symbiota Portal'}
+            ];
+            if(this.getAdminEmail && this.getGbifCredentialsConfigured){
+                returnArr.push(
+                    {value: 11, label: 'GBIF Data Upload'}
+                );
+            }
+            return returnArr;
         }
     },
     actions: {
+        clearGbifDownloadKey() {
+            this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKey'] = null;
+            this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKeyTimestamp'] = null;
+            if(this.getCollectionDataUploadParametersEditsExist){
+                this.updateCollectionDataUploadParametersRecord();
+            }
+        },
         createCollectionDataUploadParametersRecord(collid, callback) {
             this.collectionDataUploadParametersEditData['collid'] = collid.toString();
             const formData = new FormData();
@@ -103,9 +130,9 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                 }
             });
         },
-        deleteCollectionDataUploadParametersRecord(collid, callback) {
+        deleteCollectionDataUploadParametersRecord(callback) {
             const formData = new FormData();
-            formData.append('collid', collid.toString());
+            formData.append('collid', this.collectionId.toString());
             formData.append('uspid', this.collectionDataUploadParametersId.toString());
             formData.append('action', 'deleteCollectionDataUploadParameterRecord');
             fetch(collectionDataUploadParametersApiUrl, {
@@ -118,7 +145,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             .then((val) => {
                 callback(Number(val));
                 if(Number(val) === 1){
-                    this.setCollectionDataUploadParametersArr(collid);
+                    this.setCollectionDataUploadParametersArr(this.collectionId);
                     this.setCurrentCollectionDataUploadParametersRecord(0);
                 }
             });
@@ -126,17 +153,39 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         getCurrentCollectionDataUploadParametersData() {
             return this.collectionDataUploadParametersArr.find(params => Number(params.uspid) === this.collectionDataUploadParametersId);
         },
+        getGbifDownloadKeyStatus() {
+            const url = 'https://api.gbif.org/v1/occurrence/download/' + this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKey'];
+            const formData = new FormData();
+            formData.append('url', url);
+            formData.append('action', 'getExternalData');
+            formData.append('requestType', 'get');
+            fetch(proxyServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                console.log(resObj);
+            });
+        },
         setCurrentCollectionDataUploadParametersRecord(uspid) {
             if(Number(uspid) > 0){
                 this.collectionDataUploadParametersId = Number(uspid);
                 this.collectionDataUploadParametersData = Object.assign({}, this.getCurrentCollectionDataUploadParametersData());
+                this.collectionId = Number(this.collectionDataUploadParametersData['collid']);
             }
             else{
+                this.collectionId = 0;
                 this.collectionDataUploadParametersId = null;
                 this.collectionDataUploadParametersData = Object.assign({}, this.blankCollectionDataUploadParameterRecord);
                 this.collectionDataUploadParametersData['configjson'] = Object.assign({}, this.blankConfigurations);
             }
             this.collectionDataUploadParametersEditData = Object.assign({}, this.collectionDataUploadParametersData);
+            if(Number(this.collectionDataUploadParametersData['uploadtype']) === 11 && this.collectionDataUploadParametersData['configjson'] && this.collectionDataUploadParametersData['configjson']['gbifDownloadKey']){
+                this.validateGbifDownloadKey();
+            }
         },
         setCollectionDataUploadParametersArr(collid, uspid = null) {
             this.collectionDataUploadParametersArr.length = 0;
@@ -160,9 +209,9 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         updateCollectionDataUploadParametersEditData(key, value) {
             this.collectionDataUploadParametersEditData[key] = value;
         },
-        updateCollectionDataUploadParametersRecord(collid, callback) {
+        updateCollectionDataUploadParametersRecord(callback = null) {
             const formData = new FormData();
-            formData.append('collid', collid.toString());
+            formData.append('collid', this.collectionId.toString());
             formData.append('uspid', this.collectionDataUploadParametersId.toString());
             formData.append('paramsData', JSON.stringify(this.collectionDataUploadParametersUpdateData));
             formData.append('action', 'updateCollectionDataUploadParameterRecord');
@@ -174,12 +223,26 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                callback(Number(res));
+                if(callback){
+                    callback(Number(res));
+                }
                 if(res && Number(res) === 1){
-                    this.setCollectionDataUploadParametersArr(collid);
+                    this.setCollectionDataUploadParametersArr(this.collectionId);
                     this.collectionDataUploadParametersData = Object.assign({}, this.collectionDataUploadParametersEditData);
                 }
             });
+        },
+        validateGbifDownloadKey() {
+            const currentDate = new Date();
+            const dateThirtyDaysAgo = new Date();
+            dateThirtyDaysAgo.setDate(currentDate.getDate() - 30);
+            const downloadKeyDate = new Date(this.collectionDataUploadParametersData['configjson']['gbifDownloadKeyTimestamp']);
+            if(downloadKeyDate < dateThirtyDaysAgo){
+                this.getGbifDownloadKeyStatus();
+            }
+            else{
+                this.clearGbifDownloadKey();
+            }
         }
     }
 });

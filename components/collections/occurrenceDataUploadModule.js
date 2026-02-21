@@ -31,11 +31,33 @@ const occurrenceDataUploadModule = {
                                                 <file-picker-input-element :disabled="currentTab !== 'configuration' || !!currentProcess" :accepted-types="acceptedFileTypes" :value="uploadedFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
                                             </div>
                                         </div>
-                                        <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || !!currentProcess"></collection-data-upload-parameters-field-module>
-                                        <div class="row justify-end">
-                                            <div>
-                                                <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || !!currentProcess || !initializeValid" dense tabindex="0" />
+                                        <div v-if="Number(profileData.uploadtype) === 11 && Number(collectionDataUploadParametersId) === 0" class="row">
+                                            <div class="text-subtitle1 text-red">
+                                                Please click the Create button to create a new upload profile 
                                             </div>
+                                        </div>
+                                        <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || !!currentProcess"></collection-data-upload-parameters-field-module>
+                                        <div class="row justify-end q-gutter-sm">
+                                            <template v-if="Number(profileData.uploadtype) === 11 && !gbifDwcaDownloadPath">
+                                                <template v-if="!profileData['configjson'] || !profileData['configjson']['gbifDownloadKey']">
+                                                    <div>
+                                                        <q-btn color="secondary" @click="requestGbifDataDownload();" label="Request Data" :disabled="currentTab !== 'configuration' || !!currentProcess || !profileData['configjson'] || !profileData['configjson']['gbifPredicateJson']" dense tabindex="0" />
+                                                    </div>
+                                                </template>
+                                                <template v-else>
+                                                    <div class="text-subtitle1 text-red">
+                                                        Data request is being processed by GBIF
+                                                    </div>
+                                                    <div>
+                                                        <q-btn color="negative" @click="cancelGbifDataRequest();" label="Cancel Request" dense tabindex="0" />
+                                                    </div>
+                                                </template>
+                                            </template>
+                                            <template v-else>
+                                                <div>
+                                                    <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || !!currentProcess || !initializeValid" dense tabindex="0" />
+                                                </div>
+                                            </template>
                                         </div>
                                     </div>
                                 </q-card-section>
@@ -514,6 +536,7 @@ const occurrenceDataUploadModule = {
         const flatFileMode = Vue.ref(false);
         const flatFileMofData = Vue.ref([]);
         const flatFileOccurrenceData = Vue.ref([]);
+        const gbifDwcaDownloadPath = Vue.computed(() => collectionDataUploadParametersStore.getGbifDwcaDownloadPath);
         const includeDeterminationData = Vue.ref(true);
         const includeMultimediaData = Vue.ref(true);
         const includeMofData = Vue.ref(true);
@@ -522,7 +545,10 @@ const occurrenceDataUploadModule = {
             if((Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10) && profileData.value['dwcpath']){
                 valid = true;
             }
-            if(Number(profileData.value['uploadtype']) === 6 && uploadedFile.value){
+            else if(Number(profileData.value['uploadtype']) === 6 && uploadedFile.value){
+                valid = true;
+            }
+            else if(Number(profileData.value['uploadtype']) === 11 && gbifDwcaDownloadPath.value){
                 valid = true;
             }
             return valid;
@@ -681,6 +707,10 @@ const occurrenceDataUploadModule = {
             processorDisplayDataArr = [];
             processorDisplayCurrentIndex.value = 0;
             processorDisplayIndex.value = 0;
+        }
+
+        function cancelGbifDataRequest() {
+            collectionDataUploadParametersStore.clearGbifDownloadKey();
         }
 
         function clearData() {
@@ -2603,6 +2633,23 @@ const occurrenceDataUploadModule = {
             }
         }
 
+        function requestGbifDataDownload() {
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('predicateJson', JSON.stringify(profileData['configjson']['gbifPredicateJson']));
+            formData.append('action', 'requestGbifDataDownload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                console.log(res);
+            });
+        }
+
         function resetScrollProcess() {
             setTimeout(() => {
                 scrollProcess.value = null;
@@ -2873,6 +2920,7 @@ const occurrenceDataUploadModule = {
             fieldMapperSourceFields,
             fieldMapperTargetFields,
             flatFileMode,
+            gbifDwcaDownloadPath,
             includeDeterminationData,
             includeMultimediaData,
             includeMofData,
@@ -2904,6 +2952,7 @@ const occurrenceDataUploadModule = {
             sourceDataFilesMultimedia,
             uploadedFile,
             uploadSummaryData,
+            cancelGbifDataRequest,
             finalTransfer,
             getPopupViewerRecords,
             initializeUpload,
@@ -2916,6 +2965,7 @@ const occurrenceDataUploadModule = {
             processorDisplayScrollUp,
             processParameterProfileSelection,
             processUploadFile,
+            requestGbifDataDownload,
             saveMapping,
             setScroller,
             setSourceDataPrimaryIdentifier,

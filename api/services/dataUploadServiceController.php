@@ -144,4 +144,7 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         $clearDerivatives = array_key_exists('clearImageDerivatives',$_POST) && (int)$_POST['clearImageDerivatives'] === 1;
         echo $dataUploadService->finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives);
     }
+    elseif($action === 'requestGbifDataDownload' && array_key_exists('predicateJson', $_POST)){
+        echo $dataUploadService->requestGbifDataDownload(json_decode($_POST['predicateJson'], true));
+    }
 }
