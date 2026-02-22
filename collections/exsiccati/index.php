@@ -1,7 +1,7 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $ometId = array_key_exists('ometid',$_REQUEST)?(int)$_REQUEST['ometid']:0;
@@ -77,11 +77,12 @@ if($formSubmit === 'dlexsiccati'){
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati</title>
-    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript">
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati Index</title>
+    <meta name="description" content="Index of collection exsiccati records">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript">
 		function toggleExsEditDiv(){
 			toggle('exseditdiv');
 			document.getElementById("numadddiv").style.display = "none";
@@ -210,8 +211,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
 		function openIndPU(occId){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+				wWidth = document.getElementById('main-container').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
@@ -246,19 +247,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<?php
 	include(__DIR__ . '/../../header.php');
 	?>
-	<div class='navpath'>
-		<a href="../../index.php">Home</a> &gt;&gt;
-		<?php
-		if($ometId || $omenId){
-			echo '<a href="index.php"><b>Return to main Exsiccati Index</b></a>';
-		}
-		else{
-			echo '<a href="index.php"><b>Exsiccati Index</b></a>';
-		}
-		?>
-	</div>
-	<div id="innertext" style="width:95%;">
-		<?php
+	<div id="mainContainer" style="padding: 10px 15px 15px;width:95%;">
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+            <?php
+            if($ometId || $omenId){
+                echo '<a href="index.php" tabindex="0"><b>Return to main Exsiccati Index</b></a>';
+            }
+            else{
+                echo '<a href="index.php" tabindex="0"><b>Exsiccati Index</b></a>';
+            }
+            ?>
+        </div>
+        <?php
 		if($statusStr){
 			echo '<hr/>';
 			echo '<div style="margin:10px;color:'.(strpos($statusStr,'SUCCESS') === false?'red':'green').';">'.$statusStr.'</div>';
@@ -793,8 +794,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

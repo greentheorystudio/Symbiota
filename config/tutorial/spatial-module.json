@@ -1,0 +1,1330 @@
+{
+    "title": "Mapping Tutorial",
+    "introHtml": "<p>Welcome to the mapping tutorial! This is an interactive tutorial that will walk you through what this page can do, including how to load and work with different types of map layers, and how to use the vector and raster analysis tools. Follow along and test each component and tool explained as you progress through the topics.</p><p>Use the green arrow buttons in the bottom-right corner of this screen or your left and right arrow keys to progress forwards and backwards in the tutorial. The red x button will close the tutorial. </p><p>There will be a Hide Tutorial button in the bottom-left corner of the screen to temporarily hide the tutorial panel. To re-open the panel, click the Show Tutorial button in the same location.</p>",
+    "sections": [
+        {
+            "title": "Main Map Window",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>In this tutorial, we will walk you through each tool on the screen to get a sense of where panels are located. First we will go through how to interact with the map.</p>"
+                },
+                {
+                    "header": "Full Screen Toggle and Zoom Slider",
+                    "html": "<p>Located in the top-right corner of this window is the <b>Zoom Slider</b>, and above it is the <b>Full Screen Toggle.</b></p> <p>Click the full screen toggle to make the map full screen, then the x button to exit full screen. Drag the handle in the middle of the Zoom Slider, click the plus or minus buttons, or scroll on your mouse or touchpad while hovering over the map to adjust the zoom level of the map.</p>"
+                },
+                {
+                    "header": "Pan",
+                    "html": "<p>To pan the map in any direction, simply click and drag on any area of the map to move it in the direction you wish.</p>"
+                },
+                {
+                    "header": "Location and Distance Panel",
+                    "html": "<p>In the bottom-right corner of this window is the <b>Location and Distance Panel.</b> This panel displays the coordinates of the current mouse position on the map (if the mouse cursor is on the map) and scale bars displaying distance in both miles and kilometers according to the current zoom level of the map.</p>"
+                },
+                {
+                    "header": "Main Control Panel",
+                    "html": "<p>Next let's go through the <b>locations of the control panels</b> that are available to use. Located along the center top edge of this window, or as a collapsed tab to the side if viewing on a small window, is the <b>main control panel</b>. </p> <p>You can use this panel to draw polygons on the map, change map appearance, select your uploaded layers, search for species, et cetera.</p>"
+                },
+                {
+                    "header": "Side Panel Toggle",
+                    "html": "<p>Located in the left side of this window is a <b>collapsed Side Panel</b>.</p> <p>Click on the small tab to access the Vector tools and Raster tools. You can click on the Vector tools title at the top of the panel to collapse the Vector tools and open the Raster tools.</p> <p> If viewing this page on a small screen, the side panel will be the bottom collapsed tab.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Main Control Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Now we will go over the function of the <b>Main Control Panel.</b> This panel has three dropdown features, in addition to buttons for customization and search, the home button to take you back to the home page, and a camera icon to download the current screen.</p>"
+                },
+                {
+                    "header": "Draw Selector",
+                    "html": "<p>Located on the very left side (or the top if viewed on a small window) of the Main Control Panel. Clicking on the dropdown menu and selecting one of the draw tools will let you <b>draw new polygons, boxes, circles, lines, or point features on the map.</b> Select the draw tool you want to use, then click on the map to draw the features you want, then click again or double click to complete the shape. </p> "
+                },
+                {
+                    "header": "Draw Selector",
+                    "html": "<p>To draw lines in Freehand Mode instead of as straight lines, open the Settings Button, and check the box next to 'Set Draw Tool to Freehand Mode.' To deactivate the draw tool, click on the drop-down and select None. To delete features you have drawn, you can open the side panel, click on the feature you want to delete, and click 'Delete Selected Features'. </p> <p>For more detail on how to create shapes on the map, see the 'Using the Draw Tool' tutorial.</p>"
+                },
+                {
+                    "header": "Base Layer Selector",
+                    "html": "<p>Located between the other two dropdown selectors in the Main Control Panel. Use this dropdown to change the appearance of the map to any of the publically available base layers that are included. To use this selector, click on the drop-down and select the base layer of your choice. The map will immediately load the new base layer when you make a selection. </p> <p>It is important to note that these layers have different minimum zoom threshholds and therefore some may not display properly when the map is set to a high zoom level. These layers are provided for reference purposes only and cannot be interacted with or used with any of the analysis tools.</p>"
+                },
+                {
+                    "header": "Active Layer Selector",
+                    "html": "<p>Located to the right of the Base Layer Selector (or under it if viewing on a small window) on the Main Control Panel. When you have multiple layers on the map, for example if you have drawn polygons or points, your active layer must be the layer that includes the features you want to interact with in order to inspect data or select and edit said features. Once you have added layers, click on the drop-down and select the layer with the features you would like to interact with.</p> <p>For more detail on the type of layers you can add to the map, see the 'Map Layers' tutorial, and to upload and explore map layers, see the 'Loading and Exploring Map Layers' tutorial. </p>"
+                },
+                {
+                    "header": "Settings Button",
+                    "html": "<p>Located on the most left side (or at the top if viewed on a small window) of the five buttons on the Main Control Panel. Click this button to open the Settings Panel. The Settings Panel can customize how occurrence data is displayed on the map. For more detail on how to use the Setting Panel, see the 'Settings Panel' tutorial.</p>"
+                },
+                {
+                    "header": "Layers Button",
+                    "html": "<p>Located between the Settings and Search Button on the Main Control Panel. This button can be clicked to open the Layers Panel, which will show you information and allow you to edit the layers. For more detail on how to use the Layers Panel, see the 'Layers Panel' tutorial.</p>"
+                },
+                {
+                    "header": "Search Button",
+                    "html": "<p>Located between the Layer Button and the Home Button on the Main Control Panel. This button can be clicked to open the Search Panel, which can help you search for occurrence data of species through selecting criteria, collections, or the advanced query search accessible through the three tabs at the top of the panel. For more detail on how to use the Search Panel, see the 'Loading Occurrence Data with the Search Panel' tutorial.</p>"
+                },
+                {
+                    "header": "Download Map Image Button",
+                    "html": "<p>Located between the Home Button and the Tutorial button on the Main Control Panel. This button can be clicked to download a png image of the map as it currently appears, including all layers and data that are currently loaded onto it and with the current symbology settings for each layer.</p>"
+                },
+                {
+                    "header": "Tutorial Button",
+                    "html": "<p>Located on the very right side (or the bottom if viewed on a smaller window) of the Main Control Panel. This button can be clicked to open the Mapping Tutorial!</p>"
+                }
+            ]
+        },
+        {
+            "title": "Loading Occurrence Data",
+            "slides": [
+                {
+                    "header": "Search Panel",
+                    "html": "<p>The Search Panel is located between the Layers Button and the Home Button on the Main Control Panel.</p> <p>The Search Panel has three tabs at top: Criteria, Collections, and Advanced to aid you in your search of occurrence data. Each tab has a SEARCH RECORDS button and a CLEAR button on the left side to load the occurrence search, and clear your selections.</p>"
+                },
+                {
+                    "header": "Occurrence Data",
+                    "html": "<p>You can search for occurrence records through narrowing your search using the Criteria Tab, Collections Tab, or the Advanced Tab, and/or when at least one polygon, box, or circle feature is selected in the Shapes Layer. Through selecting shapes you have drawn or uploaded, you can search for occurrence records within those areas. </p>"
+                },
+                {
+                    "header": "The Criteria and Collections Tab",
+                    "html": "<p>In the <b>Criteria Tab</b>, you can search for occurrence data depending on the criteria you enter by filling out the form, and pressing the SEARCH RECORDS button. In the <b>Collections tab</b>, you can select records depending on the dataset it belongs to by checking or unchecking the boxes and clicking the SEARCH RECORDS button. See the 'Advanced Query Builder' tutorial on how to use the Advanced Tab.</p>"
+                },
+                {
+                    "header": "Loaded Occurrence Data",
+                    "html": "<p> Occurrence records loaded onto the map are automatically added to the Points Layer. When occurrence records are loaded, the Records and Symbology Panel becomes available in the Side Panel showing each occurrence record under the Records tab.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Occurrence records are initially colored by the collection they represent. The symbology for occurrence records can be changed in the Symbology tab.  To learn how to use the Records and Symbology Panel, see the 'Records and Symbology Panel' tutorial.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Records and Symbology Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Records and Symbology Panel becomes available in the Side Panel when occurrence records are loaded. We will go through the Records tab and Symbology tab in the following tutorial.</p>"
+                },
+                {
+                    "header": "Records Tab",
+                    "html": "<p>The Records Tab is accessed through the Records and Symbology Panel in the Side Panel. It contains download options for the occurrence records returned in a search, links to other options to view the records, and a list of the records themselves, with the ability for selecting records of interest.</p>"
+                },
+                {
+                    "header": "Download Type Selector and Button",
+                    "html": "<p>In the top-left corner of the Records Tab is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download the occurrence records in a CSV/ZIP, KML, GeoJSON, or GPX file format. For more detail, see the 'Download Occurance Data' tutorial.</p>"
+                },
+                {
+                    "header": "List and Table Buttons",
+                    "html": "<p>Click the List Display button <button class=\"icon-button\" title=\"List Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-list\"></i></button> or the Table Display button <button class=\"icon-button\" title=\"Table Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-table\"></i></button> to go to the list or table display for the occurrence records search.</p>"
+                },
+                {
+                    "header": "Image Display Button",
+                    "html": "<p>Click the Image Display button <button class=\"icon-button\" title=\"Image Display\"><i style=\"height:15px;width:15px;\" class=\"fas fa-camera\"></i></button> to go to the image search page.</p>"
+                },
+                {
+                    "header": "Copy Search URL Button",
+                    "html": "<p>When the search does not include a complex shape, clicking the Copy Search URL button <button class=\"icon-button\" title=\"Copy Search URL\"><i style=\"height:15px;width:15px;\" class=\"fas fa-link\"></i></button> will copy a url to your computer's clipboard that will load the same search. This url can be used at any time to quickly reload the same search at a different time.</p>"
+                },
+                {
+                    "header": "Occurrence Record Table and Record Count Bar",
+                    "html": "<p>Below the options and display links is the Occurrence Records table and Record Count Bar. If more than 100 occurrence records are returned in a search, the Occurrence Record Table will show 100 records at a time, and you can and use the arrows on the Record Count Bar above the table to navigate to other records.</p>"
+                },
+                {
+                    "header": "Select/Deselect All Checkbox",
+                    "html": "<p>The first row of the left most column in the Occurrence Records Table is the Select/Deselect All Checkbox. This checkbox can be used to select and deselect all of the occurrence records in the current table. You can use this button, individually select records through the left most column of the Occurrence Records Table, or select records on the map to be highlighted and added to the Selections Tab. Deselecting records will both remove them from the Selections Tab and deselect them on the map.</p>"
+                },
+                {
+                    "header": "Occurrence Record Table",
+                    "html": "<p>Below the Select/Deselect All Checkbox is the Occurrence Record Table with the occurrence records returned from the search. There are columns for Catalog Number, Collector, Date, and Scientific Name for each record. The text in the Collector column for each record can be clicked to open a popup window displaying the complete data for that record. Additionally, the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column can be clicked to pan the map to that record's location on the map and add a temporary marker. If the Scientific Name is included in the Taxonomic Thesaurus, the text in this column can be clicked to open the Taxon Profile page for the taxon in a separate browser tab.</p>"
+                },
+                {
+                    "header": "Selections Tab",
+                    "html": "<p>The Selections Tab is available whenever occurrence records are selected. It is accessed in the Records and Symbology dropdown in the Side Panel. It contains download options for the selected occurrence records, a list of the records themselves, a button to clear the current record selections, and a button to adjust the map to show the selections.</p>"
+                },
+                {
+                    "header": "Download Type Selector and Button",
+                    "html": "<p>You can use the same Download Type Selector and Button as the Records tab to download data of the selected occurrence data. </p>"
+                },
+                {
+                    "header": "Clear Selections Button",
+                    "html": "<p>The 'CLEAR SELECTIONS' Button can be clicked to deselect all of the currently selected occurrence records, removing all records from this tab and the tab itself, deselecting all occurrence records on the map, and deselecting all records in the Records Tab.</p>"
+                },
+                {
+                    "header": "Zoom to Selections Button",
+                    "html": "<p>The 'ZOOM TO SELECTIONS' button can be clicked to automatically zoom and pan the map so that all of the selected records are visible on the map.</p>"
+                },
+                {
+                    "header": "Show Only Selected Points Checkbox",
+                    "html": "<p>This checkbox can be used to limit the occurrence records displayed on the map to only those selected. When checked, only the selected occurrence records will be displayed on the map.</p>"
+                },
+                {
+                    "header": "Selected Occurrence Record Table",
+                    "html": "<p>Below the Show Only Selected Points Checkbox is the Selected Occurrence Record Table displaying all of the currently selected occurrence records in the same format as the Occurrence Record Table.</p>"
+                },
+                {
+                    "header": "Symbology Tab",
+                    "html": "<p>The Symbology Tab is accessed in the Records and Symbology Panel in the Side Panel. You can change the color of the points of occurrence in the map depending on the taxa or the collection the record belongs to.</p>"
+                },
+                {
+                    "header": "Symbology Dropdown and Symbol Key",
+                    "html": "<p>In the top-left corner of the Symbology Tab is the Symbology Dropdown where you can select between viewing the records on the map by taxa or by collections. Under that is the Symbol Key that distinguishes individual records representing specimens from those representing observations.</p>"
+                },
+                {
+                    "header": "Assigning Colors to Groups",
+                    "html": "<p>The colored box to the left of each taxon or collection in this list indicates the color that is being used to represent records on the map identified to that group. Each box can be clicked to open a color picker to select a different color to represent that group. Changing the color for any group immediately sets the symbology for all of the occurrence records on the map to be symbolized based on the group they represent, if they are not already, and updates the symbology to include the newly selected color.,</p>"
+                },
+                {
+                    "header": "Reset Symbology button",
+                    "html": "<p>In the top-right corner of the Collections Tab is the 'RESET SYMBOLOGY' button. Clicking this button will reset the symbology for all of the occurrence records on the map back to the original, default state of being symbolized based on the collection or taxa they are part of.</p>"
+                },
+                {
+                    "header": "Auto Color Button",
+                    "html": "<p>Below the Reset Symbology button is the Auto Color button. Clicking this button will set the symbology for all of the occurrence records on the map to be symbolized based on the collection and taxa they represent, if they are not already, and will assign each collection a random, unique color for its symbology.</p>"
+                },
+                {
+                    "header": "Save Symbology Button",
+                    "html": "<p>Below the Auto Color button is the Save Symbology button. Clicking this button will generate a png image file of the collection list in this tab and all of the symbology colors assigned to each collection or taxa.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Downloading Occurrence Data",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Occurrence data can be downloaded from both the Records Tab and the Selections Tab in the Records and Symbology Panel in the Side Panel. Downloading occurrence data from the Records Tab will download all of the records returned in a search. Downloading occurrence data from the Selections Tab will download only the selected records from a search.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In either the Records Tab or the Selections Tab, the Download Type Selector can be used to select the download format for the occurrence data. The options include: CSV/ZIP, KML, GeoJSON, and GPX. Once a download type is selected, click the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button> to initiate the download.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>If the download type CSV/ZIP is selected, an additional window will open allowing for further options as to the structure and formatting of the download. These options include whether the structure the data in the Native or Darwin Core format, whether to include determination or image extensions, whether the file be an archive, and other file formatting. Once these further options have been set, or if the default settings are preferred, click the Download Data button to proceed with the download.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Settings Panel (and Heat Map)",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Settings Panel is accessed by clicking on the Settings Toggle in the Main Control Panel. This panel includes settings for how loaded occurrence data will be displayed on the map, in addition to displaying a heat map. The panel can be closed by clicking the close icon in the top-right corner.</p>"
+                },
+                {
+                    "header": "Cluster Points",
+                    "html": "<p>When checked, occurrence points loaded onto the map are clustered, based on the cluster distance setting, into clusters of like records. When not checked, all occurrence records are loaded as individual points on the map, regardless of proximity.</p>"
+                },
+                {
+                    "header": "Cluster Distance",
+                    "html": "<p>This setting controls the minimum distance threshold (in pixels) between points or clusters which determine whether they are clustered when Cluster Points is checked.</p>"
+                },
+                {
+                    "header": "Display Heat Map",
+                    "html": "<p>When checked, occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map Radius and Heat Map Blur settings. When not checked occurrence records are displayed on the map as individual points, or clusters of like points.</p>"
+                },
+                {
+                    "header": "Heat Map Radius",
+                    "html": "<p>This setting controls the radius (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
+                },
+                {
+                    "header": "Heat Map Blur",
+                    "html": "<p>This setting controls the blur size (in pixels) of occurrence record points in the heat map display when Display Heat Map is checked.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Map Layers",
+            "slides": [
+                {
+                    "header": "Layers",
+                    "html": "<p>The map initially loads without any additional layers included. As layers get added to the map, they are added in a stacking fashion, much like sheets being stacked on a pile of paper.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Additional layers of two data types can be optionally loaded onto the map: <b>vector</b> layers can be added, which include data based on discrete features (points, lines, or polygons), that can have any number of data attributes associated with them; and <b>raster</b> layers can be added, which include data arranged in a grid with each grid cell (or pixel) associated with a single data value.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>While there are tools for analyzing both raster and vector data, only vector data can be used as search criteria for occurrence records. Raster data can be used however to create vector features based on a value, or value range.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Each additional layer loaded onto the map can be interacted with individually. For most layers interaction is limited to exploring the data they contain, whether it be viewing the data attributes of specific features within a vector layer, or viewing the data value at a specific point in a raster layer.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>There are two additional layers that are added automatically to the map, and allow for a greater amount of interaction. These two layers are relied upon for creating, editing, and using vector data to search for occurrence records, and to further analyze points assocated with occurrence records returned from a search. Both layers will be introduced here, but will be discussed in greater depth in further topics in this tutorial:</p>"
+                },
+                {
+                    "header": "Shapes Layer",
+                    "html": "<p>The Shapes Layer is a vector layer that is automatically added to the map when new features are created using the Draw Tool (to be discussed in a later topic), or vector features are selected from an additional layer added to the map. Features included in the Shapes Layer can be edited, selected, deleted, processed further using the Vector Tools, or used to search for occurrence records. The contents of the Shapes Layer can also be downloaded in multiple geospatial formats for further use.</p>"
+                },
+                {
+                    "header": "Points Layer",
+                    "html": "<p>The Points Layer is a vector layer that is automatically added to the map when occurrence records are loaded from a search. The point features included in this layer can be rendered as individual points, clustered points, or as a heat map. Additionally they allow for a greater degree of symbology options based on the collections and taxonomy of the associated occurrence data. Point features in this layer can be individually selected, and downloads can be prepared of either the entire dataset, or a selected subset, in a variety of export formats.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Uploading and Exploring Map Data Files",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Map data files can be added to the map from the following file formats: KML (.kml), GeoJSON (.geojson), Shapefile (.zip), and GeoTIFF (.tif or .tiff).</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>All map data loaded onto the map must be in either WGS84 or NAD83 projections.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To load a map data file onto the map, simply drag and drop the file anywhere over the map window.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Each layer file added to the map is added to both the Active Layer Selector and Layers Panel under the filename of the original map data file.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>No more than 3 vector files (KML, GeoJSON, or Shapefile) and 3 raster files (GeoTIFF) can be loaded onto the map at any one time.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In order to explore the data or select features from any layer loaded onto the map, the layer must first be activated through the Active Layer Selector in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>When a vector layer is activated on the map, holding the alt key (option key on Mac) and clicking on any feature in that layer will open an info window displaying all of the metadata of that feature.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>When a raster layer is activated on the map, holding the alt key (option key on Mac) and clicking anywhere that layer will open an info window displaying the raster value for the point clicked.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>When a vector layer is activated on the map, clicking on any feature in that layer will add it to the Shapes Layer where it can be used for further processing or searching, which will be discussed further in a later topic in this tutorial.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>When there are no layers activated on the map, and the Active Layer Selector is set to None, hovering over any feature or raster data on the map will open an info window displaying the source layer for that feature or data.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Layers Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Layers Panel is accessed by clicking on the Layers Button in the Main Control Panel. This panel includes controls for any layer that has been loaded onto the map as well as layers that have been preconfigured. The types of controls available for any layer can vary depending on whether the layer is currently loaded on the map, whether the layer has raster or vector type data, and whether if it is a preconfigured layer or if it is either the Shapes or Points Layers (to be discussed further in a later topic).</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Preconfigured layers may be arranged individually or in groups. If layer groups have been configured, there will be an expansion bar in the Layers Panel with the layer group name, which can be clicked to view all of the layers included in the group.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Layers are arranged in the Layers Panel in the following order: the Shapes and Points Layers (if loaded on the map) appear at the top, any layers that you have loaded onto the map appear next, and then all preconfigured layers and layer groups appear last. If no layers have been loaded on the map, and no layers have been preconfigured, there will be no layers in the Layers Panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Each layer is depicted in a box within the Layers Panel. In the top-left of the box is the layer name, which corresponds with the layer name in the Active Layer Selector if the layer is visible. Any metadata that has been configured with layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of the box will be an icon to indicate whether the layer contains vector or raster data, with <i style=\"height:20px;width:20px;\" class=\"fas fa-vector-square\"></i> for vector data and <i style=\"height:20px;width:20px;\" class=\"fas fa-border-all\"></i> for raster data.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Each layer's information and controls are enclosed within individual frames within the Layers Panel. In the top-left of each frame is the layer name, which corresponds with the layer name in the Active Layer Selector, if the layer is visible. Any metadata that has been configured with the layer, including description, who provided the layer, source link, date acquired, and date uploaded, will appear below the layer name. In the bottom-left corner of each frame will be an icon to indicate whether the layer contains vector or raster data, with <i style=\"height:20px;width:20px;\" class=\"fas fa-vector-square\"></i> for vector data and <i style=\"height:20px;width:20px;\" class=\"fas fa-border-all\"></i> for raster data.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The layer controls are found in the bottom-right of each layer frame. If the layer is currently not visible, the controls may be limited to one or two, but more will be available once the layer's visibility is changed. We will go through each control that is available, what layers it is available for, and how to use each. We will start with the control in the far bottom-right corner of each layer frame and address each control to the left:</p>"
+                },
+                {
+                    "header": "Visibility Toggle",
+                    "html": "<p><b>Available for every layer, both when visible and hidden.</b> In the far bottom-right corner of each layer frame is the Visibility Toggle checkbox, which toggles whether the layer is visible on the map. Checking this checkbox will show the layer on the map, and unchecking it will hide the layer. It is important to note that this checkbox simply toggles the visibility of a layer and does not affect the layer data.</p>"
+                },
+                {
+                    "header": "Delete Layer Button",
+                    "html": "<p><b>Available for the Shapes and Points Layers and any layers that you have loaded onto the map, both when visible and hidden.</b> Clicking this button will completely remove the layer, and all of its data, from the map. If this layer is the Shapes Layer, this means that all features included in that layer will be deleted. If this layer is the Points Layer, this means that all search results will be removed from the map and the Records Panel. Clicing this button cannot be undone.</p>"
+                },
+                {
+                    "header": "Query Selector Toggle Button",
+                    "html": "<p><b>Available for vector layers when visible.</b> Clicking this will close the Layers Panel and open the Query Selector for the layer. The Query Selector allows you to select features within a given layer based on their attribute values and will be discussed further in a later topic.</p>"
+                },
+                {
+                    "header": "Symbology Toggle Button",
+                    "html": "<p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> Clicking this button will open and close the layer's symbology settings, where you can adjust how the layer is symbolized on the map. For vector layers, these settings include: border color, fill color, border width, point radius (for point features), and opacity. To adjust border color and fill color, simply click on the color indicator box next to each, and then select the color you would like from the color picker that opens. For raster layers, you can select one of the several predefined color scales for symbolizing raster data. All symbology adjustments made for any layer are immediately reflected on the map.</p>"
+                },
+                {
+                    "header": "Order Adjuster",
+                    "html": "<p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> This will indicate, and allow you to adjust, the order in which the layer is located within the stack of layers currently visible on the map. As layers are added to the map, they are added over previously added layers and have incrementally higher order numbers in the stack of layers. Layers with lower order numbers apeear underneath layers of higher order numbers on the map. You can use this adjuster to either move a layer higher or lower within the layer stack, and therefore make it appear above or below other layers on the map.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Working With the Shapes Layer",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Features included in the Shapes Layer can be both edited and selected for further processing, use in a search, or to be deleted. In order to edit or select features in the Shapes Layer, be sure that Shapes is selected in the Active Layer Selector first.</p>"
+                },
+                {
+                    "header": "Editing Features",
+                    "html": "<p>To edit any feature in the Shapes Layer, hold down the shift key and click on the feature to activate it for editing. A red dashed bounding box will appear over the feature with arrow and box handles for scaling, moving, and rotating that feature. While holding down the shift key, click and drag on any of the arrow or box handles to scale, move, and rotate the feature. While holding down the shift key, click anywhere outside of the red dashed bounding box to finish editing.</p>"
+                },
+                {
+                    "header": "Selecting Features",
+                    "html": "<p>Selecting (or deselecting) any feature in the Shapes Layer can be done by simply clicking on the feature. It is necessary to select features that are to be used as criteria in a occurrence search, or used with any of the processing tools.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Working With the Points Layer",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>Occurrence records loaded on the map are automatically added into the Points Layer. In order to work with occurrence records in the Points Layer, be sure that Points is selected in the Active Layer Selector first.</p>"
+                },
+                {
+                    "header": "Clusters",
+                    "html": "<p>When Cluster Points is activated in the Settings Panel, occurrence clusters will appear as wider circles on the map with a number indicating the amount of records included in that cluster. Click on any cluster to zoom further in to see the individual occurrence records included.</p>"
+                },
+                {
+                    "header": "Selecting Records",
+                    "html": "<p>Selecting or deselecting any occurrence record in the Points Layer can be done by simply clicking on the individual occurrence record. Selecting occurrence records on the map both adds them to the Selections Tab, and selects them in the Records Tab, in the Records and Taxa Panel in the Side Panel. Deselecting occurrence records on the map both removes them from the Selections Tab, and deselects them in the Records Tab, in the Records and Taxa Panel in the Side Panel.</p>"
+                },
+                {
+                    "header": "Viewing Record Data",
+                    "html": "<p>Holding the alt key (option key on Mac) and clicking on any individual occurrence record will open an info window displaying all of the data for that record.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Vector Tools Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Vector Tools Panel is accessed by opening the Side Panel and clicking on Vector Tools to expand the panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Vector Tools Panel includes two tabs: Shapes and Points. Each of these tabs will be discussed more thouroughly in the following topics.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Shapes Tab",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Shapes Tab is accessed in the Vector Tools Panel in the Side Panel. It contains download options, means for deleting, and several analysis tools for features in the Shapes Layer. The top portion of the Shapes Tab will be covered here, while the analysis tools available in the lower portion of the tab will be covered individually in following topics.</p>"
+                },
+                {
+                    "header": "Selected Area Display",
+                    "html": "<p>At the top of the Shapes Tab is the Selected Area Display. This display shows the total area, in sq/km, of all of the features currently selected in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Download Type Selector and Button",
+                    "html": "<p>Below the Selected Area Display on the left side is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download all of the features currently in the Shapes Layer in a KML or GeoJSON file format. Downloading features from the Shapes Layer will be discussed further in the next topic.</p>"
+                },
+                {
+                    "header": "Delete Selected Features Button",
+                    "html": "<p>To the right of the Download Type Selector and button is the Delete Selected Features button. This can be clicked to go to delete all features that are currently selected in the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Downloading Features From the Shapes Layer",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Download Type Selector and button in the Shapes Tab in the Vector Tools Panel in the Side Panel can be used to download all of the features currently in the Shapes Layer in either KML or GeoJSON formats.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Both download formats can be used in many other geoprocessing applications.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To download simply select either KML or GeoJSON in the Download Type Selector, and then click the Download button in the Shapes Tab.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Downloaded files can simply be dragged and dropped anywhere over the map window to reload the doanloaded features at a later time.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Buffer Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Buffer Tool is accessable in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a buffer polygon of a specified size (in km) around selected features in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Before using the Buffer Tool, there must already be at least one feature in the Shapes Layer on which to base the buffer polygon. Features can be created using the Draw Tool, or added from other vector layers loaded onto the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To use the Buffer Tool, follow these steps:</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Select the features on which you would like to create the buffer in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Enter the width the buffer should be (in km) in the box in the Buffer Tool.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>Click the Buffer button in the Buffer Tool.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>All created buffer features are added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Difference Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Difference Tool is accessable in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the area representing the difference of one selected polygon, box, or circle from another selected polygon, box, or circle in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Before using the Difference Tool, there must already be the two features in the Shapes Layer on which to base the difference polygon. Features can be created using the Draw Tool, or added from other vector layers loaded onto the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To use the Difference Tool, follow these steps:</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Select the feature from which the area of the second selected feature will be subtracted in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Select the second feature to subtract from the first feature in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>Click the Difference button in the Difference Tool.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The created difference feature is added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Intersect Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Intersect Tool is accessable in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the overlapping area of two selected polygons, boxes, or circles in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Before using the Intersect Tool, there must already be the two features in the Shapes Layer on which to base the intersect polygon. Features can be created using the Draw Tool, or added from other vector layers loaded onto the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To use the Intersect Tool, follow these steps:</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Select the two features on which to base the intersect polygon in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Click the Intersect button in the Intersect Tool.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The created intersect feature is added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Union Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Union Tool is accessable in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the combined area of two or more selected polygons, boxes, or circles in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Before using the Union Tool, there must already be at least two features in the Shapes Layer on which to base the union polygon. Features can be created using the Draw Tool, or added from other vector layers loaded onto the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To use the Union Tool, follow these steps:</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Select the features on which to base the union polygon in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Click the Union button in the Union Tool.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The created union feature is added to the Shapes Layer and replaces the originally selected features.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Points Tab",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Points Tab is accessed in the Vector Tools Panel in the Side Panel. It contains analysis tools for occurrence points in the Points Layer. These analysis tools will be covered individually in the next topics.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Concave Hull Polygon Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Concave Hull Polygon Tool is accessable in the Points Tab in the Vector Tools Panel in the Side Panel. It can be used to create a concave hull polygon or multi-polygon around either all, or only the selected, occurrence record points with a maximum edge length of a specified length (in km).</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Before using the Concave Hull Polygon Tool, occurrence records must already be loaded on the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To use the Concave Hull Polygon Tool, follow these steps:</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>If the concave hull polygon should be created based on only the selected occurrence record points, select “selected”, otherwise leave the default of “all” selected in the Concave Hull Polygon Tool.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Enter the value (in km) of the maximum edge length for the concave hull polygon.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Click the Concave Hull Polygon button in the Concave Hull Polygon Tool.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The created concave hull feature is added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Convex Hull Polygon Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Convex Hull Polygon Tool is accessable in the Points Tab in the Vector Tools Panel in the Side Panel. It can be used to create a convex hull polygon around either all, or only the selected, occurrence record points.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>A convex hull polygon differs from a concave hull polygon in that all interior angles are less than 180 degrees.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Before using the Convex Hull Polygon Tool, occurrence records must already be loaded on the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To use the Convex Hull Polygon Tool, follow these steps:</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>If the convex hull polygon should be created based on only the selected occurrence record points, select “selected”, otherwise leave the default of “all” selected in the Convex Hull Polygon Tool.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Click the Convex Hull Polygon button in the Convex Hull Polygon Tool.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The created convex hull feature is added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Raster Tools Panel",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Raster Tools Panel is accessed by opening the Side Panel and clicking on Raster Tools to expand the panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Raster Tools Panel contains analysis tools for raster layers loaded onto the map and the Target Raster Layer Selector, which is used with the tools. These analysis tools will be covered individually in the next topics.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Data-Based Vectorize Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Data-Based Vectorize Tool is accessable in the Raster Tools Panel in the Side Panel. It can be used to create vector polygon features for all areas within a selected polygon, box, or circle in the Shapes Layer, that have raster data values within a defined value range, based on the data values within the raster layer itself.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Data-Based Vectorize Tool compares to the Grid-Based Vectorize Tool in that it can analyze larger areas, and is faster. The Grid-Based Vectorize Tool however, can have a much greater level of resolution in the vector features it produces, and is more accurate.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Before using the Data-Based Vectorize Tool, at least one raster layer needs to be loaded on the map and there must already be at least one polygon, box, or circle feature in the Shapes Layer to serve as the bounds for the vectorization process.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To use the Data-Based Vectorize Tool, follow these steps:</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Make sure that Shapes is selected in the Active Layer Selector in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Select the one polygon, box, or circle feature to serve as the bounds for the vectorization process in the Shapes Layer. *Note that this feature must overlap with the raster layer to be vectorized.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Using the Target Raster Layer Selector, at the top of the Raster Tools Panel, select the raster layer to be vectorized.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>Enter the low and high values for the value range in the appropriate boxes in the Data-Based Vectorize Tool.</p>"
+                },
+                {
+                    "header": "Step 5",
+                    "html": "<p>Click the Data-Based Vectorize button in the Data-Based Vectorize Tool.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>All polygon features that are created are added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Grid-Based Vectorize Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Grid-Based Vectorize Tool is accessable in the Raster Tools Panel in the Side Panel. It can be used to create vector polygon features for all areas within a target box positioned on the map, that have raster data values within a defined value range, based on a grid analysis performed at either a 25, 50, 100, 250, or 500 meter resolution.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Grid-Based Vectorize Tool compares to the Data-Based Vectorize Tool in that its raster analysis can be more accurate and it can produce vector features that have a much greater level of resolution. The Data-Based Vectorize Tool however, can be run on much larger areas and can be a significantly faster to run.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Before using the Grid-Based Vectorize Tool, at least one raster layer needs to be loaded on the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To use the Grid-Based Vectorize Tool, follow these steps:</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Using the Target Raster Layer Selector, at the top of the Raster Tools Panel, select the raster layer to be vectorized.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Enter the low and high values for the value range in the appropriate boxes in the Grid-Based Vectorize Tool.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Select the resolution of the grid analysis, or leave it at the default value of 25, in the Grid-Based Vectorize Tool.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>Click the Display Target Box button in the Grid-Based Vectorize Tool to display the red target box on the map.</p>"
+                },
+                {
+                    "header": "Step 5",
+                    "html": "<p>Click and drag the red target box on the map to position it on the area to be vectorized. Note that the target box is different sizes, based on the resolution selected in Step 3, and it may be necessary to zoom in on the map in order to position it.</p>"
+                },
+                {
+                    "header": "Step 6",
+                    "html": "<p>Click the Grid-Based Vectorize button in the Grid-Based Vectorize Tool.</p>"
+                },
+                {
+                    "header": "Step 7",
+                    "html": "<p>Click the Hide Target Box button in the Grid-Based Vectorize Tool to remove the red target box from the map.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>All polygon features that are created are added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Using the Draw Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Draw Tool is activated through the Draw Selector in the Main Control Panel. To activate this tool simply click on the drop-down and select the type of feature that you would like to draw on the map. To deactivate the draw tool, simply click on the drop-down and select None. The Draw Tool can be used to create new polygon, box, circle, line, and point features on the map. Once the Draw Tool has been activated, follow these steps to create each feature type:</p>"
+                },
+                {
+                    "header": "Polygon",
+                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional vertices in the polygon. Click on the original vertex to complete the feature.</p>"
+                },
+                {
+                    "header": "Box",
+                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the box. Click again to complete the feature.</p>"
+                },
+                {
+                    "header": "Circle",
+                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the circle. Click again to complete the feature.</p>"
+                },
+                {
+                    "header": "Line",
+                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional vertices in the line. Click twice on the last vertex to complete the feature.</p>"
+                },
+                {
+                    "header": "Point",
+                    "html": "<p>Click once on the map to create features.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>All features created with the Draw Tool are automatically added to the Shapes Layer on the map, which will be discussed further in a later topic in this tutorial.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Advanced Query Builder",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Query Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Select attribute drop-down contains all of the attributes applied to features within that layer. Select the attribute you would like to use to base your selection query.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In the next drop-down select the comparator you would like to use in your query, out of EQUALS, CONTAINS, GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS comparators can compare text or numeric values, but the remaining comparators can only compare numeric values.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the appropriate boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Finally click the Run Query button to actually run the selection query. All features within the target layer that match the criteria you have specified will automatically be added to the Shapes Layer.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Using the Heat Map Display",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>When occurrence records have been loaded on the map, the heat map display can be activated to display the occurrence data as a heat map instead of points.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To activate or deactivate the heat map display, check or uncheck Display Heat Map in the Settings Panel.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Adjusting the Heat Map Radius and Heat Map Blur settings, also in the Settings Panel, will further adjust how occurrence points are rendered in the heat map display.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Walkthrough: Searching and Loading Occurrence Data",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>In this walkthrough we will use the the Search Panel in the Main Control Panel to enter search criteria for occurrence records and load them on the map.</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Click on the Side Panel Toggle to open the Side Panel, click on Search Criteria to expand the Search Criteria Panel (if it isn't already expanded), and then click on the Collections Tab to select it.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>In the Collections Tab, uncheck the Select/Deselect All checkbox to deselect all collections. Then check one or two individual collections of your choice.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Click the Load Records button to run the search. If a message pops up stating that there were no records matching the query, repeat step 2, but check different collections, and do this step over until occurrence records are loaded.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>When occurrence records are loaded on the map, the Records and Taxa Panel should automatically expand with the Records Tab selected. Scroll up and down over the records to view them. Click the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column of records to pan the map to that record's location on the map and add a temporary marker. Check the checkbox in the far left column of the Occurrence Record Table for a few records to select them.</p>"
+                },
+                {
+                    "header": "Step 5",
+                    "html": "<p>Click the Selections Tab to select it, and then check the Show Only Selected Points Checkbox so that only the selected records are displayed on the map. If the selected records aren't readily visible, click the Zoom to Selections button to pan and zoom the map to the records. Uncheck the Show Only Selected Points Checkbox so that all records are visible on the map again.</p>"
+                },
+                {
+                    "header": "Step 6",
+                    "html": "<p>Click the Records Tab to select it again and make note of one of the scientific names in the Scientific Name column of the Occurrence Record Table.</p>"
+                },
+                {
+                    "header": "Step 7",
+                    "html": "<p>Click on Search Criteria to expand the Search Criteria Panel and click on the Collections Tab to select it. In the Collections Tab, check the Select/Deselect All checkbox to select all collections.</p>"
+                },
+                {
+                    "header": "Step 8",
+                    "html": "<p>Click the Criteria Tab to select it, and then enter the scientific name noted in Step 6 into the Taxa box, leaving the Taxa Type Selector above the Taxa box set to Family or Scientific Name.</p>"
+                },
+                {
+                    "header": "Step 9",
+                    "html": "<p>Click the Load Records button to load all occurrence records identified to the scientific name you entered.</p>"
+                },
+                {
+                    "header": "Step 10",
+                    "html": "<p>Click on Search Criteria to expand the Search Criteria Panel and click on the Criteria Tab to select it. Try entering other criteria into the other options in this tab and loading occurrence records.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Walkthrough: Loading Occurrence Data Around a Buffer Polygon",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>In this walkthrough we will use the the Draw Tool and Buffer Tool to create a buffer polygon around a point on the map, and then find all occurrence records that occur within it.</p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Identify a location on the map (ideally a city, town, or village) in an area which you know of occurrence records occurring. If you are unsure of how to do this, follow steps 1, 2, and 3, of Walkthrough #1.</p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>With the location identified, pan and adjust the zoom level of the map so that the location appears as a point on the map.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>In the Draw Selector in the Main Control Panel, select Point to activate the Point Draw Tool.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>Poisition the mouse cursor over the location point you identified in Step 1 and click once to create a new point feature in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 5",
+                    "html": "<p>Click once on the new point feature you created in the previous step to select it in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 6",
+                    "html": "<p>Click on the Side Panel Toggle to open the Side Panel, click on Vector Tools to expand the Vector Tools Panel, and then click on the Shapes Tab to select it (if it isn't already).</p>"
+                },
+                {
+                    "header": "Step 7",
+                    "html": "<p>In the Buffer Tool in the Shapes Tab, enter the width the buffer should be (in km) in the box and click the Buffer button to create the buffer polygon.</p>"
+                },
+                {
+                    "header": "Step 8",
+                    "html": "<p>Click once on the new buffer polygon feature created in the previous step to select it in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 9",
+                    "html": "<p>Click on Search Criteria in the Side Panel to expand the Search Criteria Panel, and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring in the buffer polygon.</p>"
+                },
+                {
+                    "header": "Step 10",
+                    "html": "<p>If you receive a message after step 9 stating that there were no records matching the query, try repeatinging steps 7, 8, and 9, but using a higher value for buffer width in step 7.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Walkthrough: Loading Occurrence Data Within a U.S. County",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>In this walkthrough we will use <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a> to load US county data onto the map. We will then find all occurrence records that occur within a selected county.</p><p><b>This walkthrough uses external county data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Download the US county shapefile from the <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the COUNTY directory of their <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/\" target=\"_blank\">FTP Archive</a>. You can also <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/COUNTY/tl_2021_us_county.zip\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Drag and drop the entire shapefile zip file downloaded in step 1 over the map to load the US county data onto the map.</p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Once the US county data has been loaded, pan and adjust the zoom level of the map to view the county data. Hold the alt key (option key on Mac) and click on different county features to open an info popup showing all of the data for that county. You can click the x icon in the top-right corner of any info popup to close it.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>Identify a county on the map in which you know of occurrence records occurring. If you are unsure of how to do this, identify the county in which the location you identified in step 1 of Walkthrough #2 is located.</p>"
+                },
+                {
+                    "header": "Step 5",
+                    "html": "<p>Click once on the county feature you identified in the previous step to add it to the Shapes Layer. The newly added feature in the Shapes Layer should display over the original feature on the map.</p>"
+                },
+                {
+                    "header": "Step 6",
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 7",
+                    "html": "<p>Click once on the county feature you added to the Shapes Layer in step 5 to select it.</p>"
+                },
+                {
+                    "header": "Step 8",
+                    "html": "<p>Click on the Side Panel Toggle to open the Side Panel, click on Search Criteria to expand the Search Criteria Panel (if it isn't already expanded), and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring in the selected county. If you receive a message stating that there were no records matching the query, or if you wish to try search for occurrence records in a different county, proceed with the next steps.</p>"
+                },
+                {
+                    "header": "Step 9",
+                    "html": "<p>Click once on the county feature again to deselect it in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 10",
+                    "html": "<p>Select the US county data layer in the Active Layer Selector (this should be tl_2021_us_county if you downloaded the file specified in step 1) in the Main Control Panel to activate it.</p>"
+                },
+                {
+                    "header": "Step 11",
+                    "html": "<p>Repeat steps 5, 6, 7, and 8, but clicking on a different county feature in step 5.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Walkthrough: Using Intersect Tool",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>In this walkthrough we will use <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a> and <a class=\"tutorial-link\" href=\"https://www.sciencebase.gov/catalog/item/54244abde4b037b608f9e23d\" target=\"_blank\">ecoregion data from the USGS</a> to load US state and ecoregion data onto the map. Using the Intersect Tool we will create a feature representing a selected ecoregion in a selected state. We will then find all occurrence records that occur within the created feature.</p><p><b>This walkthrough uses external state and ecoregion data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Download the US state shapefile from the <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the STATE directory of their <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/\" target=\"_blank\">FTP Archive</a>. You can also <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/STATE/tl_2021_us_state.zip\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Download the <a class=\"tutorial-link\" href=\"https://www.sciencebase.gov/catalog/item/54244abde4b037b608f9e23d\" target=\"_blank\">Bailey's Ecoregions of the Conterminous United States shapefile from the USGS</a>. You can <a class=\"tutorial-link\" href=\"https://www.sciencebase.gov/catalog/file/get/54244abde4b037b608f9e23d?facet=Baileys_ecoregions_sgca\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Drag and drop the entire shapefile zip file downloaded in step 1 over the map to load the US state data onto the map.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>Once the US state data has been loaded, pan and adjust the zoom level of the map to view the state data better.</p>"
+                },
+                {
+                    "header": "Step 5",
+                    "html": "<p>Identify a state on the map in which you know of occurrence records occurring. If you are unsure of how to do this, identify the state in which the county you identified in step 4 of Walkthrough #3 is located.</p>"
+                },
+                {
+                    "header": "Step 6",
+                    "html": "<p>Click once on the state feature you identified in the previous step to add it to the Shapes Layer. The newly added feature in the Shapes Layer should display over the original feature on the map.</p>"
+                },
+                {
+                    "header": "Step 7",
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 8",
+                    "html": "<p>In the Layers Panel in the US state data layer added in step 3 (this should be titled tl_2021_us_state if you downloaded the file specified in step 1), click the Delete Layer button to remove that layer from the map.</p>"
+                },
+                {
+                    "header": "Step 9",
+                    "html": "<p>Close the Layers Panel by clicking close icon in the top-right corner of the panel.</p>"
+                },
+                {
+                    "header": "Step 10",
+                    "html": "<p>Drag and drop the entire shapefile zip file downloaded in step 2 over the map to load the Bailey's Ecoregion data onto the map.</p>"
+                },
+                {
+                    "header": "Step 11",
+                    "html": "<p>Identify an ecoregion on the map that overlaps the state you identified in step 5.</p>"
+                },
+                {
+                    "header": "Step 12",
+                    "html": "<p>Click once on the ecoregion feature you identified in the previous step to add it to the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 13",
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 14",
+                    "html": "<p>In the Layers Panel in the Bailey's Ecoregion data layer added in step 10 (this should be titled Baileys_ecoregions_sgca if you downloaded the file specified in step 2), click the Delete Layer button to remove that layer from the map.</p>"
+                },
+                {
+                    "header": "Step 15",
+                    "html": "<p>Close the Layers Panel by clicking close icon in the top-right corner of the panel.</p>"
+                },
+                {
+                    "header": "Step 16",
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 17",
+                    "html": "<p>Click once on the state and ecoregion features you added to the Shapes Layer in steps 6 and 12 to select them.</p>"
+                },
+                {
+                    "header": "Step 18",
+                    "html": "<p>Click on the Side Panel Toggle to open the Side Panel, click on Vector Tools to expand the Vector Tools Panel, and then click on the Shapes Tab to select it (if it isn't already).</p>"
+                },
+                {
+                    "header": "Step 19",
+                    "html": "<p>In the Intersect Tool in the Shapes Tab, click the Intersect button to create an intersect feature of the two selected features.</p>"
+                },
+                {
+                    "header": "Step 20",
+                    "html": "<p>Click the Delete Selected Features button in the Shapes Tab to remove the state and ecoregion features, leaving only the new intersect features created in the previous step.</p>"
+                },
+                {
+                    "header": "Step 21",
+                    "html": "<p>Click once on the intersect feature to select it in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 22",
+                    "html": "<p>Click on Search Criteria in the Side Panel to expand the Search Criteria Panel, and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring within the intersect polygon.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Walkthrough: Using Vector Tools",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>In this walkthrough we will use <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a> and <a class=\"tutorial-link\" href=\"https://worldclim.org/data/worldclim21.html\" target=\"_blank\">raster elevation data from WorldClim</a> to load US state and elevation data onto the map. Using the Data-Based Vectorize and Grid-Based Vectorize Tools, we will create vector features representing an elevation range in a selected state. We will then find all occurrence records that occur within each created vector feature.</p><p><b>This walkthrough uses external state data for the United States, and so requires occurrence data to exist occurring within the United States as well. Variations of this walkthrough can be can be completed using equivalent data for other countries.</b></p>"
+                },
+                {
+                    "header": "Step 1",
+                    "html": "<p>Download the US state shapefile from the <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a>. This can be found in the STATE directory of their <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/\" target=\"_blank\">FTP Archive</a>. You can also <a class=\"tutorial-link\" href=\"https://www2.census.gov/geo/tiger/TIGER2021/STATE/tl_2021_us_state.zip\">click this link to download it directly</a>. <b>Be sure to note the location the file is downloaded on your computer.</b></p>"
+                },
+                {
+                    "header": "Step 2",
+                    "html": "<p>Download the <a class=\"tutorial-link\" href=\"https://worldclim.org/data/worldclim21.html\" target=\"_blank\">5 minutes Elevation raster data from WorldClim</a>. You can <a class=\"tutorial-link\" href=\"https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/wc2.1_5m_elev.zip\">click this link to download it directly</a>. This file will download as a zip archive. Once downloaded, unzip the archive to access the tif file it contains. <b>Be sure to note the location of the unzipped tif file on your computer.</b></p>"
+                },
+                {
+                    "header": "Step 3",
+                    "html": "<p>Drag and drop the entire shapefile zip file downloaded in step 1 over the map to load the US state data onto the map.</p>"
+                },
+                {
+                    "header": "Step 4",
+                    "html": "<p>Once the US state data has been loaded, pan and adjust the zoom level of the map to view the state data better.</p>"
+                },
+                {
+                    "header": "Step 5",
+                    "html": "<p>If you went through Walkthrough #4 and wish to use the same state identified in step 5 of that walkthrough, proceed to the next step. If not, identify a state on the map in which you know of occurrence records occurring. If you are unsure of how to do this, identify the state in which the county you identified in step 4 of Walkthrough #3 is located.</p>"
+                },
+                {
+                    "header": "Step 6",
+                    "html": "<p>Click once on the state feature you identified in the previous step to add it to the Shapes Layer. The newly added feature in the Shapes Layer should display over the original feature on the map.</p>"
+                },
+                {
+                    "header": "Step 7",
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 8",
+                    "html": "<p>In the Layers Panel in the US state data layer added in step 3 (this should be titled tl_2021_us_state if you downloaded the file specified in step 1), click the Delete Layer button to remove that layer from the map.</p>"
+                },
+                {
+                    "header": "Step 9",
+                    "html": "<p>Close the Layers Panel by clicking close icon in the top-right corner of the panel.</p>"
+                },
+                {
+                    "header": "Step 10",
+                    "html": "<p>Click on the Side Panel Toggle to open the Side Panel, click on Vector Tools to expand the Vector Tools Panel, select either KML or GeoJSON in the Vector Tools Panel, and click the Download button to download the selected state feature to a file. <b>Be sure to note the location the file is downloaded on your computer ecause we will be using it later in this walkthrough.</b></p>"
+                },
+                {
+                    "header": "Step 11",
+                    "html": "<p>Drag and drop the file downloaded in step 2 over the map to load the elevation data onto the map.</p>"
+                },
+                {
+                    "header": "Step 12",
+                    "html": "<p>Once the elevation data has been loaded, pan and adjust the zoom level of the map so that you can easily see the state feature you added to the Shapes Layer in step 6, which should display over the elevation data.</p>"
+                },
+                {
+                    "header": "Step 13",
+                    "html": "<p>While holding the alt key (option key on Mac), click on different areas within the state feature to open an info popup showing the elevation value (elevation values are in meters). You can click the x icon in the top-right corner of any info popup to close it.</p>"
+                },
+                {
+                    "header": "Step 14",
+                    "html": "<p>Identifiy low and high elevation values that you would like to use in the vectorization process. This process will create vector features representing all areas that are within the low and high elevation range that you identify.</p>"
+                },
+                {
+                    "header": "Step 15",
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 16",
+                    "html": "<p>Click once on the state feature you added to the Shapes Layer in step 6 to select it.</p>"
+                },
+                {
+                    "header": "Step 17",
+                    "html": "<p>Click on Raster Tools in the Side Panel to expand the Raster Tools Panel.</p>"
+                },
+                {
+                    "header": "Step 18",
+                    "html": "<p>Select the elevation data layer in the Target Raster Layer Selector in the Raster Tools Panel (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
+                },
+                {
+                    "header": "Step 19",
+                    "html": "<p>In the Data-Based Vectorize Tool in the Raster Tools Panel, enter the low and high elevation values you identified in step 14 into the approprite boxes.</p>"
+                },
+                {
+                    "header": "Step 20",
+                    "html": "<p>In the Data-Based Vectorize Tool, click the Data-Based Vectorize button to create vector features of all areas within the state feature you selected that are within the low and high elevation values you entered. <b>Ignore any browser popup warnings about the page being unresponsive, the process takes a while, but will complete on its own.</b></p><p>The Data-Based Vectorize Tool can vectorize raster data quickly, but can be less accuarte in its processing of larger rasters, such as this one. We will vectorize first using this tool, and then try the Grid-Based Vectorize Tool to see how the two compare.</p>"
+                },
+                {
+                    "header": "Step 21",
+                    "html": "<p>Once the vectorization process is complete, click on Vector Tools in the Side Panel to expand the Vector Tools Panel, and then click the Delete Selected Features button in the Shapes Tab to remove the state feature, leaving only the new feature created in the vectorization process.</p>"
+                },
+                {
+                    "header": "Step 22",
+                    "html": "<p>Select the elevation data layer in the Active Layer Selector in the Main Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
+                },
+                {
+                    "header": "Step 23",
+                    "html": "<p>While holding the alt key (option key on Mac), click on different areas within the new feature to open an info popup showing the elevation value (elevation values are in meters). You can click the x icon in the top-right corner of any info popup to close it. Note how well (or not) the vectorization process was at vectorizing the value range you had specified.</p>"
+                },
+                {
+                    "header": "Step 24",
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
+                },
+                {
+                    "header": "Step 25",
+                    "html": "<p>In the Layers Panel in the elevation data layer (this should be titled wc21_5m_elev if you downloaded the file specified in step 2), click the Delete Layer button to remove that layer from the map.</p>"
+                },
+                {
+                    "header": "Step 26",
+                    "html": "<p>Close the Layers Panel by clicking close icon in the top-right corner of the panel.</p>"
+                },
+                {
+                    "header": "Step 27",
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 28",
+                    "html": "<p>Click once on the new feature to select it.</p>"
+                },
+                {
+                    "header": "Step 29",
+                    "html": "<p>Click on Search Criteria in the Side Panel to expand the Search Criteria Panel, and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring within the new feature.</p>"
+                },
+                {
+                    "header": "Step 30",
+                    "html": "<p>Click on Search Criteria in the Side Panel to expand the Search Criteria Panel again, and then click the Reset button, in either the Criteria or Collections Tab (whichever is selected) to reset the map back to its default state.</p>"
+                },
+                {
+                    "header": "Step 31",
+                    "html": "<p>Drag and drop the file downloaded in step 2 over the map to load the elevation data onto the map again.</p>"
+                },
+                {
+                    "header": "Step 32",
+                    "html": "<p>Drag and drop the file downloaded in step 10 over the map to load the state feature onto the map again.</p>"
+                },
+                {
+                    "header": "Step 33",
+                    "html": "<p>Click on the Side Panel Toggle to open the Side Panel, click on Raster Tools in the Side Panel to expand the Raster Tools Panel.</p>"
+                },
+                {
+                    "header": "Step 34",
+                    "html": "<p>Select the elevation data layer in the Target Raster Layer Selector in the Raster Tools Panel (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
+                },
+                {
+                    "header": "Step 35",
+                    "html": "<p>In the Grid-Based Vectorize Tool in the Raster Tools Panel, enter the low and high elevation values you identified in step 14 into the approprite boxes and select 250 for the resolution in meters.</p>"
+                },
+                {
+                    "header": "Step 36",
+                    "html": "<p>In the Grid-Based Vectorize Tool in the Raster Tools Panel, click the Display Target Box button to display the target polygon on the map.</p>"
+                },
+                {
+                    "header": "Step 37",
+                    "html": "<p>Click and drag the target polygon on the map so that it covers as much of the state feature as possible, any vectorization that happens outside of the state feature will be removed at a later step.</p>"
+                },
+                {
+                    "header": "Step 38",
+                    "html": "<p>Once the target polygon is positioned, in the Grid-Based Vectorize Tool, click the Grid-Based Vectorize button to create vector features of all areas within the target polygon that are within the low and high elevation values you entered. <b>Ignore any browser popup warnings about the page being unresponsive, the process takes a while, but will complete on its own.</b></p><p>The Grid-Based Vectorize Tool is slower, depending on the resolution selected, at vectorizing, but offers a much higher level of accuracy.</p>"
+                },
+                {
+                    "header": "Step 39",
+                    "html": "<p>Once the vectorization process is complete, select the elevation data layer in the Active Layer Selector in the Main Control Panel to activate it (this should be wc21_5m_elev if you downloaded the file specified in step 2).</p>"
+                },
+                {
+                    "header": "Step 40",
+                    "html": "<p>While holding the alt key (option key on Mac), click on different areas within the new feature to open an info popup showing the elevation value (elevation values are in meters). You can click the x icon in the top-right corner of any info popup to close it. Note how well (or not) the vectorization process was at vectorizing the value range you had specified.</p>"
+                },
+                {
+                    "header": "Step 41",
+                    "html": "<p>Repeat steps 37 and 38, repositioning the target polygon over different areas of the state feature until the entire area of the state feature (and any additional area) has been vectorized.</p>"
+                },
+                {
+                    "header": "Step 42",
+                    "html": "<p>Once the entire area of the state feature has been vectorized, in the Grid-Based Vectorize Tool in the Raster Tools Panel, click the Hide Target Box button to remove the target polygon from the map.</p>"
+                },
+                {
+                    "header": "Step 43",
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 44",
+                    "html": "<p>Click once on each the new features created from the vectorization process to select all of them.</p>"
+                },
+                {
+                    "header": "Step 45",
+                    "html": "<p>Click on Vector Tools in the Side Panel to expand the Vector Tools Panel, click on the Shapes Tab to select it (if it isn't already), and then click the Union button in the Union Tool to combine all of the selected features into one.</p>"
+                },
+                {
+                    "header": "Step 46",
+                    "html": "<p>Select state feature layer that you added to the map in step 32 in the Active Layer Selector in the Main Control Panel to activate it. It will be named the same as the filename in the Active Layer Selector.</p>"
+                },
+                {
+                    "header": "Step 47",
+                    "html": "<p>Click once on the state feature to add it to the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 48",
+                    "html": "<p>Select Shapes in the Active Layer Selector in the Main Control Panel to activate the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 49",
+                    "html": "<p>Click once on the state feature and the combined vectorization feature to select them both in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 50",
+                    "html": "<p>In the Intersect Tool in the Shapes Tab, click the Intersect button to create an intersect feature of the state and combined vectorization features.</p>"
+                },
+                {
+                    "header": "Step 51",
+                    "html": "<p>Click the Delete Selected Features button in the Shapes Tab to remove the state and combined vectorization features, leaving only the new intersect features created in the previous step.</p>"
+                },
+                {
+                    "header": "Step 52",
+                    "html": "<p>Click once on the intersect feature to select it in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Step 53",
+                    "html": "<p>Click on Search Criteria in the Side Panel to expand the Search Criteria Panel, and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring within the intersect polygon.</p>"
+                }
+            ]
+        }
+    ]
+}

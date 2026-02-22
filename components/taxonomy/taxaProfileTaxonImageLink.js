@@ -1,27 +1,30 @@
 const taxaProfileTaxonImageLink = {
-    props: [
-        'taxon'
-    ],
     template: `
         <div class="all-images-link-frame">
-            <q-card>
+            <q-card role="button" class="taxon-profile-image-link-card cursor-pointer" @click="openImageSearch();" @keyup.enter="openImageSearch();" aria-label="View all images - opens in separate tab" tabindex="0">
                 <div class="all-images-link">
-                    <span class="cursor-pointer" @click="openImageSearch();">View All {{ taxon.imageCnt }} Images</span>
+                    View All {{ taxaImageCount }} Images
                 </div>
             </q-card>
         </div>
     `,
-    methods: {
-        openImageSearch(){
-            let taxonType;
-            if(Number(this.taxon['rankId']) < 140){
-                taxonType = 4;
-            }
-            else{
-                taxonType = 2;
-            }
-            const url = CLIENT_ROOT + '/imagelib/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"' + taxonType + '","taxa":"' + this.taxon['sciName'].replaceAll("'",'%squot;') + '"}';
+    setup() {
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const clientRoot = baseStore.getClientRoot;
+        const taxaImageCount = Vue.computed(() => taxaStore.getTaxaImageCount);
+        const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+
+        function openImageSearch() {
+            const url = clientRoot + '/media/search.php?imagedisplay=thumbnail&submitaction=Load Images&starr={"imagetype":"all","usethes":true,"taxontype":"4","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}';
             window.open(url, '_blank');
+        }
+
+        return {
+            taxaImageCount,
+            taxon,
+            openImageSearch
         }
     }
 };

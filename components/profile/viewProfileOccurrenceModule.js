@@ -1,19 +1,22 @@
 const viewProfileOccurrenceModule = {
-    props: {
-        accountInfo: {
-            type: Object,
-            default: null
-        }
-    },
     template: `
         <template v-if="collectionArr.length > 0">
-            <q-list bordered class="rounded-borders q-mt-md">
-                <template v-for="collection in collectionArr">
-                    <q-expansion-item expand-separator group="collectionGroup" :label="collection.label" header-class="text-h6">
-                        <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collection.collid" :coll-type="collection.colltype" :occ-count="collection.occCount" :coll-access-level="collection.accesslevel"></collection-cotrol-panel-menus>
-                    </q-expansion-item>
-                </template>
-            </q-list>
+            <template v-if="collectionArr.length > 1">
+                <q-list bordered class="rounded-borders q-mt-md">
+                    <template v-for="collection in collectionArr">
+                        <q-expansion-item expand-separator group="collectionGroup" :label="collection.label" header-class="text-h6">
+                            <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collection.collid" :collection-type="collection.colltype" :collection-permissions="collection.collectionpermissions"></collection-cotrol-panel-menus>
+                        </q-expansion-item>
+                    </template>
+                </q-list>
+            </template>
+            <template v-else>
+                <q-card class="q-mt-md">
+                    <q-card-section>
+                        <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collectionArr[0].collid" :collection-type="collectionArr[0].colltype" :collection-permissions="collectionArr[0].collectionpermissions"></collection-cotrol-panel-menus>
+                    </q-card-section>
+                </q-card>
+            </template>
         </template>
         <template v-else>
             <q-card class="q-mt-md">
@@ -24,38 +27,27 @@ const viewProfileOccurrenceModule = {
         </template>
         <q-card class="q-mt-md">
             <q-card-section class="text-h6">
-                <a :href="(clientRoot + '/collections/datasets/index.php')">
+                <a :href="(clientRoot + '/collections/datasets/index.php')" aria-label="Dataset Management" tabindex="0">
                     Dataset Management
                 </a>
             </q-card-section>
         </q-card>
     `,
-    data() {
-        return {
-            clientRoot: Vue.ref(CLIENT_ROOT),
-            collectionArr: Vue.ref([])
-        }
-    },
     components: {
         'collection-cotrol-panel-menus': collectionControlPanelMenus
     },
-    mounted() {
-        this.setAccountCollections();
-    },
-    methods: {
-        setAccountCollections(){
-            const formData = new FormData();
-            formData.append('uid', this.uid);
-            formData.append('action', 'getAccountCollections');
-            fetch(profileApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                response.json().then((resObj) => {
-                    this.collectionArr = resObj;
-                });
-            });
+    setup() {
+        const baseStore = useBaseStore();
+        const userStore = useUserStore();
+
+        const accountInfo = Vue.computed(() => userStore.getUserData);
+        const clientRoot = baseStore.getClientRoot;
+        const collectionArr = Vue.computed(() => userStore.getCollectionArr);
+
+        return {
+            accountInfo,
+            clientRoot,
+            collectionArr
         }
     }
 };

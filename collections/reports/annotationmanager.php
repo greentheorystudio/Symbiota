@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceLabel.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = (int)$_REQUEST['collid'];
@@ -33,14 +33,15 @@ if($isEditor){
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Print Annotation Labels</title>
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Manage Annotations</title>
+    <meta name="description" content="Manage annotations for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
-    <script>
+    <script type="text/javascript">
         function selectAllAnno(cb){
             let boxesChecked = true;
             if(!cb.checked){
@@ -75,8 +76,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
         function openPopup(urlStr){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-                wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+                wWidth = document.getElementById('main-container').offsetWidth*1.05;
             }
             else if(document.body.offsetWidth){
                 wWidth = document.body.offsetWidth*0.9;
@@ -98,19 +99,19 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div class='navpath'>
-    <a href='../../index.php'>Home</a> &gt;&gt;
-    <?php
-    if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), 'observation') !== false){
-        echo '<a href="../../profile/viewprofile.php?tabindex=1">Personal Management Menu</a> &gt;&gt; ';
-    }
-    else{
-        echo '<a href="../misc/collprofiles.php?collid='.$collid.'&emode=1">Collection Control Panel</a> &gt;&gt; ';
-    }
-    ?>
-    <b>Print Annotation Labels</b>
-</div>
-<div id="innertext">
+<div id="mainContainer" style="padding: 10px 15px 15px;">
+    <div id="breadcrumbs">
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="0">Home</a> &gt;&gt;
+        <?php
+        if(stripos(strtolower($datasetManager->getMetaDataTerm('colltype')), 'observation') !== false){
+            echo '<a href="../../profile/viewprofile.php?tabindex=1" tabindex="0">Personal Management Menu</a> &gt;&gt; ';
+        }
+        else{
+            echo '<a href="../misc/collprofiles.php?collid='.$collid.'" tabindex="0">Collection Control Panel</a> &gt;&gt; ';
+        }
+        ?>
+        <b>Print Annotation Labels</b>
+    </div>
     <?php
     if($isEditor){
         $reportsWritable = false;
@@ -234,8 +235,8 @@ include(__DIR__ . '/../../header.php');
     ?>
 </div>
 <?php
-include(__DIR__ . '/../../footer.php');
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

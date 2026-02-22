@@ -1,7 +1,7 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/SOLRManager.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
+include_once(__DIR__ . '/../services/SOLRService.php');
 
 class OccurrenceMaintenance {
 
@@ -16,7 +16,7 @@ class OccurrenceMaintenance {
 			$this->destructConn = false;
 		}
 		else{
-            $connection = new DbConnection();
+            $connection = new DbService();
 		    $this->conn = $connection->getConnection();
 		}
 	}
@@ -139,9 +139,9 @@ class OccurrenceMaintenance {
 		$rs2->free();
 		
 		if($sensitiveArr){
-			$sql2 = 'UPDATE omoccurrences '.
-				'SET localitySecurity = 1 '.
-				'WHERE (ISNULL(localitySecurity) OR localitySecurity = 0) AND ISNULL(localitySecurityReason) AND tid IN('.implode(',',$sensitiveArr).') ';
+			$sql2 = 'UPDATE omoccurrences AS o LEFT JOIN taxa AS t ON o.tid = t.TID '.
+				'SET o.localitySecurity = 1 '.
+				'WHERE ISNULL(o.localitySecurityReason) AND t.tidaccepted IN('.implode(',',$sensitiveArr).') ';
 			if(!$this->conn->query($sql2)){
 				$errStr = 'WARNING: unable to protect globally rare species.';
 				$this->errorArr[] = $errStr;
@@ -163,7 +163,7 @@ class OccurrenceMaintenance {
 		$sql = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid '.
 			'INNER JOIN fmchecklists AS c ON o.stateprovince = c.locality '.
 			'INNER JOIN fmchklsttaxalink AS cl ON c.clid = cl.clid AND t.tidaccepted = cl.tid '.
-			'WHERE (ISNULL(o.localitysecurity) OR o.localitysecurity = 0) AND ISNULL(o.localitySecurityReason) AND c.type = "rarespp" ';
+			'WHERE ISNULL(o.localitySecurityReason) AND c.type = "rarespp" ';
 		if($collid) {
 			$sql .= ' AND o.collid IN(' . $collid . ') ';
 		}
@@ -239,26 +239,12 @@ class OccurrenceMaintenance {
 			if($this->verbose) {
 				$this->outputMsg('Calculating genetic resources counts... ', 1);
 			}
-			$sql = 'SELECT COUNT(CASE WHEN g.resourceurl LIKE "http://www.boldsystems%" THEN o.occid ELSE NULL END) AS boldcnt, '.
-				'COUNT(CASE WHEN g.resourceurl LIKE "http://www.ncbi%" THEN o.occid ELSE NULL END) AS gencnt '.
+			$sql = 'SELECT COUNT(DISTINCT o.occid) AS gencnt '.
 				'FROM omoccurrences AS o INNER JOIN omoccurgenetic AS g ON o.occid = g.occid '.
-				'WHERE o.collid IN('.$collid.') ';
+				'WHERE o.collid IN('.$collid.') AND g.idoccurgenetic IS NOT NULL ';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
-				$statsArr['boldcnt'] = $r->boldcnt;
 				$statsArr['gencnt'] = $r->gencnt;
-			}
-			$rs->free();
-
-			if($this->verbose) {
-				$this->outputMsg('Calculating reference counts... ', 1);
-			}
-			$sql = 'SELECT count(r.occid) AS refcnt '.
-				'FROM omoccurrences AS o INNER JOIN referenceoccurlink AS r ON o.occid = r.occid '.
-				'WHERE o.collid IN('.$collid.') ';
-			$rs = $this->conn->query($sql);
-			if($r = $rs->fetch_object()){
-				$statsArr['refcnt'] = $r->refcnt;
 			}
 			$rs->free();
 
@@ -273,7 +259,7 @@ class OccurrenceMaintenance {
 				'GROUP BY o.family ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$family = str_replace(array('"',"'"), '',$r->family);
+				$family = $r->family ? str_replace(array('"',"'"), '',$r->family) : '';
 				if($family){
 					$statsArr['families'][$family]['SpecimensPerFamily'] = $r->SpecimensPerFamily;
 					$statsArr['families'][$family]['GeorefSpecimensPerFamily'] = $r->GeorefSpecimensPerFamily;
@@ -294,7 +280,7 @@ class OccurrenceMaintenance {
 				'GROUP BY o.country ';
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$country = str_replace(array('"',"'"), '',$r->country);
+				$country = $r->country ? str_replace(array('"',"'"), '',$r->country) : '';
 				if($country){
 					$statsArr['countries'][$country]['CountryCount'] = $r->CountryCount;
 					$statsArr['countries'][$country]['GeorefSpecimensPerCountry'] = $r->GeorefSpecimensPerCountry;
@@ -306,7 +292,7 @@ class OccurrenceMaintenance {
 
 			$returnArrJson = json_encode($statsArr);
 			$sql = 'UPDATE omcollectionstats '.
-				"SET dynamicProperties = '".Sanitizer::cleanInStr($this->conn,$returnArrJson)."' ".
+				"SET dynamicProperties = '".SanitizerService::cleanInStr($this->conn,$returnArrJson)."' ".
 				'WHERE collid IN('.$collid.') ';
 			if(!$this->conn->query($sql)){
 				$errStr = 'WARNING: unable to update collection stats table [1].';
@@ -347,7 +333,7 @@ class OccurrenceMaintenance {
 			}
 		}
 		if($GLOBALS['SOLR_MODE']){
-            $solrManager = new SOLRManager();
+            $solrManager = new SOLRService();
             $solrManager->updateSOLR();
         }
 		return true;

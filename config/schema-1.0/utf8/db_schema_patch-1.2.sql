@@ -1,6 +1,3 @@
-ALTER TABLE `adminlanguages`
-    ADD COLUMN `ISO 639-3` varchar(3) NULL AFTER `iso639_2`;
-
 CREATE TABLE `configurations`
 (
     `id`                    int(11) NOT NULL AUTO_INCREMENT,
@@ -103,7 +100,7 @@ UPDATE omoccuredits e INNER JOIN (SELECT initialtimestamp, uid, count (DISTINCT 
     FROM omoccuredits
     GROUP BY initialtimestamp, uid
     HAVING cnt > 2) as inntab
-ON e.initialtimestamp = inntab.initialtimestamp AND e.uid = inntab.uid
+    ON e.initialtimestamp = inntab.initialtimestamp AND e.uid = inntab.uid
     SET edittype = 1;
 
 ALTER TABLE `omoccurgenetic`
@@ -174,14 +171,6 @@ ALTER TABLE `omoccurrences`
     ADD INDEX `Index_occur_localitySecurity`(`localitySecurity`),
     ADD INDEX `Index_latlng`(`decimalLatitude`, `decimalLongitude`),
     ADD INDEX `Index_ labelProject`(`labelProject`);
-
-REPLACE
-omoccurrencesfulltext(occid,locality,recordedby)
-SELECT occid, CONCAT_WS("; ", municipality, locality), recordedby
-FROM omoccurrences;
-
-ALTER TABLE `referenceobject`
-    CHANGE COLUMN `numbervolumnes` `numbervolumes` varchar (45) NULL DEFAULT NULL AFTER `volume`;
 
 CREATE TABLE `taxonkingdoms`
 (
@@ -436,28 +425,7 @@ VALUES (1, 10, 'Kingdom', 10, 10),
        (7, 180, 'Genus', 170, 140),
        (7, 190, 'Subgenus', 180, 180),
        (7, 220, 'Species', 190, 180),
-       (7, 230, 'Subspecies', 220, 180),
-       (100, 10, 'Kingdom', 10, 10),
-       (100, 20, 'Subkingdom', 10, 10),
-       (100, 30, 'Phylum', 20, 10),
-       (100, 40, 'Subphylum', 30, 30),
-       (100, 50, 'Superclass', 40, 30),
-       (100, 60, 'Class', 50, 30),
-       (100, 70, 'Subclass', 60, 60),
-       (100, 80, 'Infraclass', 70, 60),
-       (100, 90, 'Superorder', 80, 60),
-       (100, 100, 'Order', 90, 60),
-       (100, 110, 'Suborder', 100, 100),
-       (100, 120, 'Infraorder', 110, 100),
-       (100, 130, 'Superfamily', 120, 100),
-       (100, 140, 'Family', 130, 100),
-       (100, 150, 'Subfamily', 140, 140),
-       (100, 160, 'Tribe', 150, 140),
-       (100, 170, 'Subtribe', 160, 140),
-       (100, 180, 'Genus', 170, 140),
-       (100, 190, 'Subgenus', 180, 180),
-       (100, 220, 'Species', 190, 180),
-       (100, 230, 'Subspecies', 220, 180);
+       (7, 230, 'Subspecies', 220, 180);
 
 SET
 FOREIGN_KEY_CHECKS = 1;
@@ -512,10 +480,6 @@ CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH
     END IF;
 END;
 
-CREATE TRIGGER `uploadspectemp_delete` BEFORE DELETE ON `uploadspectemp` FOR EACH ROW BEGIN
-    DELETE FROM uploadspectemppoints WHERE `upspid` = OLD.`upspid`;
-END;
-
 ALTER TABLE `uploadtaxa`
     DROP INDEX `UNIQUE_sciname` ,
     ADD COLUMN `kingdomId` int(11) NULL AFTER `Family`,
@@ -549,7 +513,7 @@ WHERE t2.RankId = 10 AND e.taxauthid = 1 AND (t.kingdomid = 100);
 ALTER TABLE `users`
     ADD COLUMN `username` varchar(45) NOT NULL AFTER `lastname`,
   ADD COLUMN `password` varchar(255) NOT NULL AFTER `username`,
-  ADD COLUMN `lastlogindate` datetime AFTER `usergroups`;
+  ADD COLUMN `lastlogindate` datetime AFTER `validated`;
 
 UPDATE users AS u LEFT JOIN userlogin AS ul
 ON u.uid = ul.uid

@@ -1,21 +1,13 @@
 const taxaProfileTaxonVernaculars = {
-    props: [
-        'vernaculars'
-    ],
-    watch: {
-        vernaculars: function(){
-            this.processVernaculars();
-        }
-    },
     template: `
-        <template v-if="vernaculars.length">
-            <div id="vernaculars">
-                <template v-if="vernaculars.length > 1">
+        <template v-if="vernacularArr.length">
+            <div>
+                <template v-if="vernacularArr.length > 1">
                     <template v-if="!showAll">
-                        {{ firstVernacular }}<span @click="showAll = true" class="cursor-pointer" title="Click here to show more common names">&nbsp;&nbsp;[more...]</span>
+                        {{ firstVernacular }}<span role="button" @click="showAll = true" class="cursor-pointer" aria-label="Click here to show more common names" tabindex="0">&nbsp;&nbsp;[more...]</span>
                     </template>
                     <template v-else>
-                        {{ vernacularStr }}<span @click="showAll = false" class="cursor-pointer" title="Click here to show less common names">&nbsp;&nbsp;[less]</span>
+                        {{ vernacularStr }}<span role="button" @click="showAll = false" class="cursor-pointer" aria-label="Click here to show less common names" tabindex="0">&nbsp;&nbsp;[less]</span>
                     </template>
                 </template>
                 <template v-else>
@@ -24,23 +16,31 @@ const taxaProfileTaxonVernaculars = {
             </div>
         </template>
     `,
-    data() {
-        return {
-            vernacularStr: Vue.ref(null),
-            firstVernacular: Vue.ref(null),
-            loaded: Vue.ref(false),
-            showAll: Vue.ref(false)
-        };
-    },
-    mounted(){
-        this.processVernaculars();
-    },
-    methods: {
-        processVernaculars() {
-            if(this.vernaculars.length > 0){
-                this.firstVernacular = this.vernaculars[0];
-                this.vernacularStr = this.vernaculars.join(', ');
+    setup() {
+        const taxaStore = useTaxaStore();
+
+        const firstVernacular = Vue.computed(() => {
+            let firstVern = null;
+            if(vernacularArr.value.length > 0){
+                firstVern = vernacularArr.value[0]['vernacularname'];
             }
+            return firstVern;
+        });
+        const showAll = Vue.ref(false);
+        const vernacularArr = Vue.computed(() => taxaStore.getTaxaVernacularArr);
+        const vernacularStr = Vue.computed(() => {
+            const vernArr = [];
+            vernacularArr.value.forEach((vern) => {
+                vernArr.push(vern['vernacularname']);
+            });
+            return vernArr.join(', ');
+        });
+
+        return {
+            firstVernacular,
+            showAll,
+            vernacularArr,
+            vernacularStr
         }
     }
 };

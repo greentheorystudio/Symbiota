@@ -1,12 +1,18 @@
 const taxaProfileTaxonFamily = {
-    props: [
-        'taxon'
-    ],
     template: `
-        <template v-if="taxon.rankId > 140 && taxon.family">
-            <div id="family">
-                <span class="text-weight-bold">Family:</span> {{ taxon.family }}
+        <template v-if="taxon.rankid > 140 && taxon.family">
+            <div>
+                <span class="text-bold">Family:</span> {{ taxon.family }}
             </div>
         </template>
-    `
+    `,
+    setup() {
+        const taxaStore = useTaxaStore();
+
+        const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+
+        return {
+            taxon
+        }
+    }
 };

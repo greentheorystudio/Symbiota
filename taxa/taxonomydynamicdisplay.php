@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 ?>
 <!DOCTYPE html>
@@ -10,8 +10,10 @@ header('X-Frame-Options: SAMEORIGIN');
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomy Explorer</title>
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <meta name="description" content="Taxonomy explorer for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .target-taxon-card {
                 width: 50%;
@@ -35,199 +37,225 @@ header('X-Frame-Options: SAMEORIGIN');
                 font-style: italic;
             }
         </style>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     </head>
     <body>
-    <?php
-    include(__DIR__ . '/../header.php');
-    ?>
-    <div class="navpath">
-        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-        <a href="taxonomydynamicdisplay.php"><b>Taxonomy Explorer</b></a>
-    </div>
-    <div id="innertext">
-        <q-card class="target-taxon-card">
-            <q-card-section>
-                <div class="q-my-sm">
-                    <single-scientific-common-name-auto-complete :sciname="targetTaxon" :disable="loading" label="Find a taxon" limit-to-thesaurus="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
-                </div>
-                <div class="button-div">
-                    <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense />
-                </div>
-                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                <div class="q-my-sm">
-                    <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" />
-                </div>
-            </q-card-section>
-        </q-card>
-        <q-card class="q-my-md">
-            <q-card-section>
-                <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
-                    <template v-slot:default-header="prop">
-                        <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-if="prop.node.nodetype === 'child'">
-                            <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
+        <?php
+        include(__DIR__ . '/../header.php');
+        ?>
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <span class="text-bold">Taxonomy Explorer</span>
+            </div>
+            <div class="q-pa-md">
+                <q-card class="target-taxon-card">
+                    <q-card-section>
+                        <div class="q-my-sm">
+                            <single-scientific-common-name-auto-complete :sciname="(targetTaxon ? targetTaxon.sciname : null)" :disabled="loading" label="Find a taxon" :limit-to-options="true" rank-low="10" @update:sciname="updateTargetTaxon"></single-scientific-common-name-auto-complete>
                         </div>
-                        <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-else-if="prop.node.nodetype === 'synonym'">
-                            <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span>
+                        <div class="button-div">
+                            <q-btn :loading="loading" color="secondary" @click="initializeGetTargetTaxon();" label="Find Taxon" dense tabindex="0" />
                         </div>
-                    </template>
-                </q-tree>
-            </q-card-section>
-        </q-card>
-    </div>
-    <?php
-    include(__DIR__ . '/../footer.php');
-    include_once(__DIR__ . '/../config/footer-includes.php');
-    ?>
-    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=20230627" type="text/javascript"></script>
-    <script>
-        const taxonomyDynamicDisplayModule = Vue.createApp({
-            data() {
-                return {
-                    displayAuthors: Vue.ref(false),
-                    isEditor: Vue.ref(false),
-                    loading: Vue.ref(false),
-                    taxaNodes: Vue.ref([]),
-                    selectedTid: Vue.ref(null),
-                    targetFound: Vue.ref(false),
-                    targetTaxon: Vue.ref(null),
-                    targetTaxonPathArr: Vue.ref([])
-                }
-            },
-            components: {
-                'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
-            },
-            setup() {
-                let targetNodeRef = Vue.ref(null);
-                let treeRef = Vue.ref(null);
-                return {
-                    targetNodeRef,
-                    treeRef
-                }
-            },
-            mounted() {
-                this.setEditor();
-                this.setKingdomNodes();
-            },
-            methods: {
-                getTargetTaxonPath(){
-                    const formData = new FormData();
-                    formData.append('tid', this.selectedTid);
-                    formData.append('action', 'getTaxonomicTreeTaxonPath');
-                    fetch(taxonomyApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        response.json().then((resObj) => {
-                            this.targetTaxonPathArr = resObj;
-                            this.processTargetTaxonPath();
-                        });
-                    });
+                        <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
+                        <div class="q-my-sm">
+                            <q-checkbox v-model="displayAuthors" label="Show taxonomic authors" tabindex="0" />
+                        </div>
+                    </q-card-section>
+                </q-card>
+                <q-card class="q-my-md">
+                    <q-card-section>
+                        <q-tree ref="treeRef" v-model:selected="selectedTid" :nodes="taxaNodes" node-key="tid" selected-color="green" no-selection-unset @lazy-load="getTaxonChildren" @update:selected="processClick" @after-show="processTargetTaxonPath" @after-hide="processClose">
+                            <template v-slot:default-header="prop">
+                                <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-if="prop.node.nodetype === 'child'">
+                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <a role="button" @click="processClick(prop.node.tid, true);" :aria-label="( prop.node.sciname + ' taxon profile page page - Opens in separate tab')" tabindex="0"><span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors" class="taxon-node-author">{{ prop.node.author }}</span></a>
+                                </div>
+                                <div :ref="prop.node.tid === selectedTid ? 'targetNodeRef' : undefined" v-else-if="prop.node.nodetype === 'synonym'">
+                                    <span class="taxon-node-rankname">{{ prop.node.rankname }}</span> <a role="button" @click="processClick(prop.node.tid, true);" :aria-label="( prop.node.sciname + ' taxon profile page page - Opens in separate tab')" tabindex="0"><span class="taxon-node-author">[<span class="taxon-node-sciname">{{ prop.node.sciname }}</span> <span v-if="displayAuthors">{{ prop.node.author }}</span>]</span></a>
+                                </div>
+                            </template>
+                        </q-tree>
+                    </q-card-section>
+                </q-card>
+            </div>
+        </div>
+        <?php
+        include_once(__DIR__ . '/../config/footer-includes.php');
+        include(__DIR__ . '/../footer.php');
+        ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script type="text/javascript">
+            const taxonomyDynamicDisplayModule = Vue.createApp({
+                components: {
+                    'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
                 },
-                getTaxonChildren({ key, done }){
-                    const formData = new FormData();
-                    formData.append('tid', key);
-                    formData.append('action', 'getTaxonomicTreeChildNodes');
-                    fetch(taxonomyApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        response.json().then((resObj) => {
-                            done(resObj);
-                            this.processTargetTaxonPath();
+                setup() {
+                    const baseStore = useBaseStore();
+
+                    const clientRoot = baseStore.getClientRoot;
+                    const displayAuthors = Vue.ref(false);
+                    const isEditor = Vue.ref(false);
+                    const loading = Vue.ref(false);
+                    const selectedTid = Vue.ref(null);
+                    const targetFound = Vue.ref(false);
+                    const targetNodeRef = Vue.ref(null);
+                    const targetTaxon = Vue.ref(null);
+                    const targetTaxonPathArr = Vue.ref([]);
+                    const taxaNodes = Vue.ref([]);
+                    const treeRef = Vue.ref(null);
+
+                    function getTargetTaxonPath() {
+                        const formData = new FormData();
+                        formData.append('tid', selectedTid.value);
+                        formData.append('action', 'getTaxonomicTreeTaxonPath');
+                        fetch(taxonHierarchyApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resObj) => {
+                                targetTaxonPathArr.value = resObj;
+                                processTargetTaxonPath();
+                            });
                         });
-                    });
-                },
-                initializeGetTargetTaxon(){
-                    if(this.selectedTid){
-                        this.loading = true;
-                        this.targetFound = false;
-                        const openNodes = this.treeRef.getExpandedNodes();
-                        if(openNodes.length > 0){
-                            this.treeRef.collapseAll();
+                    }
+
+                    function getTaxonChildren({ key, done }) {
+                        const formData = new FormData();
+                        formData.append('tid', key);
+                        formData.append('action', 'getTaxonomicTreeChildNodes');
+                        fetch(taxonHierarchyApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resObj) => {
+                                done(resObj);
+                                processTargetTaxonPath();
+                            });
+                        });
+                    }
+
+                    function initializeGetTargetTaxon() {
+                        if(selectedTid.value){
+                            loading.value = true;
+                            targetFound.value = false;
+                            const openNodes = treeRef.value.getExpandedNodes();
+                            if(openNodes.length > 0){
+                                treeRef.value.collapseAll();
+                            }
+                            else{
+                                getTargetTaxonPath();
+                            }
+                        }
+                    }
+
+                    function processClick(tid, link = false) {
+                        if(tid){
+                            if(link){
+                                let url;
+                                if(isEditor.value){
+                                    url = clientRoot + '/taxa/taxonomy/index.php?tid=' + tid;
+                                }
+                                else{
+                                    url = clientRoot + '/taxa/index.php?taxon=' + tid;
+                                }
+                                window.open(url, '_blank');
+                            }
+                            else{
+                                const expanded = treeRef.value.isExpanded(tid);
+                                treeRef.value.setExpanded(tid, !expanded);
+                                selectedTid.value = null;
+                            }
+                        }
+                    }
+
+                    function processClose() {
+                        if(loading.value){
+                            const openNodes = treeRef.value.getExpandedNodes();
+                            if(openNodes.length === 0){
+                                getTargetTaxonPath();
+                            }
+                        }
+                    }
+
+                    function processTargetTaxonPath() {
+                        if(targetTaxonPathArr.value.length > 0 && treeRef.value.getNodeByKey(targetTaxonPathArr.value[0]['tid'])){
+                            treeRef.value.setExpanded(targetTaxonPathArr.value[0]['tid'],true);
+                            targetTaxonPathArr.value.splice(0, 1);
+                        }
+                        else if(selectedTid.value && targetNodeRef.value && !targetFound.value){
+                            targetNodeRef.value.scrollIntoView();
+                            targetFound.value = true;
+                            loading.value = false;
                         }
                         else{
-                            this.getTargetTaxonPath();
+                            loading.value = false;
                         }
                     }
-                },
-                processClick(tid){
-                    this.selectedTid = this.targetTaxon ? this.targetTaxon.tid : null;
-                    if(!tid){
-                        tid = this.selectedTid;
-                    }
-                    if(tid){
-                        let url;
-                        if(this.isEditor){
-                            url = CLIENT_ROOT + '/taxa/taxonomy/taxonomyeditor.php?tid=' + tid;
-                        }
-                        else{
-                            url = CLIENT_ROOT + '/taxa/index.php?taxon=' + tid;
-                        }
-                        window.open(url, '_blank');
-                    }
-                },
-                processClose(){
-                    if(this.loading){
-                        const openNodes = this.treeRef.getExpandedNodes();
-                        if(openNodes.length === 0){
-                            this.getTargetTaxonPath();
-                        }
-                    }
-                },
-                processTargetTaxonPath(){
-                    if(this.targetTaxonPathArr.length > 0 && this.treeRef.getNodeByKey(this.targetTaxonPathArr[0]['tid'])){
-                        this.treeRef.setExpanded(this.targetTaxonPathArr[0]['tid'],true);
-                        this.targetTaxonPathArr.splice(0, 1);
-                    }
-                    else if(this.selectedTid && this.targetNodeRef && !this.targetFound){
-                        this.targetNodeRef.scrollIntoView();
-                        this.targetFound = true;
-                        this.loading = false;
-                    }
-                    else{
-                        this.loading = false;
-                    }
-                },
-                setEditor(){
-                    const formData = new FormData();
-                    formData.append('permission', 'Taxonomy');
-                    formData.append('action', 'validatePermission');
-                    fetch(profileApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        response.text().then((res) => {
-                            this.isEditor = Number(res) === 1;
+
+                    function setEditor() {
+                        const formData = new FormData();
+                        formData.append('permission', 'Taxonomy');
+                        formData.append('action', 'validatePermission');
+                        fetch(permissionApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resData) => {
+                                isEditor.value = resData.includes('Taxonomy');
+                            });
                         });
-                    });
-                },
-                setKingdomNodes(){
-                    const formData = new FormData();
-                    formData.append('action', 'getTaxonomicTreeKingdomNodes');
-                    fetch(taxonomyApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        response.json().then((resObj) => {
-                            this.taxaNodes = resObj;
+                    }
+
+                    function setKingdomNodes() {
+                        const formData = new FormData();
+                        formData.append('action', 'getTaxonomicTreeKingdomNodes');
+                        fetch(taxonHierarchyApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            response.json().then((resObj) => {
+                                taxaNodes.value = resObj;
+                            });
                         });
+                    }
+
+                    function updateTargetTaxon(taxonObj) {
+                        targetTaxonPathArr.value = [];
+                        targetTaxon.value = taxonObj;
+                        selectedTid.value = taxonObj ? taxonObj['tid'] : null;
+                    }
+
+                    Vue.onMounted(() => {
+                        setEditor();
+                        setKingdomNodes();
                     });
-                },
-                updateTargetTaxon(taxonObj) {
-                    this.targetTaxonPathArr = [];
-                    this.targetTaxon = taxonObj;
-                    this.selectedTid = taxonObj ? taxonObj['tid'] : null;
+
+                    return {
+                        clientRoot,
+                        displayAuthors,
+                        loading,
+                        selectedTid,
+                        targetNodeRef,
+                        targetTaxon,
+                        taxaNodes,
+                        treeRef,
+                        getTaxonChildren,
+                        initializeGetTargetTaxon,
+                        processClick,
+                        processClose,
+                        processTargetTaxonPath,
+                        updateTargetTaxon
+                    }
                 }
-            }
-        });
-        taxonomyDynamicDisplayModule.use(Quasar, { config: {} });
-        taxonomyDynamicDisplayModule.mount('#innertext');
-    </script>
+            });
+            taxonomyDynamicDisplayModule.use(Quasar, { config: {} });
+            taxonomyDynamicDisplayModule.use(Pinia.createPinia());
+            taxonomyDynamicDisplayModule.mount('#mainContainer');
+        </script>
     </body>
 </html>
 

@@ -1,128 +1,3 @@
-document.addEventListener("DOMContentLoaded", function() {
-	const smallWorkingSpinnerElements = document.getElementsByClassName('sm-native-spinner');
-	if(smallWorkingSpinnerElements.length > 0){
-		for(let i in smallWorkingSpinnerElements){
-			if(smallWorkingSpinnerElements.hasOwnProperty(i)){
-				const parentStyle = smallWorkingSpinnerElements[i].style;
-				smallWorkingSpinnerElements[i].innerHTML = getSmallWorkingSpinnerHtml();
-				if(parentStyle){
-					smallWorkingSpinnerElements[i].firstChild.style.cssText = parentStyle.cssText;
-				}
-			}
-		}
-	}
-
-	const vineWorkingSpinnerElements = document.getElementsByClassName('vine-native-spinner');
-	if(vineWorkingSpinnerElements.length > 0){
-		for(let i in vineWorkingSpinnerElements){
-			if(vineWorkingSpinnerElements.hasOwnProperty(i)){
-				const parentStyle = vineWorkingSpinnerElements[i].style;
-				vineWorkingSpinnerElements[i].innerHTML = getVineWorkingSpinnerHtml();
-				if(parentStyle){
-					vineWorkingSpinnerElements[i].firstChild.style.cssText = parentStyle.cssText;
-				}
-			}
-		}
-	}
-});
-
-function arrayIndexSort(obj){
-	const keys = [];
-	for(const key in obj){
-		if(obj.hasOwnProperty(key)){
-			keys.push(key);
-		}
-	}
-	return keys;
-}
-
-function cancelAPIRequest(){
-	http.abort();
-	abortController.abort();
-}
-
-function checkObjectNotEmpty(obj){
-	for(const i in obj){
-		if(obj.hasOwnProperty(i) && obj[i]){
-			return true;
-		}
-	}
-	return false;
-}
-
-function convertParamsObjToFormData(params){
-	const paramArr = Object.entries(params);
-	const formData = new FormData();
-	paramArr.forEach((pArr) => {
-		formData.append(pArr[0], (pArr[1] ? pArr[1].toString() : null));
-	});
-	return formData;
-}
-
-function formatCheckDate(dateStr){
-	if(dateStr !== ""){
-		const dateArr = parseDate(dateStr);
-		if(dateArr['y'] === 0){
-			alert("Please use the following date formats: yyyy-mm-dd, mm/dd/yyyy, or dd mmm yyyy");
-			return false;
-		}
-		else{
-			if(dateArr['m'] > 12){
-				alert("Month cannot be greater than 12. Note that the format should be YYYY-MM-DD");
-				return false;
-			}
-
-			if(dateArr['d'] > 28){
-				if(dateArr['d'] > 31
-					|| (dateArr['d'] === 30 && dateArr['m'] === 2)
-					|| (dateArr['d'] === 31 && (dateArr['m'] === 4 || dateArr['m'] === 6 || dateArr['m'] === 9 || dateArr['m'] === 11))){
-					alert("The Day (" + dateArr['d'] + ") is invalid for that month");
-					return false;
-				}
-			}
-
-			let mStr = dateArr['m'];
-			if(mStr.length === 1){
-				mStr = "0" + mStr;
-			}
-			let dStr = dateArr['d'];
-			if(dStr.length === 1){
-				dStr = "0" + dStr;
-			}
-			return dateArr['y'] + "-" + mStr + "-" + dStr;
-		}
-	}
-}
-
-function generateRandColor(){
-	let hexColor = '';
-	const x = Math.round(0xffffff * Math.random()).toString(16);
-	const y = (6 - x.length);
-	const z = '000000';
-	const z1 = z.substring(0, y);
-	hexColor = z1 + x;
-	return hexColor;
-}
-
-function getErrorResponseText(status,statusText){
-	let text;
-	if(status === 0){
-		text = 'Cancelled';
-	}
-	else{
-		text = 'Error: ' + status + ' ' + statusText;
-	}
-	return text;
-}
-
-function getISOStrFromDateObj(dObj){
-	const dYear = dObj.getFullYear();
-	const dMonth = ((dObj.getMonth() + 1) > 9 ? (dObj.getMonth() + 1) : '0' + (dObj.getMonth() + 1));
-	const dDay = (dObj.getDate() > 9 ? dObj.getDate() : '0' + dObj.getDate());
-
-	return dYear+'-'+dMonth+'-'+dDay;
-}
-
 function getRgbaStrFromHexOpacity(hex,opacity) {
 	const rgbArr = hexToRgb(hex);
 	let retStr = '';
@@ -213,68 +88,10 @@ function hideWorking(){
 	document.body.classList.remove("processing");
 }
 
-function imagePostFunction(image, src) {
-	const img = image.getImage();
-	if(typeof window.btoa === 'function'){
-		const xhr = new XMLHttpRequest();
-		const dataEntries = src.split("&");
-		let url;
-		let params = "";
-		for (let i = 0 ; i< dataEntries.length ; i++){
-			if (i===0){
-				url = dataEntries[i];
-			}
-			else{
-				params = params + "&"+dataEntries[i];
-			}
-		}
-		xhr.open('POST', url, true);
-		xhr.responseType = 'arraybuffer';
-		xhr.onload = function(e) {
-			if (this.status === 200) {
-				const uInt8Array = new Uint8Array(this.response);
-				let i = uInt8Array.length;
-				const binaryString = new Array(i);
-				while (i--) {
-					binaryString[i] = String.fromCharCode(uInt8Array[i]);
-				}
-				const data = binaryString.join('');
-				const type = xhr.getResponseHeader('content-type');
-				if (type.indexOf('image') === 0) {
-					img.src = 'data:' + type + ';base64,' + window.btoa(data);
-				}
-			}
-		};
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhr.send(params);
-	}
-	else {
-		img.src = src;
-	}
-}
-
-function openIndividualPopup(url, occid, clid = 0){
-	let wWidth = 900;
-	if(document.getElementById('innertext')){
-        wWidth = document.getElementById('innertext').offsetWidth*1.05;
-    }
-    else if(document.body.offsetWidth){
-        wWidth = document.body.offsetWidth*0.9;
-    }
-    if(wWidth > 1000) {
-    	wWidth = 1000;
-    }
-	let newWindow = window.open(url + '?occid=' + occid + '&clid=' + clid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=' + (wWidth) + ',height=700,left=20,top=20');
-    if(newWindow.opener == null) {
-    	newWindow.opener = self;
-    }
-    return false;
-}
-
 function openPopup(url){
 	let wWidth = 900;
-	if(document.getElementById('innertext')){
-        wWidth = document.getElementById('innertext').offsetWidth*1.05;
+	if(document.getElementById('main-container')){
+        wWidth = document.getElementById('main-container').offsetWidth*1.05;
     }
     else if(document.body.offsetWidth){
         wWidth = document.body.offsetWidth*0.9;
@@ -287,11 +104,6 @@ function openPopup(url){
     	newWindow.opener = self;
     }
     return false;
-}
-
-function openTutorialWindow(url) {
-	url = CLIENT_ROOT + url;
-	window.open(url, '_blank');
 }
 
 function parseDate(dateStr){
@@ -345,33 +157,6 @@ function parseDate(dateStr){
 	retArr["m"] = m.toString();
 	retArr["d"] = d.toString();
 	return retArr;
-}
-
-function sendAPIGetRequest(url,callback,http = null){
-	if(!http){
-		http = new XMLHttpRequest();
-	}
-	http.open("GET", url, true);
-	http.onreadystatechange = function() {
-		if(http.readyState === 4) {
-			callback(http.status,http.responseText,http.statusText);
-		}
-	};
-	http.send();
-}
-
-function sendAPIPostRequest(url,params,callback,http = null){
-	if(!http){
-		http = new XMLHttpRequest();
-	}
-	const formData = convertParamsObjToFormData(params);
-	http.open("POST", url, true);
-	http.onreadystatechange = function() {
-		if(http.readyState === 4) {
-			callback(http.status,http.responseText,http.statusText);
-		}
-	};
-	http.send(formData);
 }
 
 function showWorking(){

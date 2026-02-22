@@ -1,21 +1,24 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/DbConnection.php');
+include_once(__DIR__ . '/../../services/DbService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
-$connection = new DbConnection();
-$con = $connection->getConnection();
-$queryTerm = $con->real_escape_string($_REQUEST['term']);
-$queryTerm = str_replace('"',"''",$queryTerm);
+if(SanitizerService::validateInternalRequest()){
+    $connection = new DbService();
+    $con = $connection->getConnection();
+    $queryTerm = $con->real_escape_string($_REQUEST['term']);
+    $queryTerm = str_replace('"',"''",$queryTerm);
 
-$retStr = '';
-$sql = 'SELECT ometid FROM omexsiccatititles '.
-	'WHERE CONCAT_WS("",title,CONCAT(" [",abbreviation,"]")) = "'.$queryTerm.'"';
-//echo $sql;
-$rs = $con->query($sql);
-if($r = $rs->fetch_object()) {
-	$retStr = $r->ometid;
+    $retStr = '';
+    $sql = 'SELECT ometid FROM omexsiccatititles '.
+        'WHERE CONCAT_WS("",title,CONCAT(" [",abbreviation,"]")) = "'.$queryTerm.'"';
+    //echo $sql;
+    $rs = $con->query($sql);
+    if($r = $rs->fetch_object()) {
+        $retStr = $r->ometid;
+    }
+    $rs->free();
+    $con->close();
+
+    echo $retStr;
 }
-$rs->free();
-$con->close();
-
-echo $retStr;

@@ -1,6 +1,6 @@
 <?php
-include_once(__DIR__ . '/DbConnection.php');
-include_once(__DIR__ . '/Sanitizer.php');
+include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class GlossaryUpload{
 	
@@ -14,13 +14,12 @@ class GlossaryUpload{
 	private $errorStr = '';
 	
 	public function __construct() {
-		$connection = new DbConnection();
+		$connection = new DbService();
 		$this->conn = $connection->getConnection();
  		$this->setUploadTargetPath();
  		set_time_limit(3000);
 		ini_set('max_input_time',120);
-  		ini_set('auto_detect_line_endings', true);
-	}
+  	}
 
 	public function __destruct(){
 		if($this->conn) {
@@ -43,7 +42,7 @@ class GlossaryUpload{
 				copy($ulFileName,$this->uploadTargetPath.$this->uploadFileName);
 			}
 		}
-		elseif(array_key_exists('uploadfile',$_FILES)){
+		elseif(array_key_exists('uploadfile',$_FILES) && (strtolower(substr($_FILES['uploadfile']['name'], -4)) === '.jpg' || strtolower(substr($_FILES['uploadfile']['name'], -5)) === '.jpeg' || strtolower(substr($_FILES['uploadfile']['name'], -4)) === '.png')){
 			$this->uploadFileName = $_FILES['uploadfile']['name'];
 			if(is_writable($this->uploadTargetPath)){
                 move_uploaded_file($_FILES['uploadfile']['tmp_name'], $this->uploadTargetPath.$this->uploadFileName);
@@ -62,7 +61,7 @@ class GlossaryUpload{
 
 	public function loadFile($fieldMap,$languageArr,$tidStr,$batchSources): void
 	{
-		$batchSources = Sanitizer::cleanInStr($this->conn,$this->encodeString($batchSources));
+		$batchSources = SanitizerService::cleanInStr($this->conn,$this->encodeString($batchSources));
 		$this->outputMsg('Starting Upload');
 		$this->conn->query('TRUNCATE TABLE uploadglossary');
 		$this->conn->query('OPTIMIZE TABLE uploadglossary');
@@ -96,13 +95,13 @@ class GlossaryUpload{
                             if($field === $lang.'_term'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $term = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
+                                    $term = SanitizerService::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_definition'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $definition = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
+                                    $definition = SanitizerService::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                                 if(strlen($definition) > 2000){
                                     $definition = '';
@@ -112,37 +111,37 @@ class GlossaryUpload{
                             if($field === $lang.'_source'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $source = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
+                                    $source = SanitizerService::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_author'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $author = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
+                                    $author = SanitizerService::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_translator'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $translator = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
+                                    $translator = SanitizerService::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_notes'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $notes = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
+                                    $notes = SanitizerService::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_resourceurl'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $resourceUrl = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
+                                    $resourceUrl = SanitizerService::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                             if($field === $lang.'_synonym'){
                                 $index = array_search($csvField, array_keys($fieldMap), true);
                                 if(is_string($index) || is_int($index)){
-                                    $synonym = Sanitizer::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
+                                    $synonym = SanitizerService::cleanInStr($this->conn,$this->encodeString($recordArr[$index]));
                                 }
                             }
                         }
@@ -545,21 +544,6 @@ class GlossaryUpload{
 							"\xe2\x80\xa6"
 		);
 		$fixedwordchars=array("'", "'", '"', '"', '-', '...');
-		$inStr = str_replace($badwordchars, $fixedwordchars, $inStr);
-		
-		if($inStr){
-			$charLower = strtolower($GLOBALS['CHARSET']);
-			if($charLower === 'utf-8' || $charLower === 'utf8'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1',true) === 'ISO-8859-1'){
-					$retStr = utf8_encode($inStr);
-				}
-			}
-			elseif($charLower === 'iso-8859-1'){
-				if(mb_detect_encoding($inStr,'UTF-8,ISO-8859-1') === 'UTF-8'){
-					$retStr = utf8_decode($inStr);
-				}
-			}
- 		}
-		return $retStr;
+		return str_replace($badwordchars, $fixedwordchars, $inStr);
 	}
 }

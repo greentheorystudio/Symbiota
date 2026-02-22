@@ -1,14 +1,4 @@
 const accountChecklistProjectList = {
-    props: {
-        checklistArr: {
-            type: Array,
-            default: []
-        },
-        projectArr: {
-            type: Array,
-            default: []
-        }
-    },
     template: `
         <template v-if="checklistArr.length > 0">
             <q-list bordered class="rounded-borders q-mt-md">
@@ -17,18 +7,17 @@ const accountChecklistProjectList = {
                         <q-card-section>
                             <q-list bordered separator>
                                 <template v-for="checklist in checklistArr">
-                                    <q-item :href="(clientRoot + '/checklists/checklist.php?cl=' + checklist.clid)">
-                                        <q-item-section>
-                                            <div class="row justify-start q-gutter-md items-center">
-                                                <div class="text-h6">
-                                                    {{ checklist.name }}
+                                    <template v-if="checklist.name">
+                                        <q-item role="link" class="cursor-pointer" :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist.clid)" :aria-label="('Go to ' + checklist.name)" tabindex="0">
+                                            <q-item-section>
+                                                <div class="row justify-start q-gutter-md items-center">
+                                                    <div class="text-h6">
+                                                        {{ checklist.name }}
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <q-btn round color="primary" size=".6rem" :href="(clientRoot + '/checklists/checklistadmin.php?clid=' + checklist.clid + '&emode=1')" icon="far fa-edit"></q-btn>
-                                                </div>
-                                            </div>
-                                        </q-item-section>
-                                    </q-item>
+                                            </q-item-section>
+                                        </q-item>
+                                    </template>
                                 </template>
                             </q-list>
                         </q-card-section>
@@ -50,14 +39,11 @@ const accountChecklistProjectList = {
                         <q-card-section>
                             <q-list bordered separator>
                                 <template v-for="project in projectArr">
-                                    <q-item :href="(clientRoot + '/projects/index.php?pid=' + project.pid)">
+                                    <q-item role="link" class="cursor-pointer" :href="(clientRoot + '/projects/project.php?pid=' + project.pid)" :aria-label="('Go to ' + project.projname)" tabindex="0">
                                         <q-item-section>
                                             <div class="row justify-start q-gutter-md items-center">
                                                 <div class="text-h6">
                                                     {{ project.projname }}
-                                                </div>
-                                                <div>
-                                                    <q-btn round color="primary" size=".6rem" :href="(clientRoot + '/projects/index.php?pid=' + project.pid + '&emode=1')" icon="far fa-edit"></q-btn>
                                                 </div>
                                             </div>
                                         </q-item-section>
@@ -77,9 +63,18 @@ const accountChecklistProjectList = {
             </q-card>
         </template>
     `,
-    data() {
+    setup() {
+        const baseStore = useBaseStore();
+        const userStore = useUserStore();
+
+        const checklistArr = Vue.computed(() => userStore.getChecklistArr);
+        const clientRoot = baseStore.getClientRoot;
+        const projectArr = Vue.computed(() => userStore.getProjectArr);
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            checklistArr,
+            clientRoot,
+            projectArr
         }
     }
 };

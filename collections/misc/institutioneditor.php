@@ -1,11 +1,11 @@
 <?php 
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/InstitutionManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $iid = array_key_exists('iid',$_REQUEST)?(int)$_REQUEST['iid']:0;
@@ -99,10 +99,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
 	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Institution Editor</title>
-	<link type="text/css" href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
-	<link type="text/css" href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" />
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-    <script>
+    <meta name="description" content="Collection institution editor">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript">
 		function validateAddCollectionForm(f){
 			if(f.addcollid.value === ""){
 				alert("Select a collection to be added");
@@ -116,23 +117,23 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div class='navpath'>
-	<a href='../../index.php'>Home</a> &gt;&gt; 
-	<?php 
-	if(!$targetCollid && count($collList) === 1){
-		$targetCollid = key($collList);
-	}
-	if($targetCollid){
-		echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'&emode=1">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
-	}
-	else{
-		echo '<a href="institutioneditor.php">Full Address List</a> &gt;&gt;';
-	}
-	?>
-	<b>Institution Editor</b> 
-</div>
-<div id="innertext">
-	<?php
+<div id="mainContainer" style="padding: 10px 15px 15px;">
+    <div id="breadcrumbs">
+        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="0">Home</a> &gt;&gt;
+        <?php
+        if(!$targetCollid && count($collList) === 1){
+            $targetCollid = key($collList);
+        }
+        if($targetCollid){
+            echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'" tabindex="0">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
+        }
+        else{
+            echo '<a href="institutioneditor.php" tabindex="0">Full Address List</a> &gt;&gt;';
+        }
+        ?>
+        <b>Institution Editor</b>
+    </div>
+    <?php
 	if($statusStr){
 		?>
 		<hr />
@@ -581,9 +582,9 @@ include(__DIR__ . '/../../header.php');
     }
 	?>
 </div>
-<?php 
-include(__DIR__ . '/../../footer.php');
+<?php
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

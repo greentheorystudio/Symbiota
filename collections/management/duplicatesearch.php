@@ -1,9 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
-include_once(__DIR__ . '/../../classes/SOLRManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SOLRService.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -12,7 +12,7 @@ $start = array_key_exists('start',$_REQUEST)?(int)$_REQUEST['start']:0;
 $limit = array_key_exists('limit',$_REQUEST)?(int)$_REQUEST['limit']:200;
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 if($action && !preg_match('/^[a-zA-Z0-9\s_]+$/',$action)) {
@@ -23,7 +23,7 @@ if(!$limit) {
 }
 
 $cleanManager = new OccurrenceCleaner();
-$solrManager = new SOLRManager();
+$solrManager = new SOLRService();
 if($collid) {
     $cleanManager->setCollId($collid);
 }
@@ -58,9 +58,11 @@ elseif($action === 'listdupsrecordedby'){
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Occurrence Cleaner</title>
-	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Duplicate Merging Module</title>
+    <meta name="description" content="Duplicate merging module for collection occurrence records in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <style>
 		table.styledtable td { white-space: nowrap; }
     </style>
@@ -105,15 +107,14 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	</script>
 </head>
 <body style="background-color:white;margin-left:0;margin-right:0;border: 0;">
-	<div class='navpath'>
-		<a href="../../index.php">Home</a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>&emode=1">Collection Management</a> &gt;&gt;
-		<a href="index.php?collid=<?php echo $collid; ?>">Data Cleaning Tools</a> &gt;&gt;
-		<b>Duplicate Merging Module</b>
-	</div>
-
-	<div id="innertext" style="background-color:white;">
-		<?php
+	<div id="mainContainer" style="padding: 10px 15px 15px;background-color:white;">
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+            <a href="../misc/collprofiles.php?collid=<?php echo $collid; ?>" tabindex="0">Collection Management</a> &gt;&gt;
+            <a href="index.php?collid=<?php echo $collid; ?>" tabindex="0">Data Cleaning Tools</a> &gt;&gt;
+            <b>Duplicate Merging Module</b>
+        </div>
+        <?php
         echo '<h2>'.$collMap['collectionname'].($collMap['code']?' ('.$collMap['code'].')':'').'</h2>';
 		if($isEditor){
 			if($action === 'listdupscatalog' || $action === 'listdupsothercatalog' || $action === 'listdupsrecordedby'){
@@ -124,7 +125,11 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 						<b>Use the checkboxes to select the records you would like to merge, and the radio buttons to select which target record to merge into.</b>
 					</div>
 					<form name="mergeform" action="duplicatesearch.php" method="post" onsubmit="return validateMergeForm();">
-						<?php
+                        <div style="margin:15px;">
+                            <input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+                            <input name="action" type="submit" value="Merge Duplicate Records" />
+                        </div>
+                        <?php
 						if($recCnt > $limit){
 							$href = 'duplicatesearch.php?collid='.$collid.'&action='.$action.'&start='.($start+$limit);
 							echo '<div style="float:right;"><a href="'.$href.'"><b>NEXT '.$limit.' RECORDS &gt;&gt;</b></a></div>';
@@ -138,17 +143,26 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 								<th><input type="checkbox" name="batchswitch" onclick="batchSwitchTargetSpecimens(this)" title="Batch switch target occurrences" /></th>
 								<th style="width:40px;">Catalog Number</th>
 								<th style="width:40px;">Other Catalog Numbers</th>
-                                <th>Source ID</th>
-								<th>Scientific Name</th>
+                                <th>Scientific Name</th>
+                                <th>Collection Date</th>
 								<th>Collector</th>
 								<th>Collection Number</th>
+                                <th>Locality</th>
 								<th>Associated Collectors</th>
-								<th>Collection Date</th>
 								<th>Verbatim Date</th>
 								<th>Country</th>
 								<th>State</th>
 								<th>County</th>
-								<th>Locality</th>
+                                <th>Identified By</th>
+                                <th>Date Identified</th>
+                                <th>Habitat</th>
+                                <th>Occurrence Remarks</th>
+                                <th>Associated Taxa</th>
+                                <th>Lifestage</th>
+                                <th>Sex</th>
+                                <th>Individual Count</th>
+                                <th>Preparations</th>
+                                <th>Date Entered</th>
 								<th>Date Last Modified</th>
 							</tr>
 							<?php
@@ -163,17 +177,26 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 									echo '<td><input name="dup'.$dupKey.'target" type="radio" value="'.$occId.'" '.($first?'checked':'').'/></td>'."\n";
 									echo '<td>'.$occArr['catalognumber'].'</td>'."\n";
 									echo '<td>'.$occArr['othercatalognumbers'].'</td>'."\n";
-                                    echo '<td>'.$occArr['dbpk'].'</td>'."\n";
-									echo '<td>'.$occArr['sciname'].'</td>'."\n";
+                                    echo '<td>'.$occArr['sciname'].'</td>'."\n";
+                                    echo '<td>'.$occArr['eventdate'].'</td>'."\n";
 									echo '<td>'.$occArr['recordedby'].'</td>'."\n";
 									echo '<td>'.$occArr['recordnumber'].'</td>'."\n";
+                                    echo '<td>'.$occArr['locality'].'</td>'."\n";
 									echo '<td>'.$occArr['associatedcollectors'].'</td>'."\n";
-									echo '<td>'.$occArr['eventdate'].'</td>'."\n";
 									echo '<td>'.$occArr['verbatimeventdate'].'</td>'."\n";
 									echo '<td>'.$occArr['country'].'</td>'."\n";
 									echo '<td>'.$occArr['stateprovince'].'</td>'."\n";
 									echo '<td>'.$occArr['county'].'</td>'."\n";
-									echo '<td>'.$occArr['locality'].'</td>'."\n";
+                                    echo '<td>'.$occArr['identifiedby'].'</td>'."\n";
+                                    echo '<td>'.$occArr['dateidentified'].'</td>'."\n";
+                                    echo '<td>'.$occArr['habitat'].'</td>'."\n";
+                                    echo '<td>'.$occArr['occurrenceremarks'].'</td>'."\n";
+                                    echo '<td>'.$occArr['associatedtaxa'].'</td>'."\n";
+                                    echo '<td>'.$occArr['lifestage'].'</td>'."\n";
+                                    echo '<td>'.$occArr['sex'].'</td>'."\n";
+                                    echo '<td>'.$occArr['individualcount'].'</td>'."\n";
+                                    echo '<td>'.$occArr['preparations'].'</td>'."\n";
+                                    echo '<td>'.$occArr['dateentered'].'</td>'."\n";
 									echo '<td>'.$occArr['datelastmodified'].'</td>'."\n";
 									echo '</tr>';
 									$first = false;

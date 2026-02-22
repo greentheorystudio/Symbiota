@@ -1,11 +1,11 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
 include_once(__DIR__ . '/../classes/ChecklistVoucherAdmin.php');
-include_once(__DIR__ . '/../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $clid = array_key_exists('clid',$_REQUEST)?(int)$_REQUEST['clid']:0;
@@ -37,6 +37,9 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('ClAdmin',$GLOBALS['USER_RIGHTS']) 
 	elseif($action === 'resolveconflicts'){
 		$clManager->batchAdjustChecklist($_POST);
 	}
+    elseif($action === 'Add All Taxa to Checklist'){
+        $clManager->batchAddAllUnlinkedTaxa();
+    }
 }
 $clManager->setCollectionVariables();
 ?>
@@ -46,19 +49,20 @@ $clManager->setCollectionVariables();
 include_once(__DIR__ . '/../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Administration</title>
-	<link href="../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link href="../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-	<link type="text/css" href="../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" />
-    <script src="../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/external/jquery.js"></script>
-	<script type="text/javascript" src="../js/external/jquery-ui.js"></script>
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Checklist Voucher Administration</title>
+    <meta name="description" content="Manage checklist voucher data">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
     <script type="text/javascript">
         let clid = <?php echo $clid; ?>;
         let tabIndex = <?php echo $tabIndex; ?>;
 
         function openSpatialInputWindow(type) {
-            let mapWindow = open("../../spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
+            let mapWindow = open("<?php echo $GLOBALS['CLIENT_ROOT']; ?>/spatial/index.php?windowtype=" + type,"input","resizable=0,width=900,height=700,left=100,top=20");
             if (mapWindow.opener == null) {
                 mapWindow.opener = self;
             }
@@ -67,8 +71,21 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 mapWindow = null;
             });
         }
+
+        function setPopup(sciname,clid){
+            if(!Number(sciname)){
+                sciname = sciname.replaceAll("'",'%squot;');
+            }
+            const starrObj = {
+                usethes: true,
+                taxa: sciname,
+                clid: clid
+            };
+            const url = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/list.php?starr=' + JSON.stringify(starrObj);
+            openPopup(url);
+        }
     </script>
-	<script type="text/javascript" src="../js/checklists.voucheradmin.js?ver=20230103"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/checklists.voucheradmin.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 	<style>
 		li{margin:5px;}
 	</style>
@@ -78,15 +95,14 @@ include_once(__DIR__ . '/../config/header-includes.php');
 <?php
 include(__DIR__ . '/../header.php');
 ?>
-<div class="navpath">
-	<a href="../index.php">Home</a> &gt;&gt;
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">Return to Checklist</a> &gt;&gt;
-	<b>Checklist Administration</b>
-</div>
-
-<div id='innertext'>
+<div id="mainContainer" style="padding: 10px 15px 15px;">
+    <div id="breadcrumbs">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+        <a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>" tabindex="0">Return to Checklist</a> &gt;&gt;
+        <b>Checklist Administration</b>
+    </div>
 <div style="color:#990000;font-weight:bold;margin:0 10px 10px 0;">
-	<a href="checklist.php?cl=<?php echo $clid.'&pid='.$pid; ?>">
+	<a href="checklist.php?clid=<?php echo $clid.'&pid='.$pid; ?>">
 		<?php echo $clManager->getClName(); ?>
 	</a>
 </div>
@@ -151,10 +167,12 @@ if($clid && $isEditor){
 									<option value="">Search All Collections</option>
 									<option value="">-------------------------------------</option>
 									<?php
-									$selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
-									foreach($collList as $id => $name){
-										echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
-									}
+									if($termArr){
+                                        $selCollid = $termArr['collid'] ? (int)$termArr['collid'] : 0;
+                                        foreach($collList as $id => $name){
+                                            echo '<option value="'.$id.'" '.($selCollid === (int)$id?'SELECTED':'').'>'.$name.'</option>';
+                                        }
+                                    }
 									?>
 								</select>
 							</div>
@@ -328,8 +346,7 @@ if($clid && $isEditor){
 								?>
 							</div>
 						</div>
-
-					<?php
+                        <?php
 					}
 					else{
 						?>
@@ -348,7 +365,7 @@ if($clid && $isEditor){
 											?>
 											<div>
 												<a href="#" onclick="openPopup('../taxa/index.php?taxon=<?php echo $tid.'&cl='.$clid; ?>');return false;"><?php echo $sciname; ?></a>
-												<a href="#" onclick="openPopup('../collections/list.php?db=all&thes=1&reset=1&taxa=<?php echo $sciname.'&targetclid='.$clid.'&targettid='.$tid;?>');return false;">
+												<a href="#" onclick="setPopup(<?php echo $tid . ',' . $clid;?>);">
 													<i style='width:15px;height:15px;' title="Link Voucher Occurrences" class="fas fa-link"></i>
 												</a>
 											</div>
@@ -383,7 +400,7 @@ if($clid && $isEditor){
 								?>
 							</div>
 						</div>
-					<?php
+					    <?php
 					}
 					?>
 				</div>
@@ -391,17 +408,15 @@ if($clid && $isEditor){
 			<div id="reportDiv">
 				<div style="margin:25px;height:400px;">
 					<ul>
-						<li><a href="reports/voucherreporthandler.php?rtype=fullcsv&clid=<?php echo $clid; ?>">Full species list (CSV)</a></li>
-						<li><a href="checklist.php?printmode=1&showvouchers=0&defaultoverride=1&cl=<?php echo $clid; ?>" target="_blank">Full species list (Print Friendly)</a></li>
-						<li><a href="reports/voucherreporthandler.php?rtype=fullvoucherscsv&clid=<?php echo $clid; ?>">Full species list with vouchers (CSV)</a></li>
-						<li><a href="checklist.php?printmode=1&showvouchers=1&defaultoverride=1&cl=<?php echo $clid; ?>" target="_blank">Full species list with vouchers (Print Friendly)</a></li>
-						<li><a href="reports/voucherreporthandler.php?rtype=pensoftxlsx&clid=<?php echo $clid; ?>" target="_blank">Pensoft Excel Export</a></li>
-						<li><a href="#" onclick="openPopup('reports/download.php?clid=<?php echo $clid; ?>');return false;">Occurrence vouchers only (DwC-A, CSV, Tab-delimited)</a></li>
+						<li><a href="">Full species list (CSV)</a></li>
+						<li><a href="checklist.php?printmode=1&showvouchers=0&defaultoverride=1&clid=<?php echo $clid; ?>" target="_blank">Full species list (Print Friendly)</a></li>
+						<li><a href="">Full species list with vouchers (CSV)</a></li>
+						<li><a href="checklist.php?printmode=1&showvouchers=1&defaultoverride=1&clid=<?php echo $clid; ?>" target="_blank">Full species list with vouchers (Print Friendly)</a></li>
 						<li>Possible species additions based on occurrence vouchers</li>
 					</ul>
 					<ul style="margin:-10px 0 0 25px;list-style-type:circle">
-						<li><a href="reports/voucherreporthandler.php?rtype=missingoccurcsv&clid=<?php echo $clid; ?>">Occurrences of taxa missing from checklist (CSV)</a></li>
-						<li><a href="reports/voucherreporthandler.php?rtype=problemtaxacsv&clid=<?php echo $clid; ?>">Occurrences with misspelled, illegal, and problematic scientific names (CSV)</a></li>
+						<li><a href="">Occurrences of taxa missing from checklist (CSV)</a></li>
+						<li><a href="">Occurrences with misspelled, illegal, and problematic scientific names (CSV)</a></li>
 					</ul>
 				</div>
 			</div>
@@ -418,8 +433,8 @@ else {
 ?>
 </div>
 <?php
-include(__DIR__ . '/../footer.php');
 include_once(__DIR__ . '/../config/footer-includes.php');
+include(__DIR__ . '/../footer.php');
 ?>
 </body>
 </html>

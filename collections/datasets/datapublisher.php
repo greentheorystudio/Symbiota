@@ -2,7 +2,8 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/DwcArchiverPublisher.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCollectionProfile.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $collId = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -58,12 +59,6 @@ if(isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_OR
     $datasetKey = $collManager->getDatasetKey();
     $endpointKey = $collManager->getEndpointKey();
     $idigbioKey = $collManager->getIdigbioKey();
-	if($publishIDIGBIO && !$idigbioKey){
-        $idigbioKey = $collManager->findIdigbioKey($collPubArr[$collId]['collectionguid']);
-        if($idigbioKey){
-            $collManager->updateAggKeys($collId);
-        }
-    }
 }
 
 $isEditor = 0;
@@ -89,16 +84,17 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
 	<title>Darwin Core Archive Publisher</title>
-	<link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" type="text/css" rel="stylesheet">
-	<link href="../../css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css" />
+    <meta name="description" content="Publish occurrence Darwin Core Archives for collections in the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css">
+	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/jquery-ui.css?ver=20221204" rel="stylesheet" type="text/css"/>
 	<style>
 		.nowrap { white-space: nowrap; }
 	</style>
-    <script src="../../js/external/all.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/external/jquery.js"></script>
-	<script type="text/javascript" src="../../js/external/jquery-ui.js"></script>
-	<script type="text/javascript" src="../../js/collections.gbifpublisher.js?ver=20221025"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jquery-ui.js" type="text/javascript"></script>
+	<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/collections.gbifpublisher.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
     <script type="text/javascript">
 		function verifyDwcaAdminForm(){
             const dbElements = document.getElementsByName("coll[]");
@@ -135,24 +131,24 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 <?php
 include(__DIR__ . '/../../header.php');
 ?>
-<div class='navpath'>
-	<a href="../../index.php">Home</a> &gt;&gt;
-	<?php
-	if($collId){
-		?>
-		<a href="../misc/collprofiles.php?collid=<?php echo $collId; ?>&emode=1">Collection Control Panel</a> &gt;&gt;
-		<?php
-	}
-	else{
-		?>
-		<a href="../../sitemap.php">Sitemap</a> &gt;&gt;
-		<?php
-	}
-	?>
-	<b>Darwin Core Archive Publisher</b>
-</div>
-<div id="innertext">
-	<?php
+<div id="mainContainer" style="padding: 10px 15px 15px;">
+    <div id="breadcrumbs">
+        <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+        <?php
+        if($collId){
+            ?>
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/misc/collprofiles.php?collid=<?php echo $collId; ?>" tabindex="0">Collection Control Panel</a> &gt;&gt;
+            <?php
+        }
+        else{
+            ?>
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/sitemap.php" tabindex="0">Sitemap</a> &gt;&gt;
+            <?php
+        }
+        ?>
+        <b>Darwin Core Archive Publisher</b>
+    </div>
+    <?php
 	if(!$collId && $GLOBALS['IS_ADMIN']){
 		?>
 		<div style="float:right;">
@@ -193,7 +189,7 @@ include(__DIR__ . '/../../header.php');
 		<div style="margin:10px;">
 			<h3>Data Usage Policy:</h3>
 			Use of these datasets requires agreement with the terms and conditions in our
-			<a href="../../misc/usagepolicy.php">Data Usage Policy</a>.
+			<a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/misc/usagepolicy.php">Data Usage Policy</a>.
 			Locality details for rare, threatened, or sensitive records have been redacted from these data files.
 			One must contact the collections directly to obtain access to sensitive locality data.
 		</div>
@@ -203,14 +199,8 @@ include(__DIR__ . '/../../header.php');
 	<div style="margin:20px;">
 		<b>RSS Feed:</b>
 		<?php
-		$urlPrefix = $dwcaManager->getServerDomain().$GLOBALS['CLIENT_ROOT'].(substr($GLOBALS['CLIENT_ROOT'],-1) === '/'?'':'/');
-		if(file_exists('../../webservices/dwc/rss.xml')){
-			$feedLink = $urlPrefix.'webservices/dwc/rss.xml';
-			echo '<a href="'.$feedLink.'" target="_blank">'.$feedLink.'</a>';
-		}
-		else{
-			echo '--feed not published for any of the collections within the portal--';
-		}
+        $urlPath = SanitizerService::getFullUrlPathPrefix() . '/rsshandler.php?feed=dwc';
+        echo '<a href="' . $urlPath . '" target="_blank">' . $urlPath . '</a>';
 		?>
 	</div>
 	<?php
@@ -245,7 +235,7 @@ include(__DIR__ . '/../../header.php');
 				</div>
 				<div><b>Description:</b> <?php echo $dArr['description']; ?></div>
 				<?php
-				$emlLink = $urlPrefix.'collections/datasets/emlhandler.php?collid='.$collId;
+				$emlLink = SanitizerService::getFullUrlPathPrefix().'/collections/datasets/emlhandler.php?collid='.$collId;
 				?>
 				<div><b>EML:</b> <a href="<?php echo $emlLink; ?>"><?php echo $emlLink; ?></a></div>
 				<div><b>DwC-Archive File:</b> <a href="<?php echo $dArr['link']; ?>"><?php echo $dArr['link']; ?></a></div>
@@ -296,7 +286,8 @@ include(__DIR__ . '/../../header.php');
 				$blockSubmitMsg = 'Archive cannot be published until occurrenceID GUID source is set<br/>';
 			}
 			if($recFlagArr['nullBasisRec']){
-				echo '<div style="margin:10px;font-weight:bold;color:red;">There are '.$recFlagArr['nullBasisRec'].' records missing basisOfRecord and will not be published. Please go to <a href="../editor/occurrencetabledisplay.php?q_recordedby=&q_recordnumber=&q_eventdate=&q_catalognumber=&q_othercatalognumbers=&q_observeruid=&q_recordenteredby=&q_dateentered=&q_datelastmodified=&q_processingstatus=&q_customfield1=basisOfRecord&q_customtype1=NULL&q_customvalue1=Something&q_customfield2=&q_customtype2=EQUALS&q_customvalue2=&q_customfield3=&q_customtype3=EQUALS&q_customvalue3=&collid='.$collId.'&csmode=0&occid=&occindex=0&orderby=&orderbydir=ASC">Edit Existing Occurrence Records</a> to correct this.</div>';
+				$linkUrl = '../table.php?starr={"collid":' . $collId . ',"advanced":[{"concatenator":null,"openParens":null,"field":"basisofrecord","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}]}';
+                echo '<div style="margin:10px;font-weight:bold;color:red;">There are '.$recFlagArr['nullBasisRec']." records missing basisOfRecord and will not be published. Please go to <a href='" . $linkUrl . "'>Edit Existing Occurrence Records</a> to correct this.</div>";
 			}
 			if($dwcUri && isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && ($publishGBIF || $publishIDIGBIO)){
 				if($publishGBIF && !$datasetKey) {
@@ -463,7 +454,7 @@ include(__DIR__ . '/../../header.php');
 						</td>
 						<td>
 							<?php
-							echo '<a href="'.$urlPrefix.'collections/datasets/emlhandler.php?collid='.$v['collid'].'">EML</a>';
+							echo '<a href="'.SanitizerService::getFullUrlPathPrefix().'/collections/datasets/emlhandler.php?collid='.$v['collid'].'">EML</a>';
 							?>
 						</td>
 						<td class="nowrap"><?php echo date('Y-m-d', strtotime($v['pubDate'])); ?></td>
@@ -489,8 +480,8 @@ include(__DIR__ . '/../../header.php');
 	?>
 </div>
 <?php
-include(__DIR__ . '/../../footer.php');
 include_once(__DIR__ . '/../../config/footer-includes.php');
+include(__DIR__ . '/../../footer.php');
 ?>
 </body>
 </html>

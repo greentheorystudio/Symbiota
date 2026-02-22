@@ -1,22 +1,41 @@
 const taxaProfileScinameHeader = {
-    props: [
-        'taxon',
-        'style-class'
-    ],
     template: `
-        <div id="scinamecontainer">
-            <span id="sciname" :class="styleClass">{{ taxon.sciName }}</span> <span id="sciname-author">{{ taxon.author }}</span>
-            <a :href="(clientRoot + '/taxa/index.php?taxon=' + taxon.parentTid + '&cl=' + (taxon.clid ? taxon.clid : ''))" class="parent-link" title="Go to Parent">
+        <div>
+            <span class="taxon-profile-sciname"><span :class="taxonStyleClass">{{ acceptedTaxon.sciname }}</span></span> <span>{{ acceptedTaxon.author }}</span>
+            <a :href="(clientRoot + '/taxa/index.php?taxon=' + acceptedTaxon.parenttid)" class="parent-link" title="Go to Parent" aria-label="Go to Parent" tabindex="0">
                 <q-icon name="fas fa-level-up-alt" size="15px" class="cursor-pointer" />
             </a>
-            <template v-if="taxon.submittedTid !== taxon.tid">
-                <span class="redirected-from"> (redirected from: <span class="text-italic">{{ taxon.submittedSciName }}</span>)</span>
+            <template v-if="Number(acceptedTaxon['tid']) !== Number(taxon['tid'])">
+                <span class="redirected-from"> (redirected from: <span class="text-italic">{{ taxon['sciname'] }}</span>)</span>
             </template>
         </div>
     `,
-    data() {
+    setup() {
+        const baseStore = useBaseStore();
+        const taxaStore = useTaxaStore();
+
+        const acceptedTaxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
+        const clientRoot = baseStore.getClientRoot;
+        const taxon = Vue.computed(() => taxaStore.getTaxaData);
+        const taxonStyleClass = Vue.computed(() => {
+            let styleClass;
+            if(Number(taxon.value['rankid']) > 180){
+                styleClass = 'species';
+            }
+            else if(Number(taxon.value['rankid']) === 180){
+                styleClass = 'genus';
+            }
+            else{
+                styleClass = 'higher';
+            }
+            return styleClass;
+        });
+
         return {
-            clientRoot: Vue.ref(CLIENT_ROOT)
+            acceptedTaxon,
+            clientRoot,
+            taxon,
+            taxonStyleClass
         }
     }
 };

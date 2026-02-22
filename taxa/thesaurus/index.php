@@ -1,10 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 ?>
 <!DOCTYPE html>
@@ -14,30 +14,34 @@ if(!$GLOBALS['SYMB_UID']) {
     ?>
     <head>
         <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Taxonomic Thesaurus Manager</title>
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+        <meta name="description" content="Taxonomic thesaurus manager for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+        <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <style>
             .top-tool-container {
                 width: 500px;
             }
         </style>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/all.min.js" type="text/javascript"></script>
     </head>
     <body>
+        <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
         <?php
         include(__DIR__ . '/../../header.php');
         ?>
-        <div class="navpath">
-            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php">Home</a> &gt;&gt;
-            <b>Taxonomic Thesaurus Manager</b>
-        </div>
-        <div id="innertext">
-            <h1>Taxonomic Thesaurus Manager</h1>
-            <template v-if="isEditor">
+        <div id="mainContainer">
+            <div id="breadcrumbs">
+                <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                <span class="text-bold">Taxonomic Thesaurus Manager</span>
+            </div>
+            <div v-if="isEditor" class="q-pa-md">
+                <div class="q-mb-sm text-h5 text-bold">
+                    Taxonomic Thesaurus Manager
+                </div>
                 <q-card class="top-tool-container q-mb-md">
                     <q-card-section>
                         <div class="q-my-sm">
-                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disable="loading" label="Enter Taxonomic Group" limit-to-thesaurus="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Enter Taxonomic Group" :limit-to-options="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                         </div>
                         <div class="q-my-sm q-mt-md">
                             <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
@@ -63,35 +67,20 @@ if(!$GLOBALS['SYMB_UID']) {
                         </q-tab-panel>
                     </q-tab-panels>
                 </q-card>
-            </template>
-            <template v-else>
-                <div class="text-weight-bold">You do not have permissions to access this tool</div>
-            </template>
+            </div>
         </div>
         <?php
-        include(__DIR__ . '/../../footer.php');
         include_once(__DIR__ . '/../../config/footer-includes.php');
+        include(__DIR__ . '/../../footer.php');
         ?>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/misc/multipleLanguageAutoComplete.js?ver=20230627" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/singleScientificCommonNameAutoComplete.js?ver=20230627" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonRankCheckboxSelector.js?ver=20230624" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceBulletSelector.js" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=20230624" type="text/javascript"></script>
-        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=20230624" type="text/javascript"></script>
-        <script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script type="text/javascript">
             const taxonomicThesaurusManagerModule = Vue.createApp({
-                data() {
-                    return {
-                        isEditor: Vue.ref(false),
-                        kingdomId: Vue.ref(null),
-                        loading: Vue.ref(false),
-                        requiredRanks: Vue.ref([10]),
-                        selectedRanks: Vue.ref([]),
-                        selectedRanksHigh: Vue.ref(0),
-                        taxonomicGroup: Vue.ref(null),
-                        taxonomicGroupTid: Vue.ref(null)
-                    }
-                },
                 components: {
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
                     'taxon-rank-checkbox-selector': taxonRankCheckboxSelector,
@@ -99,54 +88,87 @@ if(!$GLOBALS['SYMB_UID']) {
                     'taxonomy-data-source-import-update-module': taxonomyDataSourceImportUpdateModule
                 },
                 setup() {
-                    return {
-                        tab: Vue.ref('importer')
-                    }
-                },
-                mounted() {
-                    this.setEditor();
-                    this.selectedRanks = TAXONOMIC_RANKS;
-                    this.setRankHigh();
-                },
-                methods: {
-                    setEditor(){
+                    const baseStore = useBaseStore();
+
+                    const clientRoot = baseStore.getClientRoot;
+                    const isEditor = Vue.ref(false);
+                    const kingdomId = Vue.ref(null);
+                    const loading = Vue.ref(false);
+                    const requiredRanks = Vue.ref([10]);
+                    const selectedRanks = Vue.ref([]);
+                    const selectedRanksHigh = Vue.ref(0);
+                    const tab = Vue.ref('importer');
+                    const taxonomicGroup = Vue.ref(null);
+                    const taxonomicGroupTid = Vue.ref(null);
+
+                    function setEditor() {
                         const formData = new FormData();
                         formData.append('permission', 'Taxonomy');
                         formData.append('action', 'validatePermission');
-                        fetch(profileApiUrl, {
+                        fetch(permissionApiUrl, {
                             method: 'POST',
                             body: formData
                         })
                         .then((response) => {
-                            response.text().then((res) => {
-                                this.isEditor = Number(res) === 1;
+                            response.json().then((resData) => {
+                                isEditor.value = resData.includes('Taxonomy');
+                                if(!isEditor.value){
+                                    window.location.href = clientRoot + '/index.php';
+                                }
                             });
                         });
-                    },
-                    setRankHigh() {
-                        this.selectedRanksHigh = 0;
-                        this.selectedRanks.forEach((rank) => {
-                            if(rank > this.selectedRanksHigh){
-                                this.selectedRanksHigh = rank;
+                    }
+
+                    function setRankHigh() {
+                        selectedRanksHigh.value = 0;
+                        selectedRanks.value.forEach((rank) => {
+                            if(rank > selectedRanksHigh.value){
+                                selectedRanksHigh.value = rank;
                             }
                         });
-                    },
-                    updateLoading(value) {
-                        this.loading = value;
-                    },
-                    updateSelectedRanks(selectedArr) {
-                        this.selectedRanks = selectedArr;
-                        this.setRankHigh();
-                    },
-                    updateTaxonomicGroup(taxonObj) {
-                        this.taxonomicGroup = taxonObj;
-                        this.taxonomicGroupTid = taxonObj ? taxonObj.tid : null;
-                        this.kingdomId = taxonObj ? taxonObj.kingdomid : null;
+                    }
+
+                    function updateLoading(value) {
+                        loading.value = value;
+                    }
+
+                    function updateSelectedRanks(selectedArr) {
+                        selectedRanks.value = selectedArr;
+                        setRankHigh();
+                    }
+
+                    function updateTaxonomicGroup(taxonObj) {
+                        taxonomicGroup.value = taxonObj ? taxonObj.sciname : null;
+                        taxonomicGroupTid.value = taxonObj ? taxonObj.tid : null;
+                        kingdomId.value = taxonObj ? taxonObj.kingdomid : null;
+                    }
+
+                    Vue.onMounted(() => {
+                        setEditor();
+                        selectedRanks.value = baseStore.getTaxonomicRanks;
+                        setRankHigh();
+                    });
+                    
+                    return {
+                        clientRoot,
+                        isEditor,
+                        kingdomId,
+                        loading,
+                        requiredRanks,
+                        selectedRanks,
+                        selectedRanksHigh,
+                        tab,
+                        taxonomicGroup,
+                        taxonomicGroupTid,
+                        updateLoading,
+                        updateSelectedRanks,
+                        updateTaxonomicGroup
                     }
                 }
             });
             taxonomicThesaurusManagerModule.use(Quasar, { config: {} });
-            taxonomicThesaurusManagerModule.mount('#innertext');
+            taxonomicThesaurusManagerModule.use(Pinia.createPinia());
+            taxonomicThesaurusManagerModule.mount('#mainContainer');
         </script>
     </body>
 </html>

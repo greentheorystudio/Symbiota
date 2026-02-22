@@ -1,12 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/ExsiccatiManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
-header('Content-Type: text/html; charset=' .$GLOBALS['CHARSET']);
+include_once(__DIR__ . '/../../services/SanitizerService.php');
+header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 if(!$GLOBALS['SYMB_UID']){
-	header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+	header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $ometid = array_key_exists('ometid',$_REQUEST)?(int)$_REQUEST['ometid']:0;
@@ -44,9 +44,11 @@ if($isEditor && $formSubmit){
 include_once(__DIR__ . '/../../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati Batch Transfer</title>
-    <link href="../../css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css" />
+	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Exsiccati Importer</title>
+    <meta name="description" content="Import exsiccati records into the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
 	<script type="text/javascript">
 		function verifyExsTableForm(f){
             let formVerified = false;
@@ -91,8 +93,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
 		function openIndPU(occId){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+				wWidth = document.getElementById('main-container').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
@@ -106,8 +108,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 
 		function openExsPU(omenid){
             let wWidth = 900;
-            if(document.getElementById('innertext').offsetWidth){
-				wWidth = document.getElementById('innertext').offsetWidth*1.05;
+            if(document.getElementById('main-container').offsetWidth){
+				wWidth = document.getElementById('main-container').offsetWidth*1.05;
 			}
 			else if(document.body.offsetWidth){
 				wWidth = document.body.offsetWidth*0.9;
@@ -124,13 +126,13 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 	<?php 
 	include(__DIR__ . '/../../header.php');
 	?>
-	<div class='navpath'>
-		<a href="../../index.php">Home</a> &gt;&gt; 
-		<a href="index.php">Exsiccati Index</a> &gt;&gt; 
-		<a href="batchimport.php">Batch Import Module</a>
-	</div>
-	<div id="innertext">
-		<?php
+	<div id="mainContainer" style="padding: 10px 15px 15px;">
+        <div id="breadcrumbs">
+            <a href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php" tabindex="0">Home</a> &gt;&gt;
+            <a href="index.php" tabindex="0">Exsiccati Index</a> &gt;&gt;
+            <a href="batchimport.php" tabindex="0">Batch Import Module</a>
+        </div>
+        <?php
 		if($statusStr){
 			echo '<hr/>';
 			echo '<div style="margin:10px;color:'.(strpos($statusStr,'SUCCESS') === false?'red':'green').';">'.$statusStr.'</div>';
@@ -292,8 +294,8 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 		?>
 	</div>
 	<?php
-	include(__DIR__ . '/../../footer.php');
     include_once(__DIR__ . '/../../config/footer-includes.php');
+    include(__DIR__ . '/../../footer.php');
 	?>
 </body>
 </html>

@@ -72,7 +72,8 @@ class ImageCleaner extends Manager{
 		while($row = $result->fetch_object()){
 			$status = true;
 			$imgId = $row->imgid;
-			$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid='.$imgId.'" target="_blank">'.$imgId.'</a>...');
+			//$this->logOrEcho($cnt.': Building thumbnail: <a href="../imgdetails.php?imgid='.$imgId.'" target="_blank">'.$imgId.'</a>...');
+            $this->logOrEcho($cnt.': Building thumbnail: '.$imgId.'...');
 			$this->conn->autocommit(false);
 			$testSql = 'SELECT thumbnailurl, url FROM images WHERE (imgid = '.$imgId.') FOR UPDATE ';
 			$textRS = $this->conn->query($testSql);
@@ -82,7 +83,7 @@ class ImageCleaner extends Manager{
 						'WHERE (imgid = '.$imgId.')';
 					$this->conn->query($tagSql);
 				}
-				elseif($testR->url === 'empty' || (strncmp($testR->url, 'processing', 10) === 0 && $testR->url !== 'processing '.date('Y-m-d'))){
+				elseif($testR->url === '' || (strncmp($testR->url, 'processing', 10) === 0 && $testR->url !== 'processing '.date('Y-m-d'))){
 					$tagSql = 'UPDATE images SET url = "processing '.date('Y-m-d').'" '.
 						'WHERE (imgid = '.$imgId.')';
 					$this->conn->query($tagSql);
@@ -127,7 +128,7 @@ class ImageCleaner extends Manager{
 
 	private function getSqlWhere(): string
 	{
-		$sql = 'WHERE ((i.thumbnailurl IS NULL) OR (i.url = "empty")) ';
+		$sql = 'WHERE ((i.thumbnailurl IS NULL) OR (i.url = "")) ';
 		if($this->collid) {
 			$sql .= 'AND (o.collid = ' . $this->collid . ') ';
 		}
@@ -172,8 +173,8 @@ class ImageCleaner extends Manager{
 		$this->imgManager->setTargetPath($targetPath);
 
 		$webIsEmpty = false;
-		$imgUrl = trim($recUrlWeb);
-		if((!$imgUrl || $imgUrl === 'empty') && $recUrlOrig){
+        $imgUrl = $recUrlWeb ? trim($recUrlWeb) : '';
+		if(!$imgUrl && $recUrlOrig){
 			$imgUrl = trim($recUrlOrig);
 			$webIsEmpty = true;
 		}
@@ -282,7 +283,8 @@ class ImageCleaner extends Manager{
 			$url = $r->url;
 			$urlTn = $r->thumbnailurl;
 			$urlOrig = $r->originalurl;
-			$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid='.$r->imgid.'" target="_blank">'.$r->imgid.'</a> [cat#: '.$r->catalognumber.']...',0,'div');
+			//$this->logOrEcho($cnt.'. Rebuilding thumbnail: <a href="../imgdetails.php?imgid='.$r->imgid.'" target="_blank">'.$r->imgid.'</a> [cat#: '.$r->catalognumber.']...',0,'div');
+            $this->logOrEcho($cnt.'. Rebuilding thumbnail: '.$r->imgid.' [cat#: '.$r->catalognumber.']...',0,'div');
 			$tsSource = 0;
 			if($postArr['evaluate_ts']){
 				$tsSource = $this->getRemoteModifiedTime($urlOrig?:$url);

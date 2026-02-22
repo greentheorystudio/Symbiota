@@ -2,10 +2,10 @@
 include_once(__DIR__ . '/../../config/symbbase.php');
 include_once(__DIR__ . '/../../classes/OccurrenceCleaner.php');
 include_once(__DIR__ . '/../../classes/SpecProcessorManager.php');
-include_once(__DIR__ . '/../../classes/Sanitizer.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .Sanitizer::getCleanedRequestPath(true));
+    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
 }
 
 $collid = array_key_exists('collid',$_REQUEST)?(int)$_REQUEST['collid']:0;
@@ -23,7 +23,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
  	$isEditor = true;
 }
 ?>
-<div id="innertext" style="background-color:white;">
+<div id="mainContainer" style="padding: 10px 15px 15px;background-color:white;">
 	<?php
 	if($isEditor){
 		$reportTypes = array(0 => 'General Stats', 1 => 'User Stats', 2 => 'Georeference Stats');
@@ -44,9 +44,6 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 		<fieldset style="padding:15px">
 			<legend><b><?php echo $reportTypes[$menu]; ?></b></legend>
 			<?php
-			$urlBase = '&occindex=0&q_catalognumber=';
-			$eUrl = '../editor/occurrenceeditor.php?collid='.$collid;
-			$beUrl = '../editor/occurrencetabledisplay.php?collid='.$collid;
 			if(!$menu){
 				$statsArr = $procManager->getProcessingStats();
 				?>
@@ -56,8 +53,9 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 						<?php
 						echo $statsArr['total'];
 						if($statsArr['total']){
-							echo '<span style="margin-left:10px;"><a href="'.$eUrl.$urlBase.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
-							echo '<span style="margin-left:10px;"><a href="'.$beUrl.$urlBase.'" target="_blank" title="Editor in Table View"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+							$fullEdUrl = '../editor/occurrenceeditor.php?collid='.$collid.'&starr={"collid":'.$collid.'}';
+                            echo "<span style='margin-left:10px;'><a href='".$fullEdUrl."' target='_blank' title='Edit Records'><i style='height:15px;width:15px;' class='far fa-edit'></i></a></span>";
+							echo '<span style="margin-left:10px;"><a href="../table.php?collid='.$collid.'" target="_blank" title="Editor in Table View"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
 							echo '<span style="margin-left:10px;"><a href="../download/index.php?collid='.$collid.'&tabindex=1" target="_blank" title="Download Full Data"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 						}
 						?>
@@ -67,10 +65,10 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 						<?php
 						echo $statsArr['noimg'];
 						if($statsArr['noimg']){
-							$eUrl1 = $eUrl.$urlBase.'&q_withoutimg=1';
-							$beUrl1 = $beUrl.$urlBase.'&q_withoutimg=1';
-							echo '<span style="margin-left:10px;"><a href="'.$eUrl1.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
-							echo '<span style="margin-left:10px;"><a href="'.$beUrl1.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+							$eUrl1 = '../editor/occurrenceeditor.php?collid='.$collid.'&starr={"collid":'.$collid.',"withoutimages":1}';
+							$beUrl1 = '../table.php?starr={"collid":'.$collid.',"withoutimages":1}';
+							echo "<span style='margin-left:10px;'><a href='".$eUrl1."' target='_blank' title='Edit Records'><i style='height:15px;width:15px;' class='far fa-edit'></i></a></span>";
+							echo "<span style='margin-left:10px;'><a href='".$beUrl1."' target='_blank' title='Batch Edit Records'><i style='height:15px;width:15px;' class='fas fa-list'></i></a></span>";
 							echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=dlnoimg&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 						}
 						?>
@@ -83,10 +81,10 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 							<?php
 							echo $statsArr['noskel'];
 							if($statsArr['noskel']){
-								$eUrl3 = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=sciname&q_customtype2=NULL';
-								$beUrl3 = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=stateProvince&q_customtype1=NULL&q_customfield2=sciname&q_customtype2=NULL';
-								echo '<span style="margin-left:10px;"><a href="'.$eUrl3.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
-								echo '<span style="margin-left:10px;"><a href="'.$beUrl3.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+								$eUrl3 = '../editor/occurrenceeditor.php?collid='.$collid.'&starr={"collid":'.$collid.',"advanced":[{"concatenator":null,"openParens":null,"field":"stateprovince","dataType":null,"operator":"IS NULL","value":null,"closeParens":null},{"concatenator":"AND","openParens":null,"field":"sciname","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}],"processingstatus":"Unprocessed"}';
+                                $beUrl3 = '../table.php?starr={"collid":'.$collid.',"advanced":[{"concatenator":null,"openParens":null,"field":"stateprovince","dataType":null,"operator":"IS NULL","value":null,"closeParens":null},{"concatenator":"AND","openParens":null,"field":"sciname","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}],"processingstatus":"Unprocessed"}';
+								echo "<span style='margin-left:10px;'><a href='".$eUrl3."' target='_blank' title='Edit Records'><i style='height:15px;width:15px;' class='far fa-edit'></i></a></span>";
+								echo "<span style='margin-left:10px;'><a href='".$beUrl3."' target='_blank' title='Batch Edit Records'><i style='height:15px;width:15px;' class='fas fa-list'></i></a></span>'";
 								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=noskel&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 							}
 							?>
@@ -100,10 +98,10 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 							<?php
 							echo $statsArr['unprocnoimg'];
 							if($statsArr['unprocnoimg']){
-								$eUrl2 = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_withoutimg=1';
-								$beUrl2 = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_withoutimg=1';
-								echo '<span style="margin-left:10px;"><a href="'.$eUrl2.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
-								echo '<span style="margin-left:10px;"><a href="'.$beUrl2.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+								$eUrl2 = '../editor/occurrenceeditor.php?collid='.$collid.'&starr={"collid":'.$collid.',"withoutimages":1,"processingstatus":"Unprocessed"}';
+                                $beUrl2 = '../table.php?starr={"collid":'.$collid.',"withoutimages":1,"processingstatus":"Unprocessed"}';
+								echo "<span style='margin-left:10px;'><a href='".$eUrl2."' target='_blank' title='Edit Records'><i style='height:15px;width:15px;' class='far fa-edit'></i></a></span>";
+								echo "<span style='margin-left:10px;'><a href='".$beUrl2."' target='_blank' title='Batch Edit Records'><i style='height:15px;width:15px;' class='fas fa-list'></i></a></span>";
 								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocnoimg&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 							}
 							?>
@@ -117,10 +115,10 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 							<?php
 							echo $statsArr['unprocwithdata'];
 							if($statsArr['unprocwithdata']){
-								$eUrl3b = $eUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=locality&q_customtype1=NOTNULL&q_customfield2=stateProvince&q_customtype2=NOTNULL';
-								$beUrl3b = $beUrl.$urlBase.'&q_processingstatus=unprocessed&q_customfield1=locality&q_customtype1=NOTNULL&q_customfield2=stateProvince&q_customtype2=NOTNULL';
-								echo '<span style="margin-left:10px;"><a href="'.$eUrl3b.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
-								echo '<span style="margin-left:10px;"><a href="'.$beUrl3b.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+								$eUrl3b = '../editor/occurrenceeditor.php?collid='.$collid.'&starr={"collid":'.$collid.',"advanced":[{"concatenator":null,"openParens":null,"field":"locality","dataType":null,"operator":"IS NOT NULL","value":null,"closeParens":null},{"concatenator":"AND","openParens":null,"field":"stateprovince","dataType":null,"operator":"IS NOT NULL","value":null,"closeParens":null}],"processingstatus":"Unprocessed"}';
+                                $beUrl3b = '../table.php?starr={"collid":'.$collid.',"advanced":[{"concatenator":null,"openParens":null,"field":"locality","dataType":null,"operator":"IS NOT NULL","value":null,"closeParens":null},{"concatenator":"AND","openParens":null,"field":"stateprovince","dataType":null,"operator":"IS NOT NULL","value":null,"closeParens":null}],"processingstatus":"Unprocessed"}';
+								echo "<span style='margin-left:10px;'><a href='".$eUrl3b."' target='_blank' title='Edit Records'><i style='height:15px;width:15px;' class='far fa-edit'></i></a></span>";
+								echo "<span style='margin-left:10px;'><a href='".$beUrl3b."' target='_blank' title='Batch Edit Records'><i style='height:15px;width:15px;' class='fas fa-list'></i></a></span>";
 								echo '<span style="margin-left:10px;"><a href="processor.php?submitaction=unprocwithdata&tabindex='.$tabIndex.'&collid='.$collid.'" target="_blank" title="Download Report File"><i style="height:15px;width:15px;" class="fas fa-download"></i></a></span>';
 							}
 							?>
@@ -133,7 +131,13 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 							<tr><th>Processing Status</th><th>Count</th></tr>
 							<?php
 							foreach($statsArr['ps'] as $processingStatus => $cnt){
-								if(!$processingStatus) {
+								if($processingStatus && $processingStatus !== 'no-status'){
+                                    $eUrl4 = '../editor/occurrenceeditor.php?collid='.$collid.'&starr={"collid":'.$collid.',"processingstatus":"'.$processingStatus.'"}';
+                                    $beUrl4 = '../table.php?starr={"collid":'.$collid.',"processingstatus":"'.$processingStatus.'"}';
+                                }
+                                else{
+                                    $eUrl4 = '../editor/occurrenceeditor.php?collid='.$collid.'&starr={"collid":'.$collid.',"advanced":[{"concatenator":null,"openParens":null,"field":"processingstatus","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}]}';
+                                    $beUrl4 = '../table.php?starr={"collid":'.$collid.',"advanced":[{"concatenator":null,"openParens":null,"field":"processingstatus","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}]}';
                                     $processingStatus = 'No Status Set';
                                 }
 								echo '<tr>';
@@ -141,10 +145,8 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
 								echo '<td>';
 								echo $cnt;
 								if($cnt){
-									$eUrl4 = $eUrl.$urlBase.'&q_processingstatus='.$processingStatus;
-									$beUrl4 = $beUrl.$urlBase.'&q_processingstatus='.$processingStatus;
-									echo '<span style="margin-left:10px;"><a href="'.$eUrl4.'" target="_blank" title="Edit Records"><i style="height:15px;width:15px;" class="far fa-edit"></i></a></span>';
-									echo '<span style="margin-left:10px;"><a href="'.$beUrl4.'" target="_blank" title="Batch Edit Records"><i style="height:15px;width:15px;" class="fas fa-list"></i></a></span>';
+									echo "<span style='margin-left:10px;'><a href='".$eUrl4."' target='_blank' title='Edit Records'><i style='height:15px;width:15px;' class='far fa-edit'></i></a></span>";
+									echo "<span style='margin-left:10px;'><a href='".$beUrl4."' target='_blank' title='Batch Edit Records'><i style='height:15px;width:15px;' class='fas fa-list'></i></a></span>";
 								}
 								echo '</td>';
 								echo '</tr>';
@@ -269,7 +271,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
                         <?php
                         if($statsArr['coord']){
                             ?>
-                            <a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+                            <a href='../table.php?starr={"collid":<?php echo $collid; ?>,"advanced":[{"concatenator":null,"openParens":null,"field":"decimallatitude","dataType":null,"operator":"IS NOT NULL","value":null,"closeParens":null}]}' style="margin-left:5px;' title="Open Editor" target="_blank">
                                 <i style="height:15px;width:15px;" class="far fa-edit"></i>
                             </a>
                             <?php
@@ -280,7 +282,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
                         <?php
                         if($statsArr['noCoord']){
                             ?>
-                            <a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+                            <a href='../table.php?starr={"collid":<?php echo $collid; ?>,"advanced":[{"concatenator":null,"openParens":null,"field":"decimallatitude","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}]}' style="margin-left:5px;" title="Open Editor" target="_blank">
                                 <i style="height:15px;width:15px;" class="far fa-edit"></i>
                             </a>
                             <a href="../georef/batchgeoreftool.php?collid=<?php echo $collid; ?>" style="margin-left:5px;" title="Open Batch Georeference Tool" target="_blank">
@@ -294,7 +296,7 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
                         <?php
                         if($statsArr['noCoord_verbatim']){
                             ?>
-                            <a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NOTNULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+                            <a href='../table.php?starr={"collid":<?php echo $collid; ?>,"advanced":[{"concatenator":null,"openParens":null,"field":"decimallatitude","dataType":null,"operator":"IS NULL","value":null,"closeParens":null},{"concatenator":"AND","openParens":null,"field":"verbatimcoordinates","dataType":null,"operator":"IS NOT NULL","value":null,"closeParens":null}]}' style="margin-left:5px;" title="Open Editor" target="_blank">
                                 <i style="height:15px;width:15px;" class="far fa-edit"></i>
                             </a>
                             <?php
@@ -305,15 +307,12 @@ if($GLOBALS['IS_ADMIN'] || (array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS']
                         <?php
                         if($statsArr['noCoord_noVerbatim']){
                             ?>
-                            <a href="../editor/occurrencetabledisplay.php?collid=<?php echo $collid; ?>&occindex=0&q_catalognumber=&q_customfield1=decimallatitude&q_customtype1=NULL&q_customfield2=verbatimcoordinates&q_customtype2=NULL" style="margin-left:5px;" title="Open Editor" target="_blank">
+                            <a href='../table.php?starr={"collid":<?php echo $collid; ?>,"advanced":[{"concatenator":null,"openParens":null,"field":"decimallatitude","dataType":null,"operator":"IS NULL","value":null,"closeParens":null},{"concatenator":"AND","openParens":null,"field":"verbatimcoordinates","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}]}' style="margin-left:5px;" title="Open Editor" target="_blank">
                                 <i style="height:15px;width:15px;" class="far fa-edit"></i>
                             </a>
                             <?php
                         }
                         ?>
-                    </li>
-                    <li>
-                        <a href="coordinatevalidator.php?collid=<?php echo $collid; ?>">Check coordinates against political boundaries</a>
                     </li>
                 </ul>
                 <?php
