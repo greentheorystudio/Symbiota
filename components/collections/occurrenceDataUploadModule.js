@@ -2636,7 +2636,7 @@ const occurrenceDataUploadModule = {
         function requestGbifDataDownload() {
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            formData.append('predicateJson', JSON.stringify(profileData['configjson']['gbifPredicateJson']));
+            formData.append('predicateJson', JSON.stringify(profileData.value['configjson']['gbifPredicateJson']));
             formData.append('action', 'requestGbifDataDownload');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
