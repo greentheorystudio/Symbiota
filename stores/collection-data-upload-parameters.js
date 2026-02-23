@@ -101,9 +101,11 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
     },
     actions: {
         clearGbifDownloadKey() {
-            this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKey'] = null;
-            this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKeyTimestamp'] = null;
-            this.collectionDataUploadParametersEditData['configjson']['gbifDownloadPath'] = null;
+            const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
+            config['gbifDownloadKey'] = null;
+            config['gbifDownloadKeyTimestamp'] = null;
+            config['gbifDownloadPath'] = null;
+            this.updateCollectionDataUploadParametersEditData('configjson', config);
             if(this.getCollectionDataUploadParametersEditsExist){
                 this.updateCollectionDataUploadParametersRecord();
             }
@@ -169,9 +171,10 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             });
         },
         saveGbifDownloadKey(key) {
-            console.log(key);
-            this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKey'] = key;
-            this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKeyTimestamp'] = Date.now();
+            const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
+            config['gbifDownloadKey'] = key;
+            config['gbifDownloadKeyTimestamp'] = Date.now();
+            this.updateCollectionDataUploadParametersEditData('configjson', config);
             if(this.getCollectionDataUploadParametersEditsExist){
                 this.updateCollectionDataUploadParametersRecord();
             }
@@ -216,9 +219,6 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             this.collectionDataUploadParametersEditData[key] = value;
         },
         updateCollectionDataUploadParametersRecord(callback = null) {
-            console.log(this.collectionId);
-            console.log(this.collectionDataUploadParametersId);
-            console.log(this.collectionDataUploadParametersUpdateData);
             const formData = new FormData();
             formData.append('collid', this.collectionId.toString());
             formData.append('uspid', this.collectionDataUploadParametersId.toString());
@@ -242,10 +242,10 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         },
         validateGbifDownloadKey() {
             const currentDate = new Date();
-            const dateSixMonthsAgo = new Date();
-            dateSixMonthsAgo.setDate(currentDate.getDate() - 182);
+            const dateSixMonthsAhead = new Date();
+            dateSixMonthsAhead.setDate(currentDate.getDate() + 182);
             const downloadKeyDate = new Date(this.collectionDataUploadParametersData['configjson']['gbifDownloadKeyTimestamp']);
-            if(downloadKeyDate < dateSixMonthsAgo){
+            if(downloadKeyDate < dateSixMonthsAhead){
                 this.getGbifDownloadKeyStatus();
             }
             else{
