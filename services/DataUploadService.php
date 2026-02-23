@@ -424,6 +424,7 @@ class DataUploadService {
                         $returnArr['occurrence']['fieldsEnclosedBy'] = $coreElement->getAttribute('fieldsEnclosedBy');
                         $returnArr['occurrence']['ignoreHeaderLines'] = $coreElement->getAttribute('ignoreHeaderLines');
                         $returnArr['occurrence']['rowType'] = $rowType;
+                        $returnArr['occurrence']['dataFiles'] = array();
                         if($fieldElements = $coreElement->getElementsByTagName('field')){
                             foreach($fieldElements as $fieldElement){
                                 $term = $fieldElement->getAttribute('term');
@@ -468,12 +469,12 @@ class DataUploadService {
                     elseif(stripos($rowType,'dnaderiveddata')){
                         $tagName = 'genetic';
                     }
-                    if($coreidElement = $extensionElement->getElementsByTagName('coreid')){
-                        $extCoreId = $coreidElement->item(0)->getAttribute('index');
-                        $returnArr[$tagName]['coreid'] = $extCoreId;
-                    }
-                    if($coreId === '' || $coreEventId || $coreId === $extCoreId){
-                        if($tagName){
+                    if($tagName){
+                        if($coreidElement = $extensionElement->getElementsByTagName('coreid')){
+                            $extCoreId = $coreidElement->item(0)->getAttribute('index');
+                            $returnArr[$tagName]['coreid'] = $extCoreId;
+                        }
+                        if($coreId === '' || $coreEventId || $coreId === $extCoreId){
                             if($locElements = $extensionElement->getElementsByTagName('location')){
                                 $returnArr[$tagName]['filename'] = $locElements->item(0)->nodeValue;
                             }
@@ -483,6 +484,7 @@ class DataUploadService {
                             $returnArr[$tagName]['fieldsEnclosedBy'] = $extensionElement->getAttribute('fieldsEnclosedBy');
                             $returnArr[$tagName]['ignoreHeaderLines'] = $extensionElement->getAttribute('ignoreHeaderLines');
                             $returnArr[$tagName]['rowType'] = $rowType;
+                            $returnArr[$tagName]['dataFiles'] = array();
                             if($fieldElements = $extensionElement->getElementsByTagName('field')){
                                 foreach($fieldElements as $fieldElement){
                                     $term = $fieldElement->getAttribute('term');
@@ -572,30 +574,12 @@ class DataUploadService {
         return $recordsCreated;
     }
 
-    public function processTransferredDwca($serverPath, $metaFile): array
+    public function processSourceDataMetaXmlFile($serverPath, $metaFile): array
     {
         $returnArr = array();
         if($metaFile && $serverPath && strpos($serverPath, $GLOBALS['SERVER_ROOT']) === 0){
             $metaPath = $serverPath . '/' . $metaFile;
             $returnArr = $this->processDwcaMetaFile($metaPath);
-            if(array_key_exists('occurrence', $returnArr) && array_key_exists('filename', $returnArr['occurrence']) && $returnArr['occurrence']['filename']){
-                $returnArr['occurrence']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'occurrence', $returnArr['occurrence']);
-                if(array_key_exists('identification', $returnArr) && array_key_exists('filename', $returnArr['identification']) && $returnArr['identification']['filename']){
-                    $returnArr['identification']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'identification', $returnArr['identification']);
-                }
-                if(array_key_exists('multimedia', $returnArr) && array_key_exists('filename', $returnArr['multimedia']) && $returnArr['multimedia']['filename']){
-                    $returnArr['multimedia']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'multimedia', $returnArr['multimedia']);
-                }
-                if(array_key_exists('extendedmeasurementorfact', $returnArr) && array_key_exists('filename', $returnArr['extendedmeasurementorfact']) && $returnArr['extendedmeasurementorfact']['filename']){
-                    $returnArr['extendedmeasurementorfact']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'extendedmeasurementorfact', $returnArr['extendedmeasurementorfact']);
-                }
-                if(array_key_exists('measurementorfact', $returnArr) && array_key_exists('filename', $returnArr['measurementorfact']) && $returnArr['measurementorfact']['filename']){
-                    $returnArr['measurementorfact']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'measurementorfact', $returnArr['measurementorfact']);
-                }
-                if(array_key_exists('genetic', $returnArr) && array_key_exists('filename', $returnArr['genetic']) && $returnArr['genetic']['filename']){
-                    $returnArr['genetic']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'genetic', $returnArr['genetic']);
-                }
-            }
         }
         return $returnArr;
     }
