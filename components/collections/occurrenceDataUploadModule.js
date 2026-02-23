@@ -37,28 +37,32 @@ const occurrenceDataUploadModule = {
                                             </div>
                                         </div>
                                         <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || !!currentProcess"></collection-data-upload-parameters-field-module>
-                                        <div class="row justify-end q-gutter-sm">
-                                            <template v-if="Number(profileData.uploadtype) === 11 && !profileData['configjson']['gbifDownloadPath']">
-                                                <template v-if="!profileData['configjson'] || !profileData['configjson']['gbifDownloadKey']">
+                                        <template v-if="Number(profileData.uploadtype) === 11 && !profileData['configjson']['gbifDownloadPath']">
+                                            <template v-if="!profileData['configjson'] || !profileData['configjson']['gbifDownloadKey']">
+                                                <div class="row justify-end">
                                                     <div>
                                                         <q-btn color="secondary" @click="requestGbifDataDownload();" label="Request Data" :disabled="currentTab !== 'configuration' || !!currentProcess || !profileData['configjson'] || !profileData['configjson']['gbifPredicateJson']" dense tabindex="0" />
                                                     </div>
-                                                </template>
-                                                <template v-else>
-                                                    <div class="text-subtitle1 text-red">
+                                                </div>
+                                            </template>
+                                            <template v-else>
+                                                <div class="row justify-between">
+                                                    <div class="text-subtitle1 text-red text-bold">
                                                         Data request is being processed by GBIF
                                                     </div>
                                                     <div>
                                                         <q-btn color="negative" @click="cancelGbifDataRequest();" label="Cancel Request" dense tabindex="0" />
                                                     </div>
-                                                </template>
+                                                </div>
                                             </template>
-                                            <template v-else>
+                                        </template>
+                                        <template v-else>
+                                            <div class="row justify-end">
                                                 <div>
                                                     <q-btn color="secondary" @click="initializeUpload();" label="Initialize Upload" :disabled="currentTab !== 'configuration' || !!currentProcess || !initializeValid" dense tabindex="0" />
                                                 </div>
-                                            </template>
-                                        </div>
+                                            </div>
+                                        </template>
                                     </div>
                                 </q-card-section>
                             </q-card>
@@ -709,7 +713,14 @@ const occurrenceDataUploadModule = {
         }
 
         function cancelGbifDataRequest() {
-            collectionDataUploadParametersStore.clearGbifDownloadKey();
+            collectionDataUploadParametersStore.cancelGbifDownloadRequest((res) => {
+                if(res === 1){
+                    showNotification('positive','Download request cancelled.');
+                }
+                else{
+                    showNotification('negative', 'There was an error cancelling the download request.');
+                }
+            });
         }
 
         function clearData() {

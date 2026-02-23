@@ -113,6 +113,21 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         }
     },
     actions: {
+        cancelGbifDownloadRequest(callback) {
+            const url = 'https://api.gbif.org/v1/occurrence/download/request/' + this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKey'];
+            fetch(url, {
+                method: 'DELETE'
+            })
+            .then((response) => {
+                if(response.status === 204){
+                    this.clearGbifDownloadKey();
+                    callback(1);
+                }
+                else{
+                    callback(0);
+                }
+            });
+        },
         clearGbifDownloadKey() {
             const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
             config['gbifDownloadKey'] = null;
@@ -168,25 +183,30 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         },
         getGbifDownloadKeyStatus() {
             const url = 'https://api.gbif.org/v1/occurrence/download/' + this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKey'];
-            const formData = new FormData();
-            formData.append('url', url);
-            formData.append('action', 'getExternalData');
-            formData.append('requestType', 'get');
-            fetch(proxyServiceApiUrl, {
-                method: 'POST',
-                body: formData
+            fetch(url, {
+                method: 'GET'
             })
             .then((response) => {
                 return response.ok ? response.json() : null;
             })
             .then((resObj) => {
-                console.log(resObj);
+                if(resObj && resObj.hasOwnProperty('status') && resObj['status'] === 'SUCCEEDED') {
+                    this.saveGbifDownloadPath(resObj['downloadLink']);
+                }
             });
         },
         saveGbifDownloadKey(key) {
             const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
             config['gbifDownloadKey'] = key;
             config['gbifDownloadKeyTimestamp'] = Date.now();
+            this.updateCollectionDataUploadParametersEditData('configjson', config);
+            if(this.getCollectionDataUploadParametersEditsExist){
+                this.updateCollectionDataUploadParametersRecord();
+            }
+        },
+        saveGbifDownloadPath(path) {
+            const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
+            config['gbifDownloadPath'] = path;
             this.updateCollectionDataUploadParametersEditData('configjson', config);
             if(this.getCollectionDataUploadParametersEditsExist){
                 this.updateCollectionDataUploadParametersRecord();
@@ -258,11 +278,11 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             const dateSixMonthsAhead = new Date();
             dateSixMonthsAhead.setDate(currentDate.getDate() + 182);
             const downloadKeyDate = new Date(this.collectionDataUploadParametersData['configjson']['gbifDownloadKeyTimestamp']);
-            if(downloadKeyDate < dateSixMonthsAhead){
-                this.getGbifDownloadKeyStatus();
-            }
-            else{
+            if(downloadKeyDate > dateSixMonthsAhead){
                 this.clearGbifDownloadKey();
+            }
+            else if(!this.collectionDataUploadParametersData['configjson']['gbifDownloadPath']){
+                this.getGbifDownloadKeyStatus();
             }
         }
     }
