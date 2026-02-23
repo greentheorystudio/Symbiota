@@ -555,13 +555,10 @@ const occurrenceDataUploadModule = {
         const includeMofData = Vue.ref(true);
         const initializeValid = Vue.computed(() => {
             let valid = false;
-            if((Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10) && profileData.value['dwcpath']){
+            if((Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10 || Number(profileData.value['uploadtype']) === 11) && profileData.value['dwcpath']){
                 valid = true;
             }
             else if(Number(profileData.value['uploadtype']) === 6 && uploadedFile.value){
-                valid = true;
-            }
-            else if(Number(profileData.value['uploadtype']) === 11 && profileData.value['configjson']['gbifDownloadPath']){
                 valid = true;
             }
             return valid;
@@ -1641,7 +1638,7 @@ const occurrenceDataUploadModule = {
 
         function getOccurrenceFieldMappingOption(fieldName, mappingData) {
             let fieldOption;
-            if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10 || (uploadedFile.value && uploadedFile.value.name.endsWith('.zip'))){
+            if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10 || Number(profileData.value['uploadtype']) === 11 || (uploadedFile.value && uploadedFile.value.name.endsWith('.zip'))){
                 if(Object.keys(mappingData).length === 0 || !mappingData.hasOwnProperty(fieldName.toLowerCase())){
                     fieldOption = symbiotaFieldOptionsOccurrence.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
                 }
@@ -2504,7 +2501,7 @@ const occurrenceDataUploadModule = {
         }
 
         function processSourceDataTransfer() {
-            if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10){
+            if(Number(profileData.value['uploadtype']) === 8 || Number(profileData.value['uploadtype']) === 10 || Number(profileData.value['uploadtype']) === 11){
                 const text = 'Transferring source data archive';
                 currentProcess.value = 'transferSourceData';
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
