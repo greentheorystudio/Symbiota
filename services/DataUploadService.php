@@ -597,9 +597,9 @@ class DataUploadService {
         $fh = fopen(($serverPath . '/' . $fileInfo['filename']), 'rb');
         $wh = fopen(($serverPath . '/' . $currentFilename), 'wb');
         if((int)$fileInfo['ignoreHeaderLines'] === 1) {
-            fgetcsv($fh,0, $fileInfo['fieldsTerminatedBy'], $fileInfo['fieldsEnclosedBy'], '');
+            fgetcsv($fh,0, ($fileInfo['fieldsTerminatedBy'] === '\t' ? "\t" : $fileInfo['fieldsTerminatedBy']), ($fileInfo['fieldsEnclosedBy'] === '' ? chr(0) : $fileInfo['fieldsEnclosedBy']), '');
         }
-        while($dataArr = fgetcsv($fh,0, $fileInfo['fieldsTerminatedBy'], $fileInfo['fieldsEnclosedBy'], '')){
+        while($dataArr = fgetcsv($fh,0, ($fileInfo['fieldsTerminatedBy'] === '\t' ? "\t" : $fileInfo['fieldsTerminatedBy']), ($fileInfo['fieldsEnclosedBy'] === '' ? chr(0) : $fileInfo['fieldsEnclosedBy']), '')){
             if($recordIndex === 10000){
                 fclose($wh);
                 $returnArr[] = $currentFilename;
