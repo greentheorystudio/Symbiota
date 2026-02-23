@@ -129,6 +129,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             });
         },
         clearGbifDownloadKey() {
+            this.updateCollectionDataUploadParametersEditData('dwcpath', null);
             const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
             config['gbifDownloadKey'] = null;
             config['gbifDownloadKeyTimestamp'] = null;
@@ -205,6 +206,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             }
         },
         saveGbifDownloadPath(path) {
+            this.updateCollectionDataUploadParametersEditData('dwcpath', path);
             const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
             config['gbifDownloadPath'] = path;
             this.updateCollectionDataUploadParametersEditData('configjson', config);
