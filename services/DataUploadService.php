@@ -456,11 +456,17 @@ class DataUploadService {
                     if(stripos($rowType,'identification')){
                         $tagName = 'identification';
                     }
-                    elseif(stripos($rowType,'image') || stripos($rowType,'audubon_core') || stripos($rowType,'Multimedia')){
+                    elseif(stripos($rowType,'image') || stripos($rowType,'audubon_core') || stripos($rowType,'multimedia')){
                         $tagName = 'multimedia';
                     }
                     elseif(stripos($rowType,'extendedmeasurementorfact')){
+                        $tagName = 'extendedmeasurementorfact';
+                    }
+                    elseif(stripos($rowType,'measurementorfact')){
                         $tagName = 'measurementorfact';
+                    }
+                    elseif(stripos($rowType,'dnaderiveddata')){
+                        $tagName = 'genetic';
                     }
                     if($coreidElement = $extensionElement->getElementsByTagName('coreid')){
                         $extCoreId = $coreidElement->item(0)->getAttribute('index');
@@ -580,8 +586,14 @@ class DataUploadService {
                 if(array_key_exists('multimedia', $returnArr) && array_key_exists('filename', $returnArr['multimedia']) && $returnArr['multimedia']['filename']){
                     $returnArr['multimedia']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'multimedia', $returnArr['multimedia']);
                 }
+                if(array_key_exists('extendedmeasurementorfact', $returnArr) && array_key_exists('filename', $returnArr['extendedmeasurementorfact']) && $returnArr['extendedmeasurementorfact']['filename']){
+                    $returnArr['extendedmeasurementorfact']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'extendedmeasurementorfact', $returnArr['extendedmeasurementorfact']);
+                }
                 if(array_key_exists('measurementorfact', $returnArr) && array_key_exists('filename', $returnArr['measurementorfact']) && $returnArr['measurementorfact']['filename']){
                     $returnArr['measurementorfact']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'measurementorfact', $returnArr['measurementorfact']);
+                }
+                if(array_key_exists('genetic', $returnArr) && array_key_exists('filename', $returnArr['genetic']) && $returnArr['genetic']['filename']){
+                    $returnArr['genetic']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'genetic', $returnArr['genetic']);
                 }
             }
         }
@@ -614,7 +626,7 @@ class DataUploadService {
         fclose($wh);
         $returnArr[] = $currentFilename;
         fclose($fh);
-        FileSystemService::deleteFile($serverPath . '/' . $fileInfo['filename']);
+        FileSystemService::deleteFile($serverPath . '/' . $fileInfo['filename'], true);
         return $returnArr;
     }
 
@@ -726,12 +738,16 @@ class DataUploadService {
         return $returnArr;
     }
 
-    public function validateDwcaFilenameArr($arr, $dirPath): bool
+    public function validateDwcaFilenameArr($arr, $dirPath, $subDir = null): bool
     {
         $returnVal = false;
         foreach($arr as $filename){
-            if(strtolower($filename) === 'meta.xml'){
+            if(!$subDir && strtolower($filename) === 'meta.xml'){
                 $returnVal = true;
+            }
+            elseif(FileSystemService::isDirectory($dirPath . '/' . $filename) && (strtolower($filename) === 'dataset' || strtolower($filename) === 'verbatim')){
+                $fileArr = FileSystemService::getDirectoryFilenameArr(($dirPath . '/' . $filename));
+                $this->validateDwcaFilenameArr($fileArr, ($dirPath . '/' . $filename), true);
             }
             elseif(strtolower(substr($filename, -4)) !== '.csv' && strtolower(substr($filename, -4)) !== '.txt' && strtolower(substr($filename, -4)) !== '.xml'){
                 if(FileSystemService::isDirectory($dirPath . '/' . $filename)){
