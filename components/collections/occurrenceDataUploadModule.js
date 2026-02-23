@@ -38,7 +38,7 @@ const occurrenceDataUploadModule = {
                                         </div>
                                         <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || !!currentProcess"></collection-data-upload-parameters-field-module>
                                         <div class="row justify-end q-gutter-sm">
-                                            <template v-if="Number(profileData.uploadtype) === 11 && !gbifDwcaDownloadPath">
+                                            <template v-if="Number(profileData.uploadtype) === 11 && !profileData['configjson']['gbifDownloadPath']">
                                                 <template v-if="!profileData['configjson'] || !profileData['configjson']['gbifDownloadKey']">
                                                     <div>
                                                         <q-btn color="secondary" @click="requestGbifDataDownload();" label="Request Data" :disabled="currentTab !== 'configuration' || !!currentProcess || !profileData['configjson'] || !profileData['configjson']['gbifPredicateJson']" dense tabindex="0" />
@@ -536,7 +536,6 @@ const occurrenceDataUploadModule = {
         const flatFileMode = Vue.ref(false);
         const flatFileMofData = Vue.ref([]);
         const flatFileOccurrenceData = Vue.ref([]);
-        const gbifDwcaDownloadPath = Vue.computed(() => collectionDataUploadParametersStore.getGbifDwcaDownloadPath);
         const includeDeterminationData = Vue.ref(true);
         const includeMultimediaData = Vue.ref(true);
         const includeMofData = Vue.ref(true);
@@ -548,7 +547,7 @@ const occurrenceDataUploadModule = {
             else if(Number(profileData.value['uploadtype']) === 6 && uploadedFile.value){
                 valid = true;
             }
-            else if(Number(profileData.value['uploadtype']) === 11 && gbifDwcaDownloadPath.value){
+            else if(Number(profileData.value['uploadtype']) === 11 && profileData.value['configjson']['gbifDownloadPath']){
                 valid = true;
             }
             return valid;
@@ -2634,6 +2633,7 @@ const occurrenceDataUploadModule = {
         }
 
         function requestGbifDataDownload() {
+            showWorking();
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('predicateJson', JSON.stringify(profileData.value['configjson']['gbifPredicateJson']));
@@ -2646,7 +2646,13 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                console.log(res);
+                hideWorking();
+                if(res && res.length > 0){
+                    collectionDataUploadParametersStore.saveGbifDownloadKey(res);
+                }
+                else{
+                    showNotification('negative','An error occurred while requesting the data download from GBIF.');
+                }
             });
         }
 
@@ -2920,7 +2926,6 @@ const occurrenceDataUploadModule = {
             fieldMapperSourceFields,
             fieldMapperTargetFields,
             flatFileMode,
-            gbifDwcaDownloadPath,
             includeDeterminationData,
             includeMultimediaData,
             includeMofData,

@@ -667,6 +667,38 @@ class DataUploadService {
         return $returnVal;
     }
 
+    public function requestGbifDataDownload($predicateData): string
+    {
+        $requestData = json_encode(array(
+            'creator' => $GLOBALS['GBIF_USERNAME'],
+            'notificationAddresses' => array(
+                $GLOBALS['ADMIN_EMAIL']
+            ),
+            'sendNotification' => false,
+            'format' => 'DWCA',
+            'predicate' => $predicateData,
+            'verbatimExtensions' => array(
+                'http://rs.gbif.org/terms/1.0/DNADerivedData',
+                'http://rs.tdwg.org/dwc/terms/MeasurementOrFact',
+                'http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact'
+            )
+        ));
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://api.gbif.org/v1/occurrence/download/request');
+        curl_setopt($curl, CURLOPT_USERPWD, ($GLOBALS['GBIF_USERNAME'] . ':' . $GLOBALS['GBIF_PASSWORD']));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_USERAGENT, 'curl/8.7.1');
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($requestData)
+        ));
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $requestData);
+        $result = curl_exec($curl);
+        curl_close($curl);
+        return $result;
+    }
+
     public function setUploadLocalitySecurity($collid): int
     {
         $retVal = 1;
