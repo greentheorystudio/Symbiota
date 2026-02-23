@@ -64,6 +64,11 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                     state.collectionDataUploadParametersUpdateData[key] = state.collectionDataUploadParametersEditData[key];
                 }
             }
+            if(this.getGbifPredicateChanged){
+                state.collectionDataUploadParametersUpdateData['configjson']['gbifDownloadKey'] = null;
+                state.collectionDataUploadParametersUpdateData['configjson']['gbifDownloadKeyTimestamp'] = null;
+                state.collectionDataUploadParametersUpdateData['configjson']['gbifDownloadPath'] = null;
+            }
             return exist;
         },
         getCollectionDataUploadParametersID(state) {
@@ -84,6 +89,14 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         },
         getGbifCredentialsConfigured(state) {
             return state.baseStore.getGbifCredentialsConfigured;
+        },
+        getGbifPredicateChanged(state) {
+            if(state.collectionDataUploadParametersData.hasOwnProperty('configjson') && state.collectionDataUploadParametersEditData.hasOwnProperty('configjson') && state.collectionDataUploadParametersData['configjson'].hasOwnProperty('gbifPredicateJson') && state.collectionDataUploadParametersEditData['configjson'].hasOwnProperty('gbifPredicateJson')){
+                return state.collectionDataUploadParametersData['configjson']['gbifPredicateJson'] !== state.collectionDataUploadParametersEditData['configjson']['gbifPredicateJson'];
+            }
+            else{
+                return false;
+            }
         },
         getUploadTypeOptions() {
             const returnArr = [
