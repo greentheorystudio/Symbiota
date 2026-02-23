@@ -521,7 +521,7 @@ class DataUploadService {
         if($targetPath && $dwcaPath){
             $fileName = 'dwca.zip';
             $fullTargetPath = $targetPath . '/' . $fileName;
-            if((int)$uploadType === 8){
+            if((int)$uploadType === 8 || (int)$uploadType === 11){
                 $transferSuccess = FileSystemService::transferDwcaToLocalTarget($fullTargetPath, $dwcaPath);
             }
             elseif((int)$uploadType === 10){
