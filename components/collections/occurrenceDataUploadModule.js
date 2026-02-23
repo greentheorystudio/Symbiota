@@ -2345,7 +2345,7 @@ const occurrenceDataUploadModule = {
                 metaXmlData.value['occurrence']['dataFiles'].splice(0, 1);
                 currentComplete = metaXmlData.value['occurrence']['dataFiles'].length === 0;
             }
-            else if(includeDeterminationData.value && metaXmlData.value['identification']['dataFiles'].length > 0){
+            else if(metaXmlData.value.hasOwnProperty('identification') && includeDeterminationData.value && metaXmlData.value['identification']['dataFiles'].length > 0){
                 if(sourceDataUploadStage.value !== 'determination'){
                     countChange = true;
                     sourceDataUploadStage.value = 'determination';
@@ -2359,7 +2359,7 @@ const occurrenceDataUploadModule = {
                 metaXmlData.value['identification']['dataFiles'].splice(0, 1);
                 currentComplete = metaXmlData.value['identification']['dataFiles'].length === 0;
             }
-            else if(includeMultimediaData.value && metaXmlData.value['multimedia']['dataFiles'].length > 0){
+            else if(metaXmlData.value.hasOwnProperty('multimedia') && includeMultimediaData.value && metaXmlData.value['multimedia']['dataFiles'].length > 0){
                 if(sourceDataUploadStage.value !== 'multimedia'){
                     countChange = true;
                     sourceDataUploadStage.value = 'multimedia';
@@ -2373,7 +2373,7 @@ const occurrenceDataUploadModule = {
                 metaXmlData.value['multimedia']['dataFiles'].splice(0, 1);
                 currentComplete = metaXmlData.value['multimedia']['dataFiles'].length === 0;
             }
-            else if(includeMofData.value && metaXmlData.value['measurementorfact']['dataFiles'].length > 0){
+            else if(metaXmlData.value.hasOwnProperty('measurementorfact') && includeMofData.value && metaXmlData.value['measurementorfact']['dataFiles'].length > 0){
                 if(sourceDataUploadStage.value !== 'mof'){
                     countChange = true;
                     sourceDataUploadStage.value = 'mof';
