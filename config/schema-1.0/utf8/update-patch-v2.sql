@@ -469,7 +469,8 @@ ALTER TABLE `fmprojects`
 ALTER TABLE `omcolldatauploadparameters`
     MODIFY COLUMN `queryparamjson` longtext NULL AFTER `dwcpath`,
     MODIFY COLUMN `cleansql` longtext NULL AFTER `queryparamjson`,
-    MODIFY COLUMN `configjson` longtext NULL AFTER `cleansql`;
+    MODIFY COLUMN `configjson` longtext NULL AFTER `cleansql`,
+    ADD INDEX `Index_omcolldatauploadparameters_uploadtype`(`UploadType`);
 
 ALTER TABLE `omcollmediauploadparameters`
     MODIFY COLUMN `configjson` longtext NULL AFTER `patternmatchfield`;

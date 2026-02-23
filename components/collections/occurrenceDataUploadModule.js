@@ -39,11 +39,20 @@ const occurrenceDataUploadModule = {
                                         <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || !!currentProcess"></collection-data-upload-parameters-field-module>
                                         <template v-if="Number(profileData.uploadtype) === 11 && !profileData['configjson']['gbifDownloadPath']">
                                             <template v-if="!profileData['configjson'] || !profileData['configjson']['gbifDownloadKey']">
-                                                <div class="row justify-end">
-                                                    <div>
-                                                        <q-btn color="secondary" @click="requestGbifDataDownload();" label="Request Data" :disabled="currentTab !== 'configuration' || !!currentProcess || !profileData['configjson'] || !profileData['configjson']['gbifPredicateJson']" dense tabindex="0" />
+                                                <template v-if="gbifLoadingStatus">
+                                                    <div class="row justify-start">
+                                                        <div class="text-subtitle1 text-red text-bold">
+                                                            GBIF is currently processing data for a different upload
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </template>
+                                                <template v-else>
+                                                    <div class="row justify-end">
+                                                        <div>
+                                                            <q-btn color="secondary" @click="requestGbifDataDownload();" label="Request Data" :disabled="currentTab !== 'configuration' || !!currentProcess || !profileData['configjson'] || !profileData['configjson']['gbifPredicateJson']" dense tabindex="0" />
+                                                        </div>
+                                                    </div>
+                                                </template>
                                             </template>
                                             <template v-else>
                                                 <div class="row justify-between">
@@ -540,6 +549,7 @@ const occurrenceDataUploadModule = {
         const flatFileMode = Vue.ref(false);
         const flatFileMofData = Vue.ref([]);
         const flatFileOccurrenceData = Vue.ref([]);
+        const gbifLoadingStatus = Vue.ref(false);
         const includeDeterminationData = Vue.ref(true);
         const includeMultimediaData = Vue.ref(true);
         const includeMofData = Vue.ref(true);
@@ -2717,6 +2727,22 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function setGbifLoadingStatus() {
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'getGbifLoadingStatus');
+            fetch(collectionDataUploadParametersApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                gbifLoadingStatus.value = Number(res) === 1;
+            });
+        }
+
         function setScroller(info) {
             if((currentProcess.value || scrollProcess.value) && info.hasOwnProperty('verticalSize') && info.verticalSize > 610 && info.verticalSize !== procDisplayScrollHeight.value){
                 procDisplayScrollHeight.value = info.verticalSize;
@@ -2918,6 +2944,7 @@ const occurrenceDataUploadModule = {
         }
 
         Vue.onMounted(() => {
+            setGbifLoadingStatus();
             if(Number(props.collid) > 0){
                 collectionDataUploadParametersStore.setCollectionDataUploadParametersArr(props.collid);
             }
@@ -2937,6 +2964,7 @@ const occurrenceDataUploadModule = {
             fieldMapperSourceFields,
             fieldMapperTargetFields,
             flatFileMode,
+            gbifLoadingStatus,
             includeDeterminationData,
             includeMultimediaData,
             includeMofData,
