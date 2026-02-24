@@ -23,6 +23,7 @@ class Configurations{
         'DEFAULT_TITLE',
         'DEFAULTCATID',
         'EMAIL_CONFIGURED',
+        'GBIF_CREDENTIALS_CONFIGURED',
         'GBIF_ORG_KEY',
         'GBIF_PASSWORD',
         'GBIF_USERNAME',
@@ -368,7 +369,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20260203';
-        $GLOBALS['JS_VERSION'] = '20260201111111111122222';
+        $GLOBALS['JS_VERSION'] = '202602032';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -729,6 +730,11 @@ class Configurations{
             $GLOBALS['SMTP_PASSWORD'] &&
             $GLOBALS['SMTP_HOST'] &&
             $GLOBALS['SMTP_PORT']
+        );
+        $GLOBALS['GBIF_CREDENTIALS_CONFIGURED'] = (
+            isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD']) &&
+            $GLOBALS['GBIF_USERNAME'] &&
+            $GLOBALS['GBIF_PASSWORD']
         );
         if(!isset($GLOBALS['PERMITTED_CHECKLISTS'])){
             $GLOBALS['PERMITTED_CHECKLISTS'] = array();

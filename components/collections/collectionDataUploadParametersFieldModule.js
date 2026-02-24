@@ -12,6 +12,11 @@ const collectionDataUploadParametersFieldModule = {
                     <selector-input-element :disabled="disabled" label="Upload Type" :options="uploadTypeOptions" :value="profileData.uploadtype" @update:value="(value) => updateData('uploadtype', value)"></selector-input-element>
                 </div>
             </div>
+            <div v-if="Number(profileData.uploadtype) === 11" class="row q-col-gutter-sm">
+                <div class="col-grow">
+                    <text-field-input-element :disabled="disabled" data-type="textarea" label="Predicate JSON" :value="predicateJsonVal" @update:value="validatePredicateJson"></text-field-input-element>
+                </div>
+            </div>
             <div v-if="Number(profileData.uploadtype) === 8 || Number(profileData.uploadtype) === 10" class="row q-col-gutter-sm">
                 <div class="col-grow">
                     <text-field-input-element :disabled="disabled" data-type="textarea" label="URL" :value="profileData.dwcpath" @update:value="(value) => updateData('dwcpath', value)"></text-field-input-element>
@@ -80,6 +85,7 @@ const collectionDataUploadParametersFieldModule = {
         'text-field-input-element': textFieldInputElement
     },
     setup() {
+        const { showNotification } = useCore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
 
         const catalogNumberMatchOptions = [
@@ -105,6 +111,9 @@ const collectionDataUploadParametersFieldModule = {
             {value: 'update', label: 'Update existing records (Replaces records with incoming records)'},
             {value: 'skip', label: 'Skip existing records (Do not update)'}
         ];
+        const predicateJsonVal = Vue.computed(() => {
+            return (configurationData.value && configurationData.value['gbifPredicateJson']) ? JSON.stringify(configurationData.value['gbifPredicateJson']) : null;
+        });
         const profileData = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersData);
         const uploadTypeOptions = Vue.computed(() => collectionDataUploadParametersStore.getUploadTypeOptions);
 
@@ -128,6 +137,26 @@ const collectionDataUploadParametersFieldModule = {
             collectionDataUploadParametersStore.updateCollectionDataUploadParametersEditData(key, value);
         }
 
+        function validatePredicateJson(value) {
+            if(value){
+                try{
+                    const parsedValue = JSON.parse(value);
+                    if(parsedValue.hasOwnProperty('type') && parsedValue['type']){
+                        updateConfigurationData('gbifPredicateJson', parsedValue);
+                    }
+                    else{
+                        showNotification('negative', 'Predicate JSON is not valid.');
+                    }
+                }
+                catch(error){
+                    showNotification('negative', 'Predicate JSON is not valid.');
+                }
+            }
+            else{
+                updateConfigurationData('gbifPredicateJson', null);
+            }
+        }
+
         return {
             catalogNumberMatchOptions,
             configurationData,
@@ -135,12 +164,14 @@ const collectionDataUploadParametersFieldModule = {
             existingAssociatedMediaOptions,
             existingAssociatedMofDataOptions,
             existingRecordOptions,
+            predicateJsonVal,
             profileData,
             uploadTypeOptions,
             processMatchCatalogNumberChange,
             processMatchRecordIdChange,
             updateConfigurationData,
-            updateData
+            updateData,
+            validatePredicateJson
         }
     }
 };

@@ -23,8 +23,11 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'processExternalDwcaUnpack' && array_key_exists('targetPath', $_POST) && array_key_exists('archivePath', $_POST)){
         echo json_encode($dataUploadService->processExternalDwcaUnpack($_POST['targetPath'], $_POST['archivePath']));
     }
-    elseif($action === 'processTransferredDwca' && array_key_exists('serverPath', $_POST) && array_key_exists('metaFile', $_POST)){
-        echo json_encode($dataUploadService->processTransferredDwca($_POST['serverPath'], $_POST['metaFile']));
+    elseif($action === 'processSourceDataMetaXmlFile' && array_key_exists('serverPath', $_POST) && array_key_exists('metaFile', $_POST)){
+        echo json_encode($dataUploadService->processSourceDataMetaXmlFile($_POST['serverPath'], $_POST['metaFile']));
+    }
+    elseif($action === 'processTransferredDwcaFile' && array_key_exists('serverPath', $_POST) && array_key_exists('stage', $_POST) && array_key_exists('fileInfo', $_POST)){
+        echo json_encode($dataUploadService->processTransferredDwcaFile($_POST['serverPath'], $_POST['stage'], json_decode($_POST['fileInfo'], true)));
     }
     elseif($action === 'uploadDwcaFile' && array_key_exists('dwcaFile', $_FILES) && strtolower(substr($_FILES['dwcaFile']['name'], -4)) === '.zip'){
         echo json_encode($dataUploadService->uploadDwcaFile($_FILES['dwcaFile']));
@@ -143,5 +146,8 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'finalTransferClearExistingMediaNotInUpload'){
         $clearDerivatives = array_key_exists('clearImageDerivatives',$_POST) && (int)$_POST['clearImageDerivatives'] === 1;
         echo $dataUploadService->finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives);
+    }
+    elseif($action === 'requestGbifDataDownload' && array_key_exists('predicateJson', $_POST)){
+        echo $dataUploadService->requestGbifDataDownload(json_decode($_POST['predicateJson'], true));
     }
 }

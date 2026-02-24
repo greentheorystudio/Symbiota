@@ -64,7 +64,6 @@ class GlossaryUpload{
 		$batchSources = SanitizerService::cleanInStr($this->conn,$this->encodeString($batchSources));
 		$this->outputMsg('Starting Upload');
 		$this->conn->query('TRUNCATE TABLE uploadglossary');
-		$this->conn->query('OPTIMIZE TABLE uploadglossary');
 		$fh = fopen($this->uploadTargetPath.$this->uploadFileName, 'rb') or die("Can't open file");
 		$newTermColumn = false;
 		foreach($languageArr as $lang){

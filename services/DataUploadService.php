@@ -65,19 +65,17 @@ class DataUploadService {
 
     public function clearOccurrenceUploadTables($collid, $optimizeTables): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
-            if(!(new UploadDeterminationTemp)->clearCollectionData($collid, $optimizeTables)){
-                $retVal = 0;
+            $retVal = (new UploadDeterminationTemp)->clearCollectionData($collid);
+            if($retVal === 0){
+                $retVal = (new UploadMediaTemp)->clearCollectionData($collid);
             }
-            if(!(new UploadMediaTemp)->clearCollectionData($collid, $optimizeTables)){
-                $retVal = 0;
+            if($retVal === 0){
+                $retVal = (new UploadMofTemp)->clearCollectionData($collid);
             }
-            if(!(new UploadMofTemp)->clearCollectionData($collid, $optimizeTables)){
-                $retVal = 0;
-            }
-            if(!(new UploadOccurrenceTemp)->clearCollectionData($collid, $optimizeTables)){
-                $retVal = 0;
+            if($retVal === 0){
+                $retVal = (new UploadOccurrenceTemp)->clearCollectionData($collid, $optimizeTables);
             }
         }
         return $retVal;
@@ -85,14 +83,19 @@ class DataUploadService {
 
     public function executeCleaningScriptArr($collid, $cleaningScriptArr): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid && count($cleaningScriptArr) > 0){
             foreach($cleaningScriptArr as $scriptData){
-                if($retVal === 1){
+                if($retVal === 0 && $scriptData){
                     $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
                 }
             }
             (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
+
+
+            if($retVal === 0 && $scriptData){
+                $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
+            }
         }
         return $retVal;
     }
@@ -424,6 +427,7 @@ class DataUploadService {
                         $returnArr['occurrence']['fieldsEnclosedBy'] = $coreElement->getAttribute('fieldsEnclosedBy');
                         $returnArr['occurrence']['ignoreHeaderLines'] = $coreElement->getAttribute('ignoreHeaderLines');
                         $returnArr['occurrence']['rowType'] = $rowType;
+                        $returnArr['occurrence']['dataFiles'] = array();
                         if($fieldElements = $coreElement->getElementsByTagName('field')){
                             foreach($fieldElements as $fieldElement){
                                 $term = $fieldElement->getAttribute('term');
@@ -456,18 +460,24 @@ class DataUploadService {
                     if(stripos($rowType,'identification')){
                         $tagName = 'identification';
                     }
-                    elseif(stripos($rowType,'image') || stripos($rowType,'audubon_core') || stripos($rowType,'Multimedia')){
+                    elseif(stripos($rowType,'image') || stripos($rowType,'audubon_core') || stripos($rowType,'multimedia')){
                         $tagName = 'multimedia';
                     }
                     elseif(stripos($rowType,'extendedmeasurementorfact')){
+                        $tagName = 'extendedmeasurementorfact';
+                    }
+                    elseif(stripos($rowType,'measurementorfact')){
                         $tagName = 'measurementorfact';
                     }
-                    if($coreidElement = $extensionElement->getElementsByTagName('coreid')){
-                        $extCoreId = $coreidElement->item(0)->getAttribute('index');
-                        $returnArr[$tagName]['coreid'] = $extCoreId;
+                    elseif(stripos($rowType,'dnaderiveddata')){
+                        $tagName = 'genetic';
                     }
-                    if($coreId === '' || $coreEventId || $coreId === $extCoreId){
-                        if($tagName){
+                    if($tagName){
+                        if($coreidElement = $extensionElement->getElementsByTagName('coreid')){
+                            $extCoreId = $coreidElement->item(0)->getAttribute('index');
+                            $returnArr[$tagName]['coreid'] = $extCoreId;
+                        }
+                        if($coreId === '' || $coreEventId || $coreId === $extCoreId){
                             if($locElements = $extensionElement->getElementsByTagName('location')){
                                 $returnArr[$tagName]['filename'] = $locElements->item(0)->nodeValue;
                             }
@@ -477,6 +487,7 @@ class DataUploadService {
                             $returnArr[$tagName]['fieldsEnclosedBy'] = $extensionElement->getAttribute('fieldsEnclosedBy');
                             $returnArr[$tagName]['ignoreHeaderLines'] = $extensionElement->getAttribute('ignoreHeaderLines');
                             $returnArr[$tagName]['rowType'] = $rowType;
+                            $returnArr[$tagName]['dataFiles'] = array();
                             if($fieldElements = $extensionElement->getElementsByTagName('field')){
                                 foreach($fieldElements as $fieldElement){
                                     $term = $fieldElement->getAttribute('term');
@@ -521,7 +532,7 @@ class DataUploadService {
         if($targetPath && $dwcaPath){
             $fileName = 'dwca.zip';
             $fullTargetPath = $targetPath . '/' . $fileName;
-            if((int)$uploadType === 8){
+            if((int)$uploadType === 8 || (int)$uploadType === 11){
                 $transferSuccess = FileSystemService::transferDwcaToLocalTarget($fullTargetPath, $dwcaPath);
             }
             elseif((int)$uploadType === 10){
@@ -566,24 +577,12 @@ class DataUploadService {
         return $recordsCreated;
     }
 
-    public function processTransferredDwca($serverPath, $metaFile): array
+    public function processSourceDataMetaXmlFile($serverPath, $metaFile): array
     {
         $returnArr = array();
         if($metaFile && $serverPath && strpos($serverPath, $GLOBALS['SERVER_ROOT']) === 0){
             $metaPath = $serverPath . '/' . $metaFile;
             $returnArr = $this->processDwcaMetaFile($metaPath);
-            if(array_key_exists('occurrence', $returnArr) && array_key_exists('filename', $returnArr['occurrence']) && $returnArr['occurrence']['filename']){
-                $returnArr['occurrence']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'occurrence', $returnArr['occurrence']);
-                if(array_key_exists('identification', $returnArr) && array_key_exists('filename', $returnArr['identification']) && $returnArr['identification']['filename']){
-                    $returnArr['identification']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'identification', $returnArr['identification']);
-                }
-                if(array_key_exists('multimedia', $returnArr) && array_key_exists('filename', $returnArr['multimedia']) && $returnArr['multimedia']['filename']){
-                    $returnArr['multimedia']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'multimedia', $returnArr['multimedia']);
-                }
-                if(array_key_exists('measurementorfact', $returnArr) && array_key_exists('filename', $returnArr['measurementorfact']) && $returnArr['measurementorfact']['filename']){
-                    $returnArr['measurementorfact']['dataFiles'] = $this->processTransferredDwcaFile($serverPath, 'measurementorfact', $returnArr['measurementorfact']);
-                }
-            }
         }
         return $returnArr;
     }
@@ -597,9 +596,9 @@ class DataUploadService {
         $fh = fopen(($serverPath . '/' . $fileInfo['filename']), 'rb');
         $wh = fopen(($serverPath . '/' . $currentFilename), 'wb');
         if((int)$fileInfo['ignoreHeaderLines'] === 1) {
-            fgetcsv($fh,0, $fileInfo['fieldsTerminatedBy'], $fileInfo['fieldsEnclosedBy'], '');
+            fgetcsv($fh,0, ($fileInfo['fieldsTerminatedBy'] === '\t' ? "\t" : $fileInfo['fieldsTerminatedBy']), ($fileInfo['fieldsEnclosedBy'] === '' ? chr(0) : $fileInfo['fieldsEnclosedBy']), '');
         }
-        while($dataArr = fgetcsv($fh,0, $fileInfo['fieldsTerminatedBy'], $fileInfo['fieldsEnclosedBy'], '')){
+        while($dataArr = fgetcsv($fh,0, ($fileInfo['fieldsTerminatedBy'] === '\t' ? "\t" : $fileInfo['fieldsTerminatedBy']), ($fileInfo['fieldsEnclosedBy'] === '' ? chr(0) : $fileInfo['fieldsEnclosedBy']), '')){
             if($recordIndex === 10000){
                 fclose($wh);
                 $returnArr[] = $currentFilename;
@@ -614,7 +613,7 @@ class DataUploadService {
         fclose($wh);
         $returnArr[] = $currentFilename;
         fclose($fh);
-        FileSystemService::deleteFile($serverPath . '/' . $fileInfo['filename']);
+        FileSystemService::deleteFile($serverPath . '/' . $fileInfo['filename'], true);
         return $returnArr;
     }
 
@@ -636,13 +635,13 @@ class DataUploadService {
         $retVal = 0;
         if($collid){
             $retVal = (new UploadDeterminationTemp)->removeExistingOccurrenceDataFromUpload($collid);
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new UploadMediaTemp)->removeExistingOccurrenceDataFromUpload($collid);
             }
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new UploadMofTemp)->removeExistingOccurrenceDataFromUpload($collid);
             }
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new UploadOccurrenceTemp)->removeExistingOccurrenceDataFromUpload($collid);
             }
         }
@@ -665,6 +664,38 @@ class DataUploadService {
             $returnVal = 1;
         }
         return $returnVal;
+    }
+
+    public function requestGbifDataDownload($predicateData): string
+    {
+        $requestData = json_encode(array(
+            'creator' => $GLOBALS['GBIF_USERNAME'],
+            'notificationAddresses' => array(
+                $GLOBALS['ADMIN_EMAIL']
+            ),
+            'sendNotification' => false,
+            'format' => 'DWCA',
+            'predicate' => $predicateData,
+            'verbatimExtensions' => array(
+                'http://rs.gbif.org/terms/1.0/DNADerivedData',
+                'http://rs.tdwg.org/dwc/terms/MeasurementOrFact',
+                'http://rs.iobis.org/obis/terms/ExtendedMeasurementOrFact'
+            )
+        ));
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://api.gbif.org/v1/occurrence/download/request');
+        curl_setopt($curl, CURLOPT_USERPWD, ($GLOBALS['GBIF_USERNAME'] . ':' . $GLOBALS['GBIF_PASSWORD']));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_USERAGENT, 'curl/8.7.1');
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($requestData)
+        ));
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $requestData);
+        $result = curl_exec($curl);
+        curl_close($curl);
+        return $result;
     }
 
     public function setUploadLocalitySecurity($collid): int
@@ -694,12 +725,16 @@ class DataUploadService {
         return $returnArr;
     }
 
-    public function validateDwcaFilenameArr($arr, $dirPath): bool
+    public function validateDwcaFilenameArr($arr, $dirPath, $subDir = null): bool
     {
         $returnVal = false;
         foreach($arr as $filename){
-            if(strtolower($filename) === 'meta.xml'){
+            if(!$subDir && strtolower($filename) === 'meta.xml'){
                 $returnVal = true;
+            }
+            elseif(FileSystemService::isDirectory($dirPath . '/' . $filename) && (strtolower($filename) === 'dataset' || strtolower($filename) === 'verbatim')){
+                $fileArr = FileSystemService::getDirectoryFilenameArr(($dirPath . '/' . $filename));
+                $this->validateDwcaFilenameArr($fileArr, ($dirPath . '/' . $filename), true);
             }
             elseif(strtolower(substr($filename, -4)) !== '.csv' && strtolower(substr($filename, -4)) !== '.txt' && strtolower(substr($filename, -4)) !== '.xml'){
                 if(FileSystemService::isDirectory($dirPath . '/' . $filename)){
