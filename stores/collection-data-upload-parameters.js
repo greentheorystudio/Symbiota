@@ -64,11 +64,6 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
                     state.collectionDataUploadParametersUpdateData[key] = state.collectionDataUploadParametersEditData[key];
                 }
             }
-            if(this.getGbifPredicateChanged){
-                state.collectionDataUploadParametersUpdateData['configjson']['gbifDownloadKey'] = null;
-                state.collectionDataUploadParametersUpdateData['configjson']['gbifDownloadKeyTimestamp'] = null;
-                state.collectionDataUploadParametersUpdateData['configjson']['gbifDownloadPath'] = null;
-            }
             return exist;
         },
         getCollectionDataUploadParametersID(state) {
@@ -113,31 +108,34 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
         }
     },
     actions: {
-        cancelGbifDownloadRequest(callback) {
+        cancelGbifDownloadRequest(callback = null) {
             const url = 'https://api.gbif.org/v1/occurrence/download/request/' + this.collectionDataUploadParametersEditData['configjson']['gbifDownloadKey'];
             fetch(url, {
                 method: 'DELETE'
             })
             .then((response) => {
-                if(response.status === 204){
-                    this.clearGbifDownloadKey();
-                    callback(1);
-                }
-                else{
-                    callback(0);
+                if(callback){
+                    if(response.status === 204){
+                        this.clearGbifDownloadKey();
+                        callback(1);
+                    }
+                    else{
+                        callback(0);
+                    }
                 }
             });
         },
         clearGbifDownloadKey() {
+            this.clearGbifDownloadKeyValues();
+            this.updateCollectionDataUploadParametersRecord();
+        },
+        clearGbifDownloadKeyValues() {
             this.updateCollectionDataUploadParametersEditData('dwcpath', null);
             const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
             config['gbifDownloadKey'] = null;
             config['gbifDownloadKeyTimestamp'] = null;
             config['gbifDownloadPath'] = null;
             this.updateCollectionDataUploadParametersEditData('configjson', config);
-            if(this.getCollectionDataUploadParametersEditsExist){
-                this.updateCollectionDataUploadParametersRecord();
-            }
         },
         createCollectionDataUploadParametersRecord(collid, callback) {
             this.collectionDataUploadParametersEditData['collid'] = collid.toString();
@@ -201,18 +199,14 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             config['gbifDownloadKey'] = key;
             config['gbifDownloadKeyTimestamp'] = Date.now();
             this.updateCollectionDataUploadParametersEditData('configjson', config);
-            if(this.getCollectionDataUploadParametersEditsExist){
-                this.updateCollectionDataUploadParametersRecord();
-            }
+            this.updateCollectionDataUploadParametersRecord();
         },
         saveGbifDownloadPath(path) {
             this.updateCollectionDataUploadParametersEditData('dwcpath', path);
             const config = Object.assign({}, this.collectionDataUploadParametersEditData['configjson']);
             config['gbifDownloadPath'] = path;
             this.updateCollectionDataUploadParametersEditData('configjson', config);
-            if(this.getCollectionDataUploadParametersEditsExist){
-                this.updateCollectionDataUploadParametersRecord();
-            }
+            this.updateCollectionDataUploadParametersRecord();
         },
         setCurrentCollectionDataUploadParametersRecord(uspid) {
             if(Number(uspid) > 0){
@@ -254,26 +248,34 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             this.collectionDataUploadParametersEditData[key] = value;
         },
         updateCollectionDataUploadParametersRecord(callback = null) {
-            const formData = new FormData();
-            formData.append('collid', this.collectionId.toString());
-            formData.append('uspid', this.collectionDataUploadParametersId.toString());
-            formData.append('paramsData', JSON.stringify(this.collectionDataUploadParametersUpdateData));
-            formData.append('action', 'updateCollectionDataUploadParameterRecord');
-            fetch(collectionDataUploadParametersApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                if(callback){
-                    callback(Number(res));
+            if(this.getGbifPredicateChanged){
+                if(this.collectionDataUploadParametersData['configjson']['gbifDownloadKey'] && !this.collectionDataUploadParametersData['configjson']['gbifDownloadPath']){
+                    this.cancelGbifDownloadRequest();
                 }
-                if(res && Number(res) === 1){
-                    this.setCollectionDataUploadParametersArr(this.collectionId, this.collectionDataUploadParametersId);
-                }
-            });
+                this.clearGbifDownloadKeyValues();
+            }
+            if(this.getCollectionDataUploadParametersEditsExist){
+                const formData = new FormData();
+                formData.append('collid', this.collectionId.toString());
+                formData.append('uspid', this.collectionDataUploadParametersId.toString());
+                formData.append('paramsData', JSON.stringify(this.collectionDataUploadParametersUpdateData));
+                formData.append('action', 'updateCollectionDataUploadParameterRecord');
+                fetch(collectionDataUploadParametersApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(callback){
+                        callback(Number(res));
+                    }
+                    if(res && Number(res) === 1){
+                        this.setCollectionDataUploadParametersArr(this.collectionId, this.collectionDataUploadParametersId);
+                    }
+                });
+            }
         },
         validateGbifDownloadKey() {
             const currentDate = new Date();
