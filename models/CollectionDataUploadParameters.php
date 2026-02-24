@@ -47,7 +47,6 @@ class CollectionDataUploadParameters {
             }
             $sql = 'INSERT INTO omcolldatauploadparameters(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
             }
@@ -83,7 +82,6 @@ class CollectionDataUploadParameters {
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM omcolldatauploadparameters WHERE collid = ' . (int)$collid . ' ORDER BY title ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -107,13 +105,31 @@ class CollectionDataUploadParameters {
         return $retArr;
     }
 
+    public function getGbifLoadingStatus(): int
+    {
+        $sql = 'SELECT configjson FROM omcolldatauploadparameters WHERE uploadtype = 11 ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                if($row['configjson']){
+                    $configData = json_decode($row['configjson'], true);
+                    if(array_key_exists('gbifDownloadKey', $configData) && $configData['gbifDownloadKey'] && (!array_key_exists('gbifDownloadPath', $configData) || !$configData['gbifDownloadPath'])){
+                        return 1;
+                    }
+                }
+                unset($rows[$index]);
+            }
+        }
+        return 0;
+    }
+
     public function getUploadParametersFieldMapping($uspid): array
     {
         $retArr = array();
         if($uspid){
             $sql = 'SELECT symbspecfield, sourcefield '.
                 'FROM uploadspecmap WHERE uspid = ' . (int)$uspid . ' ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -152,7 +168,6 @@ class CollectionDataUploadParameters {
             }
             if(count($sqlValueArr) > 0){
                 $sql = 'INSERT INTO uploadspecmap(uspid, sourcefield, symbspecfield) VALUES ' . implode(',', $sqlValueArr) . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $retVal = 1;
                 }
@@ -179,7 +194,6 @@ class CollectionDataUploadParameters {
             if(count($sqlPartArr) > 0){
                 $sql = 'UPDATE omcolldatauploadparameters SET ' . implode(', ', $sqlPartArr) . ' '.
                     'WHERE uspid = ' . (int)$uspid . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $retVal = 1;
                 }

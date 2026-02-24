@@ -35,7 +35,6 @@ class TaxonomyUpload{
 	{
 		$this->outputMsg('Starting Upload');
 		$this->conn->query('DELETE FROM uploadtaxa');
-		$this->conn->query('OPTIMIZE TABLE uploadtaxa');
 		if(($fh = fopen($this->uploadTargetPath.$this->uploadFileName, 'rb')) !== false){
 			$headerArr = fgetcsv($fh);
 			$uploadTaxaFieldArr = $this->getUploadTaxaFieldArr();

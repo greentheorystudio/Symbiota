@@ -1,28 +1,26 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
 
-class UploadDeterminationTemp{
+class UploadGeneticTemp{
 
 	private $conn;
 
     private $fields = array(
-        'updid' => array('dataType' => 'number', 'length' => 50),
+        'upgid' => array('dataType' => 'number', 'length' => 11),
+        'sourceidentifier' => array('dataType' => 'string', 'length' => 150),
+        'sourcename' => array('dataType' => 'string', 'length' => 150),
+        'description' => array('dataType' => 'string', 'length' => 500),
+        'targetgene' => array('dataType' => 'string', 'length' => 500),
+        'targetsubfragment' => array('dataType' => 'string', 'length' => 500),
+        'dnasequence' => array('dataType' => 'text', 'length' => 0),
+        'url' => array('dataType' => 'text', 'length' => 0),
+        'notes' => array('dataType' => 'string', 'length' => 1000),
+        'authors' => array('dataType' => 'string', 'length' => 500),
+        'authorinstitution' => array('dataType' => 'string', 'length' => 500),
+        'reference' => array('dataType' => 'string', 'length' => 750),
         'occid' => array('dataType' => 'number', 'length' => 10),
         'collid' => array('dataType' => 'number', 'length' => 10),
         'dbpk' => array('dataType' => 'string', 'length' => 150),
-        'identifiedby' => array('dataType' => 'string', 'length' => 60),
-        'dateidentified' => array('dataType' => 'string', 'length' => 45),
-        'dateidentifiedinterpreted' => array('dataType' => 'date', 'length' => 0),
-        'sciname' => array('dataType' => 'string', 'length' => 100),
-        'tid' => array('dataType' => 'number', 'length' => 10),
-        'scientificnameauthorship' => array('dataType' => 'string', 'length' => 100),
-        'identificationqualifier' => array('dataType' => 'string', 'length' => 45),
-        'iscurrent' => array('dataType' => 'number', 'length' => 2),
-        'dettype' => array('dataType' => 'string', 'length' => 45),
-        'identificationreferences' => array('dataType' => 'string', 'length' => 255),
-        'identificationremarks' => array('dataType' => 'string', 'length' => 255),
-        'sourceidentifier' => array('dataType' => 'string', 'length' => 45),
-        'sortsequence' => array('dataType' => 'number', 'length' => 10),
         'initialtimestamp' => array('dataType' => 'timestamp', 'length' => 0)
     );
 
@@ -40,7 +38,7 @@ class UploadDeterminationTemp{
         $recordsCreated = 0;
         $fieldNameArr = array();
         $valueArr = array();
-        $skipFields = array('updid', 'occid', 'collid', 'tid', 'initialtimestamp');
+        $skipFields = array('upgid', 'occid', 'collid', 'initialtimestamp');
         $mappedFields = array();
         if($collid){
             $fieldNameArr[] = 'collid';
@@ -76,7 +74,7 @@ class UploadDeterminationTemp{
                 $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
             }
             if(count($valueArr) > 0){
-                $sql = 'INSERT INTO uploaddetermtemp(' . implode(',', $fieldNameArr) . ') '.
+                $sql = 'INSERT INTO uploadgenetictemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
                 //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
@@ -87,16 +85,15 @@ class UploadDeterminationTemp{
         return $recordsCreated;
     }
 
-    public function clearCollectionData($collid): int
+    public function clearCollectionData($collid): bool
     {
-        $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' LIMIT 100000 ';
+            $sql = 'DELETE FROM uploadgenetictemp WHERE collid = ' . (int)$collid . ' ';
             if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+                return true;
             }
         }
-        return $returnVal;
+        return false;
     }
 
     public function getFields(): array
@@ -108,8 +105,7 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'SELECT COUNT(updid) AS cnt FROM uploaddetermtemp WHERE collid  = ' . (int)$collid . ' '.
-            'AND dbpk IN(SELECT dbpk FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
+            $sql = 'SELECT COUNT(upgid) AS cnt FROM uploadgenetictemp WHERE collid  = ' . (int)$collid . ' ';
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
                 $result->free();
@@ -124,19 +120,19 @@ class UploadDeterminationTemp{
     public function populateOccidFromUploadOccurrenceData($collid): void
     {
         if($collid){
-            $sql = 'UPDATE uploaddetermtemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+            $sql = 'UPDATE uploadgenetictemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
                 'SET u.occid = o.occid '.
                 'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
             $this->conn->query($sql);
         }
     }
 
-    public function removeExistingDeterminationDataFromUpload($collid): int
+    public function removeExistingGeneticDataFromUpload($collid): int
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE u.* FROM uploaddetermtemp AS u LEFT JOIN omoccurdeterminations AS d ON u.occid = d.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND u.sciname = d.sciname AND u.identifiedby = d.identifiedby AND u.dateidentified = d.dateidentified ';
+            $sql = 'DELETE u.* FROM uploadgenetictemp AS u LEFT JOIN omoccurgenetic AS g ON u.occid = g.occid '.
+                'WHERE u.collid  = ' . $collid . ' AND u.sourceidentifier = g.sourceidentifier ';
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
@@ -148,10 +144,10 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
-            'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 100000 ';
+            $sql = 'DELETE u.* FROM uploadgenetictemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
             if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+                $returnVal = 1;
             }
         }
         return $returnVal;
