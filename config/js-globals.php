@@ -8,6 +8,7 @@
     const DEFAULT_LANG_DATA = JSON.parse('<?php echo json_encode($GLOBALS['DEFAULT_LANG_JSON']); ?>');
     const DEFAULT_TITLE = '<?php echo $GLOBALS['DEFAULT_TITLE']; ?>';
     const EMAIL_CONFIGURED = <?php echo ($GLOBALS['EMAIL_CONFIGURED'] ? 'true' : 'false'); ?>;
+    const GBIF_CREDENTIALS_CONFIGURED = <?php echo ($GLOBALS['GBIF_CREDENTIALS_CONFIGURED'] ? 'true' : 'false'); ?>;
     const GLOSSARY_MOD_IS_ACTIVE = <?php echo ($GLOBALS['GLOSSARY_MOD_IS_ACTIVE'] ? 'true' : 'false'); ?>;
     const IMAGE_TAG_OPTIONS = JSON.parse('<?php echo $GLOBALS['IMAGE_TAG_OPTIONS']; ?>');
     const JS_VERSION = '<?php echo $GLOBALS['JS_VERSION']; ?>';

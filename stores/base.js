@@ -9,6 +9,7 @@ const useBaseStore = Pinia.defineStore('base', {
         defaultLanguageData: DEFAULT_LANG_DATA,
         defaultTitle: DEFAULT_TITLE,
         emailConfigured: EMAIL_CONFIGURED,
+        gbifCredentialsConfigured: GBIF_CREDENTIALS_CONFIGURED,
         glossaryModuleIsActive: GLOSSARY_MOD_IS_ACTIVE,
         imageTagOptions: IMAGE_TAG_OPTIONS,
         jsVersion: JS_VERSION,
@@ -67,6 +68,9 @@ const useBaseStore = Pinia.defineStore('base', {
         },
         getEmailConfigured(state) {
             return state.emailConfigured;
+        },
+        getGbifCredentialsConfigured(state) {
+            return state.gbifCredentialsConfigured;
         },
         getGlossaryModuleIsActive(state) {
             return state.glossaryModuleIsActive;
