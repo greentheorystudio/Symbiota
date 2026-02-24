@@ -32,12 +32,12 @@ const occurrenceDataUploadModule = {
                                             </div>
                                         </div>
                                         <div v-if="Number(profileData.uploadtype) === 11 && Number(collectionDataUploadParametersId) === 0" class="row">
-                                            <div class="text-subtitle1 text-red">
+                                            <div class="text-subtitle1 text-red text-bold">
                                                 Please click the Create button to create a new upload profile 
                                             </div>
                                         </div>
                                         <collection-data-upload-parameters-field-module :disabled="currentTab !== 'configuration' || !!currentProcess"></collection-data-upload-parameters-field-module>
-                                        <template v-if="Number(profileData.uploadtype) === 11 && !profileData['configjson']['gbifDownloadPath']">
+                                        <template v-if="Number(profileData.uploadtype) === 11 && profileData['configjson'] && !profileData['configjson']['gbifDownloadPath']">
                                             <template v-if="!profileData['configjson'] || !profileData['configjson']['gbifDownloadKey']">
                                                 <template v-if="gbifLoadingStatus">
                                                     <div class="row justify-start">
