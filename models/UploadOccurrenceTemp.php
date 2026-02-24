@@ -410,7 +410,6 @@ class UploadOccurrenceTemp{
                 if($this->conn->query($sql)){
                     if($optimizeTables){
                         $this->conn->query('OPTIMIZE TABLE uploadspectemppoints');
-                        $this->conn->query('OPTIMIZE TABLE uploadspectemp');
                     }
                     return true;
                 }
@@ -636,6 +635,7 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid && $scriptData){
+            error_log('cleaning started');
             $sql = 'DELETE u.* FROM uploadspectemp AS u ';
             if(array_key_exists('join', $scriptData) && $scriptData['join']){
                 $sql .= $scriptData['join'] . ' ';
@@ -645,6 +645,7 @@ class UploadOccurrenceTemp{
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
             if($this->conn->query($sql)){
+                error_log('cleaning complete');
                 $returnVal = 1;
             }
         }

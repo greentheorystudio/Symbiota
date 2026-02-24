@@ -67,13 +67,13 @@ class DataUploadService {
     {
         $retVal = 1;
         if($collid){
-            if(!(new UploadDeterminationTemp)->clearCollectionData($collid, $optimizeTables)){
+            if(!(new UploadDeterminationTemp)->clearCollectionData($collid)){
                 $retVal = 0;
             }
-            if(!(new UploadMediaTemp)->clearCollectionData($collid, $optimizeTables)){
+            if(!(new UploadMediaTemp)->clearCollectionData($collid)){
                 $retVal = 0;
             }
-            if(!(new UploadMofTemp)->clearCollectionData($collid, $optimizeTables)){
+            if(!(new UploadMofTemp)->clearCollectionData($collid)){
                 $retVal = 0;
             }
             if(!(new UploadOccurrenceTemp)->clearCollectionData($collid, $optimizeTables)){

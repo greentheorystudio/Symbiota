@@ -252,14 +252,11 @@ class UploadMediaTemp{
         return $returnVal;
     }
 
-    public function clearCollectionData($collid, $optimizeTables): bool
+    public function clearCollectionData($collid): bool
     {
         if($collid){
             $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' ';
             if($this->conn->query($sql)){
-                if($optimizeTables){
-                    $this->conn->query('OPTIMIZE TABLE uploadmediatemp');
-                }
                 return true;
             }
         }

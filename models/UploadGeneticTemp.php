@@ -85,14 +85,11 @@ class UploadGeneticTemp{
         return $recordsCreated;
     }
 
-    public function clearCollectionData($collid, $optimizeTables): bool
+    public function clearCollectionData($collid): bool
     {
         if($collid){
             $sql = 'DELETE FROM uploadgenetictemp WHERE collid = ' . (int)$collid . ' ';
             if($this->conn->query($sql)){
-                if($optimizeTables){
-                    $this->conn->query('OPTIMIZE TABLE uploadgenetictemp');
-                }
                 return true;
             }
         }
