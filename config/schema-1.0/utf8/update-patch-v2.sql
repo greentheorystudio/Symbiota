@@ -322,6 +322,30 @@ ALTER TABLE `uploaddetermtemp`
     ADD COLUMN `tid` int(10) UNSIGNED NULL AFTER `sciname`,
     ADD PRIMARY KEY (`updid`);
 
+CREATE TABLE `uploadgenetictemp` (
+    `upgid` int(11) NOT NULL AUTO_INCREMENT,
+    `sourceidentifier` varchar(150) DEFAULT NULL,
+    `sourcename` varchar(150) DEFAULT NULL,
+    `description` varchar(500) DEFAULT NULL,
+    `targetgene` varchar(500) DEFAULT NULL,
+    `targetsubfragment` varchar(500) DEFAULT NULL,
+    `dnasequence` longtext,
+    `url` text,
+    `notes` varchar(1000) DEFAULT NULL,
+    `authors` varchar(500) DEFAULT NULL,
+    `authorinstitution` varchar(500) DEFAULT NULL,
+    `reference` varchar(750) DEFAULT NULL,
+    `occid` int(10) unsigned DEFAULT NULL,
+    `collid` int(10) unsigned DEFAULT NULL,
+    `dbpk` varchar(150) DEFAULT NULL,
+    `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`upgid`),
+    KEY `Index_uploadgenetic_occid` (`occid`),
+    KEY `Index_uploadgenetic_collid` (`collid`),
+    KEY `Index_uploadgenetic_dbpk` (`dbpk`),
+    KEY `Index_uploadgenetic_ts` (`initialtimestamp`)
+);
+
 CREATE TABLE `uploadmediatemp` (
     `upmid` int(50) NOT NULL AUTO_INCREMENT,
     `tid` int(10) unsigned DEFAULT NULL,
@@ -445,7 +469,8 @@ ALTER TABLE `fmprojects`
 ALTER TABLE `omcolldatauploadparameters`
     MODIFY COLUMN `queryparamjson` longtext NULL AFTER `dwcpath`,
     MODIFY COLUMN `cleansql` longtext NULL AFTER `queryparamjson`,
-    MODIFY COLUMN `configjson` longtext NULL AFTER `cleansql`;
+    MODIFY COLUMN `configjson` longtext NULL AFTER `cleansql`,
+    ADD INDEX `Index_omcolldatauploadparameters_uploadtype`(`UploadType`);
 
 ALTER TABLE `omcollmediauploadparameters`
     MODIFY COLUMN `configjson` longtext NULL AFTER `patternmatchfield`;
