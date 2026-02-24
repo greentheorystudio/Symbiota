@@ -296,7 +296,7 @@ const mediaFileUploadInputElement = {
         function addExternalFileToQueue(url, copyToServer) {
             const imageFile = ((url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg') || url.toLowerCase().endsWith('.png')) ? '1' : '0');
             const file = {
-                name: url.split('/').pop(),
+                name: url,
                 size: 0,
                 externalUrl: url,
                 copyToServer: copyToServer
@@ -356,8 +356,11 @@ const mediaFileUploadInputElement = {
                         }
                     }
                 }
-                else if(!file['uploadMetadata']['tid']){
+                else if(!file['uploadMetadata']['tid'] && !file['uploadMetadata']['scientificname'] && !file['uploadMetadata']['scientificname']){
                     errorMessage = 'Scientific name required';
+                }
+                else if(!file['uploadMetadata']['tid'] && (file['uploadMetadata']['scientificname'] || file['uploadMetadata']['scientificname'] )){
+                    errorMessage = 'Taxon not in the database';
                 }
             }
             return errorMessage;
@@ -415,6 +418,10 @@ const mediaFileUploadInputElement = {
             if(csvFileData.length > 0){
                 taxaArr.value = [];
                 csvFileData.forEach((dataObj, index) => {
+                    if(dataObj && dataObj.hasOwnProperty('sourceurl') && dataObj['sourceurl']){
+                        dataObj['filename'] = dataObj['sourceurl'];
+                        addExternalFileToQueue(dataObj['sourceurl'], true);
+                    }
                     if(dataObj && dataObj.hasOwnProperty('filename') && dataObj['filename']){
                         if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.value.includes(dataObj['scientificname'])){
                             taxaArr.value.push(dataObj['scientificname']);
@@ -425,12 +432,7 @@ const mediaFileUploadInputElement = {
                         if(collId.value > 0 && dataObj.hasOwnProperty(props.identifierField) && dataObj[props.identifierField] !== '' && !identifierArr.value.includes(dataObj[props.identifierField])){
                             identifierArr.value.push(dataObj[props.identifierField]);
                         }
-                    }
-                    else if(dataObj && dataObj.hasOwnProperty('sourceurl') && dataObj['sourceurl']){
-                        dataObj['filename'] = dataObj['sourceurl'].split('/').pop();
-                        addExternalFileToQueue(dataObj['sourceurl'], true);
-                    }
-                    else{
+                    } else{
                         csvFileData.splice(index,1);
                     }
                 });
@@ -468,9 +470,12 @@ const mediaFileUploadInputElement = {
                 action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImageFromFile' : 'addMediaFromFile';
             }
             if(file['uploadMetadata']['type'] === 'StillImage'){
-                if(action === 'addImage'){
+                if(action === 'addImage' && action === 'addImageFromUrl'){
                     file['uploadMetadata']['url'] = file['uploadMetadata']['sourceurl'];
                     file['uploadMetadata']['originalurl'] = file['uploadMetadata']['sourceurl'];
+                }
+                if(action === 'addImageFromUrl' && file['uploadMetadata']['sourceurl']) {
+                    file['uploadMetadata']['filename'] = file['uploadMetadata']['sourceurl'].split('/').pop();
                 }
                 uploadImageFile(file, action, (id, file) => {
                     if(Number(id) > 0){
@@ -540,7 +545,7 @@ const mediaFileUploadInputElement = {
                         dataKeys.forEach((key) => {
                             if(key !== 'filename' && csvData[key] && csvData[key] !== ''){
                                 if(key === 'scientificname' || key === 'sciname'){
-                                    file['uploadMetadata']['sciname'] = csvData[key];
+                                    file['uploadMetadata']['scientificname'] = csvData[key];
                                 }
                                 else if(file['uploadMetadata'].hasOwnProperty(key)){
                                     file['uploadMetadata'][key] = csvData[key];
@@ -548,8 +553,8 @@ const mediaFileUploadInputElement = {
                             }
                         });
                     }
-                    if(!file['uploadMetadata']['tid'] && file['uploadMetadata']['sciname'] && taxaData.value.hasOwnProperty(file['uploadMetadata']['sciname'].toLowerCase())){
-                        file['uploadMetadata']['tid'] = taxaData.value[file['uploadMetadata']['sciname'].toLowerCase()]['tid'];
+                    if(!file['uploadMetadata']['tid'] && file['uploadMetadata']['scientificname'] && taxaData.value.hasOwnProperty(file['uploadMetadata']['scientificname'].toLowerCase())){
+                        file['uploadMetadata']['tid'] = taxaData.value[file['uploadMetadata']['scientificname'].toLowerCase()]['tid'];
                     }
                     if(!file['uploadMetadata']['occid'] && file['filenameRecordIdentifier'] && identifierData.value.hasOwnProperty(file['filenameRecordIdentifier'])){
                         file['uploadMetadata']['occid'] = identifierData.value[file['filenameRecordIdentifier']]['occid'];
@@ -682,7 +687,7 @@ const mediaFileUploadInputElement = {
                         const occurrenceData = {};
                         occurrenceData['collid'] = collId.value.toString();
                         occurrenceData[props.identifierField] = file['filenameRecordIdentifier'];
-                        occurrenceData['sciname'] = file['uploadMetadata']['sciname'];
+                        occurrenceData['sciname'] = file['uploadMetadata']['scientificname'];
                         occurrenceData['tid'] = file['uploadMetadata']['tid'];
                         occurrenceData['processingstatus'] = 'unprocessed';
                         const formData = new FormData();
@@ -818,7 +823,7 @@ const mediaFileUploadInputElement = {
                             if(file['filenameRecordIdentifier'] && !identifierArr.value.includes(file['filenameRecordIdentifier'])){
                                 identifierArr.value.push(file['filenameRecordIdentifier']);
                             }
-                            file['uploadMetadata']['sciname'] = null;
+                            file['uploadMetadata']['scientificname'] = null;
                             if(Number(props.occId) > 0){
                                 file['uploadMetadata']['occid'] = props.occId;
                             }
