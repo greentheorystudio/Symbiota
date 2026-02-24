@@ -362,7 +362,7 @@ class DataUploadService {
         $fh = fopen(($configArr['serverPath'] . '/' . $configArr['uploadFile']), 'rb');
         while($dataArr = fgetcsv($fh,0, ',', '"', '')){
             if($recordIndex === 5000){
-                /*if($configArr['dataType'] === 'occurrence'){
+                if($configArr['dataType'] === 'occurrence'){
                     $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['processingStatus'], $configArr['fieldMap'], $configArr['secondaryFieldMap']);
                 }
                 elseif($configArr['dataType'] === 'determination'){
@@ -373,7 +373,7 @@ class DataUploadService {
                 }
                 elseif($configArr['dataType'] === 'mof'){
                     $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap'], $configArr['eventMofFields'], $configArr['occurrenceMofFields']);
-                }*/
+                }
                 $recordIndex = 0;
                 $dataUploadArr = array();
             }
@@ -382,7 +382,7 @@ class DataUploadService {
         }
         fclose($fh);
         if(count($dataUploadArr) > 0){
-            /*if($configArr['dataType'] === 'occurrence'){
+            if($configArr['dataType'] === 'occurrence'){
                 $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['processingStatus'], $configArr['fieldMap'], $configArr['secondaryFieldMap']);
             }
             elseif($configArr['dataType'] === 'determination'){
@@ -393,7 +393,7 @@ class DataUploadService {
             }
             elseif($configArr['dataType'] === 'mof'){
                 $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap'], $configArr['eventMofFields'], $configArr['occurrenceMofFields']);
-            }*/
+            }
         }
         FileSystemService::deleteFile($configArr['serverPath'] . '/' . $configArr['uploadFile']);
         return $recordsCreated;
