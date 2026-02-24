@@ -104,14 +104,14 @@ const occurrenceDataUploadModule = {
                                                 <div class="text-body1 text-bold">Occurrence Records</div>
                                                 <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('occurrence');" @keyup.enter="openFieldMapperPopup('occurrence');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                             </div>
-                                            <template v-if="metaXmlData.hasOwnProperty('identification') && metaXmlData['identification'].hasOwnProperty('dataFiles') && metaXmlData['identification']['dataFiles'].length > 0">
+                                            <template v-if="identificationDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeDeterminationData" @update:value="(value) => includeDeterminationData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Identification History</div>
                                                     <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('determination');" @keyup.enter="openFieldMapperPopup('determination');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                                 </div>
                                             </template>
-                                            <template v-if="metaXmlData.hasOwnProperty('multimedia') && metaXmlData['multimedia'].hasOwnProperty('dataFiles') && metaXmlData['multimedia']['dataFiles'].length > 0">
+                                            <template v-if="multimediaDataIncluded">
                                                 <div class="row q-gutter-sm">
                                                     <checkbox-input-element :value="includeMultimediaData" @update:value="(value) => includeMultimediaData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
                                                     <div class="text-body1 text-bold">Import Media Records</div>
@@ -549,6 +549,7 @@ const occurrenceDataUploadModule = {
         const flatFileMofData = Vue.ref([]);
         const flatFileOccurrenceData = Vue.ref([]);
         const gbifLoadingStatus = Vue.ref(false);
+        const identificationDataIncluded = Vue.ref(false);
         const includeDeterminationData = Vue.ref(true);
         const includeMultimediaData = Vue.ref(true);
         const includeMofData = Vue.ref(true);
@@ -593,6 +594,7 @@ const occurrenceDataUploadModule = {
         const mofDataIncluded = Vue.ref(false);
         const mofEventDataIncluded = Vue.ref(false);
         const mofOccurrenceDataIncluded = Vue.ref(false);
+        const multimediaDataIncluded = Vue.ref(false);
         const occurrenceMofDataFields = Vue.computed(() => collectionStore.getOccurrenceMofDataFields);
         const occurrenceSourceEventPrimaryKeyField = Vue.computed(() => {
             return Object.keys(fieldMappingDataOccurrence.value).find(key => fieldMappingDataOccurrence.value[key] === 'eventdbpk');
@@ -729,6 +731,8 @@ const occurrenceDataUploadModule = {
             localDwcaServerPath.value = null;
             localDwcaFileArr.value.length = 0;
             mofDataIncluded.value = false;
+            identificationDataIncluded.value = false;
+            multimediaDataIncluded.value = false;
             mofEventDataIncluded.value = false;
             mofOccurrenceDataIncluded.value = false;
             metaXmlData.value = Object.assign({}, {});
@@ -759,9 +763,11 @@ const occurrenceDataUploadModule = {
         }
 
         function clearOccurrenceUploadTables() {
-            const text = 'Clearing upload tables';
-            currentProcess.value = 'clearOccurrenceUploadTables';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'clearOccurrenceUploadTables'){
+                const text = 'Clearing upload tables';
+                currentProcess.value = 'clearOccurrenceUploadTables';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'clearOccurrenceUploadTables');
@@ -773,7 +779,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    clearOccurrenceUploadTables();
+                }
+                else{
                     processSuccessResponse('Complete');
                     const text = 'Setting Symbiota field mapping data';
                     currentProcess.value = 'setFieldMappingData';
@@ -784,10 +793,6 @@ const occurrenceDataUploadModule = {
                     else{
                         getFieldData();
                     }
-                }
-                else{
-                    processErrorResponse('An error occurred while clearing upload tables');
-                    adjustUIEnd();
                 }
             });
         }
@@ -1116,9 +1121,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferPostProcessCleanup() {
-            const text = 'Performing final cleanup';
-            currentProcess.value = 'finalTransferPostProcessCleanup';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferPostProcessCleanup'){
+                const text = 'Performing final cleanup';
+                currentProcess.value = 'finalTransferPostProcessCleanup';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('optimizeTables', '1');
@@ -1131,40 +1138,40 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(localDwcaServerPath.value){
-                    const formData = new FormData();
-                    formData.append('collid', props.collid.toString());
-                    formData.append('serverPath', localDwcaServerPath.value);
-                    formData.append('action', 'removeUploadFiles');
-                    fetch(dataUploadServiceApiUrl, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then((response) => {
-                        return response.ok ? response.text() : null;
-                    })
-                    .then((res) => {
-                        if(Number(res) === 1){
-                            processSuccessResponse('Upload complete!');
-                        }
-                        else{
-                            processErrorResponse('An error occurred while performing final cleanup');
-                        }
+                if(Number(res) > 0){
+                    finalTransferPostProcessCleanup();
+                }
+                else{
+                    if(localDwcaServerPath.value){
+                        const formData = new FormData();
+                        formData.append('collid', props.collid.toString());
+                        formData.append('serverPath', localDwcaServerPath.value);
+                        formData.append('action', 'removeUploadFiles');
+                        fetch(dataUploadServiceApiUrl, {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then((response) => {
+                            return response.ok ? response.text() : null;
+                        })
+                        .then((res) => {
+                            if(Number(res) === 1){
+                                processSuccessResponse('Upload complete!');
+                            }
+                            else{
+                                processErrorResponse('An error occurred while performing final cleanup');
+                            }
+                            currentProcess.value = null;
+                            currentTab.value = 'configuration';
+                            adjustUIEnd();
+                        });
+                    }
+                    else{
+                        processSuccessResponse('Upload complete!');
                         currentProcess.value = null;
                         currentTab.value = 'configuration';
                         adjustUIEnd();
-                    });
-                }
-                else{
-                    if(Number(res) === 1){
-                        processSuccessResponse('Upload complete!');
                     }
-                    else{
-                        processErrorResponse('An error occurred while performing final cleanup');
-                    }
-                    currentProcess.value = null;
-                    currentTab.value = 'configuration';
-                    adjustUIEnd();
                 }
             });
         }
@@ -2164,9 +2171,11 @@ const occurrenceDataUploadModule = {
 
         function processPostUploadCleaningScripts() {
             if(profileCleanSqlArr.value.length > 0){
-                const text = 'Running configured cleaning scripts';
-                currentProcess.value = 'runningCleaningScripts';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                if(currentProcess.value !== 'runningCleaningScripts'){
+                    const text = 'Running configured cleaning scripts';
+                    currentProcess.value = 'runningCleaningScripts';
+                    addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                }
                 const formData = new FormData();
                 formData.append('collid', props.collid.toString());
                 formData.append('cleaningScriptArr', JSON.stringify(profileCleanSqlArr.value));
@@ -2179,13 +2188,12 @@ const occurrenceDataUploadModule = {
                     return response.ok ? response.text() : null;
                 })
                 .then((res) => {
-                    if(Number(res) === 1){
-                        processSuccessResponse('Complete');
-                        processPostUploadCleanEventDates();
+                    if(Number(res) > 0){
+                        processPostUploadCleaningScripts();
                     }
                     else{
-                        processErrorResponse('An error occurred running cleaning scripts');
-                        adjustUIEnd();
+                        processSuccessResponse('Complete');
+                        processPostUploadCleanEventDates();
                     }
                 });
             }
@@ -2219,28 +2227,20 @@ const occurrenceDataUploadModule = {
             });
         }
 
-        function processPostUploadExistingRecordProcessing() {
-            let text;
+        function processPostUploadExistingRecordAssociateProcessing() {
+            const text = 'Associating upload data with existing occurrence records';
+            currentProcess.value = 'linkExistingOccurrences';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            if(profileConfigurationData.value['existingRecords'] === 'skip'){
-                text = 'Removing existing occurrence data from upload';
-                currentProcess.value = 'removeExistingOccurrences';
-                formData.append('action', 'removeExistingOccurrencesFromUpload');
+            formData.append('action', 'linkExistingOccurrencesToUpload');
+            if(Number(profileConfigurationData.value['matchOnCatalogNumber']) === 1){
+                formData.append('matchByCatalogNumber', '1');
+                formData.append('linkField', profileConfigurationData.value['catalogNumberMatchField']);
             }
-            else{
-                text = 'Associating upload data with existing occurrence records';
-                currentProcess.value = 'linkExistingOccurrences';
-                formData.append('action', 'linkExistingOccurrencesToUpload');
-                if(Number(profileConfigurationData.value['matchOnCatalogNumber']) === 1){
-                    formData.append('matchByCatalogNumber', '1');
-                    formData.append('linkField', profileConfigurationData.value['catalogNumberMatchField']);
-                }
-                else if(Number(profileConfigurationData.value['matchOnRecordId']) === 1){
-                    formData.append('matchByRecordId', '1');
-                }
+            else if(Number(profileConfigurationData.value['matchOnRecordId']) === 1){
+                formData.append('matchByRecordId', '1');
             }
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
                 body: formData
@@ -2256,6 +2256,33 @@ const occurrenceDataUploadModule = {
                 else{
                     processErrorResponse('An error occurred');
                     adjustUIEnd();
+                }
+            });
+        }
+
+        function processPostUploadExistingRecordRemoveProcessing() {
+            if(currentProcess.value !== 'removeExistingOccurrences'){
+                const text = 'Removing existing occurrence data from upload';
+                currentProcess.value = 'removeExistingOccurrences';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'removeExistingOccurrencesFromUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    processPostUploadExistingRecordRemoveProcessing();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    processPostUploadCleaningScripts();
                 }
             });
         }
@@ -2287,11 +2314,21 @@ const occurrenceDataUploadModule = {
                         });
                     }
                     processSuccessResponse('Complete');
-                    processPostUploadExistingRecordProcessing();
+                    if(profileConfigurationData.value['existingRecords'] === 'skip'){
+                        processPostUploadExistingRecordRemoveProcessing()
+                    }
+                    else{
+                        processPostUploadExistingRecordAssociateProcessing();
+                    }
                 });
             }
             else{
-                processPostUploadExistingRecordProcessing();
+                if(profileConfigurationData.value['existingRecords'] === 'skip'){
+                    processPostUploadExistingRecordRemoveProcessing()
+                }
+                else{
+                    processPostUploadExistingRecordAssociateProcessing();
+                }
             }
         }
 
@@ -2852,6 +2889,7 @@ const occurrenceDataUploadModule = {
                     validateOccurrenceFieldMappingData(fieldName);
                 });
                 if(metaXmlData.value.hasOwnProperty('identification') && metaXmlData.value['identification']['dataFiles'].length > 0 && Object.keys(metaXmlData.value['identification']['fields']).length > 0){
+                    identificationDataIncluded.value = true;
                     Object.keys(metaXmlData.value['identification']['fields']).forEach((field) => {
                         const fieldName = metaXmlData.value['identification']['fields'][field];
                         const primaryKey = Object.keys(fieldMappingDataDetermiation.value).find(key => fieldMappingDataDetermiation.value[key] === 'dbpk');
@@ -2872,6 +2910,7 @@ const occurrenceDataUploadModule = {
                     });
                 }
                 if(metaXmlData.value.hasOwnProperty('multimedia') && metaXmlData.value['multimedia']['dataFiles'].length > 0 && Object.keys(metaXmlData.value['multimedia']['fields']).length > 0){
+                    multimediaDataIncluded.value = true;
                     Object.keys(metaXmlData.value['multimedia']['fields']).forEach((field) => {
                         const fieldName = metaXmlData.value['multimedia']['fields'][field];
                         const primaryKey = Object.keys(fieldMappingDataMedia.value).find(key => fieldMappingDataMedia.value[key] === 'dbpk');
@@ -2981,6 +3020,7 @@ const occurrenceDataUploadModule = {
             fieldMapperTargetFields,
             flatFileMode,
             gbifLoadingStatus,
+            identificationDataIncluded,
             includeDeterminationData,
             includeMultimediaData,
             includeMofData,
@@ -2988,6 +3028,7 @@ const occurrenceDataUploadModule = {
             mappingValid,
             metaXmlData,
             mofDataIncluded,
+            multimediaDataIncluded,
             occurrenceSourceEventPrimaryKeyField,
             occurrenceSourcePrimaryKeyField,
             popupColumns,

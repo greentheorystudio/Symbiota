@@ -401,21 +401,25 @@ class UploadOccurrenceTemp{
         return $returnVal;
     }
 
-    public function clearCollectionData($collid, $optimizeTables): bool
+    public function clearCollectionData($collid, $optimizeTables): int
     {
+        $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadspectemppoints WHERE collid = ' . (int)$collid . ' ';
+            $sql = 'DELETE FROM uploadspectemppoints WHERE collid = ' . (int)$collid . ' LIMIT 50000 ';
             if($this->conn->query($sql)){
-                $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' ';
+                $returnVal = $this->conn->affected_rows;
+            }
+            if($returnVal === 0){
+                $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' LIMIT 100000 ';
                 if($this->conn->query($sql)){
-                    if($optimizeTables){
-                        $this->conn->query('OPTIMIZE TABLE uploadspectemppoints');
-                    }
-                    return true;
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
+            if($returnVal === 0 && $optimizeTables){
+                $this->conn->query('OPTIMIZE TABLE uploadspectemppoints');
+            }
         }
-        return false;
+        return $returnVal;
     }
 
     public function getFields(): array
@@ -635,8 +639,7 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid && $scriptData){
-            error_log('cleaning started');
-            $sql = 'DELETE u.* FROM uploadspectemp AS u ';
+            $sql = 'DELETE FROM uploadspectemp AS u ';
             if(array_key_exists('join', $scriptData) && $scriptData['join']){
                 $sql .= $scriptData['join'] . ' ';
             }
@@ -644,9 +647,9 @@ class UploadOccurrenceTemp{
             if(array_key_exists('where', $scriptData) && $scriptData['where']){
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
+            $sql .= 'LIMIT 50000 ';
             if($this->conn->query($sql)){
-                error_log('cleaning complete');
-                $returnVal = 1;
+                $returnVal = $this->conn->affected_rows;
             }
         }
         return $returnVal;
@@ -682,23 +685,29 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE up.*, u.* FROM uploadspectemppoints AS up LEFT JOIN uploadspectemp AS u ON up.upspid = u.upspid '.
-                'LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            $sql = 'DELETE FROM uploadspectemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
+                'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 50000 ';
             if($this->conn->query($sql)){
-                $returnVal = 1;
+                $returnVal = $this->conn->affected_rows;
+            }
+            if($returnVal === 0){
+                $returnVal = $this->removeOrphanedPoints($collid);
             }
         }
         return $returnVal;
     }
 
-    public function removeOrphanedPoints($collid): void
+    public function removeOrphanedPoints($collid): int
     {
+        $returnVal = 0;
         if($collid){
             $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT upspid FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') ';
-            $this->conn->query($sql);
+                'WHERE collid = ' . (int)$collid . ') LIMIT 100000 ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
         }
+        return $returnVal;
     }
 
     public function setUploadLocalitySecurity($collid): int

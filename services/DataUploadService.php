@@ -65,19 +65,17 @@ class DataUploadService {
 
     public function clearOccurrenceUploadTables($collid, $optimizeTables): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
-            if(!(new UploadDeterminationTemp)->clearCollectionData($collid)){
-                $retVal = 0;
+            $retVal = (new UploadDeterminationTemp)->clearCollectionData($collid);
+            if($retVal === 0){
+                $retVal = (new UploadMediaTemp)->clearCollectionData($collid);
             }
-            if(!(new UploadMediaTemp)->clearCollectionData($collid)){
-                $retVal = 0;
+            if($retVal === 0){
+                $retVal = (new UploadMofTemp)->clearCollectionData($collid);
             }
-            if(!(new UploadMofTemp)->clearCollectionData($collid)){
-                $retVal = 0;
-            }
-            if(!(new UploadOccurrenceTemp)->clearCollectionData($collid, $optimizeTables)){
-                $retVal = 0;
+            if($retVal === 0){
+                $retVal = (new UploadOccurrenceTemp)->clearCollectionData($collid, $optimizeTables);
             }
         }
         return $retVal;
@@ -85,14 +83,19 @@ class DataUploadService {
 
     public function executeCleaningScriptArr($collid, $cleaningScriptArr): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid && count($cleaningScriptArr) > 0){
             foreach($cleaningScriptArr as $scriptData){
-                if($retVal === 1){
+                if($retVal === 0 && $scriptData){
                     $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
                 }
             }
             (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
+
+
+            if($retVal === 0 && $scriptData){
+                $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
+            }
         }
         return $retVal;
     }
@@ -632,13 +635,13 @@ class DataUploadService {
         $retVal = 0;
         if($collid){
             $retVal = (new UploadDeterminationTemp)->removeExistingOccurrenceDataFromUpload($collid);
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new UploadMediaTemp)->removeExistingOccurrenceDataFromUpload($collid);
             }
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new UploadMofTemp)->removeExistingOccurrenceDataFromUpload($collid);
             }
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new UploadOccurrenceTemp)->removeExistingOccurrenceDataFromUpload($collid);
             }
         }

@@ -87,15 +87,16 @@ class UploadDeterminationTemp{
         return $recordsCreated;
     }
 
-    public function clearCollectionData($collid): bool
+    public function clearCollectionData($collid): int
     {
+        $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' ';
+            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' LIMIT 100000 ';
             if($this->conn->query($sql)){
-                return true;
+                $returnVal = $this->conn->affected_rows;
             }
         }
-        return false;
+        return $returnVal;
     }
 
     public function getFields(): array
@@ -107,7 +108,8 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'SELECT COUNT(updid) AS cnt FROM uploaddetermtemp WHERE collid  = ' . (int)$collid . ' ';
+            $sql = 'SELECT COUNT(updid) AS cnt FROM uploaddetermtemp WHERE collid  = ' . (int)$collid . ' '.
+            'AND dbpk IN(SELECT dbpk FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
                 $result->free();
@@ -146,10 +148,10 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE u.* FROM uploaddetermtemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
+            $sql = 'DELETE FROM uploaddetermtemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
+            'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 100000 ';
             if($this->conn->query($sql)){
-                $returnVal = 1;
+                $returnVal = $this->conn->affected_rows;
             }
         }
         return $returnVal;
