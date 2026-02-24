@@ -86,7 +86,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             return state.baseStore.getGbifCredentialsConfigured;
         },
         getGbifPredicateChanged(state) {
-            if(state.collectionDataUploadParametersData.hasOwnProperty('configjson') && state.collectionDataUploadParametersEditData.hasOwnProperty('configjson') && state.collectionDataUploadParametersData['configjson'].hasOwnProperty('gbifPredicateJson') && state.collectionDataUploadParametersEditData['configjson'].hasOwnProperty('gbifPredicateJson')){
+            if(state.collectionDataUploadParametersData['configjson'] && state.collectionDataUploadParametersEditData['configjson'] && state.collectionDataUploadParametersData['configjson'].hasOwnProperty('gbifPredicateJson') && state.collectionDataUploadParametersEditData['configjson'].hasOwnProperty('gbifPredicateJson')){
                 return state.collectionDataUploadParametersData['configjson']['gbifPredicateJson'] !== state.collectionDataUploadParametersEditData['configjson']['gbifPredicateJson'];
             }
             else{
