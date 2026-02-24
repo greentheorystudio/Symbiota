@@ -90,11 +90,8 @@ class DataUploadService {
                     $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
                 }
             }
-            (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
-
-
-            if($retVal === 0 && $scriptData){
-                $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
+            if($retVal === 0){
+                $retVal = (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
             }
         }
         return $retVal;
