@@ -1,8 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `configurations`
-    MODIFY COLUMN `configurationValue` longtext NOT NULL AFTER `configurationDataType`;
-
 ALTER TABLE `omcollections`
     ADD COLUMN `ccpk` int(10) UNSIGNED NULL AFTER `CollID`,
     ADD COLUMN `isPublic` smallint(1) NOT NULL DEFAULT 1 AFTER `SortSeq`,

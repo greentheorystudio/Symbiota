@@ -364,7 +364,7 @@ class DataUploadService {
         $dataUploadArr = array();
         $fh = fopen(($configArr['serverPath'] . '/' . $configArr['uploadFile']), 'rb');
         while($dataArr = fgetcsv($fh,0, ',', '"', '')){
-            if($recordIndex === 5000){
+            if($recordIndex === 2000){
                 if($configArr['dataType'] === 'occurrence'){
                     $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['processingStatus'], $configArr['fieldMap'], $configArr['secondaryFieldMap']);
                 }
