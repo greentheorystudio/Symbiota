@@ -92,7 +92,7 @@ const collectionDataUploadParametersEditorPopup = {
             const confirmText = 'Are you sure you want to delete this upload profile? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    collectionDataUploadParametersStore.deleteCollectionDataUploadParametersRecord(collId.value, (res) => {
+                    collectionDataUploadParametersStore.deleteCollectionDataUploadParametersRecord((res) => {
                         if(res === 1){
                             showNotification('positive','Upload profile has been deleted.');
                             context.emit('close:popup');
@@ -107,7 +107,7 @@ const collectionDataUploadParametersEditorPopup = {
 
         function saveCollectionDataUploadParametersEdits() {
             showWorking('Saving edits...');
-            collectionDataUploadParametersStore.updateCollectionDataUploadParametersRecord(collId.value, (res) => {
+            collectionDataUploadParametersStore.updateCollectionDataUploadParametersRecord((res) => {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
