@@ -292,7 +292,6 @@ class OccurrenceCollectionProfile {
 		else{
 			$cid = 'ERROR inserting new collection.';
 		}
-		$this->conn->close();
 		return $cid;
 	}
 
@@ -363,7 +362,6 @@ class OccurrenceCollectionProfile {
 			else{
 				$this->errorStr = 'ERROR linking institution address.';
 			}
-			$this->conn->close();
 		}
 		return $status;
 	}
@@ -380,7 +378,6 @@ class OccurrenceCollectionProfile {
 			else{
 				$this->errorStr = 'ERROR removing institution address.';
 			}
-			$this->conn->close();
 		}
 		return $status;
 	}
@@ -444,7 +441,6 @@ class OccurrenceCollectionProfile {
 
     public function updateAggKeys($collId){
         $aggKeyArr = array();
-        $status = true;
         $aggKeyArr['organizationKey'] = $this->organizationKey;
         $aggKeyArr['installationKey'] = $this->installationKey;
         $aggKeyArr['datasetKey'] = $this->datasetKey;
@@ -456,12 +452,10 @@ class OccurrenceCollectionProfile {
             'WHERE (collid = '.$collId.')';
         //echo $sql; exit;
         if(!$this->conn->query($sql)){
-            $status = 'ERROR saving key.';
-            return $status;
+            return 'ERROR saving key.';
         }
 
-		$this->conn->close();
-		return $status;
+		return true;
 	}
 
     public function getInstallationKey(){
