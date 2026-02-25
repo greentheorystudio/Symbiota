@@ -216,7 +216,8 @@ ALTER TABLE `images`
     ADD INDEX `images_sortsequence`(`sortsequence`),
     ADD INDEX `INDEX_images_altText`(`altText`),
     ADD INDEX `Index_images_url`(`url`),
-    ADD INDEX `Index_images_sourceurl`(`sourceurl`);
+    ADD INDEX `Index_images_sourceurl`(`sourceurl`),
+    ADD INDEX `Index_images_originalurl`(`originalurl`);
 
 ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
@@ -320,7 +321,10 @@ ALTER TABLE `taxadescrblock`
 ALTER TABLE `uploaddetermtemp`
     ADD COLUMN `updid` int(50) NOT NULL AUTO_INCREMENT FIRST,
     ADD COLUMN `tid` int(10) UNSIGNED NULL AFTER `sciname`,
-    ADD PRIMARY KEY (`updid`);
+    ADD PRIMARY KEY (`updid`),
+    ADD INDEX `Index_uploaddet_sciname`(`sciname`),
+    ADD INDEX `Index_uploaddet_identifiedby`(`identifiedBy`),
+    ADD INDEX `Index_uploaddet_dateidentified`(`dateIdentified`);
 
 CREATE TABLE `uploadgenetictemp` (
     `upgid` int(11) NOT NULL AUTO_INCREMENT,
@@ -395,7 +399,8 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_accessuri` (`accessuri`),
     KEY `Index_format` (`format`),
     KEY `Index_uploadimg_ts` (`initialtimestamp`),
-    KEY `Index_uploadimg_url`(`url`)
+    KEY `Index_uploadimg_url`(`url`),
+    KEY `Index_uploadimg_accessuri`(`accessuri`)
 );
 
 CREATE TABLE `uploadmoftemp` (

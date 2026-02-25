@@ -181,7 +181,6 @@ class UploadMofTemp{
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
-
             if($returnVal === 1){
                 $sql = 'DELETE u.* FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.occid = m.occid '.
                     'WHERE u.collid  = ' . $collid . ' AND m.occid IS NOT NULL AND u.field = m.field ';

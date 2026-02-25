@@ -465,7 +465,6 @@ class Occurrences{
             $sql3 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," spp.","") '.
                 'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% spp." ';
-            //echo $sql3;
             if($this->conn->query($sql3)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -473,7 +472,6 @@ class Occurrences{
             $sql3 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," spp","") '.
                 'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% spp" ';
-            //echo $sql3;
             if($this->conn->query($sql3)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -481,7 +479,6 @@ class Occurrences{
             $sql3 = 'UPDATE omoccurrences '.
                 'SET sciname = REPLACE(sciname," group","") '.
                 'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND sciname LIKE "% group" ';
-            //echo $sql3;
             if($this->conn->query($sql3)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -496,7 +493,6 @@ class Occurrences{
             $sql = 'UPDATE omoccurrences '.
                 'SET sciname = TRIM(sciname) '.
                 'WHERE collid = ' . (int)$collid . ' AND ISNULL(tid) AND (sciname LIKE " %" OR sciname LIKE "% ") ';
-            //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -552,7 +548,6 @@ class Occurrences{
             $fieldValueArr[] = '"' . $GLOBALS['USERNAME'] . '"';
             $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
                 $guid = UuidService::getUuidV4();
@@ -583,7 +578,6 @@ class Occurrences{
                 $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ',dateentered) '.
                     'SELECT ' . implode(',', $fieldNameArr) . ', "' . date('Y-m-d H:i:s') . '" FROM uploadspectemp '.
                     'WHERE collid = ' . (int)$collId . ' AND ISNULL(occid) ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $retVal = 1;
                 }
@@ -594,7 +588,7 @@ class Occurrences{
 
     public function deleteOccurrenceRecord($idType, $id): int
     {
-        $retVal = 0;
+        $retVal = 1;
         $whereStr = '';
         if($idType === 'occid'){
             $whereStr = 'occid = ' . (int)$id . ' ';
@@ -603,30 +597,18 @@ class Occurrences{
             $whereStr = 'occid IN(' . implode(',', $id) . ') ';
         }
         elseif($idType === 'collid'){
-            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') ';
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ' LIMIT 10000) ';
         }
         if($whereStr){
-            $retVal = (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords($idType, $id);
-            if($retVal){
-                $retVal = (new OccurrenceGeneticLinks)->deleteOccurrenceGeneticLinkageRecords($idType, $id);
-            }
-            if($retVal){
-                $retVal = (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
-            }
-            if($retVal){
-                $retVal = (new Images)->deleteAssociatedImageRecords($idType, $id);
-            }
-            if($retVal){
-                $retVal = (new Media)->deleteAssociatedMediaRecords($idType, $id);
-            }
-            if($retVal){
-                $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);
-            }
-            if($retVal){
-                $sql = 'DELETE FROM guidoccurrences WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
+            (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords($idType, $id);
+            (new Images)->deleteAssociatedImageRecords($idType, $id);
+            (new OccurrenceGeneticLinks)->deleteOccurrenceGeneticLinkageRecords($idType, $id);
+            (new ChecklistVouchers)->deleteOccurrenceChecklistVoucherRecords($idType, $id);
+            (new Media)->deleteAssociatedMediaRecords($idType, $id);
+            (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords($idType, $id);
+            $sql = 'DELETE FROM guidoccurrences WHERE ' . $whereStr . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
             }
             if($retVal){
                 $sql = 'DELETE FROM omcrowdsourcequeue WHERE ' . $whereStr . ' ';
@@ -677,8 +659,8 @@ class Occurrences{
                 else{
                     $sql = 'DELETE FROM omoccurrences WHERE collid = ' . (int)$id . ' ';
                 }
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
+                if($this->conn->query($sql)){
+                    $retVal = $this->conn->affected_rows;
                 }
             }
         }
@@ -689,22 +671,18 @@ class Occurrences{
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT imgid FROM images WHERE occid = ' . (int)$occid . ' ';
-        //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['images'] = (int)$rs->num_rows;
         $rs->free();
         $sql = 'SELECT DISTINCT mediaid FROM media WHERE occid = ' . (int)$occid . ' ';
-        //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['media'] = (int)$rs->num_rows;
         $rs->free();
         $sql = 'SELECT DISTINCT clid FROM fmvouchers WHERE occid = ' . (int)$occid . ' ';
-        //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['checklists'] = (int)$rs->num_rows;
         $rs->free();
         $sql = 'SELECT DISTINCT idoccurgenetic FROM omoccurgenetic WHERE occid = ' . (int)$occid . ' ';
-        //echo '<div>'.$sql.'</div>';
         $rs = $this->conn->query($sql);
         $retArr['genetic'] = (int)$rs->num_rows;
         $rs->free();
@@ -819,7 +797,7 @@ class Occurrences{
         $returnArr = array();
         if($collid){
             $sql = 'SELECT occid FROM omoccurrences WHERE collid  = ' . (int)$collid . ' '.
-                'AND occid NOT IN(SELECT occid FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
+                'AND occid NOT IN(SELECT occid FROM uploadspectemp WHERE collid = ' . (int)$collid . ') LIMIT 10000 ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

@@ -313,7 +313,7 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE u.* FROM uploadmediatemp AS u LEFT JOIN images AS i ON u.occid = i.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND i.occid IS NOT NULL AND (u.url = i.url OR u.originalurl = i.originalurl) ';
+                'WHERE u.collid  = ' . $collid . ' AND i.occid IS NOT NULL AND (u.url = i.url OR u.originalurl = i.originalurl OR u.sourceurl = i.sourceurl) ';
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }

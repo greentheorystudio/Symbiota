@@ -165,11 +165,11 @@ class DataUploadService {
 
     public function finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new Images)->clearExistingImagesNotInUpload($collid, $clearDerivatives);
-            if($retVal){
-                $retVal = (new Media)->clearExistingMediaNotInUpload($collid);
+            if($retVal === 0){
+                $retVal = (new Media)->clearExistingMediaNotInUpload($collid, $clearDerivatives);
             }
         }
         return $retVal;
@@ -177,7 +177,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousDeterminations($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords('collid', $collid);
         }
@@ -186,10 +186,10 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMediaRecords($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new Images)->deleteAssociatedImageRecords('collid', $collid);
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new Media)->deleteAssociatedMediaRecords('collid', $collid);
             }
         }
@@ -198,7 +198,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMofRecords($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords('collid', $collid);
         }
@@ -207,7 +207,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMofRecordsForUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecordsForUpload($collid);
         }
