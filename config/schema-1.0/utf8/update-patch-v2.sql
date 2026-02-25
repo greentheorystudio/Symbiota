@@ -400,7 +400,10 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_format` (`format`),
     KEY `Index_uploadimg_ts` (`initialtimestamp`),
     KEY `Index_uploadimg_url`(`url`),
-    KEY `Index_uploadimg_accessuri`(`accessuri`)
+    KEY `Index_uploadimg_accessuri`(`accessuri`),
+    KEY `Index_uploadimg_format`(`format`),
+    KEY `Index_uploadimg_originalurl`(`originalurl`),
+    KEY `Index_uploadimg_sourceurl`(`sourceUrl`)
 );
 
 CREATE TABLE `uploadmoftemp` (
