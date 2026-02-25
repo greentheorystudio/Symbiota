@@ -81,6 +81,21 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function executeCleaningAssociatedData($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->clearOrphanedRecords($collid);
+            if($retVal === 0){
+                $retVal = (new UploadMediaTemp)->clearOrphanedRecords($collid);
+            }
+            if($retVal === 0){
+                $retVal = (new UploadMofTemp)->clearOrphanedRecords($collid);
+            }
+        }
+        return $retVal;
+    }
+
     public function executeCleaningScriptArr($collid, $cleaningScriptArr): int
     {
         $retVal = 0;
@@ -139,6 +154,15 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferCleanMediaRecordFormatValues($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->cleanMediaRecordFormatValues($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferCleanMediaRecords($collid): int
     {
         $retVal = 1;
@@ -148,13 +172,22 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives): int
+    public function finalTransferCleanMediaRecordTidValues($collid): int
     {
         $retVal = 1;
         if($collid){
+            $retVal = (new UploadMediaTemp)->cleanMediaRecordTidValues($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives): int
+    {
+        $retVal = 0;
+        if($collid){
             $retVal = (new Images)->clearExistingImagesNotInUpload($collid, $clearDerivatives);
-            if($retVal){
-                $retVal = (new Media)->clearExistingMediaNotInUpload($collid);
+            if($retVal === 0){
+                $retVal = (new Media)->clearExistingMediaNotInUpload($collid, $clearDerivatives);
             }
         }
         return $retVal;
@@ -162,7 +195,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousDeterminations($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords('collid', $collid);
         }
@@ -171,10 +204,10 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMediaRecords($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new Images)->deleteAssociatedImageRecords('collid', $collid);
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new Media)->deleteAssociatedMediaRecords('collid', $collid);
             }
         }
@@ -183,7 +216,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMofRecords($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords('collid', $collid);
         }
@@ -192,7 +225,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMofRecordsForUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecordsForUpload($collid);
         }

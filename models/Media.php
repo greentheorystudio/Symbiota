@@ -44,13 +44,34 @@ class Media{
         $this->conn->close();
 	}
 
-    public function clearExistingMediaNotInUpload($collid): int
+    public function clearExistingMediaNotInUpload($collid, $clearDerivatives): int
     {
         $retVal = 0;
-        $sql = 'DELETE m.* FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND m.accessuri NOT IN(SELECT DISTINCT accessuri FROM uploadmediatemp WHERE collid = ' . (int)$collid . ') ';
-        if($this->conn->query($sql)){
-            $retVal = 1;
+        $medIdArr = array();
+        $sql = 'SELECT m.mediaid FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND m.accessuri NOT IN(SELECT accessuri FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND accessuri IS NOT NULL) '.
+            'AND m.sourceurl NOT IN(SELECT accessuri FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND accessuri IS NOT NULL) LIMIT 10000 ';
+        if($result = $this->conn->query($sql)){
+            while($row = $result->fetch_assoc()){
+                $medIdArr[] = $row['mediaid'];
+            }
+            $result->free();
+            $retVal = $this->clearMediaByArr($medIdArr, $clearDerivatives);
+        }
+        return $retVal;
+    }
+
+    public function clearMediaByArr($medIdArr, $clearDerivatives): int
+    {
+        $retVal = 0;
+        if(count($medIdArr) > 0){
+            if($clearDerivatives){
+                $this->deleteAssociatedMediaFiles('mediaidArr', $medIdArr);
+            }
+            $sql = 'DELETE FROM media WHERE mediaid IN(' . implode(',', $medIdArr) . ') ';
+            if($this->conn->query($sql)){
+                $retVal = $this->conn->affected_rows;
+            }
         }
         return $retVal;
     }
@@ -120,6 +141,9 @@ class Media{
         elseif($idType === 'occidArr'){
             $sql = 'SELECT accessuri FROM media WHERE occid IN(' . implode(',', $id) . ') ';
         }
+        elseif($idType === 'mediaidArr'){
+            $sql = 'SELECT accessuri FROM media WHERE mediaid IN(' . implode(',', $id) . ') ';
+        }
         elseif($idType === 'collid'){
             $sql = 'SELECT m.accessuri FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
                 'WHERE o.collid = ' . (int)$id . ' ';
@@ -143,7 +167,6 @@ class Media{
 
     public function deleteAssociatedMediaRecords($idType, $id): int
     {
-        $this->deleteAssociatedMediaFiles($idType, $id);
         $retVal = 0;
         $whereStr = '';
         if($idType === 'occid'){
@@ -159,9 +182,17 @@ class Media{
             $whereStr = 'tid = ' . (int)$id . ' AND ISNULL(occid) ';
         }
         if($whereStr){
-            $sql = 'DELETE FROM media WHERE ' . $whereStr . ' ';
-            if($this->conn->query($sql)){
-                $retVal = 1;
+            $medIdArr = array();
+            $sql = 'SELECT mediaid FROM media WHERE ' . $whereStr . ' ';
+            if($idType === 'collid'){
+                $sql .= 'LIMIT 10000 ';
+            }
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $medIdArr[] = $row['mediaid'];
+                }
+                $result->free();
+                $retVal = $this->clearMediaByArr($medIdArr, true);
             }
         }
         return $retVal;

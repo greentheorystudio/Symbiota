@@ -58,6 +58,9 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'executeCleaningScriptArr' && array_key_exists('cleaningScriptArr', $_POST)){
         echo $dataUploadService->executeCleaningScriptArr($collid, json_decode($_POST['cleaningScriptArr'], true));
     }
+    elseif($action === 'executeCleaningAssociatedData'){
+        echo $dataUploadService->executeCleaningAssociatedData($collid);
+    }
     elseif($action === 'cleanUploadEventDates'){
         echo $dataUploadService->cleanUploadEventDates($collid);
     }
@@ -102,8 +105,14 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'finalTransferAddNewDeterminations'){
         echo $dataUploadService->finalTransferAddNewDeterminations($collid);
     }
+    elseif($action === 'finalTransferCleanMediaRecordFormatValues'){
+        echo $dataUploadService->finalTransferCleanMediaRecordFormatValues($collid);
+    }
     elseif($action === 'finalTransferCleanMediaRecords'){
         echo $dataUploadService->finalTransferCleanMediaRecords($collid);
+    }
+    elseif($action === 'finalTransferCleanMediaRecordTidValues'){
+        echo $dataUploadService->finalTransferCleanMediaRecordTidValues($collid);
     }
     elseif($action === 'finalTransferRemoveExistingMediaRecordsFromUpload'){
         echo $dataUploadService->finalTransferRemoveExistingMediaRecordsFromUpload($collid);

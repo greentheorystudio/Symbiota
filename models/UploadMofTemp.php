@@ -87,7 +87,20 @@ class UploadMofTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' LIMIT 100000 ';
+            $sql = 'DELETE FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' LIMIT 50000 ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function clearOrphanedRecords($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE FROM uploadmoftemp WHERE dbpk NOT IN(SELECT dbpk FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ') LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -104,8 +117,7 @@ class UploadMofTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'SELECT COUNT(upmfid) AS cnt FROM uploadmoftemp WHERE collid  = ' . (int)$collid . ' '.
-                'AND dbpk IN(SELECT dbpk FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
+            $sql = 'SELECT COUNT(upmfid) AS cnt FROM uploadmoftemp WHERE collid  = ' . (int)$collid . ' ';
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
                 $result->free();
@@ -169,7 +181,6 @@ class UploadMofTemp{
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
-
             if($returnVal === 1){
                 $sql = 'DELETE u.* FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.occid = m.occid '.
                     'WHERE u.collid  = ' . $collid . ' AND m.occid IS NOT NULL AND u.field = m.field ';
@@ -186,7 +197,7 @@ class UploadMofTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE FROM uploadmoftemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
-                'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 100000 ';
+                'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }

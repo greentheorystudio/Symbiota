@@ -410,7 +410,7 @@ class UploadOccurrenceTemp{
                 $returnVal = $this->conn->affected_rows;
             }
             if($returnVal === 0){
-                $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' LIMIT 100000 ';
+                $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -647,7 +647,7 @@ class UploadOccurrenceTemp{
             if(array_key_exists('where', $scriptData) && $scriptData['where']){
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
-            $sql .= 'LIMIT 50000 ';
+            $sql .= 'LIMIT 25000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -702,7 +702,7 @@ class UploadOccurrenceTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT upspid FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 100000 ';
+                'WHERE collid = ' . (int)$collid . ') LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
