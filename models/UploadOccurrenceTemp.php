@@ -220,7 +220,7 @@ class UploadOccurrenceTemp{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO uploadspectemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
+                //error_log($sql);
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }
