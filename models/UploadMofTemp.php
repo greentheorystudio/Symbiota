@@ -100,7 +100,7 @@ class UploadMofTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE FROM uploadmoftemp WHERE dbpk NOT IN(SELECT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 50000 ';
+                'WHERE collid = ' . (int)$collid . ') LIMIT 25000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }

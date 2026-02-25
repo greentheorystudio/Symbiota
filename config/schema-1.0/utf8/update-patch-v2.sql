@@ -465,7 +465,18 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `locationName` varchar(255) NULL AFTER `continent`,
     ADD COLUMN `locationCode` varchar(50) NULL AFTER `locationName`,
     ADD COLUMN `repCount` int(10) UNSIGNED NULL AFTER `duplicateQuantity`,
-    ADD INDEX `Index_eventdbpk`(`eventdbpk`);
+    ADD INDEX `Index_eventdbpk`(`eventdbpk`),
+    ADD INDEX `Index_uploadspec_eventdate`(`eventDate`),
+    ADD INDEX `Index_uploadspec_year`(`year`),
+    ADD INDEX `Index_uploadspec_month`(`month`),
+    ADD INDEX `Index_uploadspec_day`(`day`),
+    ADD INDEX `Index_uploadspec_startdayofyear`(`startDayOfYear`),
+    ADD INDEX `Index_uploadspec_enddayofyear`(`endDayOfYear`),
+    ADD INDEX `Index_uploadspec_country`(`country`),
+    ADD INDEX `Index_uploadspec_stateprovince`(`stateProvince`),
+    ADD INDEX `Index_uploadspec_verbatimcoordinates`(`verbatimCoordinates`),
+    ADD INDEX `Index_uploadspec_family`(`family`),
+    ADD INDEX `Index_uploadspec_tid`(`tid`);
 
 ALTER TABLE `fmchecklists`
     MODIFY COLUMN `searchterms` longtext NULL AFTER `politicalDivision`,
