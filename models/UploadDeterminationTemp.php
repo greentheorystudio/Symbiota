@@ -121,8 +121,7 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'SELECT COUNT(updid) AS cnt FROM uploaddetermtemp WHERE collid  = ' . (int)$collid . ' '.
-            'AND dbpk IN(SELECT dbpk FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
+            $sql = 'SELECT COUNT(updid) AS cnt FROM uploaddetermtemp WHERE collid  = ' . (int)$collid . ' ';
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
                 $result->free();
