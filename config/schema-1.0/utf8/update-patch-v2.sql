@@ -207,13 +207,16 @@ ALTER TABLE `media`
     ADD COLUMN `sourceurl` varchar(255) NULL AFTER `accessuri`,
     ADD COLUMN `descriptivetranscripturi` varchar(255) NULL AFTER `sourceurl`,
     ADD INDEX `sourceurl`(`sourceurl`),
-    ADD INDEX `INDEX_media_descriptivetranscripturi`(`descriptivetranscripturi`);
+    ADD INDEX `INDEX_media_descriptivetranscripturi`(`descriptivetranscripturi`),
+    ADD INDEX `Index_media_accessuri`(`accessuri`);
 
 ALTER TABLE `images`
     ADD COLUMN `altText` varchar(355) NULL AFTER `caption`,
     ADD INDEX `sourceurl`(`sourceurl`),
     ADD INDEX `images_sortsequence`(`sortsequence`),
-    ADD INDEX `INDEX_images_altText`(`altText`);
+    ADD INDEX `INDEX_images_altText`(`altText`),
+    ADD INDEX `Index_images_url`(`url`),
+    ADD INDEX `Index_images_sourceurl`(`sourceurl`);
 
 ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
@@ -391,7 +394,8 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_originalurl` (`originalurl`),
     KEY `Index_accessuri` (`accessuri`),
     KEY `Index_format` (`format`),
-    KEY `Index_uploadimg_ts` (`initialtimestamp`)
+    KEY `Index_uploadimg_ts` (`initialtimestamp`),
+    KEY `Index_uploadimg_url`(`url`)
 );
 
 CREATE TABLE `uploadmoftemp` (
