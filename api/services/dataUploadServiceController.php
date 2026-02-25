@@ -58,6 +58,9 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'executeCleaningScriptArr' && array_key_exists('cleaningScriptArr', $_POST)){
         echo $dataUploadService->executeCleaningScriptArr($collid, json_decode($_POST['cleaningScriptArr'], true));
     }
+    elseif($action === 'executeCleaningAssociatedData'){
+        echo $dataUploadService->executeCleaningAssociatedData($collid);
+    }
     elseif($action === 'cleanUploadEventDates'){
         echo $dataUploadService->cleanUploadEventDates($collid);
     }

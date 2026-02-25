@@ -95,6 +95,19 @@ class UploadMofTemp{
         return $returnVal;
     }
 
+    public function clearOrphanedRecords($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE FROM uploadmoftemp WHERE dbpk NOT IN(SELECT dbpk FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ') LIMIT 100000 ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
+        }
+        return $returnVal;
+    }
+
     public function getFields(): array
     {
         return $this->fields;

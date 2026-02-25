@@ -2169,6 +2169,33 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function processPostUploadCleaningAssociatedData() {
+            if(currentProcess.value !== 'runningCleaningAssociatedData'){
+                const text = 'Cleaning associated data';
+                currentProcess.value = 'runningCleaningAssociatedData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'executeCleaningAssociatedData');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    processPostUploadCleaningAssociatedData();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanEventDates();
+                }
+            });
+        }
+
         function processPostUploadCleaningScripts() {
             if(profileCleanSqlArr.value.length > 0){
                 if(currentProcess.value !== 'runningCleaningScripts'){
@@ -2193,7 +2220,7 @@ const occurrenceDataUploadModule = {
                     }
                     else{
                         processSuccessResponse('Complete');
-                        processPostUploadCleanEventDates();
+                        processPostUploadCleaningAssociatedData();
                     }
                 });
             }
