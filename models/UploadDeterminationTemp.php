@@ -91,7 +91,7 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' LIMIT 100000 ';
+            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -104,7 +104,7 @@ class UploadDeterminationTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE FROM uploaddetermtemp WHERE dbpk NOT IN(SELECT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 100000 ';
+                'WHERE collid = ' . (int)$collid . ') LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -161,7 +161,7 @@ class UploadDeterminationTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE FROM uploaddetermtemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
-            'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 100000 ';
+            'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }

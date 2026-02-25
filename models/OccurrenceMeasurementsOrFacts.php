@@ -66,7 +66,7 @@ class OccurrenceMeasurementsOrFacts{
         if($whereStr){
             $sql = 'DELETE FROM ommofextension WHERE ' . $whereStr . ' ';
             if($idType === 'collid'){
-                $sql .= 'LIMIT 100000 ';
+                $sql .= 'LIMIT 50000 ';
             }
             if($this->conn->query($sql)){
                 $retVal = $this->conn->affected_rows;
@@ -78,12 +78,12 @@ class OccurrenceMeasurementsOrFacts{
     public function deleteOccurrenceMofRecordsForUpload($collid): int
     {
         $retVal = 0;
-        $sql = 'DELETE FROM ommofextension WHERE occid IN(SELECT occid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ') LIMIT 100000 ';
+        $sql = 'DELETE FROM ommofextension WHERE occid IN(SELECT occid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ') LIMIT 50000 ';
         if($this->conn->query($sql)){
             $retVal = $this->conn->affected_rows;
         }
         if($retVal === 0){
-            $sql = 'DELETE FROM ommofextension WHERE eventid IN(SELECT DISTINCT eventid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND eventid IS NOT NULL) LIMIT 100000 ';
+            $sql = 'DELETE FROM ommofextension WHERE eventid IN(SELECT DISTINCT eventid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND eventid IS NOT NULL) LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $retVal = $this->conn->affected_rows;
             }
