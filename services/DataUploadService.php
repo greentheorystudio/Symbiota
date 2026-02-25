@@ -154,11 +154,29 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferCleanMediaRecordFormatValues($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->cleanMediaRecordFormatValues($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferCleanMediaRecords($collid): int
     {
         $retVal = 1;
         if($collid){
             $retVal = (new UploadMediaTemp)->cleanMediaRecords($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferCleanMediaRecordTidValues($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->cleanMediaRecordTidValues($collid);
         }
         return $retVal;
     }

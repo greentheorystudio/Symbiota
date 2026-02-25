@@ -916,13 +916,65 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferCleanMediaRecordFormatValues() {
+            const text = 'Cleaning media record format values in upload';
+            currentProcess.value = 'finalTransferCleanMediaRecordFormatValues';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferCleanMediaRecordFormatValues');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferCleanMediaRecordTidValues();
+                }
+                else{
+                    processErrorResponse('An error occurred while cleaning media record format values in upload');
+                    adjustUIEnd();
+                }
+            });
+        }
+
         function finalTransferCleanMediaRecords() {
-            const text = 'Cleaning media records in upload';
+            const text = 'Cleaning media record URLs in upload';
             currentProcess.value = 'finalTransferCleanMediaRecords';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferCleanMediaRecords');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    processSuccessResponse('Complete');
+                    finalTransferCleanMediaRecordFormatValues();
+                }
+                else{
+                    processErrorResponse('An error occurred while cleaning media record URLs in upload');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function finalTransferCleanMediaRecordTidValues() {
+            const text = 'Linking media records to taxonomic thesaurus';
+            currentProcess.value = 'finalTransferCleanMediaRecordTidValues';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferCleanMediaRecordTidValues');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
                 body: formData
@@ -944,7 +996,7 @@ const occurrenceDataUploadModule = {
                     }
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning media records in upload');
+                    processErrorResponse('An error occurred while linking media records to taxonomic thesaurus');
                     adjustUIEnd();
                 }
             });

@@ -114,31 +114,15 @@ class UploadMediaTemp{
         return $recordsCreated;
     }
 
-    public function cleanMediaRecords($collid): int
+    public function cleanMediaRecordFormatValues($collid): int
     {
         $returnVal = 1;
         if($collid){
-            $sql = 'UPDATE uploadmediatemp SET url = NULL '.
-                'WHERE collid = ' . (int)$collid . ' AND (url = "" OR url = "empty") ';
+            $sql = 'UPDATE uploadmediatemp SET format = NULL '.
+                'WHERE collid = ' . (int)$collid . ' AND format IS NOT NULL '.
+                'AND format NOT IN("image/jpeg", "image/png", "application/zc", "video/mp4", "video/webm", "video/ogg", "audio/wav", "audio/mpeg") ';
             if(!$this->conn->query($sql)){
                 $returnVal = 0;
-            }
-
-            if($returnVal === 1){
-                $sql = 'UPDATE uploadmediatemp SET accessuri = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND (accessuri = "" OR accessuri = "empty") ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
-                }
-            }
-
-            if($returnVal === 1){
-                $sql = 'UPDATE uploadmediatemp SET format = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND format IS NOT NULL '.
-                    'AND format NOT IN("image/jpeg", "image/png", "application/zc", "video/mp4", "video/webm", "video/ogg", "audio/wav", "audio/mpeg") ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
-                }
             }
 
             if($returnVal === 1){
@@ -212,6 +196,27 @@ class UploadMediaTemp{
                     $returnVal = 0;
                 }
             }
+        }
+        return $returnVal;
+    }
+
+    public function cleanMediaRecords($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadmediatemp SET url = NULL '.
+                'WHERE collid = ' . (int)$collid . ' AND (url = "" OR url = "empty") ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadmediatemp SET accessuri = NULL '.
+                    'WHERE collid = ' . (int)$collid . ' AND (accessuri = "" OR accessuri = "empty") ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
 
             if($returnVal === 1){
                 $sql = 'UPDATE uploadmediatemp SET url = accessuri, accessuri = NULL '.
@@ -262,14 +267,19 @@ class UploadMediaTemp{
                     $returnVal = 0;
                 }
             }
+        }
+        return $returnVal;
+    }
 
-            if($returnVal === 1){
-                $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN uploadspectemp AS s ON m.occid = s.occid '.
-                    'SET m.tid = s.tid '.
-                    'WHERE m.collid = ' . (int)$collid . ' AND s.tid IS NOT NULL ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
-                }
+    public function cleanMediaRecordTidValues($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN uploadspectemp AS s ON m.occid = s.occid '.
+                'SET m.tid = s.tid '.
+                'WHERE m.collid = ' . (int)$collid . ' AND s.tid IS NOT NULL ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
             }
         }
         return $returnVal;
