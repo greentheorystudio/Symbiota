@@ -275,9 +275,9 @@ class UploadMediaTemp{
     {
         $returnVal = 1;
         if($collid){
-            $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN uploadspectemp AS s ON m.occid = s.occid '.
-                'SET m.tid = s.tid '.
-                'WHERE m.collid = ' . (int)$collid . ' AND s.tid IS NOT NULL ';
+            $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'SET m.tid = o.tid '.
+                'WHERE m.collid = ' . (int)$collid . ' AND o.tid IS NOT NULL ';
             if(!$this->conn->query($sql)){
                 $returnVal = 0;
             }
