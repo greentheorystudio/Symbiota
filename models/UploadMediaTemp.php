@@ -241,6 +241,29 @@ class UploadMediaTemp{
             }
 
             if($returnVal === 1){
+                $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND ISNULL(url) AND ISNULL(accessuri) ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadmediatemp SET sourceurl = url '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(sourceurl) AND url IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadmediatemp SET sourceurl = accessuri '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(sourceurl) AND accessuri IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
                 $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN uploadspectemp AS s ON m.occid = s.occid '.
                     'SET m.tid = s.tid '.
                     'WHERE m.collid = ' . (int)$collid . ' AND s.tid IS NOT NULL ';
