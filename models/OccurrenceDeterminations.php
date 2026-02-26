@@ -69,6 +69,24 @@ class OccurrenceDeterminations{
         return $returnVal;
     }
 
+    public function clearOccurrenceDeterminationsByArr($detIdArr): int
+    {
+        $retVal = 0;
+        if(count($detIdArr) > 0){
+            $sql = 'DELETE FROM guidoccurdeterminations WHERE detid IN(' . implode(',', $detIdArr) . ') ';
+            if(!$this->conn->query($sql)){
+                $retVal = 1;
+            }
+            if($retVal){
+                $sql = 'DELETE FROM omoccurdeterminations WHERE detid IN(' . implode(',', $detIdArr) . ') ';
+                if($this->conn->query($sql)){
+                    $retVal = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function createOccurrenceDeterminationRecord($data): int
     {
         $newID = 0;
@@ -169,24 +187,26 @@ class OccurrenceDeterminations{
         $retVal = 0;
         $whereStr = '';
         if($idType === 'occid'){
-            $whereStr = 'd.occid = ' . (int)$id;
+            $whereStr = 'occid = ' . (int)$id . ' ';
         }
         elseif($idType === 'occidArr'){
-            $whereStr = 'd.occid IN(' . implode(',', $id) . ')';
+            $whereStr = 'occid IN(' . implode(',', $id) . ') ';
         }
         elseif($idType === 'collid'){
-            $whereStr = 'd.occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') ';
         }
         if($whereStr){
-            $sql = 'DELETE g.* FROM guidoccurdeterminations AS g LEFT JOIN omoccurdeterminations AS d ON g.detid = d.detid WHERE ' . $whereStr . ' ';
-            if($this->conn->query($sql)){
-                $retVal = 1;
+            $detIdArr = array();
+            $sql = 'SELECT detid FROM omoccurdeterminations WHERE ' . $whereStr . ' ';
+            if($idType === 'collid'){
+                $sql .= 'LIMIT 50000 ';
             }
-            if($retVal){
-                $sql = 'DELETE d.* FROM omoccurdeterminations AS d WHERE ' . $whereStr . ' ';
-                if($this->conn->query($sql)){
-                    $retVal = 1;
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $detIdArr[] = $row['detid'];
                 }
+                $result->free();
+                $retVal = $this->clearOccurrenceDeterminationsByArr($detIdArr);
             }
         }
         return $retVal;

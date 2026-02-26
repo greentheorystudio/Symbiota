@@ -1,8 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
-ALTER TABLE `configurations`
-    MODIFY COLUMN `configurationValue` longtext NOT NULL AFTER `configurationDataType`;
-
 ALTER TABLE `omcollections`
     ADD COLUMN `ccpk` int(10) UNSIGNED NULL AFTER `CollID`,
     ADD COLUMN `isPublic` smallint(1) NOT NULL DEFAULT 1 AFTER `SortSeq`,
@@ -210,13 +207,17 @@ ALTER TABLE `media`
     ADD COLUMN `sourceurl` varchar(255) NULL AFTER `accessuri`,
     ADD COLUMN `descriptivetranscripturi` varchar(255) NULL AFTER `sourceurl`,
     ADD INDEX `sourceurl`(`sourceurl`),
-    ADD INDEX `INDEX_media_descriptivetranscripturi`(`descriptivetranscripturi`);
+    ADD INDEX `INDEX_media_descriptivetranscripturi`(`descriptivetranscripturi`),
+    ADD INDEX `Index_media_accessuri`(`accessuri`);
 
 ALTER TABLE `images`
     ADD COLUMN `altText` varchar(355) NULL AFTER `caption`,
     ADD INDEX `sourceurl`(`sourceurl`),
     ADD INDEX `images_sortsequence`(`sortsequence`),
-    ADD INDEX `INDEX_images_altText`(`altText`);
+    ADD INDEX `INDEX_images_altText`(`altText`),
+    ADD INDEX `Index_images_url`(`url`),
+    ADD INDEX `Index_images_sourceurl`(`sourceurl`),
+    ADD INDEX `Index_images_originalurl`(`originalurl`);
 
 ALTER TABLE `imagetag`
     DROP FOREIGN KEY `FK_imagetag_tagkey`;
@@ -320,7 +321,10 @@ ALTER TABLE `taxadescrblock`
 ALTER TABLE `uploaddetermtemp`
     ADD COLUMN `updid` int(50) NOT NULL AUTO_INCREMENT FIRST,
     ADD COLUMN `tid` int(10) UNSIGNED NULL AFTER `sciname`,
-    ADD PRIMARY KEY (`updid`);
+    ADD PRIMARY KEY (`updid`),
+    ADD INDEX `Index_uploaddet_sciname`(`sciname`),
+    ADD INDEX `Index_uploaddet_identifiedby`(`identifiedBy`),
+    ADD INDEX `Index_uploaddet_dateidentified`(`dateIdentified`);
 
 CREATE TABLE `uploadgenetictemp` (
     `upgid` int(11) NOT NULL AUTO_INCREMENT,
@@ -394,7 +398,12 @@ CREATE TABLE `uploadmediatemp` (
     KEY `Index_originalurl` (`originalurl`),
     KEY `Index_accessuri` (`accessuri`),
     KEY `Index_format` (`format`),
-    KEY `Index_uploadimg_ts` (`initialtimestamp`)
+    KEY `Index_uploadimg_ts` (`initialtimestamp`),
+    KEY `Index_uploadimg_url`(`url`),
+    KEY `Index_uploadimg_accessuri`(`accessuri`),
+    KEY `Index_uploadimg_format`(`format`),
+    KEY `Index_uploadimg_originalurl`(`originalurl`),
+    KEY `Index_uploadimg_sourceurl`(`sourceUrl`)
 );
 
 CREATE TABLE `uploadmoftemp` (
@@ -456,7 +465,18 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `locationName` varchar(255) NULL AFTER `continent`,
     ADD COLUMN `locationCode` varchar(50) NULL AFTER `locationName`,
     ADD COLUMN `repCount` int(10) UNSIGNED NULL AFTER `duplicateQuantity`,
-    ADD INDEX `Index_eventdbpk`(`eventdbpk`);
+    ADD INDEX `Index_eventdbpk`(`eventdbpk`),
+    ADD INDEX `Index_uploadspec_eventdate`(`eventDate`),
+    ADD INDEX `Index_uploadspec_year`(`year`),
+    ADD INDEX `Index_uploadspec_month`(`month`),
+    ADD INDEX `Index_uploadspec_day`(`day`),
+    ADD INDEX `Index_uploadspec_startdayofyear`(`startDayOfYear`),
+    ADD INDEX `Index_uploadspec_enddayofyear`(`endDayOfYear`),
+    ADD INDEX `Index_uploadspec_country`(`country`),
+    ADD INDEX `Index_uploadspec_stateprovince`(`stateProvince`),
+    ADD INDEX `Index_uploadspec_verbatimcoordinates`(`verbatimCoordinates`),
+    ADD INDEX `Index_uploadspec_family`(`family`),
+    ADD INDEX `Index_uploadspec_tid`(`tid`);
 
 ALTER TABLE `fmchecklists`
     MODIFY COLUMN `searchterms` longtext NULL AFTER `politicalDivision`,
