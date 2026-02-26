@@ -685,8 +685,8 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT upspid FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 50000 ';
+            $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT DISTINCT upspid FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ' AND upspid IS NOT NULL) LIMIT 10000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
