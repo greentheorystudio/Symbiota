@@ -128,37 +128,38 @@ class Collections {
 
     public function deleteCollectionRecord($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
-            $retVal = (new Occurrences)->deleteOccurrenceRecord('collid', $collid);
-            if($retVal){
+            do {
                 $retVal = (new DataUploadService)->clearOccurrenceUploadTables($collid, true);
-                $sql = 'DELETE FROM userroles WHERE (role = "CollAdmin" OR role = "CollEditor" OR role = "RareSppReader") AND tablepk = ' . (int)$collid . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-                $sql = 'DELETE m.* FROM omcolldatauploadparameters AS u LEFT JOIN uploadspecmap AS m ON u.uspid = m.uspid '.
-                    'WHERE u.collid = ' . (int)$collid . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-                $sql = 'DELETE FROM omcolldatauploadparameters WHERE collid = ' . (int)$collid . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-                $sql = 'DELETE FROM omcollmediauploadparameters WHERE collid = ' . (int)$collid . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-                $sql = 'DELETE FROM omcollectionstats WHERE collid = ' . (int)$collid . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-                $sql = 'DELETE FROM omcrowdsourcecentral WHERE collid = ' . (int)$collid . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
-                return $retVal;
+            } while ($retVal > 0);
+            do {
+                $retVal = (new Occurrences)->deleteOccurrenceRecord('collid', $collid);
+            } while ($retVal > 0);
+            $sql = 'DELETE FROM userroles WHERE (role = "CollAdmin" OR role = "CollEditor" OR role = "RareSppReader") AND tablepk = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE m.* FROM omcolldatauploadparameters AS u LEFT JOIN uploadspecmap AS m ON u.uspid = m.uspid '.
+                'WHERE u.collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM omcolldatauploadparameters WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM omcollmediauploadparameters WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM omcollectionstats WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
+            $sql = 'DELETE FROM omcrowdsourcecentral WHERE collid = ' . (int)$collid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
             }
         }
         return $retVal;
