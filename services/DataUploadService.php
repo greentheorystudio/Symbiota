@@ -29,7 +29,7 @@ class DataUploadService {
 
     public function cleanUploadCoordinates($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadCoordinates($collid);
         }
@@ -38,7 +38,7 @@ class DataUploadService {
 
     public function cleanUploadCountryStateNames($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadCountryStateNames($collid);
         }
@@ -47,7 +47,7 @@ class DataUploadService {
 
     public function cleanUploadEventDates($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadEventDates($collid);
         }
@@ -56,7 +56,7 @@ class DataUploadService {
 
     public function cleanUploadTaxonomy($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomy($collid);
         }
@@ -729,7 +729,7 @@ class DataUploadService {
 
     public function setUploadLocalitySecurity($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->setUploadLocalitySecurity($collid);
         }

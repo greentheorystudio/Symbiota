@@ -2164,9 +2164,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleanCoordinates() {
-            const text = 'Cleaning coordinates';
-            currentProcess.value = 'cleaningCoordinates';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleaningCoordinates'){
+                const text = 'Cleaning coordinates';
+                currentProcess.value = 'cleaningCoordinates';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadCoordinates');
@@ -2178,20 +2180,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadCleanCoordinates();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning coordinates');
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanTaxonomy();
                 }
-                processPostUploadCleanTaxonomy();
             });
         }
 
         function processPostUploadCleanCountryStateNames() {
-            const text = 'Cleaning country and state/province names';
-            currentProcess.value = 'cleaningCountryState';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleaningCountryState'){
+                const text = 'Cleaning country and state/province names';
+                currentProcess.value = 'cleaningCountryState';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadCountryStateNames');
@@ -2203,20 +2207,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadCleanCountryStateNames();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning country and state/province names');
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanCoordinates();
                 }
-                processPostUploadCleanCoordinates();
             });
         }
 
         function processPostUploadCleanEventDates() {
-            const text = 'Cleaning event dates';
-            currentProcess.value = 'cleaningEventDates';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleaningEventDates'){
+                const text = 'Cleaning event dates';
+                currentProcess.value = 'cleaningEventDates';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadEventDates');
@@ -2228,13 +2234,13 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadCleanEventDates();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning event dates');
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanCountryStateNames();
                 }
-                processPostUploadCleanCountryStateNames();
             });
         }
 
@@ -2299,9 +2305,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleanTaxonomy() {
-            const text = 'Cleaning taxonomy';
-            currentProcess.value = 'cleaningTaxonomy';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleaningTaxonomy'){
+                const text = 'Cleaning taxonomy';
+                currentProcess.value = 'cleaningTaxonomy';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadTaxonomy');
@@ -2313,13 +2321,13 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadCleanTaxonomy();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning taxonomy');
+                    processSuccessResponse('Complete');
+                    processPostUploadSetLocalitySecurity();
                 }
-                processPostUploadSetLocalitySecurity();
             });
         }
 
@@ -2429,9 +2437,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadSetLocalitySecurity() {
-            const text = 'Setting locality security for threatened and endangered taxa';
-            currentProcess.value = 'setUploadLocalitySecurity';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'setUploadLocalitySecurity'){
+                const text = 'Setting locality security for threatened and endangered taxa';
+                currentProcess.value = 'setUploadLocalitySecurity';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'setUploadLocalitySecurity');
@@ -2443,13 +2453,13 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadSetLocalitySecurity();
                 }
                 else{
-                    processErrorResponse('An error occurred while setting locality security for threatened and endangered taxa');
+                    processSuccessResponse('Complete');
+                    getUploadSummary();
                 }
-                getUploadSummary();
             });
         }
 
