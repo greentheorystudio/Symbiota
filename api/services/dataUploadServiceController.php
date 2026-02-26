@@ -73,6 +73,15 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'cleanUploadTaxonomy'){
         echo $dataUploadService->cleanUploadTaxonomy($collid);
     }
+    elseif($action === 'cleanUploadTaxonomyPopulateTid'){
+        echo $dataUploadService->cleanUploadTaxonomyPopulateTid($collid);
+    }
+    elseif($action === 'cleanUploadTaxonomyCleanDualKingdomTaxa'){
+        echo $dataUploadService->cleanUploadTaxonomyCleanDualKingdomTaxa($collid);
+    }
+    elseif($action === 'cleanUploadTaxonomyPopulateThesaurusData'){
+        echo $dataUploadService->cleanUploadTaxonomyPopulateThesaurusData($collid);
+    }
     elseif($action === 'getUploadSummary'){
         echo json_encode($dataUploadService->getUploadSummary($collid));
     }

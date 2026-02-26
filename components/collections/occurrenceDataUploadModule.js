@@ -649,6 +649,7 @@ const occurrenceDataUploadModule = {
         const showFieldMapperPopup = Vue.ref(false);
         const showUploadDataTableViewerPopup = Vue.ref(false);
         const skipDeterminationFields = ['updid','occid','collid','dbpk','tid','initialtimestamp'];
+        const skipGeneticFields = ['upgid','occid','collid','dbpk','initialtimestamp'];
         const skipMediaFields = ['upmid','tid','occid','collid','dbpk','username','initialtimestamp'];
         const skipOccurrenceFields = ['upspid','occid','collid','dbpk','institutionid','collectionid','datasetid','tid',
             'eventid','eventdbpk','locationid','initialtimestamp'];
@@ -669,6 +670,7 @@ const occurrenceDataUploadModule = {
         const sourceDataUploadStage = Vue.ref(null);
         const symbiotaFieldOptionsDetermination = Vue.ref([]);
         const symbiotaFieldOptionsFlatFile = Vue.ref([]);
+        const symbiotaFieldOptionsGenetic = Vue.ref([]);
         const symbiotaFieldOptionsMedia = Vue.ref([]);
         const symbiotaFieldOptionsMof = Vue.ref([
             {value: 'field', label: 'measurementtype'},
@@ -750,6 +752,7 @@ const occurrenceDataUploadModule = {
             savedMappingDataSecondary.value = Object.assign({}, {});
             symbiotaFieldOptionsDetermination.value.length = 0;
             symbiotaFieldOptionsFlatFile.value.length = 0;
+            symbiotaFieldOptionsGenetic.value.length = 0;
             symbiotaFieldOptionsMedia.value.length = 0;
             symbiotaFieldOptionsOccurrence.value.length = 0;
             sourceDataFieldsFlatFile.value = Object.assign({}, {});
@@ -1524,7 +1527,7 @@ const occurrenceDataUploadModule = {
         function getFieldData() {
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            formData.append('tableArr', JSON.stringify(['uploaddetermtemp', 'uploadmediatemp', 'uploadspectemp']));
+            formData.append('tableArr', JSON.stringify(['uploadgenetictemp', 'uploaddetermtemp', 'uploadmediatemp', 'uploadspectemp']));
             formData.append('action', 'getUploadTableFieldData');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -1539,6 +1542,14 @@ const occurrenceDataUploadModule = {
                     data['uploaddetermtemp'].forEach((field) => {
                         if(!skipDeterminationFields.includes(field)){
                             symbiotaFieldOptionsDetermination.value.push({value: field, label: field});
+                        }
+                    });
+                }
+                if(data.hasOwnProperty('uploadgenetictemp') && data['uploadgenetictemp'].length > 0){
+                    data['uploadgenetictemp'].sort();
+                    data['uploadgenetictemp'].forEach((field) => {
+                        if(!skipGeneticFields.includes(field)){
+                            symbiotaFieldOptionsGenetic.value.push({value: field, label: field});
                         }
                     });
                 }
@@ -2153,9 +2164,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleanCoordinates() {
-            const text = 'Cleaning coordinates';
-            currentProcess.value = 'cleaningCoordinates';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleaningCoordinates'){
+                const text = 'Cleaning coordinates';
+                currentProcess.value = 'cleaningCoordinates';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadCoordinates');
@@ -2167,20 +2180,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadCleanCoordinates();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning coordinates');
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanTaxonomy();
                 }
-                processPostUploadCleanTaxonomy();
             });
         }
 
         function processPostUploadCleanCountryStateNames() {
-            const text = 'Cleaning country and state/province names';
-            currentProcess.value = 'cleaningCountryState';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleaningCountryState'){
+                const text = 'Cleaning country and state/province names';
+                currentProcess.value = 'cleaningCountryState';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadCountryStateNames');
@@ -2192,20 +2207,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadCleanCountryStateNames();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning country and state/province names');
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanCoordinates();
                 }
-                processPostUploadCleanCoordinates();
             });
         }
 
         function processPostUploadCleanEventDates() {
-            const text = 'Cleaning event dates';
-            currentProcess.value = 'cleaningEventDates';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleaningEventDates'){
+                const text = 'Cleaning event dates';
+                currentProcess.value = 'cleaningEventDates';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadEventDates');
@@ -2217,13 +2234,13 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadCleanEventDates();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning event dates');
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanCountryStateNames();
                 }
-                processPostUploadCleanCountryStateNames();
             });
         }
 
@@ -2288,9 +2305,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleanTaxonomy() {
-            const text = 'Cleaning taxonomy';
-            currentProcess.value = 'cleaningTaxonomy';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleaningTaxonomy'){
+                const text = 'Cleaning taxonomy';
+                currentProcess.value = 'cleaningTaxonomy';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadTaxonomy');
@@ -2302,13 +2321,73 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadCleanTaxonomy();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning taxonomy');
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanTaxonomyPopulateTid();
                 }
+            });
+        }
+
+        function processPostUploadCleanTaxonomyCleanDualKingdomTaxa() {
+            const text = 'Checking taxon thesaurus linkages';
+            currentProcess.value = 'cleanUploadTaxonomyCleanDualKingdomTaxa';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadTaxonomyCleanDualKingdomTaxa');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                processSuccessResponse('Complete');
+                processPostUploadCleanTaxonomyPopulateThesaurusData();
+            });
+        }
+
+        function processPostUploadCleanTaxonomyPopulateThesaurusData() {
+            const text = 'Populating taxonomic data from thesaurus';
+            currentProcess.value = 'cleanUploadTaxonomyPopulateThesaurusData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadTaxonomyPopulateThesaurusData');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                processSuccessResponse('Complete');
                 processPostUploadSetLocalitySecurity();
+            });
+        }
+
+        function processPostUploadCleanTaxonomyPopulateTid() {
+            const text = 'Populating taxon identifiers from thesaurus';
+            currentProcess.value = 'cleanUploadTaxonomyPopulateTid';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadTaxonomyPopulateTid');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then(() => {
+                processSuccessResponse('Complete');
+                processPostUploadCleanTaxonomyCleanDualKingdomTaxa();
             });
         }
 
@@ -2418,9 +2497,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadSetLocalitySecurity() {
-            const text = 'Setting locality security for threatened and endangered taxa';
-            currentProcess.value = 'setUploadLocalitySecurity';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'setUploadLocalitySecurity'){
+                const text = 'Setting locality security for threatened and endangered taxa';
+                currentProcess.value = 'setUploadLocalitySecurity';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'setUploadLocalitySecurity');
@@ -2432,13 +2513,13 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
+                if(Number(res) > 0){
+                    processPostUploadSetLocalitySecurity();
                 }
                 else{
-                    processErrorResponse('An error occurred while setting locality security for threatened and endangered taxa');
+                    processSuccessResponse('Complete');
+                    getUploadSummary();
                 }
-                getUploadSummary();
             });
         }
 

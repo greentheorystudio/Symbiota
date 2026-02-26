@@ -105,7 +105,6 @@ class UploadMediaTemp{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO uploadmediatemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }
@@ -301,8 +300,8 @@ class UploadMediaTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadmediatemp WHERE dbpk NOT IN(SELECT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 25000 ';
+            $sql = 'DELETE FROM uploadmediatemp WHERE dbpk NOT IN(SELECT DISTINCT dbpk FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ' AND dbpk IS NOT NULL) LIMIT 10000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }

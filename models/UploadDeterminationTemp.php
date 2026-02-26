@@ -78,7 +78,6 @@ class UploadDeterminationTemp{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO uploaddetermtemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }
@@ -103,8 +102,8 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp WHERE dbpk NOT IN(SELECT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 25000 ';
+            $sql = 'DELETE FROM uploaddetermtemp WHERE dbpk NOT IN(SELECT DISTINCT dbpk FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ' AND dbpk IS NOT NULL) LIMIT 10000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }

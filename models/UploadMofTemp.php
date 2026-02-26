@@ -74,7 +74,6 @@ class UploadMofTemp{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO uploadmoftemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }
@@ -99,8 +98,8 @@ class UploadMofTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadmoftemp WHERE dbpk NOT IN(SELECT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 25000 ';
+            $sql = 'DELETE FROM uploadmoftemp WHERE dbpk NOT IN(SELECT DISTINCT dbpk FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ' AND dbpk IS NOT NULL) LIMIT 10000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -134,7 +133,6 @@ class UploadMofTemp{
         $retArr = array();
         if($collid){
             $sql = 'SELECT DISTINCT field FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

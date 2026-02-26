@@ -126,21 +126,21 @@ const mediaFileUploadInputElement = {
                                                 <div class="col-8 column q-pl-md overflow-hidden ellipsis">
                                                     <div class="row full-width justify-between">
                                                         <div class="ellipsis">
-                                                            {{ file.name }}
+                                                            {{ file.name.split('/').pop() }}
                                                         </div>
                                                         <div caption class="row justify-end">
                                                             {{ file.correctedSizeLabel }}
                                                         </div>
                                                     </div>
-                                                    <div caption class="overflow-hidden">
+                                                    <div class="row full-width">
                                                         <template v-if="file['filenameRecordIdentifier']">
-                                                            <span class="q-mr-xs">
+                                                            <div class="ellipsis-2-lines q-mr-xs">
                                                                 <span class="text-bold">{{ identifierField }}:</span> {{ file['filenameRecordIdentifier'] }}
-                                                            </span>
+                                                            </div>
                                                         </template>
                                                         <template v-for="key in Object.keys(file['uploadMetadata'])">
-                                                            <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== ''">
-                                                                <div class="q-mr-xs">
+                                                            <template v-if="file['uploadMetadata'][key] && file['uploadMetadata'][key] !== '' && key !== 'filename'">
+                                                                <div class="q-mr-xs overflow-hidden ellipsis">
                                                                     <span class="text-bold">{{ key }}:</span> {{ key === 'tagArr' ? JSON.stringify(file['uploadMetadata'][key]) : file['uploadMetadata'][key] }}
                                                                 </div>
                                                             </template>

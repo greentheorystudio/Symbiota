@@ -29,7 +29,7 @@ class DataUploadService {
 
     public function cleanUploadCoordinates($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadCoordinates($collid);
         }
@@ -38,7 +38,7 @@ class DataUploadService {
 
     public function cleanUploadCountryStateNames($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadCountryStateNames($collid);
         }
@@ -47,7 +47,7 @@ class DataUploadService {
 
     public function cleanUploadEventDates($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadEventDates($collid);
         }
@@ -56,9 +56,36 @@ class DataUploadService {
 
     public function cleanUploadTaxonomy($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomy($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomyCleanDualKingdomTaxa($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyCleanDualKingdomTaxa($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateThesaurusData($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyPopulateThesaurusData($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateTid($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyPopulateTid($collid);
         }
         return $retVal;
     }
@@ -104,9 +131,6 @@ class DataUploadService {
                 if($retVal === 0 && $scriptData){
                     $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
                 }
-            }
-            if($retVal === 0){
-                $retVal = (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
             }
         }
         return $retVal;
@@ -352,7 +376,6 @@ class DataUploadService {
             if(strncmp($table, 'upload', 6) === 0){
                 $retArr[$table] = array();
                 $sql = 'SHOW COLUMNS FROM ' . $table . ' ';
-                //echo '<div>'.$sql.'</div>';
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -730,7 +753,7 @@ class DataUploadService {
 
     public function setUploadLocalitySecurity($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->setUploadLocalitySecurity($collid);
         }
