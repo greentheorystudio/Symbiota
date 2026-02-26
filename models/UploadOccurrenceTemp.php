@@ -353,35 +353,53 @@ class UploadOccurrenceTemp{
                 $returnVal = $this->conn->affected_rows;
             }
             if($returnVal === 0){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
-                    'SET u.tid = t.tid '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND u.sciname IS NOT NULL AND t.tid IS NOT NULL ';
-                if($this->conn->query($sql)){
-                    $returnVal = $this->conn->affected_rows;
-                }
-            }
-            if($returnVal === 0){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
-                    'SET u.tid = NULL '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid ';
-                if($this->conn->query($sql)){
-                    $returnVal = $this->conn->affected_rows;
-                }
-            }
-            if($returnVal === 0){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
-                    'SET u.family = t.family, u.scientificnameauthorship = t.author '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL ';
-                if($this->conn->query($sql)){
-                    $returnVal = $this->conn->affected_rows;
-                }
-            }
-            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET family = sciname '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") LIMIT 40000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadTaxonomyCleanDualKingdomTaxa($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                'SET u.tid = NULL '.
+                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateThesaurusData($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
+                'SET u.family = t.family, u.scientificnameauthorship = t.author '.
+                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateTid($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                'SET u.tid = t.tid '.
+                'WHERE u.collid = ' . (int)$collid . ' AND ISNULL(u.tid) AND u.sciname IS NOT NULL AND t.tid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
         }
         return $returnVal;
@@ -631,7 +649,7 @@ class UploadOccurrenceTemp{
             if(array_key_exists('where', $scriptData) && $scriptData['where']){
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
-            $sql .= 'LIMIT 40000 ';
+            $sql .= 'LIMIT 20000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }

@@ -63,6 +63,33 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function cleanUploadTaxonomyCleanDualKingdomTaxa($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyCleanDualKingdomTaxa($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateThesaurusData($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyPopulateThesaurusData($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateTid($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyPopulateTid($collid);
+        }
+        return $retVal;
+    }
+
     public function clearOccurrenceUploadTables($collid, $optimizeTables): int
     {
         $retVal = 0;
@@ -104,9 +131,6 @@ class DataUploadService {
                 if($retVal === 0 && $scriptData){
                     $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
                 }
-            }
-            if($retVal === 0){
-                $retVal = (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
             }
         }
         return $retVal;

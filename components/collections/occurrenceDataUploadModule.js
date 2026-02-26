@@ -2326,8 +2326,68 @@ const occurrenceDataUploadModule = {
                 }
                 else{
                     processSuccessResponse('Complete');
-                    processPostUploadSetLocalitySecurity();
+                    processPostUploadCleanTaxonomyPopulateTid();
                 }
+            });
+        }
+
+        function processPostUploadCleanTaxonomyCleanDualKingdomTaxa() {
+            const text = 'Checking taxon thesaurus linkages';
+            currentProcess.value = 'cleanUploadTaxonomyCleanDualKingdomTaxa';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadTaxonomyCleanDualKingdomTaxa');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                processSuccessResponse('Complete');
+                processPostUploadCleanTaxonomyPopulateThesaurusData();
+            });
+        }
+
+        function processPostUploadCleanTaxonomyPopulateThesaurusData() {
+            const text = 'Populating taxonomic data from thesaurus';
+            currentProcess.value = 'cleanUploadTaxonomyPopulateThesaurusData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadTaxonomyPopulateThesaurusData');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                processSuccessResponse('Complete');
+                processPostUploadSetLocalitySecurity();
+            });
+        }
+
+        function processPostUploadCleanTaxonomyPopulateTid() {
+            const text = 'Populating taxon identifiers from thesaurus';
+            currentProcess.value = 'cleanUploadTaxonomyPopulateTid';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'cleanUploadTaxonomyPopulateTid');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then(() => {
+                processSuccessResponse('Complete');
+                processPostUploadCleanTaxonomyCleanDualKingdomTaxa();
             });
         }
 
