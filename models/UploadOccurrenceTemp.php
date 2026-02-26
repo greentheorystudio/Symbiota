@@ -645,7 +645,7 @@ class UploadOccurrenceTemp{
             if(array_key_exists('where', $scriptData) && $scriptData['where']){
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
-            $sql .= 'LIMIT 25000 ';
+            $sql .= 'LIMIT 40000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }

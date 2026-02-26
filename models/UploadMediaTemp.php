@@ -300,8 +300,8 @@ class UploadMediaTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadmediatemp WHERE dbpk NOT IN(SELECT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 25000 ';
+            $sql = 'DELETE FROM uploadmediatemp WHERE dbpk NOT IN(SELECT DISTINCT dbpk FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ' AND dbpk IS NOT NULL) LIMIT 10000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
