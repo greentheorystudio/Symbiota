@@ -220,7 +220,7 @@ class UploadOccurrenceTemp{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO uploadspectemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
+                //error_log($sql);
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }
@@ -231,35 +231,32 @@ class UploadOccurrenceTemp{
 
     public function cleanUploadCoordinates($collid): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadspectemp SET decimallongitude = -1 * decimallongitude '.
-                'WHERE collid = ' . (int)$collid . ' AND decimallongitude > 0 AND country IN("USA", "United States", "U.S.A.", "Canada", "Mexico") AND (stateprovince <> "Alaska" OR ISNULL(stateprovince)) ';
-            if(!$this->conn->query($sql)){
-                $returnVal = 0;
+                'WHERE collid = ' . (int)$collid . ' AND decimallongitude > 0 AND country IN("USA", "United States", "U.S.A.", "Canada", "Mexico") AND (stateprovince <> "Alaska" OR ISNULL(stateprovince)) LIMIT 40000 ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET decimallatitude = NULL, decimallongitude = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND decimallatitude = 0 AND decimallongitude = 0 ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                    'WHERE collid = ' . (int)$collid . ' AND decimallatitude = 0 AND decimallongitude = 0 LIMIT 40000 ';
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET verbatimcoordinates = CONCAT_WS(" ", decimallatitude, decimallongitude) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(verbatimcoordinates) AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(verbatimcoordinates) AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) LIMIT 40000 ';
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET decimallatitude = NULL, decimallongitude = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                    'WHERE collid = ' . (int)$collid . ' AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) LIMIT 40000 ';
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
         }
@@ -268,40 +265,37 @@ class UploadOccurrenceTemp{
 
     public function cleanUploadCountryStateNames($collid): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso3 '.
                 'SET u.country = c.countryname '.
                 'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
-            if(!$this->conn->query($sql)){
-                $returnVal = 0;
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso '.
                     'SET u.country = c.countryname '.
                     'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.abbrev '.
                     'SET u.stateprovince = s.statename '.
                     'WHERE u.collid = ' . (int)$collid . ' AND s.statename IS NOT NULL ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.statename '.
                     'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid '.
                     'SET u.country = c.countryname '.
                     'WHERE ISNULL(u.country) AND u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
         }
@@ -310,43 +304,39 @@ class UploadOccurrenceTemp{
 
     public function cleanUploadEventDates($collid): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadspectemp SET `year` = YEAR(eventdate) '.
-                'WHERE collid = ' . (int)$collid . ' AND eventdate IS NOT NULL AND ISNULL(`year`) ';
-            if(!$this->conn->query($sql)){
-                $returnVal = 0;
+                'WHERE collid = ' . (int)$collid . ' AND eventdate IS NOT NULL AND ISNULL(`year`) LIMIT 40000 ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET `month` = MONTH(eventdate) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`month`) AND eventdate IS NOT NULL ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`month`) AND eventdate IS NOT NULL LIMIT 40000 ';
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET `day` = DAY(eventdate) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`day`) AND eventdate IS NOT NULL';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`day`) AND eventdate IS NOT NULL LIMIT 40000 ';
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET startdayofyear = DAYOFYEAR(eventdate) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(startdayofyear) AND eventdate IS NOT NULL';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(startdayofyear) AND eventdate IS NOT NULL LIMIT 40000 ';
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET enddayofyear = DAYOFYEAR(eventdate) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(enddayofyear) AND eventdate IS NOT NULL';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(enddayofyear) AND eventdate IS NOT NULL LIMIT 40000 ';
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
             }
         }
@@ -355,47 +345,61 @@ class UploadOccurrenceTemp{
 
     public function cleanUploadTaxonomy($collid): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadspectemp SET sciname = family '.
-                'WHERE collid = ' . (int)$collid . ' AND family IS NOT NULL AND ISNULL(sciname) ';
-            if(!$this->conn->query($sql)){
-                $returnVal = 0;
+                'WHERE collid = ' . (int)$collid . ' AND family IS NOT NULL AND ISNULL(sciname) LIMIT 40000 ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
-
-            if($returnVal === 1){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
-                    'SET u.tid = t.tid '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND u.sciname IS NOT NULL AND t.tid IS NOT NULL ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
-                }
-            }
-
-            if($returnVal === 1){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
-                    'SET u.tid = NULL '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
-                }
-            }
-
-            if($returnVal === 1){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
-                    'SET u.family = t.family, u.scientificnameauthorship = t.author '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
-                }
-            }
-
-            if($returnVal === 1){
+            if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET family = sciname '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") LIMIT 40000 ';
+                if($this->conn->query($sql)){
+                    $returnVal = $this->conn->affected_rows;
                 }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadTaxonomyCleanDualKingdomTaxa($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                'SET u.tid = NULL '.
+                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateThesaurusData($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
+                'SET u.family = t.family, u.scientificnameauthorship = t.author '.
+                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateTid($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                'SET u.tid = t.tid '.
+                'WHERE u.collid = ' . (int)$collid . ' AND ISNULL(u.tid) AND u.sciname IS NOT NULL AND t.tid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
         }
         return $returnVal;
@@ -410,7 +414,7 @@ class UploadOccurrenceTemp{
                 $returnVal = $this->conn->affected_rows;
             }
             if($returnVal === 0){
-                $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' LIMIT 100000 ';
+                $sql = 'DELETE FROM uploadspectemp WHERE collid = ' . (int)$collid . ' LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -526,7 +530,6 @@ class UploadOccurrenceTemp{
             if($index !== null && $limit !== null){
                 $sql .= 'LIMIT ' . (((int)$index - 1) * (int)$limit) . ', ' . (int)$limit;
             }
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -538,7 +541,6 @@ class UploadOccurrenceTemp{
                         $nodeArr[$name] = $row[$name];
                     }
                     $retArr[] = $nodeArr;
-                    //unset($rows[$rIndex]);
                 }
             }
         }
@@ -647,7 +649,7 @@ class UploadOccurrenceTemp{
             if(array_key_exists('where', $scriptData) && $scriptData['where']){
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
-            $sql .= 'LIMIT 50000 ';
+            $sql .= 'LIMIT 20000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -701,8 +703,8 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT upspid FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ') LIMIT 100000 ';
+            $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT DISTINCT upspid FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ' AND upspid IS NOT NULL) LIMIT 10000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -712,13 +714,12 @@ class UploadOccurrenceTemp{
 
     public function setUploadLocalitySecurity($collid): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
-                'SET u.localitysecurity = 1 '.
-                'WHERE u.collid = ' . (int)$collid . ' AND t.securitystatus = 1 ';
-            if(!$this->conn->query($sql)){
-                $returnVal = 0;
+            $sql = 'UPDATE uploadspectemp SET localitysecurity = 1 '.
+                'WHERE collid = ' . (int)$collid . ' AND tid IN(SELECT tid FROM taxa WHERE securitystatus = 1) LIMIT 40000 ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
         }
         return $returnVal;
