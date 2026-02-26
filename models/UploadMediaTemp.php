@@ -105,7 +105,6 @@ class UploadMediaTemp{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO uploadmediatemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }
@@ -114,31 +113,15 @@ class UploadMediaTemp{
         return $recordsCreated;
     }
 
-    public function cleanMediaRecords($collid): int
+    public function cleanMediaRecordFormatValues($collid): int
     {
         $returnVal = 1;
         if($collid){
-            $sql = 'UPDATE uploadmediatemp SET url = NULL '.
-                'WHERE collid = ' . (int)$collid . ' AND (url = "" OR url = "empty") ';
+            $sql = 'UPDATE uploadmediatemp SET format = NULL '.
+                'WHERE collid = ' . (int)$collid . ' AND format IS NOT NULL '.
+                'AND format NOT IN("image/jpeg", "image/png", "application/zc", "video/mp4", "video/webm", "video/ogg", "audio/wav", "audio/mpeg") ';
             if(!$this->conn->query($sql)){
                 $returnVal = 0;
-            }
-
-            if($returnVal === 1){
-                $sql = 'UPDATE uploadmediatemp SET accessuri = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND (accessuri = "" OR accessuri = "empty") ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
-                }
-            }
-
-            if($returnVal === 1){
-                $sql = 'UPDATE uploadmediatemp SET format = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND format IS NOT NULL '.
-                    'AND format NOT IN("image/jpeg", "image/png", "application/zc", "video/mp4", "video/webm", "video/ogg", "audio/wav", "audio/mpeg") ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
-                }
             }
 
             if($returnVal === 1){
@@ -212,6 +195,27 @@ class UploadMediaTemp{
                     $returnVal = 0;
                 }
             }
+        }
+        return $returnVal;
+    }
+
+    public function cleanMediaRecords($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadmediatemp SET url = NULL '.
+                'WHERE collid = ' . (int)$collid . ' AND (url = "" OR url = "empty") ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadmediatemp SET accessuri = NULL '.
+                    'WHERE collid = ' . (int)$collid . ' AND (accessuri = "" OR accessuri = "empty") ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
 
             if($returnVal === 1){
                 $sql = 'UPDATE uploadmediatemp SET url = accessuri, accessuri = NULL '.
@@ -241,12 +245,40 @@ class UploadMediaTemp{
             }
 
             if($returnVal === 1){
-                $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN uploadspectemp AS s ON m.occid = s.occid '.
-                    'SET m.tid = s.tid '.
-                    'WHERE m.collid = ' . (int)$collid . ' AND s.tid IS NOT NULL ';
+                $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND ISNULL(url) AND ISNULL(accessuri) ';
                 if(!$this->conn->query($sql)){
                     $returnVal = 0;
                 }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadmediatemp SET sourceurl = url '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(sourceurl) AND url IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+
+            if($returnVal === 1){
+                $sql = 'UPDATE uploadmediatemp SET sourceurl = accessuri '.
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(sourceurl) AND accessuri IS NOT NULL ';
+                if(!$this->conn->query($sql)){
+                    $returnVal = 0;
+                }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function cleanMediaRecordTidValues($collid): int
+    {
+        $returnVal = 1;
+        if($collid){
+            $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
+                'SET m.tid = o.tid '.
+                'WHERE m.collid = ' . (int)$collid . ' AND o.tid IS NOT NULL ';
+            if(!$this->conn->query($sql)){
+                $returnVal = 0;
             }
         }
         return $returnVal;
@@ -256,7 +288,20 @@ class UploadMediaTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' LIMIT 100000 ';
+            $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' LIMIT 50000 ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
+        }
+        return $returnVal;
+    }
+
+    public function clearOrphanedRecords($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'DELETE FROM uploadmediatemp WHERE dbpk NOT IN(SELECT DISTINCT dbpk FROM uploadspectemp '.
+                'WHERE collid = ' . (int)$collid . ' AND dbpk IS NOT NULL) LIMIT 10000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -273,8 +318,7 @@ class UploadMediaTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'SELECT COUNT(upmid) AS cnt FROM uploadmediatemp WHERE collid  = ' . (int)$collid . ' '.
-                'AND dbpk IN(SELECT dbpk FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
+            $sql = 'SELECT COUNT(upmid) AS cnt FROM uploadmediatemp WHERE collid  = ' . (int)$collid . ' ';
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
                 $result->free();
@@ -301,7 +345,7 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE u.* FROM uploadmediatemp AS u LEFT JOIN images AS i ON u.occid = i.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND i.occid IS NOT NULL AND (u.url = i.url OR u.originalurl = i.originalurl) ';
+                'WHERE u.collid  = ' . $collid . ' AND i.occid IS NOT NULL AND (u.url = i.url OR u.originalurl = i.originalurl OR u.sourceurl = i.sourceurl) ';
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
@@ -322,7 +366,7 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE FROM uploadmediatemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
-                'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 100000 ';
+                'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
