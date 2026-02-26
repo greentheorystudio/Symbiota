@@ -29,7 +29,7 @@ class DataUploadService {
 
     public function cleanUploadCoordinates($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadCoordinates($collid);
         }
@@ -38,7 +38,7 @@ class DataUploadService {
 
     public function cleanUploadCountryStateNames($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadCountryStateNames($collid);
         }
@@ -47,7 +47,7 @@ class DataUploadService {
 
     public function cleanUploadEventDates($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadEventDates($collid);
         }
@@ -56,9 +56,36 @@ class DataUploadService {
 
     public function cleanUploadTaxonomy($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomy($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomyCleanDualKingdomTaxa($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyCleanDualKingdomTaxa($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateThesaurusData($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyPopulateThesaurusData($collid);
+        }
+        return $retVal;
+    }
+
+    public function cleanUploadTaxonomyPopulateTid($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyPopulateTid($collid);
         }
         return $retVal;
     }
@@ -81,6 +108,21 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function executeCleaningAssociatedData($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->clearOrphanedRecords($collid);
+            if($retVal === 0){
+                $retVal = (new UploadMediaTemp)->clearOrphanedRecords($collid);
+            }
+            if($retVal === 0){
+                $retVal = (new UploadMofTemp)->clearOrphanedRecords($collid);
+            }
+        }
+        return $retVal;
+    }
+
     public function executeCleaningScriptArr($collid, $cleaningScriptArr): int
     {
         $retVal = 0;
@@ -89,12 +131,6 @@ class DataUploadService {
                 if($retVal === 0 && $scriptData){
                     $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
                 }
-            }
-            (new UploadOccurrenceTemp)->removeOrphanedPoints($collid);
-
-
-            if($retVal === 0 && $scriptData){
-                $retVal = (new UploadOccurrenceTemp)->processCleaningScriptData($collid, $scriptData);
             }
         }
         return $retVal;
@@ -142,6 +178,15 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferCleanMediaRecordFormatValues($collid): int
+    {
+        $retVal = 1;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->cleanMediaRecordFormatValues($collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferCleanMediaRecords($collid): int
     {
         $retVal = 1;
@@ -151,13 +196,22 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives): int
+    public function finalTransferCleanMediaRecordTidValues($collid): int
     {
         $retVal = 1;
         if($collid){
+            $retVal = (new UploadMediaTemp)->cleanMediaRecordTidValues($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferClearExistingMediaNotInUpload($collid, $clearDerivatives): int
+    {
+        $retVal = 0;
+        if($collid){
             $retVal = (new Images)->clearExistingImagesNotInUpload($collid, $clearDerivatives);
-            if($retVal){
-                $retVal = (new Media)->clearExistingMediaNotInUpload($collid);
+            if($retVal === 0){
+                $retVal = (new Media)->clearExistingMediaNotInUpload($collid, $clearDerivatives);
             }
         }
         return $retVal;
@@ -165,7 +219,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousDeterminations($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords('collid', $collid);
         }
@@ -174,10 +228,10 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMediaRecords($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new Images)->deleteAssociatedImageRecords('collid', $collid);
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new Media)->deleteAssociatedMediaRecords('collid', $collid);
             }
         }
@@ -186,7 +240,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMofRecords($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecords('collid', $collid);
         }
@@ -195,7 +249,7 @@ class DataUploadService {
 
     public function finalTransferClearPreviousMofRecordsForUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceMeasurementsOrFacts)->deleteOccurrenceMofRecordsForUpload($collid);
         }
@@ -322,7 +376,6 @@ class DataUploadService {
             if(strncmp($table, 'upload', 6) === 0){
                 $retArr[$table] = array();
                 $sql = 'SHOW COLUMNS FROM ' . $table . ' ';
-                //echo '<div>'.$sql.'</div>';
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -700,7 +753,7 @@ class DataUploadService {
 
     public function setUploadLocalitySecurity($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->setUploadLocalitySecurity($collid);
         }

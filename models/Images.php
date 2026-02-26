@@ -96,23 +96,17 @@ class Images{
 
     public function clearExistingImagesNotInUpload($collid, $clearDerivatives): int
     {
-        $retVal = 1;
+        $retVal = 0;
         $imgIdArr = array();
-        $sql = 'SELECT DISTINCT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
-            'LEFT JOIN uploadmediatemp AS um ON i.occid = um.occid AND i.url = um.url '.
-            'WHERE o.collid = ' . (int)$collid . ' AND i.url NOT IN(SELECT DISTINCT url FROM uploadmediatemp WHERE collid = ' . (int)$collid . ') ';
+        $sql = 'SELECT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
+            'WHERE o.collid = ' . (int)$collid . ' AND i.url NOT IN(SELECT url FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND url IS NOT NULL) '.
+            'AND i.sourceurl NOT IN(SELECT url FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND url IS NOT NULL) LIMIT 10000 ';
         if($result = $this->conn->query($sql)){
-            while(($row = $result->fetch_assoc()) && $retVal){
+            while($row = $result->fetch_assoc()){
                 $imgIdArr[] = $row['imgid'];
-                if(count($imgIdArr) === 10000){
-                    $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
-                    $imgIdArr = array();
-                }
             }
             $result->free();
-            if(count($imgIdArr) > 0){
-                $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
-            }
+            $retVal = $this->clearImagesByArr($imgIdArr, $clearDerivatives);
         }
         return $retVal;
     }
@@ -120,23 +114,25 @@ class Images{
     public function clearImagesByArr($imgIdArr, $clearDerivatives): int
     {
         $retVal = 0;
-        if($clearDerivatives){
-            $this->deleteAssociatedImageFiles('imgidArr', $imgIdArr);
-        }
-        $sql = 'DELETE t.* FROM imagetag AS t WHERE t.imgid IN(' . implode(',', $imgIdArr) . ') ';
-        if($this->conn->query($sql)){
-            $retVal = 1;
-        }
-        if($retVal){
-            $sql = 'DELETE g.* FROM guidimages AS g WHERE g.imgid IN(' . implode(',', $imgIdArr) . ') ';
-            if(!$this->conn->query($sql)){
-                $retVal = 0;
+        if(count($imgIdArr) > 0){
+            if($clearDerivatives){
+                $this->deleteAssociatedImageFiles('imgidArr', $imgIdArr);
             }
-        }
-        if($retVal){
-            $sql = 'DELETE i.* FROM images AS i WHERE i.imgid IN(' . implode(',', $imgIdArr) . ') ';
-            if(!$this->conn->query($sql)){
-                $retVal = 0;
+            $sql = 'DELETE FROM imagetag WHERE imgid IN(' . implode(',', $imgIdArr) . ') ';
+            if($this->conn->query($sql)){
+                $retVal = 1;
+            }
+            if($retVal){
+                $sql = 'DELETE FROM guidimages WHERE imgid IN(' . implode(',', $imgIdArr) . ') ';
+                if(!$this->conn->query($sql)){
+                    $retVal = 0;
+                }
+            }
+            if($retVal){
+                $sql = 'DELETE FROM images WHERE imgid IN(' . implode(',', $imgIdArr) . ') ';
+                if($this->conn->query($sql)){
+                    $retVal = $this->conn->affected_rows;
+                }
             }
         }
         return $retVal;
@@ -245,7 +241,6 @@ class Images{
 
     public function deleteAssociatedImageRecords($idType, $id): int
     {
-        $this->deleteAssociatedImageFiles($idType, $id);
         $retVal = 0;
         $whereStr = '';
         if($idType === 'occid'){
@@ -261,21 +256,17 @@ class Images{
             $whereStr = 'i.tid = ' . (int)$id . ' AND ISNULL(i.occid) ';
         }
         if($whereStr){
-            $sql = 'DELETE t.* FROM imagetag AS t LEFT JOIN images AS i ON t.imgid = i.imgid WHERE ' . $whereStr . ' ';
-            if($this->conn->query($sql)){
-                $retVal = 1;
+            $imgIdArr = array();
+            $sql = 'SELECT imgid FROM images WHERE ' . $whereStr . ' ';
+            if($idType === 'collid'){
+                $sql .= 'LIMIT 10000 ';
             }
-            if($retVal){
-                $sql = 'DELETE g.* FROM guidimages AS g LEFT JOIN images AS i ON g.imgid = i.imgid WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $imgIdArr[] = $row['imgid'];
                 }
-            }
-            if($retVal){
-                $sql = 'DELETE i.* FROM images AS i WHERE ' . $whereStr . ' ';
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
-                }
+                $result->free();
+                $retVal = $this->clearImagesByArr($imgIdArr, true);
             }
         }
         return $retVal;
