@@ -649,6 +649,7 @@ const occurrenceDataUploadModule = {
         const showFieldMapperPopup = Vue.ref(false);
         const showUploadDataTableViewerPopup = Vue.ref(false);
         const skipDeterminationFields = ['updid','occid','collid','dbpk','tid','initialtimestamp'];
+        const skipGeneticFields = ['upgid','occid','collid','dbpk','initialtimestamp'];
         const skipMediaFields = ['upmid','tid','occid','collid','dbpk','username','initialtimestamp'];
         const skipOccurrenceFields = ['upspid','occid','collid','dbpk','institutionid','collectionid','datasetid','tid',
             'eventid','eventdbpk','locationid','initialtimestamp'];
@@ -669,6 +670,7 @@ const occurrenceDataUploadModule = {
         const sourceDataUploadStage = Vue.ref(null);
         const symbiotaFieldOptionsDetermination = Vue.ref([]);
         const symbiotaFieldOptionsFlatFile = Vue.ref([]);
+        const symbiotaFieldOptionsGenetic = Vue.ref([]);
         const symbiotaFieldOptionsMedia = Vue.ref([]);
         const symbiotaFieldOptionsMof = Vue.ref([
             {value: 'field', label: 'measurementtype'},
@@ -750,6 +752,7 @@ const occurrenceDataUploadModule = {
             savedMappingDataSecondary.value = Object.assign({}, {});
             symbiotaFieldOptionsDetermination.value.length = 0;
             symbiotaFieldOptionsFlatFile.value.length = 0;
+            symbiotaFieldOptionsGenetic.value.length = 0;
             symbiotaFieldOptionsMedia.value.length = 0;
             symbiotaFieldOptionsOccurrence.value.length = 0;
             sourceDataFieldsFlatFile.value = Object.assign({}, {});
@@ -1524,7 +1527,7 @@ const occurrenceDataUploadModule = {
         function getFieldData() {
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            formData.append('tableArr', JSON.stringify(['uploaddetermtemp', 'uploadmediatemp', 'uploadspectemp']));
+            formData.append('tableArr', JSON.stringify(['uploadgenetictemp', 'uploaddetermtemp', 'uploadmediatemp', 'uploadspectemp']));
             formData.append('action', 'getUploadTableFieldData');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -1539,6 +1542,14 @@ const occurrenceDataUploadModule = {
                     data['uploaddetermtemp'].forEach((field) => {
                         if(!skipDeterminationFields.includes(field)){
                             symbiotaFieldOptionsDetermination.value.push({value: field, label: field});
+                        }
+                    });
+                }
+                if(data.hasOwnProperty('uploadgenetictemp') && data['uploadgenetictemp'].length > 0){
+                    data['uploadgenetictemp'].sort();
+                    data['uploadgenetictemp'].forEach((field) => {
+                        if(!skipGeneticFields.includes(field)){
+                            symbiotaFieldOptionsGenetic.value.push({value: field, label: field});
                         }
                     });
                 }

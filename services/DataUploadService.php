@@ -352,7 +352,6 @@ class DataUploadService {
             if(strncmp($table, 'upload', 6) === 0){
                 $retArr[$table] = array();
                 $sql = 'SHOW COLUMNS FROM ' . $table . ' ';
-                //echo '<div>'.$sql.'</div>';
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();

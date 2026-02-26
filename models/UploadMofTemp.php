@@ -74,7 +74,6 @@ class UploadMofTemp{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO uploadmoftemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }
@@ -134,7 +133,6 @@ class UploadMofTemp{
         $retArr = array();
         if($collid){
             $sql = 'SELECT DISTINCT field FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

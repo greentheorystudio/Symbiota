@@ -526,7 +526,6 @@ class UploadOccurrenceTemp{
             if($index !== null && $limit !== null){
                 $sql .= 'LIMIT ' . (((int)$index - 1) * (int)$limit) . ', ' . (int)$limit;
             }
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -538,7 +537,6 @@ class UploadOccurrenceTemp{
                         $nodeArr[$name] = $row[$name];
                     }
                     $retArr[] = $nodeArr;
-                    //unset($rows[$rIndex]);
                 }
             }
         }
