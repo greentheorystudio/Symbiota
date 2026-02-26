@@ -76,7 +76,6 @@ class UploadGeneticTemp{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO uploadgenetictemp(' . implode(',', $fieldNameArr) . ') '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }

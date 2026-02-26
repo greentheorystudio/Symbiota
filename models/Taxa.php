@@ -204,39 +204,19 @@ class Taxa{
         $retVal = 1;
         if($tid){
             $taxonData = $this->getTaxonFromTid($tid, false, true);
-            $retVal = (new Images)->deleteAssociatedImageRecords('tid', $tid);
-            if($retVal){
-                $retVal = (new Images)->deleteTaxonImageTags($tid);
-            }
-            if($retVal){
-                $retVal = (new Media)->deleteAssociatedMediaRecords('tid', $tid);
-            }
-            if($retVal){
-                $retVal = (new TaxonMaps)->deleteTaxonMapRecord('tid', $tid);
-            }
-            if($retVal){
-                $retVal = (new TaxonHierarchy)->deleteTidFromHierarchyTable($tid);
-            }
-            if($retVal){
-                $retVal = (new TaxonVernaculars)->deleteTaxonVernacularRecords($tid);
-            }
-            if($retVal){
-                $retVal = (new ChecklistTaxa)->deleteChecklistTaxonRecords($tid);
-            }
-            if($retVal){
-                $retVal = (new KeyCharacterStates)->deleteTaxonCharacterStateRecords($tid);
-            }
-            if($retVal){
-                $retVal = (new Occurrences)->removeTaxonFromOccurrenceRecords($tid);
-            }
-            if($retVal){
-                $retVal = (new OccurrenceDeterminations)->removeTaxonFromDeterminationRecords($tid);
-            }
-            if($retVal){
-                $retVal = (new TaxonDescriptionBlocks)->deleteTaxonDescriptionBlockRecords($tid);
-            }
-            if($retVal && (int)$taxonData['rankid'] === 10){
-                $retVal = (new TaxonKingdoms)->deleteTaxonKingdom($taxonData['sciname']);
+            (new Images)->deleteAssociatedImageRecords('tid', $tid);
+            (new Images)->deleteTaxonImageTags($tid);
+            (new Media)->deleteAssociatedMediaRecords('tid', $tid);
+            (new TaxonMaps)->deleteTaxonMapRecord('tid', $tid);
+            (new TaxonHierarchy)->deleteTidFromHierarchyTable($tid);
+            (new TaxonVernaculars)->deleteTaxonVernacularRecords($tid);
+            (new ChecklistTaxa)->deleteChecklistTaxonRecords($tid);
+            (new KeyCharacterStates)->deleteTaxonCharacterStateRecords($tid);
+            (new Occurrences)->removeTaxonFromOccurrenceRecords($tid);
+            (new OccurrenceDeterminations)->removeTaxonFromDeterminationRecords($tid);
+            (new TaxonDescriptionBlocks)->deleteTaxonDescriptionBlockRecords($tid);
+            if((int)$taxonData['rankid'] === 10){
+                (new TaxonKingdoms)->deleteTaxonKingdom($taxonData['sciname']);
             }
             $sql = 'DELETE FROM glossarytaxalink WHERE tid = ' . (int)$tid . ' ';
             //echo $sql;
