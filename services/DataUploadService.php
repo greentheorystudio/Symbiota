@@ -180,7 +180,7 @@ class DataUploadService {
 
     public function finalTransferCleanMediaRecordFormatValues($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMediaTemp)->cleanMediaRecordFormatValues($collid);
         }
@@ -189,7 +189,7 @@ class DataUploadService {
 
     public function finalTransferCleanMediaRecords($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMediaTemp)->cleanMediaRecords($collid);
         }
