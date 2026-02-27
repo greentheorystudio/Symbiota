@@ -974,9 +974,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferCleanMediaRecordTidValues() {
-            const text = 'Linking media records to taxonomic thesaurus';
-            currentProcess.value = 'finalTransferCleanMediaRecordTidValues';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferCleanMediaRecordTidValues'){
+                const text = 'Linking media records to taxonomic thesaurus';
+                currentProcess.value = 'finalTransferCleanMediaRecordTidValues';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferCleanMediaRecordTidValues');
@@ -988,7 +990,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    finalTransferCleanMediaRecordTidValues();
+                }
+                else{
                     processSuccessResponse('Complete');
                     if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
                         finalTransferRemoveExistingMediaRecordsFromUpload();
@@ -999,10 +1004,6 @@ const occurrenceDataUploadModule = {
                     else{
                         finalTransferClearPreviousMediaRecords();
                     }
-                }
-                else{
-                    processErrorResponse('An error occurred while linking media records to taxonomic thesaurus');
-                    adjustUIEnd();
                 }
             });
         }
@@ -1332,9 +1333,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferRemoveExistingDeterminationsFromUpload() {
-            const text = 'Removing existing determination records from upload';
-            currentProcess.value = 'finalTransferRemoveExistingDeterminationsFromUpload';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferRemoveExistingDeterminationsFromUpload'){
+                const text = 'Removing existing determination records from upload';
+                currentProcess.value = 'finalTransferRemoveExistingDeterminationsFromUpload';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferRemoveExistingDeterminationsFromUpload');
@@ -1346,21 +1349,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferAddNewDeterminations();
+                if(Number(res) > 0){
+                    finalTransferRemoveExistingDeterminationsFromUpload();
                 }
                 else{
-                    processErrorResponse('An error occurred while removing existing determination records from upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewDeterminations();
                 }
             });
         }
 
         function finalTransferRemoveExistingMediaRecordsFromUpload() {
-            const text = 'Removing existing media records from upload';
-            currentProcess.value = 'finalTransferRemoveExistingMediaRecordsFromUpload';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferRemoveExistingMediaRecordsFromUpload'){
+                const text = 'Removing existing media records from upload';
+                currentProcess.value = 'finalTransferRemoveExistingMediaRecordsFromUpload';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferRemoveExistingMediaRecordsFromUpload');
@@ -1372,21 +1376,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferAddNewMedia();
+                if(Number(res) > 0){
+                    finalTransferRemoveExistingMediaRecordsFromUpload();
                 }
                 else{
-                    processErrorResponse('An error occurred while removing existing media records from upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMedia();
                 }
             });
         }
 
         function finalTransferRemoveExistingMofRecordsFromUpload() {
-            const text = 'Removing existing measurement or fact records from upload';
-            currentProcess.value = 'finalTransferRemoveExistingMofRecordsFromUpload';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferRemoveExistingMofRecordsFromUpload'){
+                const text = 'Removing existing measurement or fact records from upload';
+                currentProcess.value = 'finalTransferRemoveExistingMofRecordsFromUpload';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferRemoveExistingMofRecordsFromUpload');
@@ -1398,13 +1403,12 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferAddNewMof();
+                if(Number(res) > 0){
+                    finalTransferRemoveExistingMofRecordsFromUpload();
                 }
                 else{
-                    processErrorResponse('An error occurred while removing existing measurement or fact records from upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMof();
                 }
             });
         }
@@ -2247,6 +2251,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleaningAssociatedData() {
+            if(currentProcess.value !== 'runningCleaningAssociatedData'){
+                const text = 'Cleaning associated data';
+                currentProcess.value = 'runningCleaningAssociatedData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'executeCleaningAssociatedData');
@@ -2264,32 +2273,6 @@ const occurrenceDataUploadModule = {
                 else{
                     processSuccessResponse('Complete');
                     processPostUploadCleanEventDates();
-                }
-            });
-        }
-
-        function processPostUploadCleaningMarkingOrphanedAssociatedData() {
-            if(currentProcess.value !== 'runningCleaningAssociatedData'){
-                const text = 'Cleaning associated data';
-                currentProcess.value = 'runningCleaningAssociatedData';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            }
-            const formData = new FormData();
-            formData.append('collid', props.collid.toString());
-            formData.append('action', 'executeCleaningMarkingOrphanedAssociatedData');
-            fetch(dataUploadServiceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                if(Number(res) > 0){
-                    processPostUploadCleaningMarkingOrphanedAssociatedData();
-                }
-                else{
-                    processPostUploadCleaningAssociatedData();
                 }
             });
         }
@@ -2318,7 +2301,7 @@ const occurrenceDataUploadModule = {
                     }
                     else{
                         processSuccessResponse('Complete');
-                        processPostUploadCleanEventDates();
+                        processPostUploadCleaningAssociatedData();
                     }
                 });
             }

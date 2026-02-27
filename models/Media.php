@@ -49,8 +49,9 @@ class Media{
         $retVal = 0;
         $medIdArr = array();
         $sql = 'SELECT m.mediaid FROM media AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND m.accessuri NOT IN(SELECT accessuri FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND accessuri IS NOT NULL) '.
-            'AND m.sourceurl NOT IN(SELECT accessuri FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND accessuri IS NOT NULL) LIMIT 10000 ';
+            'LEFT JOIN uploadmediatemp AS m1 ON o.collid = m1.collid AND m.accessuri = m1.accessuri '.
+            'LEFT JOIN uploadmediatemp AS m2 ON o.collid = m2.collid AND m.sourceurl = m2.accessuri '.
+            'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(m1.upmid) AND ISNULL(m2.upmid) LIMIT 10000 ';
         if($result = $this->conn->query($sql)){
             while($row = $result->fetch_assoc()){
                 $medIdArr[] = $row['mediaid'];

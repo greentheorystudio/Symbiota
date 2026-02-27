@@ -267,35 +267,75 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso3 '.
-                'SET u.country = c.countryname '.
-                'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
-            }
-            if($returnVal === 0){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso '.
-                    'SET u.country = c.countryname '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
-                if($this->conn->query($sql)){
-                    $returnVal = $this->conn->affected_rows;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso3 '.
+                'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso3 SET u.country = c.countryname '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
                 }
             }
             if($returnVal === 0){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.abbrev '.
-                    'SET u.stateprovince = s.statename '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND s.statename IS NOT NULL ';
-                if($this->conn->query($sql)){
-                    $returnVal = $this->conn->affected_rows;
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upspid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso SET u.country = c.countryname '.
+                            'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $returnVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
             if($returnVal === 0){
-                $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.statename '.
-                    'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid '.
-                    'SET u.country = c.countryname '.
-                    'WHERE ISNULL(u.country) AND u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL ';
-                if($this->conn->query($sql)){
-                    $returnVal = $this->conn->affected_rows;
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.abbrev '.
+                    'WHERE u.collid = ' . (int)$collid . ' AND s.statename IS NOT NULL LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upspid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.abbrev SET u.stateprovince = s.statename '.
+                            'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $returnVal = $this->conn->affected_rows;
+                        }
+                    }
+                }
+            }
+            if($returnVal === 0){
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.statename '.
+                    'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upspid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'UPDATE uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.statename '.
+                            'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid SET u.country = c.countryname '.
+                            'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $returnVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
         }
@@ -367,11 +407,21 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
-                'SET u.tid = NULL '.
-                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname SET u.tid = NULL '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -395,11 +445,21 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
-                'SET u.tid = t.tid '.
-                'WHERE u.collid = ' . (int)$collid . ' AND ISNULL(u.tid) AND u.sciname IS NOT NULL AND t.tid IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
+                'WHERE u.collid = ' . (int)$collid . ' AND ISNULL(u.tid) AND u.sciname IS NOT NULL AND t.tid IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname SET u.tid = t.tid '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -641,7 +701,8 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid && $scriptData){
-            $sql = 'DELETE FROM uploadspectemp AS u ';
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u ';
             if(array_key_exists('join', $scriptData) && $scriptData['join']){
                 $sql .= $scriptData['join'] . ' ';
             }
@@ -649,9 +710,18 @@ class UploadOccurrenceTemp{
             if(array_key_exists('where', $scriptData) && $scriptData['where']){
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
-            $sql .= 'LIMIT 10000 ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $sql .= 'LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadspectemp WHERE upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
