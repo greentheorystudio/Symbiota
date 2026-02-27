@@ -102,7 +102,7 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE ud.* FROM uploaddetermtemp AS ud LEFT JOIN uploadspectemp AS us ON ud.dbpk = us.dbpk WHERE ud.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) ';
+            $sql = 'DELETE FROM uploaddetermtemp WHERE collid = ' . (int)$collid . ' AND ISNULL(dbpk) LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -126,6 +126,18 @@ class UploadDeterminationTemp{
                 if($row){
                     $returnVal = (int)$row['cnt'];
                 }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function markOrphanedRecords($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploaddetermtemp AS ud LEFT JOIN uploadspectemp AS us ON ud.dbpk = us.dbpk SET ud.dbpk = NULL WHERE ud.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
         }
         return $returnVal;

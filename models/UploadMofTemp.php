@@ -98,8 +98,7 @@ class UploadMofTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadmoftemp WHERE dbpk NOT IN(SELECT DISTINCT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ' AND dbpk IS NOT NULL) LIMIT 5000 ';
+            $sql = 'DELETE FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND ISNULL(dbpk) LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -143,6 +142,18 @@ class UploadMofTemp{
             }
         }
         return $retArr;
+    }
+
+    public function markOrphanedRecords($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadmoftemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk SET um.dbpk = NULL WHERE um.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
+            }
+        }
+        return $returnVal;
     }
 
     public function populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int

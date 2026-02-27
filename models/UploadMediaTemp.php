@@ -119,14 +119,14 @@ class UploadMediaTemp{
         if($collid){
             $sql = 'UPDATE uploadmediatemp SET format = NULL '.
                 'WHERE collid = ' . (int)$collid . ' AND format IS NOT NULL '.
-                'AND format NOT IN("image/jpeg", "image/png", "application/zc", "video/mp4", "video/webm", "video/ogg", "audio/wav", "audio/mpeg") LIMIT 10000 ';
+                'AND format NOT IN("image/jpeg", "image/png", "application/zc", "video/mp4", "video/webm", "video/ogg", "audio/wav", "audio/mpeg") LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET format = "image/jpeg" '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(format) '.
-                    'AND (url LIKE "%.jpeg" OR url LIKE "%.jpg" OR accessuri LIKE "%.jpeg" OR accessuri LIKE "%.jpg") LIMIT 10000 ';
+                    'AND (url LIKE "%.jpeg" OR url LIKE "%.jpg" OR accessuri LIKE "%.jpeg" OR accessuri LIKE "%.jpg") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -134,7 +134,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET format = "image/png" '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(format) '.
-                    'AND (url LIKE "%.png" OR accessuri LIKE "%.png") LIMIT 10000 ';
+                    'AND (url LIKE "%.png" OR accessuri LIKE "%.png") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -142,7 +142,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET format = "application/zc" '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(format) '.
-                    'AND (url LIKE "%.zc" OR accessuri LIKE "%.zc") LIMIT 10000 ';
+                    'AND (url LIKE "%.zc" OR accessuri LIKE "%.zc") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -150,7 +150,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET format = "video/mp4" '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(format) '.
-                    'AND (url LIKE "%.mp4" OR accessuri LIKE "%.mp4") LIMIT 10000 ';
+                    'AND (url LIKE "%.mp4" OR accessuri LIKE "%.mp4") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -158,7 +158,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET format = "video/webm" '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(format) '.
-                    'AND (url LIKE "%.webm" OR accessuri LIKE "%.webm") LIMIT 10000 ';
+                    'AND (url LIKE "%.webm" OR accessuri LIKE "%.webm") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -166,7 +166,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET format = "video/ogg" '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(format) '.
-                    'AND (url LIKE "%.ogg" OR accessuri LIKE "%.ogg") LIMIT 10000 ';
+                    'AND (url LIKE "%.ogg" OR accessuri LIKE "%.ogg") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -174,7 +174,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET format = "audio/wav" '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(format) '.
-                    'AND (url LIKE "%.wav" OR accessuri LIKE "%.wav") LIMIT 10000 ';
+                    'AND (url LIKE "%.wav" OR accessuri LIKE "%.wav") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -182,7 +182,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET format = "audio/mpeg" '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(format) '.
-                    'AND (url LIKE "%.mp3" OR accessuri LIKE "%.mp3") LIMIT 10000 ';
+                    'AND (url LIKE "%.mp3" OR accessuri LIKE "%.mp3") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -196,13 +196,13 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadmediatemp SET url = NULL '.
-                'WHERE collid = ' . (int)$collid . ' AND (url = "" OR url = "empty") LIMIT 10000 ';
+                'WHERE collid = ' . (int)$collid . ' AND (url = "" OR url = "empty") LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET accessuri = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND (accessuri = "" OR accessuri = "empty") LIMIT 10000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND (accessuri = "" OR accessuri = "empty") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -210,7 +210,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET url = accessuri, accessuri = NULL '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(url) AND accessuri IS NOT NULL '.
-                    'AND format IS NOT NULL AND (format = "image/jpeg" OR format = "image/png") LIMIT 10000 ';
+                    'AND format IS NOT NULL AND (format = "image/jpeg" OR format = "image/png") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -218,7 +218,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET accessuri = url, url = NULL '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(accessuri) AND url IS NOT NULL '.
-                    'AND format IS NOT NULL AND format <> "image/jpeg" AND format <> "image/png" LIMIT 10000 ';
+                    'AND format IS NOT NULL AND format <> "image/jpeg" AND format <> "image/png" LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -226,27 +226,27 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET url = originalurl '.
                     'WHERE collid = ' . (int)$collid . ' AND ISNULL(url) AND originalurl IS NOT NULL '.
-                    'AND format IS NOT NULL AND (format = "image/jpeg" OR format = "image/png") LIMIT 10000 ';
+                    'AND format IS NOT NULL AND (format = "image/jpeg" OR format = "image/png") LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
             }
             if($returnVal === 0){
-                $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND ISNULL(url) AND ISNULL(accessuri) LIMIT 10000 ';
+                $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND ISNULL(url) AND ISNULL(accessuri) LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET sourceurl = url '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(sourceurl) AND url IS NOT NULL LIMIT 10000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(sourceurl) AND url IS NOT NULL LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadmediatemp SET sourceurl = accessuri '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(sourceurl) AND accessuri IS NOT NULL LIMIT 10000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(sourceurl) AND accessuri IS NOT NULL LIMIT 50000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -285,7 +285,7 @@ class UploadMediaTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE um.* FROM uploadmediatemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk WHERE um.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) ';
+            $sql = 'DELETE FROM uploadmediatemp WHERE collid = ' . (int)$collid . ' AND ISNULL(dbpk) LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -309,6 +309,18 @@ class UploadMediaTemp{
                 if($row){
                     $returnVal = (int)$row['cnt'];
                 }
+            }
+        }
+        return $returnVal;
+    }
+
+    public function markOrphanedRecords($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $sql = 'UPDATE uploadmediatemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk SET um.dbpk = NULL WHERE um.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) ';
+            if($this->conn->query($sql)){
+                $returnVal = $this->conn->affected_rows;
             }
         }
         return $returnVal;
