@@ -98,9 +98,19 @@ class UploadMofTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND ISNULL(dbpk) LIMIT 50000 ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT um.upmfid FROM uploadmoftemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk WHERE um.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upmfid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadmoftemp WHERE upmfid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -115,8 +125,7 @@ class UploadMofTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'SELECT COUNT(upmfid) AS cnt FROM uploadmoftemp WHERE collid  = ' . (int)$collid . ' '.
-                'AND dbpk IN(SELECT dbpk FROM uploadspectemp WHERE collid = ' . (int)$collid . ') ';
+            $sql = 'SELECT COUNT(upmfid) AS cnt FROM uploadmoftemp WHERE collid  = ' . (int)$collid . ' ';
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
                 $result->free();
@@ -143,18 +152,6 @@ class UploadMofTemp{
             }
         }
         return $retArr;
-    }
-
-    public function markOrphanedRecords($collid): int
-    {
-        $returnVal = 0;
-        if($collid){
-            $sql = 'UPDATE uploadmoftemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk SET um.dbpk = NULL WHERE um.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
-            }
-        }
-        return $returnVal;
     }
 
     public function populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
@@ -186,16 +183,36 @@ class UploadMofTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE u.* FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.eventid = m.eventid '.
-                'WHERE u.collid  = ' . $collid . ' AND m.eventid IS NOT NULL AND u.field = m.field ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.eventid = m.eventid '.
+                'WHERE u.collid  = ' . $collid . ' AND m.eventid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upmfid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadmoftemp WHERE upmfid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
-            if($returnVal === 1){
-                $sql = 'DELETE u.* FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.occid = m.occid '.
-                    'WHERE u.collid  = ' . $collid . ' AND m.occid IS NOT NULL AND u.field = m.field ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+            if($returnVal === 0){
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.occid = m.occid '.
+                    'WHERE u.collid  = ' . $collid . ' AND m.occid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upmfid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'DELETE FROM uploadmoftemp WHERE upmfid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $returnVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
         }
@@ -206,10 +223,20 @@ class UploadMofTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadmoftemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
-                'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 10000 ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT um.upmfid FROM uploadmoftemp AS um LEFT JOIN omoccurrences AS o ON um.collid = o.collid AND um.dbpk = o.dbpk '.
+                'WHERE um.collid = ' . (int)$collid . ' AND o.occid IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upmfid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadmoftemp WHERE upmfid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;

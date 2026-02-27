@@ -61,9 +61,6 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'executeCleaningAssociatedData'){
         echo $dataUploadService->executeCleaningAssociatedData($collid);
     }
-    elseif($action === 'executeCleaningMarkingOrphanedAssociatedData'){
-        echo $dataUploadService->executeCleaningMarkingOrphanedAssociatedData($collid);
-    }
     elseif($action === 'cleanUploadEventDates'){
         echo $dataUploadService->cleanUploadEventDates($collid);
     }

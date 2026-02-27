@@ -123,21 +123,6 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function executeCleaningMarkingOrphanedAssociatedData($collid): int
-    {
-        $retVal = 0;
-        if($collid){
-            $retVal = (new UploadDeterminationTemp)->markOrphanedRecords($collid);
-            if($retVal === 0){
-                $retVal = (new UploadMediaTemp)->markOrphanedRecords($collid);
-            }
-            if($retVal === 0){
-                $retVal = (new UploadMofTemp)->markOrphanedRecords($collid);
-            }
-        }
-        return $retVal;
-    }
-
     public function executeCleaningScriptArr($collid, $cleaningScriptArr): int
     {
         $retVal = 0;
@@ -213,7 +198,7 @@ class DataUploadService {
 
     public function finalTransferCleanMediaRecordTidValues($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMediaTemp)->cleanMediaRecordTidValues($collid);
         }
@@ -291,7 +276,7 @@ class DataUploadService {
 
     public function finalTransferRemoveExistingDeterminationsFromUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadDeterminationTemp)->removeExistingDeterminationDataFromUpload($collid);
         }
@@ -300,7 +285,7 @@ class DataUploadService {
 
     public function finalTransferRemoveExistingMediaRecordsFromUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMediaTemp)->removeExistingMediaDataFromUpload($collid);
         }
@@ -309,7 +294,7 @@ class DataUploadService {
 
     public function finalTransferRemoveExistingMofRecordsFromUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMofTemp)->removeExistingMofDataFromUpload($collid);
         }
