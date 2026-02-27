@@ -2247,11 +2247,6 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleaningAssociatedData() {
-            if(currentProcess.value !== 'runningCleaningAssociatedData'){
-                const text = 'Cleaning associated data';
-                currentProcess.value = 'runningCleaningAssociatedData';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'executeCleaningAssociatedData');
@@ -2269,6 +2264,32 @@ const occurrenceDataUploadModule = {
                 else{
                     processSuccessResponse('Complete');
                     processPostUploadCleanEventDates();
+                }
+            });
+        }
+
+        function processPostUploadCleaningMarkingOrphanedAssociatedData() {
+            if(currentProcess.value !== 'runningCleaningAssociatedData'){
+                const text = 'Cleaning associated data';
+                currentProcess.value = 'runningCleaningAssociatedData';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'executeCleaningMarkingOrphanedAssociatedData');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    processPostUploadCleaningMarkingOrphanedAssociatedData();
+                }
+                else{
+                    processPostUploadCleaningAssociatedData();
                 }
             });
         }
@@ -2297,7 +2318,7 @@ const occurrenceDataUploadModule = {
                     }
                     else{
                         processSuccessResponse('Complete');
-                        processPostUploadCleaningAssociatedData();
+                        processPostUploadCleaningMarkingOrphanedAssociatedData();
                     }
                 });
             }

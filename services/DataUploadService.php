@@ -123,6 +123,21 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function executeCleaningMarkingOrphanedAssociatedData($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->markOrphanedRecords($collid);
+            if($retVal === 0){
+                $retVal = (new UploadMediaTemp)->markOrphanedRecords($collid);
+            }
+            if($retVal === 0){
+                $retVal = (new UploadMofTemp)->markOrphanedRecords($collid);
+            }
+        }
+        return $retVal;
+    }
+
     public function executeCleaningScriptArr($collid, $cleaningScriptArr): int
     {
         $retVal = 0;
