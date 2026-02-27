@@ -920,9 +920,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferCleanMediaRecordFormatValues() {
-            const text = 'Cleaning media record format values in upload';
-            currentProcess.value = 'finalTransferCleanMediaRecordFormatValues';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferCleanMediaRecordFormatValues'){
+                const text = 'Cleaning media record format values in upload';
+                currentProcess.value = 'finalTransferCleanMediaRecordFormatValues';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferCleanMediaRecordFormatValues');
@@ -934,21 +936,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferCleanMediaRecordTidValues();
+                if(Number(res) > 0){
+                    finalTransferCleanMediaRecordFormatValues();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning media record format values in upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferCleanMediaRecordTidValues();
                 }
             });
         }
 
         function finalTransferCleanMediaRecords() {
-            const text = 'Cleaning media record URLs in upload';
-            currentProcess.value = 'finalTransferCleanMediaRecords';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferCleanMediaRecords'){
+                const text = 'Cleaning media record URLs in upload';
+                currentProcess.value = 'finalTransferCleanMediaRecords';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferCleanMediaRecords');
@@ -960,13 +963,12 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferCleanMediaRecordFormatValues();
+                if(Number(res) > 0){
+                    finalTransferCleanMediaRecords();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning media record URLs in upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferCleanMediaRecordFormatValues();
                 }
             });
         }

@@ -102,8 +102,7 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp WHERE dbpk NOT IN(SELECT DISTINCT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ' AND dbpk IS NOT NULL) LIMIT 5000 ';
+            $sql = 'DELETE ud.* FROM uploaddetermtemp AS ud LEFT JOIN uploadspectemp AS us ON ud.dbpk = us.dbpk WHERE ud.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
@@ -160,7 +159,7 @@ class UploadDeterminationTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'DELETE FROM uploaddetermtemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
-            'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 50000 ';
+            'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 10000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
