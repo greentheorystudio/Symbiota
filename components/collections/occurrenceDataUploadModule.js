@@ -2318,7 +2318,7 @@ const occurrenceDataUploadModule = {
                     }
                     else{
                         processSuccessResponse('Complete');
-                        processPostUploadCleaningMarkingOrphanedAssociatedData();
+                        processPostUploadCleanEventDates();
                     }
                 });
             }
