@@ -234,27 +234,27 @@ class UploadOccurrenceTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadspectemp SET decimallongitude = -1 * decimallongitude '.
-                'WHERE collid = ' . (int)$collid . ' AND decimallongitude > 0 AND country IN("USA", "United States", "U.S.A.", "Canada", "Mexico") AND (stateprovince <> "Alaska" OR ISNULL(stateprovince)) LIMIT 40000 ';
+                'WHERE collid = ' . (int)$collid . ' AND decimallongitude > 0 AND country IN("USA", "United States", "U.S.A.", "Canada", "Mexico") AND (stateprovince <> "Alaska" OR ISNULL(stateprovince)) LIMIT 20000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET decimallatitude = NULL, decimallongitude = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND decimallatitude = 0 AND decimallongitude = 0 LIMIT 40000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND decimallatitude = 0 AND decimallongitude = 0 LIMIT 20000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET verbatimcoordinates = CONCAT_WS(" ", decimallatitude, decimallongitude) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(verbatimcoordinates) AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) LIMIT 40000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(verbatimcoordinates) AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) LIMIT 20000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET decimallatitude = NULL, decimallongitude = NULL '.
-                    'WHERE collid = ' . (int)$collid . ' AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) LIMIT 40000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND (decimallatitude < -90 OR decimallatitude > 90 OR decimallongitude < -180 OR decimallongitude > 180) LIMIT 20000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -307,34 +307,34 @@ class UploadOccurrenceTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadspectemp SET `year` = YEAR(eventdate) '.
-                'WHERE collid = ' . (int)$collid . ' AND eventdate IS NOT NULL AND ISNULL(`year`) LIMIT 40000 ';
+                'WHERE collid = ' . (int)$collid . ' AND eventdate IS NOT NULL AND ISNULL(`year`) LIMIT 20000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET `month` = MONTH(eventdate) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`month`) AND eventdate IS NOT NULL LIMIT 40000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`month`) AND eventdate IS NOT NULL LIMIT 20000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET `day` = DAY(eventdate) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`day`) AND eventdate IS NOT NULL LIMIT 40000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(`day`) AND eventdate IS NOT NULL LIMIT 20000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET startdayofyear = DAYOFYEAR(eventdate) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(startdayofyear) AND eventdate IS NOT NULL LIMIT 40000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(startdayofyear) AND eventdate IS NOT NULL LIMIT 20000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET enddayofyear = DAYOFYEAR(eventdate) '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(enddayofyear) AND eventdate IS NOT NULL LIMIT 40000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(enddayofyear) AND eventdate IS NOT NULL LIMIT 20000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -348,13 +348,13 @@ class UploadOccurrenceTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadspectemp SET sciname = family '.
-                'WHERE collid = ' . (int)$collid . ' AND family IS NOT NULL AND ISNULL(sciname) LIMIT 40000 ';
+                'WHERE collid = ' . (int)$collid . ' AND family IS NOT NULL AND ISNULL(sciname) LIMIT 20000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
             if($returnVal === 0){
                 $sql = 'UPDATE uploadspectemp SET family = sciname '.
-                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") LIMIT 40000 ';
+                    'WHERE collid = ' . (int)$collid . ' AND ISNULL(family) AND (sciname LIKE "%aceae" OR sciname LIKE "%idae") LIMIT 20000 ';
                 if($this->conn->query($sql)){
                     $returnVal = $this->conn->affected_rows;
                 }
@@ -717,7 +717,7 @@ class UploadOccurrenceTemp{
         $returnVal = 0;
         if($collid){
             $sql = 'UPDATE uploadspectemp SET localitysecurity = 1 '.
-                'WHERE collid = ' . (int)$collid . ' AND tid IN(SELECT tid FROM taxa WHERE securitystatus = 1) LIMIT 40000 ';
+                'WHERE collid = ' . (int)$collid . ' AND tid IN(SELECT tid FROM taxa WHERE securitystatus = 1) LIMIT 20000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
