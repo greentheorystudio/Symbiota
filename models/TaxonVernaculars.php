@@ -49,7 +49,6 @@ class TaxonVernaculars{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT IGNORE INTO taxavernaculars(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
         }
@@ -115,7 +114,6 @@ class TaxonVernaculars{
                 'WHERE tid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'ORDER BY vernacularname '.
                 'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
-            //echo $sql;
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -163,7 +161,6 @@ class TaxonVernaculars{
             'FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.tid = t.tid '.
             'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') '.
             'ORDER BY t.tidaccepted, v.vernacularname ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -183,7 +180,6 @@ class TaxonVernaculars{
             'FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid '.
             'WHERE te.tid IN(' . implode(',', $tidArr) . ') '.
             'ORDER BY te.tid, v.vernacularname ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -241,7 +237,6 @@ class TaxonVernaculars{
         }
         $sql .= 'WHERE tid IN(SELECT v.tid FROM taxavernaculars AS v WHERE ' . substr($whereStr,3) . ') ';
         $sql .= 'OR tid IN(SELECT te.tid FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid WHERE ' . substr($whereStr,3) . ') ';
-        //echo "<div>sql: ".$sql."</div>";
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -258,7 +253,6 @@ class TaxonVernaculars{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE taxavernaculars SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -271,7 +265,6 @@ class TaxonVernaculars{
         $retVal = 1;
         if($parentTid){
             $sql = 'DELETE FROM taxavernaculars WHERE TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
@@ -293,7 +286,6 @@ class TaxonVernaculars{
         }
         $sql .= 'WHERE tid IN(SELECT v.tid FROM taxavernaculars AS v WHERE ' . substr($whereStr,3) . ') ';
         $sql .= 'OR tid IN(SELECT te.tid FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid WHERE ' . substr($whereStr,3) . ') ';
-        //echo "<div>sql: ".$sql."</div>";
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -324,7 +316,6 @@ class TaxonVernaculars{
             $sqlPartArr[] = 'username = "' . $GLOBALS['PARAMS_ARR']['un'] . '"';
             $sql = 'UPDATE taxavernaculars SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE vid = ' . (int)$vid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
