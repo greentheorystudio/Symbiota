@@ -110,7 +110,6 @@ class OccurrenceDeterminations{
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $sql = 'INSERT INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
                 $guid = UuidService::getUuidV4();
@@ -136,7 +135,6 @@ class OccurrenceDeterminations{
             'SELECT occid, tid, IFNULL(identifiedby, "unknown"), IFNULL(dateidentified, "unknown"), sciname, verbatimScientificName, '.
             'scientificnameauthorship, identificationqualifier, identificationreferences, identificationremarks, 10 '.
             'FROM omoccurrences WHERE occid = ' . (int)$occid . ' ';
-        //echo "<div>".$sqlInsert."</div>";
         if($this->conn->query($sql)){
             $guid = UuidService::getUuidV4();
             $detId = $this->conn->insert_id;
@@ -156,12 +154,22 @@ class OccurrenceDeterminations{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $sql = 'INSERT IGNORE INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
-                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploaddetermtemp '.
-                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL ';
-                //echo "<div>".$sql."</div>";
-                if($this->conn->query($sql)){
-                    $retVal = 1;
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.updid FROM uploaddetermtemp AS u LEFT JOIN omoccurdeterminations AS d ON u.occid = d.occid '.
+                    'WHERE u.collid  = ' . (int)$collId . ' AND u.occid IS NOT NULL AND (ISNULL(d.occid) OR (u.sciname <> d.sciname AND u.identifiedby <> d.identifiedby AND u.dateidentified <> d.dateidentified)) LIMIT 50000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['updid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'INSERT IGNORE INTO omoccurdeterminations(' . implode(',', $fieldNameArr) . ') '.
+                            'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploaddetermtemp '.
+                            'WHERE updid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $retVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
         }
@@ -224,7 +232,6 @@ class OccurrenceDeterminations{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurdeterminations '.
             'WHERE detid = ' . (int)$detid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -249,7 +256,6 @@ class OccurrenceDeterminations{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurdeterminations '.
             'WHERE occid = ' . (int)$occid . ' ORDER BY iscurrent DESC, sortsequence ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -310,7 +316,6 @@ class OccurrenceDeterminations{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE omoccurdeterminations SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -340,7 +345,6 @@ class OccurrenceDeterminations{
             }
             $sql = 'UPDATE omoccurdeterminations SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE detid = ' . (int)$detId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
                 $determinationData = $this->getDeterminationDataById($detId);
@@ -366,7 +370,6 @@ class OccurrenceDeterminations{
                 'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
                 'SET d.tid = t.tid '.
                 'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid >= 180 ';
-            //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -375,7 +378,6 @@ class OccurrenceDeterminations{
                     'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
                     'SET d.tid = t.tid '.
                     'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid = ' . $id . ' ';
-                //echo $sql;
                 if($this->conn->query($sql)){
                     $retCnt += $this->conn->affected_rows;
                 }
@@ -384,7 +386,6 @@ class OccurrenceDeterminations{
                 'LEFT JOIN taxa AS t ON d.sciname = t.SciName '.
                 'SET d.tid = t.tid '.
                 'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(d.tid) AND t.kingdomId = ' . (int)$kingdomId . ' AND t.rankid <= 20 ';
-            //echo $sql;
             if($this->conn->query($sql)){
                 $retCnt += $this->conn->affected_rows;
             }
