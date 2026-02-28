@@ -2399,9 +2399,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadExistingRecordAssociateProcessing() {
-            const text = 'Associating upload data with existing occurrence records';
-            currentProcess.value = 'linkExistingOccurrences';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'linkExistingOccurrences'){
+                const text = 'Associating upload data with existing occurrence records';
+                currentProcess.value = 'linkExistingOccurrences';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'linkExistingOccurrencesToUpload');
@@ -2420,13 +2422,12 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    processPostUploadCleaningScripts();
+                if(Number(res) > 0){
+                    processPostUploadExistingRecordAssociateProcessing();
                 }
                 else{
-                    processErrorResponse('An error occurred');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    processPostUploadCleaningScripts();
                 }
             });
         }
