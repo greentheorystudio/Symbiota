@@ -141,14 +141,28 @@ class UploadDeterminationTemp{
         return $returnVal;
     }
 
-    public function populateOccidFromUploadOccurrenceData($collid): void
+    public function populateOccidFromUploadOccurrenceData($collid): int
     {
+        $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploaddetermtemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'SET u.occid = o.occid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            $this->conn->query($sql);
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.updid FROM uploaddetermtemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['updid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploaddetermtemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid SET u.occid = o.occid '.
+                        'WHERE u.updid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
+            }
         }
+        return $returnVal;
     }
 
     public function removeExistingDeterminationDataFromUpload($collid): int

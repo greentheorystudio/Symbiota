@@ -1472,9 +1472,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferSetNewOccurrenceIds() {
-            const text = 'Populating IDs of new occurrence records in upload data';
-            currentProcess.value = 'finalTransferSetNewOccurrenceIds';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferSetNewOccurrenceIds'){
+                const text = 'Populating IDs of new occurrence records in upload data';
+                currentProcess.value = 'finalTransferSetNewOccurrenceIds';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('updateAssociatedData', '1');
@@ -1487,7 +1489,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    finalTransferSetNewOccurrenceIds();
+                }
+                else{
                     processSuccessResponse('Complete');
                     if(Number(profileConfigurationData.value['saveSourcePrimaryIdentifier']) === 1){
                         finalTransferProcessDeterminations();
@@ -1495,10 +1500,6 @@ const occurrenceDataUploadModule = {
                     else{
                         finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences();
                     }
-                }
-                else{
-                    processErrorResponse('An error occurred while populating IDs');
-                    adjustUIEnd();
                 }
             });
         }
@@ -2398,9 +2399,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadExistingRecordAssociateProcessing() {
-            const text = 'Associating upload data with existing occurrence records';
-            currentProcess.value = 'linkExistingOccurrences';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'linkExistingOccurrences'){
+                const text = 'Associating upload data with existing occurrence records';
+                currentProcess.value = 'linkExistingOccurrences';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'linkExistingOccurrencesToUpload');
@@ -2419,13 +2422,12 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    processPostUploadCleaningScripts();
+                if(Number(res) > 0){
+                    processPostUploadExistingRecordAssociateProcessing();
                 }
                 else{
-                    processErrorResponse('An error occurred');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    processPostUploadCleaningScripts();
                 }
             });
         }
