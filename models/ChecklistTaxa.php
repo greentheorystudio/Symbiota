@@ -42,7 +42,6 @@ class ChecklistTaxa{
             if(count($valueArr) > 0){
                 $sql = 'INSERT INTO fmchklsttaxalink(clid, tid, initialtimestamp) '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
                 }
@@ -68,7 +67,6 @@ class ChecklistTaxa{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO fmchklsttaxalink(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
         }
@@ -89,7 +87,6 @@ class ChecklistTaxa{
     {
         $retVal = 0;
         $tidSql = 'SELECT clid, tid FROM fmchklsttaxalink WHERE cltlid = ' . (int)$cltlid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($tidSql)){
             $row = $result->fetch_array(MYSQLI_ASSOC);
             $result->free();
@@ -141,7 +138,6 @@ class ChecklistTaxa{
                 $startIndex = (int)$index * (int)$recCnt;
                 $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
             }
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $tidArr = array();
@@ -216,7 +212,6 @@ class ChecklistTaxa{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmchklsttaxalink WHERE tid = ' . (int)$tid . ' AND clid = ' . (int)$clid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -237,7 +232,6 @@ class ChecklistTaxa{
         $sql = 'SELECT c.clid, c.`name` '.
             'FROM fmchklsttaxalink AS t LEFT JOIN fmchecklists AS c ON t.clid = c.clid '.
             'WHERE t.tid = ' . (int)$tid . ' AND ISNULL(c.expiration) ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -257,7 +251,6 @@ class ChecklistTaxa{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE fmchklsttaxalink SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -277,7 +270,6 @@ class ChecklistTaxa{
             }
             $sql = 'UPDATE fmchklsttaxalink SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE cltlid = ' . (int)$cltlid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

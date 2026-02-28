@@ -29,7 +29,6 @@ class CollectionCategories {
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' ' .
             'FROM omcollcategories ';
         $sql .= 'ORDER BY sortsequence, category ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);

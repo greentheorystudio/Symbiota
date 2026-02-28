@@ -97,7 +97,6 @@ class Media{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO media(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
         }
@@ -107,7 +106,7 @@ class Media{
     public function createMediaRecordsFromUploadData($collId): int
     {
         $skipFields = array('mediaid', 'creatoruid', 'initialtimestamp');
-        $retVal = 1;
+        $retVal = 0;
         $fieldNameArr = array();
         if($collId){
             foreach($this->fields as $field => $fieldArr){
@@ -121,12 +120,23 @@ class Media{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $sql = 'INSERT INTO media(' . implode(',', $fieldNameArr) . ') '.
-                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
-                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND accessuri IS NOT NULL AND format IS NOT NULL ';
-                //echo "<div>".$sql."</div>";
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
+                $idArr = array();
+                $sql = 'SELECT u.upmid FROM uploadmediatemp AS u LEFT JOIN omoccurrences AS o ON u.occid = o.occid '.
+                    'LEFT JOIN media AS m1 ON o.occid = m1.occid AND u.accessuri = m1.accessuri '.
+                    'WHERE o.collid = ' . (int)$collId . ' AND u.accessuri IS NOT NULL AND u.format IS NOT NULL AND ISNULL(m1.mediaid) LIMIT 50000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upmid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'INSERT INTO media(' . implode(',', $fieldNameArr) . ') '.
+                            'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
+                            'WHERE upmid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $retVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
         }
@@ -152,7 +162,6 @@ class Media{
         elseif($idType === 'tid'){
             $sql = 'SELECT accessuri FROM media WHERE tid = ' . (int)$id . ' AND ISNULL(occid) ';
         }
-        //echo '<div>'.$sql.'</div>';
         if($sql && $result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -244,7 +253,6 @@ class Media{
                 }
             }
             $sql .= 'ORDER BY m.sortsequence ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -281,7 +289,6 @@ class Media{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM media WHERE mediaid = ' . (int)$mediaid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -313,7 +320,6 @@ class Media{
                 $sql .= 'AND m.sortsequence <= ' . (int)$sortsequenceLimit . ' ';
             }
             $sql .= 'ORDER BY m.sortsequence ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -349,7 +355,6 @@ class Media{
                 $sql .= 'AND m.sortsequence <= ' . (int)$sortsequenceLimit . ' ';
             }
             $sql .= 'ORDER BY m.sortsequence ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -394,7 +399,6 @@ class Media{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE media SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -420,7 +424,6 @@ class Media{
             }
             $sql = 'UPDATE media SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE mediaid = ' . (int)$medId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

@@ -52,7 +52,6 @@ class TaxonMaps{
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $sql = 'INSERT INTO taxamaps(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
             }
@@ -95,7 +94,6 @@ class TaxonMaps{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM taxamaps WHERE ' . $whereStr . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -126,7 +124,6 @@ class TaxonMaps{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM taxamaps WHERE tid IN(' . implode(',', $tidArr) . ') ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -153,7 +150,6 @@ class TaxonMaps{
             while($row = $result->fetch_object()){
                 if((int)$row->cnt === 0){
                     $sql2 = 'UPDATE taxamaps SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
-                    //echo $sql2;
                     if($this->conn->query($sql2)){
                         $retVal = 1;
                     }
@@ -179,7 +175,6 @@ class TaxonMaps{
             }
             $sql = 'UPDATE taxamaps SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE mid = ' . (int)$mid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

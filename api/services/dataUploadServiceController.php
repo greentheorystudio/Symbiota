@@ -90,17 +90,14 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'processUploadDataDownload' && array_key_exists('filename', $_POST) && array_key_exists('dataType', $_POST)){
         $dataUploadService->processUploadDataDownload($collid, $_POST['filename'], $_POST['dataType']);
     }
-    elseif($action === 'finalTransferUpdateExistingOccurrences' && array_key_exists('mappedFields', $_POST)){
-        echo $dataUploadService->finalTransferUpdateExistingOccurrences($collid, json_decode($_POST['mappedFields'], false));
+    elseif($action === 'finalTransferUpdateExistingOccurrences' && array_key_exists('mappedFields', $_POST) && array_key_exists('index', $_POST)){
+        echo $dataUploadService->finalTransferUpdateExistingOccurrences($collid, json_decode($_POST['mappedFields'], false), $_POST['index']);
     }
     elseif($action === 'finalTransferRemoveUnmatchedOccurrences'){
         echo $dataUploadService->finalTransferRemoveUnmatchedOccurrences($collid);
     }
-    elseif($action === 'finalTransferAddNewOccurrences'){
-        echo $dataUploadService->finalTransferAddNewOccurrences($collid);
-    }
-    elseif($action === 'finalTransferSetNewOccurrenceIds'){
-        echo $dataUploadService->finalTransferSetNewOccurrenceIds($collid);
+    elseif($action === 'finalTransferAddNewOccurrences' && array_key_exists('index', $_POST)){
+        echo $dataUploadService->finalTransferAddNewOccurrences($collid, $_POST['index']);
     }
     elseif($action === 'finalTransferClearPreviousDeterminations'){
         echo $dataUploadService->finalTransferClearPreviousDeterminations($collid);

@@ -38,12 +38,23 @@ class OccurrenceMeasurementsOrFacts{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $sql = 'INSERT INTO ommofextension(' . implode(',', $fieldNameArr) . ') '.
-                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmoftemp '.
-                    'WHERE collid = ' . (int)$collId . ' AND (eventid IS NOT NULL OR occid IS NOT NULL) ';
-                //echo "<div>".$sql."</div>";
-                if($this->conn->query($sql)){
-                    $retVal = 1;
+                $idArr = array();
+                $sql = 'SELECT u.upmfid FROM uploadmoftemp AS u LEFT JOIN omoccurrences AS o ON u.occid = o.occid '.
+                    'LEFT JOIN omoccurrences AS o2 ON u.eventid = o2.eventid '.
+                    'WHERE u.collid = ' . (int)$collId . ' AND ((u.occid IS NOT NULL AND ISNULL(o.occid)) OR (u.eventid IS NOT NULL AND ISNULL(o2.occid))) LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upmfid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'INSERT INTO ommofextension(' . implode(',', $fieldNameArr) . ') '.
+                            'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmoftemp '.
+                            'WHERE upmfid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $retVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
         }
@@ -103,7 +114,6 @@ class OccurrenceMeasurementsOrFacts{
         $sql = 'SELECT DISTINCT m.mofid, m.field, m.datavalue, m.initialtimestamp, o.collid, o.localitysecurity '.
             'FROM ommofextension AS m LEFT JOIN omoccurrences AS o ON m.' . $field . ' = o.' . $field . ' '.
             'WHERE m.' . $field . ' = ' . (int)$id . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();

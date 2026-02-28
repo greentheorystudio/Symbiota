@@ -71,7 +71,6 @@ class Permissions{
                 }
             }
             $sql = 'INSERT INTO userroles(uid, role, tablepk, uidassignedby) VALUES' . implode(', ', $addArr);
-            //echo $sql;
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
@@ -160,7 +159,6 @@ class Permissions{
         $returnArr = array();
         if($GLOBALS['VALID_USER']){
             $sql = 'SELECT collid FROM omcollections ';
-            //echo $sql;
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -192,7 +190,6 @@ class Permissions{
             $permittedProjects = array();
             $userrights = array();
             $sql = 'SELECT role, tablepk FROM userroles WHERE uid = ' . (int)$_SESSION['PARAMS_ARR']['uid'] . ' ';
-            //echo $sql;
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

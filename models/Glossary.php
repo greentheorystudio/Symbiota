@@ -46,7 +46,6 @@ class Glossary{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO glossary(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
         }
@@ -81,7 +80,6 @@ class Glossary{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM glossary WHERE glossid = ' . (int)$glossid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -107,7 +105,6 @@ class Glossary{
                 'FROM glossary AS g LEFT JOIN glossarytaxalink AS gt ON g.glossid = gt.glossid '.
                 'WHERE gt.tid IN('.implode(',', $tidArr[$tid]).') '.
                 'ORDER BY g.term ';
-            //echo $sql; exit;
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -138,7 +135,6 @@ class Glossary{
             }
             $sql = 'UPDATE glossary SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE glossid = ' . (int)$glossid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
