@@ -33,7 +33,6 @@ class KeyCharacters{
         if($cid && $dcid){
             $sql = 'INSERT INTO keycharacterdependence(cid, dcid, dcsid) '.
                 'VALUES (' . (int)$cid . ', ' . (int)$dcid . ', ' . ((int)$dcsid > 0 ? (int)$dcsid : 'NULL') . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
             }
@@ -56,7 +55,6 @@ class KeyCharacters{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO keycharacters(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
         }
@@ -123,7 +121,6 @@ class KeyCharacters{
         $sql = 'SELECT h.headingname, ' . implode(',', $fieldNameArr) . ' '.
             'FROM keycharacters AS c LEFT JOIN keycharacterheadings AS h ON c.chid = h.chid '.
             'ORDER BY h.sortsequence, h.headingname, c.sortsequence, c.charactername ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -148,7 +145,6 @@ class KeyCharacters{
             'FROM keycharacterdependence AS cd LEFT JOIN keycharacters AS c ON cd.dcid = c.cid '.
             'LEFT JOIN keycharacterstates AS cs ON cd.dcsid = cs.csid '.
             'WHERE cd.cid IN(' . (is_array($cid) ? implode(',', $cid) : $cid) . ') ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -172,7 +168,6 @@ class KeyCharacters{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM keycharacters WHERE chid = ' . (int)$cid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -197,7 +192,6 @@ class KeyCharacters{
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM keycharacters WHERE chid IN(' . implode(',', $chidArr) . ') '.
                 'ORDER BY chid, sortsequence, charactername ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -235,7 +229,6 @@ class KeyCharacters{
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM keycharacters WHERE cid IN(' . implode(',', $cidArr) . ') ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $retArr['characters'] = array();
                 $retArr['character-headings'] = array();
@@ -283,7 +276,6 @@ class KeyCharacters{
             }
             $sql = 'UPDATE keycharacters SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE cid = ' . (int)$cid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

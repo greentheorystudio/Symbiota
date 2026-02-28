@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Images.php');
 include_once(__DIR__ . '/../models/Media.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
@@ -72,15 +71,6 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function cleanUploadTaxonomyPopulateThesaurusData($collid): int
-    {
-        $retVal = 0;
-        if($collid){
-            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyPopulateThesaurusData($collid);
-        }
-        return $retVal;
-    }
-
     public function cleanUploadTaxonomyPopulateTid($collid): int
     {
         $retVal = 0;
@@ -138,7 +128,7 @@ class DataUploadService {
 
     public function finalTransferAddNewDeterminations($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceDeterminations)->createOccurrenceDeterminationRecordsFromUploadData($collid);
         }
@@ -147,10 +137,10 @@ class DataUploadService {
 
     public function finalTransferAddNewMedia($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new Images)->createImageRecordsFromUploadData($collid);
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new Media)->createMediaRecordsFromUploadData($collid);
             }
         }
@@ -159,28 +149,25 @@ class DataUploadService {
 
     public function finalTransferAddNewMof($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceMeasurementsOrFacts)->createOccurrenceMofRecordsFromUploadData($collid);
         }
         return $retVal;
     }
 
-    public function finalTransferAddNewOccurrences($collid): int
+    public function finalTransferAddNewOccurrences($collid, $index): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
-            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
-            if($retVal){
-                (new Collections)->updateUploadDate($collid);
-            }
+            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid, $index);
         }
         return $retVal;
     }
 
     public function finalTransferCleanMediaRecordFormatValues($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMediaTemp)->cleanMediaRecordFormatValues($collid);
         }
@@ -189,7 +176,7 @@ class DataUploadService {
 
     public function finalTransferCleanMediaRecords($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMediaTemp)->cleanMediaRecords($collid);
         }
@@ -198,7 +185,7 @@ class DataUploadService {
 
     public function finalTransferCleanMediaRecordTidValues($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMediaTemp)->cleanMediaRecordTidValues($collid);
         }
@@ -258,7 +245,7 @@ class DataUploadService {
 
     public function finalTransferPopulateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMofTemp)->populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields);
         }
@@ -267,7 +254,7 @@ class DataUploadService {
 
     public function finalTransferRemoveDuplicateDbpkRecordsFromUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->removeDuplicateDbpkRecordsFromUpload($collid);
         }
@@ -276,7 +263,7 @@ class DataUploadService {
 
     public function finalTransferRemoveExistingDeterminationsFromUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadDeterminationTemp)->removeExistingDeterminationDataFromUpload($collid);
         }
@@ -285,7 +272,7 @@ class DataUploadService {
 
     public function finalTransferRemoveExistingMediaRecordsFromUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMediaTemp)->removeExistingMediaDataFromUpload($collid);
         }
@@ -294,7 +281,7 @@ class DataUploadService {
 
     public function finalTransferRemoveExistingMofRecordsFromUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadMofTemp)->removeExistingMofDataFromUpload($collid);
         }
@@ -303,32 +290,21 @@ class DataUploadService {
 
     public function finalTransferRemoveUnmatchedOccurrences($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $occidArr = (new Occurrences)->getOccidArrNotIncludedInUpload($collid);
             if($occidArr){
-                (new Images)->deleteAssociatedImageRecords('occidArr', $occidArr);
-                (new Media)->deleteAssociatedMediaRecords('occidArr', $occidArr);
                 $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
             }
         }
         return $retVal;
     }
 
-    public function finalTransferSetNewOccurrenceIds($collid): int
+    public function finalTransferUpdateExistingOccurrences($collid, $mappedFields, $index): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
-            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
-        }
-        return $retVal;
-    }
-
-    public function finalTransferUpdateExistingOccurrences($collid, $mappedFields): int
-    {
-        $retVal = 1;
-        if($collid){
-            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid, $mappedFields);
+            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid, $mappedFields, $index);
         }
         return $retVal;
     }
@@ -402,9 +378,11 @@ class DataUploadService {
             else{
                 $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceData($collid);
             }
-            if($retVal && $updateAssociatedData){
-                (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
-                (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
+            if($retVal === 0 && $updateAssociatedData){
+                $retVal = (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
+                if($retVal === 0){
+                    $retVal = (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
+                }
             }
         }
         return $retVal;
