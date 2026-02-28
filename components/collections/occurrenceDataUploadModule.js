@@ -1148,9 +1148,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferPopulateMofIdentifiers() {
-            const text = 'Populating identifiers for measurement or fact records in upload';
-            currentProcess.value = 'finalTransferPopulateMofIdentifiers';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferPopulateMofIdentifiers'){
+                const text = 'Populating identifiers for measurement or fact records in upload';
+                currentProcess.value = 'finalTransferPopulateMofIdentifiers';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('eventMofDataFields', JSON.stringify(Object.keys(eventMofDataFields.value)));
@@ -1164,7 +1166,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    finalTransferPopulateMofIdentifiers();
+                }
+                else{
                     processSuccessResponse('Complete');
                     if(profileConfigurationData.value['existingMofRecords'] === 'merge'){
                         finalTransferRemoveExistingMofRecordsFromUpload();
@@ -1175,10 +1180,6 @@ const occurrenceDataUploadModule = {
                     else{
                         finalTransferClearPreviousMofRecords();
                     }
-                }
-                else{
-                    processErrorResponse('An error occurred while populating identifiers for measurement or fact records in upload');
-                    adjustUIEnd();
                 }
             });
         }

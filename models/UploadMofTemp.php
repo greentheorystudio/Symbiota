@@ -156,23 +156,42 @@ class UploadMofTemp{
 
     public function populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid){
             if(count($eventMofDataFields) > 0){
-                $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk AND u.collid = o.collid '.
-                    'SET u.eventid = o.eventid WHERE u.collid  = ' . (int)$collid . ' '.
-                    'AND o.eventid IS NOT NULL AND u.field IN("' . implode('","', $eventMofDataFields) . '") ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk AND u.collid = o.collid '.
+                    'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.eventid) AND o.eventid IS NOT NULL AND u.field IN("' . implode('","', $eventMofDataFields) . '") LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upmfid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk AND u.collid = o.collid SET u.eventid = o.eventid '.
+                            'WHERE u.upmfid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $returnVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
-
-            if($returnVal === 1 && count($occurrenceMofDataFields) > 0){
-                $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                    'SET u.occid = o.occid WHERE u.collid  = ' . (int)$collid . ' '.
-                    'AND o.occid IS NOT NULL AND u.field IN("' . implode('","', $occurrenceMofDataFields) . '") ';
-                if(!$this->conn->query($sql)){
-                    $returnVal = 0;
+            if($returnVal === 0 && count($occurrenceMofDataFields) > 0){
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                    'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) AND o.occid IS NOT NULL AND u.field IN("' . implode('","', $occurrenceMofDataFields) . '") LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upmfid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid SET u.occid = o.occid '.
+                            'WHERE u.upmfid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $returnVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
         }
