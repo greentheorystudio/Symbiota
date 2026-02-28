@@ -66,7 +66,6 @@ class Projects{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO fmprojects(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
             (new Permissions)->addPermission($GLOBALS['SYMB_UID'], 'ProjAdmin', $newID);
@@ -95,7 +94,6 @@ class Projects{
             $retVal = 0;
         }
         $sql = 'DELETE FROM fmchklstprojlink WHERE pid = ' . (int)$pid . ' ';
-        //echo $sql;
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
@@ -119,7 +117,6 @@ class Projects{
             }
         }
         $sql .= 'ORDER BY projname ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -143,7 +140,6 @@ class Projects{
         $sql = 'SELECT c.clid, c.`name`, c.latcentroid, c.longcentroid, c.defaultsettings '.
             'FROM fmchklstprojlink AS p LEFT JOIN fmchecklists AS c ON p.clid = c.clid '.
             'WHERE p.pid = ' . (int)$pid . ' ORDER BY c.`name` ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -168,7 +164,6 @@ class Projects{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmprojects WHERE pid = ' . (int)$pid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -249,7 +244,6 @@ class Projects{
             }
             $sql = 'UPDATE fmprojects SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE pid = ' . (int)$pid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

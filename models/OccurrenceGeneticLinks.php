@@ -49,7 +49,6 @@ class OccurrenceGeneticLinks{
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $sql = 'INSERT INTO omoccurgenetic(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
             }
@@ -96,7 +95,6 @@ class OccurrenceGeneticLinks{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurgenetic '.
             'WHERE occid = ' . (int)$occid . ' ORDER BY sourcename ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -126,7 +124,6 @@ class OccurrenceGeneticLinks{
             }
             $sql = 'UPDATE omoccurgenetic SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE idoccurgenetic = ' . (int)$linkId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

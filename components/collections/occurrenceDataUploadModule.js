@@ -563,6 +563,7 @@ const occurrenceDataUploadModule = {
             }
             return valid;
         });
+        const loadingIndex = Vue.ref(0);
         const localDwcaFileArr = Vue.ref([]);
         const localDwcaServerPath = Vue.ref(null);
         const mappedOccurrenceFields = Vue.computed(() => {
@@ -677,6 +678,7 @@ const occurrenceDataUploadModule = {
             {value: 'datavalue', label: 'measurementvalue'}
         ]);
         const symbiotaFieldOptionsOccurrence = Vue.ref([]);
+        const updatingIndex = Vue.ref(0);
         const uploadedFile = Vue.ref(null);
         const uploadSummaryData = Vue.ref({});
         
@@ -726,6 +728,8 @@ const occurrenceDataUploadModule = {
         }
 
         function clearData() {
+            loadingIndex.value = 0;
+            updatingIndex.value = 0;
             flatFileMode.value = false;
             includeDeterminationData.value = true;
             includeMultimediaData.value = true;
@@ -816,9 +820,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferAddNewDeterminations() {
-            const text = 'Transferring new identification records';
-            currentProcess.value = 'finalTransferAddNewDeterminations';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferAddNewDeterminations'){
+                const text = 'Transferring new identification records';
+                currentProcess.value = 'finalTransferAddNewDeterminations';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferAddNewDeterminations');
@@ -830,21 +836,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferProcessMedia();
+                if(Number(res) > 0){
+                    finalTransferAddNewDeterminations();
                 }
                 else{
-                    processErrorResponse('An error occurred while transferring new identification records');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferProcessMedia();
                 }
             });
         }
 
         function finalTransferAddNewMedia() {
-            const text = 'Transferring new media records';
-            currentProcess.value = 'finalTransferAddNewMedia';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferAddNewMedia'){
+                const text = 'Transferring new media records';
+                currentProcess.value = 'finalTransferAddNewMedia';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferAddNewMedia');
@@ -856,21 +863,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferProcessMof();
+                if(Number(res) > 0){
+                    finalTransferAddNewMedia();
                 }
                 else{
-                    processErrorResponse('An error occurred while transferring new media records');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferProcessMof();
                 }
             });
         }
 
         function finalTransferAddNewMof() {
-            const text = 'Transferring new measurement or fact records';
-            currentProcess.value = 'finalTransferAddNewMof';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferAddNewMof'){
+                const text = 'Transferring new measurement or fact records';
+                currentProcess.value = 'finalTransferAddNewMof';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferAddNewMof');
@@ -882,23 +890,25 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferPostProcessUpdateCollStats();
+                if(Number(res) > 0){
+                    finalTransferAddNewMof();
                 }
                 else{
-                    processErrorResponse('An error occurred while transferring new measurement or fact records');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferPostProcessUpdateCollStats();
                 }
             });
         }
 
         function finalTransferAddNewOccurrences() {
-            const text = 'Transferring new occurrence records';
-            currentProcess.value = 'finalTransferAddNewOccurrences';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferAddNewOccurrences'){
+                const text = 'Transferring new occurrence records';
+                currentProcess.value = 'finalTransferAddNewOccurrences';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
+            formData.append('index', loadingIndex.value.toString());
             formData.append('action', 'finalTransferAddNewOccurrences');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -908,21 +918,23 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferSetNewOccurrenceIds();
+                if(Number(res) > 0){
+                    loadingIndex.value++;
+                    finalTransferAddNewOccurrences();
                 }
                 else{
-                    processErrorResponse('An error occurred while transferring new occurrence records');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferSetNewOccurrenceIds();
                 }
             });
         }
 
         function finalTransferCleanMediaRecordFormatValues() {
-            const text = 'Cleaning media record format values in upload';
-            currentProcess.value = 'finalTransferCleanMediaRecordFormatValues';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferCleanMediaRecordFormatValues'){
+                const text = 'Cleaning media record format values in upload';
+                currentProcess.value = 'finalTransferCleanMediaRecordFormatValues';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferCleanMediaRecordFormatValues');
@@ -934,21 +946,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferCleanMediaRecordTidValues();
+                if(Number(res) > 0){
+                    finalTransferCleanMediaRecordFormatValues();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning media record format values in upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferCleanMediaRecordTidValues();
                 }
             });
         }
 
         function finalTransferCleanMediaRecords() {
-            const text = 'Cleaning media record URLs in upload';
-            currentProcess.value = 'finalTransferCleanMediaRecords';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferCleanMediaRecords'){
+                const text = 'Cleaning media record URLs in upload';
+                currentProcess.value = 'finalTransferCleanMediaRecords';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferCleanMediaRecords');
@@ -960,21 +973,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferCleanMediaRecordFormatValues();
+                if(Number(res) > 0){
+                    finalTransferCleanMediaRecords();
                 }
                 else{
-                    processErrorResponse('An error occurred while cleaning media record URLs in upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferCleanMediaRecordFormatValues();
                 }
             });
         }
 
         function finalTransferCleanMediaRecordTidValues() {
-            const text = 'Linking media records to taxonomic thesaurus';
-            currentProcess.value = 'finalTransferCleanMediaRecordTidValues';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferCleanMediaRecordTidValues'){
+                const text = 'Linking media records to taxonomic thesaurus';
+                currentProcess.value = 'finalTransferCleanMediaRecordTidValues';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferCleanMediaRecordTidValues');
@@ -986,7 +1000,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    finalTransferCleanMediaRecordTidValues();
+                }
+                else{
                     processSuccessResponse('Complete');
                     if(profileConfigurationData.value['existingMediaRecords'] === 'merge'){
                         finalTransferRemoveExistingMediaRecordsFromUpload();
@@ -997,10 +1014,6 @@ const occurrenceDataUploadModule = {
                     else{
                         finalTransferClearPreviousMediaRecords();
                     }
-                }
-                else{
-                    processErrorResponse('An error occurred while linking media records to taxonomic thesaurus');
-                    adjustUIEnd();
                 }
             });
         }
@@ -1145,9 +1158,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferPopulateMofIdentifiers() {
-            const text = 'Populating identifiers for measurement or fact records in upload';
-            currentProcess.value = 'finalTransferPopulateMofIdentifiers';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferPopulateMofIdentifiers'){
+                const text = 'Populating identifiers for measurement or fact records in upload';
+                currentProcess.value = 'finalTransferPopulateMofIdentifiers';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('eventMofDataFields', JSON.stringify(Object.keys(eventMofDataFields.value)));
@@ -1161,7 +1176,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    finalTransferPopulateMofIdentifiers();
+                }
+                else{
                     processSuccessResponse('Complete');
                     if(profileConfigurationData.value['existingMofRecords'] === 'merge'){
                         finalTransferRemoveExistingMofRecordsFromUpload();
@@ -1172,10 +1190,6 @@ const occurrenceDataUploadModule = {
                     else{
                         finalTransferClearPreviousMofRecords();
                     }
-                }
-                else{
-                    processErrorResponse('An error occurred while populating identifiers for measurement or fact records in upload');
-                    adjustUIEnd();
                 }
             });
         }
@@ -1255,7 +1269,7 @@ const occurrenceDataUploadModule = {
             const text = 'Updating collection statistics';
             currentProcess.value = 'finalTransferPostProcessUpdateCollStats';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            collectionStore.updateCollectionStatistics(props.collid, (res) => {
+            collectionStore.updateCollectionStatistics(props.collid, true, (res) => {
                 if(Number(res) === 1){
                     processSuccessResponse('Complete');
                 }
@@ -1299,9 +1313,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferRemoveDuplicateDbpkRecordsFromUpload() {
-            const text = 'Removing records with duplicate primary identifiers from upload';
-            currentProcess.value = 'finalTransferRemoveDuplicateDbpkRecordsFromUpload';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferRemoveDuplicateDbpkRecordsFromUpload'){
+                const text = 'Removing records with duplicate primary identifiers from upload';
+                currentProcess.value = 'finalTransferRemoveDuplicateDbpkRecordsFromUpload';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferRemoveDuplicateDbpkRecordsFromUpload');
@@ -1313,7 +1329,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    finalTransferRemoveDuplicateDbpkRecordsFromUpload();
+                }
+                else{
                     processSuccessResponse('Complete');
                     if(profileConfigurationData.value['existingRecords'] === 'skip'){
                         finalTransferRemoveUnmatchedOccurrences();
@@ -1322,17 +1341,15 @@ const occurrenceDataUploadModule = {
                         finalTransferUpdateExistingOccurrences();
                     }
                 }
-                else{
-                    processErrorResponse('An error occurred while removing records with duplicate primary identifiers from upload');
-                    adjustUIEnd();
-                }
             });
         }
 
         function finalTransferRemoveExistingDeterminationsFromUpload() {
-            const text = 'Removing existing determination records from upload';
-            currentProcess.value = 'finalTransferRemoveExistingDeterminationsFromUpload';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferRemoveExistingDeterminationsFromUpload'){
+                const text = 'Removing existing determination records from upload';
+                currentProcess.value = 'finalTransferRemoveExistingDeterminationsFromUpload';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferRemoveExistingDeterminationsFromUpload');
@@ -1344,21 +1361,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferAddNewDeterminations();
+                if(Number(res) > 0){
+                    finalTransferRemoveExistingDeterminationsFromUpload();
                 }
                 else{
-                    processErrorResponse('An error occurred while removing existing determination records from upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewDeterminations();
                 }
             });
         }
 
         function finalTransferRemoveExistingMediaRecordsFromUpload() {
-            const text = 'Removing existing media records from upload';
-            currentProcess.value = 'finalTransferRemoveExistingMediaRecordsFromUpload';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferRemoveExistingMediaRecordsFromUpload'){
+                const text = 'Removing existing media records from upload';
+                currentProcess.value = 'finalTransferRemoveExistingMediaRecordsFromUpload';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferRemoveExistingMediaRecordsFromUpload');
@@ -1370,21 +1388,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferAddNewMedia();
+                if(Number(res) > 0){
+                    finalTransferRemoveExistingMediaRecordsFromUpload();
                 }
                 else{
-                    processErrorResponse('An error occurred while removing existing media records from upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMedia();
                 }
             });
         }
 
         function finalTransferRemoveExistingMofRecordsFromUpload() {
-            const text = 'Removing existing measurement or fact records from upload';
-            currentProcess.value = 'finalTransferRemoveExistingMofRecordsFromUpload';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferRemoveExistingMofRecordsFromUpload'){
+                const text = 'Removing existing measurement or fact records from upload';
+                currentProcess.value = 'finalTransferRemoveExistingMofRecordsFromUpload';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'finalTransferRemoveExistingMofRecordsFromUpload');
@@ -1396,13 +1415,12 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferAddNewMof();
+                if(Number(res) > 0){
+                    finalTransferRemoveExistingMofRecordsFromUpload();
                 }
                 else{
-                    processErrorResponse('An error occurred while removing existing measurement or fact records from upload');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewMof();
                 }
             });
         }
@@ -1466,9 +1484,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferSetNewOccurrenceIds() {
-            const text = 'Populating IDs of new occurrence records in upload data';
-            currentProcess.value = 'finalTransferSetNewOccurrenceIds';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferSetNewOccurrenceIds'){
+                const text = 'Populating IDs of new occurrence records in upload data';
+                currentProcess.value = 'finalTransferSetNewOccurrenceIds';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('updateAssociatedData', '1');
@@ -1481,7 +1501,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    finalTransferSetNewOccurrenceIds();
+                }
+                else{
                     processSuccessResponse('Complete');
                     if(Number(profileConfigurationData.value['saveSourcePrimaryIdentifier']) === 1){
                         finalTransferProcessDeterminations();
@@ -1490,20 +1513,19 @@ const occurrenceDataUploadModule = {
                         finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences();
                     }
                 }
-                else{
-                    processErrorResponse('An error occurred while populating IDs');
-                    adjustUIEnd();
-                }
             });
         }
 
         function finalTransferUpdateExistingOccurrences() {
-            const text = 'Updating existing occurrence records';
-            currentProcess.value = 'finalTransferUpdateExistingOccurrences';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferUpdateExistingOccurrences'){
+                const text = 'Updating existing occurrence records';
+                currentProcess.value = 'finalTransferUpdateExistingOccurrences';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('mappedFields', JSON.stringify(mappedOccurrenceFields.value));
+            formData.append('index', updatingIndex.value.toString());
             formData.append('action', 'finalTransferUpdateExistingOccurrences');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -1513,13 +1535,13 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferRemoveUnmatchedOccurrences();
+                if(Number(res) > 0){
+                    updatingIndex.value++;
+                    finalTransferUpdateExistingOccurrences();
                 }
                 else{
-                    processErrorResponse('An error occurred while updating existing occurrence records');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferRemoveUnmatchedOccurrences();
                 }
             });
         }
@@ -2332,9 +2354,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleanTaxonomyCleanDualKingdomTaxa() {
-            const text = 'Checking taxon thesaurus linkages';
-            currentProcess.value = 'cleanUploadTaxonomyCleanDualKingdomTaxa';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleanUploadTaxonomyCleanDualKingdomTaxa'){
+                const text = 'Checking taxon thesaurus linkages';
+                currentProcess.value = 'cleanUploadTaxonomyCleanDualKingdomTaxa';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadTaxonomyCleanDualKingdomTaxa');
@@ -2346,35 +2370,22 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                processSuccessResponse('Complete');
-                processPostUploadCleanTaxonomyPopulateThesaurusData();
-            });
-        }
-
-        function processPostUploadCleanTaxonomyPopulateThesaurusData() {
-            const text = 'Populating taxonomic data from thesaurus';
-            currentProcess.value = 'cleanUploadTaxonomyPopulateThesaurusData';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            const formData = new FormData();
-            formData.append('collid', props.collid.toString());
-            formData.append('action', 'cleanUploadTaxonomyPopulateThesaurusData');
-            fetch(dataUploadServiceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                processSuccessResponse('Complete');
-                processPostUploadSetLocalitySecurity();
+                if(Number(res) > 0){
+                    processPostUploadCleanTaxonomyCleanDualKingdomTaxa();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    processPostUploadSetLocalitySecurity();
+                }
             });
         }
 
         function processPostUploadCleanTaxonomyPopulateTid() {
-            const text = 'Populating taxon identifiers from thesaurus';
-            currentProcess.value = 'cleanUploadTaxonomyPopulateTid';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleanUploadTaxonomyPopulateTid'){
+                const text = 'Populating taxon identifiers from thesaurus';
+                currentProcess.value = 'cleanUploadTaxonomyPopulateTid';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadTaxonomyPopulateTid');
@@ -2385,16 +2396,23 @@ const occurrenceDataUploadModule = {
             .then((response) => {
                 return response.ok ? response.text() : null;
             })
-            .then(() => {
-                processSuccessResponse('Complete');
-                processPostUploadCleanTaxonomyCleanDualKingdomTaxa();
+            .then((res) => {
+                if(Number(res) > 0){
+                    processPostUploadCleanTaxonomyPopulateTid();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanTaxonomyCleanDualKingdomTaxa();
+                }
             });
         }
 
         function processPostUploadExistingRecordAssociateProcessing() {
-            const text = 'Associating upload data with existing occurrence records';
-            currentProcess.value = 'linkExistingOccurrences';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'linkExistingOccurrences'){
+                const text = 'Associating upload data with existing occurrence records';
+                currentProcess.value = 'linkExistingOccurrences';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'linkExistingOccurrencesToUpload');
@@ -2413,13 +2431,12 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    processPostUploadCleaningScripts();
+                if(Number(res) > 0){
+                    processPostUploadExistingRecordAssociateProcessing();
                 }
                 else{
-                    processErrorResponse('An error occurred');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    processPostUploadCleaningScripts();
                 }
             });
         }

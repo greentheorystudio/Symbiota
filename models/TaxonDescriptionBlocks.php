@@ -51,7 +51,6 @@ class TaxonDescriptionBlocks{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO taxadescrblock(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
         }
@@ -113,7 +112,6 @@ class TaxonDescriptionBlocks{
                 'FROM taxadescrblock AS b LEFT JOIN taxadescrstmts AS s ON b.tdbid = s.tdbid '.
                 'WHERE b.tid IN(' . implode(',', $tidArr) . ') AND b.caption = "' . SanitizerService::cleanInStr($this->conn, $caption) . '" AND s.statement IS NOT NULL '.
                 'ORDER BY b.tdbid, s.sortsequence ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -147,7 +145,6 @@ class TaxonDescriptionBlocks{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM taxadescrblock WHERE tdbid = ' . (int)$tdbid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -183,7 +180,6 @@ class TaxonDescriptionBlocks{
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM taxadescrblock WHERE tid = ' . (int)$tid . ' '.
             'ORDER BY displaylevel ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -206,7 +202,6 @@ class TaxonDescriptionBlocks{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE taxadescrblock SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -232,7 +227,6 @@ class TaxonDescriptionBlocks{
             }
             $sql = 'UPDATE taxadescrblock SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE tdbid = ' . (int)$tdbid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

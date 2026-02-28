@@ -29,7 +29,6 @@ class TaxonHierarchy{
             if($tidStr){
                 $sql = 'DELETE FROM taxaenumtree '.
                     'WHERE tid IN(' . $tidStr . ') OR parenttid IN(' . $tidStr . ') ';
-                //echo $sql;
                 if($this->conn->query($sql)){
                     $returnVal = 1;
                 }
@@ -293,7 +292,6 @@ class TaxonHierarchy{
         if($tidStr){
             $sql .= 'WHERE e.tid IN(' . $tidStr . ') ';
         }
-        //echo $sql . '<br />';
         if($this->conn->query($sql)){
             $retCnt = $this->conn->affected_rows;
         }
@@ -329,7 +327,6 @@ class TaxonHierarchy{
         $sql = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid) '.
             'SELECT DISTINCT tid, parenttid FROM taxa '.
             'WHERE ' . ($tidStr ? 'tid IN(' . $tidStr . ') AND ' : '') . 'tid NOT IN(SELECT tid FROM taxaenumtree) AND parenttid IS NOT NULL ';
-        //echo $sql . '<br />';;
         if($this->conn->query($sql)){
             $retCnt = $this->conn->affected_rows;
         }
@@ -341,13 +338,11 @@ class TaxonHierarchy{
         $retVal = 1;
         if($tid){
             $sql = 'DELETE FROM taxaenumtree WHERE parenttid = ' . (int)$tid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
 
             $sql = 'UPDATE taxa SET parenttid = ' . (int)$parenttid . ' WHERE parenttid = ' . (int)$tid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }

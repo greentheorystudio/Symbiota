@@ -47,7 +47,6 @@ class TaxonKingdoms{
             'FROM taxonkingdoms AS k LEFT JOIN taxa AS t ON k.`kingdom_name` = t.SciName '.
             'WHERE t.tid IS NOT NULL '.
             'ORDER BY t.SciName ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();

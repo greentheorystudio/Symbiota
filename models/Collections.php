@@ -115,7 +115,6 @@ class Collections {
             $fieldValueArr[] = '"' . UuidService::getUuidV4() . '"';
             $sql = 'INSERT INTO omcollections(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
                 $sql = 'INSERT INTO omcollectionstats(collid, recordcnt, uploadedby) '.
@@ -218,7 +217,6 @@ class Collections {
             'FROM omcollections AS c LEFT JOIN omcollectionstats AS s ON c.collid = s.collid '.
             'LEFT JOIN institutions AS i ON c.iid = i.iid '.
             'WHERE c.collid = ' . (int)$collId . ' ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -342,7 +340,6 @@ class Collections {
                 'WHERE collid = ' . (int)$collId . ' AND country IS NOT NULL '.
                 'GROUP BY country ORDER BY termstr ';
         }
-        //echo $sql; exit;
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -368,7 +365,6 @@ class Collections {
     {
         $retArr = array();
         $sql = 'SELECT collid FROM omcollections WHERE isPublic = 1 ';
-        //echo "<div>$sql</div>";
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -403,7 +399,6 @@ class Collections {
         $parentTaxonSql = 'SELECT DISTINCT te.tid, t.tid AS parentTid, t.rankid, t.sciname '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.parenttid = t.tid '.
             'WHERE te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted AND t.RankId IN(10,30,60,100,140) ';
-        //echo '<div>Parent sql: ' .$parentTaxonSql. '</div>';
         if($result = $this->conn->query($parentTaxonSql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -417,7 +412,6 @@ class Collections {
         $sql = 'SELECT DISTINCT t.tid, t.sciname '.
             'FROM taxaenumtree AS te LEFT JOIN taxa AS t ON te.tid = t.tid '.
             'WHERE (te.tid IN(' . implode(',', $targetTidArr) . ') AND t.tid = t.tidaccepted) ';
-        //echo '<div>Table sql: ' .$sql. '</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -451,7 +445,6 @@ class Collections {
     {
         $retArr = array();
         $sql = 'SELECT family, count(occid) AS cnt FROM omoccurrences WHERE family IS NOT NULL AND collid = ' . $collId . ' GROUP BY family';
-        //echo $sql; exit;
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -497,7 +490,6 @@ class Collections {
             }
             $sql = 'UPDATE omcollections SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE collid = ' . (int)$collid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -505,8 +497,11 @@ class Collections {
         return $retVal;
     }
 
-    public function updateCollectionStatistics($collidStr): int
+    public function updateCollectionStatistics($collidStr, $newUpload): int
     {
+        if($newUpload){
+            $this->updateUploadDate($collidStr);
+        }
         $collidStr = SanitizerService::cleanInStr($this->conn, $collidStr);
         $this->performOccurrenceCleaning($collidStr);
         return $this->updateCollectionStats($collidStr);

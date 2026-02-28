@@ -80,7 +80,6 @@ class OccurrenceLocations{
             }
             $sql = 'INSERT INTO omoccurlocations(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
             }
@@ -171,7 +170,6 @@ class OccurrenceLocations{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurlocations WHERE locationid = ' . (int)$locationid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -197,7 +195,6 @@ class OccurrenceLocations{
         if($locationid){
             $sql .= 'AND locationid <> ' . $locationid . ' ';
         }
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -247,7 +244,6 @@ class OccurrenceLocations{
             'maximumelevationinmeters, verbatimelevation '.
             'FROM omoccurlocations WHERE collid = ' . (int)$collid . ' '.
             'AND ' . implode(' AND ', $sqlWhereArr);
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -277,7 +273,6 @@ class OccurrenceLocations{
             }
             $sql = 'UPDATE omoccurlocations SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE locationid = ' . (int)$locationId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = $this->updateOccurrencesFromLocationData($locationId);
             }
@@ -297,7 +292,6 @@ class OccurrenceLocations{
             }
             $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationid = l.locationid '.
                 'SET ' . implode(', ', $sqlPartArr) . ' WHERE l.locationid = ' . (int)$locationId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
                 foreach($this->collectingEventOverlapFields as $field){

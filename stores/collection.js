@@ -424,11 +424,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
                 }
             });
         },
-        updateCollectionStatistics(collidStr, callback = null) {
+        updateCollectionStatistics(collidStr, newUpload, callback = null) {
             if(collidStr){
                 const formData = new FormData();
                 formData.append('collid', this.collectionId.toString());
                 formData.append('collidStr', collidStr.toString());
+                formData.append('newUpload', (newUpload ? '1' : '0'));
                 formData.append('action', 'updateCollectionStatistics');
                 fetch(collectionApiUrl, {
                     method: 'POST',

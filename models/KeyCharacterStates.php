@@ -54,7 +54,6 @@ class KeyCharacterStates{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO keycharacterstates(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
         }
@@ -103,7 +102,6 @@ class KeyCharacterStates{
             'LEFT JOIN taxa AS t ON tl.tid = t.tid '.
             'LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
             'WHERE cs.cid = ' . (int)$cid . ' AND (tl.tid = ' . (int)$tid . ' OR te.tid = ' . (int)$tid . ') ORDER BY rankid ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -131,7 +129,6 @@ class KeyCharacterStates{
             'LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
             'WHERE te.tid IN(' . implode(',', $tidArr) . ') '.
             'ORDER BY te.tid, cs.cid, rankid ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -170,7 +167,6 @@ class KeyCharacterStates{
             'LEFT JOIN keycharacterstates AS cs ON tl.csid = cs.csid '.
             'WHERE tl.tid IN(' . implode(',', $tidArr) . ') '.
             'ORDER BY t.tid, cs.cid, rankid ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -202,7 +198,6 @@ class KeyCharacterStates{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM keycharacterstates WHERE csid = ' . (int)$csid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -225,7 +220,6 @@ class KeyCharacterStates{
             $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM keycharacterstates WHERE cid = ' . (int)$cid . ' '.
                 'ORDER BY sortsequence, characterstatename ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -252,7 +246,6 @@ class KeyCharacterStates{
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM keycharacterstates WHERE csid IN(' . implode(',', $csidArr) . ') ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $retArr['character-states'] = array();
                 $fields = mysqli_fetch_fields($result);
@@ -285,7 +278,6 @@ class KeyCharacterStates{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE keycharacterstatetaxalink SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -317,7 +309,6 @@ class KeyCharacterStates{
             }
             $sql = 'UPDATE keycharacterstates SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE csid = ' . (int)$csid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

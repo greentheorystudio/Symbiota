@@ -31,7 +31,6 @@ class ChecklistVouchers{
         if($clid && $occid && $tid){
             $sql = 'INSERT INTO fmvouchers(clid, occid, tid) '.
                 'VALUES (' . (int)$clid . ', ' . (int)$occid . ', ' . (int)$tid . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
             }
@@ -48,7 +47,6 @@ class ChecklistVouchers{
                 $sqlValueArr[] = '(' . (int)$clid . ',' . (int)$occid . ',' . (int)$tid . ')';
             }
             $sql = 'INSERT INTO fmvouchers(clid, occid, tid) VALUES ' . implode(',', $sqlValueArr) . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -61,7 +59,6 @@ class ChecklistVouchers{
         $retVal = 1;
         if($clid && $occid){
             $sql = 'DELETE FROM fmvouchers WHERE clid = ' . (int)$clid . ' AND occid = ' . (int)$occid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }

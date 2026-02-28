@@ -130,7 +130,6 @@ class Users{
         $returnVal = 0;
         if($uid){
             $sql = 'DELETE FROM useraccesstokens WHERE uid = ' . (int)$uid;
-            //echo $sql;
             if($this->conn->query($sql)){
                 $returnVal = 1;
             }
@@ -209,7 +208,6 @@ class Users{
             $fieldValueArr[] = '0';
             $sql = 'INSERT INTO users(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
                 $this->clearCookieSession();
@@ -255,22 +253,18 @@ class Users{
         $retuenVal = 1;
         if($uid){
             $sql = 'DELETE FROM useraccesstokens WHERE uid = ' . (int)$uid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retuenVal = 0;
             }
             $sql = 'DELETE FROM userroles WHERE uid = ' . (int)$uid . ' OR uidassignedby = ' . (int)$uid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retuenVal = 0;
             }
             $sql = 'UPDATE images SET photographeruid = NULL WHERE photographeruid = ' . (int)$uid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retuenVal = 0;
             }
             $sql = 'UPDATE media SET creatoruid = NULL WHERE creatoruid = ' . (int)$uid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retuenVal = 0;
             }
@@ -301,7 +295,6 @@ class Users{
     {
         $cnt = 0;
         $sql = 'SELECT COUNT(token) AS cnt FROM useraccesstokens WHERE uid = ' . (int)$uid;
-        //echo $sql;
         $result = $this->conn->query($sql);
         if($row = $result->fetch_array(MYSQLI_ASSOC)){
             $cnt = $row['cnt'];
@@ -321,7 +314,6 @@ class Users{
                 $sql .= 'AND r.tablepk = ' . (int)$tablePk . ' ';
             }
             $sql .= 'ORDER BY u.lastname, u.firstname, u.username ';
-            //echo "<div>".$sql."</div>";
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -427,7 +419,6 @@ class Users{
             $sql .= 'WHERE ' . implode(' AND ', $whereArr) . ' ';
         }
         $sql .= 'ORDER BY lastname, firstname';
-        //echo "<div>".$sql."</div>";
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -615,7 +606,6 @@ class Users{
             }
             $sql = 'UPDATE users SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE uid = ' . (int)$userId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
