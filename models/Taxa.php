@@ -77,7 +77,6 @@ class Taxa{
         $status = 0;
         if(is_numeric($tid)){
             $sql = 'SELECT family, kingdomId FROM taxa WHERE TID = ' . (int)$parentTid . ' ';
-            //echo $sql."<br>";
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
                 $result->free();
@@ -85,7 +84,6 @@ class Taxa{
                     $kingdomId = (int)$row['kingdomId'];
                     $family = $row['family'];
                     $sql2 = 'UPDATE taxa SET parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tid = ' . (int)$tid . ' ';
-                    //echo $sql2;
                     if($this->conn->query($sql2)) {
                         $status = 1;
                         $sqlSyns = 'UPDATE taxa SET parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tidaccepted = ' . (int)$tid . ' ';
@@ -113,7 +111,6 @@ class Taxa{
         $status = 0;
         if(is_numeric($tid)){
             $sql = 'SELECT parenttid, family, kingdomId FROM taxa WHERE TID = ' . (int)$tidAccepted . ' ';
-            //echo $sql."<br>";
             if($result = $this->conn->query($sql)){
                 $row = $result->fetch_array(MYSQLI_ASSOC);
                 $result->free();
@@ -122,7 +119,6 @@ class Taxa{
                     $kingdomId = (int)$row['kingdomId'];
                     $family = $row['family'];
                     $sql2 = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tid = ' . (int)$tid . ' ';
-                    //echo $sql2;
                     if($this->conn->query($sql2)) {
                         $status = 1;
                         $sqlSyns = 'UPDATE taxa SET tidaccepted = ' . (int)$tidAccepted . ', parenttid = ' . $parentTid . ', family = ' . ($family ? ('"' . $family . '"') : 'NULL') . ', kingdomId = ' . $kingdomId . ' WHERE tidaccepted = ' . (int)$tid . ' ';
@@ -176,7 +172,6 @@ class Taxa{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT IGNORE INTO taxa(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
             if((int)$data['tidaccepted'] === 0){
@@ -192,7 +187,6 @@ class Taxa{
                 $sqlId = 'INSERT IGNORE INTO taxaidentifiers(tid, `name`, identifier) VALUES('.
                     $newID . ', "' . SanitizerService::cleanInStr($this->conn, $data['source-name']) . '", '.
                     '"' . SanitizerService::cleanInStr($this->conn, $data['source-id']) . '") ';
-                //echo $sqlId; exit;
                 $this->conn->query($sqlId);
             }
         }
@@ -219,12 +213,10 @@ class Taxa{
                 (new TaxonKingdoms)->deleteTaxonKingdom($taxonData['sciname']);
             }
             $sql = 'DELETE FROM glossarytaxalink WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
             $sql = 'DELETE FROM taxa WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
@@ -252,7 +244,6 @@ class Taxa{
                 'OR TID IN(SELECT tid FROM omoccurrences WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM taxadescrblock WHERE tid = ' . (int)$tid . ') '.
                 'OR TID IN(SELECT tid FROM taxamaps WHERE tid = ' . (int)$tid . ') ';
-            //echo $sql;
             $rs = $this->conn->query($sql);
             $retVal = $rs->num_rows;
             $rs->free();
@@ -266,7 +257,6 @@ class Taxa{
         if($parentTid){
             $sql = 'SELECT DISTINCT tid, sciname, rankid, parenttid FROM taxa WHERE tid = tidaccepted AND parenttid = ' . (int)$parentTid . ' ';
             $sql .= 'ORDER BY sciname ';
-            //echo $sql;
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -296,7 +286,6 @@ class Taxa{
             }
             $sql .= 'ORDER BY sciname '.
                 'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
-            //echo $sql;
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -698,7 +687,6 @@ class Taxa{
                 'WHERE t.TID IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'OR t.parenttid IN(SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') '.
                 'ORDER BY t.RankId ';
-            //echo $sql;
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -779,7 +767,6 @@ class Taxa{
     {
         $retArr = array();
         $sql = 'SELECT DISTINCT tid, tidaccepted, sciname FROM taxa WHERE tidaccepted IN(' . implode(',', $tidArr) . ') AND tid <> tidaccepted ORDER BY tidaccepted, sciname ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -970,7 +957,6 @@ class Taxa{
             }
             $sql .= 'ORDER BY SciName '.
                 'LIMIT ' . (((int)$index - 1) * 50000) . ', 50000';
-            //echo $sql;
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -1020,7 +1006,6 @@ class Taxa{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE taxa SET parenttid = ' . (int)$targetTid . ' WHERE parenttid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -1033,7 +1018,6 @@ class Taxa{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE taxa SET parenttid = ' . (int)$targetTid . ' WHERE parenttid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -1092,7 +1076,6 @@ class Taxa{
         if($tid){
             $sql = 'UPDATE taxa SET securitystatus = 0 '.
                 'WHERE tid = ' . (int)$tid . ' OR tidaccepted = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
                 (new Occurrences)->protectGlobalSpecies(0);
@@ -1112,7 +1095,6 @@ class Taxa{
             $tidArr[] = $tid;
             $sql = 'UPDATE taxa SET securitystatus = 1 '.
                 'WHERE tid IN(' . implode(',', $tidArr) . ') OR tidaccepted IN(' . implode(',', $tidArr) . ') ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
                 (new Occurrences)->protectGlobalSpecies(0);
@@ -1191,7 +1173,6 @@ class Taxa{
             $sql1 = 'UPDATE taxa '.
                 'SET family = SciName '.
                 'WHERE RankId = 140 AND TID = tidaccepted AND (TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') OR TID = ' . (int)$parentTid . ') ';
-            //echo $sql1;
             if($this->conn->query($sql1)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -1200,7 +1181,6 @@ class Taxa{
                 'LEFT JOIN taxa AS t2 ON te.parenttid = t2.TID '.
                 'SET t.family = t2.SciName '.
                 'WHERE t.RankId >= 140 AND t.TID = t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') OR t.TID = ' . (int)$parentTid . ') AND (t2.RankId = 140 OR ISNULL(t2.RankId)) ';
-            //echo $sql3;
             if($this->conn->query($sql3)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -1215,7 +1195,6 @@ class Taxa{
             $sql2 = 'UPDATE taxa AS t LEFT JOIN taxa AS t2 ON t.tidaccepted = t2.TID '.
                 'SET t.family = t2.family '.
                 'WHERE t.RankId = 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') OR t.TID = ' . (int)$parentTid . ') ';
-            //echo $sql2;
             if($this->conn->query($sql2)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -1225,7 +1204,6 @@ class Taxa{
                 'LEFT JOIN taxa AS t3 ON te.parenttid = t3.TID '.
                 'SET t.family = t3.SciName '.
                 'WHERE t.RankId >= 140 AND t.TID <> t.tidaccepted AND (t.TID IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . (int)$parentTid . ') OR t.TID = ' . (int)$parentTid . ') AND t3.RankId = 140 ';
-            //echo $sql4;
             if($this->conn->query($sql4)){
                 $retCnt += $this->conn->affected_rows;
             }
@@ -1237,7 +1215,6 @@ class Taxa{
     {
         $retVal = false;
         $sql = 'SELECT TID FROM taxa WHERE parenttid = ' . (int)$tid . ' LIMIT 1 ';
-        //echo $sql;
         $result = $this->conn->query($sql);
         if($result->num_rows){
             $retVal = true;
@@ -1274,7 +1251,6 @@ class Taxa{
             $sqlPartArr[] = 'modifiedtimestamp = "' . date('Y-m-d H:i:s') . '"';
             $sql = 'UPDATE taxa SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE tid = ' . (int)$tid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -1288,7 +1264,6 @@ class Taxa{
         if($tid && $kingdomid){
             $sql = 'UPDATE taxa SET kingdomid = ' . (int)$kingdomid . ' AND family = ' . ($family ? ('"' . SanitizerService::cleanInStr($this->conn, $family) . '"') : 'NULL') . ' '.
                 'WHERE parenttid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -1319,7 +1294,6 @@ class Taxa{
         }
         elseif((array_key_exists('parenttid',$dataArr) && $dataArr['parenttid']) && (!array_key_exists('kingdomid',$dataArr) || !$dataArr['kingdomid'] || !array_key_exists('family',$dataArr) || !$dataArr['family'])){
             $sqlKg = 'SELECT kingdomId, family FROM taxa WHERE tid = ' . (int)$dataArr['parenttid'] . ' ';
-            //echo $sqlKg; exit;
             if($result = $this->conn->query($sqlKg)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();

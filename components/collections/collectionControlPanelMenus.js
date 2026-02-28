@@ -176,7 +176,7 @@ const collectionControlPanelMenus = {
 
         function updateCollectionStatistics() {
             showWorking();
-            collectionStore.updateCollectionStatistics(props.collectionId, (res) => {
+            collectionStore.updateCollectionStatistics(props.collectionId, false, (res) => {
                 hideWorking();
                 if(res > 0){
                     showNotification('positive','Collection statistics updated successfully.');

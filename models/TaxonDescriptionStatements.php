@@ -43,7 +43,6 @@ class TaxonDescriptionStatements{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO taxadescrstmts(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
         }
@@ -68,7 +67,6 @@ class TaxonDescriptionStatements{
             'FROM taxadescrblock AS tb LEFT JOIN taxadescrstmts AS ts ON tb.tdbid = ts.tdbid '.
             'WHERE tb.tid = ' . (int)$tid . ' '.
             'ORDER BY ts.tdbid, ts.sortsequence ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -102,7 +100,6 @@ class TaxonDescriptionStatements{
             $sqlPartArr[] = 'displayheader = ' . ((int)$editData['displayheader'] === 1 ? '1' : '0');
             $sql = 'UPDATE taxadescrstmts SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE tdsid = ' . (int)$tdsid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

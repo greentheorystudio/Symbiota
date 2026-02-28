@@ -102,10 +102,19 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp WHERE dbpk NOT IN(SELECT DISTINCT dbpk FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ' AND dbpk IS NOT NULL) LIMIT 10000 ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT ud.updid FROM uploaddetermtemp AS ud LEFT JOIN uploadspectemp AS us ON ud.dbpk = us.dbpk WHERE ud.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['updid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploaddetermtemp WHERE updid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -132,24 +141,48 @@ class UploadDeterminationTemp{
         return $returnVal;
     }
 
-    public function populateOccidFromUploadOccurrenceData($collid): void
+    public function populateOccidFromUploadOccurrenceData($collid): int
     {
+        $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploaddetermtemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'SET u.occid = o.occid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            $this->conn->query($sql);
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.updid FROM uploaddetermtemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['updid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploaddetermtemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid SET u.occid = o.occid '.
+                        'WHERE u.updid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
+            }
         }
+        return $returnVal;
     }
 
     public function removeExistingDeterminationDataFromUpload($collid): int
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE u.* FROM uploaddetermtemp AS u LEFT JOIN omoccurdeterminations AS d ON u.occid = d.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND u.sciname = d.sciname AND u.identifiedby = d.identifiedby AND u.dateidentified = d.dateidentified ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.updid FROM uploaddetermtemp AS u LEFT JOIN omoccurdeterminations AS d ON u.occid = d.occid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND u.sciname = d.sciname AND u.identifiedby = d.identifiedby AND u.dateidentified = d.dateidentified LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['updid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploaddetermtemp WHERE updid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -159,10 +192,20 @@ class UploadDeterminationTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploaddetermtemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
-            'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 50000 ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT ud.updid FROM uploaddetermtemp AS ud LEFT JOIN omoccurrences AS o ON ud.collid = o.collid AND ud.dbpk = o.dbpk '.
+                'WHERE ud.collid = ' . (int)$collid . ' AND o.occid IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['updid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploaddetermtemp WHERE updid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;

@@ -29,7 +29,8 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($collections->getCollectionInfoArr($collid));
     }
     elseif($action === 'updateCollectionStatistics' && $isEditor && array_key_exists('collidStr', $_POST)){
-        echo $collections->updateCollectionStatistics($_POST['collidStr']);
+        $newUpload = array_key_exists('newUpload', $_POST) && (int)$_POST['newUpload'] === 1;
+        echo $collections->updateCollectionStatistics($_POST['collidStr'], $newUpload);
     }
     elseif($action === 'cleanSOLRIndex' && $isEditor && array_key_exists('collidStr', $_POST)){
         echo $collections->cleanSOLRIndex($_POST['collidStr']);
@@ -38,8 +39,8 @@ if($action && SanitizerService::validateInternalRequest()){
         echo json_encode($collections->getSpeciesListDownloadData($collid));
     }
     elseif($action === 'getGeographicDistributionData' && $collid){
-        $country = array_key_exists('country',$_POST) ? $_POST['country'] : null;
-        $state = array_key_exists('state',$_POST) ? $_POST['state'] : null;
+        $country = $_POST['country'] ?? null;
+        $state = $_POST['state'] ?? null;
         echo json_encode($collections->getGeographicDistributionData($collid, $country, $state));
     }
     elseif($action === 'getTaxonomicDistributionData' && $collid){
