@@ -85,7 +85,6 @@ class Checklists{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO fmchecklists(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
             (new Permissions)->addPermission($GLOBALS['SYMB_UID'], 'ClAdmin', $newID);
@@ -112,7 +111,6 @@ class Checklists{
             $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
             $sql = 'INSERT INTO fmchecklists(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
                 if(!(new ChecklistTaxa)->batchCreateChecklistTaxaRecordsFromTidArr($newID, $tidArr)){
@@ -163,7 +161,6 @@ class Checklists{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmchecklists WHERE access = "public" AND appconfigjson IS NOT NULL ORDER BY `name` ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -202,7 +199,6 @@ class Checklists{
             }
         }
         $sql .= 'ORDER BY `name` ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -246,7 +242,6 @@ class Checklists{
             }
         }
         $sql .= 'ORDER BY p.projname ';
-        //echo $sql;
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -293,7 +288,6 @@ class Checklists{
     {
         $retArr = array();
         $sql = 'SELECT clid FROM fmchecklists WHERE parentclid IN(' . implode(',', $clidArr) . ') ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -311,7 +305,6 @@ class Checklists{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM fmchecklists WHERE clid = ' . (int)$clid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -390,7 +383,6 @@ class Checklists{
             }
             $sql = 'UPDATE fmchecklists SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE clid = ' . (int)$clid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
                 (new Permissions)->addPermission($GLOBALS['SYMB_UID'], 'ClAdmin', $clid);
@@ -424,7 +416,6 @@ class Checklists{
             $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';
             $sql = 'UPDATE fmchecklists SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE clid = ' . (int)$clid . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

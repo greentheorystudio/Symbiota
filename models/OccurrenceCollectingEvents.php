@@ -79,7 +79,6 @@ class OccurrenceCollectingEvents{
             }
             $sql = 'INSERT INTO omoccurcollectingevents(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
             }
@@ -112,7 +111,6 @@ class OccurrenceCollectingEvents{
             'lifestage, sex, occurrenceremarks, typestatus, reproductivecondition, establishmentmeans, dynamicproperties, '.
             'catalognumber, othercatalognumbers, basisofrecord, verbatimattributes '.
             'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -136,7 +134,6 @@ class OccurrenceCollectingEvents{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM omoccurcollectingevents WHERE eventID = ' . (int)$eventid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -162,7 +159,6 @@ class OccurrenceCollectingEvents{
         $sql = 'SELECT occid, tid, sciname, family, scientificnameauthorship, identificationremarks, identificationqualifier, rep, individualcount '.
             'FROM omoccurrences WHERE eventid = ' . (int)$eventid . ' '.
             'ORDER BY sciname, identificationqualifier, identificationremarks, rep ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -202,7 +198,6 @@ class OccurrenceCollectingEvents{
             'LEFT JOIN omoccurlocations AS l ON e.locationid = l.locationid '.
             'WHERE e.collid = ' . (int)$collid . ' AND ' . implode(' AND ', $sqlWhereArr) . ' '.
             'ORDER BY e.eventdate DESC, e.recordnumber ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -226,12 +221,10 @@ class OccurrenceCollectingEvents{
         if($eventId && $locationId){
             $sql = 'UPDATE omoccurcollectingevents SET locationid = ' . (int)$locationId . ' '.
                 'WHERE eventid = ' . (int)$eventId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
                 $sql = 'UPDATE omoccurrences SET locationid = ' . (int)$locationId . ' '.
                     'WHERE eventid = ' . (int)$eventId . ' ';
-                //echo "<div>".$sql."</div>";
                 if(!$this->conn->query($sql)){
                     $retVal = 0;
                 }
@@ -261,7 +254,6 @@ class OccurrenceCollectingEvents{
             }
             $sql = 'UPDATE omoccurcollectingevents SET ' . implode(', ', $sqlPartArr) . ' '.
                 'WHERE eventid = ' . (int)$eventId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = $this->updateOccurrencesFromCollectingEventData($eventId);
             }
@@ -287,7 +279,6 @@ class OccurrenceCollectingEvents{
             }
             $sql = 'UPDATE omoccurrences AS o LEFT JOIN omoccurcollectingevents AS e ON o.eventid = e.eventid '.
                 'SET ' . implode(', ', $sqlPartArr) . ' WHERE e.eventid = ' . (int)$eventId . ' ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $retVal = 1;
             }

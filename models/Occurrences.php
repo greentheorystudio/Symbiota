@@ -530,7 +530,7 @@ class Occurrences{
         return $newID;
     }
 
-    public function createOccurrenceRecordsFromUploadData($collId): int
+    public function createOccurrenceRecordsFromUploadData($collId, $index): int
     {
         $skipFields = array('occid', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
         $retVal = 0;
@@ -549,9 +549,9 @@ class Occurrences{
             if(count($fieldNameArr) > 0){
                 $sql = 'INSERT INTO omoccurrences(' . implode(',', $fieldNameArr) . ',dateentered) '.
                     'SELECT ' . implode(',', $fieldNameArr) . ', "' . date('Y-m-d H:i:s') . '" FROM uploadspectemp '.
-                    'WHERE collid = ' . (int)$collId . ' AND ISNULL(occid) ';
+                    'WHERE collid = ' . (int)$collId . ' AND ISNULL(occid) LIMIT ' . ($index * 50000) . ', 50000 ';
                 if($this->conn->query($sql)){
-                    $retVal = 1;
+                    $retVal = $this->conn->affected_rows;
                 }
             }
         }
@@ -569,7 +569,7 @@ class Occurrences{
             $whereStr = 'occid IN(' . implode(',', $id) . ') ';
         }
         elseif($idType === 'collid'){
-            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ' LIMIT 10000) ';
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') LIMIT 10000 ';
         }
         if($whereStr){
             (new OccurrenceDeterminations)->deleteOccurrenceDeterminationRecords($idType, $id);
@@ -625,12 +625,7 @@ class Occurrences{
                 }
             }
             if($retVal){
-                if($idType === 'occid' || $idType === 'occidArr'){
-                    $sql = 'DELETE FROM omoccurrences WHERE ' . $whereStr . ' ';
-                }
-                else{
-                    $sql = 'DELETE FROM omoccurrences WHERE collid = ' . (int)$id . ' ';
-                }
+                $sql = 'DELETE FROM omoccurrences WHERE ' . $whereStr . ' ';
                 if($this->conn->query($sql)){
                     $retVal = $this->conn->affected_rows;
                 }
@@ -1293,7 +1288,7 @@ class Occurrences{
         return $retVal;
     }
 
-    public function updateOccurrenceRecordsFromUploadData($collId, $mappedFields): int
+    public function updateOccurrenceRecordsFromUploadData($collId, $mappedFields, $index): int
     {
         $skipFields = array('occid', 'collid', 'dbpk', 'recordedbyid', 'associatedoccurrences', 'recordenteredby', 'dateentered', 'datelastmodified');
         $retVal = 0;
@@ -1312,11 +1307,20 @@ class Occurrences{
             }
             if(count($sqlPartArr) > 0){
                 $sqlPartArr[] = 'datelastmodified = "' . date('Y-m-d H:i:s') . '"';
-                $sql = 'UPDATE omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
-                    'SET ' . implode(', ', $sqlPartArr) . ' '.
-                    'WHERE u.collid = ' . (int)$collId . ' ';
-                if($this->conn->query($sql)){
-                    $retVal = 1;
+                $idArr = array();
+                $sql = 'SELECT upspid FROM uploadspectemp WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL LIMIT ' . ($index * 50000) . ', 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upspid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'UPDATE omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid SET ' . implode(', ', $sqlPartArr) . ' '.
+                            'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $retVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
         }
