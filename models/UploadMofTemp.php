@@ -204,7 +204,7 @@ class UploadMofTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.eventid = m.eventid '.
-                'WHERE u.collid  = ' . $collid . ' AND m.eventid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
+                'WHERE u.collid  = ' . (int)$collid . ' AND m.eventid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmfid'];
@@ -220,7 +220,7 @@ class UploadMofTemp{
             if($returnVal === 0){
                 $idArr = array();
                 $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.occid = m.occid '.
-                    'WHERE u.collid  = ' . $collid . ' AND m.occid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
+                    'WHERE u.collid  = ' . (int)$collid . ' AND m.occid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upmfid'];

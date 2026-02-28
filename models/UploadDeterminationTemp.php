@@ -170,8 +170,8 @@ class UploadDeterminationTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT ud.updid FROM uploaddetermtemp AS ud LEFT JOIN omoccurdeterminations AS d ON ud.occid = d.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND u.sciname = d.sciname AND u.identifiedby = d.identifiedby AND u.dateidentified = d.dateidentified LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT u.updid FROM uploaddetermtemp AS u LEFT JOIN omoccurdeterminations AS d ON u.occid = d.occid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND u.sciname = d.sciname AND u.identifiedby = d.identifiedby AND u.dateidentified = d.dateidentified LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['updid'];

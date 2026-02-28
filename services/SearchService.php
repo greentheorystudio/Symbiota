@@ -34,7 +34,6 @@ class SearchService {
             $sql = 'SELECT eventid, occid, field, datavalue FROM ommofextension WHERE ';
             $sql .= 'eventid IN(SELECT DISTINCT o.eventid ' . $fromStr . $whereStr . ') OR ';
             $sql .= 'occid IN(SELECT DISTINCT o.occid ' . $fromStr . $whereStr . ') ';
-            //echo '<div>Tid sql: ' . $sql . '</div>';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -140,7 +139,6 @@ class SearchService {
                 if(array_key_exists('checklist', $options) && (int)$options['checklist'] === 1){
                     $sql .= 'AND t.rankid > 140 ';
                 }
-                //echo '<div>Tid sql: ' . $sql . '</div>';
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();

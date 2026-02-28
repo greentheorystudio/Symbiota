@@ -159,7 +159,6 @@ class Images{
         $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
         $sql = 'INSERT INTO images(' . implode(',', $fieldNameArr) . ') '.
             'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        //echo "<div>".$sql."</div>";
         if($this->conn->query($sql)){
             $newID = $this->conn->insert_id;
             $guid = UuidService::getUuidV4();
@@ -176,7 +175,7 @@ class Images{
     public function createImageRecordsFromUploadData($collId): int
     {
         $skipFields = array('imgid', 'photographeruid', 'mediamd5', 'dynamicproperties', 'username', 'initialtimestamp');
-        $retVal = 1;
+        $retVal = 0;
         $fieldNameArr = array();
         if($collId){
             foreach($this->fields as $field => $fieldArr){
@@ -190,12 +189,25 @@ class Images{
                 }
             }
             if(count($fieldNameArr) > 0){
-                $sql = 'INSERT INTO images(' . implode(',', $fieldNameArr) . ') '.
-                    'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
-                    'WHERE collid = ' . (int)$collId . ' AND occid IS NOT NULL AND url IS NOT NULL AND format IS NOT NULL ';
-                //echo "<div>".$sql."</div>";
-                if(!$this->conn->query($sql)){
-                    $retVal = 0;
+                $idArr = array();
+                $sql = 'SELECT u.upmid FROM uploadmediatemp AS u LEFT JOIN omoccurrences AS o ON u.occid = o.occid '.
+                    'LEFT JOIN images AS m1 ON o.occid = m1.occid AND u.url = m1.url '.
+                    'LEFT JOIN images AS m2 ON o.occid = m2.occid AND u.sourceurl = m2.url '.
+                    'WHERE o.collid = ' . (int)$collId . ' AND u.url IS NOT NULL AND u.sourceurl IS NOT NULL AND u.format IS NOT NULL '.
+                    'AND ISNULL(m1.imgid) AND ISNULL(m2.imgid) LIMIT 50000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upmid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'INSERT INTO images(' . implode(',', $fieldNameArr) . ') '.
+                            'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadmediatemp '.
+                            'WHERE upmid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $retVal = $this->conn->affected_rows;
+                        }
+                    }
                 }
             }
         }
@@ -221,7 +233,6 @@ class Images{
         elseif($idType === 'tid'){
             $sql = 'SELECT url, thumbnailurl, originalurl FROM images WHERE tid = ' . (int)$id . ' AND ISNULL(occid) ';
         }
-        //echo '<div>'.$sql.'</div>';
         if($sql && $result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -319,7 +330,6 @@ class Images{
         $retVal = 1;
         if($imgid && $tag){
             $sql = 'DELETE FROM imagetag WHERE imgid = ' . (int)$imgid . ' AND keyvalue = "' . SanitizerService::cleanInStr($this->conn, $tag) . '" ';
-            //echo $sql;
             if(!$this->conn->query($sql)){
                 $retVal = 0;
             }
@@ -356,7 +366,6 @@ class Images{
             $sql = 'SELECT t.' . $matchField . ', i.imgid, i.url, i.thumbnailurl, i.alttext, i.photographer, i.owner, i.sortsequence '.
                 'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                 'WHERE t.' . $matchField . ' IN(' . implode(',', $tidArr) . ') AND i.sortsequence < 500 ORDER BY i.sortsequence ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -417,7 +426,6 @@ class Images{
                 'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.
                 'WHERE ' . implode(' OR ', $sqlWhereArr) . ' '.
                 'ORDER BY t.keyvalue ';
-            //error_log('SQL: ' . $sql);
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -467,7 +475,6 @@ class Images{
             if($limit){
                 $sql .= 'LIMIT ' . (int)$limit . ' ';
             }
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -507,7 +514,6 @@ class Images{
             'FROM images AS i LEFT JOIN imagetag AS t ON i.imgid = t.imgid '.
             'WHERE t.keyvalue = "' . SanitizerService::cleanInStr($this->conn, $value) . '" ';
         $sql .= 'ORDER BY i.sortsequence ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -531,7 +537,6 @@ class Images{
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
             'FROM images WHERE imgid = ' . (int)$imgid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -552,7 +557,6 @@ class Images{
     {
         $retArr = array();
         $sql = 'SELECT keyvalue FROM imagetag WHERE imgid = ' . (int)$imgid . ' ';
-        //echo '<div>'.$sql.'</div>';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
@@ -598,7 +602,6 @@ class Images{
                     $sql .= 'AND i.sortsequence <= ' . (int)$sortsequenceLimit . ' ';
                 }
                 $sql .= 'ORDER BY i.sortsequence ';
-                //echo '<div>'.$sql.'</div>';
                 if($result = $this->conn->query($sql)){
                     $fields = mysqli_fetch_fields($result);
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -643,7 +646,6 @@ class Images{
                         $sql .= 'AND i.sortsequence <= ' . (int)$sortsequenceLimit . ' ';
                     }
                     $sql .= 'ORDER BY i.sortsequence ';
-                    //echo '<div>'.$sql.'</div>';
                     if($result = $this->conn->query($sql)){
                         $fields = mysqli_fetch_fields($result);
                         $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -706,7 +708,6 @@ class Images{
                 'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                 'WHERE ' . implode(' OR ', $sqlWhereArr) . ' '.
                 'ORDER BY it.keyvalue ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -745,7 +746,6 @@ class Images{
         $retVal = 0;
         if($tid && $targetTid){
             $sql = 'UPDATE images SET tid = ' . (int)$targetTid . ' WHERE tid = ' . (int)$tid . ' ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -760,7 +760,6 @@ class Images{
             $oldTag = '-' . (int)$tid;
             $newTag = '-' . (int)$targetTid;
             $sql = 'UPDATE imagetag SET keyvalue = REPLACE(keyvalue, "' . $oldTag . '", "' . $newTag . '") WHERE keyvalue LIKE "%' . $oldTag . '" ';
-            //echo $sql2;
             if($this->conn->query($sql)){
                 $retVal = 1;
             }
@@ -787,7 +786,6 @@ class Images{
             if(count($sqlPartArr) > 0){
                 $sql = 'UPDATE images SET ' . implode(', ', $sqlPartArr) . ' '.
                     'WHERE imgid = ' . (int)$imgId . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $retVal = 1;
                 }

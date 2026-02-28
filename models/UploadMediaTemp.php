@@ -260,7 +260,7 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT um.upmid FROM uploadmediatemp AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid WHERE m.collid = ' . (int)$collid . ' AND o.tid IS NOT NULL LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT m.upmid FROM uploadmediatemp AS m LEFT JOIN omoccurrences AS o ON m.occid = o.occid WHERE m.collid = ' . (int)$collid . ' AND o.tid IS NOT NULL LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmid'];
@@ -363,7 +363,7 @@ class UploadMediaTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upmid FROM uploadmediatemp AS u LEFT JOIN images AS i ON u.occid = i.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND i.occid IS NOT NULL AND (u.url = i.url OR u.originalurl = i.originalurl OR u.sourceurl = i.sourceurl) LIMIT 25000 ';
+                'WHERE u.collid  = ' . (int)$collid . ' AND i.occid IS NOT NULL AND (u.url = i.url OR u.originalurl = i.originalurl OR u.sourceurl = i.sourceurl) LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmid'];
@@ -379,7 +379,7 @@ class UploadMediaTemp{
             if($returnVal === 0){
                 $idArr = array();
                 $sql = 'SELECT DISTINCT u.upmid FROM uploadmediatemp AS u LEFT JOIN media AS m ON u.occid = m.occid '.
-                    'WHERE u.collid  = ' . $collid . ' AND m.occid IS NOT NULL AND u.accessuri = m.accessuri LIMIT 25000 ';
+                    'WHERE u.collid  = ' . (int)$collid . ' AND m.occid IS NOT NULL AND u.accessuri = m.accessuri LIMIT 25000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upmid'];

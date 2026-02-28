@@ -125,7 +125,6 @@ class TaxonomyService {
                     if(preg_match('/[A-Z][\-\'a-z]+/',$retArr['unitname2'])){
                         $sql = 'SELECT tid FROM taxa '.
                             'WHERE unitname1 = "' . SanitizerService::cleanInStr($this->conn, $retArr['unitname1']) . '" AND unitname2 = "' . SanitizerService::cleanInStr($this->conn, $retArr['unitname2']) . '" ';
-                        //echo $sql.'<br/>';
                         $rs = $this->conn->query($sql);
                         if($rs->num_rows){
                             if(isset($retArr['author'])){
@@ -192,7 +191,6 @@ class TaxonomyService {
                         if(preg_match('/^[a-z]{2,}$/',$firstWord)){
                             $sql = 'SELECT unitind3 FROM taxa '.
                                 'WHERE unitname1 = "' . SanitizerService::cleanInStr($this->conn, $retArr['unitname1']) . '" AND unitname2 = "' . SanitizerService::cleanInStr($this->conn, $retArr['unitname2']) . '" AND unitname3 = "' . SanitizerService::cleanInStr($this->conn, $firstWord) . '" ';
-                            //echo $sql.'<br/>';
                             if($result = $this->conn->query($sql)){
                                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                                 $result->free();

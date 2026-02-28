@@ -45,7 +45,6 @@ class CollectionMediaUploadParameters {
             }
             $sql = 'INSERT INTO omcollmediauploadparameters(' . implode(',', $fieldNameArr) . ') '.
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
-            //echo "<div>".$sql."</div>";
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
             }
@@ -72,7 +71,6 @@ class CollectionMediaUploadParameters {
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
                 'FROM omcollmediauploadparameters WHERE collid = ' . (int)$collid . ' ORDER BY title ';
-            //echo '<div>'.$sql.'</div>';
             if($result = $this->conn->query($sql)){
                 $fields = mysqli_fetch_fields($result);
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
@@ -114,7 +112,6 @@ class CollectionMediaUploadParameters {
             if(count($sqlPartArr) > 0){
                 $sql = 'UPDATE omcollmediauploadparameters SET ' . implode(', ', $sqlPartArr) . ' '.
                     'WHERE spprid = ' . (int)$spprid . ' ';
-                //echo "<div>".$sql."</div>";
                 if($this->conn->query($sql)){
                     $retVal = 1;
                 }

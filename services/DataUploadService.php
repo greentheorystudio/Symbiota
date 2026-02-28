@@ -1,5 +1,4 @@
 <?php
-include_once(__DIR__ . '/../models/Collections.php');
 include_once(__DIR__ . '/../models/Images.php');
 include_once(__DIR__ . '/../models/Media.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
@@ -129,7 +128,7 @@ class DataUploadService {
 
     public function finalTransferAddNewDeterminations($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceDeterminations)->createOccurrenceDeterminationRecordsFromUploadData($collid);
         }
@@ -138,10 +137,10 @@ class DataUploadService {
 
     public function finalTransferAddNewMedia($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new Images)->createImageRecordsFromUploadData($collid);
-            if($retVal){
+            if($retVal === 0){
                 $retVal = (new Media)->createMediaRecordsFromUploadData($collid);
             }
         }
@@ -150,21 +149,18 @@ class DataUploadService {
 
     public function finalTransferAddNewMof($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceMeasurementsOrFacts)->createOccurrenceMofRecordsFromUploadData($collid);
         }
         return $retVal;
     }
 
-    public function finalTransferAddNewOccurrences($collid): int
+    public function finalTransferAddNewOccurrences($collid, $index): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
-            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
-            if($retVal){
-                (new Collections)->updateUploadDate($collid);
-            }
+            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid, $index);
         }
         return $retVal;
     }
@@ -258,7 +254,7 @@ class DataUploadService {
 
     public function finalTransferRemoveDuplicateDbpkRecordsFromUpload($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $retVal = (new UploadOccurrenceTemp)->removeDuplicateDbpkRecordsFromUpload($collid);
         }
@@ -294,32 +290,21 @@ class DataUploadService {
 
     public function finalTransferRemoveUnmatchedOccurrences($collid): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
             $occidArr = (new Occurrences)->getOccidArrNotIncludedInUpload($collid);
             if($occidArr){
-                (new Images)->deleteAssociatedImageRecords('occidArr', $occidArr);
-                (new Media)->deleteAssociatedMediaRecords('occidArr', $occidArr);
                 $retVal = (new Occurrences)->deleteOccurrenceRecord('occidArr', $occidArr);
             }
         }
         return $retVal;
     }
 
-    public function finalTransferSetNewOccurrenceIds($collid): int
+    public function finalTransferUpdateExistingOccurrences($collid, $mappedFields, $index): int
     {
-        $retVal = 1;
+        $retVal = 0;
         if($collid){
-            $retVal = (new Occurrences)->createOccurrenceRecordsFromUploadData($collid);
-        }
-        return $retVal;
-    }
-
-    public function finalTransferUpdateExistingOccurrences($collid, $mappedFields): int
-    {
-        $retVal = 1;
-        if($collid){
-            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid, $mappedFields);
+            $retVal = (new Occurrences)->updateOccurrenceRecordsFromUploadData($collid, $mappedFields, $index);
         }
         return $retVal;
     }

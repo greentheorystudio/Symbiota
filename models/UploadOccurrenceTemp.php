@@ -747,23 +747,21 @@ class UploadOccurrenceTemp{
 
     public function removeDuplicateDbpkRecordsFromUpload($collid): int
     {
-        $returnVal = 1;
-        $dbpkArr = array();
+        $returnVal = 0;
         if($collid){
-            $sql = 'SELECT DISTINCT dbpk FROM uploadspectemp GROUP BY dbpk, collid HAVING COUNT(upspid) > 1 AND collid  = ' . (int)$collid . ' ';
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u1.dbpk FROM uploadspectemp AS u1 LEFT JOIN uploadspectemp AS u2 ON u1.dbpk = u2.dbpk '.
+                'WHERE u1.collid = ' . (int)$collid . ' AND u2.collid = ' . (int)$collid . ' AND u1.dbpk IS NOT NULL '.
+                'AND u2.dbpk IS NOT NULL AND u1.upspid <> u2.upspid LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
-                $rows = $result->fetch_all(MYSQLI_ASSOC);
-                $result->free();
-                foreach($rows as $index => $row){
-                    if($row['dbpk']){
-                        $dbpkArr[] = $row['dbpk'];
-                    }
-                    unset($rows[$index]);
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['dbpk'];
                 }
-                if(count($dbpkArr) > 0){
-                    $sql = 'DELETE up.*, u.* FROM uploadspectemppoints AS up LEFT JOIN uploadspectemp AS u ON up.upspid = u.upspid WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IN("' . implode('","', $dbpkArr) . '") ';
-                    if(!$this->conn->query($sql)){
-                        $returnVal = 0;
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadspectemp WHERE dbpk IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
                     }
                 }
             }
