@@ -2339,9 +2339,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleanTaxonomyCleanDualKingdomTaxa() {
-            const text = 'Checking taxon thesaurus linkages';
-            currentProcess.value = 'cleanUploadTaxonomyCleanDualKingdomTaxa';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleanUploadTaxonomyCleanDualKingdomTaxa'){
+                const text = 'Checking taxon thesaurus linkages';
+                currentProcess.value = 'cleanUploadTaxonomyCleanDualKingdomTaxa';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadTaxonomyCleanDualKingdomTaxa');
@@ -2353,8 +2355,13 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                processSuccessResponse('Complete');
-                processPostUploadCleanTaxonomyPopulateThesaurusData();
+                if(Number(res) > 0){
+                    processPostUploadCleanTaxonomyCleanDualKingdomTaxa();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanTaxonomyPopulateThesaurusData();
+                }
             });
         }
 
@@ -2379,9 +2386,11 @@ const occurrenceDataUploadModule = {
         }
 
         function processPostUploadCleanTaxonomyPopulateTid() {
-            const text = 'Populating taxon identifiers from thesaurus';
-            currentProcess.value = 'cleanUploadTaxonomyPopulateTid';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'cleanUploadTaxonomyPopulateTid'){
+                const text = 'Populating taxon identifiers from thesaurus';
+                currentProcess.value = 'cleanUploadTaxonomyPopulateTid';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'cleanUploadTaxonomyPopulateTid');
@@ -2392,9 +2401,14 @@ const occurrenceDataUploadModule = {
             .then((response) => {
                 return response.ok ? response.text() : null;
             })
-            .then(() => {
-                processSuccessResponse('Complete');
-                processPostUploadCleanTaxonomyCleanDualKingdomTaxa();
+            .then((res) => {
+                if(Number(res) > 0){
+                    processPostUploadCleanTaxonomyPopulateTid();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    processPostUploadCleanTaxonomyCleanDualKingdomTaxa();
+                }
             });
         }
 
