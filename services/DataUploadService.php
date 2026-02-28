@@ -402,9 +402,11 @@ class DataUploadService {
             else{
                 $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceData($collid);
             }
-            if($retVal && $updateAssociatedData){
-                (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
-                (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
+            if($retVal === 0 && $updateAssociatedData){
+                $retVal = (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
+                if($retVal === 0){
+                    $retVal = (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
+                }
             }
         }
         return $retVal;

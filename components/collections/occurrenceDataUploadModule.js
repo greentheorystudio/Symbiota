@@ -1472,9 +1472,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferSetNewOccurrenceIds() {
-            const text = 'Populating IDs of new occurrence records in upload data';
-            currentProcess.value = 'finalTransferSetNewOccurrenceIds';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferSetNewOccurrenceIds'){
+                const text = 'Populating IDs of new occurrence records in upload data';
+                currentProcess.value = 'finalTransferSetNewOccurrenceIds';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('updateAssociatedData', '1');
@@ -1487,7 +1489,10 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
+                if(Number(res) > 0){
+                    finalTransferSetNewOccurrenceIds();
+                }
+                else{
                     processSuccessResponse('Complete');
                     if(Number(profileConfigurationData.value['saveSourcePrimaryIdentifier']) === 1){
                         finalTransferProcessDeterminations();
@@ -1495,10 +1500,6 @@ const occurrenceDataUploadModule = {
                     else{
                         finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences();
                     }
-                }
-                else{
-                    processErrorResponse('An error occurred while populating IDs');
-                    adjustUIEnd();
                 }
             });
         }

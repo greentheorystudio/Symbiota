@@ -657,13 +657,23 @@ class UploadOccurrenceTemp{
 
     public function linkUploadToExistingOccurrenceData($collid): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'SET u.occid = o.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            if(!$this->conn->query($sql)){
-                $returnVal = 0;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
+                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid SET u.occid = o.occid '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -671,13 +681,25 @@ class UploadOccurrenceTemp{
 
     public function linkUploadToExistingOccurrenceDataByCatalogNumber($collid, $linkField): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid && ($linkField === 'catalognumber' || $linkField === 'othercatalognumbers')){
-            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' AND u.collid = o.collid '.
-                'SET u.occid = o.occid, o.dbpk = u.dbpk '.
-                'WHERE u.collid  = ' . $collid . ' AND u.' . $linkField . ' IS NOT NULL AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL ';
-            if(!$this->conn->query($sql)){
-                $returnVal = 0;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' '.
+                'AND u.collid = o.collid WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.' . $linkField . ' IS NOT NULL '.
+                'AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' '.
+                        'AND u.collid = o.collid SET u.occid = o.occid, o.dbpk = u.dbpk '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -685,13 +707,23 @@ class UploadOccurrenceTemp{
 
     public function linkUploadToExistingOccurrenceDataByRecordId($collid): int
     {
-        $returnVal = 1;
+        $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid AND u.collid = o.collid '.
-                'SET u.occid = o.occid, o.dbpk = u.dbpk '.
-                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            if(!$this->conn->query($sql)){
-                $returnVal = 0;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid AND u.collid = o.collid '.
+                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid AND u.collid = o.collid SET u.occid = o.occid, o.dbpk = u.dbpk '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -773,10 +805,19 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadspectemppoints WHERE upspid NOT IN(SELECT DISTINCT upspid FROM uploadspectemp '.
-                'WHERE collid = ' . (int)$collid . ' AND upspid IS NOT NULL) LIMIT 50000 ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT up.upspid FROM uploadspectemppoints AS up LEFT JOIN uploadspectemp AS us ON up.upspid = us.upspid WHERE up.collid = ' . (int)$collid . ' AND ISNULL(us.upspid) LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadspectemppoints WHERE upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
