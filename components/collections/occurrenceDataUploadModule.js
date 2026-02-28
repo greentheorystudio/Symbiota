@@ -2360,28 +2360,8 @@ const occurrenceDataUploadModule = {
                 }
                 else{
                     processSuccessResponse('Complete');
-                    processPostUploadCleanTaxonomyPopulateThesaurusData();
+                    processPostUploadSetLocalitySecurity();
                 }
-            });
-        }
-
-        function processPostUploadCleanTaxonomyPopulateThesaurusData() {
-            const text = 'Populating taxonomic data from thesaurus';
-            currentProcess.value = 'cleanUploadTaxonomyPopulateThesaurusData';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
-            const formData = new FormData();
-            formData.append('collid', props.collid.toString());
-            formData.append('action', 'cleanUploadTaxonomyPopulateThesaurusData');
-            fetch(dataUploadServiceApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then((response) => {
-                return response.ok ? response.text() : null;
-            })
-            .then((res) => {
-                processSuccessResponse('Complete');
-                processPostUploadSetLocalitySecurity();
             });
         }
 

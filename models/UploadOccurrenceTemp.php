@@ -427,20 +427,6 @@ class UploadOccurrenceTemp{
         return $returnVal;
     }
 
-    public function cleanUploadTaxonomyPopulateThesaurusData($collid): int
-    {
-        $returnVal = 0;
-        if($collid){
-            $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.tid = t.tid '.
-                'SET u.family = t.family, u.scientificnameauthorship = t.author '.
-                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
-            }
-        }
-        return $returnVal;
-    }
-
     public function cleanUploadTaxonomyPopulateTid($collid): int
     {
         $returnVal = 0;
@@ -454,7 +440,7 @@ class UploadOccurrenceTemp{
                 }
                 $result->free();
                 if(count($idArr) > 0){
-                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname SET u.tid = t.tid '.
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname SET u.tid = t.tid, u.family = t.family, u.scientificnameauthorship = t.author '.
                         'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
                     if($this->conn->query($sql)){
                         $returnVal = $this->conn->affected_rows;

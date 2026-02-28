@@ -72,15 +72,6 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function cleanUploadTaxonomyPopulateThesaurusData($collid): int
-    {
-        $retVal = 0;
-        if($collid){
-            $retVal = (new UploadOccurrenceTemp)->cleanUploadTaxonomyPopulateThesaurusData($collid);
-        }
-        return $retVal;
-    }
-
     public function cleanUploadTaxonomyPopulateTid($collid): int
     {
         $retVal = 0;
