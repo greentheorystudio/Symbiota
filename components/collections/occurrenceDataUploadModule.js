@@ -1426,9 +1426,11 @@ const occurrenceDataUploadModule = {
         }
 
         function finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences() {
-            const text = 'Removing source data identifiers from uploaded occurrences';
-            currentProcess.value = 'finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences';
-            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            if(currentProcess.value !== 'finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences'){
+                const text = 'Removing source data identifiers from uploaded occurrences';
+                currentProcess.value = 'finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
             formData.append('action', 'removePrimaryIdentifiersFromUploadedOccurrences');
@@ -1440,13 +1442,12 @@ const occurrenceDataUploadModule = {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                if(Number(res) === 1){
-                    processSuccessResponse('Complete');
-                    finalTransferProcessDeterminations();
+                if(Number(res) > 0){
+                    finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences();
                 }
                 else{
-                    processErrorResponse('An error occurred while removing primary identifiers.');
-                    adjustUIEnd();
+                    processSuccessResponse('Complete');
+                    finalTransferProcessDeterminations();
                 }
             });
         }
@@ -1491,7 +1492,6 @@ const occurrenceDataUploadModule = {
             }
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
-            formData.append('updateAssociatedData', '1');
             formData.append('action', 'linkExistingOccurrencesToUpload');
             fetch(dataUploadServiceApiUrl, {
                 method: 'POST',
@@ -1503,6 +1503,48 @@ const occurrenceDataUploadModule = {
             .then((res) => {
                 if(Number(res) > 0){
                     finalTransferSetNewOccurrenceIds();
+                }
+                else{
+                    finalTransferSetNewOccurrenceIdsDetermination();
+                }
+            });
+        }
+
+        function finalTransferSetNewOccurrenceIdsDetermination() {
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'linkExistingOccurrencesToUploadDetermination');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    finalTransferSetNewOccurrenceIdsDetermination();
+                }
+                else{
+                    finalTransferSetNewOccurrenceIdsMedia();
+                }
+            });
+        }
+
+        function finalTransferSetNewOccurrenceIdsMedia() {
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'linkExistingOccurrencesToUploadMedia');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    finalTransferSetNewOccurrenceIdsMedia();
                 }
                 else{
                     processSuccessResponse('Complete');

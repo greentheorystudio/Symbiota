@@ -365,7 +365,7 @@ class DataUploadService {
         return $retArr;
     }
 
-    public function linkExistingOccurrencesToUpload($collid, $updateAssociatedData, $matchByRecordId, $matchByCatalogNumber, $linkField): int
+    public function linkExistingOccurrencesToUpload($collid, $matchByRecordId, $matchByCatalogNumber, $linkField): int
     {
         $retVal = 0;
         if($collid){
@@ -378,12 +378,24 @@ class DataUploadService {
             else{
                 $retVal = (new UploadOccurrenceTemp)->linkUploadToExistingOccurrenceData($collid);
             }
-            if($retVal === 0 && $updateAssociatedData){
-                $retVal = (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
-                if($retVal === 0){
-                    $retVal = (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
-                }
-            }
+        }
+        return $retVal;
+    }
+
+    public function linkExistingOccurrencesToUploadDetermination($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
+        }
+        return $retVal;
+    }
+
+    public function linkExistingOccurrencesToUploadMedia($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadMediaTemp)->populateOccidFromUploadOccurrenceData($collid);
         }
         return $retVal;
     }
