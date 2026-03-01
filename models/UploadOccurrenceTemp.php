@@ -647,7 +647,7 @@ class UploadOccurrenceTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 50000 ';
+                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -672,7 +672,7 @@ class UploadOccurrenceTemp{
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' '.
                 'AND u.collid = o.collid WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.' . $linkField . ' IS NOT NULL '.
-                'AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL LIMIT 50000 ';
+                'AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -697,7 +697,7 @@ class UploadOccurrenceTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 50000 ';
+                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
