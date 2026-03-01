@@ -269,7 +269,7 @@ class UploadOccurrenceTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso3 '.
-                'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 25000 ';
+                'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 50000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -286,7 +286,7 @@ class UploadOccurrenceTemp{
             if($returnVal === 0){
                 $idArr = array();
                 $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN lkupcountry AS c ON u.country = c.iso '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 25000 ';
+                    'WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 50000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upspid'];
@@ -304,7 +304,7 @@ class UploadOccurrenceTemp{
             if($returnVal === 0){
                 $idArr = array();
                 $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.abbrev '.
-                    'WHERE u.collid = ' . (int)$collid . ' AND s.statename IS NOT NULL LIMIT 25000 ';
+                    'WHERE u.collid = ' . (int)$collid . ' AND s.statename IS NOT NULL LIMIT 50000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upspid'];
@@ -322,7 +322,7 @@ class UploadOccurrenceTemp{
             if($returnVal === 0){
                 $idArr = array();
                 $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN lkupstateprovince AS s ON u.stateprovince = s.statename '.
-                    'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 25000 ';
+                    'LEFT JOIN lkupcountry AS c ON s.countryid = c.countryid WHERE u.collid = ' . (int)$collid . ' AND c.countryname IS NOT NULL LIMIT 50000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upspid'];
@@ -409,7 +409,7 @@ class UploadOccurrenceTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
-                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid LIMIT 25000 ';
+                'WHERE u.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL AND t.tid IS NOT NULL AND u.tid <> t.tid LIMIT 50000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -433,7 +433,7 @@ class UploadOccurrenceTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN taxa AS t ON u.sciname = t.sciname '.
-                'WHERE u.collid = ' . (int)$collid . ' AND ISNULL(u.tid) AND u.sciname IS NOT NULL AND t.tid IS NOT NULL LIMIT 25000 ';
+                'WHERE u.collid = ' . (int)$collid . ' AND ISNULL(u.tid) AND u.sciname IS NOT NULL AND t.tid IS NOT NULL LIMIT 50000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -647,7 +647,7 @@ class UploadOccurrenceTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 50000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -672,7 +672,7 @@ class UploadOccurrenceTemp{
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' '.
                 'AND u.collid = o.collid WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.' . $linkField . ' IS NOT NULL '.
-                'AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+                'AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL LIMIT 50000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -697,7 +697,7 @@ class UploadOccurrenceTemp{
         if($collid){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 50000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -728,7 +728,7 @@ class UploadOccurrenceTemp{
             if(array_key_exists('where', $scriptData) && $scriptData['where']){
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
-            $sql .= 'LIMIT 25000 ';
+            $sql .= 'LIMIT 10000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
@@ -752,7 +752,7 @@ class UploadOccurrenceTemp{
             $idArr = array();
             $sql = 'SELECT DISTINCT u1.dbpk FROM uploadspectemp AS u1 LEFT JOIN uploadspectemp AS u2 ON u1.dbpk = u2.dbpk '.
                 'WHERE u1.collid = ' . (int)$collid . ' AND u2.collid = ' . (int)$collid . ' AND u1.dbpk IS NOT NULL '.
-                'AND u2.dbpk IS NOT NULL AND u1.upspid <> u2.upspid LIMIT 25000 ';
+                'AND u2.dbpk IS NOT NULL AND u1.upspid <> u2.upspid LIMIT 50000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['dbpk'];
@@ -790,7 +790,7 @@ class UploadOccurrenceTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT up.upspid FROM uploadspectemppoints AS up LEFT JOIN uploadspectemp AS us ON up.upspid = us.upspid WHERE up.collid = ' . (int)$collid . ' AND ISNULL(us.upspid) LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT up.upspid FROM uploadspectemppoints AS up LEFT JOIN uploadspectemp AS us ON up.upspid = us.upspid WHERE up.collid = ' . (int)$collid . ' AND ISNULL(us.upspid) LIMIT 50000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
