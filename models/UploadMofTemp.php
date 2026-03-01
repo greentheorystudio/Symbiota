@@ -99,7 +99,7 @@ class UploadMofTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT um.upmfid FROM uploadmoftemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk WHERE um.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT um.upmfid FROM uploadmoftemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk WHERE um.collid = ' . (int)$collid . ' AND (ISNULL(us.dbpk) OR us.collid  <> ' . (int)$collid . ') LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmfid'];
@@ -160,16 +160,16 @@ class UploadMofTemp{
         if($collid){
             if(count($eventMofDataFields) > 0){
                 $idArr = array();
-                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk AND u.collid = o.collid '.
-                    'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.eventid) AND o.eventid IS NOT NULL AND u.field IN("' . implode('","', $eventMofDataFields) . '") LIMIT 25000 ';
+                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk '.
+                    'WHERE u.collid  = ' . (int)$collid . ' AND o.collid  = ' . (int)$collid . ' AND ISNULL(u.eventid) AND u.field IN("' . implode('","', $eventMofDataFields) . '") LIMIT 25000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upmfid'];
                     }
                     $result->free();
                     if(count($idArr) > 0){
-                        $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk AND u.collid = o.collid SET u.eventid = o.eventid '.
-                            'WHERE u.upmfid IN(' . implode(',', $idArr) . ') ';
+                        $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk SET u.eventid = o.eventid '.
+                            'WHERE u.upmfid IN(' . implode(',', $idArr) . ') AND o.collid  = ' . (int)$collid . ' ';
                         if($this->conn->query($sql)){
                             $returnVal = $this->conn->affected_rows;
                         }
@@ -178,16 +178,16 @@ class UploadMofTemp{
             }
             if($returnVal === 0 && count($occurrenceMofDataFields) > 0){
                 $idArr = array();
-                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                    'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) AND o.occid IS NOT NULL AND u.field IN("' . implode('","', $occurrenceMofDataFields) . '") LIMIT 25000 ';
+                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk '.
+                    'WHERE u.collid  = ' . (int)$collid . ' AND o.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) AND u.field IN("' . implode('","', $occurrenceMofDataFields) . '") LIMIT 25000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upmfid'];
                     }
                     $result->free();
                     if(count($idArr) > 0){
-                        $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid SET u.occid = o.occid '.
-                            'WHERE u.upmfid IN(' . implode(',', $idArr) . ') ';
+                        $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk SET u.occid = o.occid '.
+                            'WHERE u.upmfid IN(' . implode(',', $idArr) . ') AND o.collid  = ' . (int)$collid . ' ';
                         if($this->conn->query($sql)){
                             $returnVal = $this->conn->affected_rows;
                         }
@@ -243,8 +243,8 @@ class UploadMofTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT um.upmfid FROM uploadmoftemp AS um LEFT JOIN omoccurrences AS o ON um.collid = o.collid AND um.dbpk = o.dbpk '.
-                'WHERE um.collid = ' . (int)$collid . ' AND o.occid IS NOT NULL LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT um.upmfid FROM uploadmoftemp AS um LEFT JOIN omoccurrences AS o ON um.dbpk = o.dbpk '.
+                'WHERE um.collid = ' . (int)$collid . ' AND o.collid  = ' . (int)$collid . ' LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmfid'];
