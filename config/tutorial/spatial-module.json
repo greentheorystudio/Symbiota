@@ -64,7 +64,7 @@
                 },
                 {
                     "header": "Search Button",
-                    "html": "<p>Located between the Layer Button and the Home Button on the Main Control Panel. This button can be clicked to open the Search Panel, which can help you search for occurrence data of species through selecting criteria, collections, or the advanced query search accessible through the three tabs at the top of the panel. For more detail on how to use the Search Panel, see the 'Loading Occurrence Data with the Search Panel' tutorial.</p>"
+                    "html": "<p>Located between the Layer Button and the Home Button on the Main Control Panel. This button can be clicked to open the Search Panel, which can help you search for occurrence data of species through selecting criteria, collections, or the advanced query search accessible through the three tabs at the top of the panel. For more detail on how to use the Search Panel, see the 'Loading Occurrence Data' tutorial.</p>"
                 },
                 {
                     "header": "Download Map Image Button",
@@ -89,7 +89,7 @@
                 },
                 {
                     "header": "The Criteria and Collections Tab",
-                    "html": "<p>In the <b>Criteria Tab</b>, you can search for occurrence data depending on the criteria you enter by filling out the form, and pressing the SEARCH RECORDS button. In the <b>Collections tab</b>, you can select records depending on the dataset it belongs to by checking or unchecking the boxes and clicking the SEARCH RECORDS button. See the 'Advanced Query Builder' tutorial on how to use the Advanced Tab.</p>"
+                    "html": "<p>In the <b>Criteria Tab</b>, you can search for occurrence data depending on the criteria you enter by filling out the form, and pressing the SEARCH RECORDS button. In the <b>Collections tab</b>, you can select records depending on the dataset it belongs to by checking or unchecking the boxes and clicking the SEARCH RECORDS button. See the 'Occurrence Query Builder' tutorial on how to use the Advanced Tab.</p>"
                 },
                 {
                     "header": "Loaded Occurrence Data",
@@ -98,6 +98,15 @@
                 {
                     "header": "",
                     "html": "<p>Occurrence records are initially colored by the collection they represent. The symbology for occurrence records can be changed in the Symbology tab.  To learn how to use the Records and Symbology Panel, see the 'Records and Symbology Panel' tutorial.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Occurrence Query Builder",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The OccuQuery Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
                 }
             ]
         },
@@ -285,11 +294,11 @@
                 },
                 {
                     "header": "Clusters",
-                    "html": "<p>When Cluster Points is activated in the Settings Panel, occurrence clusters will appear as wider circles on the map with a number indicating the amount of records included in that cluster. Click on any cluster to zoom further in to see the individual occurrence records included.</p>"
+                    "html": "<p>When Cluster Points is activated in the Settings Panel in the Main Control Panel, occurrence clusters will appear as wider circles on the map with a number indicating the amount of records included in that cluster. Click on any cluster to zoom further in to see the individual occurrence records included.</p>"
                 },
                 {
                     "header": "Selecting Records",
-                    "html": "<p>Selecting or deselecting any occurrence record in the Points Layer can be done by clicking on the individual occurrence record. Selecting occurrence records on the map both adds them to the Selections Tab, and selects them in the Records Tab, in the Records and Taxa Panel in the Side Panel. Deselecting occurrence records on the map both removes them from the Selections Tab, and deselects them in the Records Tab, in the Records and Taxa Panel in the Side Panel.</p>"
+                    "html": "<p>Selecting or deselecting any occurrence record in the Points Layer can be done by clicking on the individual occurrence record. Selecting or deselecting occurrence records on the map both adds them or removes them from the Selections Tab, and selects/deselects them in the Records Tab, in the Records and Symbology Panel in the Side Panel.</p>"
                 },
                 {
                     "header": "Viewing Record Data",
@@ -330,7 +339,7 @@
                 },
                 {
                     "header": "Query Selector Toggle Button",
-                    "html": "<p><b>Available for vector layers when visible.</b> Clicking this will close the Layers Panel and open the Query Selector for the layer. The Query Selector allows you to select features within a given layer based on their attribute values.</p>"
+                    "html": "<p><b>Available for vector layers when visible.</b> Clicking this will close the Layers Panel and open the Query Selector for the layer. The Query Selector allows you to select features within a given layer based on their attribute values. For more detail, see the 'Advanced Query Builder' tutorial. </p>"
                 },
                 {
                     "header": "Symbology Toggle Button",
@@ -339,6 +348,31 @@
                 {
                     "header": "Order Adjuster",
                     "html": "<p><b>Available for all layers, except the Shapes and Points Layers, when visible.</b> This will indicate, and allow you to adjust, the order in which the layer is located within the stack of layers currently visible on the map. As layers are added to the map, they are added over previously added layers and have incrementally higher order numbers in the stack of layers. Layers with lower order numbers appear underneath layers of higher order numbers on the map. You can use this adjuster to either move a layer higher or lower within the layer stack, and therefore make it appear above or below other layers on the map.</p>"
+                }
+            ]
+        },
+        {
+            "title": "Layers Query Builder",
+            "slides": [
+                {
+                    "header": "",
+                    "html": "<p>The Query Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>The Select attribute drop-down contains all of the attributes applied to features within that layer. Select the attribute you would like to use to base your selection query.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>In the next drop-down select the comparator you would like to use in your query, out of EQUALS, CONTAINS, GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS comparators can compare text or numeric values, but the remaining comparators can only compare numeric values.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the appropriate boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Finally click the Run Query button to actually run the selection query. All features within the target layer that match the criteria you have specified will automatically be added to the Shapes Layer.</p>"
                 }
             ]
         },
@@ -392,70 +426,48 @@
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Vector Tools Panel is accessed by opening the Side Panel and clicking on Vector Tools to expand the panel.</p>"
+                    "html": "<p>The Vector Tools Panel is accessed by opening the Side Panel and clicking on Vector Tools to expand the panel. The Vector Tools Panel includes two tabs: Shapes and Points.</p>"
                 },
                 {
-                    "header": "",
-                    "html": "<p>The Vector Tools Panel includes two tabs: Shapes and Points. Each of these tabs will be discussed more thouroughly in the following topics.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Shapes Tab",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Shapes Tab is accessed in the Vector Tools Panel in the Side Panel. It contains download options, means for deleting, and several analysis tools for features in the Shapes Layer. The top portion of the Shapes Tab will be covered here, while the analysis tools available in the lower portion of the tab will be covered individually in following topics.</p>"
+                    "header": "The Shapes Tab",
+                    "html": "<p>The Shapes Tab contains download options, means for deleting, and several analysis tools for features in the Shapes Layer. The top portion of the Shapes Tab will be covered here. For more details on individual tools in the Shapes Tab, see respective tutorials.</p>"
                 },
                 {
                     "header": "Selected Area Display",
                     "html": "<p>At the top of the Shapes Tab is the Selected Area Display. This display shows the total area, in sq/km, of all of the features currently selected in the Shapes Layer.</p>"
                 },
                 {
-                    "header": "Download Type Selector and Button",
-                    "html": "<p>Below the Selected Area Display on the left side is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download all of the features currently in the Shapes Layer in a KML or GeoJSON file format. Downloading features from the Shapes Layer will be discussed further in the next topic.</p>"
-                },
-                {
                     "header": "Delete Selected Features Button",
-                    "html": "<p>To the right of the Download Type Selector and button is the Delete Selected Features button. This can be clicked to go to delete all features that are currently selected in the Shapes Layer.</p>"
+                    "html": "<p>Below the Selected Area Display is the Delete Selected Features button. This can be clicked to go to delete all features that are currently selected in the Shapes Layer.</p>"
+                },
+                {
+                    "header": "Download Type Selector and Button",
+                    "html": "<p>Below the Delete Selected Features Button is the Download Type drop-down selector followed by the Download button <button class=\"icon-button\" title=\"Download\"><i style=\"height:15px;width:15px;\" class=\"fas fa-download\"></i></button>. These can be used to download all of the features currently in the Shapes Layer in a KML or GeoJSON file format, which can be used in many other geoprocessing applications. </p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>To download, select either KML or GeoJSON in the Download Type Selector, and then click the Download button in the Shapes Tab.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>Downloaded files can be dragged and dropped anywhere over the map window to reload the downloaded features at a later time.</p>"
+                },
+                {
+                    "header": "The Points Tab",
+                    "html": "<p>The Points Tab lets you create the smallest polygon that encloses all points you choose from the points layer. At the top of the tab there is a Create Polygon dropdown where you can select which points you want to use to create polygons. See respective tool tutorials for more detail.</p>"
                 }
             ]
         },
         {
-            "title": "Downloading Features From the Shapes Layer",
+            "title": "Buffer Tool (Vector Tools Panel: Shapes Tab)",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Download Type Selector and button in the Shapes Tab in the Vector Tools Panel in the Side Panel can be used to download all of the features currently in the Shapes Layer in either KML or GeoJSON formats.</p>"
+                    "html": "<p>The Buffer Tool is accessible in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a buffer polygon of a specified size (in km) around selected shapes in the Shapes Layer.</p>"
                 },
                 {
                     "header": "",
-                    "html": "<p>Both download formats can be used in many other geoprocessing applications.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>To download simply select either KML or GeoJSON in the Download Type Selector, and then click the Download button in the Shapes Tab.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Downloaded files can simply be dragged and dropped anywhere over the map window to reload the doanloaded features at a later time.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Buffer Tool",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Buffer Tool is accessable in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a buffer polygon of a specified size (in km) around selected features in the Shapes Layer.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Before using the Buffer Tool, there must already be at least one feature in the Shapes Layer on which to base the buffer polygon. Features can be created using the Draw Tool, or added from other vector layers loaded onto the map.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>To use the Buffer Tool, follow these steps:</p>"
+                    "html": "<p>Before using the Buffer Tool, there must already be at least one hs in the Shapes Layer on which to base the buffer polygon. Features can be created using the Draw Tool, or added from other vector layers loaded onto the map. We will walk through this step by step.</p>"
                 },
                 {
                     "header": "Step 1",
@@ -480,11 +492,11 @@
             ]
         },
         {
-            "title": "Difference Tool",
+            "title": "Difference Tool (Vector Tools Panel: Shapes Tab)",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Difference Tool is accessable in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the area representing the difference of one selected polygon, box, or circle from another selected polygon, box, or circle in the Shapes Layer.</p>"
+                    "html": "<p>The Difference Tool is accessible in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the area representing the difference of one selected polygon, box, or circle from another selected polygon, box, or circle in the Shapes Layer.</p>"
                 },
                 {
                     "header": "",
@@ -517,11 +529,11 @@
             ]
         },
         {
-            "title": "Intersect Tool",
+            "title": "Intersect Tool (Vector Tools Panel: Shapes Tab)",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Intersect Tool is accessable in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the overlapping area of two selected polygons, boxes, or circles in the Shapes Layer.</p>"
+                    "html": "<p>The Intersect Tool is accessible in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the overlapping area of two selected polygons, boxes, or circles in the Shapes Layer.</p>"
                 },
                 {
                     "header": "",
@@ -550,11 +562,11 @@
             ]
         },
         {
-            "title": "Union Tool",
+            "title": "Union Tool (Vector Tools Panel: Shapes Tab)",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Union Tool is accessable in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the combined area of two or more selected polygons, boxes, or circles in the Shapes Layer.</p>"
+                    "html": "<p>The Union Tool is accessible in the Shapes Tab in the Vector Tools Panel in the Side Panel. It can be used to create a polygon with the combined area of two or more selected polygons, boxes, or circles in the Shapes Layer.</p>"
                 },
                 {
                     "header": "",
@@ -583,11 +595,11 @@
             ]
         },
         {
-            "title": "Concave Hull Polygon Tool",
+            "title": "Concave Hull Polygon Tool (Vector Tools Panel: Points Tab)",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Concave Hull Polygon Tool is accessable in the Points Tab in the Vector Tools Panel in the Side Panel. It can be used to create a concave hull polygon or multi-polygon around either all, or only the selected, occurrence record points with a maximum edge length of a specified length (in km).</p>"
+                    "html": "<p>The Concave Hull Polygon Tool is accessible in the Points Tab in the Vector Tools Panel in the Side Panel. This tool creates a polygon or multiple polygons around all or selected occurrence record points with the smallest area, using the maximum edge length specified (in km).</p>"
                 },
                 {
                     "header": "",
@@ -616,15 +628,11 @@
             ]
         },
         {
-            "title": "Convex Hull Polygon Tool",
+            "title": "Convex Hull Polygon Tool (Vector Tools Panel: Points Tab)",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Convex Hull Polygon Tool is accessable in the Points Tab in the Vector Tools Panel in the Side Panel. It can be used to create a convex hull polygon around either all, or only the selected, occurrence record points.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>A convex hull polygon differs from a concave hull polygon in that all interior angles are less than 180 degrees.</p>"
+                    "html": "<p>The Convex Hull Polygon Tool is accessible in the Points Tab in the Vector Tools Panel in the Side Panel. Although similar to the concave hull polygon, the convex hull polygon creates the smallest convex polygon that encompass all points selected, like a rubber band stretched around the points, and all interior angles are less than 180 degrees</p>"
                 },
                 {
                     "header": "",
@@ -657,16 +665,16 @@
                 },
                 {
                     "header": "",
-                    "html": "<p>The Raster Tools Panel contains analysis tools for raster layers loaded onto the map and the Target Raster Layer Selector, which is used with the tools. These analysis tools will be covered individually in the next topics.</p>"
+                    "html": "<p>The Raster Tools Panel contains analysis tools for raster layers loaded onto the map and the Target Raster Layer Selector, which is used with the tools. See respective tutorials for more detail on the two tools within Raster Tools.</p>"
                 }
             ]
         },
         {
-            "title": "Data-Based Vectorize Tool",
+            "title": "Data-Based Vectorize Tool (Raster Tools)",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The Data-Based Vectorize Tool is accessable in the Raster Tools Panel in the Side Panel. It can be used to create vector polygon features for all areas within a selected polygon, box, or circle in the Shapes Layer, that have raster data values within a defined value range, based on the data values within the raster layer itself.</p>"
+                    "html": "<p>The Data-Based Vectorize Tool is accessible in the Raster Tools Panel in the Side Panel. It can be used to create vector polygon features for all areas within a selected polygon, box, or circle in the Shapes Layer, that have raster data values within a defined value range, based on the data values within the raster layer itself.</p>"
                 },
                 {
                     "header": "",
@@ -707,7 +715,7 @@
             ]
         },
         {
-            "title": "Grid-Based Vectorize Tool",
+            "title": "Grid-Based Vectorize Tool (Raster Tools)",
             "slides": [
                 {
                     "header": "",
@@ -760,81 +768,6 @@
             ]
         },
         {
-            "title": "Using the Draw Tool",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Draw Tool is activated through the Draw Selector in the Main Control Panel. To activate this tool simply click on the drop-down and select the type of feature that you would like to draw on the map. To deactivate the draw tool, simply click on the drop-down and select None. The Draw Tool can be used to create new polygon, box, circle, line, and point features on the map. Once the Draw Tool has been activated, follow these steps to create each feature type:</p>"
-                },
-                {
-                    "header": "Polygon",
-                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional vertices in the polygon. Click on the original vertex to complete the feature.</p>"
-                },
-                {
-                    "header": "Box",
-                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the box. Click again to complete the feature.</p>"
-                },
-                {
-                    "header": "Circle",
-                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor to expand the size of the circle. Click again to complete the feature.</p>"
-                },
-                {
-                    "header": "Line",
-                    "html": "<p>Click once on the map to start drawing. Move the mouse cursor and click additionally to create additional vertices in the line. Click twice on the last vertex to complete the feature.</p>"
-                },
-                {
-                    "header": "Point",
-                    "html": "<p>Click once on the map to create features.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>All features created with the Draw Tool are automatically added to the Shapes Layer on the map, which will be discussed further in a later topic in this tutorial.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Advanced Query Builder",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>The Query Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>The Select attribute drop-down contains all of the attributes applied to features within that layer. Select the attribute you would like to use to base your selection query.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>In the next drop-down select the comparator you would like to use in your query, out of EQUALS, CONTAINS, GREATER THAN, LESS THAN, and BETWEEN. Both the EQUALS and CONTAINS comparators can compare text or numeric values, but the remaining comparators can only compare numeric values.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>If the BETWEEN comparator is selected, enter the low and high values in the appropriate boxes for the comparison query. If any other comparator is selected, enter the single value in the remaining box for the comparison query.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Finally click the Run Query button to actually run the selection query. All features within the target layer that match the criteria you have specified will automatically be added to the Shapes Layer.</p>"
-                }
-            ]
-        },
-        {
-            "title": "Using the Heat Map Display",
-            "slides": [
-                {
-                    "header": "",
-                    "html": "<p>When occurrence records have been loaded on the map, the heat map display can be activated to display the occurrence data as a heat map instead of points.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>To activate or deactivate the heat map display, check or uncheck Display Heat Map in the Settings Panel.</p>"
-                },
-                {
-                    "header": "",
-                    "html": "<p>Adjusting the Heat Map Radius and Heat Map Blur settings, also in the Settings Panel, will further adjust how occurrence points are rendered in the heat map display.</p>"
-                }
-            ]
-        },
-        {
             "title": "Walkthrough: Searching and Loading Occurrence Data",
             "slides": [
                 {
@@ -843,11 +776,11 @@
                 },
                 {
                     "header": "Step 1",
-                    "html": "<p>Click on the Side Panel Toggle to open the Side Panel, click on Search Criteria to expand the Search Criteria Panel (if it isn't already expanded), and then click on the Collections Tab to select it.</p>"
+                    "html": "<p>Click on Search button on the Main Control Panel to expand the Search Criteria Panel, and then click on the Collections Tab to select it.</p>"
                 },
                 {
                     "header": "Step 2",
-                    "html": "<p>In the Collections Tab, uncheck the Select/Deselect All checkbox to deselect all collections. Then check one or two individual collections of your choice.</p>"
+                    "html": "<p>In the Collections Tab, uncheck the Select All checkbox to deselect all collections. Then check one or two individual collections of your choice.</p>"
                 },
                 {
                     "header": "Step 3",
@@ -855,7 +788,7 @@
                 },
                 {
                     "header": "Step 4",
-                    "html": "<p>When occurrence records are loaded on the map, the Records and Taxa Panel should automatically expand with the Records Tab selected. Scroll up and down over the records to view them. Click the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column of records to pan the map to that record's location on the map and add a temporary marker. Check the checkbox in the far left column of the Occurrence Record Table for a few records to select them.</p>"
+                    "html": "<p>When occurrence records are loaded on the map, the Records and Symbology Panel should automatically expand with the Records Tab selected. Scroll up and down over the records to view them. Click the <i style=\"height:20px;width:20px;\" class=\"fas fa-search-location\"></i> icon in the Collector column of records to pan the map to that record's location on the map and add a temporary marker. Check the checkbox in the far left column of the Occurrence Record Table for a few records to select them.</p>"
                 },
                 {
                     "header": "Step 5",
@@ -867,7 +800,7 @@
                 },
                 {
                     "header": "Step 7",
-                    "html": "<p>Click on Search Criteria to expand the Search Criteria Panel and click on the Collections Tab to select it. In the Collections Tab, check the Select/Deselect All checkbox to select all collections.</p>"
+                    "html": "<p>Click on Search button on the Main Control Panel to expand the Search Criteria Panel and click on the Collections Tab to select it. In the Collections Tab, check the Select/Deselect All checkbox to select all collections.</p>"
                 },
                 {
                     "header": "Step 8",
@@ -879,7 +812,7 @@
                 },
                 {
                     "header": "Step 10",
-                    "html": "<p>Click on Search Criteria to expand the Search Criteria Panel and click on the Criteria Tab to select it. Try entering other criteria into the other options in this tab and loading occurrence records.</p>"
+                    "html": "<p>Click on Search Button to expand the Search Criteria Panel and click on the Criteria Tab to select it. Try entering other criteria into the other options in this tab and loading occurrence records.</p>"
                 }
             ]
         },
@@ -904,7 +837,7 @@
                 },
                 {
                     "header": "Step 4",
-                    "html": "<p>Poisition the mouse cursor over the location point you identified in Step 1 and click once to create a new point feature in the Shapes Layer.</p>"
+                    "html": "<p>Position the mouse cursor over the location point you identified in Step 1 and click once to create a new point feature in the Shapes Layer.</p>"
                 },
                 {
                     "header": "Step 5",
@@ -924,11 +857,11 @@
                 },
                 {
                     "header": "Step 9",
-                    "html": "<p>Click on Search Criteria in the Side Panel to expand the Search Criteria Panel, and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring in the buffer polygon.</p>"
+                    "html": "<p>Click on Search Button in the Main Control Panel to expand the Search Criteria Panel, and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring in the buffer polygon.</p>"
                 },
                 {
                     "header": "Step 10",
-                    "html": "<p>If you receive a message after step 9 stating that there were no records matching the query, try repeatinging steps 7, 8, and 9, but using a higher value for buffer width in step 7.</p>"
+                    "html": "<p>If you receive a message after step 9 stating that there were no records matching the query, try repeating steps 7, 8, and 9, but using a higher value for buffer width in step 7.</p>"
                 }
             ]
         },
