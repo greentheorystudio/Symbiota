@@ -719,7 +719,8 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid && $scriptData){
-            $sql = 'DELETE FROM uploadspectemp AS u ';
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u ';
             if(array_key_exists('join', $scriptData) && $scriptData['join']){
                 $sql .= $scriptData['join'] . ' ';
             }
@@ -727,9 +728,18 @@ class UploadOccurrenceTemp{
             if(array_key_exists('where', $scriptData) && $scriptData['where']){
                 $sql .= 'AND ' . $scriptData['where'] . ' ';
             }
-            $sql .= 'LIMIT 10000 ';
-            if($this->conn->query($sql)){
-                $returnVal = $this->conn->affected_rows;
+            $sql .= 'LIMIT 5000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upspid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadspectemp WHERE upspid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
