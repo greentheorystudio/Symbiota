@@ -646,16 +646,16 @@ class UploadOccurrenceTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk '.
+                'WHERE u.collid  = ' . $collid . ' AND o.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
                 }
                 $result->free();
                 if(count($idArr) > 0){
-                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid SET u.occid = o.occid '.
-                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk SET u.occid = o.occid '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') AND o.collid  = ' . (int)$collid . ' ';
                     if($this->conn->query($sql)){
                         $returnVal = $this->conn->affected_rows;
                     }
@@ -671,7 +671,7 @@ class UploadOccurrenceTemp{
         if($collid && ($linkField === 'catalognumber' || $linkField === 'othercatalognumbers')){
             $idArr = array();
             $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' '.
-                'AND u.collid = o.collid WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.' . $linkField . ' IS NOT NULL '.
+                'WHERE u.collid  = ' . $collid . ' AND o.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) AND u.' . $linkField . ' IS NOT NULL '.
                 'AND o.' . $linkField . ' IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
@@ -680,8 +680,8 @@ class UploadOccurrenceTemp{
                 $result->free();
                 if(count($idArr) > 0){
                     $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.' . $linkField . ' = o.' . $linkField . ' '.
-                        'AND u.collid = o.collid SET u.occid = o.occid, o.dbpk = u.dbpk '.
-                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                        'SET u.occid = o.occid, o.dbpk = u.dbpk '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') AND o.collid  = ' . (int)$collid . ' ';
                     if($this->conn->query($sql)){
                         $returnVal = $this->conn->affected_rows;
                     }
@@ -696,16 +696,16 @@ class UploadOccurrenceTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT u.upspid FROM uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid '.
+                'WHERE u.collid  = ' . $collid . ' AND o.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upspid'];
                 }
                 $result->free();
                 if(count($idArr) > 0){
-                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid AND u.collid = o.collid SET u.occid = o.occid, o.dbpk = u.dbpk '.
-                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') ';
+                    $sql = 'UPDATE uploadspectemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.occid SET u.occid = o.occid, o.dbpk = u.dbpk '.
+                        'WHERE u.upspid IN(' . implode(',', $idArr) . ') AND o.collid  = ' . (int)$collid . ' ';
                     if($this->conn->query($sql)){
                         $returnVal = $this->conn->affected_rows;
                     }
@@ -763,8 +763,8 @@ class UploadOccurrenceTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadspectemp AS u WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL '.
-                'AND u.dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 50000 ';
+            $sql = 'DELETE FROM uploadspectemp WHERE collid  = ' . $collid . ' AND dbpk IS NOT NULL '.
+                'AND dbpk IN(SELECT dbpk FROM omoccurrences WHERE collid = ' . $collid . ')  LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $returnVal = $this->conn->affected_rows;
             }
