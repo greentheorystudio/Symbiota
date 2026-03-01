@@ -99,8 +99,8 @@ class Images{
         $retVal = 0;
         $imgIdArr = array();
         $sql = 'SELECT i.imgid FROM images AS i LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
-            'LEFT JOIN uploadmediatemp AS m1 ON o.collid = m1.collid AND i.url = m1.url '.
-            'LEFT JOIN uploadmediatemp AS m2 ON o.collid = m2.collid AND i.sourceurl = m2.url '.
+            'LEFT JOIN uploadmediatemp AS m1 ON o.occid = m1.occid AND i.url = m1.url '.
+            'LEFT JOIN uploadmediatemp AS m2 ON o.occid = m2.occid AND i.sourceurl = m2.url '.
             'WHERE o.collid = ' . (int)$collid . ' AND ISNULL(m1.upmid) AND ISNULL(m2.upmid) LIMIT 10000 ';
         if($result = $this->conn->query($sql)){
             while($row = $result->fetch_assoc()){

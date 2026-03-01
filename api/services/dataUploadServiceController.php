@@ -49,11 +49,16 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         echo $dataUploadService->removeExistingOccurrencesFromUpload($collid);
     }
     elseif($action === 'linkExistingOccurrencesToUpload'){
-        $updateAssociatedData = array_key_exists('updateAssociatedData', $_POST) && (int)$_POST['updateAssociatedData'] === 1;
         $matchByCatalogNumber = array_key_exists('matchByCatalogNumber', $_POST) && (int)$_POST['matchByCatalogNumber'] === 1;
         $matchByRecordId = array_key_exists('matchByRecordId', $_POST) && (int)$_POST['matchByRecordId'] === 1;
         $linkField = $_POST['linkField'] ?? null;
-        echo $dataUploadService->linkExistingOccurrencesToUpload($collid, $updateAssociatedData, $matchByRecordId, $matchByCatalogNumber, $linkField);
+        echo $dataUploadService->linkExistingOccurrencesToUpload($collid, $matchByRecordId, $matchByCatalogNumber, $linkField);
+    }
+    elseif($action === 'linkExistingOccurrencesToUploadDetermination'){
+        echo $dataUploadService->linkExistingOccurrencesToUploadDetermination($collid);
+    }
+    elseif($action === 'linkExistingOccurrencesToUploadMedia'){
+        echo $dataUploadService->linkExistingOccurrencesToUploadMedia($collid);
     }
     elseif($action === 'executeCleaningScriptArr' && array_key_exists('cleaningScriptArr', $_POST)){
         echo $dataUploadService->executeCleaningScriptArr($collid, json_decode($_POST['cleaningScriptArr'], true));
