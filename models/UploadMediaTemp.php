@@ -260,15 +260,15 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT m.upmid FROM uploadmediatemp AS m LEFT JOIN uploadspectemp AS u ON m.dbpk = u.dbpk AND m.collid = u.collid WHERE m.collid = ' . (int)$collid . ' AND u.tid IS NOT NULL LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT m.upmid FROM uploadmediatemp AS m LEFT JOIN uploadspectemp AS u ON m.dbpk = u.dbpk WHERE m.collid = ' . (int)$collid . ' AND u.collid  = ' . (int)$collid . ' AND u.tid IS NOT NULL LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmid'];
                 }
                 $result->free();
                 if(count($idArr) > 0){
-                    $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN uploadspectemp AS u ON m.dbpk = u.dbpk AND m.collid = u.collid SET m.tid = u.tid '.
-                        'WHERE m.upmid IN(' . implode(',', $idArr) . ') ';
+                    $sql = 'UPDATE uploadmediatemp AS m LEFT JOIN uploadspectemp AS u ON m.dbpk = u.dbpk SET m.tid = u.tid '.
+                        'WHERE m.upmid IN(' . implode(',', $idArr) . ') AND u.collid  = ' . (int)$collid . ' ';
                     if($this->conn->query($sql)){
                         $returnVal = $this->conn->affected_rows;
                     }
@@ -295,7 +295,7 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT um.upmid FROM uploadmediatemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk AND um.collid = us.collid WHERE um.collid = ' . (int)$collid . ' AND ISNULL(us.dbpk) LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT um.upmid FROM uploadmediatemp AS um LEFT JOIN uploadspectemp AS us ON um.dbpk = us.dbpk WHERE um.collid = ' . (int)$collid . ' AND (ISNULL(us.dbpk) OR us.collid  <> ' . (int)$collid . ') LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmid'];
@@ -338,16 +338,16 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT u.upmid FROM uploadmediatemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT u.upmid FROM uploadmediatemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND o.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmid'];
                 }
                 $result->free();
                 if(count($idArr) > 0){
-                    $sql = 'UPDATE uploadmediatemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid SET u.occid = o.occid '.
-                        'WHERE u.upmid IN(' . implode(',', $idArr) . ') ';
+                    $sql = 'UPDATE uploadmediatemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk SET u.occid = o.occid '.
+                        'WHERE u.upmid IN(' . implode(',', $idArr) . ') AND o.collid  = ' . (int)$collid . ' ';
                     if($this->conn->query($sql)){
                         $returnVal = $this->conn->affected_rows;
                     }
@@ -402,8 +402,8 @@ class UploadMediaTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT um.upmid FROM uploadmediatemp AS um LEFT JOIN omoccurrences AS o ON um.collid = o.collid AND um.dbpk = o.dbpk '.
-                'WHERE um.collid = ' . (int)$collid . ' AND o.occid IS NOT NULL LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT um.upmid FROM uploadmediatemp AS um LEFT JOIN omoccurrences AS o ON um.dbpk = o.dbpk '.
+                'WHERE um.collid = ' . (int)$collid . ' AND o.collid  = ' . (int)$collid . ' LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmid'];
