@@ -1038,11 +1038,20 @@ class Occurrences{
     {
         $retVal = 0;
         if($collid){
-            $sql = 'UPDATE omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
-                'SET o.dbpk = NULL '.
-                'WHERE o.collid  = ' . (int)$collid . ' AND u.occid IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $retVal = 1;
+            $idArr = array();
+            $sql = 'SELECT o.occid FROM omoccurrences AS o LEFT JOIN uploadspectemp AS u ON o.occid = u.occid '.
+                'WHERE o.collid  = ' . (int)$collid . ' AND o.dbpk IS NOT NULL AND u.occid IS NOT NULL LIMIT 50000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['occid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE omoccurrences SET dbpk = NULL WHERE occid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $retVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $retVal;
