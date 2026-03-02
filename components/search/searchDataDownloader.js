@@ -38,7 +38,8 @@ const searchDataDownloader = {
             {value: 'kml', label: 'KML'},
             {value: 'geojson', label: 'GeoJSON'},
             {value: 'gpx', label: 'GPX'},
-            {value: 'taxa', label: 'Taxa List'}
+            {value: 'taxa', label: 'Taxa List'},
+            {value: 'fasta', label: 'FASTA'}
         ];
         const requestOptions = {
             selections: props.selections,
