@@ -189,7 +189,8 @@ const spatialVectorToolsTab = {
                     }
                 }
             });
-            const difference = turf.difference(features[0], features[1]);
+            console.log(features);
+            const difference = turf.difference(turf.featureCollection([features[0], features[1]]));
             if(difference){
                 const diffpoly = geoJSONFormat.readFeature(difference);
                 diffpoly.getGeometry().transform(wgs84Projection, mapProjection);
@@ -252,10 +253,10 @@ const spatialVectorToolsTab = {
             });
             featuresOne.forEach((feat1) => {
                 featuresTwo.forEach((feat2) => {
-                    const tempPoly = turf.intersect(feat1, feat2);
+                    const tempPoly = turf.intersect(turf.featureCollection([feat1, feat2]));
                     if(tempPoly){
                         if(intersection){
-                            intersection = turf.union(intersection,tempPoly);
+                            intersection = turf.union(turf.featureCollection([intersection,tempPoly]));
                         }
                         else{
                             intersection = tempPoly;
@@ -303,10 +304,10 @@ const spatialVectorToolsTab = {
                     }
                 }
             });
-            let union = turf.union(features[0], features[1]);
+            let union = turf.union(turf.featureCollection([features[0], features[1]]));
             features.forEach((feat, index) => {
                 if(index > 1){
-                    union = turf.union(union, feat);
+                    union = turf.union(turf.featureCollection([union, feat]));
                 }
             });
             if(union){

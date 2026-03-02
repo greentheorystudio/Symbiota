@@ -902,7 +902,7 @@
                 },
                 {
                     "header": "Step 8",
-                    "html": "<p>Click on the Side Panel Toggle to open the Side Panel, click on Search Criteria to expand the Search Criteria Panel (if it isn't already expanded), and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring in the selected county. If you receive a message stating that there were no records matching the query, or if you wish to try search for occurrence records in a different county, proceed with the next steps.</p>"
+                    "html": "<p>Click on the Search Button to expand the Search Criteria Panel (if it isn't already expanded), and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring in the selected county. If you receive a message stating that there were no records matching the query, or if you wish to try search for occurrence records in a different county, proceed with the next steps.</p>"
                 },
                 {
                     "header": "Step 9",
@@ -951,7 +951,7 @@
                 },
                 {
                     "header": "Step 7",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Button in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 8",
@@ -975,7 +975,7 @@
                 },
                 {
                     "header": "Step 13",
-                    "html": "<p>Open the Layers Panel by clicking on the Layers Toggle in the Main Control Panel.</p>"
+                    "html": "<p>Open the Layers Panel by clicking on the Layers Button in the Main Control Panel.</p>"
                 },
                 {
                     "header": "Step 14",
@@ -1011,7 +1011,7 @@
                 },
                 {
                     "header": "Step 22",
-                    "html": "<p>Click on Search Criteria in the Side Panel to expand the Search Criteria Panel, and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring within the intersect polygon.</p>"
+                    "html": "<p>Click on the Search Button to open the Search Criteria Panel, and then click the Load Records button, in either the Criteria or Collections Tab (whichever is selected) to load the occurrence records occurring within the intersect polygon.</p>"
                 }
             ]
         },
@@ -1076,7 +1076,7 @@
                 },
                 {
                     "header": "Step 14",
-                    "html": "<p>Identifiy low and high elevation values that you would like to use in the vectorization process. This process will create vector features representing all areas that are within the low and high elevation range that you identify.</p>"
+                    "html": "<p>Identify low and high elevation values that you would like to use in the vectorization process. This process will create vector features representing all areas that are within the low and high elevation range that you identify.</p>"
                 },
                 {
                     "header": "Step 15",
@@ -1144,11 +1144,11 @@
                 },
                 {
                     "header": "Step 31",
-                    "html": "<p>Drag and drop the file downloaded in step 2 over the map to load the elevation data onto the map again.</p>"
+                    "html": "<p>Drag and drop the <a class=\"tutorial-link\" href=\"https://worldclim.org/data/worldclim21.html\" target=\"_blank\">5 minutes Elevation raster data from WorldClim</a> downloaded in step 2 over the map to load the elevation data onto the map again.</p>"
                 },
                 {
                     "header": "Step 32",
-                    "html": "<p>Drag and drop the file downloaded in step 10 over the map to load the state feature onto the map again.</p>"
+                    "html": "<p>Drag and drop the <a class=\"tutorial-link\" href=\"https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html\" target=\"_blank\">TIGER/Line data from the United States Census Bureau</a> downloaded in step 1 over the map to load the state feature onto the map again.</p>"
                 },
                 {
                     "header": "Step 33",
