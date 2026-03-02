@@ -36,6 +36,9 @@ class DataDownloadService {
         elseif($fileType === 'docx'){
             $returnVal = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         }
+        elseif($fileType === 'fasta'){
+            $returnVal = 'text/x-fasta';
+        }
         return $returnVal;
     }
 
@@ -100,6 +103,30 @@ class DataDownloadService {
         if(!$keepFile){
             FileSystemService::deleteFile($outputFilePath, true);
         }
+    }
+
+    public function writeFASTAFromDataArr($fileName, $dataArr): string
+    {
+        $fullPath = '';
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
+        if($fileName && $targetPath){
+            $fullPath = $targetPath . '/' . $fileName;
+            $fileHandler = FileSystemService::openFileHandler($fullPath);
+            FileSystemService::writeTextToFile($fileHandler, '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ');
+            FileSystemService::writeTextToFile($fileHandler, 'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="springsdata.org">');
+            foreach($dataArr as $data){
+                FileSystemService::writeTextToFile($fileHandler, ('<wpt lat="' . $data['decimallatitude'] . '" lon="' . $data['decimallongitude'] . '">'));
+                FileSystemService::writeTextToFile($fileHandler, ('<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>'));
+                FileSystemService::writeTextToFile($fileHandler, ('<desc>' . ($data['sciname'] ? htmlspecialchars($data['sciname']) : '') . '</desc>'));
+                FileSystemService::writeTextToFile($fileHandler, '</wpt>');
+
+                if($data['sourceidentifier'] && $data['description'] && $data['dnasequence']){
+
+                }
+            }
+            FileSystemService::closeFileHandler($fileHandler);
+        }
+        return $fullPath;
     }
 
     public function writeGeoJSONFromGeoJSONArr($fileName, $dataArr): string
