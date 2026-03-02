@@ -984,7 +984,7 @@ class SearchService {
                     $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                 }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
-                if($options['type'] === 'fasta'){
+                if(array_key_exists('type', $options) && $options['type'] === 'fasta'){
                     $returnArr = $this->serializeFASTAResultArr($fromStr, $whereStr);
                 }
                 else{

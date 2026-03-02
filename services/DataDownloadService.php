@@ -112,16 +112,14 @@ class DataDownloadService {
         if($fileName && $targetPath){
             $fullPath = $targetPath . '/' . $fileName;
             $fileHandler = FileSystemService::openFileHandler($fullPath);
-            FileSystemService::writeTextToFile($fileHandler, '<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ');
-            FileSystemService::writeTextToFile($fileHandler, 'xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="springsdata.org">');
             foreach($dataArr as $data){
-                FileSystemService::writeTextToFile($fileHandler, ('<wpt lat="' . $data['decimallatitude'] . '" lon="' . $data['decimallongitude'] . '">'));
-                FileSystemService::writeTextToFile($fileHandler, ('<name>' . ($data['recordedby'] ? htmlspecialchars($data['recordedby']) : '') . ' ' . ($data['recordnumber'] ? htmlspecialchars($data['recordnumber']) : '') . '</name>'));
-                FileSystemService::writeTextToFile($fileHandler, ('<desc>' . ($data['sciname'] ? htmlspecialchars($data['sciname']) : '') . '</desc>'));
-                FileSystemService::writeTextToFile($fileHandler, '</wpt>');
-
                 if($data['sourceidentifier'] && $data['description'] && $data['dnasequence']){
-
+                    $seqStrArr = str_split($data['dnasequence'], 70);
+                    FileSystemService::writeTextToFile($fileHandler, ('>' . $data['sourceidentifier'] . ' ' . $data['description'] . "\n"));
+                    foreach($seqStrArr as $dnaStr){
+                        FileSystemService::writeTextToFile($fileHandler, ($dnaStr . "\n"));
+                    }
+                    FileSystemService::writeTextToFile($fileHandler, "\n");
                 }
             }
             FileSystemService::closeFileHandler($fileHandler);

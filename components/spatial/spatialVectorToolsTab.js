@@ -189,7 +189,6 @@ const spatialVectorToolsTab = {
                     }
                 }
             });
-            console.log(features);
             const difference = turf.difference(turf.featureCollection([features[0], features[1]]));
             if(difference){
                 const diffpoly = geoJSONFormat.readFeature(difference);
