@@ -984,25 +984,30 @@ class SearchService {
                     $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                 }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
-                if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
-                    $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
-                }
-                $sql = $selectStr . $fromStr . $whereStr;
-                if(array_key_exists('sortField', $options) && $options['sortField']){
-                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
-                }
-                elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
-                    $sql .= 'ORDER BY o.occid ';
-                }
-                if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
-                    $startIndex = (int)$options['index'] * (int)$options['reccnt'];
-                    $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
-                }
-                if($options['output'] === 'geojson'){
-                    $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
+                if(array_key_exists('type', $options) && $options['type'] === 'fasta'){
+                    $returnArr = $this->serializeFASTAResultArr($fromStr, $whereStr);
                 }
                 else{
-                    $returnArr = $this->serializeJsonResultArr($sql, $options['schema'], $spatial, ($mofDataArr ?: null));
+                    if(array_key_exists('type', $options) && ($options['type'] === 'geojson' || $options['type'] === 'kml')){
+                        $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
+                    }
+                    $sql = $selectStr . $fromStr . $whereStr;
+                    if(array_key_exists('sortField', $options) && $options['sortField']){
+                        $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                    }
+                    elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
+                        $sql .= 'ORDER BY o.occid ';
+                    }
+                    if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
+                        $startIndex = (int)$options['index'] * (int)$options['reccnt'];
+                        $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
+                    }
+                    if($options['output'] === 'geojson'){
+                        $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
+                    }
+                    else{
+                        $returnArr = $this->serializeJsonResultArr($sql, $options['schema'], $spatial, ($mofDataArr ?: null));
+                    }
                 }
             }
         }
@@ -1016,7 +1021,7 @@ class SearchService {
             if($contentType){
                 $outputFile = '';
                 $targetPath = FileSystemService::getTempDownloadUploadPath();
-                if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml'){
+                if($options['type'] === 'geojson' || $options['type'] === 'gpx' || $options['type'] === 'kml' || $options['type'] === 'fasta'){
                     $fileData = $this->processSearch($searchTermsArr, $options);
                     $fileName = $options['filename'] . '.' . $options['type'];
                     if($options['type'] === 'geojson'){
@@ -1027,6 +1032,9 @@ class SearchService {
                     }
                     elseif($options['type'] === 'kml'){
                         $outputFile = (new DataDownloadService)->writeKMLFromOccurrenceArr($fileName, $fileData);
+                    }
+                    elseif($options['type'] === 'fasta'){
+                        $outputFile = (new DataDownloadService)->writeFASTAFromDataArr($fileName, $fileData);
                     }
                 }
                 elseif($options['type'] === 'zip'){
@@ -1046,6 +1054,27 @@ class SearchService {
                 }
             }
         }
+    }
+
+    public function serializeFASTAResultArr($fromStr, $whereStr): array
+    {
+        $returnArr = array();
+        $sql = 'SELECT og.* ' . $fromStr . 'LEFT JOIN omoccurgenetic AS og ON o.occid = og.occid '.
+            $whereStr . 'AND og.idoccurgenetic IS NOT NULL ';
+        //error_log($sql);
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            while($row = $result->fetch_assoc()){
+                $recordArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $recordArr[$name] = $row[$name];
+                }
+                $returnArr[] = $recordArr;
+            }
+            $result->free();
+        }
+        return $returnArr;
     }
 
     public function serializeGeoJsonResultArr($sql, $mofData = null): array
