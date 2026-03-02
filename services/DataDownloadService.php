@@ -36,6 +36,9 @@ class DataDownloadService {
         elseif($fileType === 'docx'){
             $returnVal = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         }
+        elseif($fileType === 'fasta'){
+            $returnVal = 'text/x-fasta';
+        }
         return $returnVal;
     }
 
@@ -100,6 +103,28 @@ class DataDownloadService {
         if(!$keepFile){
             FileSystemService::deleteFile($outputFilePath, true);
         }
+    }
+
+    public function writeFASTAFromDataArr($fileName, $dataArr): string
+    {
+        $fullPath = '';
+        $targetPath = FileSystemService::getTempDownloadUploadPath();
+        if($fileName && $targetPath){
+            $fullPath = $targetPath . '/' . $fileName;
+            $fileHandler = FileSystemService::openFileHandler($fullPath);
+            foreach($dataArr as $data){
+                if($data['sourceidentifier'] && $data['description'] && $data['dnasequence']){
+                    $seqStrArr = str_split($data['dnasequence'], 70);
+                    FileSystemService::writeTextToFile($fileHandler, ('>' . $data['sourceidentifier'] . ' ' . $data['description'] . "\n"));
+                    foreach($seqStrArr as $dnaStr){
+                        FileSystemService::writeTextToFile($fileHandler, ($dnaStr . "\n"));
+                    }
+                    FileSystemService::writeTextToFile($fileHandler, "\n");
+                }
+            }
+            FileSystemService::closeFileHandler($fileHandler);
+        }
+        return $fullPath;
     }
 
     public function writeGeoJSONFromGeoJSONArr($fileName, $dataArr): string
