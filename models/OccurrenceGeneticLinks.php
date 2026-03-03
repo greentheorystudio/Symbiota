@@ -32,6 +32,18 @@ class OccurrenceGeneticLinks{
         $this->conn->close();
 	}
 
+    public function clearOccurrenceGeneticLinkageRecordsByArr($glIdArr): int
+    {
+        $retVal = 0;
+        if(count($glIdArr) > 0){
+            $sql = 'DELETE FROM omoccurgenetic WHERE idoccurgenetic IN(' . implode(',', $glIdArr) . ') ';
+            if($this->conn->query($sql)){
+                $retVal = $this->conn->affected_rows;
+            }
+        }
+        return $retVal;
+    }
+
     public function createOccurrenceGeneticLinkageRecord($data): int
     {
         $newID = 0;
@@ -56,6 +68,40 @@ class OccurrenceGeneticLinks{
         return $newID;
     }
 
+    public function createOccurrenceGeneticLinkageRecordsFromUploadData($collId): int
+    {
+        $skipFields = array('idoccurgenetic', 'initialtimestamp');
+        $retVal = 0;
+        $fieldNameArr = array();
+        if($collId){
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    $fieldNameArr[] = $field;
+                }
+            }
+            if(count($fieldNameArr) > 0){
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upgid FROM uploadgenetictemp AS u LEFT JOIN omoccurgenetic AS g ON u.occid = g.occid '.
+                    'WHERE u.collid  = ' . (int)$collId . ' AND u.occid IS NOT NULL AND (ISNULL(g.occid) OR (u.sourceidentifier <> g.sourceidentifier)) LIMIT 50000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upgid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'INSERT IGNORE INTO omoccurgenetic(' . implode(',', $fieldNameArr) . ') '.
+                            'SELECT ' . implode(',', $fieldNameArr) . ' FROM uploadgenetictemp '.
+                            'WHERE upgid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $retVal = $this->conn->affected_rows;
+                        }
+                    }
+                }
+            }
+        }
+        return $retVal;
+    }
+
     public function deleteGeneticLinkageRecord($linkId): int
     {
         $retVal = 1;
@@ -71,18 +117,26 @@ class OccurrenceGeneticLinks{
         $retVal = 0;
         $whereStr = '';
         if($idType === 'occid'){
-            $whereStr = 'occid = ' . (int)$id;
+            $whereStr = 'occid = ' . (int)$id . ' ';
         }
         elseif($idType === 'occidArr'){
-            $whereStr = 'occid IN(' . implode(',', $id) . ')';
+            $whereStr = 'occid IN(' . implode(',', $id) . ') ';
         }
         elseif($idType === 'collid'){
-            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') ';
         }
         if($whereStr){
-            $sql = 'DELETE FROM omoccurgenetic WHERE ' . $whereStr . ' ';
-            if($this->conn->query($sql)){
-                $retVal = 1;
+            $glIdArr = array();
+            $sql = 'SELECT idoccurgenetic FROM omoccurgenetic WHERE ' . $whereStr . ' ';
+            if($idType === 'collid'){
+                $sql .= 'LIMIT 50000 ';
+            }
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $glIdArr[] = $row['idoccurgenetic'];
+                }
+                $result->free();
+                $retVal = $this->clearOccurrenceGeneticLinkageRecordsByArr($glIdArr);
             }
         }
         return $retVal;

@@ -39,6 +39,11 @@ const collectionDataUploadParametersFieldModule = {
             </div>
             <div class="row q-col-gutter-sm">
                 <div class="col-grow">
+                    <selector-input-element :disabled="disabled" label="Existing Genetic Records" :options="existingAssociatedGeneticDataOptions" :value="configurationData.existingGeneticRecords" @update:value="(value) => updateConfigurationData('existingGeneticRecords', value)"></selector-input-element>
+                </div>
+            </div>
+            <div class="row q-col-gutter-sm">
+                <div class="col-grow">
                     <selector-input-element :disabled="disabled" label="Existing Measurement or Fact Records" :options="existingAssociatedMofDataOptions" :value="configurationData.existingMofRecords" @update:value="(value) => updateConfigurationData('existingMofRecords', value)"></selector-input-element>
                 </div>
             </div>
@@ -94,6 +99,10 @@ const collectionDataUploadParametersFieldModule = {
         ];
         const configurationData = Vue.computed(() => collectionDataUploadParametersStore.getConfigurations);
         const existingAssociatedDeterminationOptions = [
+            {value: 'merge', label: 'Import new records while leaving existing records'},
+            {value: 'replace', label: 'Replace existing records with new records'}
+        ];
+        const existingAssociatedGeneticDataOptions = [
             {value: 'merge', label: 'Import new records while leaving existing records'},
             {value: 'replace', label: 'Replace existing records with new records'}
         ];
@@ -161,6 +170,7 @@ const collectionDataUploadParametersFieldModule = {
             catalogNumberMatchOptions,
             configurationData,
             existingAssociatedDeterminationOptions,
+            existingAssociatedGeneticDataOptions,
             existingAssociatedMediaOptions,
             existingAssociatedMofDataOptions,
             existingRecordOptions,
