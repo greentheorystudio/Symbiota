@@ -62,10 +62,15 @@ const occurrenceEditorTabModule = {
         const configuredDataLabel = Vue.computed(() => occurrenceStore.getOccurrenceMofDataLabel);
         const containerWidth = Vue.inject('containerWidth');
         const isLocked = Vue.computed(() => occurrenceStore.getIsLocked);
+        const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const selectedTab = Vue.ref('data');
         const tabPanelStyle = Vue.computed(() => {
             return 'width: ' + (containerWidth.value - 34) + 'px;';
+        });
+
+        Vue.watch(occId, () => {
+            selectedTab.value = 'data';
         });
 
         return {
