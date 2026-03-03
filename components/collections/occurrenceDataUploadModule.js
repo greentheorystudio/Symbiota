@@ -273,6 +273,11 @@ const occurrenceDataUploadModule = {
                                                 Media records pending transfer: {{ uploadSummaryData['media'] }}
                                             </div>
                                         </div>
+                                        <div v-if="includeGeneticData" class="row">
+                                            <div>
+                                                Genetic records pending transfer: {{ uploadSummaryData['genetic'] }}
+                                            </div>
+                                        </div>
                                         <div v-if="includeMofData" class="row">
                                             <div>
                                                 Measurement or fact records pending transfer: {{ uploadSummaryData['mof'] }}
@@ -545,12 +550,15 @@ const occurrenceDataUploadModule = {
         const fieldMappingDataMof = Vue.ref({});
         const fieldMappingDataOccurrence = Vue.ref({});
         const fieldMappingDataSecondary = Vue.ref({});
+        const flatFileGeneticData = Vue.ref([]);
         const flatFileMode = Vue.ref(false);
         const flatFileMofData = Vue.ref([]);
         const flatFileOccurrenceData = Vue.ref([]);
         const gbifLoadingStatus = Vue.ref(false);
+        const geneticDataIncluded = Vue.ref(false);
         const identificationDataIncluded = Vue.ref(false);
         const includeDeterminationData = Vue.ref(true);
+        const includeGeneticData = Vue.ref(true);
         const includeMultimediaData = Vue.ref(true);
         const includeMofData = Vue.ref(true);
         const initializeValid = Vue.computed(() => {
@@ -636,6 +644,7 @@ const occurrenceDataUploadModule = {
         const profileConfigurationData = Vue.computed(() => collectionDataUploadParametersStore.getConfigurations);
         const profileData = Vue.computed(() => collectionDataUploadParametersStore.getCollectionDataUploadParametersData);
         const recordsUploadedDetermination = Vue.ref(0);
+        const recordsUploadedGenetic = Vue.ref(0);
         const recordsUploadedMof = Vue.ref(0);
         const recordsUploadedMultimedia = Vue.ref(0);
         const recordsUploadedOccurrence = Vue.ref(0);
@@ -732,10 +741,12 @@ const occurrenceDataUploadModule = {
             updatingIndex.value = 0;
             flatFileMode.value = false;
             includeDeterminationData.value = true;
+            includeGeneticData.value = true;
             includeMultimediaData.value = true;
             includeMofData.value = true;
             localDwcaServerPath.value = null;
             localDwcaFileArr.value.length = 0;
+            geneticDataIncluded.value = false;
             mofDataIncluded.value = false;
             identificationDataIncluded.value = false;
             multimediaDataIncluded.value = false;
@@ -747,6 +758,7 @@ const occurrenceDataUploadModule = {
             fieldMappingDataMof.value = Object.assign({}, {});
             fieldMappingDataOccurrence.value = Object.assign({}, {});
             fieldMappingDataSecondary.value = Object.assign({}, {});
+            flatFileGeneticData.value.length = 0;
             flatFileMofData.value.length = 0;
             flatFileOccurrenceData.value.length = 0;
             savedMappingDataDetermiation.value = Object.assign({}, {});
@@ -762,6 +774,7 @@ const occurrenceDataUploadModule = {
             sourceDataFieldsFlatFile.value = Object.assign({}, {});
             sourceDataFlatFile.value.length = 0;
             recordsUploadedDetermination.value = 0;
+            recordsUploadedGenetic.value = 0;
             recordsUploadedMof.value = 0;
             recordsUploadedMultimedia.value = 0;
             recordsUploadedOccurrence.value = 0;
@@ -846,6 +859,33 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferAddNewGeneticRecords() {
+            if(currentProcess.value !== 'finalTransferAddNewGeneticRecords'){
+                const text = 'Transferring new genetic records';
+                currentProcess.value = 'finalTransferAddNewGeneticRecords';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferAddNewGeneticRecords');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    finalTransferAddNewGeneticRecords();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    finalTransferProcessMof();
+                }
+            });
+        }
+
         function finalTransferAddNewMedia() {
             if(currentProcess.value !== 'finalTransferAddNewMedia'){
                 const text = 'Transferring new media records';
@@ -868,7 +908,7 @@ const occurrenceDataUploadModule = {
                 }
                 else{
                     processSuccessResponse('Complete');
-                    finalTransferProcessMof();
+                    finalTransferProcessGeneticData();
                 }
             });
         }
@@ -1072,6 +1112,33 @@ const occurrenceDataUploadModule = {
                 else{
                     processSuccessResponse('Complete');
                     finalTransferAddNewDeterminations();
+                }
+            });
+        }
+
+        function finalTransferClearPreviousGeneticRecords() {
+            if(currentProcess.value !== 'finalTransferClearPreviousGeneticRecords'){
+                const text = 'Clearing previous genetic records';
+                currentProcess.value = 'finalTransferClearPreviousGeneticRecords';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferClearPreviousGeneticRecords');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    finalTransferClearPreviousGeneticRecords();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewGeneticRecords();
                 }
             });
         }
@@ -1294,12 +1361,26 @@ const occurrenceDataUploadModule = {
             }
         }
 
+        function finalTransferProcessGeneticData() {
+            if(includeGeneticData.value && Number(uploadSummaryData.value['genetic']) > 0){
+                if(profileConfigurationData.value['existingGeneticRecords'] === 'merge'){
+                    finalTransferRemoveExistingGeneticRecordsFromUpload();
+                }
+                else{
+                    finalTransferClearPreviousGeneticRecords();
+                }
+            }
+            else{
+                finalTransferProcessMof();
+            }
+        }
+
         function finalTransferProcessMedia() {
             if(includeMultimediaData.value && Number(uploadSummaryData.value['media']) > 0){
                 finalTransferCleanMediaRecords();
             }
             else{
-                finalTransferProcessMof();
+                finalTransferProcessGeneticData();
             }
         }
 
@@ -1367,6 +1448,33 @@ const occurrenceDataUploadModule = {
                 else{
                     processSuccessResponse('Complete');
                     finalTransferAddNewDeterminations();
+                }
+            });
+        }
+
+        function finalTransferRemoveExistingGeneticRecordsFromUpload() {
+            if(currentProcess.value !== 'finalTransferRemoveExistingGeneticRecordsFromUpload'){
+                const text = 'Removing existing genetic records from upload';
+                currentProcess.value = 'finalTransferRemoveExistingGeneticRecordsFromUpload';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            }
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'finalTransferRemoveExistingGeneticRecordsFromUpload');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    finalTransferRemoveExistingGeneticRecordsFromUpload();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    finalTransferAddNewGeneticRecords();
                 }
             });
         }
@@ -1531,6 +1639,33 @@ const occurrenceDataUploadModule = {
             });
         }
 
+        function finalTransferSetNewOccurrenceIdsGenetic() {
+            const formData = new FormData();
+            formData.append('collid', props.collid.toString());
+            formData.append('action', 'linkExistingOccurrencesToUploadGenetic');
+            fetch(dataUploadServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    finalTransferSetNewOccurrenceIdsGenetic();
+                }
+                else{
+                    processSuccessResponse('Complete');
+                    if(Number(profileConfigurationData.value['saveSourcePrimaryIdentifier']) === 1){
+                        finalTransferProcessDeterminations();
+                    }
+                    else{
+                        finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences();
+                    }
+                }
+            });
+        }
+
         function finalTransferSetNewOccurrenceIdsMedia() {
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
@@ -1547,13 +1682,7 @@ const occurrenceDataUploadModule = {
                     finalTransferSetNewOccurrenceIdsMedia();
                 }
                 else{
-                    processSuccessResponse('Complete');
-                    if(Number(profileConfigurationData.value['saveSourcePrimaryIdentifier']) === 1){
-                        finalTransferProcessDeterminations();
-                    }
-                    else{
-                        finalTransferRemovePrimaryIdentifiersFromUploadedOccurrences();
-                    }
+                    finalTransferSetNewOccurrenceIdsGenetic();
                 }
             });
         }
@@ -1853,6 +1982,7 @@ const occurrenceDataUploadModule = {
             const idField = Object.keys(fieldMappingDataOccurrence.value).find(field => fieldMappingDataOccurrence.value[field.toLowerCase()] === 'dbpk');
             sourceDataFlatFile.value.forEach((dataRow) => {
                 const occurrenceData = {};
+                const occurrenceGeneticData = {};
                 occurrenceData['dbpk'] = dataRow[idField];
                 Object.keys(dataRow).forEach((field) => {
                     if(fieldMappingDataOccurrence.value.hasOwnProperty(field.toLowerCase()) && fieldMappingDataOccurrence.value[field.toLowerCase()] !== 'unmapped'){
@@ -1864,6 +1994,9 @@ const occurrenceDataUploadModule = {
                                 mofData['datavalue'] = dataRow[field];
                                 flatFileMofData.value.push(mofData);
                             }
+                        }
+                        else if(symbiotaFieldOptionsGenetic.value.find(gfield => gfield['value'] === fieldMappingDataOccurrence.value[field.toLowerCase()]) && dataRow[field]){
+                            occurrenceGeneticData[fieldMappingDataOccurrence.value[field.toLowerCase()]] = dataRow[field];
                         }
                         else{
                             occurrenceData[fieldMappingDataOccurrence.value[field.toLowerCase()]] = dataRow[field];
@@ -1878,6 +2011,9 @@ const occurrenceDataUploadModule = {
                                 mofData['datavalue'] = dataRow[field];
                                 flatFileMofData.value.push(mofData);
                             }
+                        }
+                        else if(symbiotaFieldOptionsGenetic.value.find(gfield => gfield['value'] === fieldMappingDataOccurrence.value[field.toLowerCase()]) && dataRow[field]){
+                            occurrenceGeneticData[fieldMappingDataOccurrence.value[field.toLowerCase()]] = dataRow[field];
                         }
                         else{
                             occurrenceData[fieldMappingDataSecondary.value[field.toLowerCase()]] = dataRow[field];
@@ -1901,6 +2037,10 @@ const occurrenceDataUploadModule = {
                     if(Number(hours) > 0 || Number(minutes) > 0 || Number(seconds) > 0){
                         occurrenceData['eventtime'] = hours.toString() + ':' + minutes.toString() + ':' + seconds.toString();
                     }
+                }
+                if(Object.keys(occurrenceGeneticData).length > 0){
+                    occurrenceGeneticData['dbpk'] = dataRow[idField];
+                    flatFileGeneticData.value.push(occurrenceGeneticData);
                 }
                 flatFileOccurrenceData.value.push(occurrenceData);
             });
@@ -2148,6 +2288,25 @@ const occurrenceDataUploadModule = {
                 }
                 currentComplete = flatFileMofData.value.length === 0;
             }
+            else if(flatFileGeneticData.value.length > 0){
+                if(sourceDataUploadStage.value !== 'genetic'){
+                    countChange = true;
+                    sourceDataUploadStage.value = 'genetic';
+                    const text = 'Loading genetic data:';
+                    currentProcess.value = 'transferSourceDataGenetic';
+                    addProcessToProcessorDisplay(getNewProcessObject('multi', text));
+                }
+                geneticDataIncluded.value = true;
+                data = flatFileGeneticData.value.length > 500 ? flatFileGeneticData.value.slice(0, 500) : flatFileGeneticData.value.slice();
+                configuration['dataType'] = 'genetic';
+                if(flatFileGeneticData.value.length > 500){
+                    flatFileGeneticData.value.splice(0, 500);
+                }
+                else{
+                    flatFileGeneticData.value.length = 0;
+                }
+                currentComplete = flatFileGeneticData.value.length === 0;
+            }
             if(configuration.hasOwnProperty('dataType')){
                 const formData = new FormData();
                 formData.append('collid', props.collid.toString());
@@ -2172,6 +2331,11 @@ const occurrenceDataUploadModule = {
                         recordsUploadedOccurrence.value += resValue;
                         totalRecordsLoaded = recordsUploadedOccurrence.value;
                         resText = recordsUploadedOccurrence.value + ' records loaded'
+                    }
+                    else if(configuration['dataType'] === 'genetic'){
+                        recordsUploadedGenetic.value += resValue;
+                        totalRecordsLoaded = recordsUploadedGenetic.value;
+                        resText = recordsUploadedGenetic.value + ' records loaded'
                     }
                     else if(configuration['dataType'] === 'mof'){
                         recordsUploadedMof.value += resValue;
@@ -2683,6 +2847,11 @@ const occurrenceDataUploadModule = {
                         totalRecordsLoaded = recordsUploadedMultimedia.value;
                         resText = recordsUploadedMultimedia.value + ' records loaded'
                     }
+                    else if(configuration['dataType'] === 'genetic'){
+                        recordsUploadedGenetic.value += resValue;
+                        totalRecordsLoaded = recordsUploadedGenetic.value;
+                        resText = recordsUploadedGenetic.value + ' records loaded'
+                    }
                     else if(configuration['dataType'] === 'mof'){
                         recordsUploadedMof.value += resValue;
                         totalRecordsLoaded = recordsUploadedMof.value;
@@ -3050,14 +3219,17 @@ const occurrenceDataUploadModule = {
         }
 
         function setSymbiotaFlatFileFieldOptions() {
-            Object.keys(eventMofDataFields.value).forEach((key) => {
-                symbiotaFieldOptionsFlatFile.value.push({value: key, label: eventMofDataFields.value[key]['label']});
-            });
-            Object.keys(occurrenceMofDataFields.value).forEach((key) => {
-                symbiotaFieldOptionsFlatFile.value.push({value: key, label: occurrenceMofDataFields.value[key]['label']});
-            });
             symbiotaFieldOptionsOccurrence.value.forEach((fieldOption) => {
                 symbiotaFieldOptionsFlatFile.value.push(fieldOption);
+            });
+            symbiotaFieldOptionsGenetic.value.forEach((fieldOption) => {
+                symbiotaFieldOptionsFlatFile.value.push({value: fieldOption['value'], label: ('genetic-' + fieldOption['label'])});
+            });
+            Object.keys(occurrenceMofDataFields.value).forEach((key) => {
+                symbiotaFieldOptionsFlatFile.value.push({value: key, label: ('mof-' + occurrenceMofDataFields.value[key]['label'])});
+            });
+            Object.keys(eventMofDataFields.value).forEach((key) => {
+                symbiotaFieldOptionsFlatFile.value.push({value: key, label: ('emof-' + eventMofDataFields.value[key]['label'])});
             });
         }
 
@@ -3245,8 +3417,10 @@ const occurrenceDataUploadModule = {
             fieldMapperTargetFields,
             flatFileMode,
             gbifLoadingStatus,
+            geneticDataIncluded,
             identificationDataIncluded,
             includeDeterminationData,
+            includeGeneticData,
             includeMultimediaData,
             includeMofData,
             initializeValid,
