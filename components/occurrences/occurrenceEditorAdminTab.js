@@ -140,12 +140,13 @@ const occurrenceEditorAdminTab = {
             const confirmText = 'Are you sure you want to delete this record? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
+                    const deleteOccid = occId.value;
                     occurrenceStore.deleteOccurrenceRecord(occId.value, (res) => {
                         if(res === 0){
                             showNotification('negative', ('An error occurred while deleting this record.'));
                         }
                         else{
-                            searchStore.removeOccidFromOccidArrs(occId.value);
+                            searchStore.removeOccidFromOccidArrs(deleteOccid);
                             occurrenceStore.setCurrentOccurrenceRecord(searchStore.getPreviousOccidInOccidArr);
                         }
                     });

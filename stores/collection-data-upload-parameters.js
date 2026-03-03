@@ -15,6 +15,7 @@ const useCollectionDataUploadParametersStore = Pinia.defineStore('collection-dat
             catalogNumberMatchField: 'catalognumber',
             existingRecords: 'update',
             existingDeterminationRecords: 'merge',
+            existingGeneticRecords: 'merge',
             existingMediaRecords: 'sync',
             existingMofRecords: 'update',
             cleanImageDerivatives: false,
