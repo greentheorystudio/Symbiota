@@ -60,6 +60,9 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'linkExistingOccurrencesToUploadMedia'){
         echo $dataUploadService->linkExistingOccurrencesToUploadMedia($collid);
     }
+    elseif($action === 'linkExistingOccurrencesToUploadGenetic'){
+        echo $dataUploadService->linkExistingOccurrencesToUploadGenetic($collid);
+    }
     elseif($action === 'executeCleaningScriptArr' && array_key_exists('cleaningScriptArr', $_POST)){
         echo $dataUploadService->executeCleaningScriptArr($collid, json_decode($_POST['cleaningScriptArr'], true));
     }
@@ -107,11 +110,20 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
     elseif($action === 'finalTransferClearPreviousDeterminations'){
         echo $dataUploadService->finalTransferClearPreviousDeterminations($collid);
     }
+    elseif($action === 'finalTransferClearPreviousGeneticRecords'){
+        echo $dataUploadService->finalTransferClearPreviousGeneticRecords($collid);
+    }
     elseif($action === 'finalTransferRemoveExistingDeterminationsFromUpload'){
         echo $dataUploadService->finalTransferRemoveExistingDeterminationsFromUpload($collid);
     }
+    elseif($action === 'finalTransferRemoveExistingGeneticRecordsFromUpload'){
+        echo $dataUploadService->finalTransferRemoveExistingGeneticRecordsFromUpload($collid);
+    }
     elseif($action === 'finalTransferAddNewDeterminations'){
         echo $dataUploadService->finalTransferAddNewDeterminations($collid);
+    }
+    elseif($action === 'finalTransferAddNewGeneticRecords'){
+        echo $dataUploadService->finalTransferAddNewGeneticRecords($collid);
     }
     elseif($action === 'finalTransferCleanMediaRecordFormatValues'){
         echo $dataUploadService->finalTransferCleanMediaRecordFormatValues($collid);
