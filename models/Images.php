@@ -256,16 +256,16 @@ class Images{
         $retVal = 0;
         $whereStr = '';
         if($idType === 'occid'){
-            $whereStr = 'i.occid = ' . (int)$id . ' ';
+            $whereStr = 'occid = ' . (int)$id . ' ';
         }
         elseif($idType === 'occidArr'){
-            $whereStr = 'i.occid IN(' . implode(',', $id) . ') ';
+            $whereStr = 'occid IN(' . implode(',', $id) . ') ';
         }
         elseif($idType === 'collid'){
-            $whereStr = 'i.occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') ';
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') ';
         }
         elseif($idType === 'tid'){
-            $whereStr = 'i.tid = ' . (int)$id . ' AND ISNULL(i.occid) ';
+            $whereStr = 'tid = ' . (int)$id . ' AND ISNULL(occid) ';
         }
         if($whereStr){
             $imgIdArr = array();
