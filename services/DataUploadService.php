@@ -3,8 +3,10 @@ include_once(__DIR__ . '/../models/Images.php');
 include_once(__DIR__ . '/../models/Media.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/OccurrenceDeterminations.php');
+include_once(__DIR__ . '/../models/OccurrenceGeneticLinks.php');
 include_once(__DIR__ . '/../models/OccurrenceMeasurementsOrFacts.php');
 include_once(__DIR__ . '/../models/UploadDeterminationTemp.php');
+include_once(__DIR__ . '/../models/UploadGeneticTemp.php');
 include_once(__DIR__ . '/../models/UploadMediaTemp.php');
 include_once(__DIR__ . '/../models/UploadMofTemp.php');
 include_once(__DIR__ . '/../models/UploadOccurrenceTemp.php');
@@ -89,6 +91,9 @@ class DataUploadService {
                 $retVal = (new UploadMediaTemp)->clearCollectionData($collid);
             }
             if($retVal === 0){
+                $retVal = (new UploadGeneticTemp)->clearCollectionData($collid);
+            }
+            if($retVal === 0){
                 $retVal = (new UploadMofTemp)->clearCollectionData($collid);
             }
             if($retVal === 0){
@@ -105,6 +110,9 @@ class DataUploadService {
             $retVal = (new UploadDeterminationTemp)->clearOrphanedRecords($collid);
             if($retVal === 0){
                 $retVal = (new UploadMediaTemp)->clearOrphanedRecords($collid);
+            }
+            if($retVal === 0){
+                $retVal = (new UploadGeneticTemp)->clearOrphanedRecords($collid);
             }
             if($retVal === 0){
                 $retVal = (new UploadMofTemp)->clearOrphanedRecords($collid);
@@ -131,6 +139,15 @@ class DataUploadService {
         $retVal = 0;
         if($collid){
             $retVal = (new OccurrenceDeterminations)->createOccurrenceDeterminationRecordsFromUploadData($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferAddNewGeneticRecords($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new OccurrenceGeneticLinks)->createOccurrenceGeneticLinkageRecordsFromUploadData($collid);
         }
         return $retVal;
     }
@@ -213,6 +230,15 @@ class DataUploadService {
         return $retVal;
     }
 
+    public function finalTransferClearPreviousGeneticRecords($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new OccurrenceGeneticLinks)->deleteOccurrenceGeneticLinkageRecords('collid', $collid);
+        }
+        return $retVal;
+    }
+
     public function finalTransferClearPreviousMediaRecords($collid): int
     {
         $retVal = 0;
@@ -266,6 +292,15 @@ class DataUploadService {
         $retVal = 0;
         if($collid){
             $retVal = (new UploadDeterminationTemp)->removeExistingDeterminationDataFromUpload($collid);
+        }
+        return $retVal;
+    }
+
+    public function finalTransferRemoveExistingGeneticRecordsFromUpload($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadGeneticTemp)->removeExistingGeneticDataFromUpload($collid);
         }
         return $retVal;
     }
@@ -340,6 +375,7 @@ class DataUploadService {
             $retArr['exist'] = (new Occurrences)->getOccurrenceCountNotIncludedInUpload($collid);
             $retArr['ident'] = (new UploadDeterminationTemp)->getUploadCount($collid);
             $retArr['media'] = (new UploadMediaTemp)->getUploadCount($collid);
+            $retArr['genetic'] = (new UploadGeneticTemp)->getUploadCount($collid);
             $retArr['mof'] = (new UploadMofTemp)->getUploadCount($collid);
         }
         return $retArr;
@@ -387,6 +423,15 @@ class DataUploadService {
         $retVal = 0;
         if($collid){
             $retVal = (new UploadDeterminationTemp)->populateOccidFromUploadOccurrenceData($collid);
+        }
+        return $retVal;
+    }
+
+    public function linkExistingOccurrencesToUploadGenetic($collid): int
+    {
+        $retVal = 0;
+        if($collid){
+            $retVal = (new UploadGeneticTemp)->populateOccidFromUploadOccurrenceData($collid);
         }
         return $retVal;
     }
@@ -614,6 +659,9 @@ class DataUploadService {
         if($configArr['dataType'] === 'occurrence'){
             $recordsCreated += (new UploadOccurrenceTemp)->batchCreateRecords($collid, $data, $configArr['processingStatus']);
         }
+        elseif($configArr['dataType'] === 'genetic'){
+            $recordsCreated += (new UploadGeneticTemp)->batchCreateRecords($collid, $data);
+        }
         elseif($configArr['dataType'] === 'mof'){
             $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $data);
         }
@@ -680,6 +728,9 @@ class DataUploadService {
             $retVal = (new UploadDeterminationTemp)->removeExistingOccurrenceDataFromUpload($collid);
             if($retVal === 0){
                 $retVal = (new UploadMediaTemp)->removeExistingOccurrenceDataFromUpload($collid);
+            }
+            if($retVal === 0){
+                $retVal = (new UploadGeneticTemp)->removeExistingOccurrenceDataFromUpload($collid);
             }
             if($retVal === 0){
                 $retVal = (new UploadMofTemp)->removeExistingOccurrenceDataFromUpload($collid);
