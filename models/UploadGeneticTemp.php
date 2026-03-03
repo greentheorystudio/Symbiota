@@ -84,15 +84,38 @@ class UploadGeneticTemp{
         return $recordsCreated;
     }
 
-    public function clearCollectionData($collid): bool
+    public function clearCollectionData($collid): int
     {
+        $returnVal = 0;
         if($collid){
-            $sql = 'DELETE FROM uploadgenetictemp WHERE collid = ' . (int)$collid . ' ';
+            $sql = 'DELETE FROM uploadgenetictemp WHERE collid = ' . (int)$collid . ' LIMIT 50000 ';
             if($this->conn->query($sql)){
-                return true;
+                $returnVal = $this->conn->affected_rows;
             }
         }
-        return false;
+        return $returnVal;
+    }
+
+    public function clearOrphanedRecords($collid): int
+    {
+        $returnVal = 0;
+        if($collid){
+            $idArr = array();
+            $sql = 'SELECT DISTINCT ug.upgid FROM uploadgenetictemp AS ug LEFT JOIN uploadspectemp AS us ON ug.dbpk = us.dbpk WHERE ug.collid = ' . (int)$collid . ' AND (ISNULL(us.dbpk) OR us.collid  <> ' . (int)$collid . ') LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upgid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadgenetictemp WHERE upgid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
+            }
+        }
+        return $returnVal;
     }
 
     public function getFields(): array
@@ -116,24 +139,48 @@ class UploadGeneticTemp{
         return $returnVal;
     }
 
-    public function populateOccidFromUploadOccurrenceData($collid): void
+    public function populateOccidFromUploadOccurrenceData($collid): int
     {
+        $returnVal = 0;
         if($collid){
-            $sql = 'UPDATE uploadgenetictemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'SET u.occid = o.occid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            $this->conn->query($sql);
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upgid FROM uploadgenetictemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND o.collid  = ' . (int)$collid . ' AND ISNULL(u.occid) LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upgid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'UPDATE uploadgenetictemp AS u LEFT JOIN uploadspectemp AS o ON u.dbpk = o.dbpk SET u.occid = o.occid '.
+                        'WHERE u.upgid IN(' . implode(',', $idArr) . ') AND o.collid  = ' . (int)$collid . ' ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
+            }
         }
+        return $returnVal;
     }
 
     public function removeExistingGeneticDataFromUpload($collid): int
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE u.* FROM uploadgenetictemp AS u LEFT JOIN omoccurgenetic AS g ON u.occid = g.occid '.
-                'WHERE u.collid  = ' . $collid . ' AND u.sourceidentifier = g.sourceidentifier ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT u.upgid FROM uploadgenetictemp AS u LEFT JOIN omoccurgenetic AS g ON u.occid = g.occid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND u.sourceidentifier = g.sourceidentifier LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upgid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadgenetictemp WHERE upgid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
@@ -143,10 +190,20 @@ class UploadGeneticTemp{
     {
         $returnVal = 0;
         if($collid){
-            $sql = 'DELETE u.* FROM uploadgenetictemp AS u LEFT JOIN omoccurrences AS o ON u.dbpk = o.dbpk AND u.collid = o.collid '.
-                'WHERE u.collid  = ' . $collid . ' AND u.dbpk IS NOT NULL AND o.occid IS NOT NULL ';
-            if($this->conn->query($sql)){
-                $returnVal = 1;
+            $idArr = array();
+            $sql = 'SELECT DISTINCT ug.upgid FROM uploadgenetictemp AS ug LEFT JOIN omoccurrences AS o ON ug.dbpk = o.dbpk '.
+                'WHERE ug.collid = ' . (int)$collid . ' AND o.collid  = ' . (int)$collid . ' LIMIT 25000 ';
+            if($result = $this->conn->query($sql)){
+                while($row = $result->fetch_assoc()){
+                    $idArr[] = $row['upgid'];
+                }
+                $result->free();
+                if(count($idArr) > 0){
+                    $sql = 'DELETE FROM uploadgenetictemp WHERE upgid IN(' . implode(',', $idArr) . ') ';
+                    if($this->conn->query($sql)){
+                        $returnVal = $this->conn->affected_rows;
+                    }
+                }
             }
         }
         return $returnVal;
