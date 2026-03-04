@@ -2126,6 +2126,8 @@ const occurrenceDataUploadModule = {
                         if(index === 0){
                             if((occurrenceSourcePrimaryKeyField.value && !dataObj.hasOwnProperty(occurrenceSourcePrimaryKeyField.value)) || (!occurrenceSourcePrimaryKeyField.value && !dataObj.hasOwnProperty('id') && !dataObj.hasOwnProperty('coreid'))){
                                 generateCoreIds = true;
+                                coreIdField.value = 'id';
+                                fieldMappingDataOccurrence.value['id'] = 'dbpk';
                             }
                             if(generateCoreIds){
                                 sourceDataFieldsFlatFile.value['id'] = occurrenceSourcePrimaryKeyField.value ? occurrenceSourcePrimaryKeyField.value : 'coreid';
@@ -2166,6 +2168,8 @@ const occurrenceDataUploadModule = {
                     const featureGeometry = selectedClone.getGeometry();
                     if((occurrenceSourcePrimaryKeyField.value && !featureProps.hasOwnProperty(occurrenceSourcePrimaryKeyField.value)) || (!occurrenceSourcePrimaryKeyField.value && !featureProps.hasOwnProperty('id') && !featureProps.hasOwnProperty('coreid'))){
                         generateCoreIds = true;
+                        coreIdField.value = 'id';
+                        fieldMappingDataOccurrence.value['id'] = 'dbpk';
                     }
                     if(generateCoreIds){
                         sourceDataFieldsFlatFile.value['id'] = occurrenceSourcePrimaryKeyField.value ? occurrenceSourcePrimaryKeyField.value : 'coreid';
