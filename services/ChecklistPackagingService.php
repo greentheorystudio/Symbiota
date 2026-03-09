@@ -584,7 +584,7 @@ class ChecklistPackagingService {
             if(array_key_exists($taxon['tidaccepted'], $dataArr['images']) && count($dataArr['images'][$taxon['tidaccepted']]) > 0){
                 $imageSrc = $dataArr['images'][$taxon['tidaccepted']][0]['thumbnailurl'] ?: $dataArr['images'][$taxon['tidaccepted']][0]['url'];
             }
-            if($imageSrc && $imageSrc[0] === '/'){
+            if($imageSrc && $imageSrc[0] === '/' && FileSystemService::fileExists(($GLOBALS['SERVER_ROOT'] . $imageSrc))){
                 $cell = PhpWordService::getTableCell($table, null, $this->imageCellStyle);
                 $textrun = PhpWordService::getTextRun($cell, 'imagePara');
                 PhpWordService::addImage($textrun, ($GLOBALS['SERVER_ROOT'] . $imageSrc), array('width' => 160, 'height' => 160));
