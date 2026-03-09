@@ -55,7 +55,7 @@ if($export){
 	$phpWord->addParagraphStyle('toAddress', array('align'=>'left','indent'=>2,'lineHeight'=>1.0,'spaceAfter'=>0,'keepNext'=>true,'keepLines'=>true));
 	$phpWord->addFontStyle('toAddressFont', array('size'=>14,'name'=>'Arial'));
 	
-	$section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0));
+	$section = $phpWord->addSection(array('paperSize' => 'Letter','marginLeft'=>360,'marginRight'=>360,'marginTop'=>360,'marginBottom'=>360,'headerHeight'=>0,'footerHeight'=>0));
 	
 	$textrun = $section->addTextRun('fromAddress');
 	$textrun->addText(htmlspecialchars($addressArr['institutionname'].' ('.$addressArr['institutioncode'].')'),'fromAddressFont');
