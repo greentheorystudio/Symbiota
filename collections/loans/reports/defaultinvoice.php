@@ -111,7 +111,7 @@ if($export){
 	$phpWord->addTableStyle('headTable',$tableStyle,$colRowStyle);
 	$cellStyle = array('valign'=>'top');
 	
-	$section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>0,'headerHeight'=>0,'footerHeight'=>600));
+	$section = $phpWord->addSection(array('paperSize' => 'Letter','marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>0,'headerHeight'=>0,'footerHeight'=>600));
 	
 	$textrun = $section->addTextRun('header');
 	$textrun->addText(htmlspecialchars($addressArr['institutionname'].' ('.$addressArr['institutioncode'].')'),'headerFont');
