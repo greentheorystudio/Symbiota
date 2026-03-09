@@ -44,6 +44,7 @@
                     <div class="column">
                         <taxa-profile-sciname-header></taxa-profile-sciname-header>
                         <taxa-profile-taxon-family></taxa-profile-taxon-family>
+                        <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
                         <taxa-profile-taxon-notes></taxa-profile-taxon-notes>
                         <taxa-profile-taxon-vernaculars></taxa-profile-taxon-vernaculars>
                         <taxa-profile-taxon-synonyms></taxa-profile-taxon-synonyms>
@@ -70,9 +71,6 @@
                             <taxa-profile-taxon-occurrence-link></taxa-profile-taxon-occurrence-link>
                         </div>
                     </div>
-                </div>
-                <div class="q-mt-md">
-                    <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
                 </div>
                 <div class="row justify-center q-mt-md">
                     <taxa-profile-image-panel @update:set-image-carousel="showImageCarousel"></taxa-profile-image-panel>
