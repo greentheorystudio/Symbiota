@@ -30,12 +30,12 @@ if($formatArr){
         $columnCount = 2;
     }
     if((int)$columnCount === 1){
-        $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>870,'marginRight'=>870,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
+        $sectionStyle = array('paperSize' => 'Letter','marginLeft'=>870,'marginRight'=>870,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         $sectionStyle['colsNum'] = 1;
         $lineWidth = 645;
     }
     else{
-        $sectionStyle = array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>375,'marginRight'=>375,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
+        $sectionStyle = array('paperSize' => 'Letter','marginLeft'=>375,'marginRight'=>375,'marginTop'=>375,'marginBottom'=>375,'headerHeight'=>0,'footerHeight'=>0);
         if((int)$columnCount === 2){
             $sectionStyle['colsNum'] = 2;
             $lineWidth = 273;
