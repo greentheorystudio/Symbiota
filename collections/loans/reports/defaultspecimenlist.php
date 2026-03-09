@@ -63,7 +63,7 @@ if($export){
 	$phpWord->addTableStyle('listTable',$tableStyle,$colRowStyle);
 	$cellStyle = array('valign'=>'bottom');
 	
-	$section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>0,'footerHeight'=>0));
+	$section = $phpWord->addSection(array('paperSize' => 'Letter','marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>0,'footerHeight'=>0));
 	
 	$textrun = $section->addTextRun('header');
 	$textrun->addText(htmlspecialchars('List of specimens loaned to: '.$invoiceArr['institutioncode']),'headerFont');

@@ -478,7 +478,7 @@ class ChecklistPackagingService {
             PhpWordService::addParagraphStyle($phpWord, 'notesvouchersPara', array('align' => 'left', 'lineHeight' => 1.0, 'indent' => 0.78125, 'spaceBefore' => 0, 'spaceAfter' => 45));
             PhpWordService::addParagraphStyle($phpWord, 'imagePara', array('align' => 'center', 'lineHeight' => 1.0, 'spaceBefore' => 0, 'spaceAfter' => 0));
             PhpWordService::addTableStyle($phpWord, 'imageTable', $this->tableStyle, $this->colRowStyle);
-            $section = PhpWordService::getSection($phpWord, array('pageSizeW' => 12240, 'pageSizeH' => 15840, 'marginLeft' => 1080, 'marginRight' => 1080, 'marginTop' => 1080, 'marginBottom' => 1080, 'headerHeight' => 0, 'footerHeight' => 0));
+            $section = PhpWordService::getSection($phpWord, array('paperSize' => 'Letter', 'marginLeft' => 1080, 'marginRight' => 1080, 'marginTop' => 1080, 'marginBottom' => 1080, 'headerHeight' => 0, 'footerHeight' => 0));
             $textrun = PhpWordService::getTextRun($section, 'defaultPara');
             PhpWordService::addText($textrun, $dataArr['data']['name'], 'titleFont');
             PhpWordService::addTextBreak($textrun);
@@ -584,7 +584,7 @@ class ChecklistPackagingService {
             if(array_key_exists($taxon['tidaccepted'], $dataArr['images']) && count($dataArr['images'][$taxon['tidaccepted']]) > 0){
                 $imageSrc = $dataArr['images'][$taxon['tidaccepted']][0]['thumbnailurl'] ?: $dataArr['images'][$taxon['tidaccepted']][0]['url'];
             }
-            if($imageSrc && $imageSrc[0] === '/'){
+            if($imageSrc && $imageSrc[0] === '/' && FileSystemService::fileExists(($GLOBALS['SERVER_ROOT'] . $imageSrc))){
                 $cell = PhpWordService::getTableCell($table, null, $this->imageCellStyle);
                 $textrun = PhpWordService::getTextRun($cell, 'imagePara');
                 PhpWordService::addImage($textrun, ($GLOBALS['SERVER_ROOT'] . $imageSrc), array('width' => 160, 'height' => 160));
