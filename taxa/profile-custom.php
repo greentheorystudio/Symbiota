@@ -13,6 +13,7 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonNotes.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonFamily.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonVernaculars.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonIdentifiers.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileTaxonSynonyms.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileCentralmage.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileDescriptionTabs.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -35,7 +36,6 @@
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaProfileImageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/custom/taxaProfileTaxonNativeStatus.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script type="text/javascript">
     const taxonProfilePage = Vue.createApp({
         template: `
@@ -44,7 +44,7 @@
                     <div class="column">
                         <taxa-profile-sciname-header></taxa-profile-sciname-header>
                         <taxa-profile-taxon-family></taxa-profile-taxon-family>
-                        <taxa-profile-taxon-native-status :taxon="taxon"></taxa-profile-taxon-native-status>
+                        <taxa-profile-taxon-identifiers></taxa-profile-taxon-identifiers>
                         <taxa-profile-taxon-notes></taxa-profile-taxon-notes>
                         <taxa-profile-taxon-vernaculars></taxa-profile-taxon-vernaculars>
                         <taxa-profile-taxon-synonyms></taxa-profile-taxon-synonyms>
@@ -106,7 +106,7 @@
             'taxa-profile-subtaxa-panel': taxaProfileSubtaxaPanel,
             'taxa-profile-media-panel': taxaProfileMediaPanel,
             'taxa-profile-image-carousel': taxaProfileImageCarousel,
-            'taxa-profile-taxon-native-status': taxaProfileTaxonNativeStatus
+            'taxa-profile-taxon-identifiers': taxaProfileTaxonIdentifiers
         },
         setup() {
             const { hideWorking, showWorking } = useCore();
