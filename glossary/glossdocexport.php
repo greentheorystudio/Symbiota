@@ -43,7 +43,7 @@ $phpWord->addTableStyle('exportTable',$tableStyle,$colRowStyle);
 $nodefCellStyle = array('valign'=>'center','width'=>2520,'borderSize'=>0,'borderColor'=>'ffffff');
 $imageCellStyle = array('valign'=>'top','width'=>2520,'borderSize'=>0,'borderColor'=>'ffffff');
 
-$section = $phpWord->addSection(array('pageSizeW'=>12240,'pageSizeH'=>15840,'marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>100,'footerHeight'=>0));
+$section = $phpWord->addSection(array('paperSize' => 'Letter','marginLeft'=>1080,'marginRight'=>1080,'marginTop'=>1080,'marginBottom'=>1080,'headerHeight'=>100,'footerHeight'=>0));
 $glosManager = new GlossaryManager(); 
 if($exportType === 'translation'){
 	$exportArr = $glosManager->getExportArr($language,$taxon,0,$translations,$definitions);
