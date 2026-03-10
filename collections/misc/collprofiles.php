@@ -19,8 +19,6 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
         <style>
             .coll-icon-image {
                 border-width: 1px;
-                height: 30px;
-                width: 30px;
             }
         </style>
         <script type="text/javascript">
@@ -229,7 +227,7 @@ $collid = (array_key_exists('collid',$_REQUEST) ? (int)$_REQUEST['collid'] : 0);
                             <q-card v-if="collection" flat bordered>
                                 <q-card-section horizontal class="q-pa-md">
                                     <q-card-section v-if="collection.icon" class="col-3 column flex flex-center">
-                                        <q-img class="rounded-borders coll-icon-image" :src="collection.icon"></q-img>
+                                        <q-img class="rounded-borders coll-icon-image" width="75%" :src="collection.icon"></q-img>
                                     </q-card-section>
                                     <q-card-section class="column">
                                         <div class="text-h6 text-bold">
