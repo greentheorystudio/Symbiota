@@ -66,10 +66,10 @@ class OccurrenceMeasurementsOrFacts{
         $retVal = 0;
         $whereStr = '';
         if($idType === 'occid'){
-            $whereStr = 'occid = ' . (int)$id . ' OR eventid IN(SELECT eventid FROM omoccurrences WHERE occid = ' . (int)$id . ')';
+            $whereStr = 'occid = ' . (int)$id;
         }
         elseif($idType === 'occidArr'){
-            $whereStr = 'occid IN(' . implode(',', $id) . ') OR eventid IN(SELECT eventid FROM omoccurrences WHERE occid IN(' . implode(',', $id) . '))';
+            $whereStr = 'occid IN(' . implode(',', $id) . ')';
         }
         elseif($idType === 'collid'){
             $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') OR eventid IN(SELECT eventid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
