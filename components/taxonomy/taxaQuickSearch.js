@@ -29,9 +29,9 @@ const taxaQuickSearch = {
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autoCompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" @keyup.enter="processEnterClick" :label="autoCompleteLabel" tabindex="0">
+                        <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autoCompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" @keyup.enter="processEnterClick" :label="autoCompleteLabel" autocomplete="off" tabindex="0">
                             <template v-slot:append>
-                                <q-icon role="button" name="search" class="cursor-pointer" @click="processSearch();" @keyup.enter="processSearch();" aria-label="Search" tabindex="0">
+                                <q-icon role="button" name="search" class="cursor-pointer" @click="processSearch" @keyup.enter="processSearch" aria-label="Search" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Search
                                     </q-tooltip>
@@ -131,8 +131,14 @@ const taxaQuickSearch = {
             processSearch();
         }
 
-        function processSearch() {
+        function processSearch(val) {
             if(selectedTaxonType.value === 'common'){
+                if(!selectedTaxon.value.hasOwnProperty('label')){
+                    const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.parentNode.parentElement.parentElement.parentElement.control.value.trim().toLowerCase());
+                    if(optionObj){
+                        selectedTaxon.value = Object.assign({}, optionObj);
+                    }
+                }
                 const formData = new FormData();
                 formData.append('vernacular', selectedTaxon.value['label']);
                 formData.append('action', 'getHighestRankingTidByVernacular');
