@@ -89,7 +89,7 @@
                 },
                 {
                     "header": "The Criteria and Collections Tab",
-                    "html": "<p>In the <b>Criteria Tab</b>, you can search for occurrence data depending on the criteria you enter by filling out the form, and pressing the SEARCH RECORDS button. In the <b>Collections tab</b>, you can select records depending on the dataset it belongs to by checking or unchecking the boxes and clicking the SEARCH RECORDS button. See the 'Occurrence Query Builder' tutorial on how to use the Advanced Tab.</p>"
+                    "html": "<p>In the <b>Criteria Tab</b>, you can search for occurrence data depending on the criteria you enter by filling out the form, and pressing the SEARCH RECORDS button. In the <b>Collections tab</b>, you can select records depending on the dataset it belongs to by checking or unchecking the boxes and clicking the SEARCH RECORDS button. See the 'Advanced Occurrence Query Builder' tutorial on how to use the Advanced Tab.</p>"
                 },
                 {
                     "header": "Loaded Occurrence Data",
@@ -102,11 +102,19 @@
             ]
         },
         {
-            "title": "Occurrence Query Builder",
+            "title": "Advanced Occurrence Query Builder",
             "slides": [
                 {
                     "header": "",
-                    "html": "<p>The OccuQuery Selector for any layer is accessed by clicking on the Query Selector Toggle button in the layer's frame in the Layers Panel. This tool allows you to select features within a given layer based on their attribute values. Once the Query Selector has been opened for a layer, here are the steps for use:</p>"
+                    "html": "<p>The Occurrence Data Query Builder is in the Advanced Tab of the Search Panel. Here you can create a Structured Query Language (SQL) style query to find specific occurrence data. </p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>First, select the number of parentheses you want dependent on how many queries you want to combine, then choose the field you want to query for, then operator you want to use, then the value. If combining multiple queries through AND or OR, use the ADD QUERY button to add another query if it hasn't been already once you select the second set of parentheses.</p>"
+                },
+                {
+                    "header": "",
+                    "html": "<p>After you fill in all the fields, your query in text form should show up at the top so you can read it over for errors. You can delete queries using the trashcan button, and adjust queries as fit as you go. Use the SEARCH RECORDS button to pull up the occurrence data that matches the query you have created.</p>"
                 }
             ]
         },
@@ -339,7 +347,7 @@
                 },
                 {
                     "header": "Query Selector Toggle Button",
-                    "html": "<p><b>Available for vector layers when visible.</b> Clicking this will close the Layers Panel and open the Query Selector for the layer. The Query Selector allows you to select features within a given layer based on their attribute values. For more detail, see the 'Advanced Query Builder' tutorial. </p>"
+                    "html": "<p><b>Available for vector layers when visible.</b> Clicking this will close the Layers Panel and open the Query Selector for the layer. The Query Selector allows you to select features within a given layer based on their attribute values. Select the attribute, a comparison operator, and a value to find features that fit your query. </p>"
                 },
                 {
                     "header": "Symbology Toggle Button",
@@ -417,7 +425,7 @@
                 },
                 {
                     "header": "",
-                    "html": "<p>When there are no layers activated on the map, and the Active Layer Selector is set to None, hovering over any feature or raster data on the map will open an info window displaying the source layer for that feature or data.</p>"
+                    "html": "<p>When there are no layers activated on the map, and the Active Layer Selector is set to None, hovering over any feature on the map will open an info window displaying the source layer for that feature.</p>"
                 }
             ]
         },
@@ -768,7 +776,7 @@
             ]
         },
         {
-            "title": "Walkthrough: Searching and Loading Occurrence Data",
+            "title": "Walkthrough 1: Searching and Loading Occurrence Data",
             "slides": [
                 {
                     "header": "",
@@ -817,7 +825,7 @@
             ]
         },
         {
-            "title": "Walkthrough: Loading Occurrence Data Around a Buffer Polygon",
+            "title": "Walkthrough 2: Loading Occurrence Data Around a Buffer Polygon",
             "slides": [
                 {
                     "header": "",
@@ -866,7 +874,7 @@
             ]
         },
         {
-            "title": "Walkthrough: Loading Occurrence Data Within a U.S. County",
+            "title": "Walkthrough 3: Loading Occurrence Data Within a U.S. County",
             "slides": [
                 {
                     "header": "",
@@ -919,7 +927,7 @@
             ]
         },
         {
-            "title": "Walkthrough: Using Intersect Tool",
+            "title": "Walkthrough 4: Using Intersect Tool",
             "slides": [
                 {
                     "header": "",
@@ -1016,7 +1024,7 @@
             ]
         },
         {
-            "title": "Walkthrough: Using Vector Tools",
+            "title": "Walkthrough 5: Using Vector Tools",
             "slides": [
                 {
                     "header": "",
