@@ -350,8 +350,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
                     const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
                     const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
-                    const sortDirection = Vue.ref('ASC');
-                    const sortField = Vue.ref(null);
                     const recordCount = Vue.computed(() => {
                         if(Number(searchRecordCount.value) > 0){
                             return Number(occId.value) === 0 ? searchRecordCount.value + 1 : searchRecordCount.value;
@@ -370,14 +368,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     Vue.watch(occId, () => {
                         searchStore.setCurrentOccId(occId.value);
-                    });
-
-                    Vue.watch(searchTermsSortDirection, () => {
-                        sortDirection.value = searchTermsSortDirection.value;
-                    });
-
-                    Vue.watch(searchTermsSortField, () => {
-                        sortField.value = searchTermsSortField.value;
                     });
 
                     function changeOccurrenceEntryFormat(value) {
@@ -418,8 +408,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 schema: 'occurrence',
                                 display: 'table',
                                 spatial: 0,
-                                sortField: sortField.value,
-                                sortDirection: sortDirection.value
+                                sortField: searchTermsSortField.value,
+                                sortDirection: searchTermsSortDirection.value
                             };
                             searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
