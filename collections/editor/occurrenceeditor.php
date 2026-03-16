@@ -347,6 +347,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const queryId = QUERYID;
                     const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
+                    const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
+                    const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
                     const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
                     const recordCount = Vue.computed(() => {
                         if(Number(searchRecordCount.value) > 0){
@@ -386,12 +388,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         occurrenceStore.setCurrentOccurrenceRecord(searchStore.getLastOccidInOccidArr);
                     }
 
-                    function goToNextRecord() {
-                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getNextOccidInOccidArr);
-                    }
-
                     function goToNewRecord() {
                         occurrenceStore.goToNewOccurrenceRecord();
+                    }
+
+                    function goToNextRecord() {
+                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getNextOccidInOccidArr);
                     }
 
                     function goToPreviousRecord() {
@@ -405,7 +407,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             const options = {
                                 schema: 'occurrence',
                                 display: 'table',
-                                spatial: 0
+                                spatial: 0,
+                                sortField: searchTermsSortField.value,
+                                sortDirection: searchTermsSortDirection.value
                             };
                             searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
