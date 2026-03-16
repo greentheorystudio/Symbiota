@@ -217,7 +217,11 @@ class TaxonVernaculars{
         $tempArr = array();
         $vernacularDataArr = array();
         $sql = 'SELECT DISTINCT t.tidaccepted, t.sciname FROM taxa AS t LEFT JOIN taxavernaculars AS tv ON t.tidaccepted = tv.tid ';
-        $sql .= "WHERE tv.vernacularname REGEXP '" . "\\\b" . SanitizerService::cleanInStr($this->conn, $vernacular) . "\\\b" . "' ORDER BY t.sciname ";
+        $sql .= "WHERE tv.vernacularname REGEXP '" . "\\\b" . SanitizerService::cleanInStr($this->conn, $vernacular) . "\\\b" . "' ";
+        if(strpos($vernacular, '-') !== false){
+            $sql .= "OR tv.vernacularname REGEXP '" . "\\\b" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $vernacular)) . "\\\b" . "' ";
+        }
+        $sql .= 'ORDER BY t.sciname ';
         //error_log($sql);
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
