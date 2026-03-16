@@ -386,12 +386,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         occurrenceStore.setCurrentOccurrenceRecord(searchStore.getLastOccidInOccidArr);
                     }
 
-                    function goToNextRecord() {
-                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getNextOccidInOccidArr);
-                    }
-
                     function goToNewRecord() {
                         occurrenceStore.goToNewOccurrenceRecord();
+                    }
+
+                    function goToNextRecord() {
+                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getNextOccidInOccidArr);
                     }
 
                     function goToPreviousRecord() {
