@@ -44,6 +44,10 @@ const taxaProfileTaxonIdentifiers = {
             return returnArr;
         }
 
+        function getNonNativeIdentifier(identifierArr) {
+            return !!identifierArr.find(identifier => identifier['name'] === 'non-native');
+        }
+
         function openOccurrenceListGeneticSearch(sciname) {
             window.open((clientRoot + '/collections/list.php?starr={"hasgenetic":1,"taxa":"' + sciname + '"}'), '_blank');
         }
@@ -53,6 +57,7 @@ const taxaProfileTaxonIdentifiers = {
             taxon,
             getGeneticIdentifier,
             getIdentifierArr,
+            getNonNativeIdentifier,
             openOccurrenceListGeneticSearch
         }
     }

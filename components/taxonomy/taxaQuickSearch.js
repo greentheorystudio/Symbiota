@@ -29,9 +29,9 @@ const taxaQuickSearch = {
                 </div>
                 <div class="row">
                     <div class="col-grow">
-                        <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autoCompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" @keyup.enter="processEnterClick" :label="autoCompleteLabel" tabindex="0">
+                        <q-select v-model="selectedTaxon.label" use-input hide-selected fill-input outlined dense options-dense hide-dropdown-icon popup-content-class="z-max" behavior="menu" input-debounce="0" bg-color="white" @new-value="createValue" :options="autoCompleteOptions" @filter="getOptions" @blur="blurAction" @update:model-value="processChange" @keyup.enter="processEnterClick" :label="autoCompleteLabel" autocomplete="off" tabindex="0">
                             <template v-slot:append>
-                                <q-icon role="button" name="search" class="cursor-pointer" @click="processSearch();" @keyup.enter="processSearch();" aria-label="Search" tabindex="0">
+                                <q-icon role="button" name="search" class="cursor-pointer" @click="processSearch" @keyup.enter="processSearch" aria-label="Search" aria-hidden="false" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                         Search
                                     </q-tooltip>
@@ -42,36 +42,57 @@ const taxaQuickSearch = {
                 </div>
             </q-card-section>
         </q-card>
+        <q-dialog class="z-top" v-model="showPopup" persistent>
+            <q-card class="md-square-popup overflow-hidden">
+                <div class="row justify-end items-start map-sm-popup">
+                    <div>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="showPopup = false" aria-label="Close window" tabindex="0"></q-btn>
+                    </div>
+                </div>
+                <div ref="contentRef" class="fit">
+                    <div :style="contentStyle" class="overflow-auto">
+                        <div v-if="taxaArr.length" class="q-pa-md column q-gutter-sm">
+                            <template v-for="taxon in taxaArr">
+                                <q-card role="button" class="cursor-pointer" @click="openTaxaProfileTab(taxon['tid']);" @keyup.enter="openTaxaProfileTab(taxon['tid']);" :aria-label="( taxon['sciname'] + ' taxon profile page page')" tabindex="0">
+                                    <q-card-section class="q-pa-md text-subtitle1">
+                                        <span class="text-italic text-bold">{{ taxon['sciname'] }}</span>
+                                        <template v-if="taxon['vernacularData'] && taxon['vernacularData'].length > 0 && getVernacularStrFromArr(taxon['vernacularData'], taxon['tid'])">
+                                            <span>{{ getVernacularStrFromArr(taxon['vernacularData'], taxon['tid']) }}</span>
+                                        </template>
+                                    </q-card-section>
+                                </q-card>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </q-card>
+        </q-dialog>
     `,
     setup(props) {
-        const { showNotification } = useCore();
+        const { hideWorking, showNotification, showWorking } = useCore();
         const baseStore = useBaseStore();
 
         const autoCompleteLabel = Vue.ref('Common Name');
         const autoCompleteOptions = Vue.ref([]);
         const clientRoot = baseStore.getClientRoot;
+        const contentRef = Vue.ref(null);
+        const contentStyle = Vue.ref(null);
         const selectedTaxon = Vue.ref({});
         const selectedTaxonType = Vue.ref(null);
+        const showPopup = Vue.ref(false);
+        const taxaArr = Vue.ref([]);
         const taxonTypeOptions = [
             {label: 'Common Name', value: 'common'},
             {label: 'Scientific Name', value: 'scientific'}
         ];
 
+        Vue.watch(contentRef, () => {
+            setContentStyle();
+        });
+
         function blurAction(val) {
             if(val && selectedTaxon.value && val.target.value !== selectedTaxon.value.label){
-                const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.value.trim().toLowerCase());
-                if(optionObj){
-                    processChange(optionObj);
-                }
-                else{
-                    processChange({
-                        label: val.target.value,
-                        sciname: val.target.value,
-                        tid: null,
-                        family: null,
-                        author: null
-                    });
-                }
+                setSelectedTaxonValue(val.target.value);
             }
         }
 
@@ -86,6 +107,7 @@ const taxaQuickSearch = {
                         label: val,
                         sciname: val,
                         tid: null,
+                        vid: null,
                         family: null,
                         author: null
                     }, 'add');
@@ -123,6 +145,20 @@ const taxaQuickSearch = {
             });
         }
 
+        function getVernacularStrFromArr(vernacularArr, tid) {
+            const nameArr = [];
+            vernacularArr.forEach(vernacular => {
+                if(vernacular['vernacularname'] && Number(tid) === Number(vernacular['vernaculartid'])){
+                    nameArr.push(vernacular['vernacularname']);
+                }
+            });
+            return nameArr.length > 0 ? (' - ' + nameArr.join(', ')) : null;
+        }
+
+        function openTaxaProfileTab(tid) {
+            window.location.href = (clientRoot + '/taxa/index.php?taxon=' + tid);
+        }
+
         function processChange(taxonObj) {
             selectedTaxon.value = Object.assign({}, taxonObj);
         }
@@ -131,34 +167,75 @@ const taxaQuickSearch = {
             processSearch();
         }
 
-        function processSearch() {
-            if(selectedTaxonType.value === 'common'){
-                const formData = new FormData();
-                formData.append('vernacular', selectedTaxon.value['label']);
-                formData.append('action', 'getHighestRankingTidByVernacular');
-                fetch(taxonVernacularApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    if(response.status === 200){
-                        response.text().then((res) => {
-                            if(Number(res) > 0){
-                                window.location.href = (clientRoot + '/taxa/index.php?taxon=' + res);
-                            }
-                            else{
-                                showNotification('negative', 'That common name was not found in the database');
-                            }
-                        });
-                    }
-                });
+        function processSearch(val) {
+            showWorking();
+            if(!selectedTaxon.value.hasOwnProperty('label')){
+                setSelectedTaxonValue(val.target.parentNode.parentElement.parentElement.parentElement.control.value);
             }
-            else{
-                if(selectedTaxon.value.hasOwnProperty('tid') && Number(selectedTaxon.value['tid']) > 0){
-                    window.location.href = (clientRoot + '/taxa/index.php?taxon=' + selectedTaxon.value['tid']);
+            const formData = new FormData();
+            if(selectedTaxonType.value === 'common'){
+                if(Number(selectedTaxon.value['vid']) > 0){
+                    formData.append('vernacularid', selectedTaxon.value['vid']);
+                    formData.append('action', 'getHighestRankingTidByVernacular');
+                    fetch(taxonVernacularApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        return response.ok ? response.text() : null;
+                    })
+                    .then((res) => {
+                        hideWorking();
+                        openTaxaProfileTab(res);
+                    });
                 }
                 else{
-                    showNotification('negative', 'That scientific name was not found in the database');
+                    formData.append('vernacular', selectedTaxon.value['label']);
+                    formData.append('action', 'getTaxaListFromVernacularFuzzySearch');
+                    fetch(taxonVernacularApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then((resData) => {
+                        hideWorking();
+                        taxaArr.value = resData;
+                        if(taxaArr.value.length > 0){
+                            showPopup.value = true;
+                        }
+                        else{
+                            showNotification('negative', 'There are no matching common names in the database');
+                        }
+                    });
+                }
+            }
+            else{
+                hideWorking();
+                if(Number(selectedTaxon.value['tid']) > 0){
+                    openTaxaProfileTab(selectedTaxon.value['tid']);
+                }
+                else{
+                    formData.append('sciname', selectedTaxon.value['label']);
+                    formData.append('action', 'getTaxaListFromScinameFuzzySearch');
+                    fetch(taxaApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then((resData) => {
+                        hideWorking();
+                        taxaArr.value = resData;
+                        if(taxaArr.value.length > 0){
+                            showPopup.value = true;
+                        }
+                        else{
+                            showNotification('negative', 'There are no matching scientific names in the database');
+                        }
+                    });
                 }
             }
         }
@@ -174,21 +251,52 @@ const taxaQuickSearch = {
             }
         }
 
+        function setContentStyle() {
+            contentStyle.value = null;
+            if(contentRef.value){
+                contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
+            }
+        }
+
+        function setSelectedTaxonValue(value) {
+            const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === value.trim().toLowerCase());
+            if(optionObj){
+                selectedTaxon.value = Object.assign({}, optionObj);
+            }
+            else{
+                selectedTaxon.value = Object.assign({}, {
+                    label: value,
+                    sciname: value,
+                    tid: null,
+                    vid: null,
+                    family: null,
+                    author: null
+                });
+            }
+        }
+
         Vue.onMounted(() => {
             selectedTaxon.value = Object.assign({}, {});
             processTaxonTypeChange(props.defaultTaxonType);
+            window.addEventListener('resize', setContentStyle);
         });
 
         return {
             autoCompleteLabel,
             autoCompleteOptions,
             clientRoot,
+            contentRef,
+            contentStyle,
             selectedTaxon,
             selectedTaxonType,
+            showPopup,
+            taxaArr,
             taxonTypeOptions,
             blurAction,
             createValue,
             getOptions,
+            getVernacularStrFromArr,
+            openTaxaProfileTab,
             processChange,
             processEnterClick,
             processSearch,
