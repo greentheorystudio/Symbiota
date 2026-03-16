@@ -80,10 +80,12 @@ class TaxonVernaculars{
         $retArr = array();
         $term = array_key_exists('term', $opts) ? SanitizerService::cleanInStr($this->conn, $opts['term']) : null;
         if($term){
+            $ignoreChars = array(' ', '-', "'");
+            $fixedTerm = str_replace($ignoreChars, '', $term);
             $limit = array_key_exists('limit', $opts) ? (int)$opts['limit'] : null;
             $sql = 'SELECT DISTINCT v.vid, v.vernacularname '.
                 'FROM taxavernaculars AS v '.
-                'WHERE v.vernacularname LIKE "' . $term . '%" '.
+                'WHERE REPLACE(REPLACE(REPLACE(v.vernacularname, " ", ""), "-", ""), "\'", "") LIKE "' . $fixedTerm . '%" '.
                 'ORDER BY v.vernacularname ';
             if($limit){
                 $sql .= 'LIMIT ' . $limit . ' ';
@@ -216,11 +218,10 @@ class TaxonVernaculars{
         $retArr = array();
         $tempArr = array();
         $vernacularDataArr = array();
+        $ignoreChars = array(' ', '-', "'");
+        $fixedVernacular = str_replace($ignoreChars, '', $vernacular);
         $sql = 'SELECT DISTINCT t.tidaccepted, t.sciname FROM taxa AS t LEFT JOIN taxavernaculars AS tv ON t.tidaccepted = tv.tid ';
-        $sql .= "WHERE tv.vernacularname REGEXP '" . "\\\b" . SanitizerService::cleanInStr($this->conn, $vernacular) . "\\\b" . "' ";
-        if(strpos($vernacular, '-') !== false){
-            $sql .= "OR tv.vernacularname REGEXP '" . "\\\b" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $vernacular)) . "\\\b" . "' ";
-        }
+        $sql .= 'WHERE REPLACE(REPLACE(REPLACE(tv.vernacularname, " ", ""), "-", ""), "\'", "") LIKE "%' . SanitizerService::cleanInStr($this->conn, $fixedVernacular) . '%" ';
         $sql .= 'ORDER BY t.sciname ';
         //error_log($sql);
         if($result = $this->conn->query($sql)){
@@ -267,13 +268,10 @@ class TaxonVernaculars{
     {
         $retArr = array();
         $whereStr = '';
+        $ignoreChars = array(' ', '-', "'");
+        $fixedVernacular = str_replace($ignoreChars, '', $vernacular);
         $sql = 'SELECT DISTINCT t.tid, t.sciname FROM taxa AS t ';
-        $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, $vernacular) . "' ";
-        $whereStr .= "OR v.vernacularname LIKE '" . SanitizerService::cleanInStr($this->conn, $vernacular) . " %' ";
-        if(strpos($vernacular, '-') !== false){
-            $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $vernacular)) . "' ";
-            $whereStr .= "OR v.vernacularname LIKE '" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $vernacular)) . " %' ";
-        }
+        $whereStr .= 'OR REPLACE(REPLACE(REPLACE(v.vernacularname, " ", ""), "-", ""), "\'", "") LIKE "' . SanitizerService::cleanInStr($this->conn, $fixedVernacular) . '%" ';
         $sql .= 'WHERE tid IN(SELECT v.tid FROM taxavernaculars AS v WHERE ' . substr($whereStr,3) . ') ';
         $sql .= 'OR tid IN(SELECT te.tid FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid WHERE ' . substr($whereStr,3) . ') ';
         if($result = $this->conn->query($sql)){
@@ -314,14 +312,11 @@ class TaxonVernaculars{
     public function setSciNameSearchDataByVernaculars($searchData, $vernaculars): array
     {
         $whereStr = '';
+        $ignoreChars = array(' ', '-', "'");
         $sql = 'SELECT DISTINCT t.tid, t.sciname FROM taxa AS t ';
         foreach($vernaculars as $name){
-            $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, $name) . "' ";
-            $whereStr .= "OR v.vernacularname LIKE '" . SanitizerService::cleanInStr($this->conn, $name) . " %' ";
-            if(strpos($name, '-') !== false){
-                $whereStr .= "OR v.vernacularname = '" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $name)) . "' ";
-                $whereStr .= "OR v.vernacularname LIKE '" . SanitizerService::cleanInStr($this->conn, str_replace('-', ' ', $name)) . " %' ";
-            }
+            $fixedName = str_replace($ignoreChars, '', $name);
+            $whereStr .= 'OR REPLACE(REPLACE(REPLACE(v.vernacularname, " ", ""), "-", ""), "\'", "") LIKE "' . SanitizerService::cleanInStr($this->conn, $fixedName) . '%" ';
         }
         $sql .= 'WHERE tid IN(SELECT v.tid FROM taxavernaculars AS v WHERE ' . substr($whereStr,3) . ') ';
         $sql .= 'OR tid IN(SELECT te.tid FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid WHERE ' . substr($whereStr,3) . ') ';
