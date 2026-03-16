@@ -98,7 +98,14 @@ const taxaQuickSearch = {
 
         function createValue(val, done) {
             if(val.length > 0) {
-                const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
+                let optionObj;
+                if(selectedTaxonType.value === 'common'){
+                    const fixedVal = val.replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '');
+                    optionObj = autoCompleteOptions.value.find(option => option['sciname'].replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '').toLowerCase() === fixedVal.trim().toLowerCase());
+                }
+                else{
+                    optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
+                }
                 if(optionObj){
                     done(optionObj, 'add');
                 }
@@ -259,7 +266,14 @@ const taxaQuickSearch = {
         }
 
         function setSelectedTaxonValue(value) {
-            const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === value.trim().toLowerCase());
+            let optionObj;
+            if(selectedTaxonType.value === 'common'){
+                const fixedVal = value.replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '');
+                optionObj = autoCompleteOptions.value.find(option => option['sciname'].replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '').toLowerCase() === fixedVal.trim().toLowerCase());
+            }
+            else{
+                optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === value.trim().toLowerCase());
+            }
             if(optionObj){
                 selectedTaxon.value = Object.assign({}, optionObj);
             }

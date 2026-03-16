@@ -124,7 +124,14 @@ const multipleScientificCommonNameAutoComplete = {
 
         function blurAction(val) {
             if(val.target.value){
-                const optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.value.trim().toLowerCase());
+                let optionObj;
+                if(Number(props.taxonType) === 5){
+                    const fixedVal = val.target.value.replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '');
+                    optionObj = autocompleteOptions.value.find(option => option['sciname'].replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '').toLowerCase() === fixedVal.trim().toLowerCase());
+                }
+                else{
+                    optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.value.trim().toLowerCase());
+                }
                 if(optionObj){
                     const currentScinameArr = props.scinameArr.slice();
                     currentScinameArr.push(optionObj);
@@ -156,7 +163,14 @@ const multipleScientificCommonNameAutoComplete = {
 
         function createValue(val, done) {
             if(val.length > 0) {
-                const optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
+                let optionObj;
+                if(Number(props.taxonType) === 5){
+                    const fixedVal = val.replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '');
+                    optionObj = autocompleteOptions.value.find(option => option['sciname'].replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '').toLowerCase() === fixedVal.trim().toLowerCase());
+                }
+                else{
+                    optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
+                }
                 if(optionObj){
                     done(optionObj, 'add');
                 }
