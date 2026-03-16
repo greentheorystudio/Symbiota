@@ -17,8 +17,11 @@ if($action && SanitizerService::validateInternalRequest()){
     if($action === 'getAutocompleteVernacularList' && $_POST['term']){
         echo json_encode($taxonVernaculars->getAutocompleteVernacularList($_POST));
     }
-    elseif($action === 'getHighestRankingTidByVernacular' && array_key_exists('vernacular', $_POST)){
-        echo $taxonVernaculars->getHighestRankingTidByVernacular($_POST['vernacular']);
+    elseif($action === 'getHighestRankingTidByVernacular' && array_key_exists('vernacularid', $_POST)){
+        echo $taxonVernaculars->getHighestRankingTidByVernacular($_POST['vernacularid']);
+    }
+    elseif($action === 'getTaxaListFromVernacularFuzzySearch' && array_key_exists('vernacular', $_POST)){
+        echo json_encode($taxonVernaculars->getTaxaListFromVernacularFuzzySearch($_POST['vernacular']));
     }
     elseif($isEditor && $action === 'createTaxonCommonNameRecord' && array_key_exists('vernacular',$_POST)){
         echo $taxonVernaculars->createTaxonCommonNameRecord(json_decode($_POST['vernacular'], true));

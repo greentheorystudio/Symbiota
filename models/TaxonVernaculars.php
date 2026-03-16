@@ -81,7 +81,7 @@ class TaxonVernaculars{
         $term = array_key_exists('term', $opts) ? SanitizerService::cleanInStr($this->conn, $opts['term']) : null;
         if($term){
             $limit = array_key_exists('limit', $opts) ? (int)$opts['limit'] : null;
-            $sql = 'SELECT DISTINCT v.vernacularname '.
+            $sql = 'SELECT DISTINCT v.vid, v.vernacularname '.
                 'FROM taxavernaculars AS v '.
                 'WHERE v.vernacularname LIKE "' . $term . '%" '.
                 'ORDER BY v.vernacularname ';
@@ -94,6 +94,7 @@ class TaxonVernaculars{
                 foreach($rows as $index => $row){
                     $scinameArr = array();
                     $scinameArr['tid'] = '';
+                    $scinameArr['vid'] = $row['vid'];
                     $scinameArr['label'] = $row['vernacularname'];
                     $scinameArr['name'] = $row['vernacularname'];
                     $scinameArr['sciname'] = $row['vernacularname'];
@@ -197,17 +198,51 @@ class TaxonVernaculars{
         return $retArr;
     }
 
-    public function getHighestRankingTidByVernacular($vernacular): int
+    public function getHighestRankingTidByVernacular($vernacularId): int
     {
         $returnVal = 0;
         $sql = 'SELECT v.tid FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.tid = t.tid '.
-            'WHERE v.vernacularname = "' . SanitizerService::cleanInStr($this->conn, $vernacular) . '" ORDER BY t.rankid LIMIT 1 ';
+            'WHERE v.vid = ' . (int)$vernacularId . ' ORDER BY t.rankid LIMIT 1 ';
         $result = $this->conn->query($sql);
         if($row = $result->fetch_array(MYSQLI_ASSOC)){
             $returnVal = $row['tid'];
         }
         $result->free();
         return $returnVal;
+    }
+
+    public function getTaxaListFromVernacularFuzzySearch($vernacular): array
+    {
+        $retArr = array();
+        $tempArr = array();
+        $vernacularDataArr = array();
+        $sql = 'SELECT DISTINCT t.tidaccepted, t.sciname FROM taxa AS t LEFT JOIN taxavernaculars AS tv ON t.tidaccepted = tv.tid ';
+        $sql .= "WHERE tv.vernacularname REGEXP '" . "\\\b" . SanitizerService::cleanInStr($this->conn, $vernacular) . "\\\b" . "' ORDER BY t.sciname ";
+        //error_log($sql);
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $tidArr = array();
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!in_array($row['tidaccepted'], $tidArr, true)){
+                    $tidArr[] = $row['tidaccepted'];
+                }
+                $nodeArr = array();
+                $nodeArr['tid'] = $row['tidaccepted'];
+                $nodeArr['sciname'] = $row['sciname'];
+                $nodeArr['vernacularData'] = array();
+                $tempArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+            if(count($tidArr) > 0){
+                $vernacularDataArr = $this->getVernacularArrFromTidArr($tidArr);
+            }
+            foreach($tempArr as $taxonArr){
+                $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tid']] ?? null;
+                $retArr[] = $taxonArr;
+            }
+        }
+        return $retArr;
     }
 
     public function getTaxonVernacularCount($tid): int
