@@ -804,6 +804,39 @@ class Taxa{
         return $retArr;
     }
 
+    public function getTaxaListFromScinameFuzzySearch($sciname): array
+    {
+        $retArr = array();
+        $tempArr = array();
+        $vernacularDataArr = array();
+        $sql = 'SELECT DISTINCT tidaccepted, sciname FROM taxa WHERE sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $sciname) . '%" ORDER BY sciname ';
+        //error_log($sql);
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $tidArr = array();
+            $result->free();
+            foreach($rows as $index => $row){
+                if(!in_array($row['tidaccepted'], $tidArr, true)){
+                    $tidArr[] = $row['tidaccepted'];
+                }
+                $nodeArr = array();
+                $nodeArr['tid'] = $row['tidaccepted'];
+                $nodeArr['sciname'] = $row['sciname'];
+                $nodeArr['vernacularData'] = array();
+                $tempArr[] = $nodeArr;
+                unset($rows[$index]);
+            }
+            if(count($tidArr) > 0){
+                $vernacularDataArr = (new TaxonVernaculars)->getVernacularArrFromTidArr($tidArr);
+            }
+            foreach($tempArr as $taxonArr){
+                $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tid']] ?? null;
+                $retArr[] = $taxonArr;
+            }
+        }
+        return $retArr;
+    }
+
     public function getTaxaUseData($tid): array
     {
         $retArr = array();

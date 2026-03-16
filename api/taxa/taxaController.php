@@ -133,4 +133,7 @@ if($action && SanitizerService::validateInternalRequest()){
         $recCnt = (array_key_exists('reccnt', $_POST) && (int)$_POST['reccnt'] > 0) ? (int)$_POST['reccnt'] : null;
         echo json_encode($taxa->getDynamicTaxaListDataArr($_POST['parentIdentifier'], $_POST['parentIdType'], $limitToDescriptions, $index, $recCnt));
     }
+    elseif($action === 'getTaxaListFromScinameFuzzySearch' && array_key_exists('sciname', $_POST)){
+        echo json_encode($taxa->getTaxaListFromScinameFuzzySearch($_POST['sciname']));
+    }
 }
