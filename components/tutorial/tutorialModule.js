@@ -20,9 +20,9 @@ const tutorialModule = {
             <div v-if="!hideTutorial && currentSlide.type === 'toc'" class="tutorial-toc-frame-container" :style="tocOuterStyle">
                 <q-card class="tutorial-frame tutorial-content q-pa-md fit">
                     <div class="heading title">Index of Topics</div>
-                    <div class="q-ml-md column wrap" :style="tocInnerStyle">
+                    <div class="q-ml-md column" :style="tocInnerStyle">
                         <template v-for="topic in Object.keys(tutorialIndex)">
-                            <div v-if="topic !== 'intro' && topic !== 'toc'">
+                            <div v-if="topic !== 'intro' && topic !== 'toc'" :style="tocInnerColumnStyle">
                                 <a class="cursor-pointer tutorial-link q-mr-md" @click="goToSection(tutorialIndex[topic].title.toLowerCase());" :aria-label="('Go to ' + tutorialIndex[topic].title + ' section')" tabindex="0">{{ tutorialIndex[topic].title }}</a>
                             </div>
                         </template>
@@ -98,6 +98,7 @@ const tutorialModule = {
         const jsVersion = baseStore.getJsVersion;
         const tocInnerStyle = Vue.ref(null);
         const tocOuterStyle = Vue.ref(null);
+        const tocInnerColumnStyle = Vue.ref(null);
         const tutorialData = Vue.ref(null);
         const tutorialIndex = Vue.ref({});
         const tutorialSlides = Vue.computed(() => {
@@ -172,11 +173,13 @@ const tutorialModule = {
         function setStyling() {
             tocInnerStyle.value = null;
             tocOuterStyle.value = null;
+            tocInnerColumnStyle.value = null;
             windowWidth.value = window.innerWidth;
             if(tutorialSlides.value.length > 10 && windowWidth.value >= 1220){
                 if(tutorialSlides.value.length > 30){
                     tocOuterStyle.value = 'width: 90%;height: 80%;';
                     tocInnerStyle.value = 'width: 100%;height: 90%;overflow: scroll;';
+                    tocInnerColumnStyle.value = 'max-width: 50%';
                 }
             }
         }
@@ -217,6 +220,7 @@ const tutorialModule = {
             hideTutorial,
             tocInnerStyle,
             tocOuterStyle,
+            tocInnerColumnStyle,
             tutorialIndex,
             tutorialSlides,
             closeTutorial,

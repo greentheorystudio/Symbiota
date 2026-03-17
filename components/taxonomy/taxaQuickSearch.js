@@ -4,6 +4,10 @@ const taxaQuickSearch = {
             type: String,
             default: 'common'
         },
+        listMode: {
+            type: Boolean,
+            default: false
+        },
         quicksearchLabel: {
             type: String,
             default: null
@@ -98,7 +102,16 @@ const taxaQuickSearch = {
 
         function createValue(val, done) {
             if(val.length > 0) {
-                const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
+                let optionObj;
+                if(!props.listMode){
+                    if(selectedTaxonType.value === 'common'){
+                        const fixedVal = val.replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '');
+                        optionObj = autoCompleteOptions.value.find(option => option['sciname'].replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '').toLowerCase() === fixedVal.trim().toLowerCase());
+                    }
+                    else{
+                        optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.trim().toLowerCase());
+                    }
+                }
                 if(optionObj){
                     done(optionObj, 'add');
                 }
@@ -174,7 +187,7 @@ const taxaQuickSearch = {
             }
             const formData = new FormData();
             if(selectedTaxonType.value === 'common'){
-                if(Number(selectedTaxon.value['vid']) > 0){
+                if(!props.listMode && Number(selectedTaxon.value['vid']) > 0){
                     formData.append('vernacularid', selectedTaxon.value['vid']);
                     formData.append('action', 'getHighestRankingTidByVernacular');
                     fetch(taxonVernacularApiUrl, {
@@ -213,7 +226,7 @@ const taxaQuickSearch = {
             }
             else{
                 hideWorking();
-                if(Number(selectedTaxon.value['tid']) > 0){
+                if(!props.listMode && Number(selectedTaxon.value['tid']) > 0){
                     openTaxaProfileTab(selectedTaxon.value['tid']);
                 }
                 else{
@@ -259,7 +272,16 @@ const taxaQuickSearch = {
         }
 
         function setSelectedTaxonValue(value) {
-            const optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === value.trim().toLowerCase());
+            let optionObj;
+            if(!props.listMode){
+                if(selectedTaxonType.value === 'common'){
+                    const fixedVal = value.replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '');
+                    optionObj = autoCompleteOptions.value.find(option => option['sciname'].replaceAll(' ', '').replaceAll('-', '').replaceAll("'", '').toLowerCase() === fixedVal.trim().toLowerCase());
+                }
+                else{
+                    optionObj = autoCompleteOptions.value.find(option => option['sciname'].toLowerCase() === value.trim().toLowerCase());
+                }
+            }
             if(optionObj){
                 selectedTaxon.value = Object.assign({}, optionObj);
             }
