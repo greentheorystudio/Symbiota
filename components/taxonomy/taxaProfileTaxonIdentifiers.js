@@ -1,7 +1,7 @@
 const taxaProfileTaxonIdentifiers = {
     template: `
         <template v-if="taxaIdentifiers.length > 0">
-            <div class="row q-gutter-sm self-center">
+            <div class="row q-gutter-sm">
                 <template v-if="getGeneticIdentifier(taxaIdentifiers)">
                     <q-chip clickable color="teal" text-color="white" class="text-bold cursor-pointer" @click="openOccurrenceListGeneticSearch(taxon.sciname);" :aria-label="('View occurrence records with associated genetic data for ' + taxon.sciname + ' in occurrence list display - Opens in separate tab')" tabindex="0">
                         Genetic Data
