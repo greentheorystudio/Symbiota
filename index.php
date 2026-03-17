@@ -59,7 +59,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                 </div>
                 <div style="margin-top:25px;display:flex;justify-content:center;">
                     <div>
-                        <taxa-quick-search default-taxon-type="scientific"></taxa-quick-search>
+                        <taxa-quick-search default-taxon-type="scientific" :list-mode="true"></taxa-quick-search>
                     </div>
                 </div>
             </div>
