@@ -1256,6 +1256,21 @@ class Taxa{
         return $retVal;
     }
 
+    public function updateGeneticDataIdentifiers(): int
+    {
+        $returnVal = 0;
+        $sql = 'DELETE FROM taxaidentifiers WHERE `name` = "genetic-data-available" ';
+        if($this->conn->query($sql)){
+            $sql = 'INSERT IGNORE INTO taxaidentifiers(tid, `name`) '.
+                'SELECT DISTINCT o.tid, "genetic-data-available" FROM omoccurgenetic AS g LEFT JOIN omoccurrences AS o ON g.occid = o.occid '.
+                'WHERE o.tid IS NOT NULL ';
+            if($this->conn->query($sql)){
+                $returnVal = 1;
+            }
+        }
+        return $returnVal;
+    }
+
     public function updateTaxaRecord($tid, $editData): int
     {
         $retVal = 0;
