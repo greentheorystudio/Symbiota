@@ -498,6 +498,7 @@ const spatialViewerElement = {
                             });
                             layersObj[mapSettings.dragDropTarget].setSource(layersObj[sourceIndex]);
                             map.getView().fit(layersObj[sourceIndex].getExtent());
+                            hideWorking();
                         }
                     }
                     else if(fileType === 'zip'){
