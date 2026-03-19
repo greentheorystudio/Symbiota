@@ -1917,26 +1917,6 @@ const spatialAnalysisModule = {
                 })
             });
             layersArr.push(layersObj['rasteranalysis']);
-            layersObj['dragDrop1'].on('postrender', () => {
-                if(!mapSettings.loadPointsEvent){
-                    hideWorking();
-                }
-            });
-            layersObj['dragDrop2'].on('postrender', () => {
-                if(!mapSettings.loadPointsEvent){
-                    hideWorking();
-                }
-            });
-            layersObj['dragDrop3'].on('postrender', () => {
-                if(!mapSettings.loadPointsEvent){
-                    hideWorking();
-                }
-            });
-            layersObj['select'].on('postrender', () => {
-                if(!mapSettings.loadPointsEvent){
-                    hideWorking();
-                }
-            });
             layersObj['pointv'].on('prerender', () => {
                 if(mapSettings.loadPointsEvent){
                     showWorking('Loading...');
@@ -1986,6 +1966,7 @@ const spatialAnalysisModule = {
                             layersObj[mapSettings.dragDropTarget].setSource(layersObj[sourceIndex]);
                             processAddedLayer(infoArr,true);
                             map.getView().fit(layersObj[sourceIndex].getExtent());
+                            hideWorking();
                         }
                     }
                     else if(fileType === 'zip'){
