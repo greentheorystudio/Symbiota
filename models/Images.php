@@ -587,8 +587,9 @@ class Images{
                 }
             }
             if(count($targetTidArr) > 0){
-                $sql = 'SELECT DISTINCT i.imgid, t.tidaccepted AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.alttext, i.caption, i.photographer, i.owner, '.
-                    'i.sortsequence, t.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'i');
+                $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ', '.
+                    't.tidaccepted AS tid, t.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                     'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                     'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                     'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') ';
@@ -633,8 +634,8 @@ class Images{
                     }
                 }
                 if(count($targetTidArr) > 0){
-                    $sql = 'SELECT DISTINCT i.imgid, te.parenttid AS tid, i.occid, i.url, i.thumbnailurl, i.originalurl, i.alttext, i.caption, i.photographer, i.owner, '.
-                        'i.sortsequence, t.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
+                    $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ', '.
+                        'te.parenttid AS tid, t.securitystatus, o.sciname, o.basisofrecord, o.catalognumber, o.othercatalognumbers '.
                         'FROM images AS i LEFT JOIN taxa AS t ON i.tid = t.tid '.
                         'LEFT JOIN omoccurrences AS o ON i.occid = o.occid '.
                         'LEFT JOIN taxaenumtree AS te ON t.tidaccepted = te.tid '.
