@@ -183,6 +183,8 @@ const spatialLayerControllerLayerElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props) {
+        const { hideWorking, showNotification, showWorking } = useCore();
+
         const coreLayers = Vue.inject('coreLayers');
         const layerOrderArr = Vue.inject('layerOrderArr');
         const layersInfoObj = Vue.inject('layersInfoObj');
@@ -209,7 +211,6 @@ const spatialLayerControllerLayerElement = {
         const removeUserLayer = Vue.inject('removeUserLayer');
         const setLayersOrder = Vue.inject('setLayersOrder');
         const updateMapSettings = Vue.inject('updateMapSettings');
-        const { hideWorking, showNotification, showWorking } = useCore();
 
         function addLayerToLayerOrderArr(layerId) {
             layerOrderArr.push(layerId);
