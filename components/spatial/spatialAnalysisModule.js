@@ -1724,10 +1724,10 @@ const spatialAnalysisModule = {
                 else{
                     const coords = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
                     if(coords[0] < -180){
-                        coords[0] = coords[0] + 360;
+                        coords[0] += 360;
                     }
                     if(coords[0] > 180){
-                        coords[0] = coords[0] - 360;
+                        coords[0] -= 360;
                     }
                     const template = 'Lat: {y} Lon: {x}';
                     document.getElementById('mapcoords').children[0].innerHTML = ol.coordinate.format(coords,template,5);
@@ -1735,7 +1735,17 @@ const spatialAnalysisModule = {
                         if(layersObj[mapSettings.activeLayer] instanceof ol.layer.Vector){
                             map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
                                 if(layer === layersObj[mapSettings.activeLayer]){
-                                    if(!mapSettings.selectSource.hasFeature(feature)){
+                                    const features = mapSettings.selectSource.getFeatures();
+                                    const selectedFeature = features.find(obj => {
+                                        let match = true;
+                                        Object.keys(obj['values_']).forEach((key) => {
+                                            if(key !== 'geometry' && (!feature['values_'].hasOwnProperty(key) || obj['values_'][key] !== feature['values_'][key])){
+                                                match = false;
+                                            }
+                                        });
+                                        return match ? obj : null;
+                                    });
+                                    if(!selectedFeature){
                                         const featureClone = feature.clone();
                                         mapSettings.selectSource.addFeature(featureClone);
                                     }
