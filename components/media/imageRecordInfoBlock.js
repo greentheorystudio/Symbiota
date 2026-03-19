@@ -54,10 +54,10 @@ const imageRecordInfoBlock = {
                             <div v-if="imageData.originalurl">
                                 <span class="text-bold">Original URL: </span>{{ imageData.originalurl }}
                             </div>
-                            <div v-if="imageData.sourceurl">
-                                <span class="text-bold">Source URL: </span>{{ imageData.sourceurl }}
-                            </div>
                         </template>
+                        <div v-if="imageData.sourceurl">
+                            <span class="text-bold">Source URL: </span>{{ imageData.sourceurl }}
+                        </div>
                         <div v-if="imageData.photographer">
                             <span class="text-bold">Photographer: </span>{{ imageData.photographer }}
                         </div>
