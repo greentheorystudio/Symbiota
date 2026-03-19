@@ -29,7 +29,7 @@ const mediaInfoWindowPopup = {
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
-                <div ref="contentContainerRef" class="fit">
+                <div ref="contentContainerRef" class="fit q-pa-md">
                     <template v-if="displayImageData">
                         <image-record-info-block :image-data="displayImageData"></image-record-info-block>
                     </template>
