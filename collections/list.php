@@ -39,7 +39,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <?php
         include(__DIR__ . '/../header.php');
         ?>
-        <div id="mainContainer">
+        <div id="mainContainer" v-cloak>
             <div id="breadcrumbs">
                 <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
                 <span class="text-bold">Search Collections List Display</span>
