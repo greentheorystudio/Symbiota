@@ -1,4 +1,5 @@
 <?php
+include_once(__DIR__ . '/Taxa.php');
 include_once(__DIR__ . '/../services/DbService.php');
 include_once(__DIR__ . '/../services/SanitizerService.php');
 
@@ -63,6 +64,7 @@ class OccurrenceGeneticLinks{
                 'VALUES (' . implode(',', $fieldValueArr) . ') ';
             if($this->conn->query($sql)){
                 $newID = $this->conn->insert_id;
+                (new Taxa)->updateGeneticDataIdentifiers();
             }
         }
         return $newID;
@@ -94,6 +96,7 @@ class OccurrenceGeneticLinks{
                             'WHERE upgid IN(' . implode(',', $idArr) . ') ';
                         if($this->conn->query($sql)){
                             $retVal = $this->conn->affected_rows;
+                            (new Taxa)->updateGeneticDataIdentifiers();
                         }
                     }
                 }
@@ -109,6 +112,7 @@ class OccurrenceGeneticLinks{
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
+        (new Taxa)->updateGeneticDataIdentifiers();
         return $retVal;
     }
 
@@ -139,6 +143,7 @@ class OccurrenceGeneticLinks{
                 $retVal = $this->clearOccurrenceGeneticLinkageRecordsByArr($glIdArr);
             }
         }
+        (new Taxa)->updateGeneticDataIdentifiers();
         return $retVal;
     }
 
