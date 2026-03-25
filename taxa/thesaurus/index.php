@@ -53,6 +53,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         <q-tab name="importer" label="Data Import/Update" no-caps></q-tab>
                         <q-tab name="fileupload" label="Load Data File" no-caps></q-tab>
                         <q-tab name="maintenance" label="Maintenance Tools" no-caps></q-tab>
+                        <q-tab name="usda" label="USDA Code Import" no-caps></q-tab>
                     </q-tabs>
                     <q-separator></q-separator>
                     <q-tab-panels v-model="tab">
@@ -64,6 +65,9 @@ if(!$GLOBALS['SYMB_UID']) {
                         </q-tab-panel>
                         <q-tab-panel name="maintenance">
                             <taxonomic-thesaurus-maintenance-module :loading="loading" :selected-ranks="selectedRanks" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomic-thesaurus-maintenance-module>
+                        </q-tab-panel>
+                        <q-tab-panel name="usda">
+                            <taxonomic-thesaurus-usda-identifier-module :loading="loading" @update:loading="updateLoading"></taxonomic-thesaurus-usda-identifier-module>
                         </q-tab-panel>
                     </q-tab-panels>
                 </q-card>
@@ -77,6 +81,8 @@ if(!$GLOBALS['SYMB_UID']) {
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusUSDAIdentifierModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
@@ -85,6 +91,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
                     'taxon-rank-checkbox-selector': taxonRankCheckboxSelector,
                     'taxonomic-thesaurus-maintenance-module': taxonomicThesaurusMaintenanceModule,
+                    'taxonomic-thesaurus-usda-identifier-module': taxonomicThesaurusUSDAIdentifierModule,
                     'taxonomy-data-source-import-update-module': taxonomyDataSourceImportUpdateModule
                 },
                 setup() {

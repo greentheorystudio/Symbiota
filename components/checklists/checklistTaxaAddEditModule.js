@@ -54,7 +54,7 @@ const checklistTaxaAddEditModule = {
         'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'text-field-input-element': textFieldInputElement
     },
-    setup(props, context) {
+    setup(_, context) {
         const { hideWorking, showNotification, showWorking } = useCore();
         const checklistStore = useChecklistStore();
 
