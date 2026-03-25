@@ -2679,7 +2679,6 @@ const spatialAnalysisModule = {
         Vue.provide('findRecordClusterPosition', findRecordClusterPosition);
         Vue.provide('findRecordPoint', findRecordPoint);
         Vue.provide('findRecordPointInCluster', findRecordPointInCluster);
-        Vue.provide('getArrayBuffer', getArrayBuffer);
         Vue.provide('getVectorLayerStyle', getVectorLayerStyle);
         Vue.provide('inputResponseData', inputResponseData);
         Vue.provide('inputWindowMode', propsRefs.inputWindowMode);
