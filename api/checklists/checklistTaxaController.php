@@ -35,4 +35,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'updateChecklistTaxonRecord' && $isEditor && array_key_exists('cltlid', $_POST) && array_key_exists('checklistTaxonData', $_POST)){
         echo $checklistTaxa->updateChecklistTaxonRecord($_POST['cltlid'], json_decode($_POST['checklistTaxonData'], true));
     }
+    elseif($action === 'batchCreateRecords' && $isEditor && array_key_exists('data', $_POST)){
+        echo $checklistTaxa->batchCreateRecords($clid, json_decode($_POST['data'], true));
+    }
 }
