@@ -50,6 +50,47 @@ class ChecklistTaxa{
         return $recordsCreated;
     }
 
+    public function batchCreateRecords($clid, $data): int
+    {
+        $recordsCreated = 0;
+        $fieldNameArr = array();
+        $valueArr = array();
+        $mappedFields = array();
+        $skipFields = array('cltlid', 'clid', 'initialtimestamp');
+        if($clid){
+            $fieldNameArr[] = 'clid';
+            foreach($this->fields as $field => $fieldArr){
+                if(!in_array($field, $skipFields)){
+                    $fieldNameArr[] = $field;
+                    $mappedFields[$field] = $field;
+                }
+            }
+            foreach($data as $dataArr){
+                $dataValueArr = array();
+                $detData = array();
+                $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, $clid, $this->fields['clid']);
+                foreach($mappedFields as $field => $key){
+                    $detData[$field] = $key ? $dataArr[$key] : null;
+                }
+                foreach($this->fields as $field => $fieldArr){
+                    if(!in_array($field, $skipFields)){
+                        $dataValue = $detData[$field] ?? null;
+                        $dataValueArr[] = SanitizerService::getSqlValueString($this->conn, SanitizerService::cleanInStr($this->conn, $dataValue), $fieldArr);
+                    }
+                }
+                $valueArr[] = '(' . implode(',', $dataValueArr) . ')';
+            }
+            if(count($valueArr) > 0){
+                $sql = 'INSERT IGNORE INTO fmchklsttaxalink(' . implode(',', $fieldNameArr) . ') '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $recordsCreated;
+    }
+
     public function createChecklistTaxonRecord($clid, $data): int
     {
         $newID = 0;
