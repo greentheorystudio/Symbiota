@@ -166,6 +166,9 @@ class CollectionDataUploadParameters {
             foreach($fieldMappingData['mof'] as $source => $target){
                 $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
             }
+            foreach($fieldMappingData['genetic'] as $source => $target){
+                $sqlValueArr[] = '(' . $uspid . ',"' . $source . '","' . $target . '")';
+            }
             if(count($sqlValueArr) > 0){
                 $sql = 'INSERT INTO uploadspecmap(uspid, sourcefield, symbspecfield) VALUES ' . implode(',', $sqlValueArr) . ' ';
                 if($this->conn->query($sql)){
