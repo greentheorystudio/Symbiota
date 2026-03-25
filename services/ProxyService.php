@@ -27,6 +27,21 @@ class ProxyService {
         return $result ? mb_convert_encoding($result, 'UTF-8', 'UTF-8,ISO-8859-1') : '{}';
     }
 
+    public static function getFileContentsFromUrl($url): string
+    {
+        $returnVal = null;
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_exec($ch);
+        $rescode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if($rescode >= 200 && $rescode < 300) {
+            $returnVal = file_get_contents($url);
+        }
+        return $returnVal;
+    }
+
     public static function getFileInfoFromUrl($url, $imageFile): array
     {
         $size = array();

@@ -125,6 +125,13 @@ const occurrenceDataUploadModule = {
                                                     <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('mof');" @keyup.enter="openFieldMapperPopup('mof');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
                                                 </div>
                                             </template>
+                                            <template v-if="geneticDataIncluded">
+                                                <div class="row q-gutter-sm">
+                                                    <checkbox-input-element :value="includeGeneticData" @update:value="(value) => includeGeneticData = value" :disabled="currentTab !== 'mapping' || !!currentProcess"></checkbox-input-element>
+                                                    <div class="text-body1 text-bold">Import Genetic Data Records</div>
+                                                    <div role="button" class="cursor-pointer" @click="openFieldMapperPopup('genetic');" @keyup.enter="openFieldMapperPopup('genetic');" aria-label="Open field mapping pop up" tabindex="0">(view mapping)</div>
+                                                </div>
+                                            </template>
                                         </template>
                                         <div class="q-mt-sm">
                                             <selector-input-element label="Incoming Records Processing Status" :options="processingStatusOptions" :value="selectedProcessingStatus" @update:value="(value) => selectedProcessingStatus = value" :clearable="true" :disabled="currentTab !== 'mapping' || !!currentProcess"></selector-input-element>
@@ -422,6 +429,9 @@ const occurrenceDataUploadModule = {
             else if(fieldMapperPopupType.value === 'mof'){
                 return fieldMappingDataMof.value;
             }
+            else if(fieldMapperPopupType.value === 'genetic'){
+                return fieldMappingDataGenetic.value;
+            }
             else{
                 return null;
             }
@@ -441,6 +451,9 @@ const occurrenceDataUploadModule = {
             }
             else if(fieldMapperPopupType.value === 'mof'){
                 return metaXmlData.value['measurementorfact']['fields'];
+            }
+            else if(fieldMapperPopupType.value === 'genetic'){
+                return metaXmlData.value['genetic']['fields'];
             }
             else{
                 return null;
@@ -462,6 +475,9 @@ const occurrenceDataUploadModule = {
             else if(fieldMapperPopupType.value === 'mof'){
                 return symbiotaFieldOptionsMof.value;
             }
+            else if(fieldMapperPopupType.value === 'genetic'){
+                return symbiotaFieldOptionsGenetic.value;
+            }
             else{
                 return null;
             }
@@ -476,6 +492,20 @@ const occurrenceDataUploadModule = {
                     }
                     else{
                         dwcMappingData[fieldMappingDataDetermiation.value[field]] = Object.keys(metaXmlData.value['identification']['fields']).find(key => metaXmlData.value['identification']['fields'][key].toLowerCase() === field.toLowerCase());
+                    }
+                }
+            });
+            return dwcMappingData;
+        });
+        const fieldMappingDataDwcaGenetic = Vue.computed(() => {
+            const dwcMappingData = {};
+            Object.keys(fieldMappingDataGenetic.value).forEach((field) => {
+                if(fieldMappingDataGenetic.value[field] !== 'unmapped'){
+                    if(fieldMappingDataGenetic.value[field] === 'dbpk'){
+                        dwcMappingData[fieldMappingDataGenetic.value[field]] = Object.keys(metaXmlData.value['genetic']['fields']).find(key => metaXmlData.value['genetic']['fields'][key].toLowerCase() === 'coreid');
+                    }
+                    else{
+                        dwcMappingData[fieldMappingDataGenetic.value[field]] = Object.keys(metaXmlData.value['genetic']['fields']).find(key => metaXmlData.value['genetic']['fields'][key].toLowerCase() === field.toLowerCase());
                     }
                 }
             });
@@ -546,6 +576,7 @@ const occurrenceDataUploadModule = {
             });
             return dwcMappingData;
         });
+        const fieldMappingDataGenetic = Vue.ref({});
         const fieldMappingDataMedia = Vue.ref({});
         const fieldMappingDataMof = Vue.ref({});
         const fieldMappingDataOccurrence = Vue.ref({});
@@ -649,6 +680,7 @@ const occurrenceDataUploadModule = {
         const recordsUploadedMultimedia = Vue.ref(0);
         const recordsUploadedOccurrence = Vue.ref(0);
         const savedMappingDataDetermiation = Vue.ref({});
+        const savedMappingDataGenetic = Vue.ref({});
         const savedMappingDataMedia = Vue.ref({});
         const savedMappingDataMof = Vue.ref({});
         const savedMappingDataOccurrence = Vue.ref({});
@@ -754,6 +786,7 @@ const occurrenceDataUploadModule = {
             mofOccurrenceDataIncluded.value = false;
             metaXmlData.value = Object.assign({}, {});
             fieldMappingDataDetermiation.value = Object.assign({}, {});
+            fieldMappingDataGenetic.value = Object.assign({}, {});
             fieldMappingDataMedia.value = Object.assign({}, {});
             fieldMappingDataMof.value = Object.assign({}, {});
             fieldMappingDataOccurrence.value = Object.assign({}, {});
@@ -762,6 +795,7 @@ const occurrenceDataUploadModule = {
             flatFileMofData.value.length = 0;
             flatFileOccurrenceData.value.length = 0;
             savedMappingDataDetermiation.value = Object.assign({}, {});
+            savedMappingDataGenetic.value = Object.assign({}, {});
             savedMappingDataMedia.value = Object.assign({}, {});
             savedMappingDataMof.value = Object.assign({}, {});
             savedMappingDataOccurrence.value = Object.assign({}, {});
@@ -1794,6 +1828,9 @@ const occurrenceDataUploadModule = {
                         else if(mapData['symbspecfield'].startsWith('SF-')){
                             savedMappingDataSecondary.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(3);
                         }
+                        else if(mapData['symbspecfield'].startsWith('GEN-')){
+                            savedMappingDataGenetic.value[mapData['sourcefield']] = mapData['symbspecfield'].slice(4);
+                        }
                         else{
                             savedMappingDataOccurrence.value[mapData['sourcefield']] = mapData['symbspecfield'];
                         }
@@ -1809,6 +1846,10 @@ const occurrenceDataUploadModule = {
                     const primaryKeyDetermination = Object.keys(savedMappingDataDetermiation.value).find(key => savedMappingDataDetermiation.value[key] === 'dbpk');
                     if(primaryKeyDetermination){
                         fieldMappingDataDetermiation.value[primaryKeyDetermination.toLowerCase()] = 'dbpk';
+                    }
+                    const primaryKeyGenetic = Object.keys(savedMappingDataGenetic.value).find(key => savedMappingDataGenetic.value[key] === 'dbpk');
+                    if(primaryKeyGenetic){
+                        fieldMappingDataGenetic.value[primaryKeyGenetic.toLowerCase()] = 'dbpk';
                     }
                     const primaryKeyMedia = Object.keys(savedMappingDataMedia.value).find(key => savedMappingDataMedia.value[key] === 'dbpk');
                     if(primaryKeyMedia){
@@ -2106,6 +2147,9 @@ const occurrenceDataUploadModule = {
             }
             else if(fieldMapperPopupType.value === 'mof'){
                 fieldMappingDataMof.value[data['sourceField']] = data['targetField'];
+            }
+            else if(fieldMapperPopupType.value === 'genetic'){
+                fieldMappingDataGenetic.value[data['sourceField']] = data['targetField'];
             }
         }
 
@@ -2817,6 +2861,20 @@ const occurrenceDataUploadModule = {
                 metaXmlData.value['measurementorfact']['dataFiles'].splice(0, 1);
                 currentComplete = metaXmlData.value['measurementorfact']['dataFiles'].length === 0;
             }
+            else if(metaXmlData.value.hasOwnProperty('genetic') && includeGeneticData.value && metaXmlData.value['genetic']['dataFiles'].length > 0){
+                if(sourceDataUploadStage.value !== 'genetic'){
+                    countChange = true;
+                    sourceDataUploadStage.value = 'genetic';
+                    const text = 'Loading genetic data:';
+                    currentProcess.value = 'transferSourceDataGenetic';
+                    addProcessToProcessorDisplay(getNewProcessObject('multi', text));
+                }
+                configuration['uploadFile'] = metaXmlData.value['genetic']['dataFiles'][0];
+                configuration['dataType'] = 'genetic';
+                configuration['fieldMap'] = Object.assign({}, fieldMappingDataDwcaGenetic.value);
+                metaXmlData.value['genetic']['dataFiles'].splice(0, 1);
+                currentComplete = metaXmlData.value['genetic']['dataFiles'].length === 0;
+            }
             if(configuration.hasOwnProperty('dataType')){
                 const formData = new FormData();
                 formData.append('collid', props.collid.toString());
@@ -3142,6 +3200,7 @@ const occurrenceDataUploadModule = {
             saveMappingData['determination'] = {};
             saveMappingData['multimedia'] = {};
             saveMappingData['mof'] = {};
+            saveMappingData['genetic'] = {};
             Object.keys(fieldMappingDataOccurrence.value).forEach((field) => {
                 saveMappingData['occurrence'][field.toLowerCase()] = fieldMappingDataOccurrence.value[field];
             });
@@ -3156,6 +3215,9 @@ const occurrenceDataUploadModule = {
             });
             Object.keys(fieldMappingDataMof.value).forEach((field) => {
                 saveMappingData['mof'][field.toLowerCase()] = 'MOF-' + fieldMappingDataMof.value[field];
+            });
+            Object.keys(fieldMappingDataGenetic.value).forEach((field) => {
+                saveMappingData['genetic'][field.toLowerCase()] = 'GEN-' + fieldMappingDataGenetic.value[field];
             });
             const formData = new FormData();
             formData.append('collid', props.collid.toString());
@@ -3307,6 +3369,27 @@ const occurrenceDataUploadModule = {
                             }
                             const usedField = fieldOption ? Object.keys(fieldMappingDataDetermiation.value).find(field => fieldMappingDataDetermiation.value[field] === fieldOption.value) : null;
                             fieldMappingDataDetermiation.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
+                        }
+                    });
+                }
+                if(metaXmlData.value.hasOwnProperty('genetic') && metaXmlData.value['genetic']['dataFiles'].length > 0 && Object.keys(metaXmlData.value['genetic']['fields']).length > 0){
+                    geneticDataIncluded.value = true;
+                    Object.keys(metaXmlData.value['genetic']['fields']).forEach((field) => {
+                        const fieldName = metaXmlData.value['genetic']['fields'][field];
+                        const primaryKey = Object.keys(fieldMappingDataGenetic.value).find(key => fieldMappingDataGenetic.value[key] === 'dbpk');
+                        if(fieldName.toLowerCase() === coreIdField.value && !primaryKey){
+                            fieldMappingDataGenetic.value[fieldName.toLowerCase()] = 'dbpk';
+                        }
+                        else if(!fieldMappingDataGenetic.value.hasOwnProperty(fieldName.toLowerCase())){
+                            let fieldOption;
+                            if(Object.keys(savedMappingDataGenetic.value).length === 0 || !savedMappingDataGenetic.value.hasOwnProperty(fieldName.toLowerCase())){
+                                fieldOption = symbiotaFieldOptionsGenetic.value.find(option => option.value.toLowerCase() === fieldName.toLowerCase());
+                            }
+                            else{
+                                fieldOption = symbiotaFieldOptionsGenetic.value.find(option => option.value.toLowerCase() === savedMappingDataGenetic.value[fieldName.toLowerCase()]);
+                            }
+                            const usedField = fieldOption ? Object.keys(fieldMappingDataGenetic.value).find(field => fieldMappingDataGenetic.value[field] === fieldOption.value) : null;
+                            fieldMappingDataGenetic.value[fieldName.toLowerCase()] = (fieldOption && !usedField) ? fieldOption.value : 'unmapped';
                         }
                     });
                 }
