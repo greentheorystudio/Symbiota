@@ -465,6 +465,9 @@ class DataUploadService {
                 elseif($configArr['dataType'] === 'mof'){
                     $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap'], $configArr['eventMofFields'], $configArr['occurrenceMofFields']);
                 }
+                elseif($configArr['dataType'] === 'genetic'){
+                    $recordsCreated += (new UploadGeneticTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+                }
                 $recordIndex = 0;
                 $dataUploadArr = array();
             }
@@ -485,12 +488,15 @@ class DataUploadService {
             elseif($configArr['dataType'] === 'mof'){
                 $recordsCreated += (new UploadMofTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap'], $configArr['eventMofFields'], $configArr['occurrenceMofFields']);
             }
+            elseif($configArr['dataType'] === 'genetic'){
+                $recordsCreated += (new UploadGeneticTemp)->batchCreateRecords($collid, $dataUploadArr, $configArr['fieldMap']);
+            }
         }
         FileSystemService::deleteFile($configArr['serverPath'] . '/' . $configArr['uploadFile']);
         return $recordsCreated;
     }
 
-    public function processDwcaMetaFile($metaPath): array
+    public function processDwcaMetaFile($metaPath, $serverPath): array
     {
         $returnArr = array();
         $coreId = '';
@@ -566,43 +572,42 @@ class DataUploadService {
                             $returnArr[$tagName]['coreid'] = $extCoreId;
                         }
                         if($coreId === '' || $coreEventId || $coreId === $extCoreId){
+                            $returnArr[$tagName]['filename'] = null;
                             if($locElements = $extensionElement->getElementsByTagName('location')){
                                 $returnArr[$tagName]['filename'] = $locElements->item(0)->nodeValue;
                             }
-                            $returnArr[$tagName]['encoding'] = $extensionElement->getAttribute('encoding');
-                            $returnArr[$tagName]['fieldsTerminatedBy'] = $extensionElement->getAttribute('fieldsTerminatedBy');
-                            $returnArr[$tagName]['linesTerminatedBy'] = $extensionElement->getAttribute('linesTerminatedBy');
-                            $returnArr[$tagName]['fieldsEnclosedBy'] = $extensionElement->getAttribute('fieldsEnclosedBy');
-                            $returnArr[$tagName]['ignoreHeaderLines'] = $extensionElement->getAttribute('ignoreHeaderLines');
-                            $returnArr[$tagName]['rowType'] = $rowType;
-                            $returnArr[$tagName]['dataFiles'] = array();
-                            if($fieldElements = $extensionElement->getElementsByTagName('field')){
-                                foreach($fieldElements as $fieldElement){
-                                    $term = $fieldElement->getAttribute('term');
-                                    if(strpos($term,'/')) {
-                                        $term = substr($term, strrpos($term, '/') + 1);
-                                    }
-                                    $index = $fieldElement->getAttribute('index');
-                                    if(is_numeric($index)){
-                                        $returnArr[$tagName]['fields'][$index] = $term;
-                                    }
+                            if($returnArr[$tagName]['filename']){
+                                $returnArr[$tagName]['encoding'] = $extensionElement->getAttribute('encoding');
+                                $returnArr[$tagName]['fieldsTerminatedBy'] = $extensionElement->getAttribute('fieldsTerminatedBy');
+                                $returnArr[$tagName]['linesTerminatedBy'] = $extensionElement->getAttribute('linesTerminatedBy');
+                                $returnArr[$tagName]['fieldsEnclosedBy'] = $extensionElement->getAttribute('fieldsEnclosedBy');
+                                $returnArr[$tagName]['ignoreHeaderLines'] = $extensionElement->getAttribute('ignoreHeaderLines');
+                                $returnArr[$tagName]['rowType'] = $rowType;
+                                $returnArr[$tagName]['dataFiles'] = array();
+                                $fh = fopen(($serverPath . '/' . $returnArr[$tagName]['filename']), 'rb');
+                                $headerArr = fgetcsv($fh,0, ($returnArr[$tagName]['fieldsTerminatedBy'] === '\t' ? "\t" : $returnArr[$tagName]['fieldsTerminatedBy']), ($returnArr[$tagName]['fieldsEnclosedBy'] === '' ? chr(0) : $returnArr[$tagName]['fieldsEnclosedBy']), '');
+                                $index = 0;
+                                foreach($headerArr as $fieldName){
+                                    $returnArr[$tagName]['fields'][(string)$index] = $fieldName;
                                     if($tagName === 'measurementorfact'){
-                                        if(!$extCoreId && strtolower($term) === 'occurrenceid'){
-                                            $extCoreId = $index;
+                                        if(!$extCoreId && strtolower($fieldName) === 'occurrenceid'){
+                                            $extCoreId = (string)$index;
                                             $returnArr[$tagName]['coreid'] = $extCoreId;
                                         }
-                                        elseif(strtolower($term) === 'eventid'){
-                                            $extEventId = $index;
+                                        elseif(strtolower($fieldName) === 'eventid'){
+                                            $extEventId = (string)$index;
                                             $returnArr[$tagName]['coreeventid'] = $extEventId;
                                         }
                                     }
+                                    $index++;
                                 }
-                            }
-                            if($extCoreId !== ''){
-                                $returnArr[$tagName]['fields'][$extCoreId] = 'coreid';
-                            }
-                            if($extEventId){
-                                $returnArr[$tagName]['fields'][$extEventId] = 'coreeventid';
+                                fclose($fh);
+                                if($extCoreId !== ''){
+                                    $returnArr[$tagName]['fields'][$extCoreId] = 'coreid';
+                                }
+                                if($extEventId){
+                                    $returnArr[$tagName]['fields'][$extEventId] = 'coreeventid';
+                                }
                             }
                         }
                     }
@@ -673,7 +678,7 @@ class DataUploadService {
         $returnArr = array();
         if($metaFile && $serverPath && strpos($serverPath, $GLOBALS['SERVER_ROOT']) === 0){
             $metaPath = $serverPath . '/' . $metaFile;
-            $returnArr = $this->processDwcaMetaFile($metaPath);
+            $returnArr = $this->processDwcaMetaFile($metaPath, $serverPath);
         }
         return $returnArr;
     }

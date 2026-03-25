@@ -20,13 +20,13 @@ const checklistTaxaEditorPopup = {
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
                         <template v-if="Number(checklistTaxaId) > 0">
-                            <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
+                            <q-tabs v-model="editTab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                                 <q-tab name="edit" label="Info" no-caps></q-tab>
                                 <q-tab name="images" label="Tag Images" no-caps></q-tab>
                                 <q-tab name="vouchers" label="Vouchers" no-caps></q-tab>
                             </q-tabs>
                             <q-separator></q-separator>
-                            <q-tab-panels v-model="tab" :style="tabStyle">
+                            <q-tab-panels v-model="editTab" :style="tabStyle">
                                 <q-tab-panel class="q-pa-none" name="edit">
                                     <checklist-taxa-add-edit-module @close:popup="closePopup();"></checklist-taxa-add-edit-module>
                                 </q-tab-panel>
@@ -39,7 +39,19 @@ const checklistTaxaEditorPopup = {
                             </q-tab-panels>
                         </template>
                         <template v-else>
-                            <checklist-taxa-add-edit-module @close:popup="closePopup();"></checklist-taxa-add-edit-module>
+                            <q-tabs v-model="addTab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
+                                <q-tab name="single" label="Single" no-caps></q-tab>
+                                <q-tab name="batch" label="Batch" no-caps></q-tab>
+                            </q-tabs>
+                            <q-separator></q-separator>
+                            <q-tab-panels v-model="addTab" :style="tabStyle">
+                                <q-tab-panel class="q-pa-none" name="single">
+                                    <checklist-taxa-add-edit-module @close:popup="closePopup();"></checklist-taxa-add-edit-module>
+                                </q-tab-panel>
+                                <q-tab-panel class="q-pa-none" name="batch">
+                                    <checklist-taxa-batch-loader-module @close:popup="closePopup();" @load:checklist-taxa="loadChecklistTaxa();"></checklist-taxa-batch-loader-module>
+                                </q-tab-panel>
+                            </q-tab-panels>
                         </template>
                     </div>
                 </div>
@@ -59,6 +71,7 @@ const checklistTaxaEditorPopup = {
     `,
     components: {
         'checklist-taxa-add-edit-module': checklistTaxaAddEditModule,
+        'checklist-taxa-batch-loader-module': checklistTaxaBatchLoaderModule,
         'checklist-taxa-image-selector-module': checklistTaxaImageSelectorModule,
         'checklist-taxa-voucher-module': checklistTaxaVoucherModule,
         'occurrence-linkage-tool-popup': occurrenceLinkageToolPopup
@@ -67,11 +80,13 @@ const checklistTaxaEditorPopup = {
         const { showNotification } = useCore();
         const checklistStore = useChecklistStore();
 
+        const addTab = Vue.ref('single');
         const checklistData = Vue.computed(() => checklistStore.getChecklistData);
         const checklistTaxaData = Vue.computed(() => checklistStore.getChecklistTaxaData);
         const checklistTaxaVoucherOccidArr = Vue.computed(() => checklistStore.getChecklistTaxaVoucherOccidArr);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const editTab = Vue.ref('edit');
         const linkageToolSearchTerms = Vue.computed(() => {
             let returnObj = {};
             if(checklistData.value['searchterms']){
@@ -84,7 +99,6 @@ const checklistTaxaEditorPopup = {
             return returnObj;
         });
         const showOccurrenceLinkageToolPopup = Vue.ref(false);
-        const tab = Vue.ref('edit');
         const tabStyle = Vue.ref(null);
 
         Vue.watch(contentRef, () => {
@@ -106,6 +120,10 @@ const checklistTaxaEditorPopup = {
             context.emit('close:popup');
         }
 
+        function loadChecklistTaxa() {
+            context.emit('load:checklist-taxa');
+        }
+
         function setContentStyle() {
             contentStyle.value = null;
             tabStyle.value = null;
@@ -122,15 +140,17 @@ const checklistTaxaEditorPopup = {
         });
 
         return {
-            addChecklistVoucherRecords,
+            addTab,
             checklistTaxaVoucherOccidArr,
             contentRef,
             contentStyle,
+            editTab,
             linkageToolSearchTerms,
             showOccurrenceLinkageToolPopup,
-            tab,
             tabStyle,
-            closePopup
+            addChecklistVoucherRecords,
+            closePopup,
+            loadChecklistTaxa
         }
     }
 };

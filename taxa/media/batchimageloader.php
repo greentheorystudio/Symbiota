@@ -18,11 +18,6 @@ if(!$GLOBALS['SYMB_UID']) {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-        <style>
-            .instruction-container {
-                margin-bottom: 20px;
-            }
-        </style>
     </head>
     <body>
         <a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
@@ -38,7 +33,7 @@ if(!$GLOBALS['SYMB_UID']) {
                 <h1>Taxa Media Batch Uploader</h1>
                 <template v-if="isEditor">
                     <div>
-                        <div class="instruction-container">
+                        <div class="q-mb-md">
                             To batch upload taxa image, audio, and video files either click the Add files button to select the files to be uploaded or drag and
                             drop the files onto the box below. A csv spreadheet can also be uploaded to provide further metadata for the files.
                             <a :href="(clientRoot + '/templates/batchTaxaImageData.csv')" aria-label="Download image template csv" tabindex="0"><span class="text-bold">Use this template for the csv spreadsheet for image files. </span></a>
