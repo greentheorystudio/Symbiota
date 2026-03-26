@@ -68,7 +68,12 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getTaxonFromSciname' && array_key_exists('sciname',$_POST)){
         $kingdomId = array_key_exists('kingdomid', $_POST) ? (int)$_POST['kingdomid'] : null;
         $showActual = array_key_exists('actual', $_POST) && (int)$_POST['actual'] === 1;
-        echo json_encode($taxa->getTaxonFromSciname($_POST['sciname'], $kingdomId, $showActual), JSON_FORCE_OBJECT);
+        $taxon = $taxa->getTaxonFromSciname($_POST['sciname'], $kingdomId, $showActual);
+        if($taxon){
+            echo json_encode($taxon);
+        } else {
+            echo json_encode($taxon, JSON_FORCE_OBJECT);
+        }
     }
     elseif($isEditor && $action === 'setUpdateFamiliesAccepted' && array_key_exists('parenttid', $_POST)){
         echo $taxa->setUpdateFamiliesAccepted((int)$_POST['parenttid']);
