@@ -270,7 +270,7 @@ class DwcArchiverCore extends Manager{
             if(strpos($this->conditionSql,'v.clid') !== false){
                 $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             }
-            if(strpos($this->conditionSql,'p.point') !== false){
+            if(strpos($this->conditionSql,'p.`point`') !== false){
                 $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
             if(strpos($this->conditionSql,'(i.') !== false || strpos($this->conditionSql,'(it.') !== false){
