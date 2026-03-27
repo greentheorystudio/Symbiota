@@ -506,7 +506,7 @@ class OccurrenceManager{
                 }
                 if($geomArr){
                     foreach($geomArr as $geom){
-                        $sqlFragArr[] = "(ST_Within(p.point,ST_GeomFromText('".$geom." '))) ";
+                        $sqlFragArr[] = "(ST_Within(p.`point`,ST_GeomFromText('".$geom." '))) ";
                     }
                     $geoSqlStrArr[] = '('.implode(' OR ', $sqlFragArr).') ';
                 }
