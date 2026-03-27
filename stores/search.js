@@ -482,7 +482,7 @@ const useSearchStore = Pinia.defineStore('search', {
             const numRows = options.hasOwnProperty('numRows') ? Number(options['numRows']) : 0;
             const index = options.hasOwnProperty('index') ? Number(options['index']) : 0;
             const bottomLimit = numRows > 0 ? (index * numRows) : 0;
-            return this.queryOccidArr.slice(bottomLimit, (bottomLimit + (numRows - 1)));
+            return this.queryOccidArr.slice(bottomLimit, (bottomLimit + numRows));
         },
         getSearchTidArr(options, callback){
             const formData = new FormData();
