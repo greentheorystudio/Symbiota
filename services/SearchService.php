@@ -65,19 +65,20 @@ class SearchService {
                     $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
                 }
                 $index = 0;
+                $rowIndex = 0;
                 $complete = false;
                 do{
                     $startIndex = $index * $batchSize;
                     $fullSql = $sql . 'LIMIT ' . $startIndex . ', ' . $batchSize . ' ';
-                    //error_log($fullSql);
                     if($result = $this->conn->query($fullSql)){
                         $rows = $result->fetch_all(MYSQLI_ASSOC);
                         $result->free();
                         if(count($rows) > 0){
                             foreach($rows as $rIndex => $row){
                                 if((int)$row['occid'] === (int)$occid){
-                                    $returnVal = $index;
+                                    $returnVal = $rowIndex;
                                 }
+                                $rowIndex++;
                                 unset($rows[$rIndex]);
                             }
                         }
