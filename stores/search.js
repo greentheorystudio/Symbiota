@@ -789,9 +789,11 @@ const useSearchStore = Pinia.defineStore('search', {
             this.searchTermsRecordSortField = value;
         },
         setSelectedRecords(recordArr) {
-            recordArr.forEach((record) => {
-                record.selected = (this.selectionsIds.indexOf(Number(record.occid)) > -1);
-            });
+            if(recordArr && recordArr.length > 0){
+                recordArr.forEach((record) => {
+                    record.selected = (this.selectionsIds.indexOf(Number(record.occid)) > -1);
+                });
+            }
             return recordArr;
         },
         setSpatialInputValues() {
