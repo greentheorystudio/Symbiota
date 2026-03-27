@@ -8,6 +8,10 @@ const taxaKingdomSelector = {
             type: String,
             default: null
         },
+        setOptions: {
+            type: Array,
+            default: []
+        },
         selectedKingdom: {
             type: Object,
             default: null
@@ -36,7 +40,15 @@ const taxaKingdomSelector = {
                 }
             })
             .then((data) => {
-                kingdomOpts.value = data;
+                if(props.setOptions.length > 0){
+                    data.forEach((taxa) => {
+                        if(props.setOptions.includes(taxa.name)){
+                            kingdomOpts.value.push(taxa);
+                        }
+                    });
+                } else {
+                    kingdomOpts.value = data;
+                }
             });
         }
 

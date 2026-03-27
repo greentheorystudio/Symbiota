@@ -935,9 +935,9 @@ const spatialAnalysisModule = {
             if(!selectedPolyError.value){
                 clearSelections(false);
                 if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                    for(const key in symbologyArr){
+                    Object.keys(symbologyArr).forEach((key) => {
                         delete symbologyArr[key];
-                    }
+                    });
                     symbologyArr['sciname'] = [];
                     symbologyArr['taxonomy'] = [];
                     searchStore.clearSelections();
@@ -976,9 +976,6 @@ const spatialAnalysisModule = {
 
         function mapPostLoadInitialize() {
             spatialModuleInitialising.value = false;
-            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
-                showWorking('Loading...');
-            }
             if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
                 if(props.stArrJson){
                     searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
@@ -1407,13 +1404,13 @@ const spatialAnalysisModule = {
         }
 
         function resetSymbology() {
-            for(let key in symbologyArr) {
-                if(key !== 'taxonomy' && symbologyArr.hasOwnProperty(key)){
+            Object.keys(symbologyArr).forEach((key) => {
+                if(key !== 'taxonomy'){
                     symbologyArr[key].forEach(keyObject => {
                         keyObject['color'] = mapSettings.pointLayerFillColor;
                     });
                 }
-            }
+            });
             changeMapSymbology();
         }
 
@@ -1925,16 +1922,6 @@ const spatialAnalysisModule = {
             layersObj['heat'].on('prerender', () => {
                 if(mapSettings.loadPointsEvent){
                     showWorking('Loading...');
-                }
-            });
-            layersObj['pointv'].on('postrender', () => {
-                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecordCount)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
-                    loadPointsPostrender();
-                }
-            });
-            layersObj['heat'].on('postrender', () => {
-                if(mapSettings.loadPointsEvent && ((mapSettings.pointVectorSource.getFeatures().length === Number(searchStore.getSearchRecordCount)) || (mapSettings.toggleSelectedPoints && mapSettings.pointVectorSource.getFeatures().length === searchStore.getSelectionsIds.length))){
-                    loadPointsPostrender();
                 }
             });
             dragAndDropInteraction.on('addfeatures', (event) => {
@@ -2530,13 +2517,13 @@ const spatialAnalysisModule = {
         }
 
         function sortSymbologyArr() {
-            for(let key in symbologyArr) {
-                if(key !== 'taxonomy' && key !== 'sciname' && symbologyArr.hasOwnProperty(key)){
+            Object.keys(symbologyArr).forEach((key) => {
+                if(key !== 'taxonomy' && key !== 'sciname'){
                     symbologyArr[key].sort((a, b) => {
                         return a.value.localeCompare(b.value);
                     });
                 }
-            }
+            });
             if(symbologyArr.hasOwnProperty('taxonomy')){
                 symbologyArr['taxonomy'].sort((a, b) => {
                     return a.value.localeCompare(b.value);
@@ -2679,7 +2666,6 @@ const spatialAnalysisModule = {
         Vue.provide('findRecordClusterPosition', findRecordClusterPosition);
         Vue.provide('findRecordPoint', findRecordPoint);
         Vue.provide('findRecordPointInCluster', findRecordPointInCluster);
-        Vue.provide('getArrayBuffer', getArrayBuffer);
         Vue.provide('getVectorLayerStyle', getVectorLayerStyle);
         Vue.provide('inputResponseData', inputResponseData);
         Vue.provide('inputWindowMode', propsRefs.inputWindowMode);
@@ -2717,6 +2703,9 @@ const spatialAnalysisModule = {
         Vue.provide('zoomToSelections', zoomToSelections);
 
         Vue.onMounted(() => {
+            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
+                showWorking('Loading...');
+            }
             spatialModuleInitialising.value = true;
             setMapLayersInteractions();
             setMapOverlays();
