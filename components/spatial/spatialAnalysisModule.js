@@ -941,13 +941,13 @@ const spatialAnalysisModule = {
                     symbologyArr['sciname'] = [];
                     symbologyArr['taxonomy'] = [];
                     searchStore.clearSelections();
-                    searchStore.clearQueryOccidArr();
+                    searchStore.clearQueryResultData();
                     showWorking('Loading...');
                     const options = {
                         schema: 'map',
                         spatial: 1
                     };
-                    searchStore.setSearchOccidArr(options, () => {
+                    searchStore.setSearchRecordCount(options, () => {
                         if(Number(searchStore.getSearchRecordCount) > 0){
                             displayQueryPopup.value = false;
                             updateMapSettings('showControlPanelLeft', false);

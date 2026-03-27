@@ -107,6 +107,7 @@ const occurrenceEditorAdminTab = {
         const clientRoot = baseStore.getClientRoot;
         const collId = Vue.computed(() => occurrenceStore.getCollId);
         const confirmationPopupRef = Vue.ref(null);
+        const currentRecordIndex = Vue.computed(() => searchStore.getCurrentOccIdIndex);
         const editArr = Vue.computed(() => occurrenceStore.getEditArr);
         const geneticLinkArr = Vue.computed(() => occurrenceStore.getGeneticLinkArr);
         const imageArr = Vue.computed(() => occurrenceStore.getImageArr);
@@ -122,6 +123,8 @@ const occurrenceEditorAdminTab = {
         });
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const profileCollectionOptions = Vue.ref([]);
+        const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
+        const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const symbUid = baseStore.getSymbUid;
         const transferToCollid = Vue.ref(null);
 
@@ -140,14 +143,29 @@ const occurrenceEditorAdminTab = {
             const confirmText = 'Are you sure you want to delete this record? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
                 if(val){
-                    const deleteOccid = occId.value;
                     occurrenceStore.deleteOccurrenceRecord(occId.value, (res) => {
                         if(res === 0){
                             showNotification('negative', ('An error occurred while deleting this record.'));
                         }
                         else{
-                            searchStore.removeOccidFromOccidArrs(deleteOccid);
-                            occurrenceStore.setCurrentOccurrenceRecord(searchStore.getPreviousOccidInOccidArr);
+                            const options = {
+                                schema: 'occurrence',
+                                display: 'table',
+                                spatial: 0,
+                                sortField: searchTermsSortField.value,
+                                sortDirection: searchTermsSortDirection.value
+                            };
+                            searchStore.setSearchRecordCount(options, () => {
+                                if(Number(searchStore.getSearchRecordCount) > 0){
+                                    searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
+                                    searchStore.getSearchOccidArrByIndex(1, currentRecordIndex.value, (occidArr) => {
+                                        occurrenceStore.setCurrentOccurrenceRecord(occidArr[0]);
+                                    });
+                                }
+                                else{
+                                    occurrenceStore.setCurrentOccurrenceRecord(0);
+                                }
+                            });
                         }
                     });
                 }

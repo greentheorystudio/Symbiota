@@ -394,7 +394,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function loadRecords(initial = false) {
                         if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                            searchStore.clearQueryOccidArr();
+                            searchStore.clearQueryResultData();
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
@@ -403,7 +403,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 sortField: sortField.value,
                                 sortDirection: sortDirection.value
                             };
-                            searchStore.setSearchOccidArr(options, () => {
+                            searchStore.setSearchRecordCount(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     if(!initial){
                                         displayQueryPopup.value = false;
