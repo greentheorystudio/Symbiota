@@ -73,6 +73,7 @@ const occurrenceEditorOccurrenceDataControls = {
                 sortDirection: searchTermsSortDirection.value
             };
         });
+        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
         const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const showConfiguredDataEditorPopup = Vue.ref(false);
@@ -89,10 +90,9 @@ const occurrenceEditorOccurrenceDataControls = {
                     occurrenceStore.createOccurrenceRecord((newOccid) => {
                         if(newOccid > 0){
                             searchStore.setSearchRecordCount(options.value, () => {
-                                searchStore.setSearchCurrentOccidIndex(newOccid, options.value, () => {
-                                    context.emit('occurrence:created', newOccid);
-                                    showNotification('positive','Occurrence record created successfully.');
-                                });
+                                searchStore.setCurrentOccIdIndex(searchRecordCount.value - 1);
+                                context.emit('occurrence:created', newOccid);
+                                showNotification('positive','Occurrence record created successfully.');
                             });
                         }
                         else{
@@ -105,10 +105,9 @@ const occurrenceEditorOccurrenceDataControls = {
                 occurrenceStore.createOccurrenceRecord((newOccid) => {
                     if(newOccid > 0){
                         searchStore.setSearchRecordCount(options.value, () => {
-                            searchStore.setSearchCurrentOccidIndex(newOccid, options.value, () => {
-                                context.emit('occurrence:created', newOccid);
-                                showNotification('positive','Occurrence record created successfully.');
-                            });
+                            searchStore.setCurrentOccIdIndex(searchRecordCount.value - 1);
+                            context.emit('occurrence:created', newOccid);
+                            showNotification('positive','Occurrence record created successfully.');
                         });
                     }
                     else{
