@@ -700,7 +700,7 @@ class SearchService {
             }
             if($geomArr){
                 foreach($geomArr as $geom){
-                    $sqlFragArr[] = "(ST_Within(p.point, ST_GeomFromText('" . $geom . " ')))";
+                    $sqlFragArr[] = "(ST_Within(p.`point`, ST_GeomFromText('" . $geom . " ')))";
                 }
                 $tempArr[] = '(' . implode(' OR ', $sqlFragArr) . ')';
             }
