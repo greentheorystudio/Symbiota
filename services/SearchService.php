@@ -1091,6 +1091,12 @@ class SearchService {
                         $mofDataArr = $this->getSearchMofData($fromStr, $whereStr);
                     }
                     $sql = $selectStr . $fromStr . $whereStr;
+                    if(array_key_exists('sortField', $options) && $options['sortField']){
+                        $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                    }
+                    elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
+                        $sql .= 'ORDER BY o.occid ';
+                    }
                     if($options['output'] === 'geojson'){
                         $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
                     }
@@ -1357,12 +1363,12 @@ class SearchService {
             $fieldNameArr[] = 'IFNULL(DATE_FORMAT(o.eventDate,"%d %M %Y"),"") AS date';
         }
         if($schema !== 'taxa'){
-            $fieldNameArr[] = 'o.institutioncode';
-            $fieldNameArr[] = 'o.collectioncode';
+            $fieldNameArr[] = 'IFNULL(o.institutioncode, c.institutioncode) AS institutioncode';
+            $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
             $fieldNameArr[] = 'c.collectionname';
             $fieldNameArr[] = 'c.icon';
-            $fieldNameArr[] = 'o.family';
-            $fieldNameArr[] = 'o.scientificnameauthorship';
+            $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
+            $fieldNameArr[] = 'IFNULL(t.author, o.scientificnameauthorship) AS scientificnameauthorship';
             $fieldNameArr[] = 't.tidaccepted';
         }
         return 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' ';
