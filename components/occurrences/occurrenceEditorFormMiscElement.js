@@ -117,8 +117,6 @@ const occurrenceEditorFormMiscElement = {
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFields = Vue.computed(() => occurrenceStore.getOccurrenceFields);
         const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
-        const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
-        const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const showElement = Vue.computed(() => {
             return (
                 !editorHideFields.value.includes('habitat') ||
@@ -148,25 +146,17 @@ const occurrenceEditorFormMiscElement = {
                                 showNotification('negative', ('An error occurred while deleting this record.'));
                             }
                             else{
+                                searchStore.removeRecordFromSearchRecordCnt();
                                 occurrenceStore.setCollectingEventReplicateData();
-                                const options = {
-                                    schema: 'occurrence',
-                                    display: 'table',
-                                    spatial: 0,
-                                    sortField: searchTermsSortField.value,
-                                    sortDirection: searchTermsSortDirection.value
-                                };
-                                searchStore.setSearchRecordCount(options, () => {
-                                    if(Number(searchStore.getSearchRecordCount) > 0){
-                                        searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
-                                        searchStore.getSearchOccidArrByIndex(1, currentRecordIndex.value, (occidArr) => {
-                                            occurrenceStore.setCurrentOccurrenceRecord(occidArr[0]);
-                                        });
-                                    }
-                                    else{
-                                        occurrenceStore.setCurrentOccurrenceRecord(0);
-                                    }
-                                });
+                                if(Number(searchStore.getSearchRecordCount) > 0){
+                                    searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
+                                    searchStore.getSearchOccidArrByIndex(1, currentRecordIndex.value, (occidArr) => {
+                                        occurrenceStore.setCurrentOccurrenceRecord(occidArr[0]);
+                                    });
+                                }
+                                else{
+                                    occurrenceStore.setCurrentOccurrenceRecord(0);
+                                }
                             }
                         });
                     }

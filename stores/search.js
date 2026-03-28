@@ -443,6 +443,9 @@ const useSearchStore = Pinia.defineStore('search', {
         }
     },
     actions: {
+        addRecordToSearchRecordCnt() {
+            this.searchRecordCount += 1;
+        },
         addRecordToSelections(record) {
             this.selections.push(record);
             this.selectionsIds.push(Number(record.occid));
@@ -705,6 +708,9 @@ const useSearchStore = Pinia.defineStore('search', {
             else{
                 window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
             }
+        },
+        removeRecordFromSearchRecordCnt() {
+            this.searchRecordCount -= 1;
         },
         removeRecordFromSelections(id) {
             const selObj = this.selections.find(obj => Number(obj['occid']) === Number(id));
