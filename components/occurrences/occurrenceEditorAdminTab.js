@@ -123,8 +123,6 @@ const occurrenceEditorAdminTab = {
         });
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const profileCollectionOptions = Vue.ref([]);
-        const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
-        const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const symbUid = baseStore.getSymbUid;
         const transferToCollid = Vue.ref(null);
 
@@ -148,24 +146,16 @@ const occurrenceEditorAdminTab = {
                             showNotification('negative', ('An error occurred while deleting this record.'));
                         }
                         else{
-                            const options = {
-                                schema: 'occurrence',
-                                display: 'table',
-                                spatial: 0,
-                                sortField: searchTermsSortField.value,
-                                sortDirection: searchTermsSortDirection.value
-                            };
-                            searchStore.setSearchRecordCount(options, () => {
-                                if(Number(searchStore.getSearchRecordCount) > 0){
-                                    searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
-                                    searchStore.getSearchOccidArrByIndex(1, currentRecordIndex.value, (occidArr) => {
-                                        occurrenceStore.setCurrentOccurrenceRecord(occidArr[0]);
-                                    });
-                                }
-                                else{
-                                    occurrenceStore.setCurrentOccurrenceRecord(0);
-                                }
-                            });
+                            searchStore.removeRecordFromSearchRecordCnt();
+                            if(Number(searchStore.getSearchRecordCount) > 0){
+                                searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
+                                searchStore.getSearchOccidArrByIndex(1, currentRecordIndex.value, (occidArr) => {
+                                    occurrenceStore.setCurrentOccurrenceRecord(occidArr[0]);
+                                });
+                            }
+                            else{
+                                occurrenceStore.setCurrentOccurrenceRecord(0);
+                            }
                         }
                     });
                 }
