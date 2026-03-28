@@ -35,6 +35,7 @@ const useSearchStore = Pinia.defineStore('search', {
         currentOccIdIndex: 0,
         dateId: null,
         hiddenFieldArr: ['collid', 'institutionid', 'collectionid', 'datasetid', 'tid', 'genus', 'specificepithet', 'taxonrank', 'infraspecificepithet', 'recordedbyid', 'latestdatecollected', 'eventid', 'locationid', 'associatedoccurrences', 'collectionname', 'icon', 'tidaccepted'],
+        newRecordMode: false,
         occidLoadingIndex: 0,
         occurrenceFieldLabels: {
             occid: 'ID',
@@ -443,8 +444,13 @@ const useSearchStore = Pinia.defineStore('search', {
         }
     },
     actions: {
-        addRecordToSearchRecordCnt() {
+        addRecordToSearchRecordCnt(occid) {
             this.searchRecordCount += 1;
+            if(this.newRecordMode){
+                const newRecArr = this.searchTerms['newOccidArr'].slice();
+                newRecArr.push(occid);
+                this.updateSearchTerms('newOccidArr', newRecArr);
+            }
         },
         addRecordToSelections(record) {
             this.selections.push(record);
@@ -741,6 +747,19 @@ const useSearchStore = Pinia.defineStore('search', {
             newBlankSearchTerms[this.dateId.toString()] = {};
             localStorage.setItem('searchTermsArr', JSON.stringify(newBlankSearchTerms));
         },
+        setNewRecordMode(value) {
+            this.newRecordMode = value;
+            if(this.newRecordMode){
+                if(!this.searchTerms.hasOwnProperty('newOccidArr')){
+                    this.searchTerms['newOccidArr'] = [];
+                }
+            }
+            else{
+                if(this.searchTerms.hasOwnProperty('newOccidArr')){
+                    delete this.searchTerms['newOccidArr'];
+                }
+            }
+        },
         setQueryIdInLocalStorageSearchTerms(queryId) {
             const stArr = JSON.parse(localStorage['searchTermsArr']);
             stArr[this.dateId.toString()][queryId.toString()] = {};
@@ -797,7 +816,7 @@ const useSearchStore = Pinia.defineStore('search', {
                 schema: 'taxa',
                 spatial: 0,
                 index: this.tidLoadingIndex.toString(),
-                reccnt: loadingCnt.toString(),
+                numRows: loadingCnt.toString(),
                 output: 'json'
             };
             this.processSimpleSearch(this.getSearchTerms, options, (data) => {

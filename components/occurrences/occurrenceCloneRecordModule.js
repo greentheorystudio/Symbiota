@@ -166,7 +166,7 @@ const occurrenceCloneRecordModule = {
             showWorking();
             occurrenceStore.createOccurrenceRecord((newOccid) => {
                 if(newOccid > 0){
-                    searchStore.addRecordToSearchRecordCnt();
+                    searchStore.addRecordToSearchRecordCnt(newOccid);
                     if(includeMediaLinkages.value){
                         resetMediaCounts();
                         processCloneImageAssociations(newOccid);
