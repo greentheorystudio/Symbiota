@@ -80,7 +80,7 @@ const occurrenceEditorOccurrenceDataControls = {
                         if(newOccid > 0){
                             context.emit('occurrence:created', newOccid);
                             showNotification('positive','Occurrence record created successfully.');
-                            searchStore.addRecordToSearchRecordCnt();
+                            searchStore.addRecordToSearchRecordCnt(newOccid);
                             searchStore.setCurrentOccIdIndex(searchRecordCount.value - 1);
                         }
                         else{
@@ -94,7 +94,7 @@ const occurrenceEditorOccurrenceDataControls = {
                     if(newOccid > 0){
                         context.emit('occurrence:created', newOccid);
                         showNotification('positive','Occurrence record created successfully.');
-                        searchStore.addRecordToSearchRecordCnt();
+                        searchStore.addRecordToSearchRecordCnt(newOccid);
                         searchStore.setCurrentOccIdIndex(searchRecordCount.value - 1);
                     }
                     else{

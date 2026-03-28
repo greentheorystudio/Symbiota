@@ -253,7 +253,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                 occurrenceStore.updateOccurrenceEditData('individualcount', recordToAdd.cnt);
                 occurrenceStore.createOccurrenceRecord((occid) => {
                     processEnteredData();
-                    searchStore.addRecordToSearchRecordCnt();
+                    searchStore.addRecordToSearchRecordCnt(occid);
                 });
             }
             else if(processingDeleteArr.length > 0){
