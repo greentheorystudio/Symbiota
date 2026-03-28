@@ -117,6 +117,8 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
         const processingUpdateArr = [];
         const repData = Vue.reactive([]);
         const replicateData = Vue.computed(() => occurrenceStore.getCollectingEventReplicateData);
+        const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
+        const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const tableColumns = Vue.ref([]);
         const tablePagination = {
             rowsPerPage: 0
@@ -251,7 +253,6 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                 occurrenceStore.updateOccurrenceEditData('individualcount', recordToAdd.cnt);
                 occurrenceStore.createOccurrenceRecord((occid) => {
                     processEnteredData();
-                    searchStore.addNewOccidToOccidArrs(occid);
                 });
             }
             else if(processingDeleteArr.length > 0){
@@ -264,7 +265,6 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                                 showNotification('negative', ('An error occurred while deleting occurrence record ' + recordToDelete + '.'));
                             }
                             processEnteredData();
-                            searchStore.removeOccidFromOccidArrs(recordToDelete);
                         });
                     }
                     else{
@@ -312,9 +312,18 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                 });
             }
             else{
-                hideWorking();
-                occurrenceStore.setCollectingEventReplicateData();
-                context.emit('close:popup');
+                const options = {
+                    schema: 'occurrence',
+                    display: 'table',
+                    spatial: 0,
+                    sortField: searchTermsSortField.value,
+                    sortDirection: searchTermsSortDirection.value
+                };
+                searchStore.setSearchRecordCount(options, () => {
+                    hideWorking();
+                    occurrenceStore.setCollectingEventReplicateData();
+                    context.emit('close:popup');
+                });
             }
         }
 
