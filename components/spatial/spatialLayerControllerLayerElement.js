@@ -183,7 +183,7 @@ const spatialLayerControllerLayerElement = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props) {
-        const { hideWorking, showNotification, showWorking } = useCore();
+        const { getArrayBuffer, hideWorking, showNotification, showWorking } = useCore();
 
         const coreLayers = Vue.inject('coreLayers');
         const layerOrderArr = Vue.inject('layerOrderArr');
@@ -203,7 +203,6 @@ const spatialLayerControllerLayerElement = {
         const addLayerToActiveLayerOptions = Vue.inject('addLayerToActiveLayerOptions');
         const addLayerToLayersObj = Vue.inject('addLayerToLayersObj');
         const addLayerToRasterLayersArr = Vue.inject('addLayerToRasterLayersArr');
-        const getArrayBuffer = Vue.inject('getArrayBuffer');
         const getVectorLayerStyle = Vue.inject('getVectorLayerStyle');
         const removeLayerFromActiveLayerOptions = Vue.inject('removeLayerFromActiveLayerOptions');
         const removeLayerFromLayersObj = Vue.inject('removeLayerFromLayersObj');

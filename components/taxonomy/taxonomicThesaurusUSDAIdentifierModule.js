@@ -9,7 +9,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
         <div class="processor-container">
             <div class="processor-control-container">
                 <div class="row q-mb-md">
-                    <taxa-kingdom-selector :disable="loading" :selected-kingdom="selectedKingdom" label="Target Kingdom" class="col-grow" @update:selected-kingdom="updateSelectedKingdom"></taxa-kingdom-selector>
+                    <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Taxa Kingdom" :value="selectedKingdom" :setOptions="kingdomOptions" @update:selected-kingdom="updateSelectedKingdom" class="col-4"></taxa-kingdom-selector>
                 </div>
                 <q-card class="processor-control-card">
                     <q-card-section>
@@ -98,7 +98,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
         </div>
     `,
     components: {
-        'taxa-kingdom-selector': taxaKingdomSelector
+        'taxa-kingdom-selector': taxaKingdomSelector,
     },
     setup() {
         const { csvToArray, getErrorResponseText, parseFile, showNotification } = useCore();
@@ -109,6 +109,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
         const clientRoot = baseStore.getClientRoot;
         const currentProcess = Vue.ref(null);
         const isEditor = Vue.ref(false);
+        const kingdomOptions = ['Plantae', 'Fungi'];
         const loading = Vue.ref(false);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
@@ -259,36 +260,44 @@ const taxonomicThesaurusUSDAIdentifierModule = {
             return procObj;
         }
 
-        function initializeUSDAImport() {
-            processingArr.value.length = 0;
-            if(selectedKingdomName.value === 'Fungi' || selectedKingdomName.value === 'Plantae'){
-                if(selectedUsdaFile.value){
-                    adjustUIStart();
-                    currentProcess.value = 'initializeUSDAImport';
-                    parseFile(selectedUsdaFile.value, (fileContents) => {
-                        csvToArray(fileContents).then((csvData) => {
-                            if(csvData[0] && csvData[0].hasOwnProperty('Symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('ScientificName')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('Scientific Name with Author')))){
-                                processingArr.value = csvData;
-                                if(selectedKingdomName.value === 'Fungi'){
-                                    processUsdaFungiSymbolUpload();
-                                }
-                                else{
-                                    processUsdaPlantaeSymbolUpload();
-                                }
+        function getUSDAData(url) {
+            const formData = new FormData();
+            formData.append('url', url);
+            formData.append('action', 'getFileContentsFromUrl');
+            fetch(proxyServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((fileContents) => {
+                    csvToArray(fileContents).then((csvData) => {
+                        if(csvData[0] && csvData[0].hasOwnProperty('symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('scientificname')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('scientific name with author')))){
+                            processingArr.value = csvData;
+                            if(selectedKingdomName.value === 'Fungi'){
+                                processUsdaFungiSymbolUpload();
                             }
                             else{
-                                showNotification('negative', 'There is an issue with processing the USDA data.');
+                                processUsdaPlantaeSymbolUpload();
                             }
-                        });
+                        }
+                        else{
+                            showNotification('negative', 'There is an issue with processing the USDA data.');
+                        }
                     });
-                }
-                else{
-                    showNotification('negative', 'You must choose a data file before starting the upload.');
-                }
+                });
+        }
+
+        function initializeUSDAImport() {
+            if(selectedKingdomName.value === 'Fungi'){
+                getUSDAData("https://plants.sc.egov.usda.gov/DocumentLibrary/Txt/Non_LichenFungi.txt");
+            } else if (selectedKingdomName.value === 'Plantae'){
+                getUSDAData("https://plants.sc.egov.usda.gov/DocumentLibrary/Txt/plantlst.txt");
+            }else {
+                showNotification('negative', 'There is an issue with the kingdom selection.');
             }
-            else{
-                showNotification('negative', 'USDA symbols are only available for taxa in the Fungi or Plantae kingdoms. Please select one of those kingdoms.');
-            }
+            processingArr.value.length = 0;
         }
 
         function processErrorResponse(text) {
@@ -350,7 +359,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
             if(!processCancelling.value && processingArr.value.length > 0){
                 const currentData = processingArr.value[0];
                 processingArr.value.splice(0, 1);
-                const sciname = cleanUsdaSciName(currentData['ScientificName']);
+                const sciname = cleanUsdaSciName(currentData['scientificname']);
                 const text = 'Processing: ' + sciname;
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 findTaxonBySciname(sciname, (resObj, errorText = null) => {
@@ -391,7 +400,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
             if(!processCancelling.value && processingArr.value.length > 0){
                 const currentData = processingArr.value[0];
                 processingArr.value.splice(0, 1);
-                const sciname = cleanUsdaSciName(currentData['Scientific Name with Author']);
+                const sciname = cleanUsdaSciName(currentData['scientific name with author']);
                 const text = 'Processing: ' + sciname;
                 addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 const formData = new FormData();
@@ -413,8 +422,10 @@ const taxonomicThesaurusUSDAIdentifierModule = {
                                         if(resObj && resObj.hasOwnProperty('tid')){
                                             const usdaIdentifier = resObj['identifiers'].find(obj => obj['name'] === 'usda');
                                             if(usdaIdentifier){
-                                                if(usdaIdentifier['identifier'] !== currentData['Symbol']){
-                                                    updateTaxonIdentifier(resObj['tid'], currentData['Symbol'], 'usda');
+                                                if(usdaIdentifier['identifier'] !== currentData['symbol']){
+                                                    updateTaxonIdentifier(resObj['tid'], currentData['symbol'], 'usda');
+                                                    processErrorResponse('USDA symbol updated');
+                                                    processUsdaPlantaeSymbolUpload();
                                                 }
                                                 else{
                                                     processErrorResponse('USDA symbol already exists');
@@ -422,7 +433,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
                                                 }
                                             }
                                             else{
-                                                addTaxonIdentifier(resObj['tid'], currentData['Symbol'], 'usda');
+                                                addTaxonIdentifier(resObj['tid'], currentData['symbol'], 'usda');
                                                 processSuccessResponse('USDA symbol added');
                                                 processUsdaPlantaeSymbolUpload();
                                             }
@@ -507,6 +518,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
             clientRoot,
             currentProcess,
             isEditor,
+            kingdomOptions,
             loading,
             procDisplayScrollAreaRef,
             processCancelling,

@@ -11,9 +11,13 @@ $stArr = array_key_exists('starr', $_POST) ? json_decode($_POST['starr'], true) 
 if($action && $options && $stArr && SanitizerService::validateInternalRequest()){
     $searchService = new SearchService();
     if($action === 'getSearchOccidArr'){
-        $index = array_key_exists('index', $_POST) ? (int)$_POST['index'] : null;
-        $recCnt = (array_key_exists('reccnt', $_POST) && (int)$_POST['reccnt'] > 0) ? (int)$_POST['reccnt'] : null;
-        echo json_encode($searchService->getSearchOccidArr($stArr, $options, $index, $recCnt));
+        echo json_encode($searchService->getSearchOccidArr($stArr, $options));
+    }
+    elseif($action === 'getSearchRecordCount'){
+        echo $searchService->getSearchRecordCount($stArr, $options);
+    }
+    elseif($action === 'getOccidIndexInSearchArr' && array_key_exists('occid', $_POST)){
+        echo $searchService->getOccidIndexInSearchArr((int)$_POST['occid'], $stArr, $options);
     }
     elseif($action === 'getSearchTidArr'){
         echo json_encode($searchService->getSearchTidArr($stArr, $options));
