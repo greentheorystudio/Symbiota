@@ -416,6 +416,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function loadRecords() {
                         if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                            searchStore.setNewRecordMode(false);
                             searchStore.clearQueryResultData();
                             showWorking('Loading...');
                             const options = {
