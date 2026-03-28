@@ -166,6 +166,7 @@ const occurrenceCloneRecordModule = {
             showWorking();
             occurrenceStore.createOccurrenceRecord((newOccid) => {
                 if(newOccid > 0){
+                    searchStore.addRecordToSearchRecordCnt();
                     if(includeMediaLinkages.value){
                         resetMediaCounts();
                         processCloneImageAssociations(newOccid);
@@ -176,17 +177,8 @@ const occurrenceCloneRecordModule = {
                             processCloneRecord();
                         }
                         else{
-                            const options = {
-                                schema: 'occurrence',
-                                display: 'table',
-                                spatial: 0,
-                                sortField: searchTermsSortField.value,
-                                sortDirection: searchTermsSortDirection.value
-                            };
-                            searchStore.setSearchRecordCount(options, () => {
-                                hideWorking();
-                                showNotification('positive','Cloned successfully');
-                            });
+                            hideWorking();
+                            showNotification('positive','Cloned successfully');
                         }
                     }
                 }

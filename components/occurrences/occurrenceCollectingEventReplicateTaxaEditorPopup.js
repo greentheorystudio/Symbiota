@@ -253,6 +253,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                 occurrenceStore.updateOccurrenceEditData('individualcount', recordToAdd.cnt);
                 occurrenceStore.createOccurrenceRecord((occid) => {
                     processEnteredData();
+                    searchStore.addRecordToSearchRecordCnt();
                 });
             }
             else if(processingDeleteArr.length > 0){
@@ -265,6 +266,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                                 showNotification('negative', ('An error occurred while deleting occurrence record ' + recordToDelete + '.'));
                             }
                             processEnteredData();
+                            searchStore.removeRecordFromSearchRecordCnt();
                         });
                     }
                     else{
@@ -312,18 +314,9 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                 });
             }
             else{
-                const options = {
-                    schema: 'occurrence',
-                    display: 'table',
-                    spatial: 0,
-                    sortField: searchTermsSortField.value,
-                    sortDirection: searchTermsSortDirection.value
-                };
-                searchStore.setSearchRecordCount(options, () => {
-                    hideWorking();
-                    occurrenceStore.setCollectingEventReplicateData();
-                    context.emit('close:popup');
-                });
+                hideWorking();
+                occurrenceStore.setCollectingEventReplicateData();
+                context.emit('close:popup');
             }
         }
 
