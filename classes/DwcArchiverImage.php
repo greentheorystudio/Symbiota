@@ -79,7 +79,7 @@ class DwcArchiverImage{
             if(strpos($conditionSql,'v.clid')){
                 $sql .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             }
-            if(strpos($conditionSql,'p.point')){
+            if(strpos($conditionSql,'p.`point`')){
                 $sql .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
             }
             $sql .= $conditionSql;
