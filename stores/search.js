@@ -35,7 +35,6 @@ const useSearchStore = Pinia.defineStore('search', {
         currentOccIdIndex: 0,
         dateId: null,
         hiddenFieldArr: ['collid', 'institutionid', 'collectionid', 'datasetid', 'tid', 'genus', 'specificepithet', 'taxonrank', 'infraspecificepithet', 'recordedbyid', 'latestdatecollected', 'eventid', 'locationid', 'associatedoccurrences', 'collectionname', 'icon', 'tidaccepted'],
-        newRecordMode: false,
         occidLoadingIndex: 0,
         occurrenceFieldLabels: {
             occid: 'ID',
@@ -446,7 +445,7 @@ const useSearchStore = Pinia.defineStore('search', {
     actions: {
         addRecordToSearchRecordCnt(occid) {
             this.searchRecordCount += 1;
-            if(this.newRecordMode){
+            if(this.searchTerms.hasOwnProperty('newOccidArr')){
                 const newRecArr = this.searchTerms['newOccidArr'].slice();
                 newRecArr.push(occid);
                 this.updateSearchTerms('newOccidArr', newRecArr);
@@ -748,8 +747,7 @@ const useSearchStore = Pinia.defineStore('search', {
             localStorage.setItem('searchTermsArr', JSON.stringify(newBlankSearchTerms));
         },
         setNewRecordMode(value) {
-            this.newRecordMode = value;
-            if(this.newRecordMode){
+            if(value){
                 if(!this.searchTerms.hasOwnProperty('newOccidArr')){
                     this.searchTerms['newOccidArr'] = [];
                 }
