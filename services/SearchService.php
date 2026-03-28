@@ -27,7 +27,7 @@ class SearchService {
     public function getOccidIndexInSearchArr($occid, $searchTermsArr, $options): int
     {
         $returnVal = 0;
-        $batchSize = 50000;
+        $batchSize = 5000;
         if((int)$occid > 0 && $searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
