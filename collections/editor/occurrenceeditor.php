@@ -72,9 +72,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             </template>
                         </div>
                         <div class="row justify-end self-center">
-                            <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
-                            <q-btn v-if="recordCount > 1 && currentRecordIndex > 1" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord" aria-label="Go to first record" tabindex="0"></q-btn>
-                            <q-btn v-if="recordCount > 1 && currentRecordIndex > 1" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord" aria-label="Go to previous record" tabindex="0"></q-btn>
+                            <template v-if="occId > 0">
+                                <div class="self-center text-bold q-mr-xs">Record {{ (currentRecordIndex + 1) }} of {{ recordCount }}</div>
+                            </template>
+                            <template v-else>
+                                <div class="self-center text-bold q-mr-xs">Record {{ (recordCount) }} of {{ (recordCount) }}</div>
+                            </template>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex > 0" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord" aria-label="Go to first record" tabindex="0"></q-btn>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex > 0" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord" aria-label="Go to previous record" tabindex="0"></q-btn>
                             <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord" aria-label="Go to next record" tabindex="0"></q-btn>
                             <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord" aria-label="Go to last record" tabindex="0"></q-btn>
                             <q-btn v-if="occurrenceEntryFormat !== 'replicate' && occId > 0" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord" aria-label="Go to new record" tabindex="0">
@@ -381,11 +386,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function goToFirstRecord() {
-                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getFirstOccidInOccidArr);
+                        searchStore.setCurrentOccIdIndex(0);
+                        processRecordIndexChange();
                     }
 
                     function goToLastRecord() {
-                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getLastOccidInOccidArr);
+                        searchStore.setCurrentOccIdIndex(searchRecordCount.value - 1);
+                        processRecordIndexChange();
                     }
 
                     function goToNewRecord() {
@@ -393,16 +400,18 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function goToNextRecord() {
-                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getNextOccidInOccidArr);
+                        searchStore.setCurrentOccIdIndex(currentRecordIndex.value + 1);
+                        processRecordIndexChange();
                     }
 
                     function goToPreviousRecord() {
-                        occurrenceStore.setCurrentOccurrenceRecord(searchStore.getPreviousOccidInOccidArr);
+                        searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
+                        processRecordIndexChange();
                     }
 
                     function loadRecords() {
                         if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                            searchStore.clearQueryOccidArr();
+                            searchStore.clearQueryResultData();
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
@@ -411,17 +420,24 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 sortField: searchTermsSortField.value,
                                 sortDirection: searchTermsSortDirection.value
                             };
-                            searchStore.setSearchOccidArr(options, () => {
+                            searchStore.setSearchRecordCount(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
-                                    if(Number(occId.value) === 0 || currentRecordIndex.value === 0){
+                                    if(Number(occId.value) > 0){
+                                        searchStore.setSearchCurrentOccidIndex(occId.value, options, () => {
+                                            occurrenceStore.setCurrentOccurrenceRecord(occId.value);
+                                            hideWorking();
+                                        });
+                                    }
+                                    else{
                                         goToFirstRecord();
+                                        hideWorking();
                                     }
                                 }
                                 else{
                                     showNotification('negative','There were no records matching your query.');
+                                    hideWorking();
                                 }
-                                hideWorking();
                             });
                         }
                         else{
@@ -438,6 +454,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     function processBatchUpdate() {
                         occurrenceStore.setCurrentOccurrenceRecord(occId.value);
                         loadRecords();
+                    }
+
+                    function processRecordIndexChange() {
+                        searchStore.getSearchOccidArrByIndex(1, currentRecordIndex.value, (occidArr) => {
+                            occurrenceStore.setCurrentOccurrenceRecord(occidArr[0]);
+                        });
                     }
 
                     function processResetCriteria() {
