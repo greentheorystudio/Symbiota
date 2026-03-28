@@ -76,12 +76,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 <div class="self-center text-bold q-mr-xs">Record {{ (currentRecordIndex + 1) }} of {{ recordCount }}</div>
                             </template>
                             <template v-else>
-                                <div class="self-center text-bold q-mr-xs">Record {{ (recordCount) }} of {{ (recordCount) }}</div>
+                                <div class="self-center text-bold q-mr-xs">Record {{ recordCount }} of {{ recordCount }}</div>
                             </template>
-                            <q-btn v-if="recordCount > 1 && currentRecordIndex > 0" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord" aria-label="Go to first record" tabindex="0"></q-btn>
+                            <q-btn v-if="(occId > 0 && (recordCount > 1 && currentRecordIndex > 0)) || (occId === 0 && recordCount > 1)" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord" aria-label="Go to first record" tabindex="0"></q-btn>
                             <q-btn v-if="recordCount > 1 && currentRecordIndex > 0" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord" aria-label="Go to previous record" tabindex="0"></q-btn>
-                            <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord" aria-label="Go to next record" tabindex="0"></q-btn>
-                            <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord" aria-label="Go to last record" tabindex="0"></q-btn>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex < (recordCount - 1) && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord" aria-label="Go to next record" tabindex="0"></q-btn>
+                            <q-btn v-if="recordCount > 1 && currentRecordIndex < (recordCount - 1) && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord" aria-label="Go to last record" tabindex="0"></q-btn>
                             <q-btn v-if="occurrenceEntryFormat !== 'replicate' && occId > 0" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord" aria-label="Go to new record" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Create new occurrence record
@@ -405,8 +405,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function goToPreviousRecord() {
-                        searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
-                        processRecordIndexChange();
+                        if(occId.value > 0){
+                            searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
+                            processRecordIndexChange();
+                        }
+                        else{
+                            goToLastRecord();
+                        }
                     }
 
                     function loadRecords() {
@@ -515,6 +520,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                                     loadRecords();
                                 }
+                            }
+                            else{
+                                searchStore.setNewRecordMode(true);
                             }
                         }
                         else{
