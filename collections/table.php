@@ -4,6 +4,7 @@ header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $collId = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$occId = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
 $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
 $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 ?>
@@ -32,6 +33,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collId; ?>;
+            const OCCID = <?php echo $occId; ?>;
             const QUERYID = <?php echo $queryId; ?>;
             const STARRJSON = '<?php echo $stArrJson; ?>';
         </script>
@@ -39,7 +41,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <q-table class="sticky-table sticky-column hide-scrollbar" :style="tableStyle" flat bordered dense :rows="recordDataArr" :columns="recordDataFieldArr" row-key="occid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="processRequest">
+            <q-table ref="tableRef" class="sticky-table sticky-column hide-scrollbar" :style="tableStyle" flat bordered dense :rows="recordDataArr" :columns="recordDataFieldArr" row-key="occid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="processRequest">
                 <template v-slot:no-data>
                     <div class="fit row flex-center text-h6 text-bold">
                         There are no records to display. Click the Search button to enter search criteria.
@@ -275,7 +277,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const currentUserPermissions = Vue.ref(null);
                     const displayBatchUpdatePopup = Vue.ref(false);
                     const displayQueryPopup = Vue.ref(false);
+                    const goToOccid = Vue.ref(null);
                     const initialCollId = COLLID;
+                    const initialOccId = OCCID;
+                    const initialSearchResults = Vue.ref(false);
                     const isAdmin = Vue.computed(() => {
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
                     });
@@ -353,6 +358,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         });
                         return returnArr;
                     });
+                    const tableRef = Vue.ref(null);
                     const tableStyle = Vue.ref('');
                     const visibleColumns = Vue.computed(() => searchStore.getTableVisibleFields);
 
@@ -379,8 +385,46 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.clearSpatialInputValues();
                     }
 
+                    function findGoToOccidPage() {
+                        const options = {
+                            schema: 'occurrence',
+                            display: 'table',
+                            spatial: 0,
+                            sortField: sortField.value,
+                            sortDirection: (sortDescending.value ? 'DESC' : 'ASC')
+                        };
+                        searchStore.setSearchCurrentOccidIndex(goToOccid.value, options, () => {
+                            const occIndex = searchStore.getCurrentOccIdIndex;
+                            if(occIndex > 0){
+                                if(occIndex < perPageCnt){
+                                    recordsPageNumber.value = 1;
+                                }
+                                else{
+                                    recordsPageNumber.value = Math.ceil(occIndex / perPageCnt);
+                                }
+                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
+                                    setCollection(searchTerms.value['collid']);
+                                }
+                                else{
+                                    loadRecords();
+                                }
+                            }
+                        });
+                    }
+
+                    function goToRecord(occid) {
+                        const record = recordDataArr.value.find(record => Number(record['occid']) === Number(occid));
+                        if(record){
+                            setTimeout(() => {
+                                const index = recordDataArr.value.indexOf(record);
+                                tableRef.value.scrollTo(((index + 10) <= perPageCnt) ? (index + 10) : index);
+                            }, 200);
+                        }
+                    }
+
                     function loadRecords(initial = false) {
                         if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                            initialSearchResults.value = true;
                             searchStore.clearQueryResultData();
                             showWorking('Loading...');
                             const options = {
@@ -493,8 +537,16 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             output: 'json'
                         };
                         searchStore.setSearchRecordData(options, () => {
-                            if(recordsPageNumber.value === 1){
+                            if(initialSearchResults.value){
                                 searchStore.setTableVisibleFields();
+                                initialSearchResults.value = false;
+                            }
+                            if(Number(goToOccid.value) > 0){
+                                goToRecord(goToOccid.value);
+                                goToOccid.value = null;
+                            }
+                            else{
+                                tableRef.value.scrollTo(0);
                             }
                             setTableStyle();
                             hideWorking();
@@ -530,14 +582,20 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
                             if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                                if(searchTerms.value.hasOwnProperty('tableIndex')){
-                                    recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
-                                }
-                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
-                                    setCollection(searchTerms.value['collid']);
+                                if(Number(initialOccId) > 0){
+                                    goToOccid.value = Number(initialOccId);
+                                    findGoToOccidPage();
                                 }
                                 else{
-                                    loadRecords();
+                                    if(searchTerms.value.hasOwnProperty('tableIndex')){
+                                        recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
+                                    }
+                                    if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
+                                        setCollection(searchTerms.value['collid']);
+                                    }
+                                    else{
+                                        loadRecords();
+                                    }
                                 }
                             }
                         }
@@ -572,6 +630,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         sortField,
                         spatialInputValues,
                         tableColumnToggleOptions,
+                        tableRef,
                         tableStyle,
                         visibleColumns,
                         closeRecordInfoWindow,
