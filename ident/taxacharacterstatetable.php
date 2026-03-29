@@ -24,7 +24,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <q-table class="sticky-table sticky-column hide-scrollbar" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="tid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="changeRecordPage">
+            <q-table ref="tableRef" class="sticky-table sticky-column hide-scrollbar" :style="tableStyle" flat bordered :rows="tableRowArr" :columns="columnHeaderArr" row-key="tid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="changeRecordPage">
                 <template v-slot:no-data>
                     <div class="fit row flex-center text-h6 text-bold">
                         <span v-if="Number(taxonomicGroupId) > 0">
@@ -90,16 +90,29 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         </template>
                     </q-tr>
                 </template>
-                <template v-slot:pagination="scope">
-                    <div class="text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                <template v-slot:bottom="scope">
+                    <div class="full-width row justify-between q-gutter-sm">
+                        <div class="text-body2 text-bold self-center">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                        <div>
+                            <q-pagination
+                                :model-value="pagination.page"
+                                color="grey-8"
+                                :max="pagination.lastPage"
+                                size="md"
+                                max-pages="10"
+                                @update:model-value="processPaginationRequest"
+                            ></q-pagination>
+                        </div>
+                        <div>
+                            <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
+                            <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
+                            <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
-
-                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
+                            <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
+                        </div>
+                    </div>
                 </template>
             </q-table>
             <template v-if="showColumnTogglePopup">
@@ -265,6 +278,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         return returnArr;
                     });
                     const sortField = Vue.ref('sciname');
+                    const tableRef = Vue.ref(null);
                     const tableRowArr = Vue.computed(() => {
                         const startIndex = (recordsPageNumber.value - 1) * perPageCnt;
                         return sortedTaxaArr.value.slice(startIndex, (startIndex + perPageCnt));
@@ -292,6 +306,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                             sortDescending.value = !sortDescending.value;
                             sortField.value = props.pagination.sortBy;
                         }
+                        tableRef.value.scrollTo(0);
                     }
 
                     function clearTaxaData() {
@@ -359,6 +374,10 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         clearTaxaData();
                         includeAllSubtaxa.value = (Number(value) === 1);
                         processSetTaxaArr();
+                    }
+
+                    function processPaginationRequest(page) {
+                        recordsPageNumber.value = page;
                     }
 
                     function processSetTaxaArr() {
@@ -479,7 +498,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         let styleStr = '';
                         styleStr += 'width: ' + window.innerWidth + 'px;';
                         if(taxaArr.value.length > 0){
-                            styleStr += 'max-height: ' + window.innerHeight + 'px;';
+                            styleStr += 'height: ' + window.innerHeight + 'px;';
                         }
                         else{
                             styleStr += 'height: 0;';
@@ -531,6 +550,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         paginationLastRecordNumber,
                         showColumnTogglePopup,
                         showTaxonCharacterStateEditorPopup,
+                        tableRef,
                         tableRowArr,
                         tableStyle,
                         taxonomicGroupId,
@@ -542,6 +562,7 @@ $tId = array_key_exists('tid', $_REQUEST) ? (int)$_REQUEST['tid'] : 0;
                         loadCharacterStateData,
                         openTaxonCharacterStateEditorPopup,
                         processIncludeAllSubtaxaChange,
+                        processPaginationRequest,
                         processTaxonCharacterStateChange,
                         processTaxonomicGroupChange,
                         setTaxon,
