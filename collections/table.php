@@ -492,6 +492,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         if(occurrenceEditorModeActive.value){
                             loadRecords();
                         }
+                        else{
+                            setTableStyle();
+                        }
                     }
 
                     function processSpatialData(data) {
