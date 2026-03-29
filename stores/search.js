@@ -225,7 +225,7 @@ const useSearchStore = Pinia.defineStore('search', {
         searchTerms: {},
         searchTermsCollId: 0,
         searchTermsRecordSortDirection: 'ASC',
-        searchTermsRecordSortField: null,
+        searchTermsRecordSortField: 'occid',
         selections: [],
         selectionsIds: [],
         solrFields: 'occid,collid,catalogNumber,otherCatalogNumbers,family,sciname,tid,scientificNameAuthorship,identifiedBy,' +
@@ -234,13 +234,11 @@ const useSearchStore = Pinia.defineStore('search', {
             'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily',
         spatialInputValues: {},
         tidLoadingIndex: 0,
+        tableVisibleFields: []
     }),
     getters: {
         getCurrentOccIdIndex(state) {
             return state.currentOccIdIndex;
-        },
-        getDateId(state) {
-            return state.dateId;
         },
         getDateIdValue() {
             const day = new Date().getDate().toString();
@@ -258,9 +256,6 @@ const useSearchStore = Pinia.defineStore('search', {
             dateTimeString += ((now.getSeconds() < 10)?'0':'')+now.getSeconds().toString();
             return dateTimeString;
         },
-        getHiddenFieldArr(state) {
-            return state.hiddenFieldArr;
-        },
         getOccurrenceEditorModeActive(state) {
             return state.searchTerms.hasOwnProperty('collid') && Number(state.searchTerms.collid) > 0;
         },
@@ -270,12 +265,6 @@ const useSearchStore = Pinia.defineStore('search', {
         getQueryBuilderFieldOptions(state) {
             return state.queryBuilderFieldOptions;
         },
-        getQueryId(state) {
-            return state.queryId;
-        },
-        getRadiusDisplayValue(state) {
-            return state.radiusUnitOptions;
-        },
         getRadiusUnitOptions(state) {
             return state.radiusUnitOptions;
         },
@@ -284,30 +273,6 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getSearchRecordData(state) {
             return state.searchRecordData;
-        },
-        getSearchRecordDataFieldArr(state) {
-            const fieldArr = [];
-            const returnArr = [];
-            state.searchRecordData.forEach((record) => {
-                Object.keys(state.occurrenceFieldLabels).forEach((field) => {
-                    if(!fieldArr.includes(field) && !state.hiddenFieldArr.includes(field) && (state.searchTermsRecordSortField === field || record[field])){
-                        fieldArr.push(field);
-                    }
-                });
-            });
-            Object.keys(state.occurrenceFieldLabels).forEach((field) => {
-                if(fieldArr.includes(field)){
-                    returnArr.push(field);
-                }
-            });
-            return returnArr;
-        },
-        getSearchRecordDataIdArr(state) {
-            const returnArr = [];
-            state.searchRecordData.forEach((record) => {
-                returnArr.push(Number(record.occid));
-            });
-            return returnArr;
         },
         getSearchRecordSelectedCount(state) {
             return state.searchRecordData.filter((record) => {
@@ -322,49 +287,6 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         getSearchTermsCollId(state) {
             return state.searchTermsCollId;
-        },
-        getSearchTermsIsEmpty(state) {
-            let empty = true;
-            if(
-                (state.searchTerms.hasOwnProperty('taxa') && state.searchTerms['taxa']) ||
-                (state.searchTerms.hasOwnProperty('country') && state.searchTerms['country']) ||
-                (state.searchTerms.hasOwnProperty('state') && state.searchTerms['state']) ||
-                (state.searchTerms.hasOwnProperty('county') && state.searchTerms['county']) ||
-                (state.searchTerms.hasOwnProperty('local') && state.searchTerms['local']) ||
-                (state.searchTerms.hasOwnProperty('elevlow') && state.searchTerms['elevlow']) ||
-                (state.searchTerms.hasOwnProperty('elevhigh') && state.searchTerms['elevhigh']) ||
-                (state.searchTerms.hasOwnProperty('collector') && state.searchTerms['collector']) ||
-                (state.searchTerms.hasOwnProperty('collnum') && state.searchTerms['collnum']) ||
-                (state.searchTerms.hasOwnProperty('eventdate1') && state.searchTerms['eventdate1']) ||
-                (state.searchTerms.hasOwnProperty('eventdate2') && state.searchTerms['eventdate2']) ||
-                (state.searchTerms.hasOwnProperty('occurrenceRemarks') && state.searchTerms['occurrenceRemarks']) ||
-                (state.searchTerms.hasOwnProperty('catnum') && state.searchTerms['catnum']) ||
-                (state.searchTerms.hasOwnProperty('upperlat') && state.searchTerms['upperlat']) ||
-                (state.searchTerms.hasOwnProperty('pointlat') && state.searchTerms['pointlat']) ||
-                (state.searchTerms.hasOwnProperty('circleArr') && state.searchTerms['circleArr'].length > 0) ||
-                (state.searchTerms.hasOwnProperty('phuid') && state.searchTerms['phuid']) ||
-                (state.searchTerms.hasOwnProperty('imagetag') && state.searchTerms['imagetag']) ||
-                (state.searchTerms.hasOwnProperty('imagekeyword') && state.searchTerms['imagekeyword']) ||
-                (state.searchTerms.hasOwnProperty('uploaddate1') && state.searchTerms['uploaddate1']) ||
-                (state.searchTerms.hasOwnProperty('uploaddate2') && state.searchTerms['uploaddate2']) ||
-                (state.searchTerms.hasOwnProperty('polyArr') && state.searchTerms['polyArr'].length > 0) ||
-                (state.searchTerms.hasOwnProperty('enteredby') && state.searchTerms['enteredby']) ||
-                (state.searchTerms.hasOwnProperty('dateentered') && state.searchTerms['dateentered']) ||
-                (state.searchTerms.hasOwnProperty('datemodified') && state.searchTerms['datemodified']) ||
-                (state.searchTerms.hasOwnProperty('processingstatus') && state.searchTerms['processingstatus']) ||
-                (state.searchTerms.hasOwnProperty('typestatus') && state.searchTerms['typestatus']) ||
-                (state.searchTerms.hasOwnProperty('hasaudio') && state.searchTerms['hasaudio']) ||
-                (state.searchTerms.hasOwnProperty('hasimages') && state.searchTerms['hasimages']) ||
-                (state.searchTerms.hasOwnProperty('hasvideo') && state.searchTerms['hasvideo']) ||
-                (state.searchTerms.hasOwnProperty('hasmedia') && state.searchTerms['hasmedia']) ||
-                (state.searchTerms.hasOwnProperty('hasgenetic') && state.searchTerms['hasgenetic']) ||
-                (state.searchTerms.hasOwnProperty('withoutimages') && state.searchTerms['withoutimages']) ||
-                (state.searchTerms.hasOwnProperty('advanced') && state.searchTerms['advanced'].length > 0) ||
-                (state.searchTerms.hasOwnProperty('mofextension') && state.searchTerms['mofextension'].length > 0)
-            ){
-                empty = false;
-            }
-            return empty;
         },
         getSearchTermsJson(state) {
             return JSON.stringify(state.searchTerms);
@@ -438,6 +360,24 @@ const useSearchStore = Pinia.defineStore('search', {
                 return state.blankSpatialInputValues;
             }
         },
+        getTableFieldArr(state) {
+            const returnArr = [];
+            Object.keys(state.occurrenceFieldLabels).forEach((field) => {
+                if(!state.hiddenFieldArr.includes(field)){
+                    returnArr.push({
+                        name: field,
+                        label: state.occurrenceFieldLabels[field],
+                        field: field,
+                        align: 'left',
+                        sortable: true
+                    });
+                }
+            });
+            return returnArr;
+        },
+        getTableVisibleFields(state) {
+            return state.tableVisibleFields;
+        },
         getTimestringIdentifier() {
             return Date.now().toString();
         }
@@ -469,6 +409,7 @@ const useSearchStore = Pinia.defineStore('search', {
             this.searchRecordData.length = 0;
             this.occidLoadingIndex = 0;
             this.tidLoadingIndex = 0;
+            this.tableVisibleFields.length = 0;
         },
         clearSearchTerms() {
             this.clearQueryResultData();
@@ -856,6 +797,23 @@ const useSearchStore = Pinia.defineStore('search', {
             this.spatialInputValues['rightLongitude'] = this.searchTerms.hasOwnProperty('rightlong') ? this.searchTerms['rightlong'] : null;
             this.spatialInputValues['upperLatitude'] = this.searchTerms.hasOwnProperty('upperlat') ? this.searchTerms['upperlat'] : null;
         },
+        setTableVisibleFields() {
+            if(this.tableVisibleFields.length === 0){
+                const fieldArr = [];
+                this.searchRecordData.forEach((record) => {
+                    this.getTableFieldArr.forEach((field) => {
+                        if(!fieldArr.includes(field.name) && !this.hiddenFieldArr.includes(field.name) && (this.searchTermsRecordSortField === field.name || record[field.name])){
+                            fieldArr.push(field.name);
+                        }
+                    });
+                });
+                this.getTableFieldArr.forEach((field) => {
+                    if(fieldArr.includes(field.name)){
+                        this.tableVisibleFields.push(field.name);
+                    }
+                });
+            }
+        },
         updateLocalStorageSearchTerms() {
             const stArr = JSON.parse(localStorage['searchTermsArr']);
             stArr[this.dateId.toString()][this.queryId.toString()] = Object.assign({}, this.searchTerms);
@@ -872,6 +830,9 @@ const useSearchStore = Pinia.defineStore('search', {
                 delete this.searchTerms[prop];
             }
             this.updateLocalStorageSearchTerms();
+        },
+        updateTableVisibleFields(value) {
+            this.tableVisibleFields = value.slice();
         }
     }
 });

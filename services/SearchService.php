@@ -1368,8 +1368,8 @@ class SearchService {
             $fieldNameArr[] = 'IFNULL(o.collectioncode, c.collectioncode) AS collectioncode';
             $fieldNameArr[] = 'c.collectionname';
             $fieldNameArr[] = 'c.icon';
-            $fieldNameArr[] = 'IFNULL(t.family, o.family) AS family';
-            $fieldNameArr[] = 'IFNULL(t.author, o.scientificnameauthorship) AS scientificnameauthorship';
+            $fieldNameArr[] = 'o.family';
+            $fieldNameArr[] = 'o.scientificnameauthorship';
             $fieldNameArr[] = 't.tidaccepted';
         }
         return 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' ';
