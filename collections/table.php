@@ -44,143 +44,98 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <div class="q-pa-sm">
-                <div id="breadcrumbs">
-                    <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
-                    <template v-if="Number(searchTermsCollId) > 0 && isEditor">
-                        <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + searchTermsCollId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
-                        <span class="text-bold">View/Edit Existing Records</span>
-                    </template>
-                    <template v-else>
-                        <span class="text-bold">Search Collections Table Display</span>
-                    </template>
-                </div>
-                <div v-if="Number(searchTermsCollId) > 0 && collInfo" class="row justify-start text-h6 text-weight-bold">
-                    <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
-                    <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
-                </div>
-                <div class="q-mb-sm row justify-start q-col-gutter-sm">
-                    <div class="col-3">
-                        <selector-input-element label="Sort by" :options="fieldOptions" option-value="field" option-label="label" :value="sortField" @update:value="processSortFieldChange"></selector-input-element>
+            <q-table class="sticky-table sticky-column hide-scrollbar" :style="tableStyle" flat bordered dense :rows="recordDataArr" :columns="recordDataFieldArr" row-key="occid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="processRequest">
+                <template v-slot:no-data>
+                    <div class="fit row flex-center text-h6 text-bold">
+                        There are no records to display. Click the Search button to enter search criteria.
                     </div>
-                    <div class="col-2">
-                        <selector-input-element :options="sortDirectionOptions" :value="sortDirection" @update:value="processSortDirectionChange"></selector-input-element>
-                    </div>
-                    <div>
-                        <q-btn color="secondary" @click="loadRecords()" label="Sort" aria-label="Sort records" tabindex="0" />
-                    </div>
-                </div>
-                <div class="q-mb-sm row justify-start q-col-gutter-md self-center">
-                    <div class="q-mr-lg row justify-start q-gutter-sm">
-                        <div class="row justify-start self-center q-mr-lg">
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
-                        </div>
-                        <div v-if="recordDataArr.length > 0">
-                            <search-data-downloader :spatial="false"></search-data-downloader>
-                        </div>
-                        <div v-if="recordDataArr.length > 0 && Number(searchTermsCollId) > 0 && isEditor" class="self-center">
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
-                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                    Batch Update Tool
-                                </q-tooltip>
-                            </q-btn>
-                        </div>
-                    </div>
-                    <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
-                        <list-display-button></list-display-button>
-                        <spatial-display-button></spatial-display-button>
-                        <image-display-button></image-display-button>
-                        <template v-if="searchTermsJson.length <= 1800">
-                            <copy-url-button></copy-url-button>
-                        </template>
-                    </div>
-                    <div v-if="recordDataArr.length > 0" class="row justify-start">
-                        <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
-
-                        <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);" aria-label="Go to first record page" tabindex="0"></q-btn>
-
-                        <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);" aria-label="Go to previous record page" tabindex="0"></q-btn>
-
-                        <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);" aria-label="Go to next record page" tabindex="0"></q-btn>
-
-                        <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);" aria-label="Go to last record page" tabindex="0"></q-btn>
-                    </div>
-                </div>
-            </div>
-            <template v-if="recordDataArr.length > 0">
-                <div>
-                    <table class="styledtable">
-                        <tr>
-                            <template v-for="field in recordDataFieldArr">
-                                <th class="no-wrap">{{ occurrenceFieldLabels[field] }}</th>
+                </template>
+                <template v-slot:top>
+                    <div class="full-width column">
+                        <div class="q-mb-sm">
+                            <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+                            <template v-if="Number(searchTermsCollId) > 0 && isEditor">
+                                <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + searchTermsCollId)" tabindex="0">Collection Control Panel</a> &gt;&gt;
+                                <span class="text-bold">View/Edit Existing Records</span>
                             </template>
-                        </tr>
-                        <template v-for="record in recordDataArr">
-                            <tr>
-                                <template v-for="field in recordDataFieldArr">
-                                    <td :class="field === 'sciname' ? 'text-italic' : ''">
-                                        <template v-if="field === 'occid'">
-                                            <span role="button" class="cursor-pointer" @click="openRecordInfoWindow(record[field]);" aria-label="See record details" tabindex="0">{{ record[field] }}</span>
-                                            <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(record['collid']))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(record['collid'])))">
-                                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" @click="redirectToOccurrenceEditorWithQueryId(record[field], searchTermsCollId);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
-                                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                        Edit occurrence record
-                                                    </q-tooltip>
-                                                </q-btn>
-                                            </template>
-                                        </template>
-                                        <template v-else>
-                                            {{ (record[field] && record[field].length > 60) ? (record[field].substring(0, 60) + '...') : record[field] }}
-                                        </template>
-                                    </td>
+                            <template v-else>
+                                <span class="text-bold">Search Collections Table Display</span>
+                            </template>
+                        </div>
+                        <div v-if="Number(searchTermsCollId) > 0 && collInfo" class="row justify-start text-h6 text-bold">
+                            <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
+                            <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
+                        </div>
+                        <div class="full-width q-mb-sm row justify-between self-center">
+                            <div class="row justify-start q-gutter-sm">
+                                <div class="row justify-start self-center q-mr-lg">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
+                                </div>
+                                <div v-if="recordDataArr.length > 0">
+                                    <search-data-downloader :spatial="false"></search-data-downloader>
+                                </div>
+                                <div v-if="recordDataArr.length > 0 && Number(searchTermsCollId) > 0 && isEditor" class="self-center">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            Batch Update Tool
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                                <div v-if="recordDataFieldArr.length > 0 && recordDataArr.length > 0" class="self-center">
+                                    <q-btn color="primary" @click="showColumnTogglePopup = true" label="Toggle Columns" tabindex="0" />
+                                </div>
+                            </div>
+                            <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
+                                <list-display-button></list-display-button>
+                                <spatial-display-button></spatial-display-button>
+                                <image-display-button></image-display-button>
+                                <template v-if="searchTermsJson.length <= 1800">
+                                    <copy-url-button></copy-url-button>
                                 </template>
-                            </tr>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template v-slot:header="props">
+                    <q-tr :props="props">
+                        <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-4">
+                            <span class="text-subtitle1 text-bold">{{ col.label }}</span>
+                        </q-th>
+                    </q-tr>
+                </template>
+                <template v-slot:body="props">
+                    <q-tr :props="props">
+                        <q-td key="occid" :props="props">
+                            <span role="button" class="cursor-pointer text-subtitle1" @click="openRecordInfoWindow(props.row.occid);" aria-label="See record details" tabindex="0">{{ props.row.occid }}</span>
+                            <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))">
+                                <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" @click="redirectToOccurrenceEditorWithQueryId(props.row.occid, searchTermsCollId);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
+                                    <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                        Edit occurrence record
+                                    </q-tooltip>
+                                </q-btn>
+                            </template>
+                        </q-td>
+                        <template v-for="field in recordDataFieldArr">
+                            <q-td v-if="field.name !== 'occid'" :key="field.name" :props="props" :class="field.name === 'sciname' ? 'text-italic' : ''">
+                                <span class="text-subtitle1">
+                                    {{ (props.row[field.name] && props.row[field.name].length > 60) ? (props.row[field.name].substring(0, 60) + '...') : props.row[field.name] }}
+                                </span>
+                            </q-td>
                         </template>
-                    </table>
-                </div>
-            </template>
-            <template v-else>
-                <q-separator size="1px" color="grey-8" class="q-ma-md"></q-separator>
-                <div class="q-pa-md row justify-center text-h6 text-bold">
-                    There are no records to display. Click the Search button to enter search criteria.
-                </div>
-            </template>
-            <div v-if="recordDataArr.length > 0" class="q-pa-sm row justify-start q-col-gutter-md self-center">
-                <div class="q-mr-lg row justify-start q-gutter-sm">
-                    <div class="row justify-start self-center q-mr-lg">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0" />
-                    </div>
-                    <div>
-                        <search-data-downloader :spatial="false"></search-data-downloader>
-                    </div>
-                    <div v-if="Number(searchTermsCollId) > 0 && isEditor" class="self-center">
-                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
-                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                Batch Update Tool
-                            </q-tooltip>
-                        </q-btn>
-                    </div>
-                </div>
-                <div class="q-mr-lg row justify-start q-gutter-sm">
-                    <list-display-button></list-display-button>
-                    <spatial-display-button></spatial-display-button>
-                    <image-display-button></image-display-button>
-                    <template v-if="searchTermsJson.length <= 1800">
-                        <copy-url-button></copy-url-button>
-                    </template>
-                </div>
-                <div class="row justify-start">
-                    <div class="self-center text-body2 text-bold q-mr-xs">Records {{ pagination.firstRowNumber }} - {{ pagination.lastRowNumber }} of {{ pagination.rowsNumber }}</div>
+                    </q-tr>
+                </template>
+                <template v-slot:pagination="scope">
+                    <div class="text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
 
-                    <q-btn v-if="pagination.lastPage > 2 && pageNumber > 1" icon="first_page" color="grey-8" round dense flat @click="setTableRecordData(1);" aria-label="Go to first record page" tabindex="0"></q-btn>
+                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pageNumber > 1" icon="chevron_left" color="grey-8" round dense flat @click="setTableRecordData(pageNumber - 1);" aria-label="Go to previous record page" tabindex="0"></q-btn>
+                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pageNumber < pagination.lastPage" icon="chevron_right" color="grey-8" round dense flat @click="setTableRecordData(pageNumber + 1);" aria-label="Go to next record page" tabindex="0"></q-btn>
+                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="pagination.lastPage > 2 && pageNumber < pagination.lastPage" icon="last_page" color="grey-8" round dense flat @click="setTableRecordData(pagination.lastPage);" aria-label="Go to last record page" tabindex="0"></q-btn>
-                </div>
-            </div>
+                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
+                </template>
+            </q-table>
             <template v-if="displayBatchUpdatePopup">
                 <occurrence-editor-batch-update-popup :show-popup="displayBatchUpdatePopup" @complete:batch-update="loadRecords();" @close:popup="displayBatchUpdatePopup = false"></occurrence-editor-batch-update-popup>
             </template>
@@ -214,6 +169,15 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     @update:spatial-data="processSpatialData"
                     @close:popup="closeSpatialPopup();"
                 ></spatial-analysis-popup>
+            </template>
+            <template v-if="showColumnTogglePopup">
+                <table-column-toggle-popup
+                    :field-arr="recordDataFieldArr"
+                    :show-popup="showColumnTogglePopup"
+                    :visible-columns="visibleColumns"
+                    @update:visible-columns="updateVisibleColumns"
+                    @close:popup="showColumnTogglePopup = false"
+                ></table-column-toggle-popup>
             </template>
         </div>
         <?php
@@ -275,6 +239,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/tableColumnTogglePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceEditorBatchUpdatePopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const occurrenceTableDisplayModule = Vue.createApp({
@@ -288,7 +253,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     'search-data-downloader': searchDataDownloader,
                     'selector-input-element': selectorInputElement,
                     'spatial-analysis-popup': spatialAnalysisPopup,
-                    'spatial-display-button': spatialDisplayButton
+                    'spatial-display-button': spatialDisplayButton,
+                    'table-column-toggle-popup': tableColumnTogglePopup
                 },
                 setup() {
                     const { hideWorking, showNotification, showWorking } = useCore();
@@ -301,84 +267,88 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const currentUserPermissions = Vue.ref(null);
                     const displayBatchUpdatePopup = Vue.ref(false);
                     const displayQueryPopup = Vue.ref(false);
-                    const fieldOptions = Vue.computed(() => searchStore.getQueryBuilderFieldOptions);
                     const initialCollId = COLLID;
                     const isAdmin = Vue.computed(() => {
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
-                    const lazyLoadCnt = 200;
                     const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
                     const occurrenceFieldLabels = Vue.computed(() => searchStore.getOccurrenceFieldLabels);
-                    const pageNumber = Vue.ref(1);
-                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
+                    const pagination = Vue.computed(() => {
+                        return {
+                            sortBy: sortField.value,
+                            descending: sortDescending.value,
+                            page: recordsPageNumber.value,
+                            lastPage: paginationLastPageNumber.value,
+                            rowsPerPage: perPageCnt,
+                            firstRowNumber: paginationFirstRecordNumber.value,
+                            lastRowNumber: paginationLastRecordNumber.value,
+                            rowsNumber: searchRecordCount.value
+                        };
+                    });
                     const paginationFirstRecordNumber = Vue.computed(() => {
                         let recordNumber = 1;
-                        if(Number(pageNumber.value) > 1){
-                            recordNumber += ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
+                        if(Number(recordsPageNumber.value) > 1){
+                            recordNumber += ((Number(recordsPageNumber.value) - 1) * Number(perPageCnt));
                         }
                         return recordNumber;
                     });
                     const paginationLastPageNumber = Vue.computed(() => {
                         let lastPage = 1;
-                        if(Number(searchRecordCount.value) > Number(lazyLoadCnt)){
-                            lastPage = Math.floor(Number(searchRecordCount.value) / Number(lazyLoadCnt));
+                        if(Number(searchRecordCount.value) > Number(perPageCnt)){
+                            lastPage = Math.floor(Number(searchRecordCount.value) / Number(perPageCnt));
                         }
-                        if(Number(searchRecordCount.value) % Number(lazyLoadCnt)){
+                        if(Number(searchRecordCount.value) % Number(perPageCnt)){
                             lastPage++;
                         }
                         return lastPage;
                     });
                     const paginationLastRecordNumber = Vue.computed(() => {
-                        let recordNumber = (Number(searchRecordCount.value) > Number(lazyLoadCnt)) ? Number(lazyLoadCnt) : Number(searchRecordCount.value);
-                        if(Number(searchRecordCount.value) > Number(lazyLoadCnt) && Number(pageNumber.value) > 1){
-                            if(Number(pageNumber.value) === Number(paginationLastPageNumber.value)){
-                                recordNumber = (Number(searchRecordCount.value) % Number(lazyLoadCnt)) + ((Number(pageNumber.value) - 1) * Number(lazyLoadCnt));
+                        let recordNumber = (Number(searchRecordCount.value) > Number(perPageCnt)) ? Number(perPageCnt) : Number(searchRecordCount.value);
+                        if(Number(searchRecordCount.value) > Number(perPageCnt) && Number(recordsPageNumber.value) > 1){
+                            if(Number(recordsPageNumber.value) === Number(paginationLastPageNumber.value)){
+                                recordNumber = (Number(searchRecordCount.value) % Number(perPageCnt)) + ((Number(recordsPageNumber.value) - 1) * Number(perPageCnt));
                             }
                             else{
-                                recordNumber = Number(pageNumber.value) * Number(lazyLoadCnt);
+                                recordNumber = Number(recordsPageNumber.value) * Number(perPageCnt);
                             }
                         }
                         return recordNumber;
                     });
-                    const pagination = Vue.computed(() => {
-                        return {
-                            page: pageNumber.value,
-                            lastPage: paginationLastPageNumber.value,
-                            rowsPerPage: lazyLoadCnt,
-                            firstRowNumber: paginationFirstRecordNumber.value,
-                            lastRowNumber: paginationLastRecordNumber.value,
-                            rowsNumber: Number(searchRecordCount.value)
-                        };
-                    });
+                    const perPageCnt = 200;
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
                     const recordDataArr = Vue.computed(() => searchStore.getSearchRecordData);
-                    const recordDataFieldArr = Vue.computed(() => searchStore.getSearchRecordDataFieldArr);
+                    const recordDataFieldArr = Vue.computed(() => searchStore.getTableFieldArr);
                     const recordInfoWindowId = Vue.ref(null);
+                    const recordsPageNumber = Vue.ref(1);
+                    const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
                     const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
                     const searchTermsCollId = Vue.computed(() => searchStore.getSearchTermsCollId);
                     const searchTermsJson = Vue.computed(() => searchStore.getSearchTermsJson);
                     const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
                     const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
                     const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
+                    const showColumnTogglePopup = Vue.ref(false);
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
-                    const sortDirection = Vue.ref('ASC');
-                    const sortDirectionOptions = [
-                        { label: 'Ascending', value: 'ASC' },
-                        { label: 'Descending', value: 'DESC' }
-                    ];
-                    const sortField = Vue.ref(null);
+                    const sortDescending = Vue.ref(false);
+                    const sortField = Vue.ref('occid');
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const stArrJson = STARRJSON;
+                    const tableStyle = Vue.ref('');
+                    const visibleColumns = Vue.computed(() => searchStore.getTableVisibleFields);
 
                     Vue.watch(searchTermsSortDirection, () => {
-                        sortDirection.value = searchTermsSortDirection.value;
+                        if(sortDescending.value && searchTermsSortDirection.value !== 'DESC'){
+                            sortDescending.value = false;
+                        }
                     });
 
                     Vue.watch(searchTermsSortField, () => {
-                        sortField.value = searchTermsSortField.value;
+                        if(sortField.value !== searchTermsSortField.value){
+                            sortField.value = searchTermsSortField.value;
+                        }
                     });
 
                     function closeRecordInfoWindow(){
@@ -401,14 +371,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 display: 'table',
                                 spatial: 0,
                                 sortField: sortField.value,
-                                sortDirection: sortDirection.value
+                                sortDirection: (sortDescending.value ? 'DESC' : 'ASC')
                             };
                             searchStore.setSearchRecordCount(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     if(!initial){
                                         displayQueryPopup.value = false;
                                     }
-                                    setTableRecordData(1);
+                                    setTableRecordData();
                                 }
                                 else{
                                     hideWorking();
@@ -432,22 +402,29 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         showSpatialPopup.value = true;
                     }
 
+                    function processRequest(props) {
+                        showWorking();
+                        let sortChange = false;
+                        if(props.pagination.sortBy !== sortField.value || props.pagination.descending !== sortDescending.value){
+                            sortChange = true;
+                        }
+                        sortField.value = props.pagination.sortBy;
+                        sortDescending.value = props.pagination.descending;
+                        if(sortChange){
+                            searchStore.setSearchTermsRecordSortField(sortField.value);
+                            searchStore.setSearchTermsRecordSortDirection(sortDescending.value ? 'DESC' : 'ASC');
+                            recordsPageNumber.value = 1;
+                        }
+                        else{
+                            recordsPageNumber.value = props.pagination.page;
+                        }
+                        setTableRecordData();
+                    }
+
                     function processResetCriteria() {
                         if(occurrenceEditorModeActive.value){
                             loadRecords();
                         }
-                    }
-
-                    function processSortDirectionChange(value) {
-                        sortDirection.value = value;
-                        searchStore.setSearchTermsRecordSortDirection(value);
-                        searchStore.updateSearchTerms('sortDirection', value);
-                    }
-
-                    function processSortFieldChange(value) {
-                        sortField.value = value;
-                        searchStore.setSearchTermsRecordSortField(value);
-                        searchStore.updateSearchTerms('sortField', value);
                     }
 
                     function processSpatialData(data) {
@@ -480,25 +457,46 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         });
                     }
 
-                    function setTableRecordData(index) {
-                        searchStore.updateSearchTerms('tableIndex', index);
+                    function setTableRecordData() {
+                        searchStore.updateSearchTerms('tableIndex', recordsPageNumber.value);
                         const options = {
                             schema: 'occurrence',
                             display: 'table',
                             spatial: 0,
-                            numRows: lazyLoadCnt,
-                            index: (index - 1),
+                            numRows: perPageCnt,
+                            index: (recordsPageNumber.value - 1),
                             sortField: sortField.value,
-                            sortDirection: sortDirection.value,
+                            sortDirection: (sortDescending.value ? 'DESC' : 'ASC'),
                             output: 'json'
                         };
                         searchStore.setSearchRecordData(options, () => {
+                            if(recordsPageNumber.value === 1){
+                                searchStore.setTableVisibleFields();
+                            }
+                            setTableStyle();
                             hideWorking();
                         });
-                        pageNumber.value = Number(index);
+                    }
+
+                    function setTableStyle() {
+                        let styleStr = '';
+                        styleStr += 'width: ' + window.innerWidth + 'px;';
+                        if(recordDataArr.value.length > 0){
+                            styleStr += 'max-height: ' + window.innerHeight + 'px;';
+                        }
+                        else{
+                            styleStr += 'height: 0;';
+                        }
+                        tableStyle.value = styleStr;
+                    }
+
+                    function updateVisibleColumns(value) {
+                        searchStore.updateTableVisibleFields(value);
                     }
 
                     Vue.onMounted(() => {
+                        window.addEventListener('resize', setTableStyle);
+                        setTableStyle();
                         setCurrentUserPermissions();
                         if(Number(queryId) === 0 && !stArrJson){
                             displayQueryPopup.value = true;
@@ -510,7 +508,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             }
                             if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                                 if(searchTerms.value.hasOwnProperty('tableIndex')){
-                                    pageNumber.value = Number(searchTerms.value['tableIndex']);
+                                    recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
                                 }
                                 if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
                                     setCollection(searchTerms.value['collid']);
@@ -531,11 +529,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         currentUserPermissions,
                         displayBatchUpdatePopup,
                         displayQueryPopup,
-                        fieldOptions,
                         isAdmin,
                         isEditor,
                         occurrenceFieldLabels,
-                        pageNumber,
+                        recordsPageNumber,
                         pagination,
                         popupWindowType,
                         recordDataArr,
@@ -546,23 +543,23 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchTermsSortDirection,
                         searchTermsSortField,
                         searchTermsValid,
+                        showColumnTogglePopup,
                         showRecordInfoWindow,
                         showSpatialPopup,
-                        sortDirection,
-                        sortDirectionOptions,
                         sortField,
                         spatialInputValues,
+                        tableStyle,
+                        visibleColumns,
                         closeRecordInfoWindow,
                         closeSpatialPopup,
                         loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
+                        processRequest,
                         processResetCriteria,
-                        processSortDirectionChange,
-                        processSortFieldChange,
                         processSpatialData,
                         redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId,
-                        setTableRecordData
+                        updateVisibleColumns
                     }
                 }
             });
