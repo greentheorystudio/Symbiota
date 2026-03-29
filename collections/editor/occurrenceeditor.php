@@ -65,7 +65,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         <div class="row justify-start q-gutter-sm self-center">
                             <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayQueryPopup = true" icon="search" label="Search" aria-label="Open Search Window" tabindex="0"></q-btn>
                             <template v-if="recordCount > 1">
-                                <table-display-button></table-display-button>
+                                <table-display-button :occid="occId"></table-display-button>
                                 <list-display-button></list-display-button>
                                 <spatial-display-button></spatial-display-button>
                                 <image-display-button></image-display-button>

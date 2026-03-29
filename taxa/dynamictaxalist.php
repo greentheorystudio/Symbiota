@@ -156,6 +156,32 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
                 </template>
+
+
+                <template v-slot:bottom="scope">
+                    <div class="full-width row justify-between q-gutter-sm">
+                        <div class="text-body2 text-bold self-center">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                        <div>
+                            <q-pagination
+                                :model-value="pagination.page"
+                                color="grey-8"
+                                :max="pagination.lastPage"
+                                size="md"
+                                max-pages="10"
+                                @update:model-value="processPaginationRequest"
+                            ></q-pagination>
+                        </div>
+                        <div>
+                            <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
+
+                            <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
+
+                            <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
+
+                            <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
+                        </div>
+                    </div>
+                </template>
             </q-table>
         </div>
         <?php
@@ -527,6 +553,10 @@ header('X-Frame-Options: SAMEORIGIN');
                         processCriteria();
                     }
 
+                    function processPaginationRequest(page) {
+                        recordsPageNumber.value = page;
+                    }
+
                     function processOrderSelection(taxon) {
                         selectedFamilySciname.value = null;
                         selectedFamilyTid.value = null;
@@ -631,7 +661,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         let styleStr = '';
                         styleStr += 'width: ' + window.innerWidth + 'px;';
                         if(taxaArr.value.length > 0){
-                            styleStr += 'max-height: ' + window.innerHeight + 'px;';
+                            styleStr += 'height: ' + window.innerHeight + 'px;';
                         }
                         else{
                             styleStr += 'height: 0;';
@@ -708,6 +738,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         processKingdomSelection,
                         processLimitToDescriptionChange,
                         processOrderSelection,
+                        processPaginationRequest,
                         processPhylumSelection,
                         processScinameSelection,
                         processTaxaDownload,
