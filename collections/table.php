@@ -4,6 +4,7 @@ header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $collId = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
+$occId = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
 $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
 $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 ?>
@@ -20,11 +21,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
         <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-        <style>
-            table.styledtable td {
-                white-space: nowrap;
-            }
-        </style>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
@@ -37,6 +33,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collId; ?>;
+            const OCCID = <?php echo $occId; ?>;
             const QUERYID = <?php echo $queryId; ?>;
             const STARRJSON = '<?php echo $stArrJson; ?>';
         </script>
@@ -44,7 +41,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     <body class="full-window-mode">
         <a class="screen-reader-only" href="#tableContainer">Skip to main content</a>
         <div id="tableContainer">
-            <q-table class="sticky-table sticky-column hide-scrollbar" :style="tableStyle" flat bordered dense :rows="recordDataArr" :columns="recordDataFieldArr" row-key="occid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="processRequest">
+            <q-table ref="tableRef" class="sticky-table sticky-column hide-scrollbar" :style="tableStyle" flat bordered dense :rows="recordDataArr" :columns="recordDataFieldArr" row-key="occid" virtual-scroll binary-state-sort v-model:pagination="pagination" :rows-per-page-options="[0]" :visible-columns="visibleColumns" separator="cell" @request="processRequest">
                 <template v-slot:no-data>
                     <div class="fit row flex-center text-h6 text-bold">
                         There are no records to display. Click the Search button to enter search criteria.
@@ -124,16 +121,29 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         </template>
                     </q-tr>
                 </template>
-                <template v-slot:pagination="scope">
-                    <div class="text-body2 text-bold q-mr-xs">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                <template v-slot:bottom="scope">
+                    <div class="full-width row justify-between q-gutter-sm">
+                        <div class="text-body2 text-bold self-center">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
+                        <div>
+                            <q-pagination
+                                :model-value="pagination.page"
+                                color="grey-8"
+                                :max="pagination.lastPage"
+                                size="md"
+                                max-pages="10"
+                                @update:model-value="processPaginationRequest"
+                            ></q-pagination>
+                        </div>
+                        <div>
+                            <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
+                            <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="!scope.isFirstPage" icon="chevron_left" color="grey-8" round dense flat @click="scope.prevPage" aria-label="Go to previous record page" tabindex="0"></q-btn>
+                            <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
 
-                    <q-btn v-if="!scope.isLastPage" icon="chevron_right" color="grey-8" round dense flat @click="scope.nextPage" aria-label="Go to next record page" tabindex="0"></q-btn>
-
-                    <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
+                            <q-btn v-if="scope.pagesNumber > 2 && !scope.isLastPage" icon="last_page" color="grey-8" round dense flat @click="scope.lastPage" aria-label="Go to last record page" tabindex="0"></q-btn>
+                        </div>
+                    </div>
                 </template>
             </q-table>
             <template v-if="displayBatchUpdatePopup">
@@ -172,7 +182,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             </template>
             <template v-if="showColumnTogglePopup">
                 <table-column-toggle-popup
-                    :field-arr="recordDataFieldArr"
+                    :field-arr="tableColumnToggleOptions"
                     :show-popup="showColumnTogglePopup"
                     :visible-columns="visibleColumns"
                     @update:visible-columns="updateVisibleColumns"
@@ -267,7 +277,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const currentUserPermissions = Vue.ref(null);
                     const displayBatchUpdatePopup = Vue.ref(false);
                     const displayQueryPopup = Vue.ref(false);
+                    const goToOccid = Vue.ref(null);
                     const initialCollId = COLLID;
+                    const initialOccId = OCCID;
+                    const initialSearchResults = Vue.ref(false);
                     const isAdmin = Vue.computed(() => {
                         return currentUserPermissions.value && currentUserPermissions.value.hasOwnProperty('SuperAdmin');
                     });
@@ -336,6 +349,16 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const sortField = Vue.ref('occid');
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
                     const stArrJson = STARRJSON;
+                    const tableColumnToggleOptions = Vue.computed(() => {
+                        const returnArr = [];
+                        recordDataFieldArr.value.forEach((field) => {
+                            if(field.name !== 'occid'){
+                                returnArr.push(field);
+                            }
+                        });
+                        return returnArr;
+                    });
+                    const tableRef = Vue.ref(null);
                     const tableStyle = Vue.ref('');
                     const visibleColumns = Vue.computed(() => searchStore.getTableVisibleFields);
 
@@ -362,8 +385,46 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.clearSpatialInputValues();
                     }
 
+                    function findGoToOccidPage() {
+                        const options = {
+                            schema: 'occurrence',
+                            display: 'table',
+                            spatial: 0,
+                            sortField: sortField.value,
+                            sortDirection: (sortDescending.value ? 'DESC' : 'ASC')
+                        };
+                        searchStore.setSearchCurrentOccidIndex(goToOccid.value, options, () => {
+                            const occIndex = searchStore.getCurrentOccIdIndex;
+                            if(occIndex > 0){
+                                if(occIndex < perPageCnt){
+                                    recordsPageNumber.value = 1;
+                                }
+                                else{
+                                    recordsPageNumber.value = Math.ceil(occIndex / perPageCnt);
+                                }
+                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
+                                    setCollection(searchTerms.value['collid']);
+                                }
+                                else{
+                                    loadRecords();
+                                }
+                            }
+                        });
+                    }
+
+                    function goToRecord(occid) {
+                        const record = recordDataArr.value.find(record => Number(record['occid']) === Number(occid));
+                        if(record){
+                            setTimeout(() => {
+                                const index = recordDataArr.value.indexOf(record);
+                                tableRef.value.scrollTo(((index + 10) <= perPageCnt) ? (index + 10) : index);
+                            }, 200);
+                        }
+                    }
+
                     function loadRecords(initial = false) {
                         if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                            initialSearchResults.value = true;
                             searchStore.clearQueryResultData();
                             showWorking('Loading...');
                             const options = {
@@ -402,6 +463,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         showSpatialPopup.value = true;
                     }
 
+                    function processPaginationRequest(page) {
+                        showWorking();
+                        recordsPageNumber.value = page;
+                        setTableRecordData();
+                    }
+
                     function processRequest(props) {
                         showWorking();
                         let sortChange = false;
@@ -424,6 +491,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     function processResetCriteria() {
                         if(occurrenceEditorModeActive.value){
                             loadRecords();
+                        }
+                        else{
+                            setTableStyle();
                         }
                     }
 
@@ -470,8 +540,16 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             output: 'json'
                         };
                         searchStore.setSearchRecordData(options, () => {
-                            if(recordsPageNumber.value === 1){
+                            if(initialSearchResults.value){
                                 searchStore.setTableVisibleFields();
+                                initialSearchResults.value = false;
+                            }
+                            if(Number(goToOccid.value) > 0){
+                                goToRecord(goToOccid.value);
+                                goToOccid.value = null;
+                            }
+                            else{
+                                tableRef.value.scrollTo(0);
                             }
                             setTableStyle();
                             hideWorking();
@@ -482,7 +560,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         let styleStr = '';
                         styleStr += 'width: ' + window.innerWidth + 'px;';
                         if(recordDataArr.value.length > 0){
-                            styleStr += 'max-height: ' + window.innerHeight + 'px;';
+                            styleStr += 'height: ' + window.innerHeight + 'px;';
                         }
                         else{
                             styleStr += 'height: 0;';
@@ -507,14 +585,20 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
                             if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                                if(searchTerms.value.hasOwnProperty('tableIndex')){
-                                    recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
-                                }
-                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
-                                    setCollection(searchTerms.value['collid']);
+                                if(Number(initialOccId) > 0){
+                                    goToOccid.value = Number(initialOccId);
+                                    findGoToOccidPage();
                                 }
                                 else{
-                                    loadRecords();
+                                    if(searchTerms.value.hasOwnProperty('tableIndex')){
+                                        recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
+                                    }
+                                    if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
+                                        setCollection(searchTerms.value['collid']);
+                                    }
+                                    else{
+                                        loadRecords();
+                                    }
                                 }
                             }
                         }
@@ -548,6 +632,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         showSpatialPopup,
                         sortField,
                         spatialInputValues,
+                        tableColumnToggleOptions,
+                        tableRef,
                         tableStyle,
                         visibleColumns,
                         closeRecordInfoWindow,
@@ -555,6 +641,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
+                        processPaginationRequest,
                         processRequest,
                         processResetCriteria,
                         processSpatialData,
