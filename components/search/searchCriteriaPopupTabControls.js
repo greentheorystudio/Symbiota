@@ -67,6 +67,7 @@ const searchCriteriaPopupTabControls = {
         }
 
         function resetCriteria() {
+            searchStore.clearSearchTerms();
             context.emit('reset:search-criteria');
         }
 

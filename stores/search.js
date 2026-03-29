@@ -649,7 +649,7 @@ const useSearchStore = Pinia.defineStore('search', {
         redirectWithQueryId(url, addlProp = null, newTab = false) {
             const baseStore = useBaseStore();
             if(newTab){
-                window.open((baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '')), '_blank');
+                window.open((baseStore.getClientRoot + url + '?queryId=' + this.queryId + ((addlProp && addlProp['prop'] && addlProp['propValue']) ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '')), '_blank');
             }
             else{
                 window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
