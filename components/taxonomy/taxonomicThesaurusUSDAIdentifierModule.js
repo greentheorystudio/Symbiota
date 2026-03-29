@@ -8,21 +8,17 @@ const taxonomicThesaurusUSDAIdentifierModule = {
     template: `
         <div class="processor-container">
             <div class="processor-control-container">
-                <div class="row q-mb-md">
-                    <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Taxa Kingdom" :value="selectedKingdom" :setOptions="kingdomOptions" @update:selected-kingdom="updateSelectedKingdom" class="col-4"></taxa-kingdom-selector>
-                </div>
+                
                 <q-card class="processor-control-card">
                     <q-card-section>
                         <div class="process-header">
                             Upload USDA Symbol data file
                         </div>
-                        Copy and save the <a href="https://plants.usda.gov/csvdownload?plantLst=nonLichenFungiSymbol" target="_blank">Fungi data</a> or <a href="https://plants.usda.gov/csvdownload?plantLst=plantCompleteList" target="_blank">Plant data</a>
-                        from the <a href="https://plants.usda.gov/home/downloads" target="_blank">USDA PLANTS Download page</a> into a txt file, then upload the file below and click Start.
-                        <div class="row q-mt-xs">
-                            <div class="col-grow">
-                                <file-picker-input-element :accepted-types="acceptedFileTypes" :disabled="loading" :value="selectedUsdaFile" :validate-file-size="false" @update:file="(value) => processFileSelection(value)"></file-picker-input-element>
-                            </div>
-                        </div>
+                        Select a taxa kingdom, then click the START button to upload USDA Symbols into the dataset. Data sources: <a href="https://plants.usda.gov/csvdownload?plantLst=nonLichenFungiSymbol" target="_blank">Fungi data</a> and <a href="https://plants.usda.gov/csvdownload?plantLst=plantCompleteList" target="_blank">Plant data</a>
+                        from the <a href="https://plants.usda.gov/home/downloads" target="_blank">USDA PLANTS Download page</a>.
+                        <div class="row q-mb-md">
+                            <taxa-kingdom-selector :selected-kingdom="selectedKingdom" label="Taxa Kingdom" :value="selectedKingdom" :setOptions="kingdomOptions" @update:selected-kingdom="updateSelectedKingdom" class="col-4"></taxa-kingdom-selector>
+                         </div>
                         <div class="processor-tool-control-container">
                             <div class="processor-cancel-message-container text-negative text-bold">
                                 <template v-if="processCancelling && currentProcess === 'initializeUSDAImport'">
@@ -31,7 +27,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
                             </div>
                             <div class="processor-tool-button-container">
                                 <div>
-                                    <q-btn :loading="currentProcess === 'initializeUSDAImport'" :disabled="currentProcess && currentProcess !== 'initializeUSDAImport'" color="secondary" @click="initializeUSDAImport();" label="Start" dense aria-label="Start Upload USDA Symbol data file" tabindex="0" />
+                                    <q-btn :loading="currentProcess === 'initializeUSDAImport'" :disabled="currentProcess !== 'kingdomSelected'" color="secondary" @click="initializeUSDAImport();" label="Start" dense aria-label="Start Upload USDA Symbol data file" tabindex="0" />
                                 </div>
                                 <div>
                                     <q-btn v-if="currentProcess === 'initializeUSDAImport'" :disabled="processCancelling && currentProcess === 'initializeUSDAImport'" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Upload USDA Symbol data file" tabindex="0" />
@@ -264,6 +260,8 @@ const taxonomicThesaurusUSDAIdentifierModule = {
             const formData = new FormData();
             formData.append('url', url);
             formData.append('action', 'getFileContentsFromUrl');
+            adjustUIStart();
+            currentProcess.value = 'initializeUSDAImport';
             fetch(proxyServiceApiUrl, {
                 method: 'POST',
                 body: formData
@@ -495,6 +493,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
             selectedKingdom.value = kingdomObj;
             selectedKingdomId.value = kingdomObj.id;
             selectedKingdomName.value = kingdomObj.name;
+            currentProcess.value = 'kingdomSelected';
         }
 
         function updateTaxonIdentifier(tid, identifier, identifierName) {
