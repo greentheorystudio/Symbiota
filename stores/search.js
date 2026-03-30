@@ -652,7 +652,7 @@ const useSearchStore = Pinia.defineStore('search', {
                 window.open((baseStore.getClientRoot + url + '?queryId=' + this.queryId + ((addlProp && addlProp['prop'] && addlProp['propValue']) ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '')), '_blank');
             }
             else{
-                window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + (addlProp ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+                window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + ((addlProp && addlProp['prop'] && addlProp['propValue']) ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
             }
         },
         removeRecordFromSearchRecordCnt() {
