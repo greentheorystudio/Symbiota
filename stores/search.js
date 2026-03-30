@@ -234,7 +234,8 @@ const useSearchStore = Pinia.defineStore('search', {
             'maximumElevationInMeters,labelProject,InstitutionCode,CollectionCode,CollectionName,CollType,thumbnailurl,accFamily',
         spatialInputValues: {},
         tidLoadingIndex: 0,
-        tableVisibleFields: []
+        tableVisibleFields: [],
+        taxaArrInitialized: false
     }),
     getters: {
         getCurrentOccIdIndex(state) {
@@ -378,6 +379,9 @@ const useSearchStore = Pinia.defineStore('search', {
         getTableVisibleFields(state) {
             return state.tableVisibleFields;
         },
+        getTaxaArrInitialized(state) {
+            return state.taxaArrInitialized;
+        },
         getTimestringIdentifier() {
             return Date.now().toString();
         }
@@ -410,6 +414,7 @@ const useSearchStore = Pinia.defineStore('search', {
             this.occidLoadingIndex = 0;
             this.tidLoadingIndex = 0;
             this.tableVisibleFields.length = 0;
+            this.taxaArrInitialized = false;
         },
         clearSearchTerms() {
             this.clearQueryResultData();
@@ -761,6 +766,7 @@ const useSearchStore = Pinia.defineStore('search', {
             this.processSimpleSearch(this.getSearchTerms, options, (data) => {
                 this.queryTaxaArr = this.queryTaxaArr.concat(data);
                 if(data.length < loadingCnt){
+                    this.taxaArrInitialized = true;
                     if(callback){
                         callback()
                     }
