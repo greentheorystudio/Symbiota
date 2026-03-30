@@ -52,17 +52,13 @@ class SearchService {
                         $sql .= 'ORDER BY t.sciname ';
                     }
                 }
-                elseif($spatial){
-                    $sql .= 'ORDER BY o.sciname, o.eventdate ';
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
-                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
-                }
-                elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
-                    $sql .= 'ORDER BY o.occid ';
-                }
-                else{
-                    $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
+                elseif(!$spatial){
+                    if(array_key_exists('sortField', $options) && $options['sortField']){
+                        $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                    }
+                    elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
+                        $sql .= 'ORDER BY o.occid ';
+                    }
                 }
                 $index = 0;
                 $rowIndex = 0;
@@ -163,17 +159,13 @@ class SearchService {
                         $sql .= 'ORDER BY t.sciname ';
                     }
                 }
-                elseif($spatial){
-                    $sql .= 'ORDER BY o.sciname, o.eventdate ';
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
-                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
-                }
-                elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
-                    $sql .= 'ORDER BY o.occid ';
-                }
-                else{
-                    $sql .= 'ORDER BY c.collectionname, o.sciname, o.eventdate ';
+                elseif(!$spatial){
+                    if(array_key_exists('sortField', $options) && $options['sortField']){
+                        $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                    }
+                    elseif(array_key_exists('display', $options) && $options['display'] === 'table'){
+                        $sql .= 'ORDER BY o.occid ';
+                    }
                 }
                 if((int)$options['numRows'] > 0){
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];

@@ -1184,14 +1184,12 @@ class Taxa{
     public function setTaxaSearchDataTids($searchData): array
     {
         foreach($searchData as $name => $tid){
-            $cleanName = SanitizerService::cleanInStr($this->conn, $name);
-            $sql = 'SELECT DISTINCT TID, SciName FROM taxa '.
-                "WHERE SciName = '" . $cleanName . "' OR SciName LIKE '" . $cleanName . " %' ";
+            $sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE unitname1 = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
                 foreach($rows as $index => $row){
-                    $searchData[$row['SciName']] = $row['TID'];
+                    $searchData[$row['sciname']] = $row['tid'];
                     unset($rows[$index]);
                 }
             }
