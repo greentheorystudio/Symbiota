@@ -49,7 +49,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <q-card flat bordered>
                         <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
                             <q-tab name="occurrence" label="Occurrence Records" no-caps></q-tab>
-                            <q-tab name="taxa" label="Taxa List" no-caps :disable="taxaCnt === 0"></q-tab>
+                            <q-tab name="taxa" label="Taxa List" no-caps></q-tab>
                         </q-tabs>
                         <q-separator></q-separator>
                         <q-tab-panels v-model="tab">
@@ -449,6 +449,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const taxaCnt = Vue.ref(0);
                     const taxaDataArr = Vue.reactive([]);
 
+                    Vue.watch(tab, () => {
+                        if(tab.value === 'taxa' && !searchStore.getTaxaArrInitialized){
+                            setSearchTaxaArr();
+                        }
+                    });
+
                     function changeRecordPage(props) {
                         setTableRecordData(props.pagination.page);
                     }
@@ -478,9 +484,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
                                     setTableRecordData(1);
-                                    searchStore.setSearchTaxaArr(() => {
-                                        processTaxaData();
-                                    });
                                 }
                                 else{
                                     hideWorking();
@@ -549,6 +552,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             });
                         });
                         taxaCnt.value = searchTaxaArr.value.length;
+                        hideWorking();
                     }
 
                     function setCurrentUserPermissions() {
@@ -577,6 +581,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             hideWorking();
                         });
                         pageNumber.value = Number(index);
+                    }
+
+                    function setSearchTaxaArr() {
+                        showWorking('Loading...');
+                        searchStore.setSearchTaxaArr(() => {
+                            processTaxaData();
+                        });
                     }
 
                     Vue.onMounted(() => {
