@@ -194,16 +194,16 @@ const textFieldInputElement = {
         function processValueChange(val) {
             if(props.dataType === 'int' || props.dataType === 'number' || props.dataType === 'increment'){
                 if(val && isNaN(val)){
-                    showNotification('negative', (props.label + ' must be a number.'));
+                    showNotification('negative', ((props.label.length > 0 ? props.label : 'Value') + ' must be a number.'));
                 }
                 else if(val && props.minValue && Number(props.minValue) > Number(val)){
-                    showNotification('negative', (props.label + ' cannot be less than ' + props.minValue + '.'));
+                    showNotification('negative', ((props.label.length > 0 ? props.label : 'Value') + ' cannot be less than ' + props.minValue + '.'));
                     if(props.dataType === 'int' || props.dataType === 'increment'){
                         context.emit('update:value', props.minValue);
                     }
                 }
                 else if(val && props.maxValue && Number(props.maxValue) < Number(val)){
-                    showNotification('negative', (props.label + ' cannot be greater than ' + props.maxValue + '.'));
+                    showNotification('negative', ((props.label.length > 0 ? props.label : 'Value') + ' cannot be greater than ' + props.maxValue + '.'));
                     if(props.dataType === 'int' || props.dataType === 'increment'){
                         context.emit('update:value', props.maxValue);
                     }
