@@ -1328,3 +1328,6 @@ div.q-tooltip.q-position-engine {
 [v-cloak] {
 	display: none;
 }
+.table-page-number-input {
+	width: 80px;
+}
