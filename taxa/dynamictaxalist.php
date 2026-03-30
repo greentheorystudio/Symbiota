@@ -148,17 +148,21 @@ header('X-Frame-Options: SAMEORIGIN');
                 <template v-slot:bottom="scope">
                     <div class="full-width row justify-between q-gutter-sm">
                         <div class="text-body2 text-bold self-center">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
-                        <div v-if="pagination.lastPage > 1">
+                        <div v-if="pagination.lastPage > 1" class="row q-gutter-sm">
                             <q-pagination
+                                ref="paginationRef"
                                 :model-value="pagination.page"
                                 color="grey-8"
                                 :max="pagination.lastPage"
                                 size="md"
-                                max-pages="10"
+                                max-pages="8"
                                 @update:model-value="processPaginationRequest"
                             ></q-pagination>
+                            <div class="table-page-number-input">
+                                <text-field-input-element data-type="int" :max-value="pagination.lastPage" min-value="1" :value="pagination.page" @update:value="processInputPaginationRequest" :clearable="false"></text-field-input-element>
+                            </div>
                         </div>
-                        <div>
+                        <div class="self-center">
                             <template v-if="pagination.lastPage > 1">
                                 <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
 
@@ -176,6 +180,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
         ?>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -184,7 +189,8 @@ header('X-Frame-Options: SAMEORIGIN');
                 components: {
                     'checkbox-input-element': checkboxInputElement,
                     'selector-input-element': selectorInputElement,
-                    'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete
+                    'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
+                    'text-field-input-element': textFieldInputElement
                 },
                 setup() {
                     const { hideWorking, processCsvDownload, showWorking } = useCore();
@@ -316,6 +322,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                         return recordNumber;
                     });
+                    const paginationRef = Vue.ref(null);
                     const parentTaxonTid = Vue.computed(() => {
                         let returnVal = null;
                         if(Number(selectedScinameTid.value) > 0){
@@ -522,6 +529,10 @@ header('X-Frame-Options: SAMEORIGIN');
                         }
                     }
 
+                    function processInputPaginationRequest(page) {
+                        paginationRef.value.set(page);
+                    }
+
                     function processKingdomSelection(value) {
                         selectedClassTid.value = null;
                         selectedFamilySciname.value = null;
@@ -700,6 +711,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         kingdomOptions,
                         limitToDescriptions,
                         pagination,
+                        paginationRef,
                         parentTaxonTid,
                         phylumOptions,
                         selectedFamilySciname,
@@ -724,6 +736,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         openOccurrenceListGeneticSearch,
                         processClassSelection,
                         processFamilySelection,
+                        processInputPaginationRequest,
                         processKingdomSelection,
                         processLimitToDescriptionChange,
                         processOrderSelection,
