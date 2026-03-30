@@ -125,16 +125,22 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     <div class="full-width row justify-between q-gutter-sm">
                         <div class="text-body2 text-bold self-center">Records {{ scope.pagination.firstRowNumber }} - {{ scope.pagination.lastRowNumber }} of {{ scope.pagination.rowsNumber }}</div>
                         <div v-if="pagination.lastPage > 1">
-                            <q-pagination
-                                :model-value="pagination.page"
-                                color="grey-8"
-                                :max="pagination.lastPage"
-                                size="md"
-                                max-pages="10"
-                                @update:model-value="processPaginationRequest"
-                            ></q-pagination>
+                            <div class="row q-gutter-sm">
+                                <q-pagination
+                                    ref="paginationRef"
+                                    :model-value="pagination.page"
+                                    color="grey-8"
+                                    :max="pagination.lastPage"
+                                    size="md"
+                                    max-pages="8"
+                                    @update:model-value="processPaginationRequest"
+                                ></q-pagination>
+                                <div class="table-page-number-input">
+                                    <text-field-input-element data-type="int" :max-value="pagination.lastPage" min-value="1" :value="pagination.page" @update:value="processInputPaginationRequest" :clearable="false"></text-field-input-element>
+                                </div>
+                            </div>
                         </div>
-                        <div>
+                        <div class="self-center">
                             <template v-if="pagination.lastPage > 1">
                                 <q-btn v-if="scope.pagesNumber > 2 && !scope.isFirstPage" icon="first_page" color="grey-8" round dense flat @click="scope.firstPage" aria-label="Go to first record page" tabindex="0"></q-btn>
 
@@ -266,7 +272,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     'selector-input-element': selectorInputElement,
                     'spatial-analysis-popup': spatialAnalysisPopup,
                     'spatial-display-button': spatialDisplayButton,
-                    'table-column-toggle-popup': tableColumnTogglePopup
+                    'table-column-toggle-popup': tableColumnTogglePopup,
+                    'text-field-input-element': textFieldInputElement
                 },
                 setup() {
                     const { hideWorking, showNotification, showWorking } = useCore();
@@ -330,6 +337,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         return recordNumber;
                     });
+                    const paginationRef = Vue.ref(null);
                     const perPageCnt = 200;
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
@@ -463,6 +471,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.setSpatialInputValues();
                         popupWindowType.value = type;
                         showSpatialPopup.value = true;
+                    }
+
+                    function processInputPaginationRequest(page) {
+                        paginationRef.value.set(page);
                     }
 
                     function processPaginationRequest(page) {
@@ -620,6 +632,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         occurrenceFieldLabels,
                         recordsPageNumber,
                         pagination,
+                        paginationRef,
                         popupWindowType,
                         recordDataArr,
                         recordDataFieldArr,
@@ -643,6 +656,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         loadRecords,
                         openRecordInfoWindow,
                         openSpatialPopup,
+                        processInputPaginationRequest,
                         processPaginationRequest,
                         processRequest,
                         processResetCriteria,
