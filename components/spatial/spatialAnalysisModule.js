@@ -501,27 +501,13 @@ const spatialAnalysisModule = {
                 }
             }
             if(searchTerms.value.hasOwnProperty('circleArr')){
-                let circleArr;
-                if(JSON.parse(searchTerms.value['circleArr'])){
-                    circleArr = JSON.parse(searchTerms.value['circleArr']);
-                }
-                else{
-                    circleArr = searchTerms.value['circleArr'];
-                }
-                if(Array.isArray(circleArr)){
-                    createCirclesFromCircleArr(circleArr, true);
+                if(Array.isArray(searchTerms.value['circleArr'])){
+                    createCirclesFromCircleArr(searchTerms.value['circleArr'], true);
                 }
             }
             if(searchTerms.value.hasOwnProperty('polyArr')){
-                let polyArr;
-                if(JSON.parse(searchTerms.value['polyArr'])){
-                    polyArr = JSON.parse(searchTerms.value['polyArr']);
-                }
-                else{
-                    polyArr = searchTerms.value['polyArr'];
-                }
-                if(Array.isArray(polyArr)){
-                    createPolysFromPolyArr(polyArr, true);
+                if(Array.isArray(searchTerms.value['polyArr'])){
+                    createPolysFromPolyArr(searchTerms.value['polyArr'], true);
                 }
             }
         }
