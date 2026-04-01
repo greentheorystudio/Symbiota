@@ -244,6 +244,7 @@ class SearchService {
 
     public function prepareImageUploadDateWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $dateArr = array();
         if(strpos($searchTermsArr['uploaddate1'],' to ')){
@@ -261,19 +262,22 @@ class SearchService {
         if($dateArr && $eDate1 = DataUtilitiesService::formatDate($dateArr[0])){
             $eDate2 = count($dateArr) > 1 ? DataUtilitiesService::formatDate($dateArr[1]) : '';
             if($eDate2){
-                $tempArr[] = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
+                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '"';
             }
             elseif(substr($eDate1,-5) === '00-00'){
-                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
+                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%"';
             }
             elseif(substr($eDate1,-2) === '00'){
-                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%") ';
+                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%"';
             }
             else{
-                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '%") ';
+                $tempArr[] = 'SELECT i.imgid FROM images AS i WHERE i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '%"';
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(i.imgid IN(SELECT DISTINCT imgid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedImageUploadDate))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceAdvancedWhereSql($searchTermsArr): string
@@ -357,20 +361,20 @@ class SearchService {
 
     public function prepareOccurrenceCatalogNumberWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $catStr = $searchTermsArr['catnum'];
         $includeOtherCatNum = array_key_exists('othercatnum', $searchTermsArr);
         $catArr = explode(';', $catStr);
-        $betweenFrag = array();
         $inFrag = array();
         foreach($catArr as $v){
             if($p = strpos($v,' - ')){
                 $term1 = trim(substr($v,0, $p));
                 $term2 = trim(substr($v, ($p + 3)));
                 if(is_numeric($term1) && is_numeric($term2)){
-                    $betweenFrag[] = '(o.catalognumber BETWEEN ' . SanitizerService::cleanInStr($this->conn, $term1) . ' AND ' . SanitizerService::cleanInStr($this->conn, $term2) . ')';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.catalognumber BETWEEN ' . SanitizerService::cleanInStr($this->conn, $term1) . ' AND ' . SanitizerService::cleanInStr($this->conn, $term2);
                     if($includeOtherCatNum){
-                        $betweenFrag[] = '(o.othercatalognumbers BETWEEN ' . SanitizerService::cleanInStr($this->conn, $term1) . ' AND ' . SanitizerService::cleanInStr($this->conn, $term2) . ')';
+                        $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.othercatalognumbers BETWEEN ' . SanitizerService::cleanInStr($this->conn, $term1) . ' AND ' . SanitizerService::cleanInStr($this->conn, $term2);
                     }
                 }
                 else{
@@ -378,9 +382,9 @@ class SearchService {
                     if(strlen($term1) === strlen($term2)) {
                         $catTerm .= ' AND length(o.catalognumber) = ' . SanitizerService::cleanInStr($this->conn, strlen($term2));
                     }
-                    $betweenFrag[] = '('.$catTerm.')';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ' . $catTerm;
                     if($includeOtherCatNum){
-                        $betweenFrag[] = '(o.othercatalognumbers BETWEEN "' . SanitizerService::cleanInStr($this->conn, $term1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $term2) . '")';
+                        $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.othercatalognumbers BETWEEN "' . SanitizerService::cleanInStr($this->conn, $term1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $term2) . '"';
                     }
                 }
             }
@@ -392,27 +396,25 @@ class SearchService {
                 }
             }
         }
-        if($betweenFrag){
-            $tempArr[] = '(' . implode(' OR ', $betweenFrag) . ')';
-        }
         if($inFrag){
-            $tempArr[] = '(o.catalognumber IN("' . implode('","', $inFrag) . '"))';
+            $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.catalognumber IN("' . implode('","', $inFrag) . '")';
             if($includeOtherCatNum){
-                $tempArr[] = '(o.othercatalognumbers IN("' . implode('","', $inFrag) . '"))';
+                $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.othercatalognumbers IN("' . implode('","', $inFrag) . '")';
                 if(strlen($inFrag[0]) === 36){
-                    $guidOccid = (new Occurrences)->getOccidByGUIDArr($inFrag);
-                    if($guidOccid){
-                        $tempArr[] = '(o.occid IN(' . implode(',', $guidOccid) . '))';
-                        $tempArr[] = '(o.occurrenceid IN("' . implode('","', $inFrag) . '"))';
-                    }
+                    $tempArr[] = 'SELECT o.occid FROM guidoccurrences AS o WHERE o.guid IN("' . implode('","', $inFrag) . '")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.occurrenceid IN("' . implode('","', $inFrag) . '")';
                 }
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCatalogNumber))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceCollectionNumberWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $collNumArr = explode(';', $searchTermsArr['collnum']);
         foreach($collNumArr as $v){
@@ -421,22 +423,25 @@ class SearchService {
                 $term1 = trim(substr($v,0, $p));
                 $term2 = trim(substr($v,$p+3));
                 if(is_numeric($term1) && is_numeric($term2)){
-                    $tempArr[] = '(o.recordnumber BETWEEN ' . $term1 . ' AND ' . $term2 . ')';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.recordnumber BETWEEN ' . $term1 . ' AND ' . $term2;
                 }
                 else{
                     if(strlen($term2) > strlen($term1)) {
                         $term1 = str_pad($term1, strlen($term2), '0', STR_PAD_LEFT);
                     }
-                    $catTerm = '(o.recordnumber BETWEEN "' . SanitizerService::cleanInStr($this->conn, $term1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $term2) . '")';
-                    $catTerm .= ' AND (length(o.recordnumber) <= ' . strlen($term2) . ')';
-                    $tempArr[] = '(' . $catTerm . ')';
+                    $catTerm = 'o.recordnumber BETWEEN "' . SanitizerService::cleanInStr($this->conn, $term1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $term2) . '")';
+                    $catTerm .= ' AND (length(o.recordnumber) <= ' . strlen($term2);
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ' . $catTerm;
                 }
             }
             else{
-                $tempArr[] = '(o.recordnumber = "' . SanitizerService::cleanInStr($this->conn, $v) . '")';
+                $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.recordnumber = "' . SanitizerService::cleanInStr($this->conn, $v) . '"';
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollectionNumber))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceCollectionWhereSql($searchTermsArr): string
@@ -462,9 +467,9 @@ class SearchService {
             $collSqlWhereStr .= '(o.collid IN(' . $collIdStr . '))';
         }
         elseif(!$GLOBALS['IS_ADMIN']){
-            $collSqlWhereStr .= '(c.isPublic = 1';
+            $collSqlWhereStr .= '(o.collid IN(SELECT collid FROM omcollections WHERE isPublic = 1)';
             if($GLOBALS['PERMITTED_COLLECTIONS']){
-                $collSqlWhereStr .= ' OR o.collid IN(' . implode(',', $GLOBALS['PERMITTED_COLLECTIONS']) . ')';
+                $collSqlWhereStr .= ' OR collid IN(' . implode(',', $GLOBALS['PERMITTED_COLLECTIONS']) . ')';
             }
             $collSqlWhereStr .= ')';
         }
@@ -473,62 +478,74 @@ class SearchService {
 
     public function prepareOccurrenceCollectorWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['collector']);
         $collectorArr = explode(';', $searchStr);
         if($collectorArr && count($collectorArr) === 1){
             if($collectorArr[0] === 'NULL'){
-                $tempArr[] = '(ISNULL(o.recordedby))';
+                $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.recordedby)';
             }
             else{
                 $lastName = DataUtilitiesService::parseRecordedByLastName($collectorArr[0]);
-                $tempArr[] = '(o.recordedby LIKE "%' . $lastName . '%")';
+                $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.recordedby LIKE "%' . $lastName . '%"';
             }
         }
         elseif(count($collectorArr) > 1){
             foreach($collectorArr as $collStr){
                 $lastName = DataUtilitiesService::parseRecordedByLastName($collStr);
-                $tempArr[] = '(o.recordedby LIKE "%' . $lastName . '%")';
+                $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.recordedby LIKE "%' . $lastName . '%"';
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollector))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceCountryWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $searchStr = str_replace('%apos;', "'", $searchTermsArr['country']);
         $countryArr = explode(';', $searchStr);
         if($countryArr){
             foreach($countryArr as $value){
                 if($value === 'NULL'){
-                    $tempArr[] = '(ISNULL(o.country))';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.country)';
                 }
                 else{
-                    $tempArr[] = '(o.country = "' . SanitizerService::cleanInStr($this->conn, $value) . '")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.country = "' . SanitizerService::cleanInStr($this->conn, $value) . '"';
                 }
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCountry))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceCountyWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['county']);
         $countyArr = explode(';', $searchStr);
         if($countyArr){
             foreach($countyArr as $value){
                 if($value === 'NULL'){
-                    $tempArr[] = '(ISNULL(o.county))';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.county)';
                 }
                 else{
                     $value = trim(str_ireplace(' county','', $value));
-                    $tempArr[] = '(o.county LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.county LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . '%"';
                 }
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCounty))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceDateEnteredWhereSql($searchTermsArr): string
@@ -634,6 +651,7 @@ class SearchService {
 
     public function prepareOccurrenceLocalityWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['local']);
         $localArr = explode(';', $searchStr);
@@ -641,14 +659,18 @@ class SearchService {
             foreach($localArr as $value){
                 $value = trim($value);
                 if($value === 'NULL'){
-                    $tempArr[] = '(ISNULL(o.locality))';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.locality)';
                 }
                 else{
-                    $tempArr[] = '(o.municipality LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . '%" OR o.locality LIKE "%' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.municipality LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . '%"';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.locality LIKE "%' . SanitizerService::cleanInStr($this->conn, $value) . '%"';
                 }
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedLocality))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceMeasurementOrFactWhereSql($searchTermsArr): string
@@ -724,6 +746,7 @@ class SearchService {
 
     public function prepareOccurrenceOccurrenceRemarksWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['occurrenceRemarks']);
         $remarksArr = explode(';', $searchStr);
@@ -731,14 +754,17 @@ class SearchService {
             foreach($remarksArr as $value){
                 $value = trim($value);
                 if($value === 'NULL'){
-                    $tempArr[] = '(ISNULL(o.occurrenceremarks))';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.occurrenceremarks)';
                 }
                 else{
-                    $tempArr[] = '(o.occurrenceremarks LIKE "%' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.occurrenceremarks LIKE "%' . SanitizerService::cleanInStr($this->conn, $value) . '%"';
                 }
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedOccurrenceRemarks))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceProcessingStatusWhereSql($searchTermsArr): string
@@ -759,17 +785,17 @@ class SearchService {
 
     public function prepareOccurrenceSpatialWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         if(array_key_exists('upperlat', $searchTermsArr) && $searchTermsArr['upperlat']){
-            $tempArr[] = '(o.decimallatitude BETWEEN ' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['bottomlat']) . ' AND ' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['upperlat']) . ' AND ' .
-                'o.decimallongitude BETWEEN ' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['leftlong']) . ' AND ' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['rightlong']) . ')';
+            $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.decimallatitude BETWEEN ' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['bottomlat']) . ' AND ' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['upperlat']) . ' AND ' .
+                'o.decimallongitude BETWEEN ' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['leftlong']) . ' AND ' . SanitizerService::cleanInStr($this->conn, $searchTermsArr['rightlong']);
         }
         if(array_key_exists('pointlat', $searchTermsArr) && $searchTermsArr['pointlat']){
             $radius = $searchTermsArr['groundradius'] * 0.621371192;
-            $tempArr[] = '((3959 * ACOS(COS(RADIANS(o.decimallatitude)) * COS(RADIANS(' . $searchTermsArr['pointlat'] . ')) * COS(RADIANS(' . $searchTermsArr['pointlong'] . ') - RADIANS(o.decimallongitude)) + SIN(RADIANS(o.decimallatitude)) * SIN(RADIANS(' . $searchTermsArr['pointlat'] . ')))) <= ' . $radius . ')';
+            $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE (3959 * ACOS(COS(RADIANS(o.decimallatitude)) * COS(RADIANS(' . $searchTermsArr['pointlat'] . ')) * COS(RADIANS(' . $searchTermsArr['pointlong'] . ') - RADIANS(o.decimallongitude)) + SIN(RADIANS(o.decimallatitude)) * SIN(RADIANS(' . $searchTermsArr['pointlat'] . ')))) <= ' . $radius;
         }
         if(array_key_exists('circleArr', $searchTermsArr) && $searchTermsArr['circleArr']){
-            $sqlFragArr = array();
             $objArr = $searchTermsArr['circleArr'];
             if(!is_array($objArr)){
                 $objArr = json_decode($objArr, true);
@@ -777,43 +803,47 @@ class SearchService {
             if($objArr){
                 foreach($objArr as $oArr){
                     $radius = $oArr['groundradius'] * 0.621371192;
-                    $sqlFragArr[] = '((3959 * ACOS(COS(RADIANS(o.decimallatitude)) * COS(RADIANS(' . $oArr['pointlat'] . ')) * COS(RADIANS(' . $oArr['pointlong'] . ') - RADIANS(o.decimallongitude)) + SIN(RADIANS(o.decimallatitude)) * SIN(RADIANS(' . $oArr['pointlat'] . ')))) <= ' . $radius . ')';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE (3959 * ACOS(COS(RADIANS(o.decimallatitude)) * COS(RADIANS(' . $oArr['pointlat'] . ')) * COS(RADIANS(' . $oArr['pointlong'] . ') - RADIANS(o.decimallongitude)) + SIN(RADIANS(o.decimallatitude)) * SIN(RADIANS(' . $oArr['pointlat'] . ')))) <= ' . $radius;
                 }
-                $tempArr[] = '('.implode(' OR ', $sqlFragArr).')';
             }
         }
         if(array_key_exists('polyArr',$searchTermsArr) && $searchTermsArr['polyArr']){
-            $sqlFragArr = array();
             $geomArr = $searchTermsArr['polyArr'];
             if(!is_array($geomArr)){
                 $geomArr = json_decode($geomArr, true);
             }
             if($geomArr){
                 foreach($geomArr as $geom){
-                    $sqlFragArr[] = "(ST_Within(p.`point`, ST_GeomFromText('" . $geom . " ')))";
+                    $tempArr[] = "SELECT o.occid FROM omoccurpoints AS o WHERE ST_Within(p.`point`, ST_GeomFromText('" . $geom . " '))";
                 }
-                $tempArr[] = '(' . implode(' OR ', $sqlFragArr) . ')';
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedSpatial))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceStateProvinceWhereSql($searchTermsArr): string
     {
+        $returnVal = '';
         $tempArr = array();
         $searchStr = str_replace('%apos;',"'", $searchTermsArr['state']);
         $stateAr = explode(';', $searchStr);
         if($stateAr){
             foreach($stateAr as $value){
                 if($value === 'NULL'){
-                    $tempArr[] = '(ISNULL(o.stateprovince))';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.stateprovince)';
                 }
                 else{
-                    $tempArr[] = '(o.stateprovince = "' . SanitizerService::cleanInStr($this->conn, $value) . '")';
+                    $tempArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.stateprovince = "' . SanitizerService::cleanInStr($this->conn, $value) . '"';
                 }
             }
         }
-        return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
+        if(count($tempArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedStateProvince))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceTaxaWhereSql($searchTermsArr, $image): string
@@ -876,7 +906,7 @@ class SearchService {
             }
         }
         if(count($sqlTaxaWherePartsArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combined))';
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa))';
         }
         return $returnVal;
     }
@@ -1366,9 +1396,6 @@ class SearchService {
         if(array_key_exists('clid', $searchTermsArr)) {
             $returnStr .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             $returnStr .= 'LEFT JOIN fmchecklists AS ch ON v.clid = ch.clid ';
-        }
-        if(array_key_exists('polyArr', $searchTermsArr)) {
-            $returnStr .= 'LEFT JOIN omoccurpoints AS p ON o.occid = p.occid ';
         }
         if(array_key_exists('phuid', $searchTermsArr) || array_key_exists('imagetag', $searchTermsArr) || array_key_exists('uploaddate1', $searchTermsArr) || array_key_exists('imagetype', $searchTermsArr)) {
             $returnStr .= 'LEFT JOIN images AS i ON o.occid = i.occid ';
