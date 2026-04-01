@@ -1643,7 +1643,7 @@ delimiter ;;
 CREATE TRIGGER `omoccurrences_insert` AFTER INSERT ON `omoccurrences` FOR EACH ROW BEGIN
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
 		INSERT INTO omoccurpoints (`occid`,`point`)
-		VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+		VALUES (NEW.`occid`, ST_SRID(Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`), 4326));
     END IF;
 END
 ;;
@@ -1654,11 +1654,11 @@ CREATE TRIGGER `omoccurrences_update` AFTER UPDATE ON `omoccurrences` FOR EACH R
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
 		IF EXISTS (SELECT `occid` FROM omoccurpoints WHERE `occid`=NEW.`occid`) THEN
             UPDATE omoccurpoints
-            SET `point` = Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`)
+            SET `point` = ST_SRID(Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`), 4326)
             WHERE `occid` = NEW.`occid`;
         ELSE
 			INSERT INTO omoccurpoints (`occid`,`point`)
-			VALUES (NEW.`occid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+			VALUES (NEW.`occid`,ST_SRID(Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`), 4326));
         END IF;
     END IF;
 END
@@ -1676,7 +1676,7 @@ delimiter ;;
 CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH ROW BEGIN
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
 		INSERT INTO uploadspectemppoints (`collid`,`upspid`,`point`)
-		VALUES (NEW.`collid`,NEW.`upspid`,Point(NEW.`decimalLatitude`, NEW.`decimalLongitude`));
+		VALUES (NEW.`collid`,NEW.`upspid`,ST_SRID(Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`), 4326));
     END IF;
 END
 ;;
