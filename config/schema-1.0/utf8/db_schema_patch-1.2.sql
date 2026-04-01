@@ -466,7 +466,7 @@ CREATE TABLE `uploadspectemppoints`
     `geoID`  int(11) NOT NULL AUTO_INCREMENT,
     `collid` int(10) NOT NULL,
     `upspid` int(50) NOT NULL,
-    `point`  point NOT NULL,
+    `point`  point NOT NULL SRID 4326,
     PRIMARY KEY (`geoID`),
     KEY `upspid` (`upspid`),
     SPATIAL KEY `point` (`point`),
