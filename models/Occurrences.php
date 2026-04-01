@@ -734,29 +734,6 @@ class Occurrences{
         return $isLocked;
     }
 
-    public function getOccidByGUIDArr($guidArr): array
-    {
-        $retArr = array();
-        if(is_array($guidArr)){
-            $searchStr = implode('","', $guidArr);
-        }
-        else{
-            $searchStr = SanitizerService::cleanInStr($this->conn, $guidArr);
-        }
-        if($guidArr){
-            $sql = 'SELECT occid FROM guidoccurrences WHERE guid IN("' . $searchStr . '")';
-            if($result = $this->conn->query($sql)){
-                $rows = $result->fetch_all(MYSQLI_ASSOC);
-                $result->free();
-                foreach($rows as $index => $row){
-                    $retArr[] = $row['occid'];
-                    unset($rows[$index]);
-                }
-            }
-        }
-        return $retArr;
-    }
-
     public function getOccidArrNotIncludedInUpload($collid): array
     {
         $returnArr = array();
