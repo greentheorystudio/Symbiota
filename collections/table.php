@@ -493,7 +493,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         sortDescending.value = props.pagination.descending;
                         if(sortChange){
                             searchStore.setSearchTermsRecordSortField(sortField.value);
+                            searchStore.updateSearchTerms('sortField', sortField.value);
                             searchStore.setSearchTermsRecordSortDirection(sortDescending.value ? 'DESC' : 'ASC');
+                            searchStore.updateSearchTerms('sortDirection', (sortDescending.value ? 'DESC' : 'ASC'));
                             recordsPageNumber.value = 1;
                         }
                         else{
