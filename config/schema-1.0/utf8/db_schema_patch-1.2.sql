@@ -476,7 +476,7 @@ CREATE TABLE `uploadspectemppoints`
 CREATE TRIGGER `uploadspectemp_insert` AFTER INSERT ON `uploadspectemp` FOR EACH ROW BEGIN
     IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL THEN
 		INSERT INTO uploadspectemppoints (`collid`,`upspid`,`point`)
-		VALUES (NEW.`collid`,NEW.`upspid`,ST_SRID(Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`), 4326));
+		VALUES (NEW.`collid`,NEW.`upspid`,ST_GeomFromText(CONCAT('POINT(', NEW.`decimalLongitude`, ' ', NEW.`decimalLatitude`, ')'), 4326, 'axis-order=long-lat'));
     END IF;
 END;
 
