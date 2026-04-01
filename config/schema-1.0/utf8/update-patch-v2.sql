@@ -520,4 +520,25 @@ ALTER TABLE `users`
     DROP COLUMN `accessrights`,
     DROP COLUMN `usergroups`;
 
+--AI suggestions
+
+ALTER TABLE `omcollections`
+    DROP INDEX `isPublic`,
+	ADD INDEX idx_collid_isPublic (collid, isPublic);
+
+ALTER TABLE `taxa`
+    RENAME INDEX `family` TO `idx_taxa_family`,
+    ADD INDEX idx_tid_family (TID, family);
+
+ALTER TABLE `omoccurrences`
+    RENAME INDEX `Index_collid` TO `idx_collid_dbpk_unique`,
+    RENAME INDEX `Index_sciname` TO `idx_omoccurrences_sciname`,
+    RENAME INDEX `Index_family` TO `idx_omoccurrences_family`,
+    RENAME INDEX `Index_country` TO `idx_omoccurrences_country`,
+    RENAME INDEX `Index_state` TO `idx_omoccurrences_stateProvince`,
+    RENAME INDEX `Index_county` TO `idx_omoccurrences_county`,
+    RENAME INDEX `FK_omoccurrences_tid` TO `idx_omoccurrences_tid`,
+    ADD INDEX idx_omoccurrences_collid (collid),
+    ADD INDEX idx_omoccurrences_family_sciname ON omoccurrences (family, sciname);
+
 SET FOREIGN_KEY_CHECKS = 1;
