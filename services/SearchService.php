@@ -462,7 +462,7 @@ class SearchService {
             $collSqlWhereStr .= '(o.collid IN(' . $collIdStr . '))';
         }
         elseif(!$GLOBALS['IS_ADMIN']){
-            $collSqlWhereStr .= '(ISNULL(c.collid) OR c.isPublic = 1';
+            $collSqlWhereStr .= '(c.isPublic = 1';
             if($GLOBALS['PERMITTED_COLLECTIONS']){
                 $collSqlWhereStr .= ' OR o.collid IN(' . implode(',', $GLOBALS['PERMITTED_COLLECTIONS']) . ')';
             }
@@ -818,6 +818,7 @@ class SearchService {
 
     public function prepareOccurrenceTaxaWhereSql($searchTermsArr, $image): string
     {
+        $returnVal = '';
         $sqlTaxaWherePartsArr = array();
         $taxaDataArr = array();
         $vernacularArr = array();
@@ -851,34 +852,33 @@ class SearchService {
                 $searchTidArr[] = $tid;
             }
             if($taxaSearchType === 4 || $taxaSearchType === 5){
-                if($image){
-                    $sqlTaxaWherePartsArr[] = '(te.parenttid = ' . (int)$tid . ' OR te.tid = ' . (int)$tid . ')';
-                }
-                else{
-                    $sqlTaxaWherePartsArr[] = '(te.parenttid = ' . (int)$tid . ' OR te.tid = ' . (int)$tid . ') OR (ISNULL(o.tid) AND o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '")';
+                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxaenumtree AS te ON o.tid = te.tid WHERE te.parenttid = ' . (int)$tid . ' ';
+                if(!$image){
+                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
                 }
             }
             elseif($taxaSearchType === 2 || ($taxaSearchType === 1 && (strtolower(substr($name,-5)) === 'aceae' || strtolower(substr($name,-4)) === 'idae'))){
-                if($image){
-                    $sqlTaxaWherePartsArr[] = '(t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '")';
-                }
-                else{
-                    $sqlTaxaWherePartsArr[] = '(t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '") OR (ISNULL(o.tid) AND (o.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '"))';
+                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o INNER JOIN taxa AS t ON o.tid = t.tid WHERE t.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" ';
+                if(!$image){
+                    $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE ISNULL(o.tid) AND (o.family = "' . SanitizerService::cleanInStr($this->conn, $name) . '" OR o.sciname = "' . SanitizerService::cleanInStr($this->conn, $name) . '") ';
                 }
             }
             elseif(!$image){
-                $sqlTaxaWherePartsArr[] = '(o.sciname REGEXP "^' . SanitizerService::cleanInStr($this->conn, $name) . '")';
+                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.sciname LIKE "' . SanitizerService::cleanInStr($this->conn, $name) . '%" ';
             }
         }
         if($searchTidArr){
             if($image){
-                $sqlTaxaWherePartsArr[] = '(i.tid IN(' . implode(',', $searchTidArr) . '))';
+                $sqlTaxaWherePartsArr[] = 'SELECT DISTINCT i.occid FROM images AS i WHERE i.tid IN(' . implode(',', $searchTidArr) . ') AND i.occid IS NOT NULL ';
             }
             else{
-                $sqlTaxaWherePartsArr[] = '(o.tid IN(' . implode(',', $searchTidArr) . '))';
+                $sqlTaxaWherePartsArr[] = 'SELECT o.occid FROM omoccurrences AS o WHERE o.tid IN(' . implode(',', $searchTidArr) . ') ';
             }
         }
-        return count($sqlTaxaWherePartsArr) > 0 ? ('(' . implode(' OR ', $sqlTaxaWherePartsArr) . ')') : '';
+        if(count($sqlTaxaWherePartsArr) > 0){
+            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combined))';
+        }
+        return $returnVal;
     }
 
     public function prepareOccurrenceWhereSql($searchTermsArr, $image = false): string
@@ -1363,9 +1363,6 @@ class SearchService {
     public function setTableJoinsSql($searchTermsArr): string
     {
         $returnStr = '';
-        if(array_key_exists('taxontype', $searchTermsArr) && ((int)$searchTermsArr['taxontype'] === 4 || (int)$searchTermsArr['taxontype'] === 5)) {
-            $returnStr .= 'INNER JOIN taxaenumtree AS te ON o.tid = te.tid ';
-        }
         if(array_key_exists('clid', $searchTermsArr)) {
             $returnStr .= 'LEFT JOIN fmvouchers AS v ON o.occid = v.occid ';
             $returnStr .= 'LEFT JOIN fmchecklists AS ch ON v.clid = ch.clid ';
