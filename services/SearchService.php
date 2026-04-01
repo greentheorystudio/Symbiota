@@ -264,13 +264,13 @@ class SearchService {
                 $tempArr[] = '(i.initialtimestamp BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
             }
             elseif(substr($eDate1,-5) === '00-00'){
-                $tempArr[] = '(i.initialtimestamp REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '")';
+                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
             }
             elseif(substr($eDate1,-2) === '00'){
-                $tempArr[] = '(i.initialtimestamp REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '") ';
+                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%") ';
             }
             else{
-                $tempArr[] = '(i.initialtimestamp REGEXP "^' . SanitizerService::cleanInStr($this->conn, $eDate1) . '") ';
+                $tempArr[] = '(i.initialtimestamp LIKE "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '%") ';
             }
         }
         return count($tempArr) > 0 ? '(' . implode(' OR ', $tempArr) . ')' : '';
@@ -330,16 +330,16 @@ class SearchService {
                             }
                         }
                         elseif($criteriaArr['operator'] === 'STARTS WITH'){
-                            $advSqlWhereStr .= ' REGEXP "^' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            $advSqlWhereStr .= ' LIKE "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
                         }
                         elseif($criteriaArr['operator'] === 'ENDS WITH'){
-                            $advSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '^"';
+                            $advSqlWhereStr .= ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
                         }
                         elseif($criteriaArr['operator'] === 'CONTAINS'){
-                            $advSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            $advSqlWhereStr .= ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
                         }
                         elseif($criteriaArr['operator'] === 'DOES NOT CONTAIN'){
-                            $advSqlWhereStr .= ' NOT REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            $advSqlWhereStr .= ' NOT LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
                         }
                     }
                     if($criteriaArr['field'] === 'username'){
@@ -524,7 +524,7 @@ class SearchService {
                 }
                 else{
                     $value = trim(str_ireplace(' county','', $value));
-                    $tempArr[] = '(o.county REGEXP "^' . SanitizerService::cleanInStr($this->conn, $value) . '")';
+                    $tempArr[] = '(o.county LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
                 }
             }
         }
@@ -541,7 +541,7 @@ class SearchService {
                 $returnStr = '(ISNULL(o.dateentered))';
             }
             else{
-                $returnStr = '(o.dateentered REGEXP "^' . SanitizerService::cleanInStr($this->conn, $value) . ' ")';
+                $returnStr = '(o.dateentered LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . ' %")';
             }
         }
         return $returnStr;
@@ -557,7 +557,7 @@ class SearchService {
                 $returnStr = '(ISNULL(o.datelastmodified))';
             }
             else{
-                $returnStr = '(o.datelastmodified REGEXP "^' . SanitizerService::cleanInStr($this->conn, $value) . ' ")';
+                $returnStr = '(o.datelastmodified LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . ' %")';
             }
         }
         return $returnStr;
@@ -619,10 +619,10 @@ class SearchService {
                     $returnStr = '(o.eventdate BETWEEN "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '" AND "' . SanitizerService::cleanInStr($this->conn, $eDate2) . '")';
                 }
                 elseif(substr($eDate1,-5) === '00-00'){
-                    $returnStr = '(o.eventdate REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '")';
+                    $returnStr = '(o.eventdate LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,5)) . '%")';
                 }
                 elseif(substr($eDate1,-2) === '00'){
-                    $returnStr = '(o.eventdate REGEXP "^' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '")';
+                    $returnStr = '(o.eventdate LIKE "' . SanitizerService::cleanInStr($this->conn, substr($eDate1,0,8)) . '%")';
                 }
                 else{
                     $returnStr = '(o.eventdate = "' . SanitizerService::cleanInStr($this->conn, $eDate1) . '")';
@@ -644,7 +644,7 @@ class SearchService {
                     $tempArr[] = '(ISNULL(o.locality))';
                 }
                 else{
-                    $tempArr[] = '(o.municipality REGEXP "^' . SanitizerService::cleanInStr($this->conn, $value) . '" OR o.locality REGEXP "' . SanitizerService::cleanInStr($this->conn, $value) . '")';
+                    $tempArr[] = '(o.municipality LIKE "' . SanitizerService::cleanInStr($this->conn, $value) . '%" OR o.locality LIKE "%' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
                 }
             }
         }
@@ -699,16 +699,16 @@ class SearchService {
                             }
                         }
                         elseif($criteriaArr['operator'] === 'STARTS WITH'){
-                            $mofSqlWhereStr .= ' REGEXP "^' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            $mofSqlWhereStr .= ' LIKE "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
                         }
                         elseif($criteriaArr['operator'] === 'ENDS WITH'){
-                            $mofSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '^"';
+                            $mofSqlWhereStr .= ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
                         }
                         elseif($criteriaArr['operator'] === 'CONTAINS'){
-                            $mofSqlWhereStr .= ' REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            $mofSqlWhereStr .= ' LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
                         }
                         elseif($criteriaArr['operator'] === 'DOES NOT CONTAIN'){
-                            $mofSqlWhereStr .= ' NOT REGEXP "' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '"';
+                            $mofSqlWhereStr .= ' NOT LIKE "%' . SanitizerService::cleanInStr($this->conn, $criteriaArr['value']) . '%"';
                         }
                         $mofSqlWhereStr .= ' AND ' . $field . ' IS NOT NULL)';
                     }
@@ -734,7 +734,7 @@ class SearchService {
                     $tempArr[] = '(ISNULL(o.occurrenceremarks))';
                 }
                 else{
-                    $tempArr[] = '(o.occurrenceremarks REGEXP "' . SanitizerService::cleanInStr($this->conn, $value) . '")';
+                    $tempArr[] = '(o.occurrenceremarks LIKE "%' . SanitizerService::cleanInStr($this->conn, $value) . '%")';
                 }
             }
         }
@@ -981,7 +981,7 @@ class SearchService {
             $sqlWherePartsArr[] = '(o.typestatus IS NOT NULL)';
         }
         if(array_key_exists('hasaudio',$searchTermsArr) && $searchTermsArr['hasaudio']){
-            $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format REGEXP "^audio/"))';
+            $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format LIKE "audio/%"))';
         }
         if(array_key_exists('hasimages',$searchTermsArr) && $searchTermsArr['hasimages']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM images))';
@@ -990,7 +990,7 @@ class SearchService {
             $sqlWherePartsArr[] = '(o.occid NOT IN(SELECT DISTINCT occid FROM images WHERE occid IS NOT NULL))';
         }
         if(array_key_exists('hasvideo',$searchTermsArr) && $searchTermsArr['hasvideo']){
-            $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format REGEXP "^video/"))';
+            $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM media WHERE format LIKE "video/%"))';
         }
         if(array_key_exists('hasmedia',$searchTermsArr) && $searchTermsArr['hasmedia']){
             $sqlWherePartsArr[] = '(o.occid IN(SELECT occid FROM images) OR o.occid IN(SELECT occid FROM media))';
@@ -1012,13 +1012,13 @@ class SearchService {
         }
         if(array_key_exists('imagetype',$searchTermsArr) && $searchTermsArr['imagetype']){
             if($searchTermsArr['imagetype'] === 'specimenonly'){
-                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord REGEXP "specimen")';
+                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%specimen%")';
             }
             elseif($searchTermsArr['imagetype'] === 'observationonly'){
-                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord REGEXP "observation")';
+                $sqlWherePartsArr[] = '(i.occid IS NOT NULL) AND (o.basisofrecord LIKE "%observation%")';
             }
             elseif($searchTermsArr['imagetype'] === 'fieldonly'){
-                $sqlWherePartsArr[] = '(i.imgid IS NOT NULL AND (ISNULL(i.occid) OR o.basisofrecord REGEXP "observation"))';
+                $sqlWherePartsArr[] = '(i.imgid IS NOT NULL AND (ISNULL(i.occid) OR o.basisofrecord LIKE "%observation%"))';
             }
         }
         if(array_key_exists('enteredby',$searchTermsArr) && $searchTermsArr['enteredby']){
