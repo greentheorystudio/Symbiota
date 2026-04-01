@@ -1,5 +1,6 @@
 <?php
 include_once(__DIR__ . '/../models/Collections.php');
+include_once(__DIR__ . '/../models/Configurations.php');
 include_once(__DIR__ . '/../models/Occurrences.php');
 include_once(__DIR__ . '/../models/Permissions.php');
 include_once(__DIR__ . '/../models/Taxa.php');
@@ -808,13 +809,14 @@ class SearchService {
             }
         }
         if(array_key_exists('polyArr', $searchTermsArr) && $searchTermsArr['polyArr']){
+            $databaseProps = (new Configurations)->getDatabasePropArr();
             $geomArr = $searchTermsArr['polyArr'];
             if(!is_array($geomArr)){
                 $geomArr = json_decode($geomArr, true);
             }
             if($geomArr){
                 foreach($geomArr as $geom){
-                    $tempArr[] = "SELECT p.occid FROM omoccurpoints AS p WHERE ST_Within(p.`point`, ST_GeomFromText('" . $geom . " ', 4326))";
+                    $tempArr[] = "SELECT p.occid FROM omoccurpoints AS p WHERE ST_Within(p.`point`, ST_GeomFromText('" . $geom . " ', 4326" . ((!array_key_exists('db', $databaseProps) || $databaseProps['db'] !== 'MariaDB') ? ", 'axis-order=long-lat'" : '') . '))';
                 }
             }
         }

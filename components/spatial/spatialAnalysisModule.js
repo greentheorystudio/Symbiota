@@ -64,7 +64,7 @@ const spatialAnalysisModule = {
         'tutorial-module': tutorialModule
     },
     setup(props, context) {
-        const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getCorrectedPolygonCoordArr, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, validatePolygonCoordArr, writeMySQLWktString } = useCore();
+        const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getCorrectedPolygonCoordArr, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, validatePolygonCoordArr } = useCore();
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
@@ -650,9 +650,9 @@ const spatialAnalysisModule = {
                         const polySimple = geoJSONFormat.readFeature(turfSimple, {featureProjection: 'EPSG:3857'});
                         const simplegeometry = polySimple.getGeometry();
                         const fixedgeometry = simplegeometry.transform(mapProjection, wgs84Projection);
-                        const geocoords = fixedgeometry.getCoordinates();
-                        const mysqlWktString = writeMySQLWktString(geoType, geocoords);
-                        geoPolyArr.value.push(mysqlWktString);
+                        const wktFormat = new ol.format.WKT();
+                        const wktStr = wktFormat.writeGeometry(fixedgeometry);
+                        geoPolyArr.value.push(wktStr);
                     }
                     if(geoType === 'Circle'){
                         const center = selectedClone.getGeometry().getCenter();
@@ -1173,9 +1173,9 @@ const spatialAnalysisModule = {
                                 }
                             }
                             else{
-                                const geocoords = fixedgeometry.getCoordinates();
-                                const mysqlWktString = writeMySQLWktString(geoType, geocoords);
-                                geoPolyArr.value.push(mysqlWktString);
+                                const wktFormat = new ol.format.WKT();
+                                const wktStr = wktFormat.writeGeometry(fixedgeometry);
+                                geoPolyArr.value.push(wktStr);
                             }
                         }
                     }
