@@ -807,14 +807,14 @@ class SearchService {
                 }
             }
         }
-        if(array_key_exists('polyArr',$searchTermsArr) && $searchTermsArr['polyArr']){
+        if(array_key_exists('polyArr', $searchTermsArr) && $searchTermsArr['polyArr']){
             $geomArr = $searchTermsArr['polyArr'];
             if(!is_array($geomArr)){
                 $geomArr = json_decode($geomArr, true);
             }
             if($geomArr){
                 foreach($geomArr as $geom){
-                    $tempArr[] = "SELECT p.occid FROM omoccurpoints AS p WHERE ST_Within(p.`point`, ST_GeomFromText('" . $geom . " '))";
+                    $tempArr[] = "SELECT p.occid FROM omoccurpoints AS p WHERE ST_Within(p.`point`, ST_GeomFromText('" . $geom . " ', 4326))";
                 }
             }
         }
