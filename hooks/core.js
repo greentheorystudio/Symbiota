@@ -552,47 +552,6 @@ function useCore() {
         return returnVal;
     }
 
-    function writeMySQLWktString(type, geocoords) {
-        let long, lat;
-        let wktStr = '';
-        let coordStr = '';
-        if(type === 'Polygon'){
-            geocoords.forEach((coords, i) => {
-                coordStr += '(';
-                coords.forEach((coord, ci) => {
-                    lat = geocoords[i][ci][1];
-                    long = geocoords[i][ci][0];
-                    coordStr += lat+' '+long+',';
-                });
-                coordStr = coordStr.substring(0,coordStr.length-1);
-                coordStr += '),';
-            });
-            coordStr = coordStr.substring(0,coordStr.length-1);
-            wktStr = 'POLYGON('+coordStr+')';
-        }
-        else if(type === 'MultiPolygon'){
-            geocoords.forEach((poly, i) => {
-                coordStr += '(';
-                poly.forEach((coords, r) => {
-                    coordStr += '(';
-                    coords.forEach((coord, c) => {
-                        lat = geocoords[i][r][c][1];
-                        long = geocoords[i][r][c][0];
-                        coordStr += lat+' '+long+',';
-                    });
-                    coordStr = coordStr.substring(0,coordStr.length-1);
-                    coordStr += '),';
-                });
-                coordStr = coordStr.substring(0,coordStr.length-1);
-                coordStr += '),';
-            });
-            coordStr = coordStr.substring(0,coordStr.length-1);
-            wktStr = 'MULTIPOLYGON('+coordStr+')';
-        }
-
-        return wktStr;
-    }
-
     return {
         capitalizeFirstLetter,
         csvToArray,
@@ -614,7 +573,6 @@ function useCore() {
         processCsvDownload,
         showNotification,
         showWorking,
-        validatePolygonCoordArr,
-        writeMySQLWktString
+        validatePolygonCoordArr
     }
 }

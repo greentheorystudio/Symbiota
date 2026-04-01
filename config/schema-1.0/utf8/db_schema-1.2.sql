@@ -939,7 +939,7 @@ CREATE TABLE `omoccurpaleogts` (
 CREATE TABLE `omoccurpoints` (
     `geoID` int(11) NOT NULL AUTO_INCREMENT,
     `occid` int(11) NOT NULL,
-    `point` point NOT NULL,
+    `point` point NOT NULL SRID 4326,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`geoID`),
     UNIQUE KEY `occid` (`occid`),
