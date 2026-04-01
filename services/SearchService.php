@@ -814,7 +814,7 @@ class SearchService {
             }
             if($geomArr){
                 foreach($geomArr as $geom){
-                    $tempArr[] = "SELECT o.occid FROM omoccurpoints AS o WHERE ST_Within(p.`point`, ST_GeomFromText('" . $geom . " '))";
+                    $tempArr[] = "SELECT p.occid FROM omoccurpoints AS p WHERE ST_Within(p.`point`, ST_GeomFromText('" . $geom . " '))";
                 }
             }
         }
