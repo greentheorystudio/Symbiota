@@ -111,7 +111,7 @@ const spatialSymbologyTab = {
         const updateMapSettings = Vue.inject('updateMapSettings');
 
         function processResetSymbology() {
-            updateMapSettings('mapSymbology', 'collectionname');
+            updateMapSettings('mapSymbology', 'sciname');
             setSelectedSymbologyOption();
             resetSymbology();
         }
