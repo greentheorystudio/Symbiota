@@ -468,9 +468,7 @@ const spatialAnalysisModule = {
         function createPolysFromPolyArr(polyArr, selected) {
             const wktFormat = new ol.format.WKT();
             polyArr.forEach((feature) => {
-                let wktStr;
-                wktStr = convertMysqlWKT(feature);
-                const newpoly = wktFormat.readFeature(wktStr, mapProjection);
+                const newpoly = wktFormat.readFeature(feature, mapProjection);
                 newpoly.getGeometry().transform(wgs84Projection, mapProjection);
                 mapSettings.selectSource.addFeature(newpoly);
                 if(selected){
@@ -501,13 +499,15 @@ const spatialAnalysisModule = {
                 }
             }
             if(searchTerms.value.hasOwnProperty('circleArr')){
-                if(Array.isArray(searchTerms.value['circleArr'])){
-                    createCirclesFromCircleArr(searchTerms.value['circleArr'], true);
+                const circleArrData = JSON.parse(searchTerms.value['circleArr']);
+                if(Array.isArray(circleArrData)){
+                    createCirclesFromCircleArr(circleArrData, true);
                 }
             }
             if(searchTerms.value.hasOwnProperty('polyArr')){
-                if(Array.isArray(searchTerms.value['polyArr'])){
-                    createPolysFromPolyArr(searchTerms.value['polyArr'], true);
+                const polyArrData = JSON.parse(searchTerms.value['polyArr']);
+                if(Array.isArray(polyArrData)){
+                    createPolysFromPolyArr(polyArrData, true);
                 }
             }
         }
@@ -1019,7 +1019,7 @@ const spatialAnalysisModule = {
                         }
                     }
                     else{
-                        if(!symbologyArr['taxonomy'].find(key => key['value'] === sciname)){
+                        if(!symbologyArr['sciname'].find(key => key['value'] === sciname)){
                             const taxonObject = {};
                             taxonObject['value'] = sciname;
                             taxonObject['taxa'] = [];

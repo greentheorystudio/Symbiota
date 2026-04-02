@@ -793,11 +793,11 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         setSpatialInputValues() {
             this.spatialInputValues['bottomLatitude'] = this.searchTerms.hasOwnProperty('bottomlat') ? this.searchTerms['bottomlat'] : null;
-            this.spatialInputValues['circleArr'] = this.searchTerms.hasOwnProperty('circleArr') ? this.searchTerms['circleArr'] : null;
+            this.spatialInputValues['circleArr'] = this.searchTerms.hasOwnProperty('circleArr') ? JSON.parse(this.searchTerms['circleArr']) : null;
             this.spatialInputValues['leftLongitude'] = this.searchTerms.hasOwnProperty('leftlong') ? this.searchTerms['leftlong'] : null;
             this.spatialInputValues['pointLatitude'] = this.searchTerms.hasOwnProperty('pointlat') ? this.searchTerms['pointlat'] : null;
             this.spatialInputValues['pointLongitude'] = this.searchTerms.hasOwnProperty('pointlong') ? this.searchTerms['pointlong'] : null;
-            this.spatialInputValues['polyArr'] = this.searchTerms.hasOwnProperty('polyArr') ? this.searchTerms['polyArr'] : null;
+            this.spatialInputValues['polyArr'] = this.searchTerms.hasOwnProperty('polyArr') ? JSON.parse(this.searchTerms['polyArr']) : null;
             this.spatialInputValues['radius'] = this.searchTerms.hasOwnProperty('radiusval') ? this.searchTerms['radiusval'] : null;
             this.spatialInputValues['radiusUnit'] = this.searchTerms.hasOwnProperty('radiusunit') ? this.searchTerms['radiusunit'] : null;
             this.spatialInputValues['rightLongitude'] = this.searchTerms.hasOwnProperty('rightlong') ? this.searchTerms['rightlong'] : null;
