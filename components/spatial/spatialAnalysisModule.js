@@ -64,7 +64,7 @@ const spatialAnalysisModule = {
         'tutorial-module': tutorialModule
     },
     setup(props, context) {
-        const { convertMysqlWKT, csvToArray, generateRandHexColor, getArrayBuffer, getCorrectedPolygonCoordArr, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, validatePolygonCoordArr } = useCore();
+        const { csvToArray, generateRandHexColor, getArrayBuffer, getCorrectedPolygonCoordArr, getPlatformProperty, getRgbaStrFromHexOpacity, hexToRgb, hideWorking, parseFile, showNotification, showWorking, validatePolygonCoordArr } = useCore();
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
         const spatialStore = useSpatialStore();
