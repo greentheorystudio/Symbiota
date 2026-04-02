@@ -8,75 +8,6 @@ function useCore() {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
-    function convertMysqlWKT(wkt) {
-        let long;
-        let lat;
-        let wktStr = '';
-        let adjustedStr = '';
-        let coordStr = '';
-        if(wkt.substring(0,7) === 'POLYGON'){
-            adjustedStr = wkt.substring(8,wkt.length-1);
-            const adjustedStrArr = adjustedStr.split('),');
-            for(let ps in adjustedStrArr){
-                if(adjustedStrArr.hasOwnProperty(ps)){
-                    coordStr += '(';
-                    let subStr = adjustedStrArr[ps].substring(1,adjustedStrArr[ps].length);
-                    if(adjustedStrArr[ps].substring(adjustedStrArr[ps].length - 1,adjustedStrArr[ps].length) === ')'){
-                        subStr = subStr.substring(0,subStr.length - 1);
-                    }
-                    const subStrArr = subStr.split(',');
-                    for(let ss in subStrArr){
-                        if(subStrArr.hasOwnProperty(ss)){
-                            const geocoords = subStrArr[ss].split(' ');
-                            lat = geocoords[0];
-                            long = geocoords[1];
-                            coordStr += long+' '+lat+',';
-                        }
-                    }
-                    coordStr = coordStr.substring(0,coordStr.length-1);
-                    coordStr += '),';
-                }
-            }
-            coordStr = coordStr.substring(0,coordStr.length-1);
-            wktStr = 'POLYGON('+coordStr+')';
-        }
-        else if(wkt.substring(0,12) === 'MULTIPOLYGON'){
-            adjustedStr = wkt.substring(13,wkt.length-1);
-            const adjustedStrArr = adjustedStr.split(')),');
-            for(let ps in adjustedStrArr){
-                if(adjustedStrArr.hasOwnProperty(ps)){
-                    coordStr += '(';
-                    const subStr = adjustedStrArr[ps].substring(2,adjustedStrArr[ps].length);
-                    const subStrArr = subStr.split('),');
-                    for(let ss in subStrArr){
-                        if(subStrArr.hasOwnProperty(ss)){
-                            coordStr += '(';
-                            if(subStrArr[ss].substring(subStrArr[ss].length - 2,subStrArr[ss].length) === '))'){
-                                subStrArr[ss] = subStrArr[ss].substring(0,subStrArr[ss].length - 2);
-                            }
-                            const subSubStrArr = subStrArr[ss].split(',');
-                            for(let sss in subSubStrArr){
-                                if(subSubStrArr.hasOwnProperty(sss)){
-                                    const geocoords = subSubStrArr[sss].split(' ');
-                                    lat = geocoords[0];
-                                    long = geocoords[1];
-                                    coordStr += long+' '+lat+',';
-                                }
-                            }
-                            coordStr = coordStr.substring(0,coordStr.length-1);
-                            coordStr += '),';
-                        }
-                    }
-                    coordStr = coordStr.substring(0,coordStr.length-1);
-                    coordStr += '),';
-                }
-            }
-            coordStr = coordStr.substring(0,coordStr.length-1);
-            wktStr = 'MULTIPOLYGON('+coordStr+')';
-        }
-        return wktStr;
-    }
-
     function convertUtmToDecimalDegrees(zone, easting, northing, datum){
         const d = 0.99960000000000004;
         let d1 = 6378137;
@@ -555,7 +486,6 @@ function useCore() {
     return {
         capitalizeFirstLetter,
         csvToArray,
-        convertMysqlWKT,
         convertUtmToDecimalDegrees,
         generateRandHexColor,
         getArrayBuffer,
