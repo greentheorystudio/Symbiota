@@ -1019,7 +1019,7 @@ const spatialAnalysisModule = {
                         }
                     }
                     else{
-                        if(!symbologyArr['taxonomy'].find(key => key['value'] === sciname)){
+                        if(!symbologyArr['sciname'].find(key => key['value'] === sciname)){
                             const taxonObject = {};
                             taxonObject['value'] = sciname;
                             taxonObject['taxa'] = [];

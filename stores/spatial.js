@@ -114,8 +114,8 @@ const useSpatialStore = Pinia.defineStore('spatial', {
         ],
         recordPage: 1,
         symbologyOptions: [
-            {field: 'collectionname', label: 'Collections'},
-            {field: 'sciname', label: 'Taxa'}
+            {field: 'sciname', label: 'Taxa'},
+            {field: 'collectionname', label: 'Collections'}
         ]
     }),
     getters: {
