@@ -396,30 +396,16 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function findGoToOccidPage() {
-                        const options = {
-                            schema: 'occurrence',
-                            display: 'table',
-                            spatial: 0,
-                            sortField: sortField.value,
-                            sortDirection: (sortDescending.value ? 'DESC' : 'ASC')
-                        };
-                        searchStore.setSearchCurrentOccidIndex(goToOccid.value, options, () => {
-                            const occIndex = searchStore.getCurrentOccIdIndex;
-                            if(occIndex > 0){
-                                if(occIndex < perPageCnt){
-                                    recordsPageNumber.value = 1;
-                                }
-                                else{
-                                    recordsPageNumber.value = Math.ceil(occIndex / perPageCnt);
-                                }
-                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
-                                    setCollection(searchTerms.value['collid']);
-                                }
-                                else{
-                                    loadRecords();
-                                }
+                        const occIndex = searchStore.getCurrentOccIdIndex;
+                        if(occIndex > 0){
+                            if(occIndex < perPageCnt){
+                                recordsPageNumber.value = 1;
                             }
-                        });
+                            else{
+                                recordsPageNumber.value = Math.ceil(occIndex / perPageCnt);
+                            }
+                            setTableRecordData();
+                        }
                     }
 
                     function goToRecord(occid) {
@@ -435,7 +421,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     function loadRecords(initial = false) {
                         if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             initialSearchResults.value = true;
-                            searchStore.clearQueryResultData();
+                            searchStore.clearQueryOccidArr();
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
@@ -444,12 +430,19 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 sortField: sortField.value,
                                 sortDirection: (sortDescending.value ? 'DESC' : 'ASC')
                             };
-                            searchStore.setSearchRecordCount(options, () => {
+                            searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     if(!initial){
                                         displayQueryPopup.value = false;
                                     }
-                                    setTableRecordData();
+                                    if(initial && Number(initialOccId) > 0){
+                                        goToOccid.value = Number(initialOccId);
+                                        searchStore.setCurrentOccId(goToOccid.value);
+                                        findGoToOccidPage();
+                                    }
+                                    else{
+                                        setTableRecordData();
+                                    }
                                 }
                                 else{
                                     hideWorking();
@@ -601,20 +594,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
                             if(searchTermsValid.value || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                                if(Number(initialOccId) > 0){
-                                    goToOccid.value = Number(initialOccId);
-                                    findGoToOccidPage();
+                                if(searchTerms.value.hasOwnProperty('tableIndex')){
+                                    recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
+                                }
+                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
+                                    setCollection(searchTerms.value['collid']);
                                 }
                                 else{
-                                    if(searchTerms.value.hasOwnProperty('tableIndex')){
-                                        recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
-                                    }
-                                    if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
-                                        setCollection(searchTerms.value['collid']);
-                                    }
-                                    else{
-                                        loadRecords();
-                                    }
+                                    loadRecords();
                                 }
                             }
                         }
