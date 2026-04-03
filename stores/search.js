@@ -655,10 +655,10 @@ const useSearchStore = Pinia.defineStore('search', {
             }
             else if(windowType === 'input' && (data.hasOwnProperty('circleArr') || data.hasOwnProperty('polyArr'))){
                 if(data.hasOwnProperty('circleArr')){
-                    this.updateSearchTerms('circleArr', data['circleArr']);
+                    this.updateSearchTerms('circleArr', JSON.stringify(data['circleArr']));
                 }
                 if(data.hasOwnProperty('polyArr')){
-                    this.updateSearchTerms('polyArr', data['polyArr']);
+                    this.updateSearchTerms('polyArr', JSON.stringify(data['polyArr']));
                 }
             }
         },
