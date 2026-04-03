@@ -4,7 +4,7 @@ const useSpatialStore = Pinia.defineStore('spatial', {
         mapSettings: {
             activeLayer: 'none',
             blankDragDropSource: null,
-            clusterDistance: SPATIAL_POINT_CLUSTER_DISTANCE,
+            clusterDistance: 50,
             clusterPoints: true,
             clusterSource: null,
             distFromMeLat: null,
@@ -32,7 +32,7 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             layerQuerySelectorId: null,
             loadPointsError: false,
             loadPointsEvent: false,
-            mapSymbology: 'sciname',
+            mapSymbology: 'collectionname',
             pointActive: false,
             pointLayerBorderColor: SPATIAL_POINT_BORDER_COLOR,
             pointLayerBorderWidth: SPATIAL_POINT_BORDER_WIDTH,
@@ -81,7 +81,8 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             uncertaintyCircleSource: null,
             uncertaintyRadiusText: '',
             uncertaintyRadiusValue: 0,
-            vectorSource: null
+            vectorSource: null,
+            zoomLevel: 0
         },
         rasterColorScales: [
             {value: 'autumn', label: 'Autumn'},
@@ -114,7 +115,7 @@ const useSpatialStore = Pinia.defineStore('spatial', {
         ],
         recordPage: 1,
         symbologyOptions: [
-            {field: 'sciname', label: 'Taxa'},
+            {field: 'sciname', label: 'Taxonomy'},
             {field: 'collectionname', label: 'Collections'}
         ]
     }),
