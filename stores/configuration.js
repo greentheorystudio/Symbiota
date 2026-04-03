@@ -14,7 +14,6 @@ const useConfigurationStore = Pinia.defineStore('configuration', {
             'SPATIAL_POINT_BORDER_COLOR': '#000000',
             'SPATIAL_POINT_BORDER_WIDTH': '1',
             'SPATIAL_POINT_CLUSTER': '1',
-            'SPATIAL_POINT_CLUSTER_DISTANCE': '50',
             'SPATIAL_POINT_DISPLAY_HEAT_MAP': '0',
             'SPATIAL_POINT_FILL_COLOR': '#E69E67',
             'SPATIAL_POINT_HEAT_MAP_BLUR': '15',
