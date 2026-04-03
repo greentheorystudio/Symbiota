@@ -138,7 +138,7 @@ class SearchService {
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
-                $sql = 'SELECT DISTINCT o.occid ';
+                $sql = 'SELECT o.occid ';
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
@@ -201,7 +201,7 @@ class SearchService {
                         $sql .= 'GROUP BY o.occid ';
                     }
                 }
-                //error_log($sql);
+                error_log($sql);
                 if($result = $this->conn->query($sql)){
                     $rows = $result->fetch_all(MYSQLI_ASSOC);
                     $result->free();
@@ -276,7 +276,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(i.imgid IN(SELECT DISTINCT imgid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedImageUploadDate))';
+            $returnVal = 'i.imgid IN(SELECT DISTINCT imgid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedImageUploadDate)';
         }
         return $returnVal;
     }
@@ -408,7 +408,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCatalogNumber))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCatalogNumber)';
         }
         return $returnVal;
     }
@@ -440,7 +440,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollectionNumber))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollectionNumber)';
         }
         return $returnVal;
     }
@@ -499,7 +499,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollector))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollector)';
         }
         return $returnVal;
     }
@@ -521,7 +521,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCountry))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCountry)';
         }
         return $returnVal;
     }
@@ -544,7 +544,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCounty))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCounty)';
         }
         return $returnVal;
     }
@@ -669,7 +669,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedLocality))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedLocality)';
         }
         return $returnVal;
     }
@@ -763,7 +763,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedOccurrenceRemarks))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedOccurrenceRemarks)';
         }
         return $returnVal;
     }
@@ -821,7 +821,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedSpatial))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedSpatial)';
         }
         return $returnVal;
     }
@@ -843,7 +843,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedStateProvince))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedStateProvince)';
         }
         return $returnVal;
     }
@@ -908,7 +908,7 @@ class SearchService {
             }
         }
         if(count($sqlTaxaWherePartsArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa))';
+            $returnVal = 'o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
         }
         return $returnVal;
     }
