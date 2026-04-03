@@ -236,10 +236,6 @@
                     "html": "<p>When checked, occurrence points loaded onto the map are clustered, based on the cluster distance setting, into clusters of like records. When not checked, all occurrence records are loaded as individual points on the map, regardless of proximity.</p>"
                 },
                 {
-                    "header": "Cluster Distance",
-                    "html": "<p>This setting controls the minimum distance threshold (in pixels) between points or clusters which determine whether they are clustered when Cluster Points is checked.</p>"
-                },
-                {
                     "header": "Display Heat Map",
                     "html": "<p>When checked, occurrence records loaded onto the map are displayed as a heat map, based on the Heat Map Radius and Heat Map Blur settings. When not checked occurrence records are displayed on the map as individual points, or clusters of like points.</p>"
                 },
