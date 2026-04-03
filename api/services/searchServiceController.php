@@ -13,12 +13,6 @@ if($action && $options && $stArr && SanitizerService::validateInternalRequest())
     if($action === 'getSearchOccidArr'){
         echo json_encode($searchService->getSearchOccidArr($stArr, $options));
     }
-    elseif($action === 'getSearchRecordCount'){
-        echo $searchService->getSearchRecordCount($stArr, $options);
-    }
-    elseif($action === 'getOccidIndexInSearchArr' && array_key_exists('occid', $_POST)){
-        echo $searchService->getOccidIndexInSearchArr((int)$_POST['occid'], $stArr, $options);
-    }
     elseif($action === 'getSearchTidArr'){
         echo json_encode($searchService->getSearchTidArr($stArr, $options));
     }
