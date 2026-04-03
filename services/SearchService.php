@@ -164,7 +164,7 @@ class SearchService {
                 else{
                     $sql .= 'ORDER BY o.occid ';
                 }
-                if((int)$options['numRows'] > 0){
+                if(array_key_exists('numRows', $options) && (int)$options['numRows'] > 0){
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
                 }
