@@ -25,69 +25,6 @@ class SearchService {
         $this->conn->close();
     }
 
-    public function getOccidIndexInSearchArr($occid, $searchTermsArr, $options): int
-    {
-        $returnVal = 0;
-        $batchSize = 5000;
-        if((int)$occid > 0 && $searchTermsArr && $options){
-            $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
-            if($sqlWhere){
-                $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
-                $sql = 'SELECT DISTINCT o.occid ';
-                $sql .= $this->setFromSql($options['schema']);
-                $sql .= $this->setTableJoinsSql($searchTermsArr);
-                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
-                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
-                    if($searchTermsArr['imagecount'] === 'taxon'){
-                        $sql .= 'GROUP BY t.tidaccepted ';
-                    }
-                    elseif($searchTermsArr['imagecount'] === 'specimen'){
-                        $sql .= 'GROUP BY o.occid ';
-                    }
-                }
-                if($options['schema'] === 'image'){
-                    if(array_key_exists('uploaddate1', $searchTermsArr) && $searchTermsArr['uploaddate1']){
-                        $sql .= 'ORDER BY i.initialtimestamp DESC ';
-                    }
-                    else{
-                        $sql .= 'ORDER BY t.sciname ';
-                    }
-                }
-                elseif(array_key_exists('sortField', $options) && $options['sortField']){
-                    $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
-                }
-                else{
-                    $sql .= 'ORDER BY o.occid ';
-                }
-                $index = 0;
-                $rowIndex = 0;
-                $complete = false;
-                do{
-                    $startIndex = $index * $batchSize;
-                    $fullSql = $sql . 'LIMIT ' . $startIndex . ', ' . $batchSize . ' ';
-                    if($result = $this->conn->query($fullSql)){
-                        $rows = $result->fetch_all(MYSQLI_ASSOC);
-                        $result->free();
-                        if(count($rows) > 0){
-                            foreach($rows as $rIndex => $row){
-                                if((int)$row['occid'] === (int)$occid){
-                                    $returnVal = $rowIndex;
-                                }
-                                $rowIndex++;
-                                unset($rows[$rIndex]);
-                            }
-                        }
-                        else{
-                            $complete = true;
-                        }
-                        $index++;
-                    }
-                } while($returnVal === 0 && !$complete);
-            }
-        }
-        return $returnVal;
-    }
-
     public function getSearchMofData($fromStr, $whereStr): array
     {
         $returnArr = array();
@@ -96,8 +33,8 @@ class SearchService {
         $occurrenceArr = array();
         if($fromStr && $whereStr){
             $sql = 'SELECT eventid, occid, field, datavalue FROM ommofextension WHERE ';
-            $sql .= 'eventid IN(SELECT DISTINCT o.eventid ' . $fromStr . $whereStr . ') OR ';
-            $sql .= 'occid IN(SELECT DISTINCT o.occid ' . $fromStr . $whereStr . ') ';
+            $sql .= 'eventid IN(SELECT o.eventid ' . $fromStr . $whereStr . ') OR ';
+            $sql .= 'occid IN(SELECT o.occid ' . $fromStr . $whereStr . ') ';
             if($result = $this->conn->query($sql)){
                 $rows = $result->fetch_all(MYSQLI_ASSOC);
                 $result->free();
@@ -138,7 +75,7 @@ class SearchService {
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
-                $sql = 'SELECT DISTINCT o.occid ';
+                $sql = 'SELECT o.occid ';
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
                 $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
@@ -164,7 +101,7 @@ class SearchService {
                 else{
                     $sql .= 'ORDER BY o.occid ';
                 }
-                if((int)$options['numRows'] > 0){
+                if(array_key_exists('numRows', $options) && (int)$options['numRows'] > 0){
                     $startIndex = (int)$options['index'] * (int)$options['numRows'];
                     $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['numRows'] . ' ';
                 }
@@ -180,39 +117,6 @@ class SearchService {
             }
         }
         return $returnArr;
-    }
-
-    public function getSearchRecordCount($searchTermsArr, $options): int
-    {
-        $returnVal = 0;
-        if($searchTermsArr && $options){
-            $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
-            if($sqlWhere){
-                $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
-                $sql = 'SELECT COUNT(o.occid) AS cnt ';
-                $sql .= $this->setFromSql($options['schema']);
-                $sql .= $this->setTableJoinsSql($searchTermsArr);
-                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
-                if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
-                    if($searchTermsArr['imagecount'] === 'taxon'){
-                        $sql .= 'GROUP BY t.tidaccepted ';
-                    }
-                    elseif($searchTermsArr['imagecount'] === 'specimen'){
-                        $sql .= 'GROUP BY o.occid ';
-                    }
-                }
-                //error_log($sql);
-                if($result = $this->conn->query($sql)){
-                    $rows = $result->fetch_all(MYSQLI_ASSOC);
-                    $result->free();
-                    foreach($rows as $rIndex => $row){
-                        $returnVal = $row['cnt'];
-                        unset($rows[$rIndex]);
-                    }
-                }
-            }
-        }
-        return $returnVal;
     }
 
     public function getSearchTidArr($searchTermsArr, $options): array
@@ -276,7 +180,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(i.imgid IN(SELECT DISTINCT imgid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedImageUploadDate))';
+            $returnVal = 'i.imgid IN(SELECT imgid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedImageUploadDate)';
         }
         return $returnVal;
     }
@@ -408,7 +312,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCatalogNumber))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCatalogNumber)';
         }
         return $returnVal;
     }
@@ -440,7 +344,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollectionNumber))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollectionNumber)';
         }
         return $returnVal;
     }
@@ -499,7 +403,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollector))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCollector)';
         }
         return $returnVal;
     }
@@ -521,7 +425,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCountry))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCountry)';
         }
         return $returnVal;
     }
@@ -544,7 +448,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCounty))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedCounty)';
         }
         return $returnVal;
     }
@@ -669,7 +573,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedLocality))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedLocality)';
         }
         return $returnVal;
     }
@@ -763,7 +667,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedOccurrenceRemarks))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedOccurrenceRemarks)';
         }
         return $returnVal;
     }
@@ -821,7 +725,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedSpatial))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedSpatial)';
         }
         return $returnVal;
     }
@@ -843,7 +747,7 @@ class SearchService {
             }
         }
         if(count($tempArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedStateProvince))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $tempArr) . ') AS combinedStateProvince)';
         }
         return $returnVal;
     }
@@ -908,7 +812,7 @@ class SearchService {
             }
         }
         if(count($sqlTaxaWherePartsArr) > 0){
-            $returnVal = '(o.occid IN(SELECT DISTINCT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa))';
+            $returnVal = 'o.occid IN(SELECT occid FROM (' . implode(' UNION ALL ', $sqlTaxaWherePartsArr) . ') AS combinedTaxa)';
         }
         return $returnVal;
     }
@@ -1097,12 +1001,14 @@ class SearchService {
         $returnArr = array();
         $mofDataArr = array();
         if($searchTermsArr && $options){
-            $occidArr = $this->getSearchOccidArr($searchTermsArr, $options);
-            if($occidArr){
-                $sqlWhere = '(o.occid IN(' . implode(',', $occidArr) . '))';
+            $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
+            if($sqlWhere){
                 $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $selectStr = $this->setSelectSql($options['schema']);
                 $fromStr = $this->setFromSql($options['schema']);
+                if(!array_key_exists('occidArr', $searchTermsArr)){
+                    $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr);
+                }
                 $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
                 if(array_key_exists('type', $options) && $options['type'] === 'fasta'){
                     $returnArr = $this->serializeFASTAResultArr($fromStr, $whereStr);
@@ -1114,6 +1020,13 @@ class SearchService {
                     $sql = $selectStr . $fromStr . $whereStr;
                     if(array_key_exists('sortField', $options) && $options['sortField']){
                         $sql .= 'ORDER BY o.' . SanitizerService::cleanInStr($this->conn, $options['sortField']) . ($options['sortDirection'] === 'DESC' ? ' DESC' : '') . ' ';
+                    }
+                    else{
+                        $sql .= 'ORDER BY o.occid ';
+                    }
+                    if(array_key_exists('reccnt', $options) && (int)$options['reccnt'] > 0 && array_key_exists('index', $options)){
+                        $startIndex = (int)$options['index'] * (int)$options['reccnt'];
+                        $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$options['reccnt'];
                     }
                     if($options['output'] === 'geojson'){
                         $returnArr = $this->serializeGeoJsonResultArr($sql, ($mofDataArr ?: null));
