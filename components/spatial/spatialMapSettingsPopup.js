@@ -14,9 +14,6 @@ const spatialMapSettingsPopup = {
                     <div>
                         <q-checkbox v-model="mapSettings.clusterPoints" label="Cluster Points" @update:model-value="changeClusterPoints" tabindex="0" />
                     </div>
-                    <div class="row col-5">
-                        <q-input type="number" outlined v-model="mapSettings.clusterDistance" class="col-6" label="Cluster Distance (px)" min="1" dense @update:model-value="changeClusterDistance" tabindex="0" />
-                    </div>
                     <div>
                         <q-checkbox v-model="mapSettings.showHeatMap" label="Display Heat Map" @update:model-value="toggleHeatMap" tabindex="0" />
                     </div>
@@ -31,21 +28,14 @@ const spatialMapSettingsPopup = {
         </q-dialog>
     `,
     setup() {
-        const { getPlatformProperty } = useCore();
+        const { getPlatformProperty, showNotification } = useCore();
 
         const layersObj = Vue.inject('layersObj');
         const mapSettings = Vue.inject('mapSettings');
 
         const loadPointsLayer = Vue.inject('loadPointsLayer');
-        const { showNotification } = useCore();
+        const setClusterDistance = Vue.inject('setClusterDistance');
         const updateMapSettings = Vue.inject('updateMapSettings');
-
-        function changeClusterDistance(val) {
-            updateMapSettings('clusterDistance', val);
-            if(mapSettings.clusterPoints && layersObj['pointv'].getSource().getFeatures().length > 0){
-                mapSettings.clusterSource.setDistance(mapSettings.clusterDistance);
-            }
-        }
 
         function changeClusterPoints(val) {
             updateMapSettings('clusterPoints', val);
@@ -54,6 +44,7 @@ const spatialMapSettingsPopup = {
 
         function changeClusterSetting() {
             if(mapSettings.clusterPoints && layersObj['pointv'].getSource().getFeatures().length > 0){
+                setClusterDistance();
                 loadPointsLayer();
             }
             else{
@@ -97,7 +88,6 @@ const spatialMapSettingsPopup = {
 
         return {
             mapSettings,
-            changeClusterDistance,
             changeClusterPoints,
             changeFreehandMode,
             changeHeatMapBlur,
