@@ -1400,6 +1400,23 @@ const spatialAnalysisModule = {
             changeMapSymbology();
         }
 
+        function setClusterDistance() {
+            if(mapSettings.clusterPoints && layersObj['pointv'].getSource().getFeatures().length > 0){
+                if(mapSettings.zoomLevel >= 13){
+                    mapSettings.clusterSource.setDistance(50);
+                }
+                else if(mapSettings.zoomLevel >= 10){
+                    mapSettings.clusterSource.setDistance(100);
+                }
+                else if(mapSettings.zoomLevel >= 5){
+                    mapSettings.clusterSource.setDistance(250);
+                }
+                else if(mapSettings.zoomLevel >= 2.5){
+                    mapSettings.clusterSource.setDistance(750);
+                }
+            }
+        }
+
         function setClusterSymbol(feature) {
             let clusterindex, hexcolor, radius;
             let style = '';
@@ -1569,6 +1586,8 @@ const spatialAnalysisModule = {
             map.addInteraction(rasterAnalysisTranslate.value);
             map.addControl(new ol.control.FullScreen());
             map.getView().on('change:resolution', () => {
+                updateMapSettings('zoomLevel', map.getView().getZoom());
+                setClusterDistance();
                 if(spiderCluster){
                     const source = layersObj['spider'].getSource();
                     source.clear();
@@ -2072,9 +2091,8 @@ const spatialAnalysisModule = {
             pointInteraction.value.on('select', (event) => {
                 let clusterCnt, newfeature, cFeatures;
                 const newfeatures = event.selected;
-                const zoomLevel = map.getView().getZoom();
                 if(newfeatures.length > 0){
-                    if(zoomLevel < 17){
+                    if(mapSettings.zoomLevel < 17){
                         const extent = ol.extent.createEmpty();
                         if(newfeatures.length > 1){
                             newfeatures.forEach((nfeature) => {
@@ -2677,6 +2695,7 @@ const spatialAnalysisModule = {
         Vue.provide('removeUserLayer', removeUserLayer);
         Vue.provide('resetSymbology', resetSymbology);
         Vue.provide('selectInteraction', selectInteraction);
+        Vue.provide('setClusterDistance', setClusterDistance);
         Vue.provide('setDisplayTutorial', setDisplayTutorial);
         Vue.provide('setLayersOrder', setLayersOrder);
         Vue.provide('setQueryPopupDisplay', setQueryPopupDisplay);

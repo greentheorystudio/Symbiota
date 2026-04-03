@@ -65,9 +65,6 @@ const symbologyConfigurationsTab = {
                         </div>
                         <div class="q-mb-sm row justify-between q-col-gutter-sm">
                             <div class="col-12 col-sm-6 col-md-4">
-                                <text-field-input-element :clearable="false" data-type="int" label="Cluster Distance (px)" :value="configurationData['SPATIAL_POINT_CLUSTER_DISTANCE']" min-value="1" @update:value="(value) => updateConfigurationData('SPATIAL_POINT_CLUSTER_DISTANCE', value)"></text-field-input-element>
-                            </div>
-                            <div class="col-12 col-sm-6 col-md-4">
                                 <text-field-input-element :clearable="false" data-type="int" label="Heat Map Radius (px)" :value="configurationData['SPATIAL_POINT_HEAT_MAP_RADIUS']" min-value="1" @update:value="(value) => updateConfigurationData('SPATIAL_POINT_HEAT_MAP_RADIUS', value)"></text-field-input-element>
                             </div>
                             <div class="col-12 col-sm-6 col-md-4">
