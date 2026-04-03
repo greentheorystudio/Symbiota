@@ -463,8 +463,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function processRecordIndexChange() {
+                        showWorking();
                         searchStore.getSearchOccidArrByIndex(1, currentRecordIndex.value, (occidArr) => {
                             occurrenceStore.setCurrentOccurrenceRecord(occidArr[0]);
+                            hideWorking();
                         });
                     }
 
