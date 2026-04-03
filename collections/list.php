@@ -474,13 +474,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
                             taxaCnt.value = 0;
                             taxaDataArr.length = 0;
-                            searchStore.clearQueryResultData();
+                            searchStore.clearQueryOccidArr();
                             showWorking('Loading...');
                             const options = {
                                 schema: 'occurrence',
                                 spatial: 0
                             };
-                            searchStore.setSearchRecordCount(options, () => {
+                            searchStore.setSearchOccidArr(options, () => {
                                 if(Number(searchStore.getSearchRecordCount) > 0){
                                     displayQueryPopup.value = false;
                                     setTableRecordData(1);
