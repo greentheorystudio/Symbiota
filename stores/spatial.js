@@ -32,7 +32,7 @@ const useSpatialStore = Pinia.defineStore('spatial', {
             layerQuerySelectorId: null,
             loadPointsError: false,
             loadPointsEvent: false,
-            mapSymbology: 'collectionname',
+            mapSymbology: 'sciname',
             pointActive: false,
             pointLayerBorderColor: SPATIAL_POINT_BORDER_COLOR,
             pointLayerBorderWidth: SPATIAL_POINT_BORDER_WIDTH,

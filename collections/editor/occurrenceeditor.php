@@ -442,6 +442,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function processResetCriteria() {
                         occurrenceStore.setCurrentOccurrenceRecord(0);
+                        loadRecords();
                     }
 
                     function processSpatialData(data) {
