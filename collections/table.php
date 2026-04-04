@@ -445,6 +445,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     }
                                 }
                                 else{
+                                    setTableStyle();
                                     hideWorking();
                                     showNotification('negative','There were no records matching your query.');
                                 }
