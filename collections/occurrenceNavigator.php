@@ -83,6 +83,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     :occurrence-id="recordInfoWindowId"
                     :show-popup="showRecordInfoWindow"
                     @close:popup="closeRecordInfoWindow"
+                    @open:occurrence-editor-interface="openOccurrenceEditorInterface"
                 ></occurrence-info-window-popup>
             </template>
             <template v-if="displayQueryPopup">
@@ -337,6 +338,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function openOccurrenceEditorInterface(collid, occid) {
+                        closeRecordInfoWindow();
                         occurrenceEditorInterfaceCollId.value = 0;
                         occurrenceEditorInterfaceOccId.value = 0;
                         if(Number(collid) > 0){
@@ -450,11 +452,11 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         closeRecordInfoWindow,
                         closeSpatialPopup,
                         loadRecords,
+                        openOccurrenceEditorInterface,
                         openRecordInfoWindow,
                         openSpatialPopup,
                         processResetCriteria,
-                        processSpatialData,
-                        redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId
+                        processSpatialData
                     }
                 }
             });

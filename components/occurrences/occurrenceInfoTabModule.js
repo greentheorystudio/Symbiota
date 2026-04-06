@@ -341,7 +341,7 @@ const occurrenceInfoTabModule = {
         'mof-data-field-row-group': mofDataFieldRowGroup,
         'spatial-viewer-element': spatialViewerElement
     },
-    setup(props) {
+    setup(props, context) {
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
@@ -502,6 +502,8 @@ const occurrenceInfoTabModule = {
         const tabMapPanelStyle = Vue.ref('');
         const tabPanelStyle = Vue.ref('');
 
+        const openOccurrenceEditorInterface = Vue.inject('openOccurrenceEditorInterface');
+
         Vue.watch(contentContainerRef, () => {
             if(contentContainerRef.value){
                 setTabPanelHeights();
@@ -510,8 +512,7 @@ const occurrenceInfoTabModule = {
 
         function openOccurrenceEditor(occid, collid) {
             if(props.navigatorMode){
-                const openOccurrenceEditorInterface = Vue.inject('openOccurrenceEditorInterface');
-                openOccurrenceEditorInterface(collid, occid);
+                context.emit('open:occurrence-editor-interface', collid, occid);
             }
             else{
                 searchStore.redirectToOccurrenceEditorWithQueryId(occid, collid);

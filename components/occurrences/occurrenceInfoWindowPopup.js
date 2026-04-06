@@ -21,7 +21,7 @@ const occurrenceInfoWindowPopup = {
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
                     </div>
                 </div>
-                <occurrence-info-tab-module :occurrence-id="occurrenceId" :navigator-mode="navigatorMode"></occurrence-info-tab-module>
+                <occurrence-info-tab-module :occurrence-id="occurrenceId" :navigator-mode="navigatorMode" @open:occurrence-editor-interface="openOccurrenceEditor"></occurrence-info-tab-module>
             </q-card>
         </q-dialog>
     `,
@@ -33,8 +33,13 @@ const occurrenceInfoWindowPopup = {
             context.emit('close:popup');
         }
 
+        function openOccurrenceEditor(collid, occid) {
+            context.emit('open:occurrence-editor-interface', collid, occid);
+        }
+
         return {
-            closePopup
+            closePopup,
+            openOccurrenceEditor
         }
     }
 };
