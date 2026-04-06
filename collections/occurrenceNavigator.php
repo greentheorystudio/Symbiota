@@ -48,6 +48,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             <template v-if="!fullScreenMode">
                 <?php
                 include(__DIR__ . '/../header.php');
+                include(__DIR__ . '/../footer.php');
                 ?>
             </template>
             <div id="mainContainer">
@@ -111,11 +112,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         @update:spatial-data="processSpatialData"
                         @close:popup="closeSpatialPopup();"
                 ></spatial-analysis-popup>
-            </template>
-            <template v-if="!fullScreenMode">
-                <?php
-                include(__DIR__ . '/../footer.php');
-                ?>
             </template>
         </div>
         <?php
@@ -269,9 +265,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const currentUserPermissions = Vue.ref(null);
                     const displayInterface = Vue.computed(() => searchStore.getDisplayInterface);
                     const displayQueryPopup = Vue.ref(false);
-                    const fullScreenMode = Vue.computed(() => {
-                        return (displayInterface.value === 'spatial' || displayInterface.value === 'occurrence');
-                    });
+                    const fullScreenMode = Vue.ref(false);
                     const initialCollId = COLLID;
                     const initialDisplayMode = DISPLAY_MODE;
                     const initialInterface = INTERFACE;
@@ -385,12 +379,23 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function setInterfaceDisplay() {
+                        const navContainerElement = document.getElementById('navContainer');
+                        const mainContainerElement = document.getElementById('mainContainer');
                         document.body.classList.remove('q-pa-md', 'full-window-mode');
                         if(displayInterface.value === 'occurrence' || displayInterface.value === 'table' || displayInterface.value === 'spatial'){
                             document.body.classList.add('full-window-mode');
                         }
                         if(displayInterface.value === 'occurrence'){
                             document.body.classList.add('q-pa-md');
+                        }
+                        if(displayInterface.value !== 'list'){
+                            navContainerElement.prepend(mainContainerElement);
+                            fullScreenMode.value = true;
+                        }
+                        else{
+                            fullScreenMode.value = false;
+                            const topNavigationElement = document.getElementById('topNavigation');
+                            topNavigationElement.after(mainContainerElement);
                         }
                     }
 
