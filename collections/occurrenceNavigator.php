@@ -45,12 +45,12 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     <body>
         <a class="screen-reader-only" href="#navContainer" tabindex="0">Skip to main content</a>
         <div id="navContainer">
-            <template v-if="!fullScreenMode">
+            <div id="containerBlockNode">
                 <?php
                 include(__DIR__ . '/../header.php');
                 include(__DIR__ . '/../footer.php');
                 ?>
-            </template>
+            </div>
             <div id="mainContainer">
                 <template v-if="displayInterface === 'table'">
                     <table-search-interface
@@ -79,38 +79,38 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             </div>
             <template v-if="recordInfoWindowId">
                 <occurrence-info-window-popup
-                        :navigator-mode="true"
-                        :occurrence-id="recordInfoWindowId"
-                        :show-popup="showRecordInfoWindow"
-                        @close:popup="closeRecordInfoWindow"
+                    :navigator-mode="true"
+                    :occurrence-id="recordInfoWindowId"
+                    :show-popup="showRecordInfoWindow"
+                    @close:popup="closeRecordInfoWindow"
                 ></occurrence-info-window-popup>
             </template>
             <template v-if="displayQueryPopup">
                 <search-criteria-popup
-                        :show-popup="(displayQueryPopup && !showSpatialPopup)"
-                        :show-spatial="displayInterface !== 'spatial'"
-                        @open:spatial-popup="openSpatialPopup"
-                        @process:search-load-records="loadRecords"
-                        @reset:search-criteria="processResetCriteria"
-                        @close:popup="displayQueryPopup = false"
+                    :show-popup="(displayQueryPopup && !showSpatialPopup)"
+                    :show-spatial="displayInterface !== 'spatial'"
+                    @open:spatial-popup="openSpatialPopup"
+                    @process:search-load-records="loadRecords"
+                    @reset:search-criteria="processResetCriteria"
+                    @close:popup="displayQueryPopup = false"
                 ></search-criteria-popup>
             </template>
             <template v-if="showSpatialPopup">
                 <spatial-analysis-popup
-                        :bottom-lat="spatialInputValues['bottomLatitude']"
-                        :circle-arr="spatialInputValues['circleArr']"
-                        :left-long="spatialInputValues['leftLongitude']"
-                        :point-lat="spatialInputValues['pointLatitude']"
-                        :point-long="spatialInputValues['pointLongitude']"
-                        :poly-arr="spatialInputValues['polyArr']"
-                        :radius="spatialInputValues['radius']"
-                        :radius-units="spatialInputValues['radiusUnit']"
-                        :right-long="spatialInputValues['rightLongitude']"
-                        :upper-lat="spatialInputValues['upperLatitude']"
-                        :show-popup="showSpatialPopup"
-                        :window-type="popupWindowType"
-                        @update:spatial-data="processSpatialData"
-                        @close:popup="closeSpatialPopup();"
+                    :bottom-lat="spatialInputValues['bottomLatitude']"
+                    :circle-arr="spatialInputValues['circleArr']"
+                    :left-long="spatialInputValues['leftLongitude']"
+                    :point-lat="spatialInputValues['pointLatitude']"
+                    :point-long="spatialInputValues['pointLongitude']"
+                    :poly-arr="spatialInputValues['polyArr']"
+                    :radius="spatialInputValues['radius']"
+                    :radius-units="spatialInputValues['radiusUnit']"
+                    :right-long="spatialInputValues['rightLongitude']"
+                    :upper-lat="spatialInputValues['upperLatitude']"
+                    :show-popup="showSpatialPopup"
+                    :window-type="popupWindowType"
+                    @update:spatial-data="processSpatialData"
+                    @close:popup="closeSpatialPopup();"
                 ></spatial-analysis-popup>
             </template>
         </div>
@@ -262,10 +262,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const searchStore = useSearchStore();
 
                     const clientRoot = baseStore.getClientRoot;
+                    const containerElement = Vue.ref(null);
                     const currentUserPermissions = Vue.ref(null);
                     const displayInterface = Vue.computed(() => searchStore.getDisplayInterface);
                     const displayQueryPopup = Vue.ref(false);
-                    const fullScreenMode = Vue.ref(false);
                     const initialCollId = COLLID;
                     const initialDisplayMode = DISPLAY_MODE;
                     const initialInterface = INTERFACE;
@@ -360,6 +360,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function processResetCriteria() {
+                        searchStore.clearQueryOccidArr();
+                        loadRecordsCompleted.value = false;
                         if(occurrenceEditorModeActive.value){
                             loadRecords();
                         }
@@ -390,10 +392,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         if(displayInterface.value !== 'list'){
                             navContainerElement.prepend(mainContainerElement);
-                            fullScreenMode.value = true;
+                            containerElement.value.remove();
                         }
                         else{
-                            fullScreenMode.value = false;
+                            navContainerElement.prepend(containerElement.value);
                             const topNavigationElement = document.getElementById('topNavigation');
                             topNavigationElement.after(mainContainerElement);
                         }
@@ -406,6 +408,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     Vue.onMounted(() => {
                         setCurrentUserPermissions();
+                        containerElement.value = document.getElementById('containerBlockNode');
                         if(Number(queryId) === 0 && !stArrJson){
                             displayQueryPopup.value = true;
                         }
@@ -435,7 +438,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         currentUserPermissions,
                         displayInterface,
                         displayQueryPopup,
-                        fullScreenMode,
                         isAdmin,
                         occurrenceEditorInterfaceCollId,
                         occurrenceEditorInterfaceDisplayMode,

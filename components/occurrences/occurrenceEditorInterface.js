@@ -30,9 +30,9 @@ const occurrenceEditorInterface = {
                     <div class="row justify-start q-gutter-sm self-center">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="openQueryPopupDisplay();" icon="search" label="Search" aria-label="Open Search Window" tabindex="0"></q-btn>
                         <template v-if="recordCount > 1">
-                            <table-display-button :occid="occId"></table-display-button>
-                            <list-display-button></list-display-button>
-                            <spatial-display-button></spatial-display-button>
+                            <table-display-button :navigator-mode="true"></table-display-button>
+                            <list-display-button :navigator-mode="true"></list-display-button>
+                            <spatial-display-button :navigator-mode="true"></spatial-display-button>
                             <image-display-button></image-display-button>
                         </template>
                     </div>

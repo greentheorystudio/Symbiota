@@ -26,8 +26,8 @@ const listSearchInterface = {
                                             <search-data-downloader :spatial="false"></search-data-downloader>
                                         </div>
                                         <div class="row justify-end q-col-gutter-sm">
-                                            <table-display-button></table-display-button>
-                                            <spatial-display-button></spatial-display-button>
+                                            <table-display-button :navigator-mode="true"></table-display-button>
+                                            <spatial-display-button :navigator-mode="true"></spatial-display-button>
                                             <image-display-button></image-display-button>
                                             <template v-if="searchTermsJson.length <= 1800">
                                                 <copy-url-button></copy-url-button>
@@ -318,7 +318,7 @@ const listSearchInterface = {
         });
 
         function changeRecordPage(props) {
-            pageNumber.value = Number(props.pageNumber.value);
+            pageNumber.value = Number(props.pagination.page);
             searchStore.updateSearchTerms('listIndex', pageNumber.value);
             setTableRecordData();
         }

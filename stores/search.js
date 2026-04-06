@@ -33,6 +33,7 @@ const useSearchStore = Pinia.defineStore('search', {
         },
         currentOccId: 0,
         dateId: null,
+        displayInterface: '',
         hiddenFieldArr: ['collid', 'institutionid', 'collectionid', 'datasetid', 'tid', 'genus', 'specificepithet', 'taxonrank', 'infraspecificepithet', 'recordedbyid', 'latestdatecollected', 'eventid', 'locationid', 'associatedoccurrences', 'collectionname', 'icon', 'tidaccepted'],
         occidLoadingIndex: 0,
         occurrenceFieldLabels: {
@@ -245,9 +246,6 @@ const useSearchStore = Pinia.defineStore('search', {
                 return 1;
             }
         },
-        getDateId(state) {
-            return state.dateId;
-        },
         getDateIdValue() {
             const day = new Date().getDate().toString();
             const month = new Date().getMonth() + 1;
@@ -264,11 +262,11 @@ const useSearchStore = Pinia.defineStore('search', {
             dateTimeString += ((now.getSeconds() < 10)?'0':'')+now.getSeconds().toString();
             return dateTimeString;
         },
+        getDisplayInterface(state) {
+            return state.displayInterface;
+        },
         getFirstOccidInOccidArr(state) {
             return state.queryOccidArr.length > 0 ? state.queryOccidArr[0] : 0;
-        },
-        getHiddenFieldArr(state) {
-            return state.hiddenFieldArr;
         },
         getLastOccidInOccidArr(state) {
             return state.queryOccidArr.length > 0 ? state.queryOccidArr[(state.queryOccidArr.length - 1)] : 0;
@@ -671,13 +669,17 @@ const useSearchStore = Pinia.defineStore('search', {
                 window.open((baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php?occid=' + occid + '&collid=' + collid), '_blank');
             }
         },
-        redirectWithQueryId(url, addlProp = null, newTab = false) {
-            const baseStore = useBaseStore();
+        redirectWithQueryId(url, displayInterface = null, newTab = false) {
+            let redirectUrl = this.baseStore.getClientRoot + url + '?';
+            if(displayInterface){
+                redirectUrl += 'interface=' + redirectUrl + '&';
+            }
+            redirectUrl += 'queryId=' + this.queryId;
             if(newTab){
-                window.open((baseStore.getClientRoot + url + '?queryId=' + this.queryId + ((addlProp && addlProp['prop'] && addlProp['propValue']) ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '')), '_blank');
+                window.open(redirectUrl, '_blank');
             }
             else{
-                window.location.href = baseStore.getClientRoot + url + '?queryId=' + this.queryId + ((addlProp && addlProp['prop'] && addlProp['propValue']) ? ('&' + addlProp['prop'] + '=' + addlProp['propValue']) : '');
+                window.location.href = redirectUrl;
             }
         },
         removeOccidFromOccidArrs(occid) {
@@ -715,6 +717,9 @@ const useSearchStore = Pinia.defineStore('search', {
         setCurrentOccId(value) {
             this.currentOccId = value;
         },
+        setDisplayInterface(value) {
+            this.displayInterface = value;
+        },
         setLocalStorageSearchTerms() {
             const newBlankSearchTerms = {};
             newBlankSearchTerms[this.dateId.toString()] = {};
@@ -741,7 +746,8 @@ const useSearchStore = Pinia.defineStore('search', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.queryOccidArr = this.queryOccidArr.concat(data);
+                const newOccidArr = this.queryOccidArr.concat(data);
+                this.queryOccidArr = newOccidArr.slice();
                 if(data.length < loadingCnt){
                     if(callback){
                         callback();

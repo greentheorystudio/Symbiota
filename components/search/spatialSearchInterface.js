@@ -1,7 +1,7 @@
 const spatialSearchInterface = {
     template: `
         <div id="map-container" class="fullscreen">
-            <spatial-analysis-module window-type="analysis" :load-records-completed="loadRecordsCompleted" @open:query-popup="openQueryPopupDisplay"></spatial-analysis-module>
+            <spatial-analysis-module window-type="analysis" :load-records-completed="loadRecordsCompleted" @open:query-popup="openQueryPopupDisplay" @open:record-info-window="openRecordInfoWindow"></spatial-analysis-module>
         </div>
     `,
     components: {
@@ -14,9 +14,14 @@ const spatialSearchInterface = {
             context.emit('open:query-popup');
         }
 
+        function openRecordInfoWindow(id){
+            context.emit('open:record-info-window', id);
+        }
+
         return {
             loadRecordsCompleted,
-            openQueryPopupDisplay
+            openQueryPopupDisplay,
+            openRecordInfoWindow
         }
     }
 };
