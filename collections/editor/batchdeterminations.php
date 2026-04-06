@@ -212,7 +212,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         }
 
         function openEditorPopup(occid){
-            openPopup('occurrenceeditor.php?occid=' + occid);
+            openPopup('../occurrenceNavigator.php?interface=occurrence&occid=' + occid);
         }
 
         function openPopup(urlStr){

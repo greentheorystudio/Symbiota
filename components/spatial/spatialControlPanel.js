@@ -25,7 +25,7 @@ const spatialControlPanel = {
                                 </div>
                                 <template v-if="!inputWindowMode">
                                     <div>
-                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
+                                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="openQueryPopupDisplay();" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
                                     </div>
                                     <div>
                                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();" aria-label="Go to homepage" tabindex="0">
@@ -125,7 +125,7 @@ const spatialControlPanel = {
                                     </div>
                                     <template v-if="!inputWindowMode">
                                         <div>
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="openQueryPopupDisplay();" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
                                         </div>
                                         <div>
                                             <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();" aria-label="Go to homepage" tabindex="0">
@@ -174,7 +174,7 @@ const spatialControlPanel = {
                             </div>
                             <template v-if="!inputWindowMode">
                                 <div>
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="setQueryPopupDisplay(true);" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="openQueryPopupDisplay();" icon="search" label="Search" dense aria-label="Open Search Window" tabindex="0" />
                                 </div>
                                 <div>
                                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" icon="home" dense @click="goHome();" aria-label="Go to homepage" tabindex="0">
@@ -250,10 +250,10 @@ const spatialControlPanel = {
         const selectInteraction = Vue.inject('selectInteraction');
         const windowWidth = Vue.inject('windowWidth');
 
+        const openQueryPopupDisplay = Vue.inject('openQueryPopupDisplay');
         const processInputSelections = Vue.inject('processInputSelections');
         const processInputSubmit = Vue.inject('processInputSubmit');
         const processInputPointUncertaintyChange = Vue.inject('processInputPointUncertaintyChange');
-        const setQueryPopupDisplay = Vue.inject('setQueryPopupDisplay');
         const showTutorial = Vue.inject('showTutorial');
         const updateMapSettings = Vue.inject('updateMapSettings');
 
@@ -466,8 +466,8 @@ const spatialControlPanel = {
             changeInputPointUncertainty,
             exportMapPNG,
             goHome,
+            openQueryPopupDisplay,
             processChangeBaseLayer,
-            setQueryPopupDisplay,
             showTutorial,
             updateMapSettings,
             updateRadiusUnits

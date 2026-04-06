@@ -81,8 +81,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     const clientRoot = store.getClientRoot;
                     const navBarData = Vue.ref([
                         {url: clientRoot + '/index.php', label: 'Home'},
-                        {url: clientRoot + '/collections/list.php', label: 'Search Collections'},
-                        {url: clientRoot + '/spatial/index.php', label: 'Spatial Module', newTab: true},
+                        {url: clientRoot + '/collections/occurrenceNavigator.php?interface=list', label: 'Search Collections'},
+                        {url: clientRoot + '/collections/occurrenceNavigator.php?interface=spatial', label: 'Spatial Module', newTab: true},
                         {url: clientRoot + '/media/search.php', label: 'Image Search'}
                     ]);
                     let navBarTimeout = null;
