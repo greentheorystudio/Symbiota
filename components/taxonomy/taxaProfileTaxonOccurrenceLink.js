@@ -16,7 +16,7 @@ const taxaProfileTaxonOccurrenceLink = {
         const taxon = Vue.computed(() => taxaStore.getAcceptedTaxonData);
 
         function openOccurrenceSearch() {
-            const url = clientRoot + '/collections/list.php?starr={"imagetype":"all","usethes":true,"taxontype":"4","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}';
+            const url = clientRoot + '/collections/occurrenceNavigator.php?interface=list&starr={"imagetype":"all","usethes":true,"taxontype":"4","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}';
             window.open(url, '_blank');
         }
 

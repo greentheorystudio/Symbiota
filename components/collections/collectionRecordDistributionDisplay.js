@@ -75,7 +75,7 @@ const collectionRecordDistributionDisplay = {
         });
 
         function getSearchUrl(key) {
-            let url = clientRoot + '/collections/list.php?starr={"db":"' + props.collectionId + '",';
+            let url = clientRoot + '/collections/occurrenceNavigator.php?interface=list&starr={"db":"' + props.collectionId + '",';
             if(props.displayType === 'geographic'){
                 if(selectedState.value){
                     url += '"country":"' + selectedCountry.value + '","state":"' + selectedState.value + '","county":"' + key + '"}';

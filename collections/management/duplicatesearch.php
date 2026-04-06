@@ -172,7 +172,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 								$first = true;
 								foreach($occurArr as $occId => $occArr){
 									echo '<tr '.(($setCnt % 2) === 1?'class="alt"':'').'>';
-									echo '<td><a href="../editor/occurrenceeditor.php?occid='.$occId.'" target="_blank">'.$occId.'</a></td>'."\n";
+									echo '<td><a href="../occurrenceNavigator.php?interface=occurrence&occid='.$occId.'" target="_blank">'.$occId.'</a></td>'."\n";
 									echo '<td><input name="dupid[]" type="checkbox" value="'.$dupKey.':'.$occId.'" /></td>'."\n";
 									echo '<td><input name="dup'.$dupKey.'target" type="radio" value="'.$occId.'" '.($first?'checked':'').'/></td>'."\n";
 									echo '<td>'.$occArr['catalognumber'].'</td>'."\n";

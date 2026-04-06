@@ -68,8 +68,6 @@ const occurrenceCloneRecordModule = {
         const mediaArr = Vue.computed(() => occurrenceStore.getMediaArr);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceData = Vue.computed(() => occurrenceStore.getCurrentOccurrenceData);
-        const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
-        const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const selectedIncludeDataOption = Vue.ref('event');
 
         Vue.watch(occId, () => {
@@ -166,7 +164,7 @@ const occurrenceCloneRecordModule = {
             showWorking();
             occurrenceStore.createOccurrenceRecord((newOccid) => {
                 if(newOccid > 0){
-                    searchStore.addRecordToSearchRecordCnt(newOccid);
+                    searchStore.addNewOccidToOccidArrs(newOccid);
                     if(includeMediaLinkages.value){
                         resetMediaCounts();
                         processCloneImageAssociations(newOccid);
