@@ -434,7 +434,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     Vue.provide('openOccurrenceEditorInterface', openOccurrenceEditorInterface);
 
                     Vue.onMounted(() => {
-                        showWorking('Loading...');
                         setCurrentUserPermissions();
                         containerElement.value = document.getElementById('containerBlockNode');
                         if(Number(queryId) === 0 && !stArrJson){
