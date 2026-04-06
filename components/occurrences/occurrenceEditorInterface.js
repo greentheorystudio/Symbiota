@@ -250,7 +250,7 @@ const occurrenceEditorInterface = {
                 if(Number(props.displayMode) > 1){
                     occurrenceStore.setDisplayMode(props.displayMode);
                 }
-                occurrenceStore.setCurrentOccurrenceRecord(props.occid);
+                occurrenceStore.setCurrentOccurrenceRecord(Number(props.occid));
             }
             else{
                 searchStore.setDisplayInterface('list');

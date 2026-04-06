@@ -320,9 +320,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function loadRecords(){
                         if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                            showWorking('Loading...');
                             loadRecordsCompleted.value = false;
                             searchStore.clearQueryOccidArr();
-                            showWorking('Loading...');
                             searchStore.setSearchOccidArr(loadRecordOptions.value, () => {
                                 loadRecordsCompleted.value = true;
                                 if(Number(searchRecordCount.value) > 0){
@@ -382,7 +382,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(searchTermsCollId.value)){
                                         searchStore.updateSearchTerms('collid', collid);
                                     }
-                                    loadRecords(true);
+                                    if(initialInterface !== 'occurrence'){
+                                        loadRecords(true);
+                                    }
+                                    else{
+                                        displayQueryPopup.value = false;
+                                        hideWorking();
+                                    }
                                 }
                                 else{
                                     searchStore.updateSearchTerms('db', [collid]);
@@ -428,6 +434,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     Vue.provide('openOccurrenceEditorInterface', openOccurrenceEditorInterface);
 
                     Vue.onMounted(() => {
+                        showWorking('Loading...');
                         setCurrentUserPermissions();
                         containerElement.value = document.getElementById('containerBlockNode');
                         if(Number(queryId) === 0 && !stArrJson){
