@@ -103,8 +103,8 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     const imgDuration = 4000;
                     const navBarData = Vue.ref([
                         {url: (clientRoot + '/index.php'), label: 'Home'},
-                        {url: (clientRoot + '/collections/list.php'), label: 'Search Collections'},
-                        {url: (clientRoot + '/spatial/index.php'), label: 'Spatial Module', newTab: true},
+                        {url: (clientRoot + '/collections/occurrenceNavigator.php?interface=list'), label: 'Search Collections'},
+                        {url: (clientRoot + '/collections/occurrenceNavigator.php?interface=spatial'), label: 'Spatial Module', newTab: true},
                         {url: (clientRoot + '/media/search.php'), label: 'Image Search'},
                         {
                             label: 'Interactive Tools',
@@ -170,12 +170,14 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                     }
 
                     function slideShow() {
-                        document.getElementById('bannerContainer').style.backgroundImage = imgArray[curIndex.value];
-                        if(photographerArray[curIndex.value] !== ""){
-                            document.getElementById('imageCredit').innerHTML = '<div style="background-color:white;opacity:60%;color:black;padding:5px;font-size: 12px;">(photographer: ' + photographerArray[curIndex.value] + ')</div>';
-                        }
-                        else{
-                            document.getElementById('imageCredit').innerHTML = '';
+                        if(document.getElementById('bannerContainer')){
+                            document.getElementById('bannerContainer').style.backgroundImage = imgArray[curIndex.value];
+                            if(photographerArray[curIndex.value] !== ""){
+                                document.getElementById('imageCredit').innerHTML = '<div style="background-color:white;opacity:60%;color:black;padding:5px;font-size: 12px;">(photographer: ' + photographerArray[curIndex.value] + ')</div>';
+                            }
+                            else{
+                                document.getElementById('imageCredit').innerHTML = '';
+                            }
                         }
                         curIndex.value++;
                         if(curIndex.value === imgArray.length) {
