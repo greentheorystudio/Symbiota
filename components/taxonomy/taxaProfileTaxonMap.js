@@ -35,7 +35,7 @@ const taxaProfileTaxonMap = {
             else{
                 taxonType = 1;
             }
-            const url = clientRoot + '/spatial/index.php?starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
+            const url = clientRoot + '/collections/occurrenceNavigator.php?interface=spatial&starr={"usethes":true,"taxontype":"' + taxonType + '","taxa":"' + taxon.value['sciname'].replaceAll("'",'%squot;') + '"}&clusterpoints=' + (clustering ? 'true' : 'false');
             window.open(url, '_blank');
         }
 

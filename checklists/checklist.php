@@ -581,7 +581,7 @@ $pid = array_key_exists('pid', $_REQUEST) ? (int)$_REQUEST['pid'] : 0;
                     });
                     const keyModuleIsActive = baseStore.getKeyModuleIsActive;
                     const mapViewUrl = Vue.computed(() => {
-                        return (clientRoot + '/spatial/index.php?starr={"clid":"' + clId.value + '"}');
+                        return (clientRoot + '/collections/occurrenceNavigator.php?interface=spatial&starr={"clid":"' + clId.value + '"}');
                     });
                     const paginatedTaxaArr = Vue.computed(() => {
                         let returnArr;

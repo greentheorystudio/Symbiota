@@ -355,7 +355,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
             if(strlen($loc) > 500) {
                 $loc = substr($loc, 400);
             }
-            $openStr = "window.open('" . $GLOBALS['CLIENT_ROOT'] . '/collections/editor/occurrenceeditor.php?occid=' . $r->occid . "', '_blank');";
+            $openStr = "window.open('" . $GLOBALS['CLIENT_ROOT'] . '/collections/occurrenceNavigator.php?interface=occurrence&occid=' . $r->occid . "', '_blank');";
             $retHtml .= '<tr>';
             $retHtml .= '<td><input type="checkbox" name="occid[]" value="'.$r->occid.'" checked /></td>';
             $retHtml .= '<td>';

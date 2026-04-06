@@ -663,10 +663,10 @@ const useSearchStore = Pinia.defineStore('search', {
         redirectToOccurrenceEditorWithQueryId(occid, collid) {
             const baseStore = useBaseStore();
             if(this.getOccurrenceEditorModeActive){
-                window.location.href = baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php?queryId=' + this.queryId + '&occid=' + occid + '&collid=' + collid;
+                window.location.href = baseStore.getClientRoot + '/collections/occurrenceNavigator.php?interface=occurrence&queryId=' + this.queryId + '&occid=' + occid + '&collid=' + collid;
             }
             else{
-                window.open((baseStore.getClientRoot + '/collections/editor/occurrenceeditor.php?occid=' + occid + '&collid=' + collid), '_blank');
+                window.open((baseStore.getClientRoot + '/collections/occurrenceNavigator.php?interface=occurrence&occid=' + occid + '&collid=' + collid), '_blank');
             }
         },
         redirectWithQueryId(url, displayInterface = null, newTab = false) {

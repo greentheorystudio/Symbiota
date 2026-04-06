@@ -81,7 +81,7 @@ include_once(__DIR__ . '/../config/header-includes.php');
                 taxa: sciname,
                 clid: clid
             };
-            const url = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/list.php?starr=' + JSON.stringify(starrObj);
+            const url = '<?php echo $GLOBALS['CLIENT_ROOT']; ?>/collections/occurrenceNavigator.php?interface=list&starr=' + JSON.stringify(starrObj);
             openPopup(url);
         }
     </script>

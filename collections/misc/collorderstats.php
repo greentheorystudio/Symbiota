@@ -71,7 +71,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
                     echo '<td>';
                     if($data['SpecimensPerOrder'] === 1){
                         $starrStr = '{"db":"'.$collId.'","usethes":true,"taxa":"'.$name.'"}';
-                        echo "<a href='../list.php?starr=".$starrStr."' target='_blank'>";
+                        echo "<a href='../occurrenceNavigator.php?interface=list&starr=".$starrStr."' target='_blank'>";
                     }
                     echo number_format($data['SpecimensPerOrder']);
                     if($data['SpecimensPerOrder'] === 1){
