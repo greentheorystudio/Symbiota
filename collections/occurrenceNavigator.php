@@ -260,6 +260,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 setup() {
                     const { hideWorking, showNotification, showWorking } = useCore();
                     const baseStore = useBaseStore();
+                    const occurrenceStore = useOccurrenceStore();
                     const searchStore = useSearchStore();
 
                     const clientRoot = baseStore.getClientRoot;
@@ -284,6 +285,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         return returnVal;
                     });
+                    const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const loadRecordsCompleted = Vue.ref(false);
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
@@ -373,6 +375,23 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         searchStore.processSpatialPopupData(popupWindowType.value, data);
                     }
 
+                    function setCollection(collid) {
+                        if(Number(collid) > 0){
+                            occurrenceStore.setCollection(collid, false, () => {
+                                if(isEditor.value){
+                                    if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(searchTermsCollId.value)){
+                                        searchStore.updateSearchTerms('collid', collid);
+                                    }
+                                    loadRecords(true);
+                                }
+                                else{
+                                    searchStore.updateSearchTerms('db', [collid]);
+                                    displayQueryPopup.value = true;
+                                }
+                            });
+                        }
+                    }
+
                     function setCurrentUserPermissions() {
                         baseStore.getGlobalConfigValue('USER_RIGHTS', (dataStr) => {
                             const data = dataStr ? JSON.parse(dataStr) : null;
@@ -430,8 +449,16 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
                             if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                                loadRecords();
+                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
+                                    setCollection(searchTerms.value['collid']);
+                                }
+                                else{
+                                    loadRecords();
+                                }
                             }
+                        }
+                        else if(Number(initialCollId) > 0){
+                            setCollection(initialCollId);
                         }
                     });
 

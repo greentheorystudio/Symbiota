@@ -247,9 +247,6 @@ const occurrenceEditorInterface = {
             window.addEventListener('resize', setContainerWidth);
             occurrenceStore.setOccurrenceFields();
             if(Number(props.collid) > 0 || Number(props.occid) > 0){
-                if(Number(props.collid) > 0 && Number(props.occid) === 0){
-                    occurrenceStore.setCollection(props.collid);
-                }
                 if(Number(props.displayMode) > 1){
                     occurrenceStore.setDisplayMode(props.displayMode);
                 }

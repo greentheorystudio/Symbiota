@@ -331,21 +331,6 @@ const tableSearchInterface = {
             setTableRecordData();
         }
 
-        function setCollection(collid) {
-            if(Number(collid) > 0){
-                occurrenceStore.setCollection(collid, false, () => {
-                    if(isEditor.value){
-                        if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(searchTermsCollId.value)){
-                            searchStore.updateSearchTerms('collid', collid);
-                        }
-                    }
-                    else{
-                        searchStore.updateSearchTerms('db', [collid]);
-                    }
-                });
-            }
-        }
-
         function setTableRecordData() {
             searchStore.updateSearchTerms('tableIndex', recordsPageNumber.value);
             const options = {
@@ -396,9 +381,6 @@ const tableSearchInterface = {
             setTableStyle();
             if(searchTerms.value.hasOwnProperty('tableIndex')){
                 recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
-            }
-            if(Number(props.collid) > 0){
-                setCollection(props.collid);
             }
             if(searchRecordCount.value > 0){
                 initialSearchResults.value = true;
