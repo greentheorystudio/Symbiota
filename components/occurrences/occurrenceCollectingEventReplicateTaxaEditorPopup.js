@@ -117,8 +117,6 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
         const processingUpdateArr = [];
         const repData = Vue.reactive([]);
         const replicateData = Vue.computed(() => occurrenceStore.getCollectingEventReplicateData);
-        const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
-        const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const tableColumns = Vue.ref([]);
         const tablePagination = {
             rowsPerPage: 0
@@ -253,7 +251,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                 occurrenceStore.updateOccurrenceEditData('individualcount', recordToAdd.cnt);
                 occurrenceStore.createOccurrenceRecord((occid) => {
                     processEnteredData();
-                    searchStore.addRecordToSearchRecordCnt(occid);
+                    searchStore.addNewOccidToOccidArrs(occid);
                 });
             }
             else if(processingDeleteArr.length > 0){
@@ -266,7 +264,7 @@ const occurrenceCollectingEventReplicateTaxaEditorPopup = {
                                 showNotification('negative', ('An error occurred while deleting occurrence record ' + recordToDelete + '.'));
                             }
                             processEnteredData();
-                            searchStore.removeRecordFromSearchRecordCnt();
+                            searchStore.removeOccidFromOccidArrs(recordToDelete);
                         });
                     }
                     else{

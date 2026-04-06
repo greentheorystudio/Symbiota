@@ -64,7 +64,6 @@ const occurrenceEditorOccurrenceDataControls = {
         const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceValid = Vue.computed(() => occurrenceStore.getOccurrenceValid);
-        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         const showConfiguredDataEditorPopup = Vue.ref(false);
         const showEventLocationTransferPopup = Vue.ref(false);
 
@@ -80,8 +79,7 @@ const occurrenceEditorOccurrenceDataControls = {
                         if(newOccid > 0){
                             context.emit('occurrence:created', newOccid);
                             showNotification('positive','Occurrence record created successfully.');
-                            searchStore.addRecordToSearchRecordCnt(newOccid);
-                            searchStore.setCurrentOccIdIndex(searchRecordCount.value - 1);
+                            searchStore.addNewOccidToOccidArrs(newOccid);
                         }
                         else{
                             showNotification('negative', 'There was an error creating the occurrence record.');
@@ -94,8 +92,7 @@ const occurrenceEditorOccurrenceDataControls = {
                     if(newOccid > 0){
                         context.emit('occurrence:created', newOccid);
                         showNotification('positive','Occurrence record created successfully.');
-                        searchStore.addRecordToSearchRecordCnt(newOccid);
-                        searchStore.setCurrentOccIdIndex(searchRecordCount.value - 1);
+                        searchStore.addNewOccidToOccidArrs(newOccid);
                     }
                     else{
                         showNotification('negative', 'There was an error creating the occurrence record.');
