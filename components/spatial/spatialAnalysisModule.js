@@ -836,9 +836,18 @@ const spatialAnalysisModule = {
                         primeSymbologyData(features);
                         mapSettings.pointVectorSource.addFeatures(features);
                         if(index === finalIndex){
-                            const pointextent = mapSettings.pointVectorSource.getExtent();
-                            map.getView().fit(pointextent,map.getSize());
-                            loadPointsPostrender();
+                            const pointFeatures = mapSettings.pointVectorSource.getFeatures();
+                            if(pointFeatures.length > 0){
+                                const pointextent = mapSettings.pointVectorSource.getExtent();
+                                map.getView().fit(pointextent,map.getSize());
+                                loadPointsPostrender();
+                            }
+                            else{
+                                updateMapSettings('sidePanelExpandedElement', 'records');
+                                updateMapSettings('showSidePanel', true);
+                                hideWorking();
+                                showNotification('negative','All of the records cannot be displayed on the map due to missing coordinate data');
+                            }
                         }
                     }
                     else{
