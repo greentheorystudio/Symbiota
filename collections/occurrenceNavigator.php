@@ -44,8 +44,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
     </head>
     <body>
         <a class="screen-reader-only" href="#navContainer" tabindex="0">Skip to main content</a>
-        <div id="navContainer">
-            <div id="containerBlockNode">
+        <div id="navContainer" class="fit">
+            <div id="containerBlockNode" class="fit">
                 <?php
                 include(__DIR__ . '/../header.php');
                 include(__DIR__ . '/../footer.php');
@@ -423,8 +423,13 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         else{
                             navContainerElement.prepend(containerElement.value);
-                            const topNavigationElement = document.getElementById('topNavigation');
-                            topNavigationElement.after(mainContainerElement);
+                            if(document.getElementById('appContainer')){
+                                const topNavigationElement = document.getElementById('topNavigation');
+                                topNavigationElement.after(mainContainerElement);
+                            }
+                            else{
+                                containerElement.value.insertBefore(mainContainerElement, containerElement.value.children[2]);
+                            }
                         }
                     }
 
