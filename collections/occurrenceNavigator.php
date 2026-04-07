@@ -52,7 +52,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 include(__DIR__ . '/../footer.php');
                 ?>
             </div>
-            <div id="interfaceContainer">
+            <div id="interfaceContainer" :style="mainContainerStyle">
                 <template v-if="displayInterface === 'table'">
                     <table-search-interface
                         :collid="occurrenceEditorInterfaceCollId"
@@ -285,6 +285,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const loadRecordsCompleted = Vue.ref(false);
+                    const mainContainerStyle = Vue.ref('');
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
@@ -377,6 +378,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         if(Number(collid) > 0){
                             occurrenceStore.setCollection(collid, false, () => {
                                 if(isEditor.value){
+                                    searchStore.setOccurrenceEditorMode(true);
                                     if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(searchTermsCollId.value)){
                                         searchStore.updateSearchTerms('collid', collid);
                                     }
@@ -410,6 +412,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         const mainContainerElement = document.getElementById('interfaceContainer');
                         document.body.classList.remove('q-pa-md', 'full-window-mode');
                         mainContainerElement.classList.remove('list-search-container');
+                        mainContainerStyle.value = '';
                         if(displayInterface.value === 'occurrence' || displayInterface.value === 'table' || displayInterface.value === 'spatial'){
                             document.body.classList.add('full-window-mode');
                         }
@@ -432,6 +435,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             else{
                                 containerElement.value.insertBefore(mainContainerElement, containerElement.value.children[1]);
                             }
+                        }
+                        if(mainContainerElement.parentElement.id === 'navContainer'){
+                            mainContainerStyle.value = 'width: 80%;';
                         }
                     }
 
@@ -481,6 +487,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         displayInterface,
                         displayQueryPopup,
                         isAdmin,
+                        mainContainerStyle,
                         occurrenceEditorInterfaceCollId,
                         occurrenceEditorInterfaceDisplayMode,
                         occurrenceEditorInterfaceOccId,

@@ -36,6 +36,7 @@ const useSearchStore = Pinia.defineStore('search', {
         displayInterface: '',
         hiddenFieldArr: ['collid', 'institutionid', 'collectionid', 'datasetid', 'tid', 'genus', 'specificepithet', 'taxonrank', 'infraspecificepithet', 'recordedbyid', 'latestdatecollected', 'eventid', 'locationid', 'associatedoccurrences', 'collectionname', 'icon', 'tidaccepted'],
         occidLoadingIndex: 0,
+        occurrenceEditorMode: false,
         occurrenceFieldLabels: {
             occid: 'ID',
             dbpk: 'dbpk',
@@ -280,7 +281,7 @@ const useSearchStore = Pinia.defineStore('search', {
             }
         },
         getOccurrenceEditorModeActive(state) {
-            return state.searchTerms.hasOwnProperty('collid') && Number(state.searchTerms.collid) > 0;
+            return state.occurrenceEditorMode;
         },
         getOccurrenceFieldLabels(state) {
             return state.occurrenceFieldLabels;
@@ -724,6 +725,9 @@ const useSearchStore = Pinia.defineStore('search', {
             const newBlankSearchTerms = {};
             newBlankSearchTerms[this.dateId.toString()] = {};
             localStorage.setItem('searchTermsArr', JSON.stringify(newBlankSearchTerms));
+        },
+        setOccurrenceEditorMode(value) {
+            this.occurrenceEditorMode = value;
         },
         setQueryIdInLocalStorageSearchTerms(queryId) {
             const stArr = JSON.parse(localStorage['searchTermsArr']);

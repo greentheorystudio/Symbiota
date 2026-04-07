@@ -147,6 +147,7 @@ const occurrenceEditorInterface = {
         const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
         const moduleContainerRef = Vue.ref(null);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
+        const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
@@ -162,7 +163,9 @@ const occurrenceEditorInterface = {
         const loadRecordsCompleted = Vue.inject('loadRecordsCompleted');
 
         Vue.watch(collId, () => {
-            searchStore.updateSearchTerms('collid', collId.value);
+            if(occurrenceEditorModeActive.value){
+                searchStore.updateSearchTerms('collid', collId.value);
+            }
         });
 
         Vue.watch(occId, () => {
