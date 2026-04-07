@@ -1,590 +1,296 @@
-<?php 
-include_once(__DIR__ . '/../../config/symbbase.php');
-include_once(__DIR__ . '/../../classes/InstitutionManager.php');
-include_once(__DIR__ . '/../../services/SanitizerService.php');
+<?php
+include_once(__DIR__ . '../../../config/symbbase.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
-if(!$GLOBALS['SYMB_UID']) {
-    header('Location: ../../profile/index.php?refurl=' .SanitizerService::getCleanedRequestPath(true));
-}
-
-$iid = array_key_exists('iid',$_REQUEST)?(int)$_REQUEST['iid']:0;
-$targetCollid = array_key_exists('targetcollid',$_REQUEST)?(int)$_REQUEST['targetcollid']:0;
-$eMode = array_key_exists('emode',$_REQUEST)?(int)$_REQUEST['emode']:0;
-$instCodeDefault = array_key_exists('instcode',$_REQUEST)?htmlspecialchars($_REQUEST['instcode']):'';
-$formSubmit = array_key_exists('formsubmit',$_POST)?htmlspecialchars($_POST['formsubmit']): '';
-$addCollId = array_key_exists('addcollid',$_POST)?(int)$_POST['addcollid']:0;
-$removeCollId = array_key_exists('removecollid',$_REQUEST)?(int)$_REQUEST['removecollid']:0;
-
-$instManager = new InstitutionManager();
-$fullCollList = $instManager->getCollectionList();
-if($iid){
-	$instManager->setInstitutionId($iid);
-}
-$collList = array();
-foreach($fullCollList as $k => $v){
-	if($v['iid'] === $iid) {
-        $collList[$k] = $v['name'];
-    }
-}
-
-$editorCode = 0;
-$statusStr = '';
-if($GLOBALS['IS_ADMIN']){
-	$editorCode = 3;
-}
-elseif(array_key_exists('CollAdmin',$GLOBALS['USER_RIGHTS'])){
-	$editorCode = 1;
-	if($collList && array_intersect($GLOBALS['USER_RIGHTS']['CollAdmin'],array_keys($collList))){
-		$editorCode = 2;
-	}
-}
-if($editorCode){
-	if($formSubmit === 'Add Institution'){
-		$iid = $instManager->submitInstitutionAdd($_POST);
-		if($iid){
-			if($targetCollid) {
-                header('Location: ../misc/collprofiles.php?collid=' . $targetCollid);
-            }
-		}
-		else{
-			$statusStr = $instManager->getErrorStr();
-		}
-	}
-	else if($editorCode > 1){
-        if($formSubmit === 'Update Institution Address'){
-            if($instManager->submitInstitutionEdits($_POST)){
-                if($targetCollid) {
-                    header('Location: ../misc/collprofiles.php?collid=' . $targetCollid);
-                }
-            }
-            else{
-                $statusStr = $instManager->getErrorStr();
-            }
-        }
-        elseif(isset($_POST['deliid'])){
-            $delIid = $_POST['deliid'];
-            if($instManager->deleteInstitution($delIid)){
-                $statusStr = 'SUCCESS! Institution deleted.';
-                $iid = 0;
-            }
-            else{
-                $statusStr = $instManager->getErrorStr();
-            }
-        }
-        elseif($formSubmit === 'Add Collection'){
-            if($instManager->addCollection($addCollId,$iid)){
-                $collList[$addCollId] = $fullCollList[$addCollId]['name'];
-            }
-            else{
-                $statusStr = $instManager->getErrorStr();
-            }
-        }
-        elseif(isset($_GET['removecollid'])){
-            if($instManager->removeCollection($_GET['removecollid'])){
-                $statusStr = 'SUCCESS! Institution removed';
-                unset($collList[$removeCollId]);
-            }
-            else{
-                $statusStr = $instManager->getErrorStr();
-            }
-        }
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
 <?php
-include_once(__DIR__ . '/../../config/header-includes.php');
+include_once(__DIR__ . '../../../config/header-includes.php');
 ?>
 <head>
-	<title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Institution Editor</title>
-    <meta name="description" content="Collection institution editor">
+    <title><?php echo $GLOBALS['DEFAULT_TITLE']; ?> Locations</title>
+    <meta name="description" content="Institution index for the <?php echo $GLOBALS['DEFAULT_TITLE']; ?> portal">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-	<link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript">
-		function validateAddCollectionForm(f){
-			if(f.addcollid.value === ""){
-				alert("Select a collection to be added");
-				return false;
-			}
-			return true;
-		}
-    </script>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol.css?ver=10.8.1" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
+    <style>
+        div.q-menu.q-position-engine {
+            z-index: 100000000000;
+        }
+    </style>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=10.8.1" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/shp.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/jszip.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/stream.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/FileSaver.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
+    <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
 </head>
 <body>
+<a class="screen-reader-only" href="#mainContainer" tabindex="0">Skip to main content</a>
 <?php
-include(__DIR__ . '/../../header.php');
+include(__DIR__ . '../../../header.php');
 ?>
-<div id="mainContainer" style="padding: 10px 15px 15px;">
+<div id="mainContainer">
     <div id="breadcrumbs">
-        <a href='<?php echo $GLOBALS['CLIENT_ROOT']; ?>/index.php' tabindex="0">Home</a> &gt;&gt;
-        <?php
-        if(!$targetCollid && count($collList) === 1){
-            $targetCollid = key($collList);
-        }
-        if($targetCollid){
-            echo '<a href="../misc/collprofiles.php?collid='.$targetCollid.'" tabindex="0">'.$collList[$targetCollid].' Management</a> &gt;&gt;';
-        }
-        else{
-            echo '<a href="institutioneditor.php" tabindex="0">Full Address List</a> &gt;&gt;';
-        }
-        ?>
-        <b>Institution Editor</b>
+        <a :href="(clientRoot + '/index.php')" tabindex="0">Home</a> &gt;&gt;
+        <span class="text-bold">Locations</span>
     </div>
-    <?php
-	if($statusStr){
-		?>
-		<hr />
-		<div style="margin:20px;color:<?php echo (strncmp($statusStr, 'ERROR', 5) === 0 ?'red':'green'); ?>;">
-			<?php echo $statusStr; ?>
-		</div>
-		<hr />
-		<?php 
-	}
-	if($iid){
-		if($instArr = $instManager->getInstitutionData()){
-			?>
-			<div style="float:right;">
-				<a href="institutioneditor.php">
-					<i style="height:15px;width:15px;" title="Return to Institution List" class="fas fa-level-up-alt"></i>
-				</a>
-				<?php 
-				if($editorCode > 1){
-					?>
-					<a href="#" onclick="toggle('editdiv');">
-						<i style="height:20px;width:20px;" title="Edit Institution" class="far fa-edit"></i>
-					</a>
-					<?php 
-				}
-				?>
-			</div>
-			<div style="clear:both;">
-				<form name="insteditform" action="institutioneditor.php" method="post">
-					<fieldset style="padding:20px;">
-						<legend><b>Address Details</b></legend>
-						<div style="position:relative;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Institution Code:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['institutioncode']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="institutioncode" type="text" value="<?php echo $instArr['institutioncode']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Institution Name:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['institutionname']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="institutionname" type="text" value="<?php echo $instArr['institutionname']; ?>" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Institution Name2:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['institutionname2']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="institutionname2" type="text" value="<?php echo $instArr['institutionname2']; ?>" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Address:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['address1']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="address1" type="text" value="<?php echo $instArr['address1']; ?>" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Address 2:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['address2']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="address2" type="text" value="<?php echo $instArr['address2']; ?>" style="width:400px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								City:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['city']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="city" type="text" value="<?php echo $instArr['city']; ?>" style="width:100px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								State/Province:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['stateprovince']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="stateprovince" type="text" value="<?php echo $instArr['stateprovince']; ?>" style="width:100px;" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Postal Code:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['postalcode']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="postalcode" type="text" value="<?php echo $instArr['postalcode']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Country:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['country']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="country" type="text" value="<?php echo $instArr['country']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Phone:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['phone']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="phone" type="text" value="<?php echo $instArr['phone']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Contact:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['contact']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="contact" type="text" value="<?php echo $instArr['contact']; ?>" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Email:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['email']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="email" type="text" value="<?php echo $instArr['email']; ?>" style="width:150px" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								URL:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<a href="<?php echo $instArr['url']; ?>" target="_blank">
-									<?php echo $instArr['url']; ?>
-								</a>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="url" type="text" value="<?php echo $instArr['url']; ?>" style="width:400px" />
-							</div>
-						</div>
-						<div style="position:relative;clear:both;">
-							<div style="float:left;width:155px;font-weight:bold;">
-								Notes:
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'none':'block'; ?>;">
-								<?php echo $instArr['notes']; ?>
-							</div>
-							<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-								<input name="notes" type="text" value="<?php echo $instArr['notes']; ?>" style="width:400px" />
-							</div>
-						</div>
-						<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;clear:both;margin:30px 0 0 20px;">
-							<input name="formsubmit" type="submit" value="Update Institution Address" />
-							<input name="iid" type="hidden" value="<?php echo $iid; ?>" />
-							<input name="targetcollid" type="hidden" value="<?php echo $targetCollid; ?>" />
-						</div>
-					</fieldset>
-				</form>
-				<div style="clear:both;">
-					<fieldset style="padding:20px;">
-						<legend><b>Collecitons Linked to Institution Address</b></legend>
-						<div>
-							<?php 
-							if($collList){
-								foreach($collList as $id => $collName){
-									echo '<div style="margin:5px;font-weight:bold;clear:both;height:15px;">';
-									echo '<div style="float:left;"><a href="../misc/collprofiles.php?collid='.$id.'">'.$collName.'</a></div> ';
-									if($editorCode === 3 || in_array($id, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)) {
-                                        echo ' <div class="editdiv" style="margin-left:10px;display:' . ($eMode ? '' : 'none') . '"><a href="institutioneditor.php?iid=' . $iid . '&removecollid=' . $id . '"><i style="height:15px;width:15px;" class="far fa-trash-alt"></i></a></div>';
-                                    }
-									echo '</div>';
-								}
-							}
-							else{
-								echo '<div style="margin:25px;"><b>Institution is not linked to a collection</b></div>';
-							}
-							?>
-						</div>
-						<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-							<div style="margin:15px;clear:both;">* Click on red X to unlink collection</div>
-							<?php 
-							$addList = array();
-							foreach($fullCollList as $collid => $collArr){
-								if($collArr['iid'] !== $iid){
-									if($GLOBALS['IS_ADMIN'] || (isset($GLOBALS['USER_RIGHTS']['CollAdmin']) && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true))){
-										$addList[$collid] = $collArr;
-									}
-								}
-							}
-							if($addList){
-								?>
-								<hr />
-								<form name="addcollectionform" method="post" action="institutioneditor.php" onsubmit="return validateAddCollectionForm(this)">
-									<select name="addcollid" style="width:400px;">
-										<option value="">Select collection to add</option>
-										<option value="">------------------------------------</option>
-										<?php 
-										foreach($addList as $collid => $collArr){
-											echo '<option value="'.$collid.'">'.$collArr['name'].'</option>';
-										}
-										?>
-									</select>
-									<input name="iid" type="hidden" value="<?php echo $iid; ?>" />
-									<input name="formsubmit" type="submit" value="Add Collection" />
-								</form>
-								<?php 
-							}
-							?>
-						</div>
-					</fieldset>
-					<div class="editdiv" style="display:<?php echo $eMode?'block':'none'; ?>;">
-						<fieldset style="padding:20px;">
-							<legend><b>Delete Institution</b></legend>
-							<form name="instdelform" action="institutioneditor.php" method="post" onsubmit="return confirm('Are you sure you want to delete this institution?')">
-								<div style="position:relative;clear:both;">
-									<input name="formsubmit" type="submit" value="Delete Institution" <?php
-                                    if($collList) {
-                                        echo 'disabled';
-                                    } ?> />
-									<input name="deliid" type="hidden" value="<?php echo $iid; ?>" />
-									<?php 
-									if($collList) {
-                                        echo '<div style="margin:15px;color:red;">Deletion of addresses that have linked collections is not allowed</div>';
-                                    }
-									?>
-								</div>
-							</form>
-						</fieldset>
-					</div>
-				</div>
-			</div>		
-			<?php
-		}
-	}
-	else if($editorCode){
-        ?>
-        <div style="float:right;">
-            <a href="#" onclick="toggle('instadddiv');">
-                <i style="height:20px;width:20px;color:green;" title="Add a New Institution" class="fas fa-plus"></i>
-            </a>
-        </div>
-        <div id="instadddiv" style="display:<?php echo ($eMode?'block':'none'); ?>;margin-bottom:8px;">
-            <form name="instaddform" action="institutioneditor.php" method="post">
-                <fieldset style="padding:20px;">
-                    <legend><b>Add New Institution</b></legend>
-                    <div style="position:relative;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Institution Code:
-                        </div>
-                        <div>
-                            <input name="institutioncode" type="text" value="<?php echo $instCodeDefault; ?>" />
-                        </div>
+    <div class="q-pa-md">
+        <div class="column q-gutter-sm">
+            <div class="row justify-between">
+                <h1>
+                    Locations
+                </h1>
+                <div v-if="validUser" class="row justify-end q-gutter-sm q-pr-md">
+                    <div>
+                        <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Locatiion" tabindex="0" />
                     </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Institution Name:
-                        </div>
-                        <div>
-                            <input name="institutionname" type="text" value="" style="width:400px;" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Institution Name2:
-                        </div>
-                        <div>
-                            <input name="institutionname2" type="text" value="" style="width:400px;" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Address:
-                        </div>
-                        <div>
-                            <input name="address1" type="text" value="" style="width:400px;" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Address 2:
-                        </div>
-                        <div>
-                            <input name="address2" type="text" value="" style="width:400px;" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            City:
-                        </div>
-                        <div>
-                            <input name="city" type="text" value="" style="width:100px;" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            State/Province:
-                        </div>
-                        <div>
-                            <input name="stateprovince" type="text" value="" style="width:100px;" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Postal Code:
-                        </div>
-                        <div>
-                            <input name="postalcode" type="text" value="" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Country:
-                        </div>
-                        <div>
-                            <input name="country" type="text" value="" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Phone:
-                        </div>
-                        <div>
-                            <input name="phone" type="text" value="" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Contact:
-                        </div>
-                        <div>
-                            <input name="contact" type="text" value="" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Email:
-                        </div>
-                        <div>
-                            <input name="email" type="text" value="" style="width:150px" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            URL:
-                        </div>
-                        <div>
-                            <input name="url" type="text" value="" style="width:400px" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Notes:
-                        </div>
-                        <div>
-                            <input name="notes" type="text" value="" style="width:400px" />
-                        </div>
-                    </div>
-                    <div style="position:relative;clear:both;">
-                        <div style="float:left;width:155px;font-weight:bold;">
-                            Link to:
-                        </div>
-                        <div>
-                            <select name="targetcollid" style="width:400px;">
-                                <option value="">Leave Orphaned</option>
-                                <option value="">--------------------------------------</option>
-                                <?php
-                                foreach($fullCollList as $collid => $collArr){
-                                    if($collArr['iid'] && ($GLOBALS['IS_ADMIN'] || ($GLOBALS['USER_RIGHTS']['CollAdmin'] && in_array($collid, $GLOBALS['USER_RIGHTS']['CollAdmin'], true)))){
-                                        echo '<option value="'.$collid.'" '.($collid === $targetCollid?'SELECTED':'').'>'.$collArr['name'].'</option>';
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
-                    <div style="margin:20px;clear:both;">
-                        <input name="formsubmit" type="submit" value="Add Institution" />
-                    </div>
-                </fieldset>
-            </form>
-        </div>
-        <?php
-        if(!$eMode){
-            ?>
-            <div style="padding-left:10px;">
-                <h2>Select an Institution from the list</h2>
-                <ul>
-                    <?php
-                    $instList = $instManager->getInstitutionList();
-                    if($instList){
-                        foreach($instList as $iid => $iArr){
-                            echo '<li><a href="institutioneditor.php?iid='.$iid.'">';
-                            echo $iArr['institutionname'].($iArr['institutioncode']?' ('.$iArr['institutioncode'].')':'');
-                            if($editorCode === 3 || array_intersect(explode(',',$iArr['collid']),$GLOBALS['USER_RIGHTS']['CollAdmin'])){
-                                echo ' <a href="institutioneditor.php?emode=1&iid='.$iid.'"><i style="height:15px;width:15px;" title="Edit Institution" class="far fa-edit"></i></a>';
-                            }
-                            echo '</a></li>';
-                        }
-                    }
-                    else{
-                        echo '<div>There are no institutions you have right to edit</div>';
-                    }
-                    ?>
-                </ul>
+                </div>
             </div>
-            <?php
-        }
-    }
-    else{
-        echo '<div>You need to have administrative user rights for a collection to add an institution</div>';
-    }
-	?>
+            <template v-if="Object.keys(checklistArr).length > 0">
+                <template v-for="projectGroup in checklistArr">
+                    <q-card v-if="projectGroup['checklists'].length > 0" flat>
+                        <q-card-section class="column q-gutter-sm">
+                            <div v-if="projectGroup['projname']" class="row justify-start">
+                                <div class="text-h6 text-bold">
+                                    <a :href="(clientRoot + '/projects/project.php?pid=' + projectGroup['pid'])" tabindex="0">{{ projectGroup['projname'] }}</a>
+                                </div>
+                                <div v-if="projectGroup['coordinates'].length > 0" class="q-ml-sm self-center">
+                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(projectGroup['coordinates']);" icon="fas fa-globe" dense aria-label="See checklists on map" tabindex="0">
+                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                            See checklists on map
+                                        </q-tooltip>
+                                    </q-btn>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <template v-for="checklist in projectGroup['checklists']">
+                                    <div class="row justify-start">
+                                        <div class="text-body1">
+                                            <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])" tabindex="0">{{ checklist['name'] }}</a>
+                                        </div>
+                                        <div v-if="(checklist['latcentroid'] && checklist['longcentroid']) || checklist['footprintwkt']" class="q-ml-md self-center">
+                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(((checklist['latcentroid'] && checklist['longcentroid']) ? [[Number(checklist['longcentroid']), Number(checklist['latcentroid'])]] : null), (checklist['footprintwkt'] ? checklist['footprintwkt'] : null));" icon="fas fa-globe" dense aria-label="See checklist on map" tabindex="0">
+                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                                    See checklist on map
+                                                </q-tooltip>
+                                            </q-btn>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </q-card-section>
+                    </q-card>
+                </template>
+            </template>
+            <template v-else>
+                <div class="text-h4 text-bold">
+                    There are no checklists available at this time.
+                </div>
+            </template>
+        </div>
+        <template v-if="showChecklistEditorPopup">
+            <checklist-editor-popup
+                    :show-popup="showChecklistEditorPopup"
+                    @close:popup="showChecklistEditorPopup = false"
+            ></checklist-editor-popup>
+        </template>
+        <template v-if="showSpatialPopup">
+            <spatial-viewer-popup
+                    :coordinate-set="spatialPopupCoordinateSet"
+                    :footprint-wkt="spatialPopupFootprintWkt"
+                    :show-popup="showSpatialPopup"
+                    @close:popup="closeSpatialPopup();"
+            ></spatial-viewer-popup>
+        </template>
+    </div>
 </div>
 <?php
-include_once(__DIR__ . '/../../config/footer-includes.php');
-include(__DIR__ . '/../../footer.php');
+include_once(__DIR__ . '../../../config/footer-includes.php');
+include(__DIR__ . '../../../footer.php');
 ?>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionCatalogNumberQuickSearch.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountInformationForm.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileAccountModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/accountChecklistProjectList.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionControlPanelMenus.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/profile/viewProfileOccurrenceModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageCarousel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/imageRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/media/mediaRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/determinationRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/geneticLinkRecordInfoBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/colorPicker.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/copyURLButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/collectionCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/dateInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonDescriptionSourceTabAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/listDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/spatialDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchDataDownloader.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/tableDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/keyDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/checklistDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/imageDisplayButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/advancedQueryBuilder.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCollectionsBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaBlock.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopupTabControls.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/search/searchCriteriaPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRecordsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSelectionsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSymbologyTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanelLeftShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanelTopShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSidePanelShowButton.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSideButtonTray.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialRasterColorScaleSelect.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialVectorToolsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialPointVectorToolsTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRecordsSymbologyExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialVectorToolsExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialRasterToolsExpansion.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialSidePanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialDrawToolSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialBaseLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/spatialActiveLayerSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialMapSettingsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialControlPanel.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerLayerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerLayerGroupElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerControllerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialLayerQuerySelectorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRow.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/mofDataFieldRowGroup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoTabModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/occurrences/occurrenceInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialAnalysisPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/occurrenceFootprintWktInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/wysiwygInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userPermissionManagementModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistEditorAppConfigTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistEditorAdminTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script type="text/javascript">
+    const checklistIndexModule = Vue.createApp({
+        components: {
+            'checklist-editor-popup': checklistEditorPopup,
+            'spatial-viewer-popup': spatialViewerPopup
+        },
+        setup() {
+            const baseStore = useBaseStore();
+            const checklistStore = useChecklistStore();
+
+            const checklistArr = Vue.ref([]);
+            const clientRoot = baseStore.getClientRoot;
+            const showChecklistEditorPopup = Vue.ref(false);
+            const showSpatialPopup = Vue.ref(false);
+            const spatialPopupCoordinateSet = Vue.ref(null);
+            const spatialPopupFootprintWkt = Vue.ref(null);
+            const validUser = baseStore.getValidUser;
+
+            function closeSpatialPopup() {
+                spatialPopupCoordinateSet.value = null;
+                spatialPopupFootprintWkt.value = null;
+                showSpatialPopup.value = false;
+            }
+
+            function openChecklistEditorPopup() {
+                checklistStore.setChecklist(0);
+                showChecklistEditorPopup.value = true;
+            }
+
+            function openSpatialPopup(coordSet, footprintWkt = null) {
+                if(coordSet){
+                    spatialPopupCoordinateSet.value = coordSet;
+                }
+                if(footprintWkt){
+                    spatialPopupFootprintWkt.value = footprintWkt;
+                }
+                showSpatialPopup.value = true;
+            }
+
+            function setChecklistArr() {
+                const formData = new FormData();
+                formData.append('action', 'getChecklistIndexArr');
+                fetch(checklistApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then((response) => {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then((resData) => {
+                        checklistArr.value = resData;
+                        Object.keys(checklistArr.value).forEach((pid) => {
+                            if(checklistArr.value[pid]['checklists'].length > 0){
+                                checklistArr.value[pid]['checklists'].sort((a, b) => {
+                                    return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                                });
+                            }
+                        });
+                        checklistArr.value.sort((a, b) => {
+                            if(a['projname'] === null && b['projname'] === null){
+                                return 0;
+                            }
+                            else if(a['projname'] === null){
+                                return 1;
+                            }
+                            else if(b['projname'] === null){
+                                return -1;
+                            }
+                            else{
+                                return a['projname'].toLowerCase().localeCompare(b['projname'].toLowerCase());
+                            }
+                        });
+                    });
+            }
+
+            Vue.onMounted(() => {
+                setChecklistArr();
+            });
+
+            return {
+                checklistArr,
+                clientRoot,
+                showChecklistEditorPopup,
+                showSpatialPopup,
+                spatialPopupCoordinateSet,
+                spatialPopupFootprintWkt,
+                validUser,
+                closeSpatialPopup,
+                openChecklistEditorPopup,
+                openSpatialPopup
+            }
+        }
+    });
+    checklistIndexModule.use(Quasar, { config: {} });
+    checklistIndexModule.use(Pinia.createPinia());
+    checklistIndexModule.mount('#mainContainer');
+</script>
 </body>
 </html>
