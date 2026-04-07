@@ -1332,6 +1332,7 @@ div.q-tooltip.q-position-engine {
 	width: 80px;
 }
 .list-search-container{
-	width: 80%;
 	margin: 0 auto;
+	background-color: #FFFFFF;
+	min-height: 400px;
 }
