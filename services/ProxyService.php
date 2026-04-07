@@ -34,11 +34,17 @@ class ProxyService {
         curl_setopt($ch, CURLOPT_NOBODY, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_exec($ch);
-        $rescode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        if($rescode >= 200 && $rescode < 300) {
+        if (!curl_errno($ch)) {
             $returnVal = file_get_contents($url);
+        } else{
+            $returnVal = '';
         }
+//        $rescode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+//        curl_close($ch);
+//        if($rescode >= 200 && $rescode < 300) {
+//            $returnVal = file_get_contents($url);
+//        }
+        curl_close($ch);
         return $returnVal;
     }
 
