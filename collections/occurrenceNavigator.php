@@ -52,7 +52,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 include(__DIR__ . '/../footer.php');
                 ?>
             </div>
-            <div id="mainContainer" :style="mainContainerStyle">
+            <div id="interfaceContainer" :class="displayInterface === 'list' ? 'list-search-container' : ''">
                 <template v-if="displayInterface === 'table'">
                     <table-search-interface
                         :collid="occurrenceEditorInterfaceCollId"
@@ -285,9 +285,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const loadRecordsCompleted = Vue.ref(false);
-                    const mainContainerStyle = Vue.computed(() => {
-                        return displayInterface.value === 'list' ? '' : 'width: 100%;';
-                    });
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
@@ -410,7 +407,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function setInterfaceDisplay() {
                         const navContainerElement = document.getElementById('navContainer');
-                        const mainContainerElement = document.getElementById('mainContainer');
+                        const mainContainerElement = document.getElementById('interfaceContainer');
                         document.body.classList.remove('q-pa-md', 'full-window-mode');
                         if(displayInterface.value === 'occurrence' || displayInterface.value === 'table' || displayInterface.value === 'spatial'){
                             document.body.classList.add('full-window-mode');
@@ -480,7 +477,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         displayInterface,
                         displayQueryPopup,
                         isAdmin,
-                        mainContainerStyle,
                         occurrenceEditorInterfaceCollId,
                         occurrenceEditorInterfaceDisplayMode,
                         occurrenceEditorInterfaceOccId,
@@ -502,7 +498,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             });
             occurrenceNavigatorModule.use(Quasar, { config: {} });
             occurrenceNavigatorModule.use(Pinia.createPinia());
-            occurrenceNavigatorModule.mount('#mainContainer');
+            occurrenceNavigatorModule.mount('#interfaceContainer');
         </script>
     </body>
 </html>
