@@ -39,11 +39,6 @@ class ProxyService {
         } else{
             $returnVal = '';
         }
-//        $rescode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-//        curl_close($ch);
-//        if($rescode >= 200 && $rescode < 300) {
-//            $returnVal = file_get_contents($url);
-//        }
         curl_close($ch);
         return $returnVal;
     }

@@ -374,6 +374,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
                             if(usdaIdentifier){
                                 if(usdaIdentifier['identifier'] !== currentData['Symbol']){
                                     updateTaxonIdentifier(resObj['tid'], currentData['Symbol'], 'usda');
+                                    processUsdaFungiSymbolUpload();
                                 }
                                 else{
                                     processErrorResponse('USDA symbol already exists');
