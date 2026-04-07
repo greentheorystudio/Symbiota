@@ -436,7 +436,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 containerElement.value.insertBefore(mainContainerElement, containerElement.value.children[1]);
                             }
                         }
-                        if(mainContainerElement.parentElement.id === 'navContainer'){
+                        if(mainContainerElement.parentElement.id === 'containerBlockNode'){
                             mainContainerStyle.value = 'width: 80%;';
                         }
                     }
