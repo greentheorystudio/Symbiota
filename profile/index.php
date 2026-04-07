@@ -14,6 +14,9 @@ if(strpos($_SERVER['REQUEST_URI'], 'refurl=')){
 elseif(array_key_exists('refurl', $_REQUEST)){
     $refUrl = $_REQUEST['refurl'];
 }
+if($refUrl === 'undefined'){
+    $refUrl = '';
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">

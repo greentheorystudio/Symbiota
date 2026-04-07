@@ -107,12 +107,12 @@ const collectionControlPanelMenus = {
                                     <collection-catalog-number-quick-search :collection-id="collectionId"></collection-catalog-number-quick-search>
                                 </div>
                                 <div class="q-mt-sm">
-                                    <a :href="(clientRoot + '/collections/editor/occurrenceeditor.php?gotomode=1&collid=' + collectionId)" tabindex="0">
+                                    <a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=occurrence&collid=' + collectionId)" tabindex="0">
                                         Create A New Occurrence Record (Occurrence Editor)
                                     </a>
                                 </div>
                                 <div>
-                                    <a :href="(clientRoot + '/collections/table.php?collid=' + collectionId)" tabindex="0">
+                                    <a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=table&collid=' + collectionId)" tabindex="0">
                                         View/Edit Existing Records (Occurrence Table Viewer)
                                     </a>
                                 </div>

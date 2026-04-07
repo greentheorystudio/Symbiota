@@ -4,6 +4,10 @@ const occurrenceInfoTabModule = {
             type: Boolean,
             default: false
         },
+        navigatorMode: {
+            type: Boolean,
+            default: false
+        },
         occurrenceId: {
             type: Number,
             default: null
@@ -224,7 +228,7 @@ const occurrenceInfoTabModule = {
                                 For additional information about this specimen, please contact: {{ collectionData['contact'] }} (<a :href="('mailto:' + collectionData['email'])" tabindex="0">{{ collectionData['email'] }}</a>)
                             </div>
                             <div v-if="isEditor">
-                                You can edit this record using the <a class="cursor-pointer" @click="redirectToOccurrenceEditorWithQueryId(occurrenceId, collectionData['collid']);" aria-label="Edit occurrence record" tabindex="0">Occurrence Editor</a>.
+                                You can edit this record using the <a class="cursor-pointer" @click="openOccurrenceEditor(occurrenceId, collectionData['collid']);" aria-label="Edit occurrence record" tabindex="0">Occurrence Editor</a>.
                             </div>
                         </div>
                     </q-tab-panel>
@@ -337,7 +341,7 @@ const occurrenceInfoTabModule = {
         'mof-data-field-row-group': mofDataFieldRowGroup,
         'spatial-viewer-element': spatialViewerElement
     },
-    setup(props) {
+    setup(props, context) {
         const baseStore = useBaseStore();
         const searchStore = useSearchStore();
 
@@ -498,11 +502,22 @@ const occurrenceInfoTabModule = {
         const tabMapPanelStyle = Vue.ref('');
         const tabPanelStyle = Vue.ref('');
 
+        const openOccurrenceEditorInterface = Vue.inject('openOccurrenceEditorInterface');
+
         Vue.watch(contentContainerRef, () => {
             if(contentContainerRef.value){
                 setTabPanelHeights();
             }
         });
+
+        function openOccurrenceEditor(occid, collid) {
+            if(props.navigatorMode){
+                context.emit('open:occurrence-editor-interface', collid, occid);
+            }
+            else{
+                searchStore.redirectToOccurrenceEditorWithQueryId(occid, collid);
+            }
+        }
 
         function setChecklistArr() {
             const formData = new FormData();
@@ -759,7 +774,7 @@ const occurrenceInfoTabModule = {
             occurrenceMofDataFields,
             occurrenceMofDataLabel,
             occurrenceMofLayoutData,
-            redirectToOccurrenceEditorWithQueryId: searchStore.redirectToOccurrenceEditorWithQueryId,
+            openOccurrenceEditor,
             selectedTab,
             tabCardStyle,
             tabMapPanelStyle,

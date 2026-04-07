@@ -244,7 +244,7 @@ include_once(__DIR__ . '/../../../config/header-includes.php');
 										<td>
 											<?php
 											if($isEditor || $rArr['reviewstatus'] === 5){
-												echo '<a href="../../editor/occurrenceeditor.php?csmode=1&occid='.$occid.'" target="_blank">';
+												echo '<a href="../../occurrenceNavigator.php?interface=occurrence&csmode=1&occid='.$occid.'" target="_blank">';
 												echo '<i style="height:15px;width:15px;" class="far fa-edit"></i>';
 												echo '</a>';
 											}
