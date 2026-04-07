@@ -186,9 +186,9 @@ const tableSearchInterface = {
             let lastPage = 1;
             if(Number(searchRecordCount.value) > Number(perPageCnt)){
                 lastPage = Math.floor(Number(searchRecordCount.value) / Number(perPageCnt));
-            }
-            if(Number(searchRecordCount.value) % Number(perPageCnt)){
-                lastPage++;
+                if(Number(searchRecordCount.value) % Number(perPageCnt)){
+                    lastPage++;
+                }
             }
             return lastPage;
         });
