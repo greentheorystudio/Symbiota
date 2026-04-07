@@ -52,7 +52,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 include(__DIR__ . '/../footer.php');
                 ?>
             </div>
-            <div id="interfaceContainer" :style="mainContainerStyle">
+            <div id="interfaceContainer">
                 <template v-if="displayInterface === 'table'">
                     <table-search-interface
                         :collid="occurrenceEditorInterfaceCollId"
@@ -285,7 +285,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const loadRecordsCompleted = Vue.ref(false);
-                    const mainContainerStyle = Vue.ref('');
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
@@ -412,7 +411,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         const mainContainerElement = document.getElementById('interfaceContainer');
                         document.body.classList.remove('q-pa-md', 'full-window-mode');
                         mainContainerElement.classList.remove('list-search-container');
-                        mainContainerStyle.value = '';
+                        mainContainerElement.style.removeProperty('width');
                         if(displayInterface.value === 'occurrence' || displayInterface.value === 'table' || displayInterface.value === 'spatial'){
                             document.body.classList.add('full-window-mode');
                         }
@@ -424,7 +423,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         if(displayInterface.value !== 'list'){
                             navContainerElement.prepend(mainContainerElement);
-                            containerElement.value.remove();
+                            containerElement.value.classList.add('hidden');
                         }
                         else{
                             navContainerElement.prepend(containerElement.value);
@@ -435,9 +434,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             else{
                                 containerElement.value.insertBefore(mainContainerElement, containerElement.value.children[1]);
                             }
+                            containerElement.value.classList.remove('hidden');
                         }
-                        if(mainContainerElement.parentElement.id === 'navContainer'){
-                            mainContainerStyle.value = 'width: 80%;';
+                        if(displayInterface.value === 'list' && mainContainerElement.parentElement.id === 'containerBlockNode'){
+                            mainContainerElement.style.setProperty("width", "80%", "important");
                         }
                     }
 
@@ -487,7 +487,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         displayInterface,
                         displayQueryPopup,
                         isAdmin,
-                        mainContainerStyle,
                         occurrenceEditorInterfaceCollId,
                         occurrenceEditorInterfaceDisplayMode,
                         occurrenceEditorInterfaceOccId,
