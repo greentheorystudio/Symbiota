@@ -423,7 +423,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         if(displayInterface.value !== 'list'){
                             navContainerElement.prepend(mainContainerElement);
-                            containerElement.value.remove();
+                            containerElement.value.classList.add('hidden');
                         }
                         else{
                             navContainerElement.prepend(containerElement.value);
@@ -434,6 +434,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             else{
                                 containerElement.value.insertBefore(mainContainerElement, containerElement.value.children[1]);
                             }
+                            containerElement.value.classList.remove('hidden');
                         }
                         if(displayInterface.value === 'list' && mainContainerElement.parentElement.id === 'containerBlockNode'){
                             mainContainerElement.style.setProperty("width", "80%", "important");
