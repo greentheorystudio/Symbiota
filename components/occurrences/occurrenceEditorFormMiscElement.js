@@ -109,7 +109,6 @@ const occurrenceEditorFormMiscElement = {
         const searchStore = useSearchStore();
 
         const controlledVocabularies = Vue.computed(() => occurrenceStore.getOccurrenceFieldControlledVocabularies);
-        const currentRecordIndex = Vue.computed(() => searchStore.getCurrentOccIdIndex);
         const editorHideFields = Vue.computed(() => occurrenceStore.getEditorHideFields);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
@@ -146,17 +145,8 @@ const occurrenceEditorFormMiscElement = {
                                 showNotification('negative', ('An error occurred while deleting this record.'));
                             }
                             else{
-                                searchStore.removeRecordFromSearchRecordCnt();
+                                searchStore.removeOccidFromOccidArrs(occId.value);
                                 occurrenceStore.setCollectingEventReplicateData();
-                                if(Number(searchStore.getSearchRecordCount) > 0){
-                                    searchStore.setCurrentOccIdIndex(currentRecordIndex.value - 1);
-                                    searchStore.getSearchOccidArrByIndex(1, currentRecordIndex.value, (occidArr) => {
-                                        occurrenceStore.setCurrentOccurrenceRecord(occidArr[0]);
-                                    });
-                                }
-                                else{
-                                    occurrenceStore.setCurrentOccurrenceRecord(0);
-                                }
                             }
                         });
                     }

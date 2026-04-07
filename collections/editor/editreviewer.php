@@ -179,7 +179,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
         }
 
         function openIndPU(occid){
-            const newWindow = window.open('../editor/occurrenceeditor.php?occid=' + occid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
+            const newWindow = window.open('../occurrenceNavigator.php?interface=occurrence&occid=' + occid, 'indspec' + occid, 'scrollbars=1,toolbar=0,resizable=1,width=1000,height=700,left=20,top=20');
             if (newWindow.opener == null) {
                 newWindow.opener = self;
             }
