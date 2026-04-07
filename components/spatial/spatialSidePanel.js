@@ -97,27 +97,27 @@ const spatialSidePanel = {
         }
 
         function setExpansionHeight() {
-            if(!inputWindowMode.value){
-                let expansionCnt = 0;
-                let expansionHeight = 0;
-                const listElementChildren = contentContainerRef.value.childNodes[0].childNodes;
-                listElementChildren.forEach((element) => {
-                    if(element.localName === 'div'){
-                        if(element.classList.contains('q-expansion-item')){
-                            expansionCnt++;
+            if(contentContainerRef.value){
+                if(!inputWindowMode.value){
+                    let expansionCnt = 0;
+                    let expansionHeight = 0;
+                    const listElementChildren = contentContainerRef.value.childNodes[0].childNodes;
+                    listElementChildren.forEach((element) => {
+                        if(element.localName === 'div'){
+                            if(element.classList.contains('q-expansion-item')){
+                                expansionCnt++;
+                            }
+                            if(expansionHeight === 0 && element.classList.contains('q-expansion-item--collapsed')){
+                                expansionHeight = height(element);
+                            }
                         }
-                        if(expansionHeight === 0 && element.classList.contains('q-expansion-item--collapsed')){
-                            expansionHeight = height(element);
-                        }
-                    }
-                });
-                const cardHeight = contentContainerRef.value.parentNode.parentNode.clientHeight - ((expansionHeight * expansionCnt) + (2 * expansionCnt) + 6);
-                const tabCardHeight = contentContainerRef.value.parentNode.parentNode.clientHeight - ((expansionHeight * expansionCnt) + 12);
-                expansionCardStyle.value = 'height: ' + cardHeight + 'px;';
-                expansionTabCardStyle.value = 'height: ' + tabCardHeight + 'px;';
-            }
-            else{
-                if(contentContainerRef.value){
+                    });
+                    const cardHeight = contentContainerRef.value.parentNode.parentNode.clientHeight - ((expansionHeight * expansionCnt) + (2 * expansionCnt) + 6);
+                    const tabCardHeight = contentContainerRef.value.parentNode.parentNode.clientHeight - ((expansionHeight * expansionCnt) + 12);
+                    expansionCardStyle.value = 'height: ' + cardHeight + 'px;';
+                    expansionTabCardStyle.value = 'height: ' + tabCardHeight + 'px;';
+                }
+                else{
                     const cardHeight = contentContainerRef.value.parentNode.parentNode.clientHeight - 8;
                     expansionCardStyle.value = 'height: ' + cardHeight + 'px;overflow-y: scroll;';
                 }
