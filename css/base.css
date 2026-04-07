@@ -1331,3 +1331,7 @@ div.q-tooltip.q-position-engine {
 .table-page-number-input {
 	width: 80px;
 }
+.list-search-container{
+	width: 80%;
+	margin: 0 auto;
+}
