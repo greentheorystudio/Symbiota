@@ -68,6 +68,7 @@ class Configurations{
         'SPATIAL_POINT_BORDER_COLOR',
         'SPATIAL_POINT_BORDER_WIDTH',
         'SPATIAL_POINT_CLUSTER',
+        'SPATIAL_POINT_CLUSTER_DISTANCE',
         'SPATIAL_POINT_DISPLAY_HEAT_MAP',
         'SPATIAL_POINT_FILL_COLOR',
         'SPATIAL_POINT_HEAT_MAP_BLUR',
@@ -367,8 +368,8 @@ class Configurations{
                 $this->initializeImportConfigurations();
             }
         }
-        $GLOBALS['CSS_VERSION'] = '20260214';
-        $GLOBALS['JS_VERSION'] = '20260214';
+        $GLOBALS['CSS_VERSION'] = '20260215';
+        $GLOBALS['JS_VERSION'] = '2026022022';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -404,6 +405,7 @@ class Configurations{
         $GLOBALS['SPATIAL_POINT_BORDER_COLOR'] = '#000000';
         $GLOBALS['SPATIAL_POINT_BORDER_WIDTH'] = '1';
         $GLOBALS['SPATIAL_POINT_CLUSTER'] = true;
+        $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] = '50';
         $GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = false;
         $GLOBALS['SPATIAL_POINT_FILL_COLOR'] = '#E69E67';
         $GLOBALS['SPATIAL_POINT_HEAT_MAP_BLUR'] = '15';
@@ -663,6 +665,9 @@ class Configurations{
         }
         if(!isset($GLOBALS['MOF_SEARCH_FIELD_JSON'])){
             $GLOBALS['MOF_SEARCH_FIELD_JSON'] = '';
+        }
+        if(!isset($GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE']) || $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] === ''){
+            $GLOBALS['SPATIAL_POINT_CLUSTER_DISTANCE'] = '50';
         }
         if(!isset($GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'])){
             $GLOBALS['SPATIAL_POINT_DISPLAY_HEAT_MAP'] = false;

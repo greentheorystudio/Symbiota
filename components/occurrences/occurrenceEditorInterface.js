@@ -29,7 +29,7 @@ const occurrenceEditorInterface = {
                 <div class="row justify-between">
                     <div class="row justify-start q-gutter-sm self-center">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="openQueryPopupDisplay();" icon="search" label="Search" aria-label="Open Search Window" tabindex="0"></q-btn>
-                        <template v-if="recordCount > 1">
+                        <template v-if="recordCount > 0">
                             <table-display-button :navigator-mode="true"></table-display-button>
                             <list-display-button :navigator-mode="true"></list-display-button>
                             <spatial-display-button :navigator-mode="true"></spatial-display-button>
@@ -129,7 +129,7 @@ const occurrenceEditorInterface = {
         'table-display-button': tableDisplayButton
     },
     setup(props, context) {
-        const { showNotification } = useCore();
+        const { hideWorking, showNotification } = useCore();
         const baseStore = useBaseStore();
         const occurrenceStore = useOccurrenceStore();
         const searchStore = useSearchStore();
@@ -139,7 +139,14 @@ const occurrenceEditorInterface = {
         const collInfo = Vue.computed(() => occurrenceStore.getCollectionData);
         const confirmationPopupRef = Vue.ref(null);
         const containerWidth = Vue.ref(0);
-        const currentRecordIndex = Vue.computed(() => searchStore.getCurrentOccIdIndex);
+        const currentRecordIndex = Vue.computed(() => {
+            if(occurrenceEditorModeActive.value){
+                return searchStore.getCurrentOccIdIndex;
+            }
+            else{
+                return 1;
+            }
+        });
         const displayBatchUpdatePopup = Vue.ref(false);
         const displayImageTranscriberPopup = Vue.ref(false);
         const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
@@ -147,8 +154,16 @@ const occurrenceEditorInterface = {
         const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
         const moduleContainerRef = Vue.ref(null);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
+        const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
-        const searchRecordCount = Vue.computed(() => searchStore.getSearchRecordCount);
+        const searchRecordCount = Vue.computed(() => {
+            if(occurrenceEditorModeActive.value){
+                return searchStore.getSearchRecordCount;
+            }
+            else{
+                return 1;
+            }
+        });
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
         const recordCount = Vue.computed(() => {
             if(Number(searchRecordCount.value) > 0){
@@ -162,7 +177,9 @@ const occurrenceEditorInterface = {
         const loadRecordsCompleted = Vue.inject('loadRecordsCompleted');
 
         Vue.watch(collId, () => {
-            searchStore.updateSearchTerms('collid', collId.value);
+            if(occurrenceEditorModeActive.value){
+                searchStore.updateSearchTerms('collid', collId.value);
+            }
         });
 
         Vue.watch(occId, () => {
@@ -215,6 +232,7 @@ const occurrenceEditorInterface = {
             else{
                 occurrenceStore.setCurrentOccurrenceRecord(0);
             }
+            hideWorking();
         }
 
         function setContainerWidth() {

@@ -29,7 +29,7 @@ const tableSearchInterface = {
                                 <span class="text-bold">Search Collections Table Display</span>
                             </template>
                         </div>
-                        <div v-if="Number(searchTermsCollId) > 0 && collInfo" class="row justify-start text-h6 text-bold">
+                        <div v-if="occurrenceEditorModeActive && collInfo" class="row justify-start text-h6 text-bold">
                             <template v-if="collInfo.collectionname">{{ collInfo.collectionname }}</template>
                             <template v-if="collInfo.institutioncode || collInfo.collectioncode"> (<template v-if="collInfo.institutioncode">{{ collInfo.institutioncode }}</template><template v-if="collInfo.institutioncode && collInfo.collectioncode">-</template><template v-if="collInfo.collectioncode">{{ collInfo.collectioncode }}</template>)</template>
                         </div>
@@ -161,6 +161,7 @@ const tableSearchInterface = {
         const goToOccid = Vue.ref(null);
         const initialSearchResults = Vue.ref(false);
         const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
+        const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
         const occurrenceFieldLabels = Vue.computed(() => searchStore.getOccurrenceFieldLabels);
         const pagination = Vue.computed(() => {
             return {
@@ -402,12 +403,13 @@ const tableSearchInterface = {
             displayBatchUpdatePopup,
             isAdmin,
             isEditor,
+            occurrenceEditorModeActive,
             occurrenceFieldLabels,
-            recordsPageNumber,
             pagination,
             paginationRef,
             recordDataArr,
             recordDataFieldArr,
+            recordsPageNumber,
             searchTermsCollId,
             searchTermsJson,
             searchTermsSortDirection,
