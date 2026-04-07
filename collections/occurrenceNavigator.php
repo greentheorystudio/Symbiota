@@ -52,7 +52,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 include(__DIR__ . '/../footer.php');
                 ?>
             </div>
-            <div id="mainContainer" :class="displayInterface !== 'list' ? 'full-width' : ''">
+            <div id="interfaceContainer">
                 <template v-if="displayInterface === 'table'">
                     <table-search-interface
                         :collid="occurrenceEditorInterfaceCollId"
@@ -77,44 +77,44 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 <template v-else>
                     <list-search-interface @open:query-popup="displayQueryPopup = true" @open:record-info-window="openRecordInfoWindow"></list-search-interface>
                 </template>
+                <template v-if="recordInfoWindowId">
+                    <occurrence-info-window-popup
+                        :navigator-mode="true"
+                        :occurrence-id="recordInfoWindowId"
+                        :show-popup="showRecordInfoWindow"
+                        @close:popup="closeRecordInfoWindow"
+                        @open:occurrence-editor-interface="openOccurrenceEditorInterface"
+                    ></occurrence-info-window-popup>
+                </template>
+                <template v-if="displayQueryPopup">
+                    <search-criteria-popup
+                        :show-popup="(displayQueryPopup && !showSpatialPopup)"
+                        :show-spatial="displayInterface !== 'spatial'"
+                        @open:spatial-popup="openSpatialPopup"
+                        @process:search-load-records="loadRecords"
+                        @reset:search-criteria="processResetCriteria"
+                        @close:popup="displayQueryPopup = false"
+                    ></search-criteria-popup>
+                </template>
+                <template v-if="showSpatialPopup">
+                    <spatial-analysis-popup
+                        :bottom-lat="spatialInputValues['bottomLatitude']"
+                        :circle-arr="spatialInputValues['circleArr']"
+                        :left-long="spatialInputValues['leftLongitude']"
+                        :point-lat="spatialInputValues['pointLatitude']"
+                        :point-long="spatialInputValues['pointLongitude']"
+                        :poly-arr="spatialInputValues['polyArr']"
+                        :radius="spatialInputValues['radius']"
+                        :radius-units="spatialInputValues['radiusUnit']"
+                        :right-long="spatialInputValues['rightLongitude']"
+                        :upper-lat="spatialInputValues['upperLatitude']"
+                        :show-popup="showSpatialPopup"
+                        :window-type="popupWindowType"
+                        @update:spatial-data="processSpatialData"
+                        @close:popup="closeSpatialPopup();"
+                    ></spatial-analysis-popup>
+                </template>
             </div>
-            <template v-if="recordInfoWindowId">
-                <occurrence-info-window-popup
-                    :navigator-mode="true"
-                    :occurrence-id="recordInfoWindowId"
-                    :show-popup="showRecordInfoWindow"
-                    @close:popup="closeRecordInfoWindow"
-                    @open:occurrence-editor-interface="openOccurrenceEditorInterface"
-                ></occurrence-info-window-popup>
-            </template>
-            <template v-if="displayQueryPopup">
-                <search-criteria-popup
-                    :show-popup="(displayQueryPopup && !showSpatialPopup)"
-                    :show-spatial="displayInterface !== 'spatial'"
-                    @open:spatial-popup="openSpatialPopup"
-                    @process:search-load-records="loadRecords"
-                    @reset:search-criteria="processResetCriteria"
-                    @close:popup="displayQueryPopup = false"
-                ></search-criteria-popup>
-            </template>
-            <template v-if="showSpatialPopup">
-                <spatial-analysis-popup
-                    :bottom-lat="spatialInputValues['bottomLatitude']"
-                    :circle-arr="spatialInputValues['circleArr']"
-                    :left-long="spatialInputValues['leftLongitude']"
-                    :point-lat="spatialInputValues['pointLatitude']"
-                    :point-long="spatialInputValues['pointLongitude']"
-                    :poly-arr="spatialInputValues['polyArr']"
-                    :radius="spatialInputValues['radius']"
-                    :radius-units="spatialInputValues['radiusUnit']"
-                    :right-long="spatialInputValues['rightLongitude']"
-                    :upper-lat="spatialInputValues['upperLatitude']"
-                    :show-popup="showSpatialPopup"
-                    :window-type="popupWindowType"
-                    @update:spatial-data="processSpatialData"
-                    @close:popup="closeSpatialPopup();"
-                ></spatial-analysis-popup>
-            </template>
         </div>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -407,13 +407,17 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     function setInterfaceDisplay() {
                         const navContainerElement = document.getElementById('navContainer');
-                        const mainContainerElement = document.getElementById('mainContainer');
+                        const mainContainerElement = document.getElementById('interfaceContainer');
                         document.body.classList.remove('q-pa-md', 'full-window-mode');
+                        mainContainerElement.classList.remove('list-search-container');
                         if(displayInterface.value === 'occurrence' || displayInterface.value === 'table' || displayInterface.value === 'spatial'){
                             document.body.classList.add('full-window-mode');
                         }
                         if(displayInterface.value === 'occurrence'){
                             document.body.classList.add('q-pa-md');
+                        }
+                        if(displayInterface.value === 'list'){
+                            mainContainerElement.classList.add('list-search-container');
                         }
                         if(displayInterface.value !== 'list'){
                             navContainerElement.prepend(mainContainerElement);
@@ -498,7 +502,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             });
             occurrenceNavigatorModule.use(Quasar, { config: {} });
             occurrenceNavigatorModule.use(Pinia.createPinia());
-            occurrenceNavigatorModule.mount('#navContainer');
+            occurrenceNavigatorModule.mount('#interfaceContainer');
         </script>
     </body>
 </html>
