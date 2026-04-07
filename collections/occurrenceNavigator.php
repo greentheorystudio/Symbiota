@@ -77,44 +77,44 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 <template v-else>
                     <list-search-interface @open:query-popup="displayQueryPopup = true" @open:record-info-window="openRecordInfoWindow"></list-search-interface>
                 </template>
+                <template v-if="recordInfoWindowId">
+                    <occurrence-info-window-popup
+                        :navigator-mode="true"
+                        :occurrence-id="recordInfoWindowId"
+                        :show-popup="showRecordInfoWindow"
+                        @close:popup="closeRecordInfoWindow"
+                        @open:occurrence-editor-interface="openOccurrenceEditorInterface"
+                    ></occurrence-info-window-popup>
+                </template>
+                <template v-if="displayQueryPopup">
+                    <search-criteria-popup
+                        :show-popup="(displayQueryPopup && !showSpatialPopup)"
+                        :show-spatial="displayInterface !== 'spatial'"
+                        @open:spatial-popup="openSpatialPopup"
+                        @process:search-load-records="loadRecords"
+                        @reset:search-criteria="processResetCriteria"
+                        @close:popup="displayQueryPopup = false"
+                    ></search-criteria-popup>
+                </template>
+                <template v-if="showSpatialPopup">
+                    <spatial-analysis-popup
+                        :bottom-lat="spatialInputValues['bottomLatitude']"
+                        :circle-arr="spatialInputValues['circleArr']"
+                        :left-long="spatialInputValues['leftLongitude']"
+                        :point-lat="spatialInputValues['pointLatitude']"
+                        :point-long="spatialInputValues['pointLongitude']"
+                        :poly-arr="spatialInputValues['polyArr']"
+                        :radius="spatialInputValues['radius']"
+                        :radius-units="spatialInputValues['radiusUnit']"
+                        :right-long="spatialInputValues['rightLongitude']"
+                        :upper-lat="spatialInputValues['upperLatitude']"
+                        :show-popup="showSpatialPopup"
+                        :window-type="popupWindowType"
+                        @update:spatial-data="processSpatialData"
+                        @close:popup="closeSpatialPopup();"
+                    ></spatial-analysis-popup>
+                </template>
             </div>
-            <template v-if="recordInfoWindowId">
-                <occurrence-info-window-popup
-                    :navigator-mode="true"
-                    :occurrence-id="recordInfoWindowId"
-                    :show-popup="showRecordInfoWindow"
-                    @close:popup="closeRecordInfoWindow"
-                    @open:occurrence-editor-interface="openOccurrenceEditorInterface"
-                ></occurrence-info-window-popup>
-            </template>
-            <template v-if="displayQueryPopup">
-                <search-criteria-popup
-                    :show-popup="(displayQueryPopup && !showSpatialPopup)"
-                    :show-spatial="displayInterface !== 'spatial'"
-                    @open:spatial-popup="openSpatialPopup"
-                    @process:search-load-records="loadRecords"
-                    @reset:search-criteria="processResetCriteria"
-                    @close:popup="displayQueryPopup = false"
-                ></search-criteria-popup>
-            </template>
-            <template v-if="showSpatialPopup">
-                <spatial-analysis-popup
-                    :bottom-lat="spatialInputValues['bottomLatitude']"
-                    :circle-arr="spatialInputValues['circleArr']"
-                    :left-long="spatialInputValues['leftLongitude']"
-                    :point-lat="spatialInputValues['pointLatitude']"
-                    :point-long="spatialInputValues['pointLongitude']"
-                    :poly-arr="spatialInputValues['polyArr']"
-                    :radius="spatialInputValues['radius']"
-                    :radius-units="spatialInputValues['radiusUnit']"
-                    :right-long="spatialInputValues['rightLongitude']"
-                    :upper-lat="spatialInputValues['upperLatitude']"
-                    :show-popup="showSpatialPopup"
-                    :window-type="popupWindowType"
-                    @update:spatial-data="processSpatialData"
-                    @close:popup="closeSpatialPopup();"
-                ></spatial-analysis-popup>
-            </template>
         </div>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -498,7 +498,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             });
             occurrenceNavigatorModule.use(Quasar, { config: {} });
             occurrenceNavigatorModule.use(Pinia.createPinia());
-            occurrenceNavigatorModule.mount('#navContainer');
+            occurrenceNavigatorModule.mount('#mainContainer');
         </script>
     </body>
 </html>
