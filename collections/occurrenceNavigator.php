@@ -52,7 +52,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 include(__DIR__ . '/../footer.php');
                 ?>
             </div>
-            <div id="mainContainer" :class="displayInterface !== 'list' ? 'full-width' : ''">
+            <div id="mainContainer" :style="mainContainerStyle">
                 <template v-if="displayInterface === 'table'">
                     <table-search-interface
                         :collid="occurrenceEditorInterfaceCollId"
@@ -285,6 +285,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const loadRecordsCompleted = Vue.ref(false);
+                    const mainContainerStyle = Vue.computed(() => {
+                        return displayInterface.value === 'list' ? '' : 'width: 100%;';
+                    });
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
@@ -477,6 +480,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         displayInterface,
                         displayQueryPopup,
                         isAdmin,
+                        mainContainerStyle,
                         occurrenceEditorInterfaceCollId,
                         occurrenceEditorInterfaceDisplayMode,
                         occurrenceEditorInterfaceOccId,
