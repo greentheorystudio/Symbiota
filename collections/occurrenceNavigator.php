@@ -52,7 +52,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 include(__DIR__ . '/../footer.php');
                 ?>
             </div>
-            <div id="interfaceContainer" :class="displayInterface === 'list' ? 'list-search-container' : ''">
+            <div id="interfaceContainer">
                 <template v-if="displayInterface === 'table'">
                     <table-search-interface
                         :collid="occurrenceEditorInterfaceCollId"
@@ -409,11 +409,15 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         const navContainerElement = document.getElementById('navContainer');
                         const mainContainerElement = document.getElementById('interfaceContainer');
                         document.body.classList.remove('q-pa-md', 'full-window-mode');
+                        mainContainerElement.classList.remove('list-search-container');
                         if(displayInterface.value === 'occurrence' || displayInterface.value === 'table' || displayInterface.value === 'spatial'){
                             document.body.classList.add('full-window-mode');
                         }
                         if(displayInterface.value === 'occurrence'){
                             document.body.classList.add('q-pa-md');
+                        }
+                        if(displayInterface.value === 'list'){
+                            mainContainerElement.classList.add('list-search-container');
                         }
                         if(displayInterface.value !== 'list'){
                             navContainerElement.prepend(mainContainerElement);
