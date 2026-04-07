@@ -48,6 +48,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
             <div id="containerBlockNode" class="fit">
                 <?php
                 include(__DIR__ . '/../header.php');
+                include_once(__DIR__ . '/../config/footer-includes.php');
                 include(__DIR__ . '/../footer.php');
                 ?>
             </div>
@@ -115,9 +116,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 ></spatial-analysis-popup>
             </template>
         </div>
-        <?php
-        include_once(__DIR__ . '/../config/footer-includes.php');
-        ?>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -428,7 +426,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 topNavigationElement.after(mainContainerElement);
                             }
                             else{
-                                containerElement.value.insertBefore(mainContainerElement, containerElement.value.children[2]);
+                                containerElement.value.insertBefore(mainContainerElement, containerElement.value.children[1]);
                             }
                         }
                     }
