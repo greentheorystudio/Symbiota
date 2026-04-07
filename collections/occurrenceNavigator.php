@@ -52,7 +52,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                 include(__DIR__ . '/../footer.php');
                 ?>
             </div>
-            <div id="mainContainer">
+            <div id="mainContainer" :class="displayInterface !== 'list' ? 'full-width' : ''">
                 <template v-if="displayInterface === 'table'">
                     <table-search-interface
                         :collid="occurrenceEditorInterfaceCollId"
