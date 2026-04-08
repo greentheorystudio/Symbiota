@@ -214,6 +214,7 @@ class IRLDataService {
     {
         $dataArr = array();
         $returnArr = array();
+        $salinityData = array();
         $taxaNameArr = array();
         $targetTidArr = array();
         $parentTaxonArr = array();
@@ -221,17 +222,17 @@ class IRLDataService {
         $mArr = array("M02", "M03", "M04", "M14");
         $pArr = array("M05", "M06", "M08");
         $eArr = array("M07", "M09", "M10", "M11", "M12", "M13");
-        $sql = 'SELECT DISTINCT l.locationcode, o.decimallatitude, o.decimallongitude, o.rep, o.eventdate, '.
-            'o.sciname, t.tid, t.rankid, o.individualcount, o.identificationRemarks, m.datavalue '.
+        $sql = 'SELECT DISTINCT l.locationcode, o.eventid, o.decimallatitude, o.decimallongitude, o.rep, o.eventdate, '.
+            'o.sciname, t.tid, t.rankid, o.individualcount, o.identificationRemarks '.
             'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
-            'LEFT JOIN ommofextension AS m ON o.eventID = m.eventID '.
             'LEFT JOIN taxa AS t ON o.tid = t.tid '.
-            'WHERE o.collid = ' . (int)$collid . ' AND (m.field = "bottom_salinity" OR ISNULL(m.mofID)) ';
+            'WHERE o.collid = ' . (int)$collid . ' ';
         //echo $sql;
         $result = $this->conn->query($sql);
         while($row = $result->fetch_object()){
             $nodeArr = array();
             $nodeArr['StationID'] = $row->locationcode;
+            $nodeArr['eventid'] = $row->eventid;
             $nodeArr['Latitude'] = $row->decimallatitude;
             $nodeArr['Longitude'] = $row->decimallongitude;
             $nodeArr['Replicate'] = $row->rep;
@@ -251,7 +252,7 @@ class IRLDataService {
             else{
                 $nodeArr['HabClassName'] = '';
             }
-            $nodeArr['Salinity'] = $row->datavalue;
+            $nodeArr['Salinity'] = '';
             $nodeArr['Kingdom'] = '';
             $nodeArr['Phylum'] = '';
             $nodeArr['Class'] = '';
@@ -271,6 +272,16 @@ class IRLDataService {
                 $parentTaxonArr[$row->tid][(int)$row->rankid]['sciname'] = $row->sciname;
             }
             $dataArr[] = $nodeArr;
+        }
+        $result->free();
+
+        $sql = 'SELECT DISTINCT o.eventid, m.datavalue '.
+            'FROM omoccurrences AS o LEFT JOIN ommofextension AS m ON o.eventID = m.eventID '.
+            'WHERE o.collid = ' . (int)$collid . ' AND m.field = "bottom_salinity" ';
+        //echo $sql;
+        $result = $this->conn->query($sql);
+        while($row = $result->fetch_object()){
+            $salinityData[$row->eventid] = $row->datavalue;
         }
         $result->free();
 
@@ -298,6 +309,8 @@ class IRLDataService {
                 $nodeArr['Order'] = (array_key_exists(100, $parentArr) ? $parentArr[100]['sciname'] : '');
                 $nodeArr['Family'] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
             }
+            $nodeArr['Salinity'] = array_key_exists($nodeArr['eventid'], $salinityData) ? $salinityData[$nodeArr['eventid']] : '';
+            unset($nodeArr['eventid']);
             $returnArr[] = $nodeArr;
         }
         return $returnArr;
