@@ -129,7 +129,7 @@ class ImageProcessor {
                                                 'SET url = "'.$url.'", originalurl = "'.$originalUrl.'", thumbnailurl = '.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').' '.
                                                 'WHERE imgid = '.$r1->imgid;
                                             if($this->conn->query($sql2)){
-                                                echo '<li style="margin-left:10px">Existing image replaced with new image mapping: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
+                                                echo '<li style="margin-left:10px">Existing image replaced with new image mapping: <a href="../occurrenceNavigator.php?interface=occurrence&occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
                                                 $this->deleteImage($r1->url);
                                                 $this->deleteImage($r1->originalurl);
                                                 $this->deleteImage($r1->thumbnailurl);
@@ -158,7 +158,7 @@ class ImageProcessor {
                                 $sqlInsert = 'INSERT INTO images(occid,url,originalurl,thumbnailurl) '.
                                     'VALUES('.$occid.',"'.$url.'","'.$originalUrl.'",'.($thumbnailUrl?'"'.$thumbnailUrl.'"':'NULL').')';
                                 if($this->conn->query($sqlInsert)){
-                                    echo '<li style="margin-left:10px">Image URLs linked to: <a href="../editor/occurrenceeditor.php?occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
+                                    echo '<li style="margin-left:10px">Image URLs linked to: <a href="../occurrenceNavigator.php?interface=occurrence&occid='.$occid.'" target="_blank">'.$catalogNumber.'</a></li>';
                                 }
                                 else{
                                     echo '<li style="margin-left:10px">ERROR loading image.</li>';

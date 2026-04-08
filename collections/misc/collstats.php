@@ -918,7 +918,7 @@ if($action !== 'Update Statistics'){
                                         echo '<td>';
                                         if(count($resultsTemp) === 1){
                                             $starrStr = '{"db":"'.$collid.'","usethes":true,"taxa":"'.$name.'"}';
-                                            echo "<a href='../list.php?starr=".$starrStr."' target='_blank'>";
+                                            echo "<a href='../occurrenceNavigator.php?interface=list&starr=".$starrStr."' target='_blank'>";
                                         }
                                         echo number_format($data['SpecimensPerFamily']);
                                         if(count($resultsTemp) === 1){
@@ -956,7 +956,7 @@ if($action !== 'Update Statistics'){
                                         echo '<td>';
                                         if(count($resultsTemp) === 1){
                                             $starrStr = '{"db":"'.$collid.'","country":"'.$name.'"}';
-                                            echo "<a href='../list.php?starr=".$starrStr."' target='_blank'>";
+                                            echo "<a href='../occurrenceNavigator.php?interface=list&starr=".$starrStr."' target='_blank'>";
                                         }
                                         echo number_format($data['CountryCount']);
                                         if(count($resultsTemp) === 1){

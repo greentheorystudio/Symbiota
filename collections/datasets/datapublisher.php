@@ -286,7 +286,7 @@ include(__DIR__ . '/../../header.php');
 				$blockSubmitMsg = 'Archive cannot be published until occurrenceID GUID source is set<br/>';
 			}
 			if($recFlagArr['nullBasisRec']){
-				$linkUrl = '../table.php?starr={"collid":' . $collId . ',"advanced":[{"concatenator":null,"openParens":null,"field":"basisofrecord","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}]}';
+				$linkUrl = '../occurrenceNavigator.php?interface=table&starr={"collid":' . $collId . ',"advanced":[{"concatenator":null,"openParens":null,"field":"basisofrecord","dataType":null,"operator":"IS NULL","value":null,"closeParens":null}]}';
                 echo '<div style="margin:10px;font-weight:bold;color:red;">There are '.$recFlagArr['nullBasisRec']." records missing basisOfRecord and will not be published. Please go to <a href='" . $linkUrl . "'>Edit Existing Occurrence Records</a> to correct this.</div>";
 			}
 			if($dwcUri && isset($GLOBALS['GBIF_USERNAME'], $GLOBALS['GBIF_PASSWORD'], $GLOBALS['GBIF_ORG_KEY']) && ($publishGBIF || $publishIDIGBIO)){
