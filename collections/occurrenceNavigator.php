@@ -33,6 +33,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/panzoom.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collId; ?>;
             const DISPLAY_MODE = <?php echo $displayMode; ?>;
@@ -461,6 +462,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         if(Number(initialOccId) > 0){
                             occurrenceEditorInterfaceOccId.value = Number(initialOccId);
+                            displayQueryPopup.value = false;
                         }
                         searchStore.setDisplayInterface(initialInterface);
                         if(Number(queryId) > 0 || stArrJson){
