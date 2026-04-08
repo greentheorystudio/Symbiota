@@ -76,19 +76,19 @@ include_once(__DIR__ . '/services/SanitizerService.php');
         document.addEventListener("DOMContentLoaded", () => {
             const dropDownNavBar = Vue.createApp({
                 setup() {
-                    const store = useBaseStore();
-                    const storeRefs = Pinia.storeToRefs(store);
-                    const clientRoot = store.getClientRoot;
+                    const baseStore = useBaseStore();
+
+                    const clientRoot = baseStore.getClientRoot;
                     const navBarData = Vue.ref([
                         {url: clientRoot + '/index.php', label: 'Home'},
-                        {url: clientRoot + '/collections/list.php', label: 'Search Collections'},
-                        {url: clientRoot + '/spatial/index.php', label: 'Spatial Module', newTab: true},
+                        {url: clientRoot + '/collections/occurrenceNavigator.php?interface=list', label: 'Search Collections'},
+                        {url: clientRoot + '/collections/occurrenceNavigator.php?interface=spatial', label: 'Spatial Module', newTab: true},
                         {url: clientRoot + '/media/search.php', label: 'Image Search'}
                     ]);
                     let navBarTimeout = null;
                     const navBarToggle = Vue.ref({});
                     const requestPath = REQUEST_PATH;
-                    const userDisplayName = storeRefs.getUserDisplayName;
+                    const userDisplayName = Vue.computed(() => baseStore.getUserDisplayName);
                     const windowWidth = Vue.ref(0);
 
                     function  handleResize() {

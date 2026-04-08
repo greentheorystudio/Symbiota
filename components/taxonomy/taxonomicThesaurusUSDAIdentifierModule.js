@@ -270,28 +270,32 @@ const taxonomicThesaurusUSDAIdentifierModule = {
                     return response.ok ? response.text() : null;
                 })
                 .then((fileContents) => {
-                    csvToArray(fileContents).then((csvData) => {
-                        if(csvData[0] && csvData[0].hasOwnProperty('symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('scientificname')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('scientific name with author')))){
-                            processingArr.value = csvData;
-                            if(selectedKingdomName.value === 'Fungi'){
-                                processUsdaFungiSymbolUpload();
+                    if(fileContents.length > 0){
+                        csvToArray(fileContents).then((csvData) => {
+                            if(csvData[0] && csvData[0].hasOwnProperty('symbol') && ((selectedKingdomName.value === 'Fungi' && csvData[0].hasOwnProperty('scientificname')) || (selectedKingdomName.value === 'Plantae' && csvData[0].hasOwnProperty('scientific name with author')))){
+                                processingArr.value = csvData;
+                                if(selectedKingdomName.value === 'Fungi'){
+                                    processUsdaFungiSymbolUpload();
+                                }
+                                else{
+                                    processUsdaPlantaeSymbolUpload();
+                                }
                             }
                             else{
-                                processUsdaPlantaeSymbolUpload();
+                                showNotification('negative', 'There is an issue with processing the USDA data.');
                             }
-                        }
-                        else{
-                            showNotification('negative', 'There is an issue with processing the USDA data.');
-                        }
-                    });
+                        });
+                    } else{
+                        showNotification('negative', 'There is an issue downloading the USDA data.');
+                    }
                 });
         }
 
         function initializeUSDAImport() {
             if(selectedKingdomName.value === 'Fungi'){
-                getUSDAData("https://plants.sc.egov.usda.gov/DocumentLibrary/Txt/Non_LichenFungi.txt");
+                getUSDAData('https://plants.sc.egov.usda.gov/DocumentLibrary/Txt/Non_LichenFungi.txt');
             } else if (selectedKingdomName.value === 'Plantae'){
-                getUSDAData("https://plants.sc.egov.usda.gov/DocumentLibrary/Txt/plantlst.txt");
+                getUSDAData('https://plants.sc.egov.usda.gov/DocumentLibrary/Txt/plantlst.txt');
             }else {
                 showNotification('negative', 'There is an issue with the kingdom selection.');
             }
@@ -370,6 +374,7 @@ const taxonomicThesaurusUSDAIdentifierModule = {
                             if(usdaIdentifier){
                                 if(usdaIdentifier['identifier'] !== currentData['Symbol']){
                                     updateTaxonIdentifier(resObj['tid'], currentData['Symbol'], 'usda');
+                                    processUsdaFungiSymbolUpload();
                                 }
                                 else{
                                     processErrorResponse('USDA symbol already exists');

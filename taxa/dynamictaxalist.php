@@ -464,7 +464,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function openOccurrenceListGeneticSearch(sciname) {
-                        window.open((clientRoot + '/collections/list.php?starr={"hasgenetic":1,"taxa":"' + sciname + '"}'), '_blank');
+                        window.open((clientRoot + '/collections/occurrenceNavigator.php?interface=list&starr={"hasgenetic":1,"taxa":"' + sciname + '"}'), '_blank');
                     }
 
                     function processClassSelection(value) {

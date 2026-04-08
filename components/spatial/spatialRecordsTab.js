@@ -7,8 +7,8 @@ const spatialRecordsTab = {
                 </div>
                 <div class="col-12 col-md-4 offset-md-grow">
                     <div class="row q-gutter-sm">
-                        <list-display-button></list-display-button>
-                        <table-display-button></table-display-button>
+                        <list-display-button :navigator-mode="true"></list-display-button>
+                        <table-display-button :navigator-mode="true"></table-display-button>
                         <image-display-button></image-display-button>
                         <template v-if="searchTermsJson.length <= 1800">
                             <copy-url-button></copy-url-button>
@@ -55,7 +55,7 @@ const spatialRecordsTab = {
                                     <div class="fit text-left">
                                         <a role="button" class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);" @keyup.enter="openRecordInfoWindow(props.row.occid);" aria-label="View record details" tabindex="0">{{ (props.row.collector ? props.row.collector : '[No data]') }}</a>
                                     </div>
-                                    <div class="row justify-end">
+                                    <div v-if="props.row.decimallatitude && props.row.decimallongitude" class="row justify-end">
                                         <q-btn color="grey-4" size="xs" text-color="black" class="q-ml-sm black-border" icon="fas fa-search-location" @click="setMapFinderPopup(props.row);" dense aria-label="See location on map" tabindex="0">
                                             <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                                 See location on map
