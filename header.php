@@ -91,9 +91,9 @@ include_once(__DIR__ . '/services/SanitizerService.php');
                         {url: CLIENT_ROOT + '/index.php', label: 'Home'},
                         {url: CLIENT_ROOT + '/misc/project.php', label: 'The Project'},
                         {label: 'Trees'},
-                        {url: CLIENT_ROOT + '/collections/list.php', label: 'Specimen Search'},
+                        {url: CLIENT_ROOT + '/collections/occurrenceNavigator.php?interface=list', label: 'Specimen Search'},
                         {url: CLIENT_ROOT + '/media/search.php', label: 'Image Search'},
-                        {url: CLIENT_ROOT + '/spatial/index.php', label: 'Map Search', newTab: true},
+                        {url: CLIENT_ROOT + '/collections/occurrenceNavigator.php?interface=spatial', label: 'Map Search', newTab: true},
                         {
                             label: 'Interactive Tools',
                             subItems: [
