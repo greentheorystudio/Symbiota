@@ -74,11 +74,10 @@ class SearchService {
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
-                $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $sql = 'SELECT o.occid ';
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
-                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
                 if($options['schema'] === 'image' && array_key_exists('imagecount', $searchTermsArr) && $searchTermsArr['imagecount']){
                     if($searchTermsArr['imagecount'] === 'taxon'){
                         $sql .= 'GROUP BY t.tidaccepted ';
@@ -125,11 +124,10 @@ class SearchService {
         if($searchTermsArr && $options){
             $sqlWhere = $this->prepareOccurrenceWhereSql($searchTermsArr, ($options['schema'] === 'image'));
             if($sqlWhere){
-                $spatial = array_key_exists('spatial', $options) && (int)$options['spatial'] === 1;
                 $sql = 'SELECT DISTINCT t.tidaccepted ';
                 $sql .= $this->setFromSql($options['schema']);
                 $sql .= $this->setTableJoinsSql($searchTermsArr);
-                $sql .= $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                $sql .= $this->setWhereSql($sqlWhere, $options['schema']);
                 $sql .= 'AND t.tidaccepted IS NOT NULL ';
                 if(array_key_exists('checklist', $options) && (int)$options['checklist'] === 1){
                     $sql .= 'AND t.rankid > 140 ';
@@ -1009,7 +1007,7 @@ class SearchService {
                 if(!array_key_exists('occidArr', $searchTermsArr)){
                     $fromStr .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                 }
-                $whereStr = $this->setWhereSql($sqlWhere, $options['schema'], $spatial);
+                $whereStr = $this->setWhereSql($sqlWhere, $options['schema']);
                 if(array_key_exists('type', $options) && $options['type'] === 'fasta'){
                     $returnArr = $this->serializeFASTAResultArr($fromStr, $whereStr);
                 }
@@ -1069,7 +1067,7 @@ class SearchService {
                 else{
                     $rareSpCollidAccessArr = (new Permissions)->getUserRareSpCollidAccessArr();
                     $sqlWhereCriteria = $this->prepareOccurrenceWhereSql($searchTermsArr);
-                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema'], $options['spatial']);
+                    $sqlWhere = $this->setWhereSql($sqlWhereCriteria, $options['schema']);
                     $sqlFrom = $this->setFromSql($options['schema']);
                     $sqlFrom .= ' ' . $this->setTableJoinsSql($searchTermsArr);
                     $outputFileData = (new DarwinCoreArchiverService)->createOccurrenceFile($rareSpCollidAccessArr, $sqlWhere, $sqlFrom, $targetPath, $options, false);
@@ -1112,39 +1110,46 @@ class SearchService {
             $fields = mysqli_fetch_fields($result);
             $numRows = $result->num_rows;
             while($row = $result->fetch_assoc()){
-                $rareSpReader = false;
-                $localitySecurity = (int)$row['localitysecurity'] === 1;
-                if($localitySecurity){
-                    $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
-                }
-                if(!$localitySecurity || $rareSpReader){
-                    $geoArr = array();
-                    $geoArr['type'] = 'Feature';
-                    $geoArr['geometry']['type'] = 'Point';
-                    $geoArr['geometry']['coordinates'] = [(float)$row['decimallongitude'], (float)$row['decimallatitude']];
-                    $geoArr['properties'] = array();
-                    $geoArr['properties']['id'] = $row['occid'];
-                    foreach($fields as $val){
-                        $name = $val->name;
-                        if($name !== 'footprintwkt'){
-                            $geoArr['properties'][$name] = $row[$name];
-                        }
+                if($row['decimallongitude'] && $row['decimallatitude']){
+                    $rareSpReader = false;
+                    $localitySecurity = (int)$row['localitysecurity'] === 1;
+                    if($localitySecurity){
+                        $rareSpReader = in_array((int)$row['collid'], $rareSpCollidAccessArr, true);
                     }
-                    if($mofData){
-                        if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
-                            foreach($mofData['event'][$row['eventid']] as $field => $value){
-                                $geoArr['properties'][$field] = $value;
+                    if(!$localitySecurity || $rareSpReader){
+                        $geoArr = array();
+                        $geoArr['type'] = 'Feature';
+                        $geoArr['geometry']['type'] = 'Point';
+                        $geoArr['geometry']['coordinates'] = [(float)$row['decimallongitude'], (float)$row['decimallatitude']];
+                        $geoArr['properties'] = array();
+                        $geoArr['properties']['id'] = $row['occid'];
+                        foreach($fields as $val){
+                            $name = $val->name;
+                            if($name !== 'footprintwkt'){
+                                if($name === 'sciname'){
+                                    $geoArr['properties'][$name] = $row[$name] ?: '[N/A]';
+                                }
+                                else{
+                                    $geoArr['properties'][$name] = $row[$name];
+                                }
                             }
-                            unset($mofData['event'][$row['eventid']]);
                         }
-                        if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
-                            foreach($mofData['occurrence'][$row['occid']] as $field => $value){
-                                $geoArr['properties'][$field] = $value;
+                        if($mofData){
+                            if($row['eventid'] && $mofData['event'] && array_key_exists($row['eventid'], $mofData['event'])){
+                                foreach($mofData['event'][$row['eventid']] as $field => $value){
+                                    $geoArr['properties'][$field] = $value;
+                                }
+                                unset($mofData['event'][$row['eventid']]);
                             }
-                            unset($mofData['occurrence'][$row['occid']]);
+                            if($mofData['occurrence'] && array_key_exists($row['occid'], $mofData['occurrence'])){
+                                foreach($mofData['occurrence'][$row['occid']] as $field => $value){
+                                    $geoArr['properties'][$field] = $value;
+                                }
+                                unset($mofData['occurrence'][$row['occid']]);
+                            }
                         }
+                        $featuresArr[] = $geoArr;
                     }
-                    $featuresArr[] = $geoArr;
                 }
             }
             $result->free();
@@ -1320,13 +1325,10 @@ class SearchService {
         return $returnStr;
     }
 
-    public function setWhereSql($sqlWhere, $schema, $spatial): string
+    public function setWhereSql($sqlWhere, $schema): string
     {
         $returnStr = 'WHERE ' . $sqlWhere . ' ';
-        if($spatial || $schema === 'image'){
-            if($spatial){
-                $returnStr .= 'AND (o.sciname IS NOT NULL AND o.decimallatitude IS NOT NULL AND o.decimallongitude IS NOT NULL) ';
-            }
+        if($schema === 'image'){
             if(!array_key_exists('SuperAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('CollAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppAdmin', $GLOBALS['USER_RIGHTS']) && !array_key_exists('RareSppReadAll', $GLOBALS['USER_RIGHTS'])){
                 if(array_key_exists('RareSppReader', $GLOBALS['USER_RIGHTS'])){
                     $returnStr .= 'AND (o.collid IN (' . implode(',', $GLOBALS['USER_RIGHTS']['RareSppReader']) . ') OR (o.localitysecurity = 0 OR ISNULL(o.localitysecurity))) ';

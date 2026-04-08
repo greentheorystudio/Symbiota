@@ -1,9 +1,5 @@
 const spatialAnalysisModule = {
     props: {
-        clusterPoints: {
-            type: Boolean,
-            default: true
-        },
         inputWindowMode: {
             type: Boolean,
             default: false
@@ -12,25 +8,14 @@ const spatialAnalysisModule = {
             type: Array,
             default: []
         },
-        queryId: {
-            type: Number,
-            default: 0
-        },
-        stArrJson: {
-            type: String,
-            default: null
+        loadRecordsCompleted: {
+            type: Boolean,
+            default: false
         }
     },
     template: `
         <spatial-layer-controller-popup :layers-info-obj="layersInfoObj"></spatial-layer-controller-popup>
         <spatial-layer-query-selector-popup :layer-id="mapSettings.layerQuerySelectorId"></spatial-layer-query-selector-popup>
-        <template v-if="mapSettings.recordInfoWindowId">
-            <occurrence-info-window-popup :occurrence-id="mapSettings.recordInfoWindowId" :show-popup="mapSettings.showRecordInfoWindow" @close:popup="closeRecordInfoWindow"></occurrence-info-window-popup>
-        </template>
-        <template v-if="displayQueryPopup">
-            <search-criteria-popup :show-popup="displayQueryPopup" :show-spatial="false" @reset:search-criteria="clearSelectedFeatures" @process:search-load-records="loadRecords" @reset:search-criteria="processResetCriteria" @close:popup="setQueryPopupDisplay(false)"></search-criteria-popup>
-        </template>
-
         <div id="map" :class="inputWindowMode ? 'input-window analysis' : 'analysis'">
             <spatial-side-panel :show-panel="mapSettings.showSidePanel" :expanded-element="mapSettings.sidePanelExpandedElement"></spatial-side-panel>
             <spatial-control-panel ref="controlPanelRef"></spatial-control-panel>
@@ -44,7 +29,6 @@ const spatialAnalysisModule = {
             <template v-if="inputWindowMode">
                 <q-btn dense class="z-max map-popup-close-button" size="md" color="red" text-color="white" icon="fas fa-times" @click="emitClosePopup();" aria-label="Close window" tabindex="0"></q-btn>
             </template>
-
             <div id="mapinfo">
                 <div id="mapcoords"></div>
                 <div id="mapscale_us"></div>
@@ -54,8 +38,6 @@ const spatialAnalysisModule = {
         <tutorial-module tutorial="spatial-module" :show-tutorial="displayTutorial" @close:tutorial="displayTutorial = false"></tutorial-module>
     `,
     components: {
-        'occurrence-info-window-popup': occurrenceInfoWindowPopup,
-        'search-criteria-popup': searchCriteriaPopup,
         'spatial-side-panel': spatialSidePanel,
         'spatial-control-panel': spatialControlPanel,
         'spatial-layer-controller-popup': spatialLayerControllerPopup,
@@ -75,7 +57,6 @@ const spatialAnalysisModule = {
         const clickedFeatures = Vue.shallowReactive([]);
         const controlPanelRef = Vue.ref(null);
         const coreLayers = spatialStore.getCoreLayers;
-        const displayQueryPopup = Vue.ref(false);
         const displayTutorial = Vue.ref(false);
         const dragAndDropInteraction = new ol.interaction.DragAndDrop({
             formatConstructors: [
@@ -105,7 +86,6 @@ const spatialAnalysisModule = {
         });
         const mapSettings = Vue.shallowReactive(Object.assign({}, spatialStore.getMapSettings));
         let mapView = null;
-        const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
         const pointInteraction = Vue.computed(() => setPointInteraction());
         let popupCloser = Vue.ref(false);
         let popupContent = Vue.ref('');
@@ -134,6 +114,10 @@ const spatialAnalysisModule = {
             units: 'degrees'
         });
         const windowWidth = Vue.ref(0);
+
+        Vue.watch(propsRefs.loadRecordsCompleted, () => {
+            processSearchRecordCountChange();
+        });
 
         updateMapSettings('blankDragDropSource', new ol.source.Vector({
             wrapX: true
@@ -321,10 +305,6 @@ const spatialAnalysisModule = {
             layersObj['pointv'].getSource().changed();
         }
 
-        function clearSelectedFeatures() {
-            selectInteraction.value.getFeatures().clear();
-        }
-
         function clearSelections(resetToggle) {
             const selections = searchStore.getSelectionsIds;
             selections.forEach((id) => {
@@ -355,11 +335,6 @@ const spatialAnalysisModule = {
             popupCloser.value = false;
             clearTimeout(popupTimeout);
             popupTimeout = null;
-        }
-
-        function closeRecordInfoWindow(){
-            updateMapSettings('recordInfoWindowId', null);
-            updateMapSettings('showRecordInfoWindow', false);
         }
 
         function coordFormat() {
@@ -846,7 +821,7 @@ const spatialAnalysisModule = {
                 };
                 searchStore.processSearch(options, (res, index) => {
                     if(res){
-                        const finalIndex = searchStore.getSearchRecordCount > lazyLoadCnt ? (Math.ceil(searchStore.getSearchRecordCount / lazyLoadCnt) - 1) : 0;
+                        const finalIndex = searchRecordCnt.value > lazyLoadCnt ? (Math.ceil(searchRecordCnt.value / lazyLoadCnt) - 1) : 0;
                         const format = new ol.format.GeoJSON();
                         let features = format.readFeatures(res, {
                             featureProjection: 'EPSG:3857'
@@ -861,9 +836,18 @@ const spatialAnalysisModule = {
                         primeSymbologyData(features);
                         mapSettings.pointVectorSource.addFeatures(features);
                         if(index === finalIndex){
-                            const pointextent = mapSettings.pointVectorSource.getExtent();
-                            map.getView().fit(pointextent,map.getSize());
-                            loadPointsPostrender();
+                            const pointFeatures = mapSettings.pointVectorSource.getFeatures();
+                            if(pointFeatures.length > 0){
+                                const pointextent = mapSettings.pointVectorSource.getExtent();
+                                map.getView().fit(pointextent,map.getSize());
+                                loadPointsPostrender();
+                            }
+                            else{
+                                updateMapSettings('sidePanelExpandedElement', 'records');
+                                updateMapSettings('showSidePanel', true);
+                                hideWorking();
+                                showNotification('negative','All of the records cannot be displayed on the map due to missing coordinate data');
+                            }
                         }
                     }
                     else{
@@ -875,7 +859,7 @@ const spatialAnalysisModule = {
                 processed += lazyLoadCnt;
                 index++;
             }
-            while(processed < searchStore.getSearchRecordCount && !mapSettings.loadPointsError);
+            while(processed < searchRecordCnt.value && !mapSettings.loadPointsError);
             updateMapSettings('clusterSource', new ol.source.PropertyCluster({
                 distance: mapSettings.clusterDistance,
                 source: mapSettings.pointVectorSource,
@@ -917,68 +901,22 @@ const spatialAnalysisModule = {
             hideWorking();
         }
 
-        function loadRecords(){
-            if(!selectedPolyError.value){
-                clearSelections(false);
-                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                    Object.keys(symbologyArr).forEach((key) => {
-                        delete symbologyArr[key];
-                    });
-                    symbologyArr['sciname'] = [];
-                    symbologyArr['taxonomy'] = [];
-                    searchStore.clearSelections();
-                    searchStore.clearQueryOccidArr();
-                    showWorking('Loading...');
-                    const options = {
-                        schema: 'map',
-                        spatial: 1
-                    };
-                    searchStore.setSearchOccidArr(options, () => {
-                        if(Number(searchStore.getSearchRecordCount) > 0){
-                            displayQueryPopup.value = false;
-                            updateMapSettings('showControlPanelLeft', false);
-                            spatialStore.updateRecordPage(1);
-                            searchStore.updateSearchTerms('mapIndex', 1);
-                            loadPointsLayer();
-                        }
-                        else{
-                            if(mapSettings.pointActive){
-                                removeLayerFromActiveLayerOptions('pointv');
-                                updateMapSettings('pointActive', false);
-                            }
-                            hideWorking();
-                            showNotification('negative','There were no records matching your query.');
-                        }
-                    });
-                }
-                else{
-                    showNotification('negative','Please enter search criteria.');
-                }
-            }
-            else{
-                showNotification('negative','You have too many complex polygons selected. Please deselect one or more polygons in order to Load Records.');
-            }
-        }
-
         function mapPostLoadInitialize() {
             spatialModuleInitialising.value = false;
-            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
-                if(props.stArrJson){
-                    searchStore.loadSearchTermsArrFromJson(props.stArrJson.replaceAll('%squot;', "'"));
-                }
-                if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                    updateMapSettings('loadPointsEvent', true);
-                    createShapesFromSearchTermsArr();
-                    loadRecords();
-                }
+            if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
+                updateMapSettings('loadPointsEvent', true);
+                createShapesFromSearchTermsArr();
             }
             window.addEventListener('resize', handleWindowResize);
             handleWindowResize();
         }
 
+        function openQueryPopupDisplay() {
+            context.emit('open:query-popup');
+        }
+
         function openRecordInfoWindow(id){
-            updateMapSettings('recordInfoWindowId', id);
-            updateMapSettings('showRecordInfoWindow', true);
+            context.emit('open:record-info-window', id);
         }
 
         function primeSymbologyData(features) {
@@ -1239,6 +1177,13 @@ const spatialAnalysisModule = {
             context.emit('update:spatial-data', inputResponseData.value);
         }
 
+        function processLoadRecords() {
+            updateMapSettings('showControlPanelLeft', false);
+            spatialStore.updateRecordPage(1);
+            searchStore.updateSearchTerms('mapIndex', 1);
+            loadPointsLayer();
+        }
+
         function processPointSelection(sFeature) {
             const feature = (sFeature.get('features') ? sFeature.get('features')[0] : sFeature);
             const id = Number(feature.get('id'));
@@ -1255,12 +1200,20 @@ const spatialAnalysisModule = {
             updatePointStyle(id);
         }
 
-        function processResetCriteria() {
-            if(Number(searchRecordCnt.value) === 0){
-                removeUserLayer('pointv');
-            }
-            if(occurrenceEditorModeActive.value){
-                loadRecords();
+        function processSearchRecordCountChange() {
+            Object.keys(symbologyArr).forEach((key) => {
+                delete symbologyArr[key];
+            });
+            symbologyArr['sciname'] = [];
+            symbologyArr['taxonomy'] = [];
+            searchStore.clearSelections();
+            selectInteraction.value.getFeatures().clear();
+            mapSettings.pointVectorSource.clear(true);
+            removeLayerFromActiveLayerOptions('pointv');
+            updateMapSettings('pointActive', false);
+            if(Number(searchRecordCnt.value) > 0){
+                showWorking('Loading...');
+                processLoadRecords();
             }
         }
 
@@ -1919,16 +1872,6 @@ const spatialAnalysisModule = {
                 })
             });
             layersArr.push(layersObj['rasteranalysis']);
-            layersObj['pointv'].on('prerender', () => {
-                if(mapSettings.loadPointsEvent){
-                    showWorking('Loading...');
-                }
-            });
-            layersObj['heat'].on('prerender', () => {
-                if(mapSettings.loadPointsEvent){
-                    showWorking('Loading...');
-                }
-            });
             dragAndDropInteraction.on('addfeatures', (event) => {
                 let filename = event.file.name.split('.');
                 const fileType = filename.pop();
@@ -2289,10 +2232,6 @@ const spatialAnalysisModule = {
                 hitTolerance: 2,
                 style: getPointStyle
             });
-        }
-
-        function setQueryPopupDisplay(val) {
-            displayQueryPopup.value = val;
         }
 
         function setRasterAnalysisInteraction() {
@@ -2681,6 +2620,7 @@ const spatialAnalysisModule = {
         Vue.provide('loadPointsLayer', loadPointsLayer);
         Vue.provide('map', Vue.computed(() => map));
         Vue.provide('mapSettings', mapSettings);
+        Vue.provide('openQueryPopupDisplay', openQueryPopupDisplay);
         Vue.provide('openRecordInfoWindow', openRecordInfoWindow);
         Vue.provide('processInputSelections', processInputSelections);
         Vue.provide('processInputSubmit', processInputSubmit);
@@ -2698,7 +2638,6 @@ const spatialAnalysisModule = {
         Vue.provide('setClusterDistance', setClusterDistance);
         Vue.provide('setDisplayTutorial', setDisplayTutorial);
         Vue.provide('setLayersOrder', setLayersOrder);
-        Vue.provide('setQueryPopupDisplay', setQueryPopupDisplay);
         Vue.provide('showPopup', showPopup);
         Vue.provide('showTutorial', showTutorial);
         Vue.provide('symbologyArr', symbologyArr);
@@ -2708,42 +2647,33 @@ const spatialAnalysisModule = {
         Vue.provide('zoomToSelections', zoomToSelections);
 
         Vue.onMounted(() => {
-            if(!propsRefs.inputWindowMode.value && (props.queryId || props.stArrJson)){
-                showWorking('Loading...');
-            }
             spatialModuleInitialising.value = true;
             setMapLayersInteractions();
             setMapOverlays();
             setMap();
             addMapControlsInteractions();
             setLayersController();
-            if(!propsRefs.inputWindowMode.value){
-                searchStore.initializeSearchStorage(props.queryId);
-            }
             getCoords();
             setTransformHandleStyle();
-            if(!props.clusterPoints){
-                updateMapSettings('clusterPoints', false);
-            }
             updateMapSettings('drawToolFreehandMode', getPlatformProperty('has.touch'));
             changeDraw();
             controlPanelRef.value.changeBaseMap();
             window.addEventListener('resize', handleWindowResize);
             handleWindowResize();
+            if(Number(searchRecordCnt.value) > 0){
+                processSearchRecordCountChange();
+            }
         });
 
         return {
             controlPanelRef,
-            displayQueryPopup,
             displayTutorial,
             layersInfoObj,
             mapSettings,
             popupCloser,
             popupContent,
             transformInteraction,
-            clearSelectedFeatures,
             closePopup,
-            closeRecordInfoWindow,
             createCircleFromPointRadius,
             createCirclesFromCircleArr,
             createPointFromPointParams,
@@ -2752,9 +2682,6 @@ const spatialAnalysisModule = {
             createPolysFromPolyArr,
             createUncertaintyCircleFromPointRadius,
             emitClosePopup,
-            loadRecords,
-            processResetCriteria,
-            setQueryPopupDisplay,
             updateMapSettings,
             zoomToShapesLayer
         }

@@ -217,7 +217,7 @@ function openIndPopup(occid){
 }
 
 function openEditorPopup(occid){
-	openPopup('../editor/occurrenceeditor.php?occid=' + occid);
+	openPopup('../occurrenceNavigator.php?interface=occurrence&occid=' + occid);
 }
 
 function verifyDate(eventDateInput){

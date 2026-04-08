@@ -25,8 +25,8 @@ header('Content-Type: text/html; charset=UTF-8' );
                 <div class="q-pa-md column">
                     <div class="text-h6 text-bold">Collections</div>
                     <ul>
-                        <li><a :href="(clientRoot + '/collections/list.php')" tabindex="0">Search Collections</a></li>
-                        <li><a :href="(clientRoot + '/spatial/index.php')" tabindex="0">Spatial Module</a></li>
+                        <li><a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=list')" tabindex="0">Search Collections</a></li>
+                        <li><a :href="(clientRoot + '/collections/occurrenceNavigator.php?interface=spatial')" tabindex="0">Spatial Module</a></li>
                         <li><a :href="(clientRoot + '/collections/misc/collprofiles.php')" tabindex="0">Collections</a></li>
                         <!-- <li><a :href="(clientRoot + '/collections/misc/collstats.php')" tabindex="0">Collection Statistics</a></li> -->
                         <template v-if="activateExsiccati">

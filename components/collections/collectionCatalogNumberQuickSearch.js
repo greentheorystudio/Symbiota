@@ -45,7 +45,7 @@ const collectionCatalogNumberQuickSearch = {
                             showNotification('negative', 'There are multiple records with that catalog number.');
                         }
                         else{
-                            window.location.href = (clientRoot + '/collections/editor/occurrenceeditor.php?occid=' + data[0]['occid']);
+                            window.location.href = (clientRoot + '/collections/occurrenceNavigator.php?interface=occurrence&occid=' + data[0]['occid']);
                         }
                     });
                 });
