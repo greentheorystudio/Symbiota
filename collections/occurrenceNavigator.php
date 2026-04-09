@@ -411,8 +411,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         const navContainerElement = document.getElementById('navContainer');
                         const mainContainerElement = document.getElementById('interfaceContainer');
                         document.body.classList.remove('q-pa-md', 'full-window-mode');
-                        mainContainerElement.classList.remove('list-search-container');
-                        mainContainerElement.style.removeProperty('width');
+                        mainContainerElement.classList.remove('list-search-container', 'occurrence', 'list', 'table', 'spatial');
+                        mainContainerElement.classList.add((displayInterface.value + '-interface'));
                         if(displayInterface.value === 'occurrence' || displayInterface.value === 'table' || displayInterface.value === 'spatial'){
                             document.body.classList.add('full-window-mode');
                         }
@@ -436,9 +436,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                 containerElement.value.insertBefore(mainContainerElement, containerElement.value.children[1]);
                             }
                             containerElement.value.classList.remove('hidden');
-                        }
-                        if(displayInterface.value === 'list' && mainContainerElement.parentElement.id === 'containerBlockNode'){
-                            mainContainerElement.style.setProperty("width", "80%", "important");
                         }
                     }
 
