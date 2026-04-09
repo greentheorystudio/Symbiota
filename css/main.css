@@ -1013,3 +1013,6 @@ a.header-home-link, a.header-home-link:hover, a.header-home-link:visited {
 	font-weight: 400;
 	font-size: 1.5em;
 }
+div.list-interface {
+	width: 80% !important;
+}
