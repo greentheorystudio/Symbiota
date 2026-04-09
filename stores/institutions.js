@@ -94,20 +94,27 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
             }
             this.institutionsEditData = Object.assign({}, this.institutionsData);
         },
-        setInstitutionsArr(iid) {
-            const formData = new FormData();
-            formData.append('iid', iid.toString());
-            formData.append('action', 'getInstitutionsData');
-            fetch(institutionsApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
+        setInstitutionData(iid) {
+            this.institutionsEditData = Object.assign({}, {});
+            this.institutionsId = Number(iid);
+            if (Number(iid) > 0){
+                const formData = new FormData();
+                formData.append('iid', iid.toString());
+                formData.append('action', 'getInstitutionsData');
+                fetch(institutionsApiUrl, {
+                    method: 'POST',
+                    body: formData
                 })
-                .then((data) => {
-                    this.institutionsArr = data;
-                });
+                    .then((response) => {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then((data) => {
+                        this.institutionsData = Object.assign({}, data);
+                    });
+            } else {
+                this.institutionsData = Object.assign({}, this.blankInstitutionRecord);
+            }
+            this.institutionsEditData = Object.assign({}, this.institutionsData);
         },
         updateInstitutionsEditData(key, value) {
             this.institutionsEditData[key] = value;

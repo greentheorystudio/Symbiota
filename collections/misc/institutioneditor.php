@@ -48,29 +48,33 @@ include(__DIR__ . '../../../header.php');
                 <h1>
                     Locations
                 </h1>
+<!--                the button here doesn't show up ... valid user works, so it's quasar not working?-->
                 <div v-if="validUser" class="row justify-end q-gutter-sm q-pr-md">
                     <div>
-                        <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Locatiion" tabindex="0" />
+                        <b-button size="sm">Small Button</b-button>
+                        <q-btn color="secondary" @click="openInstitutionsEditorPopup();" label="Create Locatiion" tabindex="0" />
                     </div>
                 </div>
             </div>
-            <template v-if="Object.keys(checklistArr).length > 0">
-                <template v-for="projectGroup in checklistArr">
+            <template v-if="Object.keys(institutionsArr).length > 0">
+                <template v-for="projectGroup in institutionsArr">
                     <q-card v-if="projectGroup['checklists'].length > 0" flat>
                         <q-card-section class="column q-gutter-sm">
                             <div v-if="projectGroup['projname']" class="row justify-start">
                                 <div class="text-h6 text-bold">
-                                    <a :href="(clientRoot + '/projects/project.php?pid=' + projectGroup['pid'])" tabindex="0">{{ projectGroup['projname'] }}</a>
+                                    {{ projectGroup['projname'] }}
                                 </div>
-                                <div v-if="projectGroup['coordinates'].length > 0" class="q-ml-sm self-center">
-                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(projectGroup['coordinates']);" icon="fas fa-globe" dense aria-label="See checklists on map" tabindex="0">
-                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                            See checklists on map
-                                        </q-tooltip>
-                                    </q-btn>
-                                </div>
+<!--                                SPACIAL STUFF, IGNORE FOR NOW-->
+<!--                                <div v-if="projectGroup['coordinates'].length > 0" class="q-ml-sm self-center">-->
+<!--                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(projectGroup['coordinates']);" icon="fas fa-globe" dense aria-label="See checklists on map" tabindex="0">-->
+<!--                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">-->
+<!--                                            See locations on map-->
+<!--                                        </q-tooltip>-->
+<!--                                    </q-btn>-->
+<!--                                </div>-->
                             </div>
                             <div class="column">
+<!--                                what's the difference between the  checklist['name'] and projectGroup['projname']??? which one is shown in checklists rn -->
                                 <template v-for="checklist in projectGroup['checklists']">
                                     <div class="row justify-start">
                                         <div class="text-body1">
@@ -96,20 +100,21 @@ include(__DIR__ . '../../../header.php');
                 </div>
             </template>
         </div>
-        <template v-if="showChecklistEditorPopup">
-            <checklist-editor-popup
-                    :show-popup="showChecklistEditorPopup"
-                    @close:popup="showChecklistEditorPopup = false"
-            ></checklist-editor-popup>
-        </template>
-        <template v-if="showSpatialPopup">
-            <spatial-viewer-popup
-                    :coordinate-set="spatialPopupCoordinateSet"
-                    :footprint-wkt="spatialPopupFootprintWkt"
-                    :show-popup="showSpatialPopup"
-                    @close:popup="closeSpatialPopup();"
-            ></spatial-viewer-popup>
-        </template>
+<!--        POP-UPS, FOCUS ON SHOWING LIST FOR NOW-->
+<!--        <template v-if="showInstitutionsEditorPopup">-->
+<!--            <institutions-editor-popup-->
+<!--                    :show-popup="showInstitutionsEditorPopup"-->
+<!--                    @close:popup="showInstitutionsEditorPopup = false"-->
+<!--            ></institutions-editor-popup>-->
+<!--        </template>-->
+<!--        <template v-if="showSpatialPopup">-->
+<!--            <spatial-viewer-popup-->
+<!--                    :coordinate-set="spatialPopupCoordinateSet"-->
+<!--                    :footprint-wkt="spatialPopupFootprintWkt"-->
+<!--                    :show-popup="showSpatialPopup"-->
+<!--                    @close:popup="closeSpatialPopup();"-->
+<!--            ></spatial-viewer-popup>-->
+<!--        </template>-->
     </div>
 </div>
 <?php
@@ -117,10 +122,10 @@ include_once(__DIR__ . '../../../config/footer-includes.php');
 include(__DIR__ . '../../../footer.php');
 ?>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/taxa-vernacular.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist-taxa.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/checklist.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/project.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/institutions.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/stores/checklist-taxa.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
+<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/stores/checklist.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
+<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/stores/project.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionCatalogNumberQuickSearch.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -190,24 +195,26 @@ include(__DIR__ . '../../../footer.php');
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/wysiwygInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userPermissionManagementModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistEditorAppConfigTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistEditorAdminTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/checklists/checklistEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/institutions/institutionsFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/institutions/institutionsEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/components/checklists/checklistEditorAppConfigTab.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
+<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/components/checklists/checklistEditorAdminTab.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
+<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/components/checklists/checklistFieldModule.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
+<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/components/checklists/checklistEditorPopup.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script type="text/javascript">
-    const checklistIndexModule = Vue.createApp({
+    const institutionIndexModule = Vue.createApp({
         components: {
-            'checklist-editor-popup': checklistEditorPopup,
+            'institutions-editor-popup': institutionsEditorPopup,
             'spatial-viewer-popup': spatialViewerPopup
         },
         setup() {
             const baseStore = useBaseStore();
-            const checklistStore = useChecklistStore();
+            const institutionsStore = useInstitutionsStore();
 
-            const checklistArr = Vue.ref([]);
+            const institutionsArr = Vue.ref([]);
             const clientRoot = baseStore.getClientRoot;
-            const showChecklistEditorPopup = Vue.ref(false);
+            const showInstitutionsEditorPopup = Vue.ref(false);
             const showSpatialPopup = Vue.ref(false);
             const spatialPopupCoordinateSet = Vue.ref(null);
             const spatialPopupFootprintWkt = Vue.ref(null);
@@ -219,9 +226,9 @@ include(__DIR__ . '../../../footer.php');
                 showSpatialPopup.value = false;
             }
 
-            function openChecklistEditorPopup() {
-                checklistStore.setChecklist(0);
-                showChecklistEditorPopup.value = true;
+            function openInstitutionsEditorPopup() {
+                // institutionsStore.setChecklist(0);
+                showInstitutionsEditorPopup.value = true;
             }
 
             function openSpatialPopup(coordSet, footprintWkt = null) {
@@ -233,11 +240,10 @@ include(__DIR__ . '../../../footer.php');
                 }
                 showSpatialPopup.value = true;
             }
-
-            function setChecklistArr() {
+            function setInstitutionsArr() {
                 const formData = new FormData();
-                formData.append('action', 'getChecklistIndexArr');
-                fetch(checklistApiUrl, {
+                formData.append('action', 'getInstitutionsArr');
+                fetch(institutionsApiUrl, {
                     method: 'POST',
                     body: formData
                 })
@@ -245,52 +251,31 @@ include(__DIR__ . '../../../footer.php');
                         return response.ok ? response.json() : null;
                     })
                     .then((resData) => {
-                        checklistArr.value = resData;
-                        Object.keys(checklistArr.value).forEach((pid) => {
-                            if(checklistArr.value[pid]['checklists'].length > 0){
-                                checklistArr.value[pid]['checklists'].sort((a, b) => {
-                                    return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
-                                });
-                            }
-                        });
-                        checklistArr.value.sort((a, b) => {
-                            if(a['projname'] === null && b['projname'] === null){
-                                return 0;
-                            }
-                            else if(a['projname'] === null){
-                                return 1;
-                            }
-                            else if(b['projname'] === null){
-                                return -1;
-                            }
-                            else{
-                                return a['projname'].toLowerCase().localeCompare(b['projname'].toLowerCase());
-                            }
-                        });
+                        institutionsArr.value = resData;
                     });
             }
 
             Vue.onMounted(() => {
-                setChecklistArr();
+                setInstitutionsArr();
             });
 
             return {
-                checklistArr,
+                institutionsArr,
                 clientRoot,
-                showChecklistEditorPopup,
+                showInstitutionsEditorPopup,
                 showSpatialPopup,
                 spatialPopupCoordinateSet,
                 spatialPopupFootprintWkt,
                 validUser,
                 closeSpatialPopup,
-                openChecklistEditorPopup,
+                openInstitutionsEditorPopup,
                 openSpatialPopup
             }
         }
     });
-    checklistIndexModule.use(Quasar, { config: {} });
-    checklistIndexModule.use(Pinia.createPinia());
-    checklistIndexModule.mount('#mainContainer');
+    institutionIndexModule.use(Quasar, { config: {} });
+    institutionIndexModule.use(Pinia.createPinia());
+    institutionIndexModule.mount('#mainContainer');
 </script>
 </body>
 </html>

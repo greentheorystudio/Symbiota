@@ -1,4 +1,4 @@
-const checklistFieldModule = {
+const institutionsFieldModule = {
     template: `
         <div class="q-pa-md column q-col-gutter-sm">
             <div class="row justify-between">
@@ -36,11 +36,11 @@ const checklistFieldModule = {
                     <text-field-input-element data-type="textarea" label="Publication" :value="checklistData['publication']" maxlength="500" @update:value="(value) => updateChecklistData('publication', value)"></text-field-input-element>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-grow">
-                    <wysiwyg-input-element label="Abstract" :value="checklistData['abstract']" @update:value="(value) => updateChecklistData('abstract', value)"></wysiwyg-input-element>
-                </div>
-            </div>
+<!--            <div class="row">-->
+<!--                <div class="col-grow">-->
+<!--                    <wysiwyg-input-element label="Abstract" :value="checklistData['abstract']" @update:value="(value) => updateChecklistData('abstract', value)"></wysiwyg-input-element>-->
+<!--                </div>-->
+<!--            </div>-->
             <div class="row">
                 <div class="col-grow">
                     <text-field-input-element data-type="textarea" label="Notes" :value="checklistData['notes']" maxlength="500" @update:value="(value) => updateChecklistData('notes', value)"></text-field-input-element>
@@ -51,76 +51,76 @@ const checklistFieldModule = {
                     <selector-input-element :options="checklistOptions" label="Parent Checklist" :value="checklistData['parentclid']" option-value="clid" option-label="name" :clearable="true" @update:value="(value) => updateChecklistData('parentclid', value)"></selector-input-element>
                 </div>
             </div>
-            <div class="row justify-start q-gutter-sm no-wrap">
-                <div class="self-center">
-                    <div class="text-body1 text-bold">
-                        Centroid
-                    </div>
-                </div>
-                <div class="col-3">
-                    <text-field-input-element data-type="number" label="Latitude" :value="checklistData['latcentroid']" @update:value="(value) => updateChecklistData('latcentroid', value)"></text-field-input-element>
-                </div>
-                <div class="col-3">
-                    <text-field-input-element data-type="number" label="Longitude" :value="checklistData['longcentroid']" @update:value="(value) => updateChecklistData('longcentroid', value)"></text-field-input-element>
-                </div>
-                <div class="col-1 self-center">
-                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-point');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">
-                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                            Open Mapping Aid
-                        </q-tooltip>
-                    </q-btn>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-grow row q-gutter-sm no-wrap">
-                    <occurrence-footprint-wkt-input-element label="Footprint Polygon" :value="checklistData['footprintwkt']" @open:spatial-popup="openSpatialPopup" @update:value="(value) => updateChecklistData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>
-                </div>
-            </div>
-            <q-card flat bordered>
-                <q-card-section class="column">
-                    <div class="text-h6 text-bold">Default Display Settings</div>
-                    <div>
-                        <checkbox-input-element label="More Details" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('ddetails')) ? checklistData['defaultsettings']['ddetails'] : null" @update:value="(value) => updateDefaultSettingsData('ddetails', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Sort Taxa by Scientific Name" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dalpha')) ? checklistData['defaultsettings']['dalpha'] : null" @update:value="(value) => updateDefaultSettingsData('dalpha', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Accepted Names" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('acceptedNames')) ? checklistData['defaultsettings']['acceptedNames'] : null" @update:value="(value) => updateDefaultSettingsData('acceptedNames', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Synonyms" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('showsynonyms')) ? checklistData['defaultsettings']['showsynonyms'] : null" @update:value="(value) => updateDefaultSettingsData('showsynonyms', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Common Names" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dcommon')) ? checklistData['defaultsettings']['dcommon'] : null" @update:value="(value) => updateDefaultSettingsData('dcommon', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Images" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dimages')) ? checklistData['defaultsettings']['dimages'] : null" @update:value="(value) => updateDefaultSettingsData('dimages', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Notes & Vouchers" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dvouchers')) ? checklistData['defaultsettings']['dvouchers'] : null" @update:value="(value) => updateDefaultSettingsData('dvouchers', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Taxon Authors" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dauthors')) ? checklistData['defaultsettings']['dauthors'] : null" @update:value="(value) => updateDefaultSettingsData('dauthors', value)"></checkbox-input-element>
-                    </div>
-                    <div>
-                        <checkbox-input-element label="Activate Identification Key" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('keyactive')) ? checklistData['defaultsettings']['keyactive'] : null" @update:value="(value) => updateDefaultSettingsData('keyactive', value)"></checkbox-input-element>
-                    </div>
-                </q-card-section>
-            </q-card>
-            <div v-if="canPublicPublish" class="row">
-                <div class="col-grow">
-                    <selector-input-element :options="accessOptions" label="Access" :value="checklistData['access']" @update:value="(value) => updateChecklistData('access', value)"></selector-input-element>
-                </div>
-            </div>
+<!--            <div class="row justify-start q-gutter-sm no-wrap">-->
+<!--                <div class="self-center">-->
+<!--                    <div class="text-body1 text-bold">-->
+<!--                        Centroid-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="col-3">-->
+<!--                    <text-field-input-element data-type="number" label="Latitude" :value="checklistData['latcentroid']" @update:value="(value) => updateChecklistData('latcentroid', value)"></text-field-input-element>-->
+<!--                </div>-->
+<!--                <div class="col-3">-->
+<!--                    <text-field-input-element data-type="number" label="Longitude" :value="checklistData['longcentroid']" @update:value="(value) => updateChecklistData('longcentroid', value)"></text-field-input-element>-->
+<!--                </div>-->
+<!--                <div class="col-1 self-center">-->
+<!--                    <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="openSpatialPopup('input-point');" icon="fas fa-globe" dense aria-label="Open Mapping Aid" tabindex="0">-->
+<!--                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">-->
+<!--                            Open Mapping Aid-->
+<!--                        </q-tooltip>-->
+<!--                    </q-btn>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-grow row q-gutter-sm no-wrap">-->
+<!--                    <occurrence-footprint-wkt-input-element label="Footprint Polygon" :value="checklistData['footprintwkt']" @open:spatial-popup="openSpatialPopup" @update:value="(value) => updateChecklistData('footprintwkt', value)"></occurrence-footprint-wkt-input-element>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <q-card flat bordered>-->
+<!--                <q-card-section class="column">-->
+<!--                    <div class="text-h6 text-bold">Default Display Settings</div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="More Details" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('ddetails')) ? checklistData['defaultsettings']['ddetails'] : null" @update:value="(value) => updateDefaultSettingsData('ddetails', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="Sort Taxa by Scientific Name" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dalpha')) ? checklistData['defaultsettings']['dalpha'] : null" @update:value="(value) => updateDefaultSettingsData('dalpha', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="Accepted Names" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('acceptedNames')) ? checklistData['defaultsettings']['acceptedNames'] : null" @update:value="(value) => updateDefaultSettingsData('acceptedNames', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="Synonyms" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('showsynonyms')) ? checklistData['defaultsettings']['showsynonyms'] : null" @update:value="(value) => updateDefaultSettingsData('showsynonyms', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="Common Names" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dcommon')) ? checklistData['defaultsettings']['dcommon'] : null" @update:value="(value) => updateDefaultSettingsData('dcommon', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="Images" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dimages')) ? checklistData['defaultsettings']['dimages'] : null" @update:value="(value) => updateDefaultSettingsData('dimages', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="Notes & Vouchers" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dvouchers')) ? checklistData['defaultsettings']['dvouchers'] : null" @update:value="(value) => updateDefaultSettingsData('dvouchers', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="Taxon Authors" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('dauthors')) ? checklistData['defaultsettings']['dauthors'] : null" @update:value="(value) => updateDefaultSettingsData('dauthors', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <checkbox-input-element label="Activate Identification Key" :value="(checklistData['defaultsettings'] && checklistData['defaultsettings'].hasOwnProperty('keyactive')) ? checklistData['defaultsettings']['keyactive'] : null" @update:value="(value) => updateDefaultSettingsData('keyactive', value)"></checkbox-input-element>-->
+<!--                    </div>-->
+<!--                </q-card-section>-->
+<!--            </q-card>-->
+<!--            <div v-if="canPublicPublish" class="row">-->
+<!--                <div class="col-grow">-->
+<!--                    <selector-input-element :options="accessOptions" label="Access" :value="checklistData['access']" @update:value="(value) => updateChecklistData('access', value)"></selector-input-element>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
-        'occurrence-footprint-wkt-input-element': occurrenceFootprintWktInputElement,
+        // 'occurrence-footprint-wkt-input-element': occurrenceFootprintWktInputElement,
         'selector-input-element': selectorInputElement,
         'text-field-input-element': textFieldInputElement,
-        'wysiwyg-input-element': wysiwygInputElement
+        // 'wysiwyg-input-element': wysiwygInputElement
     },
     setup(_, context) {
         const { hideWorking, showNotification, showWorking } = useCore();

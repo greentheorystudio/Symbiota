@@ -26,38 +26,38 @@ const institutionsEditorPopup = {
                                 <q-tab-panel class="q-pa-none" name="details">
                                     <checklist-field-module @open:spatial-popup="openSpatialPopup" @close:popup="closePopup();"></checklist-field-module>
                                 </q-tab-panel>
-                                <q-tab-panel v-if="appEnabled && checklistData['access'] === 'public'" class="q-pa-none" name="app">
-                                    <checklist-editor-app-config-tab></checklist-editor-app-config-tab>
-                                </q-tab-panel>
-                                <q-tab-panel class="q-pa-none" name="admin">
-                                    <checklist-editor-admin-tab></checklist-editor-admin-tab>
-                                </q-tab-panel>
+<!--                                <q-tab-panel v-if="appEnabled && checklistData['access'] === 'public'" class="q-pa-none" name="app">-->
+<!--&lt;!&ndash;                                    <checklist-editor-app-config-tab></checklist-editor-app-config-tab>&ndash;&gt;-->
+<!--                                </q-tab-panel>-->
+<!--                                <q-tab-panel class="q-pa-none" name="admin">-->
+<!--&lt;!&ndash;                                    <checklist-editor-admin-tab></checklist-editor-admin-tab>&ndash;&gt;-->
+<!--                                </q-tab-panel>-->
                             </q-tab-panels>
                         </template>
-                        <template v-else>
-                            <checklist-field-module @open:spatial-popup="openSpatialPopup" @close:popup="closePopup();"></checklist-field-module>
-                        </template>
+<!--                        <template v-else>-->
+<!--                            <institutions-field-module @open:spatial-popup="openSpatialPopup" @close:popup="closePopup();"></institutions-field-module>-->
+<!--                        </template>-->
                     </div>
                 </div>
             </q-card>
         </q-dialog>
-        <template v-if="showSpatialPopup">
-            <spatial-analysis-popup
-                :decimal-latitude="decimalLatitudeValue"
-                :decimal-longitude="decimalLongitudeValue"
-                :footprint-wkt="footprintWktValue"
-                :show-popup="showSpatialPopup"
-                :window-type="popupWindowType"
-                @update:spatial-data="processSpatialData"
-                @close:popup="closeSpatialPopup();"
-            ></spatial-analysis-popup>
-        </template>
+<!--        <template v-if="showSpatialPopup">-->
+<!--            <spatial-analysis-popup-->
+<!--                :decimal-latitude="decimalLatitudeValue"-->
+<!--                :decimal-longitude="decimalLongitudeValue"-->
+<!--                :footprint-wkt="footprintWktValue"-->
+<!--                :show-popup="showSpatialPopup"-->
+<!--                :window-type="popupWindowType"-->
+<!--                @update:spatial-data="processSpatialData"-->
+<!--                @close:popup="closeSpatialPopup();"-->
+<!--            ></spatial-analysis-popup>-->
+<!--        </template>-->
     `,
     components: {
-        'checklist-editor-admin-tab': checklistEditorAdminTab,
-        'checklist-editor-app-config-tab': checklistEditorAppConfigTab,
-        'checklist-field-module': checklistFieldModule,
-        'spatial-analysis-popup': spatialAnalysisPopup
+        // 'checklist-editor-admin-tab': checklistEditorAdminTab,
+        // 'checklist-editor-app-config-tab': checklistEditorAppConfigTab,
+        'institutions-field-module': institutionsFieldModule,
+        // 'spatial-analysis-popup': spatialAnalysisPopup
     },
     setup(_, context) {
         const baseStore = useBaseStore();
