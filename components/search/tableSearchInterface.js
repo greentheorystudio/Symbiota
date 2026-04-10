@@ -242,7 +242,7 @@ const tableSearchInterface = {
                 textClass = 'text-subtitle1'
             }
             else if(selectedTextSize.value === 'medium'){
-                textClass = 'text-body1'
+                textClass = 'text-body2'
             }
             return textClass;
         });
