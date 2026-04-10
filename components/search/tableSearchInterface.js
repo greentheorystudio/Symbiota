@@ -221,7 +221,7 @@ const tableSearchInterface = {
         const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
         const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
-        const selectedTextSize = Vue.ref('large');
+        const selectedTextSize = Vue.ref('medium');
         const showColumnTogglePopup = Vue.ref(false);
         const sortDescending = Vue.ref(false);
         const sortField = Vue.ref('occid');
