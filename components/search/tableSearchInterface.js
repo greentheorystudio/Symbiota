@@ -53,7 +53,7 @@ const tableSearchInterface = {
                                 </div>
                                 <div v-if="recordDataFieldArr.length > 0 && recordDataArr.length > 0" class="self-center">
                                     <div>
-                                        <q-btn-toggle v-model="selectedTextSize" rounded glossy toggle-color="primary" color="white" text-color="primary" :options="textSizeOptions"></q-btn-toggle>
+                                        <q-btn-toggle v-model="selectedTextSize" rounded toggle-color="primary" color="white" text-color="primary" :options="textSizeOptions"></q-btn-toggle>
                                     </div>
                                 </div>
                             </div>
