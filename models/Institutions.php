@@ -7,7 +7,7 @@ class Institutions{
 
     private $fields = array(
         'iid' => array('dataType' => 'number', 'length' => 0),
-        'instituioncode' => array('dataType' => 'string', 'length' => 45),
+        'institutioncode' => array('dataType' => 'string', 'length' => 45),
         'institutionname' => array('dataType' => 'string', 'length' => 150),
         'institutionname2' => array('dataType' => 'string', 'length' => 150),
         'address1' => array('dataType' => 'string', 'length' => 150),
@@ -62,13 +62,31 @@ class Institutions{
         }
         return $retVal;
     }
-
+    public function getInstitutionsArr(): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM institutions ORDER BY institutionname';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $row[$name];
+                }
+            }
+        }
+        return $retArr;
+    }
     public function getInstitutionData($iid): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM institution WHERE iid = ' . (int)$iid . ' ';
+            'FROM institutions WHERE iid = ' . (int)$iid . ' ';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $row = $result->fetch_array(MYSQLI_ASSOC);

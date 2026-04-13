@@ -49,6 +49,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                         <li><a :href="(clientRoot + '/projects/index.php')" tabindex="0">Biotic Inventory Projects</a></li>
                         <li><a :href="(clientRoot + '/checklists/index.php')" tabindex="0">Checklists</a></li>
                         <li><a :href="(clientRoot + '/checklists/checklist.php')" tabindex="0">Dynamic Checklist</a></li>
+                        <li><a :href="(clientRoot + '/collections/misc/institutioneditor.php')" tabindex="0">Locations</a></li>
                         <template v-if="keyModuleIsActive">
                             <li><a :href="(clientRoot + '/ident/key.php')" tabindex="0">Dynamic Key</a></li>
                         </template>
