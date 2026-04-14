@@ -1,58 +1,61 @@
 const useInstitutionsStore = Pinia.defineStore('institutions', {
     state: () => ({
         blankInstitutionRecord: {
-            tdbid: 0,
-            tid: null,
-            caption: null,
-            source: null,
-            sourceurl: null,
-            language: null,
-            langid: null,
-            displaylevel: 1,
-            uid: null,
-            notes: null
-            //no initial timestamp
+            iid: 0,
+            instituioncode: null,
+            institutionname: null,
+            institutionname2: null,
+            address1: null,
+            address2: null,
+            city: null,
+            stateprovince: null,
+            postalcode: null,
+            country: null,
+            phone: null,
+            contact: null,
+            email: null,
+            notes: null,
         },
         institutionsArr: [],
-        taxaDescriptionBlockData: {},
-        taxaDescriptionBlockEditData: {},
-        taxaDescriptionBlockId: 0,
-        taxaDescriptionBlockUpdateData: {}
+        institutionsData: {},
+        institutionsEditData: {},
+        institutionsId: 0,
+        institutionsUpdateData: {}
     }),
     getters: {
-        getTaxaDescriptionBlockArr(state) {
-            return state.taxaDescriptionBlockArr;
+        getInstitutionsArr(state) {
+            return state.institutionsArr;
         },
-        getTaxaDescriptionBlockData(state) {
-            return state.taxaDescriptionBlockEditData;
+        getInstitutionsData(state) {
+            return state.institutionsEditData;
         },
-        getTaxaDescriptionBlockEditsExist(state) {
+        getInstitutionsEditsExist(state) {
             let exist = false;
-            state.taxaDescriptionBlockUpdateData = Object.assign({}, {});
-            for(let key in state.taxaDescriptionBlockEditData) {
-                if(state.taxaDescriptionBlockEditData.hasOwnProperty(key) && state.taxaDescriptionBlockEditData[key] !== state.taxaDescriptionBlockData[key]) {
+            state.institutionsUpdateData = Object.assign({}, {});
+            for(let key in state.institutionsEditData) {
+                if(state.institutionsEditData.hasOwnProperty(key) && state.institutionsEditData[key] !== state.institutionsData[key]) {
                     exist = true;
-                    state.taxaDescriptionBlockUpdateData[key] = state.taxaDescriptionBlockEditData[key];
+                    state.institutionsUpdateData[key] = state.institutionsEditData[key];
                 }
             }
             return exist;
         },
-        getTaxaDescriptionBlockID(state) {
-            return state.taxaDescriptionBlockId;
+        getInstitutionsID(state) {
+            return state.institutionsId;
         },
-        getTaxaDescriptionBlockValid(state) {
-            return !!state.taxaDescriptionBlockEditData['institutionname'];
+        getInstitutionsValid(state) {
+            return !!state.institutionsEditData['institutionname'];
         }
     },
     actions: {
-        clearTaxaDescriptionBlockArr() {
-            this.taxaDescriptionBlockArr.length = 0;
+        clearInstitutionsArr() {
+            this.institutionsArr.length = 0;
         },
-        createTaxaDescriptionBlockRecord(callback) {
+        createInstitutionsRecord(callback) {
             const formData = new FormData();
-            formData.append('description', JSON.stringify(this.taxaDescriptionBlockEditData));
-            formData.append('action', 'createTaxonDescriptionBlockRecord');
-            fetch(taxonDescriptionBlockApiUrl, {
+            formData.append('description', JSON.stringify(this.institutionsEditData));
+            formData.append('action', 'createInstitutionsRecord');
+            fetch(institutionsApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -63,11 +66,11 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                     callback(Number(res));
                 });
         },
-        deleteTaxaDescriptionBlockRecord(callback) {
+        deleteInstitutionsRecord(callback) {
             const formData = new FormData();
-            formData.append('tdbid', this.taxaDescriptionBlockId.toString());
-            formData.append('action', 'deleteTaxonDescriptionBlockRecord');
-            fetch(taxonDescriptionBlockApiUrl, {
+            formData.append('iid', this.institutionsId.toString());
+            formData.append('action', 'deleteInstitutionsRecord');
+            fetch(institutionsApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -78,45 +81,50 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                     callback(Number(res));
                 });
         },
-        getCurrentTaxaDescriptionBlockData() {
-            return this.taxaDescriptionBlockArr.find(block => Number(block.tdbid) === this.taxaDescriptionBlockId);
+        getCurrentInstitutionsData() {
+            return this.institutionsArr.find(block => Number(block.iid) === this.institutionsId);
         },
-        setCurrentTaxaDescriptionBlockRecord(tdbid) {
-            this.taxaDescriptionBlockId = Number(tdbid);
-            if(this.taxaDescriptionBlockId > 0){
-                this.taxaDescriptionBlockData = Object.assign({}, this.getCurrentTaxaDescriptionBlockData());
+        setCurrentInstitutionsRecord(iid) {
+            this.institutionsId = Number(iid);
+            if(this.institutionsId > 0){
+                this.institutionsData = Object.assign({}, this.getCurrentInstitutionsData());
             }
             else{
-                this.taxaDescriptionBlockData = Object.assign({}, this.blankTaxaDescriptionBlockRecord);
-                this.taxaDescriptionBlockData['language'] = this.baseStore.getDefaultLanguageName;
-                this.taxaDescriptionBlockData['langid'] = this.baseStore.getDefaultLanguageId;
+                this.institutionsData = Object.assign({}, this.blankInstitutionRecord);
             }
-            this.taxaDescriptionBlockEditData = Object.assign({}, this.taxaDescriptionBlockData);
+            this.institutionsEditData = Object.assign({}, this.institutionsData);
         },
-        setTaxonDescriptionBlockArr(tid) {
-            const formData = new FormData();
-            formData.append('tid', tid.toString());
-            formData.append('action', 'getTaxonDescriptions');
-            fetch(taxonDescriptionBlockApiUrl, {
-                method: 'POST',
-                body: formData
-            })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
+        setInstitutionData(iid) {
+            this.institutionsEditData = Object.assign({}, {});
+            this.institutionsId = Number(iid);
+            if (Number(iid) > 0){
+                const formData = new FormData();
+                formData.append('iid', iid.toString());
+                formData.append('action', 'getInstitutionsData');
+                fetch(institutionsApiUrl, {
+                    method: 'POST',
+                    body: formData
                 })
-                .then((data) => {
-                    this.taxaDescriptionBlockArr = data;
-                });
+                    .then((response) => {
+                        return response.ok ? response.json() : null;
+                    })
+                    .then((data) => {
+                        this.institutionsData = Object.assign({}, data);
+                    });
+            } else {
+                this.institutionsData = Object.assign({}, this.blankInstitutionRecord);
+            }
+            this.institutionsEditData = Object.assign({}, this.institutionsData);
         },
-        updateTaxaDescriptionBlockEditData(key, value) {
-            this.taxaDescriptionBlockEditData[key] = value;
+        updateInstitutionsEditData(key, value) {
+            this.institutionsEditData[key] = value;
         },
-        updateTaxaDescriptionBlockRecord(callback) {
+        updateInstitutionsRecord(callback) {
             const formData = new FormData();
-            formData.append('tdbid', this.taxaDescriptionBlockId.toString());
-            formData.append('descriptionData', JSON.stringify(this.taxaDescriptionBlockUpdateData));
-            formData.append('action', 'updateTaxonDescriptionBlockRecord');
-            fetch(taxonDescriptionBlockApiUrl, {
+            formData.append('iid', this.institutionsId.toString());
+            formData.append('descriptionData', JSON.stringify(this.institutionsUpdateData));
+            formData.append('action', 'updateInstitutionsRecord');
+            fetch(institutionsApiUrl, {
                 method: 'POST',
                 body: formData
             })
@@ -126,7 +134,7 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                 .then((res) => {
                     callback(Number(res));
                     if(res && Number(res) === 1){
-                        this.taxaDescriptionBlockData = Object.assign({}, this.taxaDescriptionBlockEditData);
+                        this.institutionsData = Object.assign({}, this.institutionsEditData);
                     }
                 });
         }
