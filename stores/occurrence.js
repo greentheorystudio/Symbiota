@@ -613,7 +613,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         returnData.state = data.address.state;
                         returnData.valid = true;
                         if((!this.occurrenceEditData['country'] || this.occurrenceEditData['country'] === '') && returnData.country && returnData.country !== ''){
-                            this.updateOccurrenceEditData('country', returnData.country);
+                            if(this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot'){
+                                this.updateLocationEditData('country', returnData.country);
+                            }
+                            else{
+                                this.updateOccurrenceEditData('country', returnData.country);
+                            }
                         }
                         if(this.occurrenceEditData['country'] && returnData.country && this.occurrenceEditData['country'] !== '' && this.occurrenceEditData['country'].toLowerCase() !== returnData.country.toLowerCase()){
                             if(this.occurrenceEditData['country'].toLowerCase() !== 'usa' && this.occurrenceEditData['country'].toLowerCase() !== 'united states of america' && returnData.country.toLowerCase() !== 'united states'){
@@ -625,7 +630,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                                 returnData.valid = false;
                             }
                             else{
-                                this.updateOccurrenceEditData('stateprovince', returnData.state);
+                                if(this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot'){
+                                    this.updateLocationEditData('stateprovince', returnData.state);
+                                }
+                                else{
+                                    this.updateOccurrenceEditData('stateprovince', returnData.state);
+                                }
                             }
                         }
                         if(data.address.county && data.address.county !== ''){
@@ -636,7 +646,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                                 returnData.valid = false;
                             }
                             else{
-                                this.updateOccurrenceEditData('county', coordCountyIn);
+                                if(this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot'){
+                                    this.updateLocationEditData('county', coordCountyIn);
+                                }
+                                else{
+                                    this.updateOccurrenceEditData('county', coordCountyIn);
+                                }
                             }
                         }
                     }
