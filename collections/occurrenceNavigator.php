@@ -33,6 +33,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/html2canvas.min.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/geotiff.js" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/plotty.min.js" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/panzoom.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             const COLLID = <?php echo $collId; ?>;
             const DISPLAY_MODE = <?php echo $displayMode; ?>;
@@ -410,8 +411,8 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         const navContainerElement = document.getElementById('navContainer');
                         const mainContainerElement = document.getElementById('interfaceContainer');
                         document.body.classList.remove('q-pa-md', 'full-window-mode');
-                        mainContainerElement.classList.remove('list-search-container');
-                        mainContainerElement.style.removeProperty('width');
+                        mainContainerElement.classList.remove('list-search-container', 'occurrence', 'list', 'table', 'spatial');
+                        mainContainerElement.classList.add((displayInterface.value + '-interface'));
                         if(displayInterface.value === 'occurrence' || displayInterface.value === 'table' || displayInterface.value === 'spatial'){
                             document.body.classList.add('full-window-mode');
                         }
@@ -436,9 +437,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             }
                             containerElement.value.classList.remove('hidden');
                         }
-                        if(displayInterface.value === 'list' && mainContainerElement.parentElement.id === 'containerBlockNode'){
-                            mainContainerElement.style.setProperty("width", "80%", "important");
-                        }
                     }
 
                     Vue.provide('currentUserPermissions', currentUserPermissions);
@@ -461,6 +459,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         if(Number(initialOccId) > 0){
                             occurrenceEditorInterfaceOccId.value = Number(initialOccId);
+                            displayQueryPopup.value = false;
                         }
                         searchStore.setDisplayInterface(initialInterface);
                         if(Number(queryId) > 0 || stArrJson){
