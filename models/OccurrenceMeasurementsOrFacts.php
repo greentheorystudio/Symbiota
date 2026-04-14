@@ -41,7 +41,7 @@ class OccurrenceMeasurementsOrFacts{
                 $idArr = array();
                 $sql = 'SELECT u.upmfid FROM uploadmoftemp AS u LEFT JOIN omoccurrences AS o ON u.occid = o.occid '.
                     'LEFT JOIN omoccurrences AS o2 ON u.eventid = o2.eventid '.
-                    'WHERE u.collid = ' . (int)$collId . ' AND ((u.occid IS NOT NULL AND ISNULL(o.occid)) OR (u.eventid IS NOT NULL AND ISNULL(o2.occid))) LIMIT 25000 ';
+                    'WHERE u.collid = ' . (int)$collId . ' AND ((u.occid IS NOT NULL AND o.occid IS NOT NULL) OR (u.eventid IS NOT NULL AND o2.occid IS NOT NULL)) LIMIT 25000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upmfid'];
