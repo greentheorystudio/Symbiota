@@ -362,7 +362,7 @@ const locationFieldModule = {
         function updateData(key, value) {
             context.emit('update:location-data', {key: key, value: value});
             if(key === 'decimallongitude' && props.data['decimallatitude']){
-                validateCoordinates();
+                validateCoordinates(props.eventMode);
             }
         }
 
