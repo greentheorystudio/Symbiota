@@ -224,7 +224,7 @@ const tableSearchInterface = {
         const selectedTextSize = Vue.ref('medium');
         const showColumnTogglePopup = Vue.ref(false);
         const sortDescending = Vue.ref(false);
-        const sortField = Vue.ref('occid');
+        const sortField = Vue.ref(null);
         const tableColumnToggleOptions = Vue.computed(() => {
             const returnArr = [];
             recordDataFieldArr.value.forEach((field) => {
@@ -262,18 +262,6 @@ const tableSearchInterface = {
         Vue.watch(loadRecordsCompleted, () => {
             if(loadRecordsCompleted.value){
                 processSearchRecordCountChange();
-            }
-        });
-
-        Vue.watch(searchTermsSortDirection, () => {
-            if(sortDescending.value && searchTermsSortDirection.value !== 'DESC'){
-                sortDescending.value = false;
-            }
-        });
-
-        Vue.watch(searchTermsSortField, () => {
-            if(sortField.value !== searchTermsSortField.value){
-                sortField.value = searchTermsSortField.value;
             }
         });
 
@@ -401,6 +389,8 @@ const tableSearchInterface = {
         Vue.onMounted(() => {
             window.addEventListener('resize', setTableStyle);
             setTableStyle();
+            sortField.value = searchTermsSortField.value;
+            sortDescending.value = searchTermsSortDirection.value === 'DESC';
             if(searchTerms.value.hasOwnProperty('tableIndex')){
                 recordsPageNumber.value = Number(searchTerms.value['tableIndex']);
             }
@@ -438,7 +428,6 @@ const tableSearchInterface = {
             searchTermsValid,
             selectedTextSize,
             showColumnTogglePopup,
-            sortField,
             tableColumnToggleOptions,
             tableRef,
             tableStyle,
