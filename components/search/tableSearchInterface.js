@@ -48,8 +48,13 @@ const tableSearchInterface = {
                                         </q-tooltip>
                                     </q-btn>
                                 </div>
-                                <div v-if="recordDataFieldArr.length > 0 && recordDataArr.length > 0" class="self-center">
+                                <div v-if="recordDataFieldArr.length > 0 && recordDataArr.length > 0" class="self-center q-mr-sm">
                                     <q-btn color="primary" @click="showColumnTogglePopup = true" label="Toggle Columns" tabindex="0" />
+                                </div>
+                                <div v-if="recordDataFieldArr.length > 0 && recordDataArr.length > 0" class="self-center">
+                                    <div>
+                                        <q-btn-toggle v-model="selectedTextSize" rounded toggle-color="primary" color="white" text-color="primary" :options="textSizeOptions"></q-btn-toggle>
+                                    </div>
                                 </div>
                             </div>
                             <div v-if="recordDataArr.length > 0" class="q-mr-lg row justify-start q-gutter-sm">
@@ -66,14 +71,14 @@ const tableSearchInterface = {
                 <template v-slot:header="props">
                     <q-tr :props="props">
                         <q-th v-for="col in props.cols" :key="col.name" :props="props" class="bg-grey-4">
-                            <span class="text-subtitle1 text-bold">{{ col.label }}</span>
+                            <span :class="textSizeClass" class="text-bold">{{ col.label }}</span>
                         </q-th>
                     </q-tr>
                 </template>
                 <template v-slot:body="props">
                     <q-tr :props="props">
-                        <q-td key="occid" :props="props">
-                            <span role="button" class="cursor-pointer text-subtitle1" @click="openRecordInfoWindow(props.row.occid);" aria-label="See record details" tabindex="0">{{ props.row.occid }}</span>
+                        <q-td key="occid" :props="props" class="self-center">
+                            <span role="button" :class="textSizeClass" class="cursor-pointer" @click="openRecordInfoWindow(props.row.occid);" aria-label="See record details" tabindex="0">{{ props.row.occid }}</span>
                             <template v-if="isAdmin || isEditor || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollAdmin') && currentUserPermissions['CollAdmin'].includes(Number(props.row.collid))) || (currentUserPermissions && currentUserPermissions.hasOwnProperty('CollEditor') && currentUserPermissions['CollEditor'].includes(Number(props.row.collid)))">
                                 <q-btn color="grey-4" text-color="black" class="q-ml-sm black-border" size="xs" @click="openOccurrenceEditorInterface(searchTermsCollId, props.row.occid);" icon="fas fa-edit" dense aria-label="Edit occurrence record" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -84,7 +89,7 @@ const tableSearchInterface = {
                         </q-td>
                         <template v-for="field in recordDataFieldArr">
                             <q-td v-if="field.name !== 'occid'" :key="field.name" :props="props" :class="field.name === 'sciname' ? 'text-italic' : ''">
-                                <span class="text-subtitle1">
+                                <span :class="textSizeClass">
                                     {{ (props.row[field.name] && props.row[field.name].length > 60) ? (props.row[field.name].substring(0, 60) + '...') : props.row[field.name] }}
                                 </span>
                             </q-td>
@@ -216,6 +221,7 @@ const tableSearchInterface = {
         const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
         const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
+        const selectedTextSize = Vue.ref('medium');
         const showColumnTogglePopup = Vue.ref(false);
         const sortDescending = Vue.ref(false);
         const sortField = Vue.ref('occid');
@@ -230,6 +236,21 @@ const tableSearchInterface = {
         });
         const tableRef = Vue.ref(null);
         const tableStyle = Vue.ref('');
+        const textSizeClass = Vue.computed(() => {
+            let textClass = '';
+            if(selectedTextSize.value === 'large'){
+                textClass = 'text-subtitle1'
+            }
+            else if(selectedTextSize.value === 'medium'){
+                textClass = 'text-body2'
+            }
+            return textClass;
+        });
+        const textSizeOptions = Vue.ref([
+            { label: 'Large text', value: 'large' },
+            { label: 'Medium text', value: 'medium' },
+            { label: 'Small text', value: 'small' }
+        ]);
         const visibleColumns = Vue.computed(() => searchStore.getTableVisibleFields);
 
         const currentUserPermissions = Vue.inject('currentUserPermissions');
@@ -415,11 +436,14 @@ const tableSearchInterface = {
             searchTermsSortDirection,
             searchTermsSortField,
             searchTermsValid,
+            selectedTextSize,
             showColumnTogglePopup,
             sortField,
             tableColumnToggleOptions,
             tableRef,
             tableStyle,
+            textSizeClass,
+            textSizeOptions,
             visibleColumns,
             openOccurrenceEditorInterface,
             openQueryPopupDisplay,

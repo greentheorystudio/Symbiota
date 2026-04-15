@@ -72,6 +72,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                                         <li><a :href="(clientRoot + '/collections/misc/collmetadata.php')" tabindex="0">Create New Collection</a></li>
                                         <li><a :href="(clientRoot + '/collections/management/thumbnailbuilder.php')" tabindex="0">Build Image Thumbnails</a></li>
                                         <li><a :href="(clientRoot + '/collections/management/guidmapper.php')" tabindex="0">Generate GUIDs/UUIDs</a></li>
+                                        <li><a :href="(clientRoot + '/collections/misc/institutioneditor.php')" tabindex="0">Locations</a></li>
                                     </ul>
                                 </template>
                                 <template v-if="isAdmin || taxonomy || taxonProfile">

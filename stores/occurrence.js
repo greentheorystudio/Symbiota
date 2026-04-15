@@ -592,7 +592,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 callback(Number(res));
             });
         },
-        getCoordinateVerificationData(callback) {
+        getCoordinateVerificationData(eventMode, callback) {
             if(this.occurrenceEditData['decimallatitude'] && this.occurrenceEditData['decimallongitude']){
                 const url = 'https://nominatim.openstreetmap.org/reverse?lat=' + this.occurrenceEditData['decimallatitude'].toString() + '&lon=' + this.occurrenceEditData['decimallongitude'].toString() + '&format=json';
                 fetch(url)
@@ -612,8 +612,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         returnData.country = data.address.country;
                         returnData.state = data.address.state;
                         returnData.valid = true;
-                        if((!this.occurrenceEditData['country'] || this.occurrenceEditData['country'] === '') && returnData.country && returnData.country !== ''){
-                            this.updateOccurrenceEditData('country', returnData.country);
+                        if(!eventMode && (!this.occurrenceEditData['country'] || this.occurrenceEditData['country'] === '') && returnData.country && returnData.country !== ''){
+                            if(this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot'){
+                                this.updateLocationEditData('country', returnData.country);
+                            }
+                            else{
+                                this.updateOccurrenceEditData('country', returnData.country);
+                            }
                         }
                         if(this.occurrenceEditData['country'] && returnData.country && this.occurrenceEditData['country'] !== '' && this.occurrenceEditData['country'].toLowerCase() !== returnData.country.toLowerCase()){
                             if(this.occurrenceEditData['country'].toLowerCase() !== 'usa' && this.occurrenceEditData['country'].toLowerCase() !== 'united states of america' && returnData.country.toLowerCase() !== 'united states'){
@@ -624,8 +629,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             if(this.occurrenceEditData['stateprovince'] && this.occurrenceEditData['stateprovince'] !== '' && this.occurrenceEditData['stateprovince'].toLowerCase() !== returnData.state.toLowerCase()){
                                 returnData.valid = false;
                             }
-                            else{
-                                this.updateOccurrenceEditData('stateprovince', returnData.state);
+                            else if(!eventMode){
+                                if(this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot'){
+                                    this.updateLocationEditData('stateprovince', returnData.state);
+                                }
+                                else{
+                                    this.updateOccurrenceEditData('stateprovince', returnData.state);
+                                }
                             }
                         }
                         if(data.address.county && data.address.county !== ''){
@@ -635,8 +645,13 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                             if(this.occurrenceEditData['county'] && this.occurrenceEditData['county'] !== '' && this.occurrenceEditData['county'].toLowerCase() !== coordCountyIn.toLowerCase()){
                                 returnData.valid = false;
                             }
-                            else{
-                                this.updateOccurrenceEditData('county', coordCountyIn);
+                            else if(!eventMode){
+                                if(this.occurrenceEntryFormat === 'replicate' || this.occurrenceEntryFormat === 'lot'){
+                                    this.updateLocationEditData('county', coordCountyIn);
+                                }
+                                else{
+                                    this.updateOccurrenceEditData('county', coordCountyIn);
+                                }
                             }
                         }
                     }

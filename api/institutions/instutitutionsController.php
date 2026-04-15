@@ -32,6 +32,9 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getInstitutionsData' && $iid){
         echo json_encode($institutions->getInstitutionData($iid));
     }
+    elseif($action === 'getInstitutionsArr'){
+        echo json_encode($institutions->getInstitutionsArr());
+    }
     elseif($action === 'updateInstitutionsRecord' && $isEditor && $iid && array_key_exists('institutionsData', $_POST)){
         echo $institutions->updateInstitutionRecord($iid, json_decode($_POST['institutionsData'], true));
     }
