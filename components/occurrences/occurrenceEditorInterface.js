@@ -239,8 +239,8 @@ const occurrenceEditorInterface = {
             containerWidth.value = moduleContainerRef.value.clientWidth;
         }
 
-        function validateCoordinates() {
-            occurrenceStore.getCoordinateVerificationData((data) => {
+        function validateCoordinates(eventMode = false) {
+            occurrenceStore.getCoordinateVerificationData(eventMode, (data) => {
                 if(data.address){
                     if(!data.valid){
                         let alertText = 'Are those coordinates accurate? They currently map to: ' + data.country + ', ' + data.state;
