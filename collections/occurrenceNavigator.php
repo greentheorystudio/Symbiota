@@ -386,7 +386,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                         loadRecords(true);
                                     }
                                     else{
-                                        displayQueryPopup.value = false;
                                         hideWorking();
                                     }
                                 }
@@ -447,9 +446,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     Vue.onMounted(() => {
                         setCurrentUserPermissions();
                         containerElement.value = document.getElementById('containerBlockNode');
-                        if(Number(queryId) === 0 && !stArrJson){
-                            displayQueryPopup.value = true;
-                        }
                         searchStore.initializeSearchStorage(queryId);
                         if(Number(initialCollId) > 0){
                             occurrenceEditorInterfaceCollId.value = Number(initialCollId);
@@ -459,7 +455,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                         }
                         if(Number(initialOccId) > 0){
                             occurrenceEditorInterfaceOccId.value = Number(initialOccId);
-                            displayQueryPopup.value = false;
+                        }
+                        if(Number(initialCollId) === 0 && Number(initialOccId) === 0 && Number(queryId) === 0 && !stArrJson){
+                            displayQueryPopup.value = true;
                         }
                         searchStore.setDisplayInterface(initialInterface);
                         if(Number(queryId) > 0 || stArrJson){
