@@ -19,7 +19,7 @@ const mofDataFieldRow = {
     },
     template: `
         <template v-if="editor">
-            <div v-if="fields.length > 0" class="row justify-between q-col-gutter-sm">
+            <div v-if="fields.length > 0" class="row justify-start q-col-gutter-sm">
                 <template v-for="field in fields">
                     <div :ref="(element) => setElementRef(element, field.fieldName)">
                         <template v-if="configuredDataFields[field.fieldName]['dataType'] === 'boolean'">
