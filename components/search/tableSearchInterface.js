@@ -330,11 +330,12 @@ const tableSearchInterface = {
                 searchStore.setSearchTermsRecordSortDirection(sortDescending.value ? 'DESC' : 'ASC');
                 searchStore.updateSearchTerms('sortDirection', (sortDescending.value ? 'DESC' : 'ASC'));
                 recordsPageNumber.value = 1;
+                context.emit('load:records');
             }
             else{
                 recordsPageNumber.value = props.pagination.page;
+                setTableRecordData();
             }
-            setTableRecordData();
         }
 
         function setTableRecordData() {
