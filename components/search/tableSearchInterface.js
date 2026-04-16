@@ -221,7 +221,7 @@ const tableSearchInterface = {
         const searchTermsSortDirection = Vue.computed(() => searchStore.getSearchTermsRecordSortDirection);
         const searchTermsSortField = Vue.computed(() => searchStore.getSearchTermsRecordSortField);
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
-        const selectedTextSize = Vue.ref('medium');
+        const selectedTextSize = Vue.ref('small');
         const showColumnTogglePopup = Vue.ref(false);
         const sortDescending = Vue.ref(false);
         const sortField = Vue.ref(null);
@@ -237,18 +237,14 @@ const tableSearchInterface = {
         const tableRef = Vue.ref(null);
         const tableStyle = Vue.ref('');
         const textSizeClass = Vue.computed(() => {
-            let textClass = '';
+            let textClass = 'text-body2';
             if(selectedTextSize.value === 'large'){
                 textClass = 'text-subtitle1'
-            }
-            else if(selectedTextSize.value === 'medium'){
-                textClass = 'text-body2'
             }
             return textClass;
         });
         const textSizeOptions = Vue.ref([
             { label: 'Large text', value: 'large' },
-            { label: 'Medium text', value: 'medium' },
             { label: 'Small text', value: 'small' }
         ]);
         const visibleColumns = Vue.computed(() => searchStore.getTableVisibleFields);
