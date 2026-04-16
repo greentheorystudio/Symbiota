@@ -72,7 +72,7 @@ const locationFieldModule = {
                 <div v-if="!eventMode" class="self-center">
                     <q-btn color="grey-4" class="black-border" size="sm" @click="openGeolocatePopup();" dense aria-label="Open GeoLocate pop up" tabindex="0">
                         <q-avatar size="xs">
-                            <img src="../../images/geolocate.png">
+                            <img :src="(clientRoot + '/images/geolocate.png')">
                         </q-avatar>
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                             GeoLocate locality
@@ -227,8 +227,10 @@ const locationFieldModule = {
     },
     setup(props, context) {
         const { showNotification } = useCore();
+        const baseStore = useBaseStore();
         const occurrenceStore = useOccurrenceStore();
 
+        const clientRoot = baseStore.getClientRoot;
         const coordinateUncertaintyInMetersValue = Vue.ref(null);
         const decimalLatitudeValue = Vue.ref(null);
         const decimalLongitudeValue = Vue.ref(null);
@@ -383,6 +385,7 @@ const locationFieldModule = {
         });
 
         return {
+            clientRoot,
             coordinateUncertaintyInMetersValue,
             decimalLatitudeValue,
             decimalLongitudeValue,
