@@ -89,7 +89,7 @@ class IRLDataService {
         $taxaNameArr = array();
         $targetTidArr = array();
         $parentTaxonArr = array();
-        $sql = 'SELECT DISTINCT l.locationcode, c.`year`, c.`month`, o.rep '.
+        $sql = 'SELECT l.locationcode, c.`year`, c.`month`, o.rep '.
             'FROM omoccurlocations AS l LEFT JOIN omoccurcollectingevents AS c ON l.locationid = c.locationid '.
             'LEFT JOIN omoccurrences AS o ON c.eventid = o.eventid '.
             'WHERE c.collid = ' . (int)$collid . ' ORDER BY l.locationcode, c.`year`, c.`month`, o.rep ';
@@ -222,7 +222,7 @@ class IRLDataService {
         $mArr = array("M02", "M03", "M04", "M14");
         $pArr = array("M05", "M06", "M08");
         $eArr = array("M07", "M09", "M10", "M11", "M12", "M13");
-        $sql = 'SELECT DISTINCT l.locationcode, o.eventid, o.decimallatitude, o.decimallongitude, o.rep, o.eventdate, '.
+        $sql = 'SELECT l.locationcode, o.eventid, o.decimallatitude, o.decimallongitude, o.rep, o.eventdate, '.
             'o.sciname, t.tid, t.rankid, o.individualcount, o.identificationRemarks '.
             'FROM omoccurrences AS o LEFT JOIN omoccurlocations AS l ON o.locationID = l.locationID '.
             'LEFT JOIN taxa AS t ON o.tid = t.tid '.
