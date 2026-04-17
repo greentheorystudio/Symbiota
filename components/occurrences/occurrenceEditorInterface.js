@@ -236,7 +236,9 @@ const occurrenceEditorInterface = {
         }
 
         function setContainerWidth() {
-            containerWidth.value = moduleContainerRef.value.clientWidth;
+            if(moduleContainerRef.value){
+                containerWidth.value = moduleContainerRef.value.clientWidth;
+            }
         }
 
         function validateCoordinates(eventMode = false) {
