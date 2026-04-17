@@ -89,7 +89,7 @@ class IRLDataService {
         $taxaNameArr = array();
         $targetTidArr = array();
         $parentTaxonArr = array();
-        $sql = 'SELECT l.locationcode, c.`year`, c.`month`, o.rep '.
+        $sql = 'SELECT DISTINCT l.locationcode, c.`year`, c.`month`, o.rep '.
             'FROM omoccurlocations AS l LEFT JOIN omoccurcollectingevents AS c ON l.locationid = c.locationid '.
             'LEFT JOIN omoccurrences AS o ON c.eventid = o.eventid '.
             'WHERE c.collid = ' . (int)$collid . ' ORDER BY l.locationcode, c.`year`, c.`month`, o.rep ';
@@ -143,7 +143,6 @@ class IRLDataService {
                 unset($rows[$index]);
             }
         }
-
         foreach($taxaNameArr as $tid => $sciname){
             $parentArr = (array_key_exists($tid, $parentTaxonArr) ? $parentTaxonArr[$tid] : array());
             $rowArr = array();
