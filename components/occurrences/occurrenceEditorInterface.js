@@ -29,7 +29,7 @@ const occurrenceEditorInterface = {
                 <div class="row justify-between">
                     <div class="row justify-start q-gutter-sm self-center">
                         <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="openQueryPopupDisplay();" icon="search" label="Search" aria-label="Open Search Window" tabindex="0"></q-btn>
-                        <template v-if="recordCount > 0">
+                        <template v-if="searchRecordCount > 1">
                             <table-display-button :navigator-mode="true"></table-display-button>
                             <list-display-button :navigator-mode="true"></list-display-button>
                             <spatial-display-button :navigator-mode="true"></spatial-display-button>
@@ -37,16 +37,20 @@ const occurrenceEditorInterface = {
                         </template>
                     </div>
                     <div class="row justify-end self-center">
-                        <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
-                        <q-btn v-if="recordCount > 1 && currentRecordIndex > 1" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord" aria-label="Go to first record" tabindex="0"></q-btn>
-                        <q-btn v-if="recordCount > 1 && currentRecordIndex > 1" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord" aria-label="Go to previous record" tabindex="0"></q-btn>
-                        <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord" aria-label="Go to next record" tabindex="0"></q-btn>
-                        <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord" aria-label="Go to last record" tabindex="0"></q-btn>
-                        <q-btn v-if="occurrenceEntryFormat !== 'replicate' && occId > 0" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord" aria-label="Go to new record" tabindex="0">
-                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                Create new occurrence record
-                            </q-tooltip>
-                        </q-btn>
+                        <template v-if="showNavigation">
+                            <template v-if="occId > 0 || searchRecordCount > 0">
+                                <div class="self-center text-bold q-mr-xs">Record {{ currentRecordIndex }} of {{ recordCount }}</div>
+                                <q-btn v-if="recordCount > 1 && currentRecordIndex > 1" icon="first_page" color="grey-8" round dense flat @click="goToFirstRecord" aria-label="Go to first record" tabindex="0"></q-btn>
+                                <q-btn v-if="recordCount > 1 && currentRecordIndex > 1" icon="chevron_left" color="grey-8" round dense flat @click="goToPreviousRecord" aria-label="Go to previous record" tabindex="0"></q-btn>
+                                <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="chevron_right" color="grey-8" round dense flat @click="goToNextRecord" aria-label="Go to next record" tabindex="0"></q-btn>
+                                <q-btn v-if="recordCount > 1 && currentRecordIndex < recordCount && occId > 0" icon="last_page" color="grey-8" round dense flat @click="goToLastRecord" aria-label="Go to last record" tabindex="0"></q-btn>
+                            </template>
+                            <q-btn v-if="occurrenceEntryFormat !== 'replicate' && (!newRecord || occId > 0)" icon="add_circle" color="grey-8" round dense flat @click="goToNewRecord" aria-label="Go to new record" tabindex="0">
+                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                    Create new occurrence record
+                                </q-tooltip>
+                            </q-btn>
+                        </template>
                     </div>
                 </div>
                 <div class="row justify-between">
@@ -62,7 +66,7 @@ const occurrenceEditorInterface = {
                                 <occurrence-entry-format-selector :selected-format="occurrenceEntryFormat" @change-occurrence-entry-format="changeOccurrenceEntryFormat"></occurrence-entry-format-selector>
                             </div>
                         </template>
-                        <template v-if="recordCount > 1">
+                        <template v-if="searchRecordCount > 1">
                             <div class="self-center">
                                 <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="displayBatchUpdatePopup = true" icon="find_replace" dense aria-label="Open Batch Update Tool" :disabled="!searchTermsValid" tabindex="0">
                                     <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -150,28 +154,45 @@ const occurrenceEditorInterface = {
         const displayBatchUpdatePopup = Vue.ref(false);
         const displayImageTranscriberPopup = Vue.ref(false);
         const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
+        const eventId = Vue.computed(() => occurrenceStore.getCollectingEventID);
         const imageCount = Vue.computed(() => occurrenceStore.getImageCount);
         const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
+        const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const moduleContainerRef = Vue.ref(null);
+        const newRecord = Vue.computed(() => occurrenceStore.getNewRecord);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
+        const recordCount = Vue.computed(() => {
+            let returnVal = 0;
+            if(searchStore.getSearchRecordCount > 0){
+                returnVal = searchStore.getSearchRecordCount;
+            }
+            if(Number(occId.value) === 0 || (Number(occId.value) > 0 && searchStore.getSearchRecordCount === 0)){
+                returnVal += 1;
+            }
+            return returnVal;
+        });
         const searchRecordCount = Vue.computed(() => {
-            if(occurrenceEditorModeActive.value){
-                return searchStore.getSearchRecordCount;
+            let returnVal = 0;
+            if(searchStore.getSearchRecordCount > 0){
+                returnVal = searchStore.getSearchRecordCount;
             }
-            else{
-                return 1;
+            else if(newRecord.value){
+                returnVal = 1;
             }
+            return returnVal;
         });
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
-        const recordCount = Vue.computed(() => {
-            if(Number(searchRecordCount.value) > 0){
-                return Number(occId.value) === 0 ? searchRecordCount.value + 1 : searchRecordCount.value;
+        const showNavigation = Vue.computed(() => {
+            let returnVal = false;
+            if(searchRecordCount.value > 0){
+                returnVal = true;
             }
-            else{
-                return 1;
+            else if(occurrenceEntryFormat.value === 'lot' && Number(locationId.value) > 0 && Number(eventId.value) > 0){
+                returnVal = true;
             }
+            return returnVal;
         });
 
         const loadRecordsCompleted = Vue.inject('loadRecordsCompleted');
@@ -229,8 +250,8 @@ const occurrenceEditorInterface = {
                     goToFirstRecord();
                 }
             }
-            else{
-                occurrenceStore.setCurrentOccurrenceRecord(0);
+            else if(occurrenceEntryFormat.value !== 'lot' && occurrenceEntryFormat.value !== 'replicate'){
+                occurrenceStore.goToNewOccurrenceRecord();
             }
             hideWorking();
         }
@@ -289,10 +310,13 @@ const occurrenceEditorInterface = {
             imageCount,
             isEditor,
             moduleContainerRef,
+            newRecord,
             occId,
             occurrenceEntryFormat,
             recordCount,
+            searchRecordCount,
             searchTermsValid,
+            showNavigation,
             changeOccurrenceEntryFormat,
             goToFirstRecord,
             goToLastRecord,

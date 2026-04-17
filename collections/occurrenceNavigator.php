@@ -291,6 +291,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
                     const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
+                    const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
                     const recordInfoWindowId = Vue.ref(null);
@@ -391,6 +392,9 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                         loadRecords(true);
                                     }
                                     else{
+                                        if(Number(initialOccId) === 0 && occurrenceEntryFormat.value !== 'lot' && occurrenceEntryFormat.value !== 'replicate'){
+                                            occurrenceStore.goToNewOccurrenceRecord();
+                                        }
                                         hideWorking();
                                     }
                                 }
