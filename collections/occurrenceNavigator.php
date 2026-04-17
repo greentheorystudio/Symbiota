@@ -286,6 +286,7 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     });
                     const isEditor = Vue.computed(() => occurrenceStore.getIsEditor);
                     const loadRecordsCompleted = Vue.ref(false);
+                    const occId = Vue.computed(() => occurrenceStore.getOccId);
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
@@ -304,6 +305,10 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
 
                     Vue.watch(displayInterface, () => {
                         setInterfaceDisplay();
+                    });
+
+                    Vue.watch(occId, () => {
+                        occurrenceEditorInterfaceOccId.value = Number(occId.value);
                     });
 
                     function closeRecordInfoWindow(){
