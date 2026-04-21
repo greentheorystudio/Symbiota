@@ -19,7 +19,7 @@ if(SanitizerService::validateInternalRequest()){
             $result = $con->query($sql);
             $i = 0;
             while ($row = $result->fetch_object()) {
-                $returnArr[$i]['name'] = htmlentities($row->sciname);
+                $returnArr[$i]['name'] = $row->sciname;
                 $i++;
             }
         }
@@ -31,7 +31,7 @@ if(SanitizerService::validateInternalRequest()){
             $result = $con->query($sql);
             $i = 0;
             while ($row = $result->fetch_object()) {
-                $returnArr[$i]['name'] = htmlentities($row->VernacularName);
+                $returnArr[$i]['name'] = $row->VernacularName;
                 $i++;
             }
         }
@@ -43,7 +43,7 @@ if(SanitizerService::validateInternalRequest()){
             $result = $con->query($sql);
             $i = 0;
             while ($row = $result->fetch_object()) {
-                $returnArr[$i]['name'] = htmlentities($row->country);
+                $returnArr[$i]['name'] = $row->country;
                 $i++;
             }
         }
@@ -55,7 +55,7 @@ if(SanitizerService::validateInternalRequest()){
             $result = $con->query($sql);
             $i = 0;
             while ($row = $result->fetch_object()) {
-                $returnArr[$i]['name'] = htmlentities($row->stateProvince);
+                $returnArr[$i]['name'] = $row->stateProvince;
                 $i++;
             }
         }
@@ -69,8 +69,8 @@ if(SanitizerService::validateInternalRequest()){
             $result = $con->query($sql);
             $i = 0;
             while ($row = $result->fetch_object()) {
-                $returnArr[$i]['name'] = htmlentities($row->fullname);
-                $returnArr[$i]['id'] = htmlentities($row->uid);
+                $returnArr[$i]['name'] = $row->fullname;
+                $returnArr[$i]['id'] = $row->uid;
                 $i++;
             }
         }

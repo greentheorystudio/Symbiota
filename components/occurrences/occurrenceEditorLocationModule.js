@@ -92,6 +92,7 @@ const occurrenceEditorLocationModule = {
         }
 
         function processEventSelection(event) {
+            occurrenceStore.setCurrentOccurrenceRecord(0);
             occurrenceStore.setCurrentCollectingEventRecord(event.eventid);
         }
 
