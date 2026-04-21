@@ -261,6 +261,12 @@ const tableSearchInterface = {
             }
         });
 
+        Vue.watch(searchRecordCount, () => {
+            if(searchRecordCount.value === 0){
+                setTableStyle();
+            }
+        });
+
         function findGoToOccidPage() {
             const occIndex = searchStore.getCurrentOccIdIndex;
             if(occIndex > 0){
@@ -317,24 +323,26 @@ const tableSearchInterface = {
         }
 
         function processRequest(props) {
-            showWorking();
-            let sortChange = false;
-            if(props.pagination.sortBy !== sortField.value || props.pagination.descending !== sortDescending.value){
-                sortChange = true;
-            }
-            sortField.value = props.pagination.sortBy;
-            sortDescending.value = props.pagination.descending;
-            if(sortChange){
-                searchStore.setSearchTermsRecordSortField(sortField.value);
-                searchStore.updateSearchTerms('sortField', sortField.value);
-                searchStore.setSearchTermsRecordSortDirection(sortDescending.value ? 'DESC' : 'ASC');
-                searchStore.updateSearchTerms('sortDirection', (sortDescending.value ? 'DESC' : 'ASC'));
-                recordsPageNumber.value = 1;
-                context.emit('load:records');
-            }
-            else{
-                recordsPageNumber.value = props.pagination.page;
-                setTableRecordData();
+            if(searchRecordCount.value > 0){
+                showWorking();
+                let sortChange = false;
+                if(props.pagination.sortBy !== sortField.value || props.pagination.descending !== sortDescending.value){
+                    sortChange = true;
+                }
+                sortField.value = props.pagination.sortBy;
+                sortDescending.value = props.pagination.descending;
+                if(sortChange){
+                    searchStore.setSearchTermsRecordSortField(sortField.value);
+                    searchStore.updateSearchTerms('sortField', sortField.value);
+                    searchStore.setSearchTermsRecordSortDirection(sortDescending.value ? 'DESC' : 'ASC');
+                    searchStore.updateSearchTerms('sortDirection', (sortDescending.value ? 'DESC' : 'ASC'));
+                    recordsPageNumber.value = 1;
+                    context.emit('load:records');
+                }
+                else{
+                    recordsPageNumber.value = props.pagination.page;
+                    setTableRecordData();
+                }
             }
         }
 
