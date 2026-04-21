@@ -53,7 +53,7 @@ if(SanitizerService::validateInternalRequest()){
                 if($row->vernacularname){
                     $sciName .= ' ('.$row->vernacularname.')';
                 }
-                $retArrRow['label'] = htmlentities($sciName);
+                $retArrRow['label'] = $sciName;
                 $retArrRow['value'] = $row->tidaccepted;
                 $returnArr[] = $retArrRow;
             }
@@ -65,14 +65,14 @@ if(SanitizerService::validateInternalRequest()){
                 if($row->vernacularname){
                     $sciName .= ' ('.$row->vernacularname.')';
                 }
-                $returnArr[$i]['name'] = htmlentities($sciName);
-                $returnArr[$i]['id'] = htmlentities($row->tidaccepted);
+                $returnArr[$i]['name'] = $sciName;
+                $returnArr[$i]['id'] = $row->tidaccepted;
                 $i++;
             }
         }
         else{
             while ($row = $result->fetch_object()) {
-                $returnArr[] = htmlentities($row->sciname);
+                $returnArr[] = $row->sciname;
             }
         }
     }

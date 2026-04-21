@@ -133,7 +133,6 @@ const searchCriteriaPopup = {
         }
 
         function resetCriteria() {
-            searchStore.clearSearchTerms();
             if(searchCriteriaBlockRef.value){
                 searchCriteriaBlockRef.value.resetCriteria();
             }
