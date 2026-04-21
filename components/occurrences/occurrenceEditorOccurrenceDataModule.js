@@ -15,7 +15,7 @@ const occurrenceEditorOccurrenceDataModule = {
                     </div>
                     <template v-if="locationId > 0">
                         <occurrence-editor-collecting-event-module></occurrence-editor-collecting-event-module>
-                        <template v-if="eventId > 0 && (occurrenceEntryFormat === 'lot' || occId > 0)">
+                        <template v-if="eventId > 0 && ((occurrenceEntryFormat === 'lot' && newRecord) || occId > 0)">
                             <q-card flat bordered class="black-border">
                                 <q-card-section class="q-pa-sm q-pt-md column q-gutter-y-md">
                                     <occurrence-editor-occurrence-data-controls></occurrence-editor-occurrence-data-controls>
@@ -81,6 +81,7 @@ const occurrenceEditorOccurrenceDataModule = {
         const imageCarouselContainerStyle = Vue.ref(null);
         const imageCarouselInnerContainerRef = Vue.ref(null);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
+        const newRecord = Vue.computed(() => occurrenceStore.getNewRecord);
         const occId = Vue.computed(() => occurrenceStore.getOccId);
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
 
@@ -102,6 +103,7 @@ const occurrenceEditorOccurrenceDataModule = {
             imageCarouselContainerStyle,
             imageCarouselInnerContainerRef,
             locationId,
+            newRecord,
             occId,
             occurrenceEntryFormat
         }
