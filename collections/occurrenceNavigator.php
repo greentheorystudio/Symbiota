@@ -371,9 +371,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     function processResetCriteria() {
                         searchStore.clearQueryOccidArr();
                         loadRecordsCompleted.value = false;
-                        if(occurrenceEditorModeActive.value){
-                            loadRecords();
-                        }
                     }
 
                     function processSpatialData(data) {
@@ -388,20 +385,15 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(searchTermsCollId.value)){
                                         searchStore.updateSearchTerms('collid', collid);
                                     }
-                                    if(initialInterface !== 'occurrence'){
-                                        loadRecords(true);
+                                    if(Number(initialOccId) === 0 && occurrenceEntryFormat.value !== 'lot' && occurrenceEntryFormat.value !== 'replicate'){
+                                        occurrenceStore.goToNewOccurrenceRecord();
                                     }
-                                    else{
-                                        if(Number(initialOccId) === 0 && occurrenceEntryFormat.value !== 'lot' && occurrenceEntryFormat.value !== 'replicate'){
-                                            occurrenceStore.goToNewOccurrenceRecord();
-                                        }
-                                        hideWorking();
-                                    }
+                                    hideWorking();
                                 }
                                 else{
                                     searchStore.updateSearchTerms('db', [collid]);
-                                    displayQueryPopup.value = true;
                                 }
+                                displayQueryPopup.value = true;
                             });
                         }
                     }
