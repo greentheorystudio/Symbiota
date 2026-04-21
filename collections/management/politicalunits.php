@@ -442,7 +442,7 @@ include_once(__DIR__ . '/../../config/header-includes.php');
 															}
 															?>
 														</select>
-														<input name="locality" type="hidden" value="<?php echo htmlentities($localityName); ?>" />
+														<input name="locality" type="hidden" value="<?php echo $localityName; ?>" />
 														<input name="country" type="hidden" value="<?php echo $countryName; ?>" />
 														<input name="state" type="hidden" value="<?php echo $stateName; ?>" />
 														<input name="collid" type="hidden" value="<?php echo $collid; ?>" />

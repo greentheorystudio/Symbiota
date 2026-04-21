@@ -370,11 +370,11 @@ class SearchService {
             $collSqlWhereStr .= '(o.collid IN(' . $collIdStr . '))';
         }
         elseif(!$GLOBALS['IS_ADMIN']){
-            $collSqlWhereStr .= '(o.collid IN(SELECT collid FROM omcollections WHERE isPublic = 1)';
+            $collSqlWhereStr .= '(o.collid IN(SELECT collid FROM omcollections WHERE isPublic = 1';
             if($GLOBALS['PERMITTED_COLLECTIONS']){
                 $collSqlWhereStr .= ' OR collid IN(' . implode(',', $GLOBALS['PERMITTED_COLLECTIONS']) . ')';
             }
-            $collSqlWhereStr .= ')';
+            $collSqlWhereStr .= '))';
         }
         return $collSqlWhereStr;
     }
