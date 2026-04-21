@@ -142,6 +142,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         isLocked: false,
         locationStore: useOccurrenceLocationStore(),
         mediaStore: useMediaStore(),
+        newRecord: false,
         occId: null,
         occurrenceData: {},
         occurrenceEditData: {},
@@ -314,6 +315,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         getMediaArr(state) {
             return state.mediaStore.getMediaArr;
+        },
+        getNewRecord(state) {
+            return state.newRecord;
         },
         getOccId(state) {
             return state.occId;
@@ -488,6 +492,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     }
                     if(this.entryFollowUpAction === 'remain' || this.entryFollowUpAction === 'none'){
                         this.setCurrentOccurrenceRecord(Number(res));
+                        this.newRecord = false;
                     }
                     else{
                         this.setCurrentOccurrenceRecord(0);
@@ -680,19 +685,16 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 callback(data);
             });
         },
-        goToNewOccurrenceRecord(carryLocation = false, carryEvent = false) {
+        goToNewOccurrenceRecord() {
+            this.newRecord = true;
             this.setCurrentOccurrenceRecord(0);
-            if(carryLocation){
+            if(this.occurrenceEntryFormat === 'lot'){
                 this.mergeLocationOccurrenceData();
+                this.mergeEventOccurrenceData();
             }
             else{
                 this.locationStore.clearLocationData();
                 this.collectingEventStore.clearLocationData();
-            }
-            if(carryEvent){
-                this.mergeEventOccurrenceData();
-            }
-            else{
                 this.setCurrentCollectingEventRecord(0);
             }
         },
