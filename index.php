@@ -47,7 +47,7 @@ header('Content-Type: text/html; charset=UTF-8' );
                     protocol as its data standard.
                 </div>
 
-                <div style="padding: 0 10px;">
+                <div style="margin-top:10px;padding: 0 10px;">
                     The module will be developed using existing functionality within Symbiota to track ex-situ plant and seed
                     collections, and add further functionality to track plant propagation methods used in growing events and
                     link those events to specimen based collections. The new data module will have the ability to be visible
