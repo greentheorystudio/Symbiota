@@ -369,7 +369,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     }
 
                     function processResetCriteria() {
-                        searchStore.clearQueryOccidArr();
                         loadRecordsCompleted.value = false;
                     }
 
