@@ -122,7 +122,13 @@ class IRLDataService {
             if($row->tid && !in_array($row->tid, $targetTidArr)){
                 $targetTidArr[] = $row->tid;
             }
-            $taxaDataArr[$row->sciname][$keyCode] = $row->individualCount;
+            if(!array_key_exists($row->tid, $taxaDataArr)){
+                $taxaDataArr[$row->tid] = array();
+            }
+            if(!array_key_exists($keyCode, $taxaDataArr[$row->tid])){
+                $taxaDataArr[$row->tid][$keyCode] = 0;
+            }
+            $taxaDataArr[$row->tid][$keyCode] += (int)$row->individualCount;
             if((int)$row->rankid === 10 || (int)$row->rankid === 30 || (int)$row->rankid === 60 || (int)$row->rankid === 100 || (int)$row->rankid === 140){
                 $parentTaxonArr[$row->tid][(int)$row->rankid]['id'] = $row->tid;
                 $parentTaxonArr[$row->tid][(int)$row->rankid]['sciname'] = $row->sciname;
@@ -153,7 +159,7 @@ class IRLDataService {
             $rowArr[] = (array_key_exists(140, $parentArr) ? $parentArr[140]['sciname'] : '');
             $rowArr[] = $sciname;
             foreach($keyArr as $key){
-                $rowArr[] = ((array_key_exists($key, $taxaDataArr[$sciname]) && (int)$taxaDataArr[$sciname][$key] > 0) ? $taxaDataArr[$sciname][$key] : '0');
+                $rowArr[] = ((array_key_exists($key, $taxaDataArr[$tid]) && (int)$taxaDataArr[$tid][$key] > 0) ? $taxaDataArr[$tid][$key] : '0');
             }
             $returnArr[] = $rowArr;
         }
