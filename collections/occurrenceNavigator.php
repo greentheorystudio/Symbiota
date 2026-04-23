@@ -290,7 +290,6 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                     const occurrenceEditorInterfaceCollId = Vue.ref(null);
                     const occurrenceEditorInterfaceDisplayMode = Vue.ref(null);
                     const occurrenceEditorInterfaceOccId = Vue.ref(null);
-                    const occurrenceEditorModeActive = Vue.computed(() => searchStore.getOccurrenceEditorModeActive);
                     const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
                     const popupWindowType = Vue.ref(null);
                     const queryId = QUERYID;
@@ -381,18 +380,21 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             occurrenceStore.setCollection(collid, false, () => {
                                 if(isEditor.value){
                                     searchStore.setOccurrenceEditorMode(true);
-                                    if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(searchTermsCollId.value)){
+                                    if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(collid)){
                                         searchStore.updateSearchTerms('collid', collid);
                                     }
                                     if(Number(initialOccId) === 0 && occurrenceEntryFormat.value !== 'lot' && occurrenceEntryFormat.value !== 'replicate'){
                                         occurrenceStore.goToNewOccurrenceRecord();
                                     }
+                                    if(Number(initialOccId) === 0 && initialDisplayMode === 1){
+                                        displayQueryPopup.value = true;
+                                    }
                                     hideWorking();
                                 }
                                 else{
                                     searchStore.updateSearchTerms('db', [collid]);
+                                    displayQueryPopup.value = true;
                                 }
-                                displayQueryPopup.value = true;
                             });
                         }
                     }
