@@ -1168,7 +1168,7 @@ CREATE TABLE `taxa` (
     `modifiedTimeStamp` datetime DEFAULT NULL,
     `InitialTimeStamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`TID`),
-    UNIQUE KEY `sciname_unique` (`SciName`,`kingdomId`,`RankId`),
+    UNIQUE KEY `sciname_unique` (`SciName`,`kingdomId`),
     KEY `rankid_index` (`RankId`),
     KEY `unitname1_index` (`UnitName1`,`UnitName2`),
     KEY `FK_taxa_uid_idx` (`modifiedUid`),

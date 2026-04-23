@@ -48,73 +48,74 @@ include(__DIR__ . '../../../header.php');
                 <h1>
                     Locations
                 </h1>
-<!--                the button here doesn't show up ... valid user works, so it's quasar not working?-->
-                <div v-if="validUser" class="row justify-end q-gutter-sm q-pr-md">
+                <div v-if="isEditor" class="row justify-end q-gutter-sm q-pr-md">
                     <div>
-                        <b-button size="sm">Small Button</b-button>
-                        <q-btn color="secondary" @click="openInstitutionsEditorPopup();" label="Create Locatiion" tabindex="0" />
+                        <q-btn color="secondary" @click="openInstitutionsEditorPopup(0);" label="Create Locatiion" tabindex="0" />
                     </div>
                 </div>
             </div>
             <template v-if="Object.keys(institutionsArr).length > 0">
-                <template v-for="projectGroup in institutionsArr">
-                    <q-card v-if="projectGroup['checklists'].length > 0" flat>
-                        <q-card-section class="column q-gutter-sm">
-                            <div v-if="projectGroup['projname']" class="row justify-start">
-                                <div class="text-h6 text-bold">
-                                    {{ projectGroup['projname'] }}
-                                </div>
-<!--                                SPACIAL STUFF, IGNORE FOR NOW-->
-<!--                                <div v-if="projectGroup['coordinates'].length > 0" class="q-ml-sm self-center">-->
-<!--                                    <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(projectGroup['coordinates']);" icon="fas fa-globe" dense aria-label="See checklists on map" tabindex="0">-->
-<!--                                        <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">-->
-<!--                                            See locations on map-->
-<!--                                        </q-tooltip>-->
-<!--                                    </q-btn>-->
-<!--                                </div>-->
-                            </div>
-                            <div class="column">
-<!--                                what's the difference between the  checklist['name'] and projectGroup['projname']??? which one is shown in checklists rn -->
-                                <template v-for="checklist in projectGroup['checklists']">
-                                    <div class="row justify-start">
-                                        <div class="text-body1">
-                                            <a :href="(clientRoot + '/checklists/checklist.php?clid=' + checklist['clid'])" tabindex="0">{{ checklist['name'] }}</a>
-                                        </div>
-                                        <div v-if="(checklist['latcentroid'] && checklist['longcentroid']) || checklist['footprintwkt']" class="q-ml-md self-center">
-                                            <q-btn color="grey-4" text-color="black" class="black-border" size="xs" @click="openSpatialPopup(((checklist['latcentroid'] && checklist['longcentroid']) ? [[Number(checklist['longcentroid']), Number(checklist['latcentroid'])]] : null), (checklist['footprintwkt'] ? checklist['footprintwkt'] : null));" icon="fas fa-globe" dense aria-label="See checklist on map" tabindex="0">
-                                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
-                                                    See checklist on map
-                                                </q-tooltip>
-                                            </q-btn>
-                                        </div>
+                    <template v-for="institutions in institutionsArr" :key="key">
+                        <q-card flat bordered class="my-card" :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-2'">
+                            <q-card-section>
+                                <div class="row items-center no-wrap">
+                                    <div v-if="institutions['institutionname2']" class="col">
+                                        <div class="text-h6"><b>{{institutions['institutionname']}} - {{institutions['institutionname2']}} </b></div>
                                     </div>
-                                </template>
-                            </div>
-                        </q-card-section>
-                    </q-card>
-                </template>
+                                    <div v-else class="col">
+                                        <div class="text-h6"><b>{{institutions['institutionname']}} </b></div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <q-btn @click="openInstitutionsEditorPopup(institutions['iid']);" color="grey-4" text-color="black" class="black-border" size="xs"  icon="fas fa-edit" dense aria-label="Edit character record" tabindex="0">
+                                            <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" delay="1000" :offset="[10, 10]">
+                                                Edit location record
+                                            </q-tooltip>
+                                        </q-btn>
+                                    </div>
+                                </div>
+                                <div>
+                                    <b>Location Code:</b> {{institutions['institutioncode']}}, <b>Location ID:</b> {{institutions['iid']}}
+                                </div>
+                                <div v-if="institutions['address2'] && institutions['stateprovince']">
+                                    <b>Address:</b> {{institutions['address1']}},  {{institutions['address2']}}, {{institutions['city']}}</br>
+                                    {{institutions['stateprovince']}}, {{institutions['postalcode']}}, {{institutions['country']}}
+                                </div>
+                                <div v-if="institutions['address2'] && !institutions['stateprovince']">
+                                    <b>Address:</b> {{institutions['address1']}},  {{institutions['address2']}}, {{institutions['city']}}</br>
+                                    {{institutions['postalcode']}}, {{institutions['country']}}
+                                </div>
+                                <div v-else>
+                                    <b>Address:</b> {{institutions['address1']}},  {{institutions['city']}}</br>
+                                    {{institutions['stateprovince']}}, {{institutions['postalcode']}}, {{institutions['country']}}
+                                </div>
+                                <div v-if="institutions['notes']">
+                                    <b>Notes:</b> {{institutions['notes']}}
+                                </div>
+                                <div v-if="isEditor && institutions['phone']">
+                                    <b>Phone:</b> {{institutions['phone']}}
+                                </div>
+                                <div v-if="isEditor && institutions['contact']">
+                                    <b>Contact:</b> {{institutions['contact']}}
+                                </div>
+                                <div v-if="isEditor && institutions['email']">
+                                    <b>Email:</b> {{institutions['email']}}
+                                </div>
+                            </q-card-section>
+                        </q-card>
+                    </template>
             </template>
             <template v-else>
                 <div class="text-h4 text-bold">
-                    There are no checklists available at this time.
+                    There are no locations available at this time.
                 </div>
             </template>
         </div>
-<!--        POP-UPS, FOCUS ON SHOWING LIST FOR NOW-->
-<!--        <template v-if="showInstitutionsEditorPopup">-->
-<!--            <institutions-editor-popup-->
-<!--                    :show-popup="showInstitutionsEditorPopup"-->
-<!--                    @close:popup="showInstitutionsEditorPopup = false"-->
-<!--            ></institutions-editor-popup>-->
-<!--        </template>-->
-<!--        <template v-if="showSpatialPopup">-->
-<!--            <spatial-viewer-popup-->
-<!--                    :coordinate-set="spatialPopupCoordinateSet"-->
-<!--                    :footprint-wkt="spatialPopupFootprintWkt"-->
-<!--                    :show-popup="showSpatialPopup"-->
-<!--                    @close:popup="closeSpatialPopup();"-->
-<!--            ></spatial-viewer-popup>-->
-<!--        </template>-->
+        <template v-if="showInstitutionsEditorPopup">
+            <institutions-editor-popup
+                    :show-popup="showInstitutionsEditorPopup"
+                    @close:popup="showInstitutionsEditorPopup = false"
+            ></institutions-editor-popup>
+        </template>
     </div>
 </div>
 <?php
@@ -123,9 +124,6 @@ include(__DIR__ . '../../../footer.php');
 ?>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/stores/institutions.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/stores/checklist-taxa.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/stores/checklist.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/stores/project.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/pwdInput.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/collections/collectionCatalogNumberQuickSearch.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -197,49 +195,42 @@ include(__DIR__ . '../../../footer.php');
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/userPermissionManagementModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/institutions/institutionsFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/institutions/institutionsEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
-<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/components/checklists/checklistEditorAppConfigTab.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/components/checklists/checklistEditorAdminTab.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/components/checklists/checklistFieldModule.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
-<!--<script src="--><?php //echo $GLOBALS['CLIENT_ROOT']; ?><!--/components/checklists/checklistEditorPopup.js?ver=--><?php //echo $GLOBALS['JS_VERSION']; ?><!--" type="text/javascript"></script>-->
 <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/spatial/spatialViewerPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
 <script type="text/javascript">
     const institutionIndexModule = Vue.createApp({
         components: {
             'institutions-editor-popup': institutionsEditorPopup,
-            'spatial-viewer-popup': spatialViewerPopup
         },
         setup() {
             const baseStore = useBaseStore();
             const institutionsStore = useInstitutionsStore();
 
             const institutionsArr = Vue.ref([]);
+            const isEditor = Vue.ref(false);
             const clientRoot = baseStore.getClientRoot;
             const showInstitutionsEditorPopup = Vue.ref(false);
-            const showSpatialPopup = Vue.ref(false);
-            const spatialPopupCoordinateSet = Vue.ref(null);
-            const spatialPopupFootprintWkt = Vue.ref(null);
-            const validUser = baseStore.getValidUser;
 
-            function closeSpatialPopup() {
-                spatialPopupCoordinateSet.value = null;
-                spatialPopupFootprintWkt.value = null;
-                showSpatialPopup.value = false;
-            }
-
-            function openInstitutionsEditorPopup() {
-                // institutionsStore.setChecklist(0);
+            function openInstitutionsEditorPopup(num) {
+                institutionsStore.setInstitutionData(num);
                 showInstitutionsEditorPopup.value = true;
             }
 
-            function openSpatialPopup(coordSet, footprintWkt = null) {
-                if(coordSet){
-                    spatialPopupCoordinateSet.value = coordSet;
-                }
-                if(footprintWkt){
-                    spatialPopupFootprintWkt.value = footprintWkt;
-                }
-                showSpatialPopup.value = true;
+
+            function setCollectionPermissions() {
+                const formData = new FormData();
+                formData.append('permissionJson', JSON.stringify(['CollAdmin', 'CollEditor']));
+                formData.append('action', 'validatePermission');
+                fetch(permissionApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then((response) => {
+                        response.json().then((resData) => {
+                            isEditor.value =  (resData.includes('CollAdmin') || resData.includes('CollEditor'));
+                        });
+                    });
             }
+
             function setInstitutionsArr() {
                 const formData = new FormData();
                 formData.append('action', 'getInstitutionsArr');
@@ -257,19 +248,15 @@ include(__DIR__ . '../../../footer.php');
 
             Vue.onMounted(() => {
                 setInstitutionsArr();
+                setCollectionPermissions();
             });
 
             return {
                 institutionsArr,
                 clientRoot,
                 showInstitutionsEditorPopup,
-                showSpatialPopup,
-                spatialPopupCoordinateSet,
-                spatialPopupFootprintWkt,
-                validUser,
-                closeSpatialPopup,
+                isEditor,
                 openInstitutionsEditorPopup,
-                openSpatialPopup
             }
         }
     });
