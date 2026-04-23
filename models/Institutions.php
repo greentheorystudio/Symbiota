@@ -70,13 +70,16 @@ class Institutions{
             'FROM institutions ORDER BY institutionname';
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
-            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
-            if($row){
+            foreach($rows as $index => $row){
+                $nodeArr = array();
                 foreach($fields as $val){
                     $name = $val->name;
-                    $retArr[$name] = $row[$name];
+                    $nodeArr[$name] = $row[$name];
                 }
+                $retArr[] = $nodeArr;
+                unset($rows[$index]);
             }
         }
         return $retArr;
