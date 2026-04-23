@@ -76,6 +76,7 @@ const occurrenceEditorLocationModule = {
         const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
         const locationId = Vue.computed(() => occurrenceStore.getLocationID);
         const locationValid = Vue.computed(() => occurrenceStore.getLocationValid);
+        const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showCollectingEventListPopup = Vue.ref(false);
         const showLocationEditorPopup = Vue.ref(false);
@@ -93,7 +94,7 @@ const occurrenceEditorLocationModule = {
         }
 
         function processEventSelection(event) {
-            if(Number(displayMode.value > 1)){
+            if(occurrenceEntryFormat.value !== 'replicate' && Number(displayMode.value > 1)){
                 occurrenceStore.goToNewOccurrenceRecord();
             }
             occurrenceStore.setCurrentCollectingEventRecord(event.eventid);
