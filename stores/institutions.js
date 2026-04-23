@@ -110,11 +110,12 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
                     })
                     .then((data) => {
                         this.institutionsData = Object.assign({}, data);
+                        this.institutionsEditData = Object.assign({}, this.institutionsData);
                     });
             } else {
                 this.institutionsData = Object.assign({}, this.blankInstitutionRecord);
+                this.institutionsEditData = Object.assign({}, this.institutionsData);
             }
-            this.institutionsEditData = Object.assign({}, this.institutionsData);
         },
         updateInstitutionsEditData(key, value) {
             this.institutionsEditData[key] = value;
