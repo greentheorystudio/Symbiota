@@ -70,6 +70,7 @@ const occurrenceEditorLocationModule = {
         const collectingEventArr = Vue.computed(() => occurrenceStore.getLocationCollectingEventArr);
         const collId = Vue.computed(() => occurrenceStore.getCollId);
         const confirmationPopupRef = Vue.ref(null);
+        const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
         const editorConfirmed = Vue.ref(false);
         const locationData = Vue.computed(() => occurrenceStore.getLocationData);
         const locationFields = Vue.computed(() => occurrenceStore.getLocationFields);
@@ -92,7 +93,9 @@ const occurrenceEditorLocationModule = {
         }
 
         function processEventSelection(event) {
-            occurrenceStore.setCurrentOccurrenceRecord(0);
+            if(Number(displayMode.value > 1)){
+                occurrenceStore.goToNewOccurrenceRecord();
+            }
             occurrenceStore.setCurrentCollectingEventRecord(event.eventid);
         }
 
