@@ -361,18 +361,11 @@ const useTaxaStore = Pinia.defineStore('taxa', {
                 if(Number(res) === 1){
                     this.updateTaxonHierarchyData(this.taxaId, (res) => {
                         if(Number(res) === 1){
-                            this.updateTaxonHierarchyData(remaptid, (res) => {
-                                callback(Number(res));
-                            });
-                        }
-                        else{
-                            callback(Number(res));
+                            this.updateTaxonHierarchyData(remaptid);
                         }
                     });
                 }
-                else{
-                    callback(Number(res));
-                }
+                callback(Number(res));
             });
         },
         removeTaxonFromHierarchyData() {
