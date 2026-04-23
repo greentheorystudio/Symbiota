@@ -97,6 +97,7 @@ const occurrenceEditorCollectingEventModule = {
         const configuredDataFields = Vue.computed(() => occurrenceStore.getEventMofDataFields);
         const configuredDataLabel = Vue.computed(() => occurrenceStore.getEventMofDataLabel);
         const confirmationPopupRef = Vue.ref(null);
+        const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
         const editorConfirmed = Vue.ref(false);
         const editTaxonPopupTaxonData = Vue.ref(null);
         const eventData = Vue.computed(() => occurrenceStore.getCollectingEventData);
@@ -121,6 +122,9 @@ const occurrenceEditorCollectingEventModule = {
             occurrenceStore.createCollectingEventRecord((newEventId) => {
                 if(newEventId > 0){
                     showNotification('positive','Event record created successfully.');
+                    if(Number(displayMode.value > 1)){
+                        occurrenceStore.goToNewOccurrenceRecord();
+                    }
                 }
                 else{
                     showNotification('negative', 'There was an error creating the event record.');
