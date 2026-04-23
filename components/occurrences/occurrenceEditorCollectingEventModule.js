@@ -122,7 +122,7 @@ const occurrenceEditorCollectingEventModule = {
             occurrenceStore.createCollectingEventRecord((newEventId) => {
                 if(newEventId > 0){
                     showNotification('positive','Event record created successfully.');
-                    if(Number(displayMode.value > 1)){
+                    if(occurrenceEntryFormat.value !== 'replicate' && Number(displayMode.value > 1)){
                         occurrenceStore.goToNewOccurrenceRecord();
                     }
                 }
