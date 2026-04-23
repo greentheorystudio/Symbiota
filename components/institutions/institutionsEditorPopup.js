@@ -15,64 +15,27 @@ const institutionsEditorPopup = {
                 </div>
                 <div ref="contentRef" class="fit">
                     <div :style="contentStyle" class="overflow-auto">
-                        <template v-if="Number(checklistId) > 0">
-                            <q-tabs v-model="tab" content-class="bg-grey-3" active-bg-color="grey-4" align="justify">
-                                <q-tab name="details" label="Info" no-caps></q-tab>
-                                <q-tab v-if="appEnabled && checklistData['access'] === 'public'" name="app" label="Mobile Checklist" no-caps></q-tab>
-                                <q-tab name="admin" label="Admin" no-caps></q-tab>
-                            </q-tabs>
-                            <q-separator></q-separator>
-                            <q-tab-panels v-model="tab" :style="tabStyle">
-                                <q-tab-panel class="q-pa-none" name="details">
-                                    <checklist-field-module @open:spatial-popup="openSpatialPopup" @close:popup="closePopup();"></checklist-field-module>
-                                </q-tab-panel>
-<!--                                <q-tab-panel v-if="appEnabled && checklistData['access'] === 'public'" class="q-pa-none" name="app">-->
-<!--&lt;!&ndash;                                    <checklist-editor-app-config-tab></checklist-editor-app-config-tab>&ndash;&gt;-->
-<!--                                </q-tab-panel>-->
-<!--                                <q-tab-panel class="q-pa-none" name="admin">-->
-<!--&lt;!&ndash;                                    <checklist-editor-admin-tab></checklist-editor-admin-tab>&ndash;&gt;-->
-<!--                                </q-tab-panel>-->
+                        <template v-if="Number(institutionsId) > 0">
+                            <institutions-field-module @close:popup="closePopup();"></institutions-field-module>
                             </q-tab-panels>
                         </template>
-<!--                        <template v-else>-->
-<!--                            <institutions-field-module @open:spatial-popup="openSpatialPopup" @close:popup="closePopup();"></institutions-field-module>-->
-<!--                        </template>-->
+                        <template v-else>
+                            <institutions-field-module @close:popup="closePopup();"></institutions-field-module>
+                        </template>
                     </div>
                 </div>
             </q-card>
         </q-dialog>
-<!--        <template v-if="showSpatialPopup">-->
-<!--            <spatial-analysis-popup-->
-<!--                :decimal-latitude="decimalLatitudeValue"-->
-<!--                :decimal-longitude="decimalLongitudeValue"-->
-<!--                :footprint-wkt="footprintWktValue"-->
-<!--                :show-popup="showSpatialPopup"-->
-<!--                :window-type="popupWindowType"-->
-<!--                @update:spatial-data="processSpatialData"-->
-<!--                @close:popup="closeSpatialPopup();"-->
-<!--            ></spatial-analysis-popup>-->
-<!--        </template>-->
     `,
     components: {
-        // 'checklist-editor-admin-tab': checklistEditorAdminTab,
-        // 'checklist-editor-app-config-tab': checklistEditorAppConfigTab,
         'institutions-field-module': institutionsFieldModule,
-        // 'spatial-analysis-popup': spatialAnalysisPopup
     },
     setup(_, context) {
         const baseStore = useBaseStore();
-        const checklistStore = useChecklistStore();
-
         const appEnabled = baseStore.getAppEnabled;
-        const checklistData = Vue.computed(() => checklistStore.getChecklistData);
-        const checklistId = Vue.computed(() => checklistStore.getChecklistID);
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
-        const decimalLatitudeValue = Vue.ref(null);
-        const decimalLongitudeValue = Vue.ref(null);
-        const footprintWktValue = Vue.ref(null);
         const popupWindowType = Vue.ref(null);
-        const showSpatialPopup = Vue.ref(false);
         const tab = Vue.ref('details');
         const tabStyle = Vue.ref(null);
 
@@ -102,26 +65,6 @@ const institutionsEditorPopup = {
             showSpatialPopup.value = true;
         }
 
-        function processSpatialData(data) {
-            if(popupWindowType.value.includes('point') && data.hasOwnProperty('decimalLatitude') && data.hasOwnProperty('decimalLongitude')){
-                const latDecimalPlaces = (checklistData.value.hasOwnProperty('decimallatitude') && checklistData.value['decimallatitude']) ? checklistData.value['decimallatitude'].toString().split('.')[1].length : null;
-                const longDecimalPlaces = (checklistData.value.hasOwnProperty('decimallongitude') && checklistData.value['decimallongitude']) ? checklistData.value['decimallongitude'].toString().split('.')[1].length : null;
-                if(!latDecimalPlaces || Number(checklistData.value['decimallatitude']) !== Number(Number(data['decimalLatitude']).toFixed(latDecimalPlaces))){
-                    checklistStore.updateChecklistEditData('latcentroid', data['decimalLatitude']);
-                }
-                if(!longDecimalPlaces || Number(checklistData.value['decimallongitude']) !== Number(Number(data['decimalLongitude']).toFixed(longDecimalPlaces))){
-                    checklistStore.updateChecklistEditData('longcentroid', data['decimalLongitude']);
-                }
-            }
-            else if(popupWindowType.value.includes('wkt') && data.hasOwnProperty('footprintWKT')){
-                checklistStore.updateChecklistEditData('footprintwkt', data['footprintWKT']);
-                if(data.hasOwnProperty('centroid')){
-                    checklistStore.updateChecklistEditData('latcentroid', data['centroid']['decimalLatitude']);
-                    checklistStore.updateChecklistEditData('longcentroid', data['centroid']['decimalLongitude']);
-                }
-            }
-        }
-
         function setContentStyle() {
             contentStyle.value = null;
             tabStyle.value = null;
@@ -132,9 +75,9 @@ const institutionsEditorPopup = {
         }
 
         function setSpatialInputValues() {
-            decimalLatitudeValue.value = checklistData.value['latcentroid'];
-            decimalLongitudeValue.value = checklistData.value['longcentroid'];
-            footprintWktValue.value = checklistData.value['footprintwkt'];
+            decimalLatitudeValue.value = institutionsData.value['latcentroid'];
+            decimalLongitudeValue.value = institutionsData.value['longcentroid'];
+            footprintWktValue.value = institutionsData.value['footprintwkt'];
         }
 
         Vue.onMounted(() => {
@@ -144,21 +87,12 @@ const institutionsEditorPopup = {
 
         return {
             appEnabled,
-            checklistData,
-            checklistId,
             contentRef,
             contentStyle,
-            decimalLatitudeValue,
-            decimalLongitudeValue,
-            footprintWktValue,
             popupWindowType,
-            showSpatialPopup,
             tab,
             tabStyle,
-            closePopup,
-            closeSpatialPopup,
-            openSpatialPopup,
-            processSpatialData
+            closePopup
         }
     }
 };
