@@ -6,11 +6,13 @@ const useUserStore = Pinia.defineStore('user', {
             firstname: null,
             middleinitial: null,
             lastname: null,
+            collectorcode: null,
             username: null,
             password: null,
             title: null,
             institution: null,
             email: null,
+            phone: null,
             guid: null,
             validated: null,
             lastlogindate: null
