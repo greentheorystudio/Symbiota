@@ -16,11 +16,7 @@ include_once(__DIR__ . '../../../config/header-includes.php');
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/external/ol-ext.min.css?ver=20240115" rel="stylesheet" type="text/css"/>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/base.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
     <link href="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/css/main.css?ver=<?php echo $GLOBALS['CSS_VERSION']; ?>" rel="stylesheet" type="text/css"/>
-    <style>
-        div.q-menu.q-position-engine {
-            z-index: 100000000000;
-        }
-    </style>
+
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol.js?ver=10.8.1" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/ol-ext.min.js?ver=20240115" type="text/javascript"></script>
     <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/js/external/turf.min.js" type="text/javascript"></script>
@@ -60,10 +56,10 @@ include(__DIR__ . '../../../header.php');
                             <q-card-section>
                                 <div class="row items-center no-wrap">
                                     <div v-if="institutions['institutionname2']" class="col">
-                                        <div class="text-h6"><b>{{institutions['institutionname']}} - {{institutions['institutionname2']}} </b></div>
+                                        <div class="text-h6"><b>{{institutions['institutionname']}} - {{institutions['institutionname2']}} ({{institutions['institutioncode']}}) </b></div>
                                     </div>
                                     <div v-else class="col">
-                                        <div class="text-h6"><b>{{institutions['institutionname']}} </b></div>
+                                        <div class="text-h6"><b>{{institutions['institutionname']}} ({{institutions['institutioncode']}})</b></div>
                                     </div>
                                     <div class="col-auto">
                                         <q-btn @click="openInstitutionsEditorPopup(institutions['iid']);" color="grey-4" text-color="black" class="black-border" size="xs"  icon="fas fa-edit" dense aria-label="Edit character record" tabindex="0">
@@ -73,32 +69,31 @@ include(__DIR__ . '../../../header.php');
                                         </q-btn>
                                     </div>
                                 </div>
+<!--                                address 1 BR addressline 2 BR city, state postal code BR country-->
                                 <div>
-                                    <b>Location Code:</b> {{institutions['institutioncode']}}, <b>Location ID:</b> {{institutions['iid']}}
-                                </div>
-                                <div v-if="institutions['address2'] && institutions['stateprovince']">
-                                    <b>Address:</b> {{institutions['address1']}},  {{institutions['address2']}}, {{institutions['city']}}</br>
-                                    {{institutions['stateprovince']}}, {{institutions['postalcode']}}, {{institutions['country']}}
-                                </div>
-                                <div v-if="institutions['address2'] && !institutions['stateprovince']">
-                                    <b>Address:</b> {{institutions['address1']}},  {{institutions['address2']}}, {{institutions['city']}}</br>
-                                    {{institutions['postalcode']}}, {{institutions['country']}}
-                                </div>
-                                <div v-else>
-                                    <b>Address:</b> {{institutions['address1']}},  {{institutions['city']}}</br>
-                                    {{institutions['stateprovince']}}, {{institutions['postalcode']}}, {{institutions['country']}}
-                                </div>
-                                <div v-if="institutions['notes']">
-                                    <b>Notes:</b> {{institutions['notes']}}
-                                </div>
-                                <div v-if="isEditor && institutions['phone']">
-                                    <b>Phone:</b> {{institutions['phone']}}
-                                </div>
-                                <div v-if="isEditor && institutions['contact']">
-                                    <b>Contact:</b> {{institutions['contact']}}
-                                </div>
-                                <div v-if="isEditor && institutions['email']">
-                                    <b>Email:</b> {{institutions['email']}}
+                                    <span>
+                                        <b>Address:</b> {{institutions['address1']}}
+                                    </span>
+                                    <span v-if="institutions['address2']">
+                                        <br>{{institutions['address2']}}
+                                    </span>
+                                    <span> <br> {{institutions['city']}}</span>
+                                    <span v-if="institutions['stateprovince']">, {{institutions['stateprovince']}}</span> <span>{{institutions['postalcode']}}</span>
+                                    <span>
+                                        <br> {{institutions['country']}}
+                                    </span>
+                                    <span v-if="institutions['notes']">
+                                        <br><b>Notes:</b> {{institutions['notes']}}
+                                    </span>
+                                    <span v-if="isEditor && institutions['phone']">
+                                        <br><b>Phone:</b> {{institutions['phone']}}
+                                    </span>
+                                    <span v-if="isEditor && institutions['contact']">
+                                        <br><b>Contact:</b> {{institutions['contact']}}
+                                    </span>
+                                    <span v-if="isEditor && institutions['email']">
+                                        <br><b>Email:</b> {{institutions['email']}}
+                                    </span>
                                 </div>
                             </q-card-section>
                         </q-card>
