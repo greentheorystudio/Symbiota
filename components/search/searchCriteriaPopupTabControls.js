@@ -16,6 +16,11 @@ const searchCriteriaPopupTabControls = {
                 <div>
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="resetCriteria();" label="Clear" dense tabindex="0" />
                 </div>
+                <template v-if="searchTerms.hasOwnProperty('collid') && Number(searchTerms['collid']) > 0">
+                    <div>
+                        <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="loadRecords();" label="Load All Records" dense tabindex="0" />
+                    </div>
+                </template>
                 <div>
                     <q-btn color="grey-4" text-color="black" class="black-border" size="md" @click="processSearchButtonClick();" :label="searchButtonLabel" :disabled="!searchTermsValid" dense tabindex="0">
                         <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -51,6 +56,7 @@ const searchCriteriaPopupTabControls = {
                 return 'Search for records matching the criteria';
             }
         });
+        const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const searchTermsValid = Vue.computed(() => searchStore.getSearchTermsValid);
 
         function loadRecords() {
@@ -74,6 +80,7 @@ const searchCriteriaPopupTabControls = {
         return {
             searchButtonLabel,
             searchRecordsTooltip,
+            searchTerms,
             searchTermsValid,
             loadRecords,
             processSearchButtonClick,
