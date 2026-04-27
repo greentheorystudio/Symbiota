@@ -53,7 +53,7 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
         },
         createInstitutionsRecord(callback) {
             const formData = new FormData();
-            formData.append('description', JSON.stringify(this.institutionsEditData));
+            formData.append('institutions', JSON.stringify(this.institutionsEditData));
             formData.append('action', 'createInstitutionsRecord');
             fetch(institutionsApiUrl, {
                 method: 'POST',
@@ -123,7 +123,7 @@ const useInstitutionsStore = Pinia.defineStore('institutions', {
         updateInstitutionsRecord(callback) {
             const formData = new FormData();
             formData.append('iid', this.institutionsId.toString());
-            formData.append('descriptionData', JSON.stringify(this.institutionsUpdateData));
+            formData.append('institutionsData', JSON.stringify(this.institutionsUpdateData));
             formData.append('action', 'updateInstitutionsRecord');
             fetch(institutionsApiUrl, {
                 method: 'POST',
