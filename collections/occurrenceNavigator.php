@@ -383,13 +383,18 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                                     if(!searchTerms.value.hasOwnProperty('collid') || Number(searchTerms.value['collid']) === 0 || Number(searchTerms.value['collid']) !== Number(collid)){
                                         searchStore.updateSearchTerms('collid', collid);
                                     }
-                                    if(Number(initialOccId) === 0 && occurrenceEntryFormat.value !== 'lot' && occurrenceEntryFormat.value !== 'replicate'){
-                                        occurrenceStore.goToNewOccurrenceRecord();
+                                    if(searchStore.getSearchTermsValid){
+                                        loadRecords();
                                     }
-                                    if(Number(initialOccId) === 0 && initialDisplayMode === 1){
-                                        displayQueryPopup.value = true;
+                                    else{
+                                        if(Number(initialOccId) === 0 && occurrenceEntryFormat.value !== 'lot' && occurrenceEntryFormat.value !== 'replicate'){
+                                            occurrenceStore.goToNewOccurrenceRecord();
+                                        }
+                                        if(Number(initialOccId) === 0 && initialDisplayMode === 1){
+                                            displayQueryPopup.value = true;
+                                        }
+                                        hideWorking();
                                     }
-                                    hideWorking();
                                 }
                                 else{
                                     searchStore.updateSearchTerms('db', [collid]);
@@ -466,13 +471,14 @@ $stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
                             if(stArrJson){
                                 searchStore.loadSearchTermsArrFromJson(stArrJson.replaceAll('%squot;', "'"));
                             }
-                            if(searchStore.getSearchTermsValid || (searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0)){
-                                if(Number(initialCollId) === 0 && Number(searchTerms.value['collid']) > 0){
-                                    setCollection(searchTerms.value['collid']);
-                                }
-                                else{
-                                    loadRecords();
-                                }
+                            if(Number(initialCollId) > 0){
+                                setCollection(initialCollId);
+                            }
+                            else if(searchTerms.value.hasOwnProperty('collid') && Number(searchTerms.value['collid']) > 0){
+                                setCollection(searchTerms.value['collid']);
+                            }
+                            else if(searchStore.getSearchTermsValid){
+                                loadRecords();
                             }
                         }
                         else if(Number(initialCollId) > 0){
