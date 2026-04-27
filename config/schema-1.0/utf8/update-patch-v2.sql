@@ -520,6 +520,10 @@ ALTER TABLE `users`
     DROP COLUMN `accessrights`,
     DROP COLUMN `usergroups`;
 
+ALTER TABLE `users`
+    ADD COLUMN `collectorcode` varchar(45) NULL AFTER `lastname`,
+    ADD COLUMN `phone` varchar(45) NULL AFTER `email`;
+
 --AI suggestions
 
 ALTER TABLE `omcollections`
