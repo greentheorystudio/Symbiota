@@ -42,7 +42,7 @@ const collectionCatalogNumberQuickSearch = {
                             showNotification('negative', 'There are no records with that catalog number.');
                         }
                         else if(data.length > 1){
-                            showNotification('negative', 'There are multiple records with that catalog number.');
+                            window.location.href = (clientRoot + '/collections/occurrenceNavigator.php?interface=occurrence&starr={"collid":' + props.collectionId + ',"catnum":"' + catalogNumber.value + '"}');
                         }
                         else{
                             window.location.href = (clientRoot + '/collections/occurrenceNavigator.php?interface=occurrence&occid=' + data[0]['occid']);
