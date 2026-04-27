@@ -6,131 +6,88 @@ include_once(__DIR__ . '/../services/SanitizerService.php');
 class OccurrenceCleaner extends Manager{
 
 	private $collid;
-	private $obsUid;
 	private $featureCount = 0;
 	
 	public function __construct(){
 		parent::__construct();
 	}
 
-	public function getDuplicateCatalogNumber($type, $start, $limit): array
-	{
-		$dupArr = array();
-		$catArr = array();
-		$cnt = 0;
-		if($type === 'cat'){
-			$sql1 = 'SELECT catalognumber '.
-				'FROM omoccurrences '.
-				'WHERE catalognumber IS NOT NULL AND collid = '.$this->collid;
-		}
-		else{
-			$sql1 = 'SELECT otherCatalogNumbers '.
-				'FROM omoccurrences '.
-				'WHERE otherCatalogNumbers IS NOT NULL AND collid = '.$this->collid;
-		}
-		//echo $sql1;
-		$rs = $this->conn->query($sql1);
-		while($r = $rs->fetch_object()){
-			$cn = ($type === 'cat'?$r->catalognumber:$r->otherCatalogNumbers);
-			if(array_key_exists($cn,$catArr)){
-				$cnt++;
-				if($start < $cnt && !array_key_exists($cn,$dupArr)){
-					$dupArr[$cn] = '';
-					if(count($dupArr) > $limit) {
-						break;
-					}
-				}
-			}
-			else{
-				$catArr[$cn] = '';
-			}
-		}
-		$rs->free();
-
-		if($type === 'cat'){
-			$sql = 'SELECT o.catalognumber AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
-				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
-				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified, '.
+    public function getDuplicateCatalogNumber($type, $start, $limit): array
+    {
+        if($type === 'cat'){
+            $sql = 'SELECT o.catalognumber AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
+                'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
+                'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified, '.
                 'o.identifiedby, o.dateidentified, o.habitat, o.occurrenceremarks, o.associatedtaxa, o.lifestage, '.
                 'o.sex, o.individualcount, o.preparations, o.dateentered '.
-				'FROM omoccurrences AS o '.
-				'WHERE o.collid = '.$this->collid.' AND o.catalognumber IN("'.implode('","',array_keys($dupArr)).'") '.
-				'ORDER BY o.catalognumber';
-		}
-		else{
-			$sql = 'SELECT o.otherCatalogNumbers AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
-				'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
-				'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified, '.
+                'FROM (SELECT catalognumber, COUNT(occid) AS cnt FROM omoccurrences WHERE collid = ' . $this->collid . ' GROUP BY catalognumber) AS cat '.
+                'LEFT JOIN omoccurrences AS o ON cat.catalognumber = o.catalognumber '.
+                'WHERE cat.cnt > 1 AND o.collid = ' . $this->collid . ' '.
+                'ORDER BY o.catalognumber LIMIT ' . (int)$start . ', ' . (int)$limit;
+        }
+        else{
+            $sql = 'SELECT o.otherCatalogNumbers AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.family, o.sciname, '.
+                'o.recordedby, o.recordnumber, o.associatedcollectors, o.eventdate, o.verbatimeventdate, '.
+                'o.country, o.stateprovince, o.county, o.municipality, o.locality, o.datelastmodified, '.
                 'o.identifiedby, o.dateidentified, o.habitat, o.occurrenceremarks, o.associatedtaxa, o.lifestage, '.
                 'o.sex, o.individualcount, o.preparations, o.dateentered '.
-				'FROM omoccurrences AS o '.
-				'WHERE o.collid = '.$this->collid.' AND o.otherCatalogNumbers IN("'.implode('","',array_keys($dupArr)).'") '.
-				'ORDER BY o.otherCatalogNumbers';
-		}
-		//echo $sql;
+                'FROM (SELECT othercatalognumbers, COUNT(occid) AS cnt FROM omoccurrences WHERE collid = ' . $this->collid . ' GROUP BY othercatalognumbers) AS cat '.
+                'LEFT JOIN omoccurrences AS o ON cat.othercatalognumbers = o.othercatalognumbers '.
+                'WHERE cat.cnt > 1 AND o.collid = ' . $this->collid . ' '.
+                'ORDER BY o.othercatalognumbers LIMIT ' . (int)$start . ', ' . (int)$limit;
+        }
+        //error_log($sql);
 
-		return $this->getDuplicates($sql);
-	}
+        return $this->getDuplicates($sql);
+    }
 
-	public function getDuplicateCollectorNumber($start): array
-	{
-		$retArr = array();
-		if($this->obsUid){
-			$sql = 'SELECT o.occid, o.eventdate, recordedby, o.recordnumber '.
-				'FROM omoccurrences AS o INNER JOIN '.
-				'(SELECT eventdate, recordnumber FROM omoccurrences GROUP BY eventdate, recordnumber, collid, observeruid '.
-				'HAVING Count(*)>1 AND collid = '.$this->collid.' AND observeruid = '.$this->obsUid.
-				' AND eventdate IS NOT NULL AND recordnumber IS NOT NULL '.
-				'AND recordnumber NOT IN("sn","s.n.","Not Provided","unknown")) AS intab '.
-				'ON o.eventdate = intab.eventdate AND o.recordnumber = intab.recordnumber '.
-				'WHERE collid = '.$this->collid.' AND observeruid = '.$this->obsUid.' ';
-		}
-		else{
-			$sql = 'SELECT o.occid, o.eventdate, recordedby, o.recordnumber '.
-				'FROM omoccurrences AS o INNER JOIN '.
-				'(SELECT eventdate, recordnumber FROM omoccurrences GROUP BY eventdate, recordnumber, collid '.
-				'HAVING Count(*)>1 AND collid = '.$this->collid.
-				' AND eventdate IS NOT NULL AND recordnumber IS NOT NULL '.
-				'AND recordnumber NOT IN("sn","s.n.","Not Provided","unknown")) AS intab '.
-				'ON o.eventdate = intab.eventdate AND o.recordnumber = intab.recordnumber '.
-				'WHERE collid = '.$this->collid.' ';
-		}
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		$collArr = array();
-		while($r = $rs->fetch_object()){
-			$collArr[$r->eventdate][$r->recordnumber][$r->recordedby][] = $r->occid;
-		}
-		$rs->free();
+    public function getDuplicateCollectorNumber($start): array
+    {
+        $retArr = array();
+        $sql = 'SELECT o.occid, o.eventdate, recordedby, o.recordnumber '.
+            'FROM omoccurrences AS o INNER JOIN '.
+            '(SELECT eventdate, recordnumber FROM omoccurrences GROUP BY eventdate, recordnumber, collid '.
+            'HAVING Count(*)>1 AND collid = '.$this->collid.
+            ' AND eventdate IS NOT NULL AND recordnumber IS NOT NULL '.
+            'AND recordnumber NOT IN("sn","s.n.","Not Provided","unknown")) AS intab '.
+            'ON o.eventdate = intab.eventdate AND o.recordnumber = intab.recordnumber '.
+            'WHERE collid = '.$this->collid.' ';
+        //echo $sql;
+        $rs = $this->conn->query($sql);
+        $collArr = array();
+        while($r = $rs->fetch_object()){
+            $collArr[$r->eventdate][$r->recordnumber][$r->recordedby][] = $r->occid;
+        }
+        $rs->free();
 
-		$cnt = 0;
-		foreach($collArr as $ed => $arr1){
-			foreach($arr1 as $rn => $arr2){
-				foreach($arr2 as $ln => $dupArr){
-					if(count($dupArr) > 1){
-						if($cnt >= $start){
-							$sql = 'SELECT '.$cnt.' AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.othercatalognumbers, o.family, o.sciname, o.recordedby, o.recordnumber, '.
-								'o.associatedcollectors, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.municipality, o.locality, datelastmodified, '.
+        $cnt = 0;
+        foreach($collArr as $ed => $arr1){
+            foreach($arr1 as $rn => $arr2){
+                foreach($arr2 as $ln => $dupArr){
+                    if(count($dupArr) > 1){
+                        if($cnt >= $start){
+                            $sql = 'SELECT '.$cnt.' AS dupid, o.occid, o.catalognumber, o.othercatalognumbers, o.othercatalognumbers, o.family, o.sciname, o.recordedby, o.recordnumber, '.
+                                'o.associatedcollectors, o.eventdate, o.verbatimeventdate, o.country, o.stateprovince, o.county, o.municipality, o.locality, datelastmodified, '.
                                 'o.identifiedby, o.dateidentified, o.habitat, o.occurrenceremarks, o.associatedtaxa, o.lifestage, '.
                                 'o.sex, o.individualcount, o.preparations, o.dateentered '.
-								'FROM omoccurrences AS o '.
-								'WHERE occid IN('.implode(',',$dupArr).') ';
-							//echo $sql;
-							$dupArr = $this->getDuplicates($sql);
-							foreach($dupArr as $dup){
-								$retArr[] = $dup;
-							}
-						}
-						if($cnt > ($start+200)) {
-							break 3;
-						}
-						$cnt++;
-					}
-				}
-			}
-		}
-		return $retArr;
-	}
+                                'FROM omoccurrences AS o '.
+                                'WHERE occid IN('.implode(',',$dupArr).') ';
+                            //echo $sql;
+                            $dupArr = $this->getDuplicates($sql);
+                            foreach($dupArr as $dup){
+                                $retArr[] = $dup;
+                            }
+                        }
+                        if($cnt > ($start+200)) {
+                            break 3;
+                        }
+                        $cnt++;
+                    }
+                }
+            }
+        }
+        return $retArr;
+    }
 
 	private function getDuplicates($sql): array
 	{
