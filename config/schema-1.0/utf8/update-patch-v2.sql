@@ -186,6 +186,7 @@ ALTER TABLE `omoccurrences`
 
 CREATE TABLE `ommofextension` (
     `mofID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `locationID` int(10) unsigned DEFAULT NULL,
     `eventID` int(10) unsigned DEFAULT NULL,
     `occId` int(10) unsigned DEFAULT NULL,
     `field` varchar(250) NOT NULL,
@@ -193,12 +194,14 @@ CREATE TABLE `ommofextension` (
     `enteredBy` varchar(250) DEFAULT NULL,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`mofID`),
+    UNIQUE KEY `INDEX_UNIQUE_ommofextension_locationid` (`locationID`,`field`),
     UNIQUE KEY `INDEX_UNIQUE_event_field` (`eventID`,`field`),
     UNIQUE KEY `INDEX_UNIQUE_OCCID` (`occId`,`field`),
     KEY `field` (`field`),
     KEY `datavalue` (`datavalue`),
     KEY `FK_eventID` (`eventID`),
-    CONSTRAINT `FK_event` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`),
+    CONSTRAINT `FK_ommofextension_locationid` FOREIGN KEY (`locationID`) REFERENCES `omoccurlocations` (`locationID`)  ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT `FK_event` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`)  ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `FK_ommofextension_occid` FOREIGN KEY (`occId`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
