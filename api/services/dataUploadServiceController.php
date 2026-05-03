@@ -144,9 +144,10 @@ if($action && $isEditor && SanitizerService::validateInternalRequest()){
         echo $dataUploadService->finalTransferAddNewMedia($collid);
     }
     elseif($action === 'finalTransferPopulateMofIdentifiers'){
+        $locationMofDataFields = array_key_exists('locationMofDataFields', $_POST) ? json_decode($_POST['locationMofDataFields'], false) : array();
         $eventMofDataFields = array_key_exists('eventMofDataFields', $_POST) ? json_decode($_POST['eventMofDataFields'], false) : array();
         $occurrenceMofDataFields = array_key_exists('occurrenceMofDataFields', $_POST) ? json_decode($_POST['occurrenceMofDataFields'], false) : array();
-        echo $dataUploadService->finalTransferPopulateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields);
+        echo $dataUploadService->finalTransferPopulateMofIdentifiers($collid, $locationMofDataFields, $eventMofDataFields, $occurrenceMofDataFields);
     }
     elseif($action === 'finalTransferRemoveExistingMofRecordsFromUpload'){
         echo $dataUploadService->finalTransferRemoveExistingMofRecordsFromUpload($collid);

@@ -51,6 +51,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
         eventMofDataFields: {},
         eventMofDataFieldsLayoutData: {},
         eventMofDataLabel: 'Measurement or Fact Data',
+        locationMofData: {},
+        locationMofDataFields: {},
+        locationMofDataFieldsLayoutData: {},
+        locationMofDataLabel: 'Measurement or Fact Data',
         occurrenceFieldControlledVocabularies: {},
         occurrenceMofData: {},
         occurrenceMofDataFields: {},
@@ -112,6 +116,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getEventMofDataLabel(state) {
             return state.eventMofDataLabel;
+        },
+        getLocationMofData(state) {
+            return state.locationMofData;
+        },
+        getLocationMofDataFields(state) {
+            return state.locationMofDataFields;
+        },
+        getLocationMofDataFieldsLayoutData(state) {
+            return state.locationMofDataFieldsLayoutData;
+        },
+        getLocationMofDataLabel(state) {
+            return state.locationMofDataLabel;
         },
         getGeoreferencedPercent(state) {
             let percent = 0;
@@ -254,6 +270,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.eventMofDataFields = Object.assign({}, {});
             this.eventMofDataFieldsLayoutData = Object.assign({}, {});
             this.eventMofDataLabel = 'Measurement or Fact Data';
+            this.locationMofData = Object.assign({}, {});
+            this.locationMofDataFields = Object.assign({}, {});
+            this.locationMofDataFieldsLayoutData = Object.assign({}, {});
+            this.locationMofDataLabel = 'Measurement or Fact Data';
             this.occurrenceFieldControlledVocabularies = Object.assign({}, {});
             this.occurrenceMofData = Object.assign({}, {});
             this.occurrenceMofDataFields = Object.assign({}, {});
@@ -359,6 +379,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     this.collectionData = Object.assign({}, resObj);
                     this.collectionEditData = Object.assign({}, this.collectionData);
                     if(this.collectionData['configuredData']){
+                        if(this.collectionData['configuredData'].hasOwnProperty('locationMofExtension')){
+                            this.locationMofData = Object.assign({}, this.collectionData['configuredData']['locationMofExtension']);
+                            if(Object.keys(this.collectionData['configuredData']['locationMofExtension']['dataFields']).length > 0){
+                                this.locationMofDataFields = this.collectionData['configuredData']['locationMofExtension']['dataFields'];
+                                if(this.collectionData['configuredData']['locationMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['locationMofExtension']['dataLayout']){
+                                    this.locationMofDataFieldsLayoutData = this.collectionData['configuredData']['locationMofExtension']['dataLayout'];
+                                }
+                                if(this.collectionData['configuredData']['locationMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['locationMofExtension']['dataLabel']){
+                                    this.locationMofDataLabel = this.collectionData['configuredData']['locationMofExtension']['dataLabel'].toString();
+                                }
+                            }
+                        }
                         if(this.collectionData['configuredData'].hasOwnProperty('eventMofExtension')){
                             this.eventMofData = Object.assign({}, this.collectionData['configuredData']['eventMofExtension']);
                             if(Object.keys(this.collectionData['configuredData']['eventMofExtension']['dataFields']).length > 0){
