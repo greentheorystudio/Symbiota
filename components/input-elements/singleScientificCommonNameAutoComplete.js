@@ -24,6 +24,14 @@ const singleScientificCommonNameAutoComplete = {
             type: Boolean,
             default: false
         },
+        identifierName: {
+            type: String,
+            default: null
+        },
+        identifierValue: {
+            type: String,
+            default: null
+        },
         kingdomId: {
             type: Number,
             default: 0
@@ -255,7 +263,9 @@ const singleScientificCommonNameAutoComplete = {
             const formData = new FormData();
             formData.append('action', action);
             formData.append('term', val);
-            formData.append('kingdomid', (props.kingdomId ? props.kingdomId.toString() : ''));
+            formData.append('kingdomid', props.kingdomId.toString());
+            formData.append('identifiername', props.identifierName);
+            formData.append('identifiervalue', props.identifierValue);
             formData.append('hideauth', props.hideAuthor);
             formData.append('hideprotected', props.hideProtected);
             formData.append('acceptedonly', props.acceptedTaxaOnly);
