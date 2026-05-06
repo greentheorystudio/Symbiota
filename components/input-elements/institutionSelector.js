@@ -48,12 +48,12 @@ const institutionsSelector = {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((resData) => {
-                    institutionsArr.value = resData;
-                });
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resData) => {
+                institutionsArr.value = resData;
+            });
         }
 
         Vue.onMounted(() => {

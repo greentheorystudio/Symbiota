@@ -264,8 +264,8 @@ const singleScientificCommonNameAutoComplete = {
             formData.append('action', action);
             formData.append('term', val);
             formData.append('kingdomid', props.kingdomId.toString());
-            formData.append('identifiername', props.identifierName);
-            formData.append('identifiervalue', props.identifierValue);
+            formData.append('identifiername', (props.identifierName ? props.identifierName : ''));
+            formData.append('identifiervalue', (props.identifierValue ? props.identifierValue : ''));
             formData.append('hideauth', props.hideAuthor);
             formData.append('hideprotected', props.hideProtected);
             formData.append('acceptedonly', props.acceptedTaxaOnly);

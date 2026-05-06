@@ -474,10 +474,18 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         },
         createOccurrenceDeterminationRecord(callback) {
             const newIsCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
+            if(newIsCurrent && this.collectionStore.getTaxonIdentifierFieldArr.length > 0){
+                this.updateOccurrenceEditDataTaxon(this.determinationStore.getDeterminationData);
+            }
             this.determinationStore.createOccurrenceDeterminationRecord(this.getCollId, this.occId, (newDetId) => {
                 callback(Number(newDetId));
                 if(newIsCurrent){
-                    this.setCurrentOccurrenceRecord(this.occId);
+                    if(this.collectionStore.getTaxonIdentifierFieldArr.length > 0){
+                        this.updateMofDataBatch(true);
+                    }
+                    else{
+                        this.setCurrentOccurrenceRecord(this.occId);
+                    }
                 }
                 else if(newDetId && Number(newDetId) > 0){
                     this.determinationStore.setDeterminationArr(this.occId);
@@ -921,12 +929,12 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                 method: 'POST',
                 body: formData
             })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((data) => {
-                    this.checklistArr = data;
-                });
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.checklistArr = data;
+            });
         },
         setCollectingEventAutoSearch(value) {
             this.collectingEventAutoSearch = value;
@@ -1351,6 +1359,20 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
         updateLocationRecord(callback) {
             this.locationStore.updateLocationRecord(this.getCollId, callback);
         },
+        updateMofDataBatch(reload = false) {
+            if(this.getEventMofEditsExist){
+                this.processMofEditData('event');
+            }
+            if(this.getLocationMofEditsExist){
+                this.processMofEditData('location');
+            }
+            if(this.getOccurrenceMofEditsExist){
+                this.processMofEditData('occurrence');
+            }
+            if(reload){
+                this.setCurrentOccurrenceRecord(this.occId);
+            }
+        },
         updateOccurrenceDeterminationRecord(callback) {
             const isCurrent = Number(this.determinationStore.getDeterminationData['iscurrent']) === 1;
             this.determinationStore.updateDeterminationRecord(this.getCollId, (res) => {
@@ -1384,6 +1406,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             this.occurrenceEditData['family'] = taxon ? taxon.family : null;
             this.occurrenceEditData['scientificnameauthorship'] = taxon ? taxon.author : null;
             this.occurrenceEditData['taxonData'] = taxon ? Object.assign({}, taxon) : null;
+            if(this.collectionStore.getTaxonIdentifierFieldArr.length > 0){
+                this.updateTaxonIdentifierFields();
+            }
         },
         updateOccurrenceEvent(eventid, updateData, callback) {
             const formData = new FormData();
@@ -1450,6 +1475,9 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                         if(this.getCollectingEventID === 0 && Number(this.occurrenceData['eventid']) > 0){
                             this.setCurrentCollectingEventRecord(this.occurrenceData['eventid']);
                         }
+                        if(this.collectionStore.getTaxonIdentifierFieldArr.length > 0 || this.collectionStore.computedDataFieldNameArr.length > 0){
+                            this.updateMofDataBatch();
+                        }
                     }
                     if(Number(res) === 1 && this.getCollectingEventID > 0 && (this.occurrenceUpdateData.hasOwnProperty('locationid') || this.getEmbeddedOccurrenceRecord) && this.getCollectingEventEditsExist){
                         this.updateCollectingEventRecord(callback);
@@ -1459,6 +1487,38 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
                     }
                 });
             });
+        },
+        updateTaxonIdentifierFields(saveChanges = false) {
+            if(Number(this.occurrenceEditData['tid']) > 0){
+                const formData = new FormData();
+                formData.append('tidArr', JSON.stringify([this.occurrenceEditData['tid']]));
+                formData.append('action', 'getIdentifiersFromTidArr');
+                fetch(taxaApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    if(data.hasOwnProperty(this.occurrenceEditData['tid'])){
+                        this.collectionStore.getTaxonIdentifierFieldArr.forEach((field) => {
+                            const identifierData = data[this.occurrenceEditData['tid']].find(iField => iField['name'] === field['identifier']);
+                            if(field.hasOwnProperty('booleanMode') && field['booleanMode']){
+                                this.occurrenceMofEditData[field['fieldName']] = identifierData ? field['booleanModePositiveValue'] : field['booleanModeNegativeValue'];
+                            }
+                            else{
+                                this.occurrenceMofEditData[field['fieldName']] = identifierData ? identifierData['identifier'] : null;
+                            }
+                        });
+                    }
+                });
+            }
+            else{
+                this.collectionStore.getTaxonIdentifierFieldArr.forEach((field) => {
+                    this.occurrenceMofEditData[field['fieldName']] = null;
+                });
+            }
         }
     }
 });

@@ -45,6 +45,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
         collectionId: 0,
         collectionPermissions: [],
         collectionUpdateData: {},
+        computedDataConfig: {
+            event: [],
+            location: [],
+            occurrence: []
+        },
+        computedDataFieldNameArr: [],
         configuredDataDownloads: [],
         editorHideFields: [],
         eventMofData: {},
@@ -60,7 +66,8 @@ const useCollectionStore = Pinia.defineStore('collection', {
         occurrenceMofDataFields: {},
         occurrenceMofDataFieldsLayoutData: {},
         occurrenceMofDataLabel: 'Measurement or Fact Data',
-        transcriberHideFields: [],
+        taxonIdentifierFieldArr: [],
+        transcriberHideFields: []
     }),
     getters: {
         getClientRoot() {
@@ -92,6 +99,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getCollectionValid(state) {
             return !!state.collectionEditData['collectionname'];
+        },
+        getComputedDataConfig(state) {
+            return state.computedDataConfig;
+        },
+        getComputedDataFieldNameArr(state) {
+            return state.computedDataFieldNameArr;
         },
         getConfiguredDataDownloads(state) {
             return state.configuredDataDownloads;
@@ -186,6 +199,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
             percent = percent > 1 ? percent.toFixed() : percent.toFixed(2);
             return percent;
         },
+        getTaxonIdentifierFieldArr(state) {
+            return state.taxonIdentifierFieldArr;
+        },
         getTranscriberHideFields(state) {
             return state.transcriberHideFields;
         }
@@ -263,6 +279,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         clearCollectionData() {
             this.collectionId = 0;
+            this.computedDataConfig.event.length = 0;
+            this.computedDataConfig.location.length = 0;
+            this.computedDataConfig.occurrence.length = 0;
+            this.computedDataFieldNameArr.length = 0;
             this.collectionData = Object.assign({}, this.blankCollectionRecord);
             this.collectionPermissions.length = 0;
             this.configuredDataDownloads.length = 0;
@@ -279,6 +299,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.occurrenceMofDataFields = Object.assign({}, {});
             this.occurrenceMofDataFieldsLayoutData = Object.assign({}, {});
             this.occurrenceMofDataLabel = 'Measurement or Fact Data';
+            this.editorHideFields.length = 0;
+            this.transcriberHideFields.length = 0;
+            this.taxonIdentifierFieldArr.length = 0;
         },
         createCollectionRecord(callback) {
             const formData = new FormData();
@@ -326,6 +349,29 @@ const useCollectionStore = Pinia.defineStore('collection', {
             })
             .then((resObj) => {
                 callback(resObj);
+            });
+        },
+        processConfiguredDataFields() {
+            Object.keys(this.eventMofDataFields).forEach((fieldName) => {
+                if(this.eventMofDataFields[fieldName]['dataType'] === 'calculated'){
+
+                }
+            });
+            Object.keys(this.locationMofDataFields).forEach((fieldName) => {
+                if(this.locationMofDataFields[fieldName]['dataType'] === 'calculated'){
+
+                }
+            });
+            Object.keys(this.occurrenceMofDataFields).forEach((fieldName) => {
+                if(this.occurrenceMofDataFields[fieldName]['dataType'] === 'calculated'){
+
+                }
+                else if(this.occurrenceMofDataFields[fieldName]['dataType'] === 'taxon-identifier'){
+                    this.taxonIdentifierFieldArr.push({
+                        fieldName: fieldName,
+                        identifier: this.occurrenceMofDataFields[fieldName]['identifier']
+                    });
+                }
             });
         },
         setCollection(collid, callback = null) {
@@ -427,6 +473,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
                         if(this.collectionData['configuredData'].hasOwnProperty('transcriberHideFields') && this.collectionData['configuredData']['transcriberHideFields']){
                             this.transcriberHideFields = this.collectionData['configuredData']['transcriberHideFields'];
                         }
+                        this.processConfiguredDataFields();
                     }
                     if(callback){
                         callback();

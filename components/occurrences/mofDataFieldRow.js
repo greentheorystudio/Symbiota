@@ -40,7 +40,7 @@ const mofDataFieldRow = {
                                 @update:value="(value) => updateConfiguredEditData(field.fieldName, value)"
                             ></selector-input-element>
                         </template>
-                        <template v-if="configuredDataFields[field.fieldName]['dataType'] === 'date'">
+                        <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'date'">
                             <date-input-element 
                                 :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
                                 :label="configuredDataFields[field.fieldName]['label']" 
@@ -48,17 +48,72 @@ const mofDataFieldRow = {
                                 @update:value="(value) => updateConfiguredEditData(field.fieldName, (value ? value.date : null))"
                             ></date-input-element>
                         </template>
-                        <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'int' || configuredDataFields[field.fieldName]['dataType'] === 'number' || configuredDataFields[field.fieldName]['dataType'] === 'string'">
+                        <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'int' || configuredDataFields[field.fieldName]['dataType'] === 'number' || configuredDataFields[field.fieldName]['dataType'] === 'increment' || configuredDataFields[field.fieldName]['dataType'] === 'string' || configuredDataFields[field.fieldName]['dataType'] === 'textarea'">
                             <text-field-input-element 
                                 :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
                                 :data-type="configuredDataFields[field.fieldName]['dataType']" 
                                 :label="configuredDataFields[field.fieldName]['label']" 
                                 :field="field.fieldName"
+                                :field-hint="configuredDataFields[field.fieldName]['fieldHint'] ? configuredDataFields[field.fieldName]['fieldHint'] : null"
                                 :max-value="configuredDataFields[field.fieldName]['maxValue'] ? configuredDataFields[field.fieldName]['maxValue'] : null" 
-                                :min-value="configuredDataFields[field.fieldName]['minValue'] ? configuredDataFields[field.fieldName]['minValue'] : null" 
+                                :min-value="configuredDataFields[field.fieldName]['minValue'] ? configuredDataFields[field.fieldName]['minValue'] : null"
+                                :max-length="configuredDataFields[field.fieldName]['maxlength'] ? configuredDataFields[field.fieldName]['maxlength'] : null"
+                                :show-counter="configuredDataFields[field.fieldName]['showCounter'] ? configuredDataFields[field.fieldName]['showCounter'] : false"
+                                :step="configuredDataFields[field.fieldName]['step'] ? configuredDataFields[field.fieldName]['step'] : 1"
                                 :value="configuredData[field.fieldName]" 
                                 @update:value="(value) => updateConfiguredEditData(field.fieldName, value)"
                             ></text-field-input-element>
+                        </template>
+                        <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'single-taxon-auto-complete'">
+                            <single-scientific-common-name-auto-complete 
+                                :accepted-taxa-only="configuredDataFields[field.fieldName]['acceptedTaxaOnly'] ? configuredDataFields[field.fieldName]['acceptedTaxaOnly'] : false"
+                                :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
+                                :hide-author="configuredDataFields[field.fieldName]['hideAuthor'] ? configuredDataFields[field.fieldName]['hideAuthor'] : true"
+                                :hide-protected="configuredDataFields[field.fieldName]['hideProtected'] ? configuredDataFields[field.fieldName]['hideProtected'] : false"
+                                :identifier-name="configuredDataFields[field.fieldName]['identifierName'] ? configuredDataFields[field.fieldName]['identifierName'] : null"
+                                :identifier-value="configuredDataFields[field.fieldName]['identifierValue'] ? configuredDataFields[field.fieldName]['identifierValue'] : null"
+                                :kingdom-id="configuredDataFields[field.fieldName]['kingdomId'] ? configuredDataFields[field.fieldName]['kingdomId'] : 0" 
+                                :label="configuredDataFields[field.fieldName]['label']" 
+                                :limit-to-options="configuredDataFields[field.fieldName]['limitToOptions'] ? configuredDataFields[field.fieldName]['limitToOptions'] : false"
+                                :option-limit="configuredDataFields[field.fieldName]['optionLimit'] ? configuredDataFields[field.fieldName]['optionLimit'] : 10" 
+                                :options="configuredDataFields[field.fieldName]['options'] ? configuredDataFields[field.fieldName]['options'] : null"
+                                :parent-tid="configuredDataFields[field.fieldName]['parentTid'] ? configuredDataFields[field.fieldName]['parentTid'] : null"
+                                :rank-high="configuredDataFields[field.fieldName]['rankHigh'] ? configuredDataFields[field.fieldName]['rankHigh'] : null"
+                                :rank-limit="configuredDataFields[field.fieldName]['rankLimit'] ? configuredDataFields[field.fieldName]['rankLimit'] : null"
+                                :rank-low="configuredDataFields[field.fieldName]['rankLow'] ? configuredDataFields[field.fieldName]['rankLow'] : null" 
+                                :sciname="configuredData[field.fieldName]"
+                                :taxon-type="configuredDataFields[field.fieldName]['taxonType'] ? configuredDataFields[field.fieldName]['taxonType'] : null" 
+                                @update:value="(value) => updateConfiguredEditData(field.fieldName, (value ? value['sciname'] : null))"
+                            ></single-scientific-common-name-auto-complete>
+                        </template>
+                        <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'multi-taxon-auto-complete'">
+                            <multiple-scientific-common-name-auto-complete 
+                                :accepted-taxa-only="configuredDataFields[field.fieldName]['acceptedTaxaOnly'] ? configuredDataFields[field.fieldName]['acceptedTaxaOnly'] : false"
+                                :concatenator="configuredDataFields[field.fieldName]['concatenator'] ? configuredDataFields[field.fieldName]['concatenator'] : ';'"
+                                :definition="configuredDataFields[field.fieldName]['definition'] ? configuredDataFields[field.fieldName]['definition'] : null" 
+                                :hide-author="configuredDataFields[field.fieldName]['hideAuthor'] ? configuredDataFields[field.fieldName]['hideAuthor'] : true"
+                                :hide-protected="configuredDataFields[field.fieldName]['hideProtected'] ? configuredDataFields[field.fieldName]['hideProtected'] : false"
+                                :identifier-name="configuredDataFields[field.fieldName]['identifierName'] ? configuredDataFields[field.fieldName]['identifierName'] : null"
+                                :identifier-value="configuredDataFields[field.fieldName]['identifierValue'] ? configuredDataFields[field.fieldName]['identifierValue'] : null"
+                                :kingdom-id="configuredDataFields[field.fieldName]['kingdomId'] ? configuredDataFields[field.fieldName]['kingdomId'] : 0" 
+                                :label="configuredDataFields[field.fieldName]['label']" 
+                                :limit-to-options="configuredDataFields[field.fieldName]['limitToOptions'] ? configuredDataFields[field.fieldName]['limitToOptions'] : false"
+                                :option-limit="configuredDataFields[field.fieldName]['optionLimit'] ? configuredDataFields[field.fieldName]['optionLimit'] : 10" 
+                                :options="configuredDataFields[field.fieldName]['options'] ? configuredDataFields[field.fieldName]['options'] : null"
+                                :parent-tid="configuredDataFields[field.fieldName]['parentTid'] ? configuredDataFields[field.fieldName]['parentTid'] : null"
+                                :rank-high="configuredDataFields[field.fieldName]['rankHigh'] ? configuredDataFields[field.fieldName]['rankHigh'] : null"
+                                :rank-limit="configuredDataFields[field.fieldName]['rankLimit'] ? configuredDataFields[field.fieldName]['rankLimit'] : null"
+                                :rank-low="configuredDataFields[field.fieldName]['rankLow'] ? configuredDataFields[field.fieldName]['rankLow'] : null" 
+                                :sciname="configuredData[field.fieldName]"
+                                :taxon-type="configuredDataFields[field.fieldName]['taxonType'] ? configuredDataFields[field.fieldName]['taxonType'] : null" 
+                                @update:value="(value) => updateConfiguredEditData(field.fieldName, value)"
+                            ></multiple-scientific-common-name-auto-complete>
+                        </template>
+                        <template v-else-if="configuredDataFields[field.fieldName]['dataType'] === 'calculated' || configuredDataFields[field.fieldName]['dataType'] === 'taxon-identifier'">
+                            <computed-value-input-element 
+                                :label="configuredDataFields[field.fieldName]['label']"
+                                :value="configuredData[field.fieldName]" 
+                            ></computed-value-input-element>
                         </template>
                     </div>
                 </template>
@@ -79,12 +134,18 @@ const mofDataFieldRow = {
     `,
     components: {
         'checkbox-input-element': checkboxInputElement,
+        'computed-value-input-element': computedValueInputElement,
         'date-input-element': dateInputElement,
+        'multiple-scientific-common-name-auto-complete': multipleScientificCommonNameAutoComplete,
         'selector-input-element': selectorInputElement,
+        'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
+        const occurrenceStore = useOccurrenceStore();
+
         const dataFieldRefObject = {};
+        const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
 
         function getClassName(size, value) {
             let className = '';
@@ -129,6 +190,7 @@ const mofDataFieldRow = {
         });
 
         return {
+            occurrenceData,
             setElementRef,
             updateConfiguredEditData
         }
