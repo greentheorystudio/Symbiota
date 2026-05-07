@@ -142,10 +142,7 @@ const mofDataFieldRow = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const occurrenceStore = useOccurrenceStore();
-
         const dataFieldRefObject = {};
-        const occurrenceData = Vue.computed(() => occurrenceStore.getOccurrenceData);
 
         function getClassName(size, value) {
             let className = '';
@@ -190,7 +187,6 @@ const mofDataFieldRow = {
         });
 
         return {
-            occurrenceData,
             setElementRef,
             updateConfiguredEditData
         }
