@@ -38,6 +38,9 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
         locationEditData: {},
         locationFields: {},
         locationId: 0,
+        locationMofData: {},
+        locationMofEditData: {},
+        locationMofUpdateData: {},
         locationUpdateData: {}
     }),
     getters: {
@@ -64,16 +67,51 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
         getLocationID(state) {
             return state.locationId;
         },
+        getLocationMofData(state) {
+            return state.locationMofEditData;
+        },
+        getLocationMofEditData(state) {
+            const editData = {
+                add: [],
+                delete: [],
+                update: []
+            };
+            Object.keys(state.locationMofUpdateData).forEach((key) => {
+                if(state.locationMofEditData[key] && !state.locationMofData[key]){
+                    editData.add.push({field: key, value: state.locationMofUpdateData[key]});
+                }
+                else if(!state.locationMofEditData[key] && state.locationMofData[key]){
+                    editData.delete.push(key);
+                }
+                else if(state.locationMofEditData[key] !== state.locationMofData[key]){
+                    editData.update.push({field: key, value: state.locationMofUpdateData[key]});
+                }
+            });
+            return editData;
+        },
+        getLocationMofEditsExist(state) {
+            let exist = false;
+            state.locationMofUpdateData = Object.assign({}, {});
+            for(let key in state.locationMofEditData) {
+                if(state.locationMofEditData.hasOwnProperty(key) && state.locationMofEditData[key] !== state.locationMofData[key]) {
+                    exist = true;
+                    state.locationMofUpdateData[key] = state.locationMofEditData[key];
+                }
+            }
+            return exist;
+        },
         getLocationValid(state) {
             return (state.locationEditData['country'] && state.locationEditData['stateprovince']);
         }
     },
     actions: {
         clearLocationData() {
+            this.locationMofData = Object.assign({}, {});
+            this.locationMofEditData = Object.assign({}, {});
             this.locationId = 0;
             this.locationData = Object.assign({}, this.blankLocationRecord);
         },
-        createLocationRecord(collid, callback, locationData = null) {
+        createLocationRecord(collid, fields, callback, locationData = null) {
             this.locationEditData['collid'] = collid;
             const formData = new FormData();
             formData.append('collid', collid.toString());
@@ -91,7 +129,7 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
             .then((response) => {
                 response.text().then((res) => {
                     if(res && Number(res) > 0){
-                        this.setCurrentLocationRecord(Number(res), collid, callback);
+                        this.setCurrentLocationRecord(Number(res), collid, fields, callback);
                     }
                 });
             });
@@ -149,12 +187,12 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
                 callback(data);
             });
         },
-        setCurrentLocationRecord(locationid, collid, callback = null) {
+        setCurrentLocationRecord(locationid, collid, fields, callback = null) {
             if(locationid && Number(locationid) > 0){
                 if(this.locationId !== Number(locationid)){
                     this.clearLocationData();
                     this.locationId = Number(locationid);
-                    this.setLocationData(collid, callback);
+                    this.setLocationData(collid, fields, callback);
                 }
             }
             else{
@@ -165,7 +203,7 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
                 }
             }
         },
-        setLocationData(collid, callback) {
+        setLocationData(collid, fields, callback) {
             const formData = new FormData();
             formData.append('locationid', this.locationId.toString());
             formData.append('collid', collid.toString());
@@ -180,6 +218,7 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
             .then((data) => {
                 this.locationData = Object.assign({}, data);
                 this.locationEditData = Object.assign({}, this.locationData);
+                this.setLocationMofData(fields);
                 if(callback){
                     callback(this.locationId);
                 }
@@ -199,8 +238,30 @@ const useOccurrenceLocationStore = Pinia.defineStore('occurrence-location', {
                 this.locationFields = Object.assign({}, data);
             });
         },
+        setLocationMofData(fields) {
+            const formData = new FormData();
+            formData.append('type', 'location');
+            formData.append('id', this.locationId.toString());
+            formData.append('action', 'getMofDataByTypeAndId');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                Object.keys(fields).forEach(field => {
+                    this.locationMofData[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
+                });
+                this.locationMofEditData = Object.assign({}, this.locationMofData);
+            });
+        },
         updateLocationEditData(key, value) {
             this.locationEditData[key] = value;
+        },
+        updateLocationMofEditData(key, value) {
+            this.locationMofEditData[key] = value;
         },
         updateLocationRecord(collid, callback) {
             const formData = new FormData();
