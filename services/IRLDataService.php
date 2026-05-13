@@ -170,7 +170,7 @@ class IRLDataService {
     public function getProjectEnvironmentalData($collid): array
     {
         $returnArr = array();
-        $headerArr = array('sample_date', 'site', 'time', 'depth', 'decimalLong', 'decimalLat');
+        $headerArr = array('sample_date', 'site', 'time', 'collector', 'associated collectors', 'event remarks', 'depth', 'decimalLong', 'decimalLat');
         $configuredDataArr = array();
         $configuredData = $this->getConfiguredData($collid);
         if($configuredData && array_key_exists('eventMofExtension', $configuredData) && array_key_exists('dataFields', $configuredData['eventMofExtension'])){
@@ -189,7 +189,7 @@ class IRLDataService {
             }
             $result->free();
 
-            $sql = 'SELECT c.eventID, c.eventDate, l.locationCode, c.eventTime, '.
+            $sql = 'SELECT c.eventID, c.eventDate, l.locationCode, c.eventTime, c.recordedBy, c.associatedCollectors, c.eventRemarks, '.
                 'c.minimumDepthInMeters, IFNULL(c.decimallongitude, l.decimalLongitude) AS "decimalLong", '.
                 'IFNULL(c.decimalLatitude, l.decimalLatitude) AS "decimalLat" '.
                 'FROM omoccurcollectingevents AS c LEFT JOIN omoccurlocations AS l ON c.locationID = l.locationID '.
@@ -202,6 +202,9 @@ class IRLDataService {
                 $rowArr[] = $row->eventDate;
                 $rowArr[] = $row->locationCode;
                 $rowArr[] = $row->eventTime;
+                $rowArr[] = $row->recordedBy;
+                $rowArr[] = $row->associatedCollectors;
+                $rowArr[] = $row->eventRemarks;
                 $rowArr[] = $row->minimumDepthInMeters;
                 $rowArr[] = $row->decimalLong;
                 $rowArr[] = $row->decimalLat;
