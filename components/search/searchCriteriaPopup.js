@@ -172,6 +172,15 @@ const searchCriteriaPopup = {
             .then((response) => {
                 response.json().then((resObj) => {
                     if(resObj['configuredData']){
+                        if(resObj['configuredData'].hasOwnProperty('locationMofExtension') && Object.keys(resObj['configuredData']['locationMofExtension']['dataFields']).length > 0){
+                            Object.keys(resObj['configuredData']['locationMofExtension']['dataFields']).forEach((key) => {
+                                mofExtensionFieldsArr.push({
+                                    dataType: 'event',
+                                    field: key,
+                                    label: resObj['configuredData']['locationMofExtension']['dataFields'][key]['label']
+                                });
+                            });
+                        }
                         if(resObj['configuredData'].hasOwnProperty('eventMofExtension') && Object.keys(resObj['configuredData']['eventMofExtension']['dataFields']).length > 0){
                             Object.keys(resObj['configuredData']['eventMofExtension']['dataFields']).forEach((key) => {
                                 mofExtensionFieldsArr.push({

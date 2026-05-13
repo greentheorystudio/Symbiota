@@ -75,6 +75,7 @@ class UploadOccurrenceTemp{
         'rep' => array('dataType' => 'number', 'length' => 10),
         'preparations' => array('dataType' => 'string', 'length' => 100),
         'locationid' => array('dataType' => 'number', 'length' => 11),
+        'locationdbpk' => array('dataType' => 'string', 'length' => 150),
         'island' => array('dataType' => 'string', 'length' => 75),
         'islandgroup' => array('dataType' => 'string', 'length' => 75),
         'waterbody' => array('dataType' => 'string', 'length' => 255),

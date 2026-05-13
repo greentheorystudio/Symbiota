@@ -30,6 +30,9 @@ const occurrenceInfoTabModule = {
                     <template v-if="checklistArr.length > 0 || geneticLinkArr.length > 0">
                         <q-tab class="bg-grey-3" label="Linked Resources" name="resources" no-caps />
                     </template>
+                    <template v-if="locationMofDataExists">
+                        <q-tab class="bg-grey-3" :label="(locationMofDataLabel ? locationMofDataLabel : 'Location Measurements or Facts')" name="locationmof" no-caps />
+                    </template>
                     <template v-if="eventMofDataExists">
                         <q-tab class="bg-grey-3" :label="(eventMofDataLabel ? eventMofDataLabel : 'Event Measurements or Facts')" name="eventmof" no-caps />
                     </template>
@@ -299,6 +302,20 @@ const occurrenceInfoTabModule = {
                             </template>
                         </q-tab-panel>
                     </template>
+                    <template v-if="locationMofDataExists">
+                        <q-tab-panel name="locationmof" :style="tabPanelStyle">
+                            <div class="q-pt-sm q-pb-sm column q-gutter-sm">
+                                <template v-for="layoutElement in locationMofLayoutData">
+                                    <template v-if="layoutElement.type === 'dataFieldRow'">
+                                        <mof-data-field-row :editor="false" :configured-data="locationMofData" :configured-data-fields="locationMofDataFields" :fields="layoutElement.fields"></mof-data-field-row>
+                                    </template>
+                                    <template v-else-if="layoutElement.type === 'dataFieldRowGroup'">
+                                        <mof-data-field-row-group :editor="false" :configured-data="locationMofData" :configured-data-fields="locationMofDataFields" :label="layoutElement.label" :rows="layoutElement.rows" :expansion="layoutElement.expansion"></mof-data-field-row-group>
+                                    </template>
+                                </template>
+                            </div>
+                        </q-tab-panel>
+                    </template>
                     <template v-if="eventMofDataExists">
                         <q-tab-panel name="eventmof" :style="tabPanelStyle">
                             <div class="q-pt-sm q-pb-sm column q-gutter-sm">
@@ -398,6 +415,19 @@ const occurrenceInfoTabModule = {
         const isEditor = Vue.computed(() => {
             return (collectionPermissions.value.includes('CollAdmin') || collectionPermissions.value.includes('CollEditor'));
         });
+        const locationMofData = Vue.ref({});
+        const locationMofDataExists = Vue.computed(() => {
+            let exist = false;
+            Object.keys(locationMofDataFields.value).forEach(key => {
+                if(locationMofData.value.hasOwnProperty(key) && locationMofData.value[key]){
+                    exist = true;
+                }
+            });
+            return exist;
+        });
+        const locationMofDataFields = Vue.ref({});
+        const locationMofDataLabel = Vue.ref(null);
+        const locationMofLayoutData = Vue.ref({});
         const mediaArr = Vue.ref([]);
         const occurrenceCoordinateStr = Vue.computed(() => {
             let returnStr = '';
@@ -502,8 +532,6 @@ const occurrenceInfoTabModule = {
         const tabMapPanelStyle = Vue.ref('');
         const tabPanelStyle = Vue.ref('');
 
-        const openOccurrenceEditorInterface = Vue.inject('openOccurrenceEditorInterface');
-
         Vue.watch(contentContainerRef, () => {
             if(contentContainerRef.value){
                 setTabPanelHeights();
@@ -547,6 +575,20 @@ const occurrenceInfoTabModule = {
                 response.json().then((resObj) => {
                     collectionData.value = Object.assign({}, resObj);
                     if(collectionData.value['configuredData']){
+                        if(collectionData.value['configuredData'].hasOwnProperty('locationMofExtension')){
+                            if(Object.keys(collectionData.value['configuredData']['locationMofExtension']['dataFields']).length > 0){
+                                locationMofDataFields.value = collectionData.value['configuredData']['locationMofExtension']['dataFields'];
+                                if(collectionData.value['configuredData']['locationMofExtension'].hasOwnProperty('dataLayout') && collectionData.value['configuredData']['locationMofExtension']['dataLayout']){
+                                    locationMofLayoutData.value = Object.assign({}, collectionData.value['configuredData']['locationMofExtension']['dataLayout']);
+                                }
+                                if(collectionData.value['configuredData']['locationMofExtension'].hasOwnProperty('dataLabel') && collectionData.value['configuredData']['locationMofExtension']['dataLabel']){
+                                    locationMofDataLabel.value = collectionData.value['configuredData']['locationMofExtension']['dataLabel'].toString();
+                                }
+                                if(Number(occurrenceData.value['locationid']) > 0){
+                                    setLocationMofData();
+                                }
+                            }
+                        }
                         if(collectionData.value['configuredData'].hasOwnProperty('eventMofExtension')){
                             if(Object.keys(collectionData.value['configuredData']['eventMofExtension']['dataFields']).length > 0){
                                 eventMofDataFields.value = collectionData.value['configuredData']['eventMofExtension']['dataFields'];
@@ -662,6 +704,25 @@ const occurrenceInfoTabModule = {
             });
         }
 
+        function setLocationMofData() {
+            const formData = new FormData();
+            formData.append('type', 'location');
+            formData.append('id', occurrenceData.value['locationid'].toString());
+            formData.append('action', 'getMofDataByTypeAndId');
+            fetch(occurrenceMeasurementOrFactApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                Object.keys(locationMofDataFields.value).forEach(field => {
+                    locationMofData.value[field] = (data && data.hasOwnProperty(field)) ? data[field] : null;
+                });
+            });
+        }
+
         function setMediaArr() {
             const formData = new FormData();
             formData.append('property', 'occid');
@@ -763,6 +824,11 @@ const occurrenceInfoTabModule = {
             geneticLinkArr,
             imageArr,
             isEditor,
+            locationMofData,
+            locationMofDataExists,
+            locationMofDataFields,
+            locationMofDataLabel,
+            locationMofLayoutData,
             mediaArr,
             occurrenceCoordinateStr,
             occurrenceData,
