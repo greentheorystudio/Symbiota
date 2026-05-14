@@ -45,18 +45,29 @@ const useCollectionStore = Pinia.defineStore('collection', {
         collectionId: 0,
         collectionPermissions: [],
         collectionUpdateData: {},
+        computedDataConfig: {
+            event: [],
+            location: [],
+            occurrence: []
+        },
+        computedDataFieldNameArr: [],
         configuredDataDownloads: [],
         editorHideFields: [],
         eventMofData: {},
         eventMofDataFields: {},
         eventMofDataFieldsLayoutData: {},
         eventMofDataLabel: 'Measurement or Fact Data',
+        locationMofData: {},
+        locationMofDataFields: {},
+        locationMofDataFieldsLayoutData: {},
+        locationMofDataLabel: 'Measurement or Fact Data',
         occurrenceFieldControlledVocabularies: {},
         occurrenceMofData: {},
         occurrenceMofDataFields: {},
         occurrenceMofDataFieldsLayoutData: {},
         occurrenceMofDataLabel: 'Measurement or Fact Data',
-        transcriberHideFields: [],
+        taxonIdentifierFieldArr: [],
+        transcriberHideFields: []
     }),
     getters: {
         getClientRoot() {
@@ -89,6 +100,12 @@ const useCollectionStore = Pinia.defineStore('collection', {
         getCollectionValid(state) {
             return !!state.collectionEditData['collectionname'];
         },
+        getComputedDataConfig(state) {
+            return state.computedDataConfig;
+        },
+        getComputedDataFieldNameArr(state) {
+            return state.computedDataFieldNameArr;
+        },
         getConfiguredDataDownloads(state) {
             return state.configuredDataDownloads;
         },
@@ -112,6 +129,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         getEventMofDataLabel(state) {
             return state.eventMofDataLabel;
+        },
+        getLocationMofData(state) {
+            return state.locationMofData;
+        },
+        getLocationMofDataFields(state) {
+            return state.locationMofDataFields;
+        },
+        getLocationMofDataFieldsLayoutData(state) {
+            return state.locationMofDataFieldsLayoutData;
+        },
+        getLocationMofDataLabel(state) {
+            return state.locationMofDataLabel;
         },
         getGeoreferencedPercent(state) {
             let percent = 0;
@@ -169,6 +198,9 @@ const useCollectionStore = Pinia.defineStore('collection', {
             }
             percent = percent > 1 ? percent.toFixed() : percent.toFixed(2);
             return percent;
+        },
+        getTaxonIdentifierFieldArr(state) {
+            return state.taxonIdentifierFieldArr;
         },
         getTranscriberHideFields(state) {
             return state.transcriberHideFields;
@@ -247,6 +279,10 @@ const useCollectionStore = Pinia.defineStore('collection', {
         },
         clearCollectionData() {
             this.collectionId = 0;
+            this.computedDataConfig.event.length = 0;
+            this.computedDataConfig.location.length = 0;
+            this.computedDataConfig.occurrence.length = 0;
+            this.computedDataFieldNameArr.length = 0;
             this.collectionData = Object.assign({}, this.blankCollectionRecord);
             this.collectionPermissions.length = 0;
             this.configuredDataDownloads.length = 0;
@@ -254,11 +290,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
             this.eventMofDataFields = Object.assign({}, {});
             this.eventMofDataFieldsLayoutData = Object.assign({}, {});
             this.eventMofDataLabel = 'Measurement or Fact Data';
+            this.locationMofData = Object.assign({}, {});
+            this.locationMofDataFields = Object.assign({}, {});
+            this.locationMofDataFieldsLayoutData = Object.assign({}, {});
+            this.locationMofDataLabel = 'Measurement or Fact Data';
             this.occurrenceFieldControlledVocabularies = Object.assign({}, {});
             this.occurrenceMofData = Object.assign({}, {});
             this.occurrenceMofDataFields = Object.assign({}, {});
             this.occurrenceMofDataFieldsLayoutData = Object.assign({}, {});
             this.occurrenceMofDataLabel = 'Measurement or Fact Data';
+            this.editorHideFields.length = 0;
+            this.transcriberHideFields.length = 0;
+            this.taxonIdentifierFieldArr.length = 0;
         },
         createCollectionRecord(callback) {
             const formData = new FormData();
@@ -306,6 +349,29 @@ const useCollectionStore = Pinia.defineStore('collection', {
             })
             .then((resObj) => {
                 callback(resObj);
+            });
+        },
+        processConfiguredDataFields() {
+            Object.keys(this.eventMofDataFields).forEach((fieldName) => {
+                if(this.eventMofDataFields[fieldName]['dataType'] === 'calculated'){
+
+                }
+            });
+            Object.keys(this.locationMofDataFields).forEach((fieldName) => {
+                if(this.locationMofDataFields[fieldName]['dataType'] === 'calculated'){
+
+                }
+            });
+            Object.keys(this.occurrenceMofDataFields).forEach((fieldName) => {
+                if(this.occurrenceMofDataFields[fieldName]['dataType'] === 'calculated'){
+
+                }
+                else if(this.occurrenceMofDataFields[fieldName]['dataType'] === 'taxon-identifier'){
+                    this.taxonIdentifierFieldArr.push({
+                        fieldName: fieldName,
+                        identifier: this.occurrenceMofDataFields[fieldName]['identifier']
+                    });
+                }
             });
         },
         setCollection(collid, callback = null) {
@@ -359,6 +425,18 @@ const useCollectionStore = Pinia.defineStore('collection', {
                     this.collectionData = Object.assign({}, resObj);
                     this.collectionEditData = Object.assign({}, this.collectionData);
                     if(this.collectionData['configuredData']){
+                        if(this.collectionData['configuredData'].hasOwnProperty('locationMofExtension')){
+                            this.locationMofData = Object.assign({}, this.collectionData['configuredData']['locationMofExtension']);
+                            if(Object.keys(this.collectionData['configuredData']['locationMofExtension']['dataFields']).length > 0){
+                                this.locationMofDataFields = this.collectionData['configuredData']['locationMofExtension']['dataFields'];
+                                if(this.collectionData['configuredData']['locationMofExtension'].hasOwnProperty('dataLayout') && this.collectionData['configuredData']['locationMofExtension']['dataLayout']){
+                                    this.locationMofDataFieldsLayoutData = this.collectionData['configuredData']['locationMofExtension']['dataLayout'];
+                                }
+                                if(this.collectionData['configuredData']['locationMofExtension'].hasOwnProperty('dataLabel') && this.collectionData['configuredData']['locationMofExtension']['dataLabel']){
+                                    this.locationMofDataLabel = this.collectionData['configuredData']['locationMofExtension']['dataLabel'].toString();
+                                }
+                            }
+                        }
                         if(this.collectionData['configuredData'].hasOwnProperty('eventMofExtension')){
                             this.eventMofData = Object.assign({}, this.collectionData['configuredData']['eventMofExtension']);
                             if(Object.keys(this.collectionData['configuredData']['eventMofExtension']['dataFields']).length > 0){
@@ -395,6 +473,7 @@ const useCollectionStore = Pinia.defineStore('collection', {
                         if(this.collectionData['configuredData'].hasOwnProperty('transcriberHideFields') && this.collectionData['configuredData']['transcriberHideFields']){
                             this.transcriberHideFields = this.collectionData['configuredData']['transcriberHideFields'];
                         }
+                        this.processConfiguredDataFields();
                     }
                     if(callback){
                         callback();

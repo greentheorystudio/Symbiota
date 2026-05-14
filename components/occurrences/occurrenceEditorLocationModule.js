@@ -10,6 +10,9 @@ const occurrenceEditorLocationModule = {
                         <template v-if="locationId > 0 && collectingEventArr.length > 0">
                             <q-btn color="secondary" @click="showCollectingEventListPopup = true" label="View Events" tabindex="0" />
                         </template>
+                        <template v-if="Number(locationId) > 0 && Object.keys(configuredDataFields).length > 0">
+                            <q-btn color="secondary" @click="showConfiguredDataEditorPopup = true" :label="configuredDataLabel" tabindex="0" />
+                        </template>
                         <template v-if="Number(locationId) === 0">
                             <q-btn color="secondary" @click="showLocationLinkageToolPopup = true" label="Search Locations" tabindex="0" />
                             <q-btn color="secondary" @click="createLocationRecord();" label="Create Location Record" :disabled="!locationValid" tabindex="0" />
@@ -52,12 +55,21 @@ const occurrenceEditorLocationModule = {
                 @close:popup="showLocationEditorPopup = false"
             ></occurrence-location-editor-popup>
         </template>
+        <template v-if="showConfiguredDataEditorPopup">
+            <mof-data-editor-popup
+                data-type="location"
+                :new-record="Number(locationId) === 0"
+                :show-popup="showConfiguredDataEditorPopup"
+                @close:popup="showConfiguredDataEditorPopup = false"
+            ></mof-data-editor-popup>
+        </template>
         <confirmation-popup ref="confirmationPopupRef"></confirmation-popup>
     `,
     components: {
         'confirmation-popup': confirmationPopup,
         'location-field-module': locationFieldModule,
         'location-name-code-auto-complete': locationNameCodeAutoComplete,
+        'mof-data-editor-popup': mofDataEditorPopup,
         'occurrence-collecting-event-list-popup': occurrenceCollectingEventListPopup,
         'occurrence-location-editor-popup': occurrenceLocationEditorPopup,
         'occurrence-location-linkage-tool-popup': occurrenceLocationLinkageToolPopup,
@@ -69,6 +81,8 @@ const occurrenceEditorLocationModule = {
 
         const collectingEventArr = Vue.computed(() => occurrenceStore.getLocationCollectingEventArr);
         const collId = Vue.computed(() => occurrenceStore.getCollId);
+        const configuredDataFields = Vue.computed(() => occurrenceStore.getLocationMofDataFields);
+        const configuredDataLabel = Vue.computed(() => occurrenceStore.getLocationMofDataLabel);
         const confirmationPopupRef = Vue.ref(null);
         const displayMode = Vue.computed(() => occurrenceStore.getDisplayMode);
         const editorConfirmed = Vue.ref(false);
@@ -79,6 +93,7 @@ const occurrenceEditorLocationModule = {
         const occurrenceEntryFormat = Vue.computed(() => occurrenceStore.getOccurrenceEntryFormat);
         const occurrenceFieldDefinitions = Vue.computed(() => occurrenceStore.getOccurrenceFieldDefinitions);
         const showCollectingEventListPopup = Vue.ref(false);
+        const showConfiguredDataEditorPopup = Vue.ref(false);
         const showLocationEditorPopup = Vue.ref(false);
         const showLocationLinkageToolPopup = Vue.ref(false);
 
@@ -118,7 +133,7 @@ const occurrenceEditorLocationModule = {
                 showLocationEditorPopup.value = true;
             }
             else{
-                const confirmText = 'If you want to edit this location, click OK to continue. If you want to change the location for this collecting event, click Cancel, and then click Edit Event button in the Collecting Event section, and then click the Change Location button. If you want to change the location for this occurrence only, click Cancel, and then click Change Event/Location button in the bottom section. ';
+                const confirmText = 'If you want to edit this location, click OK to continue. If you want to change the location for this collecting event, click Cancel, and then click Edit Event button in the Event section, and then click the Change Location button. If you want to change the location for this occurrence only, click Cancel, and then click Change Event/Location button in the bottom section. ';
                 confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'Cancel', trueText: 'OK', callback: (val) => {
                     editorConfirmed.value = true;
                     if(val){
@@ -139,6 +154,8 @@ const occurrenceEditorLocationModule = {
         return {
             collectingEventArr,
             collId,
+            configuredDataFields,
+            configuredDataLabel,
             confirmationPopupRef,
             locationData,
             locationId,
@@ -146,6 +163,7 @@ const occurrenceEditorLocationModule = {
             locationValid,
             occurrenceFieldDefinitions,
             showCollectingEventListPopup,
+            showConfiguredDataEditorPopup,
             showLocationEditorPopup,
             showLocationLinkageToolPopup,
             createLocationRecord,

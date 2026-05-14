@@ -5,6 +5,11 @@ const viewProfileOccurrenceModule = {
                 <q-list bordered class="rounded-borders q-mt-md">
                     <template v-for="collection in collectionArr">
                         <q-expansion-item expand-separator group="collectionGroup" :label="collection.label" header-class="text-h6">
+                            <div class="q-ml-md q-mr-sm text-bold">
+                                <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collection.collid)" tabindex="0">
+                                    Go to Control Panel
+                                </a>
+                            </div>
                             <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collection.collid" :collection-type="collection.colltype" :collection-permissions="collection.collectionpermissions"></collection-cotrol-panel-menus>
                         </q-expansion-item>
                     </template>
@@ -13,6 +18,11 @@ const viewProfileOccurrenceModule = {
             <template v-else>
                 <q-card class="q-mt-md">
                     <q-card-section>
+                        <div class="q-ml-md q-mr-sm text-bold">
+                            <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collection.collid)" tabindex="0">
+                                Go to Control Panel
+                            </a>
+                        </div>
                         <collection-cotrol-panel-menus :user-name="accountInfo.username" :collection-id="collectionArr[0].collid" :collection-type="collectionArr[0].colltype" :collection-permissions="collectionArr[0].collectionpermissions"></collection-cotrol-panel-menus>
                     </q-card-section>
                 </q-card>

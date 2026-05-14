@@ -269,11 +269,11 @@ class DataUploadService {
         return $retVal;
     }
 
-    public function finalTransferPopulateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
+    public function finalTransferPopulateMofIdentifiers($collid, $locationMofDataFields, $eventMofDataFields, $occurrenceMofDataFields): int
     {
         $retVal = 0;
         if($collid){
-            $retVal = (new UploadMofTemp)->populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields);
+            $retVal = (new UploadMofTemp)->populateMofIdentifiers($collid, $locationMofDataFields, $eventMofDataFields, $occurrenceMofDataFields);
         }
         return $retVal;
     }

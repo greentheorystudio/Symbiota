@@ -42,7 +42,10 @@ const mofDataFieldModule = {
         const occurrenceStore = useOccurrenceStore();
 
         const configuredData = Vue.computed(() => {
-            if(props.dataType === 'event'){
+            if(props.dataType === 'location'){
+                return occurrenceStore.getLocationMofData;
+            }
+            else if(props.dataType === 'event'){
                 return occurrenceStore.getEventMofData;
             }
             else{
@@ -50,7 +53,10 @@ const mofDataFieldModule = {
             }
         });
         const configuredDataFields = Vue.computed(() => {
-            if(props.dataType === 'event'){
+            if(props.dataType === 'location'){
+                return occurrenceStore.getLocationMofDataFields;
+            }
+            else if(props.dataType === 'event'){
                 return occurrenceStore.getEventMofDataFields;
             }
             else{
@@ -58,7 +64,10 @@ const mofDataFieldModule = {
             }
         });
         const configuredDataFieldsLayoutData = Vue.computed(() => {
-            if(props.dataType === 'event'){
+            if(props.dataType === 'location'){
+                return occurrenceStore.getLocationMofDataFieldsLayoutData;
+            }
+            else if(props.dataType === 'event'){
                 return occurrenceStore.getEventMofDataFieldsLayoutData;
             }
             else{
@@ -66,7 +75,10 @@ const mofDataFieldModule = {
             }
         });
         const configuredDataLabel = Vue.computed(() => {
-            if(props.dataType === 'event'){
+            if(props.dataType === 'location'){
+                return occurrenceStore.getLocationMofDataLabel;
+            }
+            else if(props.dataType === 'event'){
                 return occurrenceStore.getEventMofDataLabel;
             }
             else{
@@ -74,42 +86,70 @@ const mofDataFieldModule = {
             }
         });
         const editsExist = Vue.computed(() => {
-            if(props.dataType === 'event'){
+            if(props.dataType === 'location'){
+                return occurrenceStore.getLocationMofEditsExist;
+            }
+            else if(props.dataType === 'event'){
                 return occurrenceStore.getEventMofEditsExist;
             }
             else{
                 return occurrenceStore.getOccurrenceMofEditsExist;
             }
         });
-        const newEventRecord = Vue.ref(false);
 
         function processSaveDataEdits() {
-            if(props.dataType === 'occurrence' || Number(occurrenceStore.getCollectingEventID) > 0){
-                saveConfiguredDataEdits();
+            if(props.dataType === 'location'){
+                if(Number(occurrenceStore.getLocationID) > 0){
+                    saveConfiguredDataEdits();
+                }
+                else{
+                    occurrenceStore.setNewLocationDataFromCurrentOccurrence();
+                    occurrenceStore.createLocationRecord(() => {
+                        if(occurrenceStore.getOccurrenceEditsExist){
+                            occurrenceStore.updateOccurrenceRecord((res) => {
+                                if(res === 1){
+                                    saveConfiguredDataEdits();
+                                }
+                                else{
+                                    showNotification('negative', 'There was an error setting the location data.');
+                                }
+                            });
+                        }
+                        else{
+                            showNotification('negative', 'There was an error setting the location data.');
+                        }
+                    });
+                }
+            }
+            else if(props.dataType === 'event'){
+                if(Number(occurrenceStore.getCollectingEventID) > 0){
+                    saveConfiguredDataEdits();
+                }
+                else{
+                    occurrenceStore.setNewCollectingEventDataFromCurrentOccurrence();
+                    occurrenceStore.createCollectingEventRecord(() => {
+                        if(occurrenceStore.getOccurrenceEditsExist){
+                            occurrenceStore.updateOccurrenceRecord((res) => {
+                                if(res === 1){
+                                    saveConfiguredDataEdits();
+                                }
+                                else{
+                                    showNotification('negative', 'There was an error setting the event data.');
+                                }
+                            });
+                        }
+                        else{
+                            showNotification('negative', 'There was an error setting the event data.');
+                        }
+                    });
+                }
             }
             else{
-                newEventRecord.value = true;
-                occurrenceStore.setNewCollectingEventDataFromCurrentOccurrence();
-                occurrenceStore.createCollectingEventRecord(() => {
-                    if(occurrenceStore.getOccurrenceEditsExist){
-                        occurrenceStore.updateOccurrenceRecord((res) => {
-                            if(res === 1){
-                                saveConfiguredDataEdits();
-                            }
-                            else{
-                                showNotification('negative', 'There was an error setting the event data.');
-                            }
-                        });
-                    }
-                    else{
-                        showNotification('negative', 'There was an error setting the event data.');
-                    }
-                });
+                saveConfiguredDataEdits();
             }
         }
 
         function saveConfiguredDataEdits() {
-            newEventRecord.value = false;
             occurrenceStore.processMofEditData(props.dataType, (res) => {
                 if(Number(res) === 1){
                     showNotification('positive','Edits saved.');
@@ -121,7 +161,10 @@ const mofDataFieldModule = {
         }
 
         function updateConfiguredEditData(data) {
-            if(props.dataType === 'event'){
+            if(props.dataType === 'location'){
+                occurrenceStore.updateLocationMofEditData(data.key, data.value);
+            }
+            else if(props.dataType === 'event'){
                 occurrenceStore.updateEventMofEditData(data.key, data.value);
             }
             else{
