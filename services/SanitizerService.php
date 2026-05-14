@@ -9,6 +9,9 @@ class SanitizerService {
             $newStr = preg_replace('/\s\s+/', ' ',$newStr);
             $newStr = $conn->real_escape_string($newStr);
         }
+        elseif(is_numeric($str)){
+            $newStr = (string)$str;
+        }
         return $newStr;
     }
 
@@ -50,7 +53,7 @@ class SanitizerService {
         $returnPath = '';
         $fullRequestPathParts = array();
         $fullRequestPath = $_SERVER['REQUEST_URI'];
-        if(strpos($fullRequestPath, '?') !== false){
+        if(str_contains($fullRequestPath, '?')){
             $fullRequestPathParts = explode('?', $fullRequestPath);
             if($fullRequestPathParts){
                 $returnPath = htmlspecialchars($fullRequestPathParts[0]);
@@ -59,9 +62,9 @@ class SanitizerService {
         else{
             $returnPath = htmlspecialchars($fullRequestPath);
         }
-        if(substr($returnPath,-4) !== '.php'){
+        if(!str_ends_with($returnPath, '.php')){
             $fixedPath = '/index.php';
-            if(strpos($returnPath, '.php') !== false){
+            if(str_contains($returnPath, '.php')){
                 $returnPathParts = explode('.php', $returnPath);
                 if($returnPathParts){
                     $fixedPath = $returnPathParts[0] . '.php';
@@ -75,7 +78,7 @@ class SanitizerService {
             if($fullRequestPathParts){
                 $argArr[] = str_replace('&amp;', '&',htmlspecialchars($fullRequestPathParts[1], ENT_NOQUOTES));
             }
-            if(array_key_exists('queryId',$_REQUEST) && (!$fullRequestPathParts || strpos($fullRequestPathParts[1], 'queryId=') === false)){
+            if(array_key_exists('queryId',$_REQUEST) && (!$fullRequestPathParts || !str_contains($fullRequestPathParts[1], 'queryId='))){
                 $argArr[] = 'queryId=' . (int)$_REQUEST['queryId'];
             }
             if($argArr){
@@ -109,7 +112,10 @@ class SanitizerService {
     {
         $returnStr = 'NULL';
         if($value){
-            if($dataType !== 'number'){
+            if(($dataType === 'number' && (string)$value !== '') || is_numeric($value)){
+                $returnStr = (string)$value;
+            }
+            elseif($dataType !== 'number'){
                 if($dataType === 'json' || $dataType === 'sql'){
                     $returnStr = "'" . $value . "'";
                 }
@@ -121,9 +127,6 @@ class SanitizerService {
                     }
                 }
             }
-            elseif((string)$value !== '' && is_numeric($value)){
-                $returnStr = (string)$value;
-            }
         }
         return $returnStr;
     }
@@ -133,7 +136,7 @@ class SanitizerService {
         $valid = false;
         $referer = $_SERVER['HTTP_REFERER'] ?? '';
         if($referer){
-            if(strpos($referer, "http") !== 0){
+            if(strncmp($referer, 'http', 4) !== 0){
                 $referer = 'http:' . $referer;
             }
             $arr1 = explode('//', $referer);
@@ -149,7 +152,7 @@ class SanitizerService {
     {
         $requestPath = '';
         $fullRequestPath = $_SERVER['REQUEST_URI'];
-        if(strpos($fullRequestPath, '?') !== false){
+        if(str_contains($fullRequestPath, '?')){
             $fullRequestPathParts = explode('?', $fullRequestPath);
             if($fullRequestPathParts){
                 $requestPath = htmlspecialchars($fullRequestPathParts[0]);
@@ -158,10 +161,10 @@ class SanitizerService {
         else{
             $requestPath = htmlspecialchars($fullRequestPath);
         }
-        if(strpos($requestPath, $GLOBALS['IMAGE_ROOT_URL']) === false && substr($requestPath,-4) !== '.php' && substr($requestPath,-5) !== '.html'){
+        if(!str_contains($requestPath, $GLOBALS['IMAGE_ROOT_URL']) && !str_ends_with($requestPath, '.php') && !str_ends_with($requestPath, '.html')){
             $clientRoot = $GLOBALS['CLIENT_ROOT'] ?? '';
             $fixedPath = $clientRoot . '/index.php';
-            if(strpos($requestPath, '.php') !== false){
+            if(str_contains($requestPath, '.php')){
                 $requestPathParts = explode('.php', $requestPath);
                 if($requestPathParts){
                     $fixedPath = $clientRoot . $requestPathParts[0] . '.php';
