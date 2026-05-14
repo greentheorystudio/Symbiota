@@ -186,6 +186,7 @@ ALTER TABLE `omoccurrences`
 
 CREATE TABLE `ommofextension` (
     `mofID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `locationID` int(10) unsigned DEFAULT NULL,
     `eventID` int(10) unsigned DEFAULT NULL,
     `occId` int(10) unsigned DEFAULT NULL,
     `field` varchar(250) NOT NULL,
@@ -193,12 +194,14 @@ CREATE TABLE `ommofextension` (
     `enteredBy` varchar(250) DEFAULT NULL,
     `initialtimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`mofID`),
+    UNIQUE KEY `INDEX_UNIQUE_ommofextension_locationid` (`locationID`,`field`),
     UNIQUE KEY `INDEX_UNIQUE_event_field` (`eventID`,`field`),
     UNIQUE KEY `INDEX_UNIQUE_OCCID` (`occId`,`field`),
     KEY `field` (`field`),
     KEY `datavalue` (`datavalue`),
     KEY `FK_eventID` (`eventID`),
-    CONSTRAINT `FK_event` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`),
+    CONSTRAINT `FK_ommofextension_locationid` FOREIGN KEY (`locationID`) REFERENCES `omoccurlocations` (`locationID`)  ON DELETE RESTRICT ON UPDATE RESTRICT,
+    CONSTRAINT `FK_event` FOREIGN KEY (`eventID`) REFERENCES `omoccurcollectingevents` (`eventID`)  ON DELETE RESTRICT ON UPDATE RESTRICT,
     CONSTRAINT `FK_ommofextension_occid` FOREIGN KEY (`occId`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 
@@ -410,8 +413,10 @@ CREATE TABLE `uploadmoftemp` (
     `upmfid` int(50) NOT NULL AUTO_INCREMENT,
     `collid` int(10) unsigned DEFAULT NULL,
     `dbpk` varchar(150) DEFAULT NULL,
+    `locationdbpk` varchar(150) DEFAULT NULL,
     `eventdbpk` varchar(150) DEFAULT NULL,
     `occid` int(10) unsigned DEFAULT NULL,
+    `locationID` int(10) unsigned DEFAULT NULL,
     `eventID` int(10) unsigned DEFAULT NULL,
     `field` varchar(250) DEFAULT NULL,
     `datavalue` varchar(1000) DEFAULT NULL,
@@ -421,7 +426,9 @@ CREATE TABLE `uploadmoftemp` (
     KEY `Index_uploaddet_occid` (`occid`),
     KEY `Index_collid` (`collid`),
     KEY `Index_uploaddet_dbpk` (`dbpk`),
+    KEY `Index_locationdbpk` (`locationdbpk`),
     KEY `Index_eventdbpk` (`eventdbpk`),
+    KEY `Index_locationID` (`locationID`),
     KEY `Index_eventID` (`eventID`),
     KEY `Index_field` (`field`),
     KEY `Index_datavalue` (`datavalue`)
@@ -458,6 +465,7 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `eventRemarks` text NULL AFTER `eventType`,
     ADD COLUMN `rep` int(10) NULL AFTER `samplingEffort`,
     ADD COLUMN `locationID` int(11) UNSIGNED NULL AFTER `preparations`,
+    ADD COLUMN `locationdbpk` varchar(150) NULL AFTER `locationID`,
     ADD COLUMN `island` varchar(75) NULL AFTER `locationID`,
     ADD COLUMN `islandGroup` varchar(75) NULL AFTER `island`,
     ADD COLUMN `waterBody` varchar(255) NULL AFTER `islandGroup`,
@@ -466,6 +474,7 @@ ALTER TABLE `uploadspectemp`
     ADD COLUMN `locationCode` varchar(50) NULL AFTER `locationName`,
     ADD COLUMN `repCount` int(10) UNSIGNED NULL AFTER `duplicateQuantity`,
     ADD INDEX `Index_eventdbpk`(`eventdbpk`),
+    ADD INDEX `Index_uploadspec_locationdbpk`(`locationdbpk`),
     ADD INDEX `Index_uploadspec_eventdate`(`eventDate`),
     ADD INDEX `Index_uploadspec_year`(`year`),
     ADD INDEX `Index_uploadspec_month`(`month`),

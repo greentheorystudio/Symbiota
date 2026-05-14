@@ -141,4 +141,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getTaxaListFromScinameFuzzySearch' && array_key_exists('sciname', $_POST)){
         echo json_encode($taxa->getTaxaListFromScinameFuzzySearch($_POST['sciname']));
     }
+    elseif($action === 'getIdentifiersFromTidArr' && array_key_exists('tidArr', $_POST)){
+        $tidArr = json_decode($_POST['tidArr'], false);
+        echo json_encode($taxa->getIdentifiersFromTidArr($tidArr));
+    }
 }

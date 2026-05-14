@@ -5,7 +5,7 @@ const occurrenceEditorFormCollectingEventElement = {
                 <template v-if="!collectionEventAutoSearch || (occId > 0 && Object.keys(configuredDataFields).length > 0)">
                     <div class="row justify-between">
                         <div class="text-grey-8 text-h6 text-weight-bolder q-pl-sm">
-                            Collecting Event
+                            Event
                         </div>
                         <div class="row justify-end q-gutter-sm">
                             <div v-if="occId > 0 && Object.keys(configuredDataFields).length > 0">
@@ -19,7 +19,7 @@ const occurrenceEditorFormCollectingEventElement = {
                 </template>
                 <template v-else>
                     <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
-                        Collecting Event
+                        Event
                     </div>
                 </template>
                 <collecting-event-field-module

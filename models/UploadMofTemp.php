@@ -9,8 +9,10 @@ class UploadMofTemp{
         'upmfid' => array('dataType' => 'number', 'length' => 50),
         'collid' => array('dataType' => 'number', 'length' => 10),
         'dbpk' => array('dataType' => 'string', 'length' => 150),
+        'locationdbpk' => array('dataType' => 'string', 'length' => 150),
         'eventdbpk' => array('dataType' => 'string', 'length' => 150),
         'occid' => array('dataType' => 'number', 'length' => 10),
+        'locationid' => array('dataType' => 'number', 'length' => 10),
         'eventid' => array('dataType' => 'number', 'length' => 10),
         'field' => array('dataType' => 'string', 'length' => 250),
         'datavalue' => array('dataType' => 'string', 'length' => 1000),
@@ -32,7 +34,7 @@ class UploadMofTemp{
         $recordsCreated = 0;
         $fieldNameArr = array();
         $valueArr = array();
-        $skipFields = array('upmfid', 'collid', 'occid', 'eventid', 'enteredby', 'initialtimestamp');
+        $skipFields = array('upmfid', 'collid', 'occid', 'locationid', 'eventid', 'enteredby', 'initialtimestamp');
         $mappedFields = array();
         if($collid){
             $fieldNameArr[] = 'collid';
@@ -154,10 +156,28 @@ class UploadMofTemp{
         return $retArr;
     }
 
-    public function populateMofIdentifiers($collid, $eventMofDataFields, $occurrenceMofDataFields): int
+    public function populateMofIdentifiers($collid, $locationMofDataFields, $eventMofDataFields, $occurrenceMofDataFields): int
     {
         $returnVal = 0;
         if($collid){
+            if(count($locationMofDataFields) > 0){
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.locationdbpk = o.locationdbpk '.
+                    'WHERE u.collid  = ' . (int)$collid . ' AND o.collid  = ' . (int)$collid . ' AND ISNULL(u.locationid) AND u.field IN("' . implode('","', $locationMofDataFields) . '") LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upmfid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'UPDATE uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.locationdbpk = o.locationdbpk SET u.locationid = o.locationid '.
+                            'WHERE u.upmfid IN(' . implode(',', $idArr) . ') AND o.collid  = ' . (int)$collid . ' ';
+                        if($this->conn->query($sql)){
+                            $returnVal = $this->conn->affected_rows;
+                        }
+                    }
+                }
+            }
             if(count($eventMofDataFields) > 0){
                 $idArr = array();
                 $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN uploadspectemp AS o ON u.eventdbpk = o.eventdbpk '.
@@ -203,8 +223,8 @@ class UploadMofTemp{
         $returnVal = 0;
         if($collid){
             $idArr = array();
-            $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.eventid = m.eventid '.
-                'WHERE u.collid  = ' . (int)$collid . ' AND m.eventid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
+            $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.locationid = m.locationid '.
+                'WHERE u.collid  = ' . (int)$collid . ' AND m.locationid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
             if($result = $this->conn->query($sql)){
                 while($row = $result->fetch_assoc()){
                     $idArr[] = $row['upmfid'];
@@ -214,6 +234,23 @@ class UploadMofTemp{
                     $sql = 'DELETE FROM uploadmoftemp WHERE upmfid IN(' . implode(',', $idArr) . ') ';
                     if($this->conn->query($sql)){
                         $returnVal = $this->conn->affected_rows;
+                    }
+                }
+            }
+            if($returnVal === 0){
+                $idArr = array();
+                $sql = 'SELECT DISTINCT u.upmfid FROM uploadmoftemp AS u LEFT JOIN ommofextension AS m ON u.eventid = m.eventid '.
+                    'WHERE u.collid  = ' . (int)$collid . ' AND m.eventid IS NOT NULL AND u.field = m.field LIMIT 25000 ';
+                if($result = $this->conn->query($sql)){
+                    while($row = $result->fetch_assoc()){
+                        $idArr[] = $row['upmfid'];
+                    }
+                    $result->free();
+                    if(count($idArr) > 0){
+                        $sql = 'DELETE FROM uploadmoftemp WHERE upmfid IN(' . implode(',', $idArr) . ') ';
+                        if($this->conn->query($sql)){
+                            $returnVal = $this->conn->affected_rows;
+                        }
                     }
                 }
             }
