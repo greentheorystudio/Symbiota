@@ -53,18 +53,6 @@ const institutionsEditorPopup = {
             context.emit('close:popup');
         }
 
-        function closeSpatialPopup() {
-            popupWindowType.value = null;
-            showSpatialPopup.value = false;
-            clearSpatialInputValues();
-        }
-
-        function openSpatialPopup(type) {
-            setSpatialInputValues();
-            popupWindowType.value = type;
-            showSpatialPopup.value = true;
-        }
-
         function setContentStyle() {
             contentStyle.value = null;
             tabStyle.value = null;
@@ -72,12 +60,6 @@ const institutionsEditorPopup = {
                 contentStyle.value = 'height: ' + (contentRef.value.clientHeight - 30) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
                 tabStyle.value = 'height: ' + (contentRef.value.clientHeight - 90) + 'px;width: ' + contentRef.value.clientWidth + 'px;';
             }
-        }
-
-        function setSpatialInputValues() {
-            decimalLatitudeValue.value = institutionsData.value['latcentroid'];
-            decimalLongitudeValue.value = institutionsData.value['longcentroid'];
-            footprintWktValue.value = institutionsData.value['footprintwkt'];
         }
 
         Vue.onMounted(() => {

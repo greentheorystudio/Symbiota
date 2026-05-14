@@ -8,6 +8,10 @@ const multipleScientificCommonNameAutoComplete = {
             type: Boolean,
             default: true
         },
+        concatenator: {
+            type: String,
+            default: ';'
+        },
         definition: {
             type: Object,
             default: null
@@ -23,6 +27,18 @@ const multipleScientificCommonNameAutoComplete = {
         hideProtected: {
             type: Boolean,
             default: false
+        },
+        identifierName: {
+            type: String,
+            default: null
+        },
+        identifierValue: {
+            type: String,
+            default: null
+        },
+        kingdomId: {
+            type: Number,
+            default: 0
         },
         label: {
             type: String,
@@ -52,9 +68,9 @@ const multipleScientificCommonNameAutoComplete = {
             type: Number,
             default: null
         },
-        scinameArr: {
-            type: Array,
-            default: []
+        sciname: {
+            type: String,
+            default: null
         },
         tabindex: {
             type: Number,
@@ -121,6 +137,7 @@ const multipleScientificCommonNameAutoComplete = {
         const autocompleteOptions = Vue.ref([]);
         const autocompleteRef = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
+        const scinameArr = Vue.ref([]);
 
         function blurAction(val) {
             if(val.target.value){
@@ -133,20 +150,18 @@ const multipleScientificCommonNameAutoComplete = {
                     optionObj = autocompleteOptions.value.find(option => option['sciname'].toLowerCase() === val.target.value.trim().toLowerCase());
                 }
                 if(optionObj){
-                    const currentScinameArr = props.scinameArr.slice();
-                    currentScinameArr.push(optionObj);
-                    processChange(currentScinameArr);
+                    scinameArr.value.push(optionObj);
+                    processChange();
                 }
                 else if(!props.limitToOptions){
-                    const currentScinameArr = props.scinameArr.slice();
-                    currentScinameArr.push({
+                    scinameArr.value.push({
                         label: val.target.value,
                         sciname: val.target.value,
                         tid: null,
                         family: null,
                         author: null
                     });
-                    processChange(currentScinameArr);
+                    processChange();
                 }
                 else if(props.options && props.options.length > 0){
                     showNotification('negative', 'That name was not found in the taxa list');
@@ -158,7 +173,8 @@ const multipleScientificCommonNameAutoComplete = {
         }
 
         function clearAction() {
-            processChange([]);
+            scinameArr.value.length = 0;
+            processChange();
         }
 
         function createValue(val, done) {
@@ -209,8 +225,12 @@ const multipleScientificCommonNameAutoComplete = {
             displayDefinitionPopup.value = true;
         }
 
-        function processChange(taxonObj) {
-            context.emit('update:sciname', taxonObj);
+        function processChange() {
+            const nameArr = [];
+            scinameArr.value.forEach((taxon) => {
+                nameArr.push(taxon.sciname);
+            });
+            context.emit('update:sciname', (nameArr.length > 0 ? nameArr.join(props.concatenator) : null));
             autocompleteRef.value.updateInputValue('');
         }
 
@@ -250,7 +270,9 @@ const multipleScientificCommonNameAutoComplete = {
             const formData = new FormData();
             formData.append('action', action);
             formData.append('term', val);
-            formData.append('kingdomid', (props.kingdomId ? props.kingdomId.toString() : ''));
+            formData.append('kingdomid', props.kingdomId.toString());
+            formData.append('identifiername', (props.identifierName ? props.identifierName : ''));
+            formData.append('identifiervalue', (props.identifierValue ? props.identifierValue : ''));
             formData.append('hideauth', props.hideAuthor);
             formData.append('hideprotected', props.hideProtected);
             formData.append('acceptedonly', props.acceptedTaxaOnly);
@@ -278,10 +300,29 @@ const multipleScientificCommonNameAutoComplete = {
             autocompleteOptions.value = newOptions;
         }
 
+        function setScinameArrFromScinameVal() {
+            if(props.sciname && props.sciname.length > 0){
+                const nameArr = props.sciname.split(props.concatenator);
+                nameArr.forEach((sciname) => {
+                    scinameArr.value.push({
+                        label: sciname.trim(),
+                        sciname: sciname.trim()
+                    });
+                });
+            }
+        }
+
+        Vue.onMounted(() => {
+            if(props.sciname && props.sciname !== ''){
+                setScinameArrFromScinameVal();
+            }
+        });
+
         return {
             autocompleteOptions,
             autocompleteRef,
             displayDefinitionPopup,
+            scinameArr,
             blurAction,
             clearAction,
             createValue,

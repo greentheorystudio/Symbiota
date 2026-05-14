@@ -16,6 +16,7 @@ const taxaQuickSearch = {
     template: `
         <q-card flat bordered class="black-border bg-grey-3">
             <q-card-section class="q-pa-sm column">
+                <span class="screen-reader-only">This is the taxon quick search. You can select either common or scientific name in the taxon type selector, enter the name you would like to search for in the textbox, and then press enter or click the search button. You can also follow the advanced search link to go to the dynamic taxa list page.</span>
                 <div v-if="quicksearchLabel">
                     <span class="text-h6 text-bold">{{ quicksearchLabel }}</span>
                 </div>

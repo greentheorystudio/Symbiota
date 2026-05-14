@@ -346,6 +346,8 @@ class Taxa{
             $rankHigh = array_key_exists('rhigh', $opts) ? (int)$opts['rhigh'] : null;
             $rankLimit = array_key_exists('rlimit', $opts) ? (int)$opts['rlimit'] : null;
             $rankLow = array_key_exists('rlow', $opts) ? (int)$opts['rlow'] : null;
+            $identifierName = (array_key_exists('identifiername', $opts) && $opts['identifiername']) ? SanitizerService::cleanInStr($this->conn, $opts['identifiername']) : null;
+            $identifierValue = (array_key_exists('identifiervalue', $opts) && $opts['identifiervalue']) ? SanitizerService::cleanInStr($this->conn, $opts['identifiervalue']) : null;
             $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
             $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . '  '.
                 'FROM taxa WHERE sciname LIKE "' . $term . '%" ';
@@ -371,6 +373,14 @@ class Taxa{
             }
             if($kingdomId){
                 $sql .= 'AND kingdomid = ' . $kingdomId . ' ';
+            }
+            if($identifierName){
+                if($identifierValue){
+                    $sql .= 'AND tid IN(SELECT tid FROM taxaidentifiers WHERE `name` = "' . $identifierName . '" AND identifier = "' . $identifierValue . '") ';
+                }
+                else{
+                    $sql .= 'AND tid IN(SELECT tid FROM taxaidentifiers WHERE `name` = "' . $identifierName . '") ';
+                }
             }
             $sql .= 'ORDER BY sciname ';
             if($limit){

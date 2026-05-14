@@ -4,7 +4,7 @@ const occurrenceEditorCollectingEventModule = {
             <q-card-section class="q-px-sm q-pb-sm column q-col-gutter-sm">
                 <div class="row justify-between">
                     <div class="text-grey-8 text-h6 text-weight-bolder q-pl-md">
-                        Collecting Event
+                        Event
                     </div>
                     <div class="row justify-end q-gutter-sm">
                         <template v-if="Number(eventId) > 0">
