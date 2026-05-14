@@ -9,6 +9,7 @@ class OccurrenceMeasurementsOrFacts{
 
     private $fields = array(
         'mofid' => array('dataType' => 'number', 'length' => 10),
+        'locationid' => array('dataType' => 'number', 'length' => 10),
         'eventid' => array('dataType' => 'number', 'length' => 10),
         'occid' => array('dataType' => 'number', 'length' => 10),
         'field' => array('dataType' => 'string', 'length' => 250),
@@ -41,7 +42,8 @@ class OccurrenceMeasurementsOrFacts{
                 $idArr = array();
                 $sql = 'SELECT u.upmfid FROM uploadmoftemp AS u LEFT JOIN omoccurrences AS o ON u.occid = o.occid '.
                     'LEFT JOIN omoccurrences AS o2 ON u.eventid = o2.eventid '.
-                    'WHERE u.collid = ' . (int)$collId . ' AND ((u.occid IS NOT NULL AND o.occid IS NOT NULL) OR (u.eventid IS NOT NULL AND o2.occid IS NOT NULL)) LIMIT 25000 ';
+                    'LEFT JOIN omoccurrences AS o3 ON u.locationid = o3.locationid '.
+                    'WHERE u.collid = ' . (int)$collId . ' AND ((u.occid IS NOT NULL AND o.occid IS NOT NULL) OR (u.eventid IS NOT NULL AND o2.collid = ' . (int)$collId . ') OR (u.locationid IS NOT NULL AND o3.collid = ' . (int)$collId . ')) LIMIT 25000 ';
                 if($result = $this->conn->query($sql)){
                     while($row = $result->fetch_assoc()){
                         $idArr[] = $row['upmfid'];
@@ -72,7 +74,7 @@ class OccurrenceMeasurementsOrFacts{
             $whereStr = 'occid IN(' . implode(',', $id) . ')';
         }
         elseif($idType === 'collid'){
-            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') OR eventid IN(SELECT eventid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
+            $whereStr = 'occid IN(SELECT occid FROM omoccurrences WHERE collid = ' . (int)$id . ') OR eventid IN(SELECT eventid FROM omoccurrences WHERE collid = ' . (int)$id . ') OR locationid IN(SELECT locationid FROM omoccurrences WHERE collid = ' . (int)$id . ')';
         }
         if($whereStr){
             $sql = 'DELETE FROM ommofextension WHERE ' . $whereStr . ' ';
@@ -94,6 +96,12 @@ class OccurrenceMeasurementsOrFacts{
             $retVal = $this->conn->affected_rows;
         }
         if($retVal === 0){
+            $sql = 'DELETE FROM ommofextension WHERE locationid IN(SELECT DISTINCT locationid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND locationid IS NOT NULL) LIMIT 50000 ';
+            if($this->conn->query($sql)){
+                $retVal = $this->conn->affected_rows;
+            }
+        }
+        if($retVal === 0){
             $sql = 'DELETE FROM ommofextension WHERE eventid IN(SELECT DISTINCT eventid FROM uploadmoftemp WHERE collid = ' . (int)$collid . ' AND eventid IS NOT NULL) LIMIT 50000 ';
             if($this->conn->query($sql)){
                 $retVal = $this->conn->affected_rows;
@@ -105,7 +113,10 @@ class OccurrenceMeasurementsOrFacts{
     public function getMofDataByTypeAndId($type, $id): array
     {
         $retArr = array();
-        if($type === 'event'){
+        if($type === 'location'){
+            $field = 'locationid';
+        }
+        elseif($type === 'event'){
             $field = 'eventid';
         }
         else{
@@ -138,7 +149,10 @@ class OccurrenceMeasurementsOrFacts{
     public function processMofEdits($type, $id, $editData): int
     {
         $returnVal = 0;
-        if($type === 'event'){
+        if($type === 'location'){
+            $idField = 'locationid';
+        }
+        elseif($type === 'event'){
             $idField = 'eventid';
         }
         else{

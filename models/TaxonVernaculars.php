@@ -82,11 +82,51 @@ class TaxonVernaculars{
         if($term){
             $ignoreChars = array(' ', '-', "'");
             $fixedTerm = str_replace($ignoreChars, '', $term);
+            $acceptedOnly = array_key_exists('acceptedonly', $opts) && (($opts['acceptedonly'] === 'true' || (int)$opts['acceptedonly'] === 1));
+            $hideProtected = array_key_exists('hideprotected', $opts) && (($opts['hideprotected'] === 'true' || (int)$opts['hideprotected'] === 1));
+            $kingdomId = (array_key_exists('kingdomid', $opts) && (int)$opts['kingdomid'] > 0) ? (int)$opts['kingdomid'] : null;
             $limit = array_key_exists('limit', $opts) ? (int)$opts['limit'] : null;
+            $parentTid = (array_key_exists('parenttid', $opts) && (int)$opts['parenttid'] > 0) ? (int)$opts['parenttid'] : null;
+            $rankHigh = array_key_exists('rhigh', $opts) ? (int)$opts['rhigh'] : null;
+            $rankLimit = array_key_exists('rlimit', $opts) ? (int)$opts['rlimit'] : null;
+            $rankLow = array_key_exists('rlow', $opts) ? (int)$opts['rlow'] : null;
+            $identifierName = (array_key_exists('identifiername', $opts) && $opts['identifiername']) ? SanitizerService::cleanInStr($this->conn, $opts['identifiername']) : null;
+            $identifierValue = (array_key_exists('identifiervalue', $opts) && $opts['identifiervalue']) ? SanitizerService::cleanInStr($this->conn, $opts['identifiervalue']) : null;
             $sql = 'SELECT DISTINCT v.vid, v.vernacularname '.
-                'FROM taxavernaculars AS v '.
-                'WHERE REPLACE(REPLACE(REPLACE(v.vernacularname, " ", ""), "-", ""), "\'", "") LIKE "' . $fixedTerm . '%" '.
-                'ORDER BY v.vernacularname ';
+                'FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.tid = t.tid '.
+                'WHERE REPLACE(REPLACE(REPLACE(v.vernacularname, " ", ""), "-", ""), "\'", "") LIKE "' . $fixedTerm . '%" ';
+            if($rankLimit){
+                $sql .= 'AND t.rankid = ' . $rankLimit . ' ';
+            }
+            else{
+                if($rankLow){
+                    $sql .= 'AND t.rankid >= ' . $rankLow . ' ';
+                }
+                if($rankHigh){
+                    $sql .= 'AND t.rankid <= ' . $rankHigh . ' ';
+                }
+            }
+            if($parentTid){
+                $sql .= 'AND v.tid IN(SELECT tid FROM taxaenumtree WHERE parenttid = ' . $parentTid . ') ';
+            }
+            if($hideProtected){
+                $sql .= 'AND t.securitystatus <> 1 ';
+            }
+            if($acceptedOnly){
+                $sql .= 'AND t.tid = t.tidaccepted ';
+            }
+            if($kingdomId){
+                $sql .= 'AND t.kingdomid = ' . $kingdomId . ' ';
+            }
+            if($identifierName){
+                if($identifierValue){
+                    $sql .= 'AND v.tid IN(SELECT tid FROM taxaidentifiers WHERE `name` = "' . $identifierName . '" AND identifier = "' . $identifierValue . '") ';
+                }
+                else{
+                    $sql .= 'AND v.tid IN(SELECT tid FROM taxaidentifiers WHERE `name` = "' . $identifierName . '") ';
+                }
+            }
+            $sql .= 'ORDER BY v.vernacularname ';
             if($limit){
                 $sql .= 'LIMIT ' . $limit . ' ';
             }

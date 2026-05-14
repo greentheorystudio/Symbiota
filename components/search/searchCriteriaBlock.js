@@ -20,7 +20,7 @@ const searchCriteriaBlock = {
                     <selector-input-element label="Taxon Type" :options="taxonTypeOptions" :value="searchTerms.taxontype" @update:value="updateTaxonType"></selector-input-element>
                 </div>
                 <div class="col-12 col-sm-8 col-md-9">
-                    <multiple-scientific-common-name-auto-complete :label="scinameFieldLabel" :sciname-arr="scinameArr" :taxon-type="searchTerms.taxontype" @update:sciname="processScientificNameChange" @click:enter="processEnterClick"></multiple-scientific-common-name-auto-complete>
+                    <multiple-scientific-common-name-auto-complete :label="scinameFieldLabel" :sciname="searchTerms.taxa" :taxon-type="searchTerms.taxontype" @update:sciname="processScientificNameChange" @click:enter="processEnterClick"></multiple-scientific-common-name-auto-complete>
                 </div>
             </div>
             <div class="row q-col-gutter-sm">
@@ -202,7 +202,6 @@ const searchCriteriaBlock = {
 
         const processingStatusOptions = Vue.computed(() => baseStore.getOccurrenceProcessingStatusOptions);
         const radiusUnitOptions = Vue.computed(() => searchStore.getRadiusUnitOptions);
-        const scinameArr = Vue.ref([]);
         const scinameFieldLabel = Vue.ref('Scientific Names');
         const searchTerms = Vue.computed(() => searchStore.getSearchTerms);
         const taxonTypeOptions = [
@@ -223,33 +222,12 @@ const searchCriteriaBlock = {
             context.emit('click:enter');
         }
 
-        function processScientificNameChange(taxonArr) {
-            scinameArr.value = taxonArr;
-            if(scinameArr.value.length > 0){
-                const nameArr = [];
-                scinameArr.value.forEach((taxon) => {
-                    nameArr.push(taxon.label);
-                });
-                updateSearchTerms('taxa', nameArr.join(';'));
-            }
-            else{
-                updateSearchTerms('taxa', null);
-            }
+        function processScientificNameChange(taxonVal) {
+            updateSearchTerms('taxa', taxonVal);
         }
 
         function resetCriteria() {
-            scinameArr.value.length = 0;
             scinameFieldLabel.value = 'Scientific Names';
-        }
-
-        function setScinameArrFromSearchTerms() {
-            const searchTermsScinameArr = searchTerms.value['taxa'].split(';');
-            searchTermsScinameArr.forEach((sciname) => {
-                scinameArr.value.push({
-                    label: sciname.trim(),
-                    sciname: sciname.trim()
-                });
-            });
         }
 
         function updateDateData(prop, dateData) {
@@ -284,16 +262,9 @@ const searchCriteriaBlock = {
             updateSearchTerms('taxontype', value);
         }
 
-        Vue.onMounted(() => {
-            if(searchTerms.value['taxa'] && searchTerms.value['taxa'] !== ''){
-                setScinameArrFromSearchTerms();
-            }
-        });
-
         return {
             processingStatusOptions,
             radiusUnitOptions,
-            scinameArr,
             scinameFieldLabel,
             searchTerms,
             taxonTypeOptions,

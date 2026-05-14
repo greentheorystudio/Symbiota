@@ -112,8 +112,9 @@ const institutionsFieldModule = {
         function createInstitutionslist() {
             institutionsStore.createInstitutionsRecord((newBlockId) => {
                 if(newBlockId > 0){
-                    showNotification('positive','Description block added successfully.');
+                    showNotification('positive','Location added successfully.');
                     context.emit('close:popup');
+                    window.location.reload();
                 }
                 else{
                     showNotification('negative', 'There was an error adding the new location .');
@@ -129,6 +130,7 @@ const institutionsFieldModule = {
                             if(res === 1){
                                 showNotification('positive','Location has been deleted.');
                                 context.emit('close:popup');
+                                window.location.reload();
                             }
                             else{
                                 showNotification('negative', 'There was an error deleting the location.');
@@ -144,6 +146,7 @@ const institutionsFieldModule = {
                 hideWorking();
                 if(res === 1){
                     showNotification('positive','Edits saved.');
+                    window.location.reload();
                 }
                 else{
                     showNotification('negative', 'There was an error saving the location edits.');
