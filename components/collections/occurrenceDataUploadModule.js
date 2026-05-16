@@ -397,7 +397,7 @@ const occurrenceDataUploadModule = {
         'upload-data-table-viewer-popup': uploadDataTableViewerPopup
     },
     setup(props) {
-        const { csvToArray, hideWorking, parseFile, showNotification, showWorking } = useCore();
+        const { csvToArray, getIso8601StrFromRFC1123Str, hideWorking, isRFC1123Str, parseFile, showNotification, showWorking } = useCore();
 
         const baseStore = useBaseStore();
         const collectionDataUploadParametersStore = useCollectionDataUploadParametersStore();
@@ -2069,6 +2069,9 @@ const occurrenceDataUploadModule = {
                     if(Number(year) > 0 && Number(month) > 0 && Number(day) > 0){
                         occurrenceData['eventdate'] = year.toString() + '-' + month.toString() + '-' + day.toString();
                     }
+                }
+                if(occurrenceData.hasOwnProperty('eventdate') && occurrenceData['eventdate'] && occurrenceData.hasOwnProperty('verbatimeventdate') && occurrenceData['verbatimeventdate'] && isRFC1123Str(occurrenceData['verbatimeventdate'])){
+                    occurrenceData['eventdate'] = getIso8601StrFromRFC1123Str(occurrenceData['verbatimeventdate']);
                 }
                 if(occurrenceData.hasOwnProperty('eventtime') && occurrenceData['eventtime'] && occurrenceData['eventtime'].toString() !== '' && !occurrenceData['eventtime'].toString().includes(':') && Number(occurrenceData['eventtime']) > 0){
                     const time = new Date(occurrenceData['eventtime']);
