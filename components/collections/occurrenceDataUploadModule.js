@@ -2070,7 +2070,7 @@ const occurrenceDataUploadModule = {
                         occurrenceData['eventdate'] = year.toString() + '-' + month.toString() + '-' + day.toString();
                     }
                 }
-                if(occurrenceData.hasOwnProperty('eventdate') && occurrenceData['eventdate'] && occurrenceData.hasOwnProperty('verbatimeventdate') && occurrenceData['verbatimeventdate'] && isRFC1123Str(occurrenceData['verbatimeventdate'])){
+                if(occurrenceData.hasOwnProperty('eventdate') && !occurrenceData['eventdate'] && occurrenceData.hasOwnProperty('verbatimeventdate') && occurrenceData['verbatimeventdate'] && isRFC1123Str(occurrenceData['verbatimeventdate'])){
                     occurrenceData['eventdate'] = getIso8601StrFromRFC1123Str(occurrenceData['verbatimeventdate']);
                 }
                 if(occurrenceData.hasOwnProperty('eventtime') && occurrenceData['eventtime'] && occurrenceData['eventtime'].toString() !== '' && !occurrenceData['eventtime'].toString().includes(':') && Number(occurrenceData['eventtime']) > 0){
