@@ -1,14 +1,15 @@
 <?php
 include_once(__DIR__ . '/../config/symbbase.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 header('Content-Type: text/html; charset=UTF-8' );
 header('X-Frame-Options: SAMEORIGIN');
 
 $occId = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
 $collId = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 $displayMode = array_key_exists('mode', $_REQUEST) ? (int)$_REQUEST['mode'] : 1;
-$interface = array_key_exists('interface', $_REQUEST) ? $_REQUEST['interface'] : '';
+$interface = (array_key_exists('interface', $_REQUEST) && $_REQUEST['interface']) ? preg_replace('/[^A-Za-z0-9]/', '', $_REQUEST['interface']) : '';
 $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
-$stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
+$stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && SanitizerService::validateJsonStr($_REQUEST['starr'])) ? $_REQUEST['starr'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $GLOBALS['DEFAULT_LANG']; ?>">
