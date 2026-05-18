@@ -44,6 +44,10 @@ const textFieldInputElement = {
             type: Number,
             default: null
         },
+        roundValue: {
+            type: Number,
+            default: null
+        },
         showCounter: {
             type: Boolean,
             default: false
@@ -209,6 +213,9 @@ const textFieldInputElement = {
                     }
                 }
                 else{
+                    if(props.roundValue){
+                        val = val.toFixed(Number(props.roundValue));
+                    }
                     context.emit('update:value', val);
                 }
             }
