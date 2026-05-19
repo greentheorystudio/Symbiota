@@ -179,6 +179,12 @@ function useCore() {
         return text;
     }
 
+    function getIso8601StrFromRFC1123Str(rfc1123Str) {
+        const isoDateStr = new Date(rfc1123Str).toISOString();
+        const isoDateStrArr = isoDateStr.split('T');
+        return isoDateStrArr[0];
+    }
+
     function getPlatformProperty(prop){
         let value = null;
         if(prop === 'userAgent'){
@@ -231,6 +237,15 @@ function useCore() {
 
     function hideWorking() {
         $q.loading.hide();
+    }
+
+    function isRFC1123Str(dateStr) {
+        const rfc1123Regex = /^(?:Sun|Mon|Tue|Wed|Thu|Fri|Sat), \d{2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} GMT$/;
+        if(!rfc1123Regex.test(dateStr)) {
+            return false;
+        }
+        const date = new Date(dateStr);
+        return !isNaN(date.getTime()) && date.toUTCString() === dateStr;
     }
 
     function parseDate(dateStr){
@@ -416,21 +431,21 @@ function useCore() {
                 if(Array.isArray(row)){
                     row.forEach(val => {
                         if(val){
-                            val = '\"' + (val ? val : '') + '\"';
+                            val = '\"' + (val ? val.replaceAll('"', '""') : '') + '\"';
                         }
                         fixedRow.push(val);
                     });
                 }
                 else{
-                    for(let key in row) {
+                    Object.keys(row).forEach((key) => {
                         if(!headersSaved){
-                            headerArr.push('\"' + key + '\"');
+                            headerArr.push('\"' + key.replaceAll('"', '""') + '\"');
                         }
                         if(row.hasOwnProperty(key)){
-                            const val = '\"' + (row[key] ? row[key] : '') + '\"';
+                            const val = '\"' + (row[key] ? row[key].replaceAll('"', '""') : '') + '\"';
                             fixedRow.push(val);
                         }
-                    }
+                    });
                 }
                 if(!headersSaved && headerArr.length > 0){
                     csvContent += headerArr.join(',') + '\n';
@@ -494,11 +509,13 @@ function useCore() {
         getCorrectedPolygonCoordArr,
         getCurrentDateStr,
         getErrorResponseText,
+        getIso8601StrFromRFC1123Str,
         getPlatformProperty,
         getRgbaStrFromHexOpacity,
         getSubstringByRegEx,
         hexToRgb,
         hideWorking,
+        isRFC1123Str,
         parseFile,
         parseDate,
         parseScientificName,
