@@ -431,21 +431,21 @@ function useCore() {
                 if(Array.isArray(row)){
                     row.forEach(val => {
                         if(val){
-                            val = '\"' + (val ? val : '') + '\"';
+                            val = '\"' + (val ? val.replaceAll('"', '""') : '') + '\"';
                         }
                         fixedRow.push(val);
                     });
                 }
                 else{
-                    for(let key in row) {
+                    Object.keys(row).forEach((key) => {
                         if(!headersSaved){
-                            headerArr.push('\"' + key + '\"');
+                            headerArr.push('\"' + key.replaceAll('"', '""') + '\"');
                         }
                         if(row.hasOwnProperty(key)){
-                            const val = '\"' + (row[key] ? row[key] : '') + '\"';
+                            const val = '\"' + (row[key] ? row[key].replaceAll('"', '""') : '') + '\"';
                             fixedRow.push(val);
                         }
-                    }
+                    });
                 }
                 if(!headersSaved && headerArr.length > 0){
                     csvContent += headerArr.join(',') + '\n';
