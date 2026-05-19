@@ -148,6 +148,16 @@ class SanitizerService {
         return $valid;
     }
 
+    public static function validateJsonStr($jsonStr): bool
+    {
+        try {
+            $data = json_decode($jsonStr, true, 512, JSON_THROW_ON_ERROR);
+            return (bool)$data;
+        } catch (JsonException) {
+            return false;
+        }
+    }
+
     public static function validateRequestPath(): void
     {
         $requestPath = '';
