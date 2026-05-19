@@ -41,7 +41,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
             const INTERFACE = '<?php echo ($interface ?: 'list'); ?>';
             const OCCID = <?php echo $occId; ?>;
             const QUERYID = <?php echo $queryId; ?>;
-            const STARRJSON = '<?php echo $stArrJson; ?>';
+            const STARRJSON = '<?php echo str_replace("'", "\'", $stArrJson); ?>';
         </script>
     </head>
     <body>
@@ -303,7 +303,7 @@ $stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && Sani
                     const showRecordInfoWindow = Vue.ref(false);
                     const showSpatialPopup = Vue.ref(false);
                     const spatialInputValues = Vue.computed(() => searchStore.getSpatialInputValues);
-                    const stArrJson = STARRJSON;
+                    const stArrJson = STARRJSON.replaceAll("\\'", "'");
 
                     Vue.watch(displayInterface, () => {
                         setInterfaceDisplay();
