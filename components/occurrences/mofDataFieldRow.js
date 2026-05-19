@@ -57,6 +57,7 @@ const mofDataFieldRow = {
                                 :field-hint="configuredDataFields[field.fieldName]['fieldHint'] ? configuredDataFields[field.fieldName]['fieldHint'] : null"
                                 :max-value="configuredDataFields[field.fieldName]['maxValue'] ? configuredDataFields[field.fieldName]['maxValue'] : null" 
                                 :min-value="configuredDataFields[field.fieldName]['minValue'] ? configuredDataFields[field.fieldName]['minValue'] : null"
+                                :round-value="configuredDataFields[field.fieldName]['roundValue'] ? configuredDataFields[field.fieldName]['roundValue'] : null" 
                                 :max-length="configuredDataFields[field.fieldName]['maxlength'] ? configuredDataFields[field.fieldName]['maxlength'] : null"
                                 :show-counter="configuredDataFields[field.fieldName]['showCounter'] ? configuredDataFields[field.fieldName]['showCounter'] : false"
                                 :step="configuredDataFields[field.fieldName]['step'] ? configuredDataFields[field.fieldName]['step'] : 1"
