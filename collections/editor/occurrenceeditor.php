@@ -1,11 +1,12 @@
 <?php
 include_once(__DIR__ . '/../../config/symbbase.php');
+include_once(__DIR__ . '/../../services/SanitizerService.php');
 
 $occId = array_key_exists('occid', $_REQUEST) ? (int)$_REQUEST['occid'] : 0;
 $collId = array_key_exists('collid', $_REQUEST) ? (int)$_REQUEST['collid'] : 0;
 $displayMode = array_key_exists('mode', $_REQUEST) ? (int)$_REQUEST['mode'] : 1;
 $queryId = array_key_exists('queryId', $_REQUEST) ? (int)$_REQUEST['queryId'] : 0;
-$stArrJson = array_key_exists('starr', $_REQUEST) ? $_REQUEST['starr'] : '';
+$stArrJson = (array_key_exists('starr', $_REQUEST) && $_REQUEST['starr'] && SanitizerService::validateJsonStr($_REQUEST['starr'])) ? $_REQUEST['starr'] : '';
 
 $url = $GLOBALS['CLIENT_ROOT'] . '/collections/occurrenceNavigator.php?interface=occurrence';
 if($collId > 0){
