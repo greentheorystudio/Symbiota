@@ -425,11 +425,9 @@ header('X-Frame-Options: SAMEORIGIN');
                                 returnArr.push(permObj);
                             });
                         }
-                        if(returnArr.length > 0){
-                            returnArr.sort((a, b) => {
-                                return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
-                            });
-                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
                         return returnArr;
                     });
                     const clientRoot = baseStore.getClientRoot;
@@ -443,11 +441,9 @@ header('X-Frame-Options: SAMEORIGIN');
                                 returnArr.push(permObj);
                             });
                         }
-                        if(returnArr.length > 0){
-                            returnArr.sort((a, b) => {
-                                return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
-                            });
-                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
                         return returnArr;
                     });
                     const collectionArr = Vue.ref([]);
@@ -461,11 +457,9 @@ header('X-Frame-Options: SAMEORIGIN');
                                 returnArr.push(permObj);
                             });
                         }
-                        if(returnArr.length > 0){
-                            returnArr.sort((a, b) => {
-                                return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
-                            });
-                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
                         return returnArr;
                     });
                     const collRarePermissionArr = Vue.computed(() => {
@@ -478,11 +472,9 @@ header('X-Frame-Options: SAMEORIGIN');
                                 returnArr.push(permObj);
                             });
                         }
-                        if(returnArr.length > 0){
-                            returnArr.sort((a, b) => {
-                                return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
-                            });
-                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
                         return returnArr;
                     });
                     const currentUserId = Vue.ref(null);
@@ -505,11 +497,9 @@ header('X-Frame-Options: SAMEORIGIN');
                                 returnArr.push(permObj);
                             });
                         }
-                        if(returnArr.length > 0){
-                            returnArr.sort((a, b) => {
-                                return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
-                            });
-                        }
+                        returnArr.sort((a, b) => {
+                            return a['name'].toLowerCase().localeCompare(b['name'].toLowerCase());
+                        });
                         return returnArr;
                     });
                     const projectArr = Vue.ref([]);
