@@ -220,10 +220,9 @@ class DataUtilitiesService {
             $no = array_key_exists('utmnorthing',$occData) ? $occData['utmnorthing'] : '';
             $ea = array_key_exists('utmeasting',$occData) ? $occData['utmeasting'] : '';
             $zo = array_key_exists('utmzoning',$occData) ? $occData['utmzoning'] : '';
-            $da = array_key_exists('geodeticdatum',$occData) ? $occData['geodeticdatum'] : '';
             if(!isset($occData['decimallatitude'], $occData['decimallongitude'])){
                 if($no && $ea && $zo){
-                    $llArr = self::convertUtmToLL($ea, $no, $zo, $da);
+                    $llArr = self::convertUtmToLL($ea, $no, $zo);
                     if(isset($llArr['lat'])) {
                         $occData['decimallatitude'] = $llArr['lat'];
                     }
@@ -621,16 +620,12 @@ class DataUtilitiesService {
                 }
             }
             if((!$target && !$retArr) || $target === 'UTM'){
-                $d = '';
-                if(preg_match('/NAD\s*27/i', $inStr)) {
-                    $d = 'NAD27';
-                }
                 if(preg_match('/\D*(\d{1,2}\D?)\s+(\d{6,7})m?E\s+(\d{7})m?N/i', $inStr,$m)){
                     $z = $m[1];
                     $e = $m[2];
                     $n = $m[3];
                     if($n && $e && $z){
-                        $llArr = self::convertUtmToLL($e, $n, $z, $d);
+                        $llArr = self::convertUtmToLL($e, $n, $z);
                         if(isset($llArr['lat'])) {
                             $retArr['lat'] = $llArr['lat'];
                         }
@@ -679,7 +674,7 @@ class DataUtilitiesService {
                             $n = $m[1];
                         }
                         if($e && $n){
-                            $llArr = self::convertUtmToLL($e, $n, $z, $d);
+                            $llArr = self::convertUtmToLL($e, $n, $z);
                             if(isset($llArr['lat'])) {
                                 $retArr['lat'] = $llArr['lat'];
                             }
@@ -690,10 +685,8 @@ class DataUtilitiesService {
                     }
                 }
             }
-            if($retArr){
-                if($retArr['lat'] < -90 || $retArr['lat'] > 90 || $retArr['lng'] < -180 || $retArr['lng'] > 180) {
-                    $retArr = array();
-                }
+            if($retArr && ($retArr['lat'] < -90 || $retArr['lat'] > 90 || $retArr['lng'] < -180 || $retArr['lng'] > 180)){
+                $retArr = array();
             }
         }
         return $retArr;
