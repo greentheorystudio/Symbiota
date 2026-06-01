@@ -674,7 +674,7 @@ class DataUtilitiesService {
                     $e = $m[2];
                     $n = $m[3];
                     if($n && $e && $z){
-                        $llArr = self::convertUtmToLL($e,$n,$z,$d);
+                        $llArr = self::convertUtmToLL($e, $n, $z, $d);
                         if(isset($llArr['lat'])) {
                             $retArr['lat'] = $llArr['lat'];
                         }
