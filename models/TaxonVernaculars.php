@@ -200,7 +200,7 @@ class TaxonVernaculars{
     public function getVernacularArrFromTidArr($tidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT t.tidaccepted, v.vernacularname '.
+        $sql = 'SELECT DISTINCT t.tidaccepted, v.vernacularname, v.`language` '.
             'FROM taxavernaculars AS v LEFT JOIN taxa AS t ON v.tid = t.tid '.
             'WHERE t.tidaccepted IN(' . implode(',', $tidArr) . ') '.
             'ORDER BY t.tidaccepted, v.vernacularname ';
@@ -214,12 +214,13 @@ class TaxonVernaculars{
                 $nodeArr = array();
                 $nodeArr['vernacularname'] = $row['vernacularname'];
                 $nodeArr['vernaculartid'] = $row['tidaccepted'];
+                $nodeArr['vernacularlanguage'] = $row['language'];
                 $retArr[$row['tidaccepted']][] = $nodeArr;
                 unset($rows[$index]);
             }
         }
 
-        $sql = 'SELECT DISTINCT te.tid, v.tid AS vernaculartid, v.vernacularname '.
+        $sql = 'SELECT DISTINCT te.tid, v.tid AS vernaculartid, v.vernacularname, v.`language` '.
             'FROM taxavernaculars AS v LEFT JOIN taxaenumtree AS te ON v.tid = te.parenttid '.
             'WHERE te.tid IN(' . implode(',', $tidArr) . ') '.
             'ORDER BY te.tid, v.vernacularname ';
@@ -233,6 +234,7 @@ class TaxonVernaculars{
                 $nodeArr = array();
                 $nodeArr['vernacularname'] = $row['vernacularname'];
                 $nodeArr['vernaculartid'] = $row['vernaculartid'];
+                $nodeArr['vernacularlanguage'] = $row['language'];
                 $retArr[$row['tid']][] = $nodeArr;
                 unset($rows[$index]);
             }

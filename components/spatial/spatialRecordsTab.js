@@ -196,7 +196,9 @@ const spatialRecordsTab = {
             else{
                 searchStore.removeRecordFromSelections(record.occid);
             }
-            updatePointStyle(record.occid);
+            if(record.decimallatitude && record.decimallongitude){
+                updatePointStyle(record.occid);
+            }
         }
 
         function processSelectAllChange(selected) {

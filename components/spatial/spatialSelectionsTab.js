@@ -29,7 +29,7 @@ const spatialSelectionsTab = {
                     <template v-slot:body="props">
                         <q-tr v-if="!tableLoading" :props="props">
                             <q-td>
-                                <q-checkbox v-model="checkboxValue" @update:model-value="deselectRecord(props.row.occid)" dense aria-label="Deselect record" tabindex="0" />
+                                <q-checkbox v-model="checkboxValue" @update:model-value="deselectRecord(props.row)" dense aria-label="Deselect record" tabindex="0" />
                             </q-td>
                             <q-td key="catalognumber" :props="props">
                                 {{ props.row.catalognumber }}
@@ -99,10 +99,12 @@ const spatialSelectionsTab = {
         const updatePointStyle = Vue.inject('updatePointStyle');
         const zoomToSelections = Vue.inject('zoomToSelections');
 
-        function deselectRecord(occid) {
+        function deselectRecord(record) {
             checkboxValue.value = true;
-            searchStore.removeRecordFromSelections(occid);
-            updatePointStyle(occid);
+            searchStore.removeRecordFromSelections(record.occid);
+            if(record.decimallatitude && record.decimallongitude){
+                updatePointStyle(record.occid);
+            }
             if(recordDataArr.value.length === 0){
                 updateMapSettings('selectedRecordsSelectionsSymbologyTab', 'records');
             }
