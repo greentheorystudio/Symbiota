@@ -2207,7 +2207,7 @@ const occurrenceDataUploadModule = {
             const geoJSONFormat = new ol.format.GeoJSON();
             const uploadFeatures = geoJSONFormat.readFeatures(geojsonData);
             uploadFeatures.forEach((feature, index) => {
-                if(feature){
+                if(feature && feature.getGeometry()){
                     const featureData = {};
                     const featureProps = feature.getProperties();
                     const selectedClone = feature.clone();
