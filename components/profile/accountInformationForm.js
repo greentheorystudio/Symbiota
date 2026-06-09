@@ -22,7 +22,7 @@ const accountInformationForm = {
             <q-input outlined v-model="user.phone" label="Phone Number" bg-color="white" class="col-4" dense @update:model-value="(value) => processChange('phone', value)" tabindex="0"></q-input>
         </div>
         <div class="row justify-start q-gutter-md q-mt-xs">
-            <q-input outlined v-model="user.collectorcode" label="Collecctor Code" bg-color="white" class="col-3" dense @update:model-value="(value) => processChange('collectorcode', value)" tabindex="0"></q-input>
+            <q-input outlined v-model="user.collectorcode" label="Collector Code" bg-color="white" class="col-3" dense @update:model-value="(value) => processChange('collectorcode', value)" tabindex="0"></q-input>
             <q-input outlined v-model="user.title" label="Title" bg-color="white" class="col-3" dense @update:model-value="(value) => processChange('title', value)" tabindex="0"></q-input>
             <q-input outlined v-model="user.institution" label="Institution/Agency" bg-color="white" class="col-grow" dense @update:model-value="(value) => processChange('institution', value)" tabindex="0"></q-input>
         </div>
