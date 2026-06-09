@@ -102,7 +102,7 @@ const spatialSelectionsTab = {
         function deselectRecord(record) {
             checkboxValue.value = true;
             searchStore.removeRecordFromSelections(record.occid);
-            if(record.decimallatitude && record.decimallongitude){
+            if(record.lat && record.lon){
                 updatePointStyle(record.occid);
             }
             if(recordDataArr.value.length === 0){
