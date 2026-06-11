@@ -1,37 +1,13 @@
 <?php
+include_once(__DIR__ . '/../classes/GPoint.php');
 include_once(__DIR__ . '/FileSystemService.php');
 include_once(__DIR__ . '/TaxonomyService.php');
 
 class DataUtilitiesService {
 
-    public static $ellipsoid = array(
-        'Airy' => array(6377563, 0.00667054),
-        'Australian National' => array(6378160, 0.006694542),
-        'Bessel 1841' => array(6377397, 0.006674372),
-        'Bessel 1841 Nambia' => array(6377484, 0.006674372),
-        'Clarke 1866' => array(6378206, 0.006768658),
-        'Clarke 1880' => array(6378249, 0.006803511),
-        'Everest' => array(6377276, 0.006637847),
-        'Fischer 1960 Mercury' => array(6378166, 0.006693422),
-        'Fischer 1968' => array(6378150, 0.006693422),
-        'GRS 1967' => array(6378160, 0.006694605),
-        'GRS 1980' => array(6378137, 0.00669438),
-        'Helmert 1906' => array(6378200, 0.006693422),
-        'Hough' => array(6378270, 0.00672267),
-        'International' => array(6378388, 0.00672267),
-        'Krassovsky' => array(6378245, 0.006693422),
-        'Modified Airy' => array(6377340, 0.00667054),
-        'Modified Everest' => array(6377304, 0.006637847),
-        'Modified Fischer 1960' => array(6378155, 0.006693422),
-        'South American 1969' => array(6378160, 0.006694542),
-        'WGS 60' => array(6378165, 0.006693422),
-        'WGS 66' => array(6378145, 0.006694542),
-        'WGS 72' => array(6378135, 0.006694318),
-        'WGS 84' => array(6378137, 0.00669438)
-    );
-    public static $monthNames = array('jan'=>'01','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04','apr'=>'04','may'=>'05','jun'=>'06','jul'=>'07','ago'=>'08',
+    public static array $monthNames = array('jan'=>'01','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04','apr'=>'04','may'=>'05','jun'=>'06','jul'=>'07','ago'=>'08',
         'aug'=>'08','sep'=>'09','oct'=>'10','nov'=>'11','dec'=>'12','dic'=>'12');
-    public static $monthRoman = array('I'=>'01','II'=>'02','III'=>'03','IV'=>'04','V'=>'05','VI'=>'06','VII'=>'07','VIII'=>'08','IX'=>'09','X'=>'10','XI'=>'11','XII'=>'12');
+    public static array $monthRoman = array('I'=>'01','II'=>'02','III'=>'03','IV'=>'04','V'=>'05','VI'=>'06','VII'=>'07','VIII'=>'08','IX'=>'09','X'=>'10','XI'=>'11','XII'=>'12');
 
     public static function cleanOccurrenceData($occData){
         foreach($occData as $k => $v){
@@ -244,10 +220,9 @@ class DataUtilitiesService {
             $no = array_key_exists('utmnorthing',$occData) ? $occData['utmnorthing'] : '';
             $ea = array_key_exists('utmeasting',$occData) ? $occData['utmeasting'] : '';
             $zo = array_key_exists('utmzoning',$occData) ? $occData['utmzoning'] : '';
-            $da = array_key_exists('geodeticdatum',$occData) ? $occData['geodeticdatum'] : '';
             if(!isset($occData['decimallatitude'], $occData['decimallongitude'])){
                 if($no && $ea && $zo){
-                    $llArr = self::convertUtmToLL($ea, $no, $zo, $da);
+                    $llArr = self::convertUtmToLL($ea, $no, $zo);
                     if(isset($llArr['lat'])) {
                         $occData['decimallatitude'] = $llArr['lat'];
                     }
@@ -360,7 +335,7 @@ class DataUtilitiesService {
                 $occData['sciname'] = preg_replace($pattern,'', $occData['sciname']);
             }
         }
-        else if(array_key_exists('genus', $occData)){
+        elseif(array_key_exists('genus', $occData)){
             $sciName = $occData['genus'];
             if(array_key_exists('specificepithet', $occData)) {
                 $sciName .= ' ' . $occData['specificepithet'];
@@ -410,71 +385,51 @@ class DataUtilitiesService {
         return $occData;
     }
 
-    public static function convertTMtoLL($easting, $northing, $zone, $a, $e2): array
+    public static function convertUtmToLL($e, $n, $z): array
     {
+        $retArr = array();
         $k0 = 0.9996;
-        $e1 = (1 - sqrt(1 - $e2)) / (1 + sqrt(1 - $e2));
-        sscanf($zone, '%d%s',$zoneNumber, $zoneLetter);
+        $e1 = (1 - sqrt(1 - 0.00669438)) / (1 + sqrt(1 - 0.00669438));
+        $y = $n;
+        sscanf($z, '%d%s',$zoneNumber, $zoneLetter);
         $isSouthern = false;
         if($zoneLetter){
             if(strtoupper($zoneLetter) < 'N'){
                 $isSouthern = true;
             }
             if(strtoupper($zoneLetter) === 'S'){
-                if(($zoneNumber > 18 && $zoneNumber < 23) || $northing < 3540000 || $northing > 4420000){
+                if(($zoneNumber > 18 && $zoneNumber < 23) || $y < 3540000 || $y > 4420000){
                     $isSouthern = true;
                 }
             }
         }
         if($isSouthern){
-            $northing -= 10000000.0;
+            $y -= 10000000.0;
         }
         $longOrigin = ($zoneNumber - 1) * 6 - 180 + 3;
-        $falseEasting = 500000.0;
-        $x = $easting - $falseEasting;
-        $eccPrimeSquared = $e2 / (1 - $e2);
-        $m = $northing / $k0;
-        $mu = $m / ($a * (1 - $e2 / 4 - 3 * $e2 * $e2 / 64 - 5 * $e2 * $e2 * $e2 / 256));
+        $x = $e - 500000.0;
+        $eccPrimeSquared = 0.00669438 / (1 - 0.00669438);
+        $m = $y / $k0;
+        $mu = $m / (6378137 * (1 - 0.00669438 / 4 - 3 * 0.00669438 * 0.00669438 / 64 - 5 * 0.00669438 * 0.00669438 * 0.00669438 / 256));
         $phi1Rad = $mu + (3 * $e1 / 2 - 27 * $e1 * $e1 * $e1 / 32) * sin(2 * $mu) + (21 * $e1 * $e1 / 16 - 55 * $e1 * $e1 * $e1 * $e1 / 32) * sin(4 * $mu) + (151 * $e1 * $e1 * $e1 / 96) * sin(6 * $mu);
-        $n1 = $a / sqrt(1 - $e2 * sin($phi1Rad) * sin($phi1Rad));
+        $n1 = 6378137 / sqrt(1 - 0.00669438 * sin($phi1Rad) * sin($phi1Rad));
         $t1 = tan($phi1Rad) * tan($phi1Rad);
         $c1 = $eccPrimeSquared * cos($phi1Rad) * cos($phi1Rad);
-        $r1 = $a * (1 - $e2) / ((1 - $e2 * sin($phi1Rad) * sin($phi1Rad)) ** 1.5);
+        $r1 = 6378137 * (1 - 0.00669438) / ((1 - 0.00669438 * sin($phi1Rad) * sin($phi1Rad)) ** 1.5);
         $d = $x / ($n1 * $k0);
         $tlat = $phi1Rad - ($n1 * tan($phi1Rad) / $r1) * ($d * $d / 2 - (5 + 3 * $t1 + 10 * $c1 - 4 * $c1 * $c1 - 9 * $eccPrimeSquared) * $d * $d * $d * $d / 24 + (61 + 90 * $t1 + 298 * $c1 + 45 * $t1 * $t1 - 252 * $eccPrimeSquared - 3 * $c1 * $c1) * $d * $d * $d * $d * $d * $d / 720);
+        $lat = rad2deg($tlat);
         $tlong = ($d - (1 + 2 * $t1 + $c1) * $d * $d * $d / 6 + (5 - 2 * $c1 + 28 * $t1 - 3 * $c1 * $c1 + 8 * $eccPrimeSquared + 24 * $t1 * $t1) * $d * $d * $d * $d * $d / 120) / cos($phi1Rad);
-        $returnLat = rad2deg($tlat);
-        $returnLong = $longOrigin + rad2deg($tlong);
-        return array($returnLat, $returnLong);
-    }
-
-    public static function convertUtmToLL($easting, $northing, $zone, $datum): array
-    {
-        $retArr = array();
-        if($easting && $northing && $zone){
-            if(preg_match('/nad\s*83/i', $datum)){
-                $datumVal = 'GRS 1980';
-            }
-            elseif(preg_match('/nad\s*27/i', $datum)){
-                $datumVal = 'Clarke 1866';
-            }
-            else{
-                $datumVal = 'WGS 84';
-            }
-            $a = self::$ellipsoid[$datumVal][1];
-            $e2 = self::$ellipsoid[$datumVal][1];
-            $latLongArr = self::convertTMtoLL($easting, $northing, $zone, $a, $e2);
-            $lat = count($latLongArr) === 2 ? $latLongArr[0] : null;
-            $lng = count($latLongArr) === 2 ? $latLongArr[1] : null;
-            if($lat && $lng){
-                $retArr['lat'] = round($lat,6, PHP_ROUND_HALF_UP);
-                $retArr['lng'] = round($lng,6, PHP_ROUND_HALF_UP);
-            }
+        $lng = $longOrigin + rad2deg($tlong);
+        if($lat && $lng){
+            $retArr['lat'] = round($lat,6);
+            $retArr['lng'] = round($lng,6);
         }
         return $retArr;
     }
     
-    public static function formatDate($inStr){
+    public static function formatDate($inStr): bool|string
+    {
         $retDate = '';
         $dateStr = trim($inStr);
         if(!$dateStr) {
@@ -665,16 +620,12 @@ class DataUtilitiesService {
                 }
             }
             if((!$target && !$retArr) || $target === 'UTM'){
-                $d = '';
-                if(preg_match('/NAD\s*27/i', $inStr)) {
-                    $d = 'NAD27';
-                }
                 if(preg_match('/\D*(\d{1,2}\D?)\s+(\d{6,7})m?E\s+(\d{7})m?N/i', $inStr,$m)){
                     $z = $m[1];
                     $e = $m[2];
                     $n = $m[3];
                     if($n && $e && $z){
-                        $llArr = self::convertUtmToLL($e,$n,$z,$d);
+                        $llArr = self::convertUtmToLL($e, $n, $z);
                         if(isset($llArr['lat'])) {
                             $retArr['lat'] = $llArr['lat'];
                         }
@@ -723,7 +674,7 @@ class DataUtilitiesService {
                             $n = $m[1];
                         }
                         if($e && $n){
-                            $llArr = self::convertUtmToLL($e, $n, $z, $d);
+                            $llArr = self::convertUtmToLL($e, $n, $z);
                             if(isset($llArr['lat'])) {
                                 $retArr['lat'] = $llArr['lat'];
                             }
@@ -734,10 +685,8 @@ class DataUtilitiesService {
                     }
                 }
             }
-            if($retArr){
-                if($retArr['lat'] < -90 || $retArr['lat'] > 90 || $retArr['lng'] < -180 || $retArr['lng'] > 180) {
-                    $retArr = array();
-                }
+            if($retArr && ($retArr['lat'] < -90 || $retArr['lat'] > 90 || $retArr['lng'] < -180 || $retArr['lng'] > 180)){
+                $retArr = array();
             }
         }
         return $retArr;
