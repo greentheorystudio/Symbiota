@@ -480,14 +480,14 @@ class ChecklistPackagingService {
             PhpWordService::addTableStyle($phpWord, 'imageTable', $this->tableStyle, $this->colRowStyle);
             $section = PhpWordService::getSection($phpWord, array('paperSize' => 'Letter', 'marginLeft' => 1080, 'marginRight' => 1080, 'marginTop' => 1080, 'marginBottom' => 1080, 'headerHeight' => 0, 'footerHeight' => 0));
             $textrun = PhpWordService::getTextRun($section, 'defaultPara');
-            PhpWordService::addText($textrun, $dataArr['data']['name'], 'titleFont');
+            PhpWordService::addText($textrun, htmlspecialchars($dataArr['data']['name'], ENT_QUOTES | ENT_XML1, 'UTF-8'), 'titleFont');
             PhpWordService::addTextBreak($textrun);
             PhpWordService::addText($textrun, 'Authors: ', 'topicFont');
-            PhpWordService::addText($textrun, ($dataArr['data']['authors'] ?: ''), 'textFont');
+            PhpWordService::addText($textrun, ($dataArr['data']['authors'] ? htmlspecialchars($dataArr['data']['authors'], ENT_QUOTES | ENT_XML1, 'UTF-8') : ''), 'textFont');
             PhpWordService::addTextBreak($textrun);
             if($dataArr['data']['publication']){
                 PhpWordService::addText($textrun, 'Publication: ', 'topicFont');
-                PhpWordService::addText($textrun, $dataArr['data']['publication'], 'textFont');
+                PhpWordService::addText($textrun, htmlspecialchars($dataArr['data']['publication'], ENT_QUOTES | ENT_XML1, 'UTF-8'), 'textFont');
                 PhpWordService::addTextBreak($textrun);
             }
             if($dataArr['data']['locality'] || ($dataArr['data']['latcentroid'] && $dataArr['data']['longcentroid'])){
@@ -495,12 +495,12 @@ class ChecklistPackagingService {
             }
             if($dataArr['data']['abstract']){
                 PhpWordService::addText($textrun, 'Abstract: ', 'topicFont');
-                PhpWordService::addText($textrun, $dataArr['data']['abstract'], 'textFont');
+                PhpWordService::addText($textrun, htmlspecialchars($dataArr['data']['abstract'], ENT_QUOTES | ENT_XML1, 'UTF-8'), 'textFont');
                 PhpWordService::addTextBreak($textrun);
             }
             if($dataArr['data']['notes']){
                 PhpWordService::addText($textrun, 'Notes: ', 'topicFont');
-                PhpWordService::addText($textrun, $dataArr['data']['notes'], 'textFont');
+                PhpWordService::addText($textrun, htmlspecialchars($dataArr['data']['notes'], ENT_QUOTES | ENT_XML1, 'UTF-8'), 'textFont');
                 PhpWordService::addTextBreak($textrun);
             }
             $textrun = PhpWordService::getTextRun($section, 'linePara');
@@ -589,12 +589,12 @@ class ChecklistPackagingService {
                 $textrun = PhpWordService::getTextRun($cell, 'imagePara');
                 PhpWordService::addImage($textrun, ($GLOBALS['SERVER_ROOT'] . $imageSrc), array('width' => 160, 'height' => 160));
                 PhpWordService::addTextBreak($textrun);
-                PhpWordService::addText($textrun, $taxon['sciname'], 'topicFont');
+                PhpWordService::addText($textrun, htmlspecialchars($taxon['sciname'], ENT_QUOTES | ENT_XML1, 'UTF-8'), 'topicFont');
                 PhpWordService::addTextBreak($textrun);
                 if((int)$options['vernaculars'] === 1 && $taxon['vernacularData'] && count($taxon['vernacularData']) > 0){
                     $vernacularArr = array();
                     foreach($taxon['vernacularData'] as $vernacular){
-                        $vernacularArr[] = $vernacular['vernacularname'];
+                        $vernacularArr[] = htmlspecialchars($vernacular['vernacularname'], ENT_QUOTES | ENT_XML1, 'UTF-8');
                     }
                     PhpWordService::addText($textrun, (count($vernacularArr) > 0 ? implode(', ', $vernacularArr) : ''), 'topicFont');
                     PhpWordService::addTextBreak($textrun);
@@ -627,7 +627,7 @@ class ChecklistPackagingService {
         }
         if($localityStr){
             PhpWordService::addText($textrun, 'Locality: ', 'topicFont');
-            PhpWordService::addText($textrun, $localityStr, 'textFont');
+            PhpWordService::addText($textrun, htmlspecialchars($localityStr, ENT_QUOTES | ENT_XML1, 'UTF-8'), 'textFont');
             PhpWordService::addTextBreak($textrun);
         }
     }
@@ -644,13 +644,13 @@ class ChecklistPackagingService {
             $textrun = PhpWordService::getTextRun($section, 'scinamePara');
             PhpWordService::addText($textrun, $taxon['sciname'], 'scientificnameFont');
             if((int)$options['authors'] === 1 && $taxon['author']){
-                PhpWordService::addText($textrun, (' ' . $taxon['author']), 'textFont');
+                PhpWordService::addText($textrun, (' ' . htmlspecialchars($taxon['author'], ENT_QUOTES | ENT_XML1, 'UTF-8')), 'textFont');
                 PhpWordService::addTextBreak($textrun);
             }
             if((int)$options['vernaculars'] === 1 && $taxon['vernacularData'] && count($taxon['vernacularData']) > 0){
                 $vernacularArr = array();
                 foreach($taxon['vernacularData'] as $vernacular){
-                    $vernacularArr[] = $vernacular['vernacularname'];
+                    $vernacularArr[] = htmlspecialchars($vernacular['vernacularname'], ENT_QUOTES | ENT_XML1, 'UTF-8');
                 }
                 PhpWordService::addText($textrun, (count($vernacularArr) > 0 ? (' - ' . implode(', ', $vernacularArr)) : ''), 'topicFont');
             }
@@ -682,12 +682,12 @@ class ChecklistPackagingService {
                     if($taxon['source']){
                         $notesStr .= 'Source: ' . $taxon['source'];
                     }
-                    PhpWordService::addText($textrun, $notesStr, 'textFont');
+                    PhpWordService::addText($textrun, htmlspecialchars($notesStr, ENT_QUOTES | ENT_XML1, 'UTF-8'), 'textFont');
                 }
                 if(array_key_exists($taxon['tid'], $dataArr['vouchers']) && count($dataArr['vouchers'][$taxon['tid']]) > 0){
                     $voucherStrArr = array();
                     foreach($dataArr['vouchers'][$taxon['tid']] as $voucher){
-                        $voucherStrArr[] = $voucher['label'];
+                        $voucherStrArr[] = htmlspecialchars($voucher['label'], ENT_QUOTES | ENT_XML1, 'UTF-8');
                     }
                     if(count($voucherStrArr) > 0){
                         PhpWordService::addText($textrun, implode(', ', $voucherStrArr), 'textFont');

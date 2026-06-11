@@ -33,9 +33,7 @@ header('X-Frame-Options: SAMEORIGIN');
             <div class="q-pa-md">
                 <div class="column q-gutter-sm">
                     <div class="q-mb-md row justify-between">
-                        <h1>
-                            Biotic Inventory Projects
-                        </h1>
+                        <div class="text-h5 text-bold">Biotic Inventory Projects</div>
                         <div v-if="validUser" class="row justify-end q-gutter-sm q-pr-md">
                             <div>
                                 <q-btn color="secondary" @click="openProjectEditorPopup();" label="Create Project" tabindex="0" />
