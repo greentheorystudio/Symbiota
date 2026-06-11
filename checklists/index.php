@@ -45,9 +45,7 @@ header('X-Frame-Options: SAMEORIGIN');
             <div class="q-pa-md">
                 <div class="column q-gutter-sm">
                     <div class="row justify-between">
-                        <h1>
-                            Checklists
-                        </h1>
+                        <div class="text-h5 text-bold">Checklists</div>
                         <div v-if="validUser" class="row justify-end q-gutter-sm q-pr-md">
                             <div>
                                 <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Checklist" tabindex="0" />
