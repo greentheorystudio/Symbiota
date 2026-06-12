@@ -19,7 +19,7 @@ const viewProfileOccurrenceModule = {
                 <q-card class="q-mt-md">
                     <q-card-section>
                         <div class="q-ml-md q-mr-sm text-bold">
-                            <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collection.collid)" tabindex="0">
+                            <a :href="(clientRoot + '/collections/misc/collprofiles.php?collid=' + collectionArr[0].collid)" tabindex="0">
                                 Go to Control Panel
                             </a>
                         </div>
