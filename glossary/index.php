@@ -130,7 +130,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     </template>
                 </template>
                 <template v-else>
-                    <div class="text-h4 text-bold">
+                    <div class="text-h6 text-bold">
                         There are no glossary terms available at this time.
                     </div>
                 </template>
