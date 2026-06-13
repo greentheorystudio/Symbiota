@@ -28,4 +28,13 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'updateGlossaryRecord' && $isEditor && $glossid && array_key_exists('glossaryData', $_POST)){
         echo $glossary->updateGlossaryRecord($glossid, json_decode($_POST['glossaryData'], true));
     }
+    elseif($action === 'getGlossaryLanguageArr'){
+        echo json_encode($glossary->getGlossaryLanguageArr());
+    }
+    elseif($action === 'getGlossaryTaxaArr'){
+        echo json_encode($glossary->getGlossaryTaxaArr());
+    }
+    elseif($action === 'getGlossaryArr' && array_key_exists('numRows', $_POST) && array_key_exists('index', $_POST)){
+        echo json_encode($glossary->getGlossaryArr((int)$_POST['numRows'], (int)$_POST['index']));
+    }
 }

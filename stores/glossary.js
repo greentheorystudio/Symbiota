@@ -12,12 +12,21 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             resourceurl: null,
             uid: null
         },
+        glossaryArr: [],
         glossaryData: {},
         glossaryEditData: {},
         glossaryId: 0,
+        glossaryImageStore: useGlossaryImageStore(),
+        glossaryLanguageArr: [],
+        glossaryLoadingIndex: 0,
+        glossarySourceStore: useGlossarySourceStore(),
+        glossaryTaxaArr: [],
         glossaryUpdateData: {}
     }),
     getters: {
+        getGlossaryArr(state) {
+            return state.glossaryArr;
+        },
         getGlossaryData(state) {
             return state.glossaryEditData;
         },
@@ -35,11 +44,28 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         getGlossaryID(state) {
             return state.glossaryId;
         },
+        getGlossaryLanguageArr(state) {
+            return state.glossaryLanguageArr;
+        },
+        getGlossarySourceData(state) {
+            return state.glossarySourceStore.getGlossarySourceData;
+        },
+        getGlossarySourceID(state) {
+            return state.glossarySourceStore.getGlossarySourceID;
+        },
+        getGlossaryTaxaArr(state) {
+            return state.glossaryTaxaArr;
+        },
         getGlossaryValid(state) {
             return state.glossaryEditData['term'] && state.glossaryEditData['language'];
         }
     },
     actions: {
+        clearGlossaryData() {
+            this.glossaryId = 0;
+            this.glossaryData = Object.assign({}, this.blankGlossaryRecord);
+            this.glossaryImageStore.clearGlossaryImageData();
+        },
         createGlossaryRecord(callback) {
             const formData = new FormData();
             formData.append('glossary', JSON.stringify(this.glossaryEditData));
@@ -68,6 +94,88 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             })
             .then((res) => {
                 callback(Number(res));
+            });
+        },
+        getCurrentGlossaryData() {
+            return this.glossaryArr.find(glossary => Number(glossary.glossid) === this.glossaryId);
+        },
+        setCurrentGlossaryRecord(glossid) {
+            this.clearGlossaryData();
+            this.glossaryId = Number(glossid);
+            if(this.glossaryId > 0){
+                this.glossaryData = Object.assign({}, this.getCurrentGlossaryData());
+                this.glossaryImageStore.setGlossaryImageArr(this.glossaryId);
+            }
+            else{
+                this.glossaryData = Object.assign({}, this.blankGlossaryRecord);
+            }
+            this.glossaryEditData = Object.assign({}, this.glossaryData);
+        },
+        setGlossaryArr(callback){
+            const loadingCnt = 10000;
+            const formData = new FormData();
+            formData.append('numRows', loadingCnt.toString());
+            formData.append('index', this.glossaryLoadingIndex.toString());
+            formData.append('action', 'getGlossaryArr');
+            fetch(glossaryApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                const newGlossaryArr = this.glossaryArr.concat(data);
+                this.glossaryArr = newGlossaryArr.slice();
+                if(data.length === loadingCnt){
+                    this.glossaryLoadingIndex++;
+                    this.setGlossaryArr(callback);
+                }
+                else{
+                    if(callback){
+                        callback();
+                    }
+                }
+            });
+        },
+        setGlossaryData(callback = null) {
+            this.glossaryLoadingIndex = 0;
+            this.glossaryArr.length = 0;
+            this.glossaryLanguageArr.length = 0;
+            this.glossaryTaxaArr.length = 0;
+            this.setGlossaryLanguageArr();
+            this.setGlossaryTaxaArr();
+            this.setGlossaryArr(callback);
+        },
+        setGlossaryLanguageArr() {
+            const formData = new FormData();
+            formData.append('action', 'getGlossaryLanguageArr');
+            fetch(glossaryApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.glossaryLanguageArr = data;
+            });
+        },
+        setGlossarySourceData(id) {
+            this.glossarySourceStore.setGlossarySourceData(id);
+        },
+        setGlossaryTaxaArr() {
+            const formData = new FormData();
+            formData.append('action', 'getGlossaryTaxaArr');
+            fetch(glossaryApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.glossaryTaxaArr = data;
             });
         },
         updateGlossaryEditData(key, value) {

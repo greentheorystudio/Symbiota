@@ -32,6 +32,10 @@ const useGlossarySourceStore = Pinia.defineStore('glossary-source', {
         }
     },
     actions: {
+        clearGlossarySourceData() {
+            this.glossarySourceId = 0;
+            this.glossarySourceData = Object.assign({}, this.blankGlossarySourceRecord);
+        },
         createGlossarySourceRecord(callback) {
             const formData = new FormData();
             formData.append('glossarySource', JSON.stringify(this.glossarySourceEditData));
@@ -61,6 +65,31 @@ const useGlossarySourceStore = Pinia.defineStore('glossary-source', {
             .then((res) => {
                 callback(Number(res));
             });
+        },
+        setGlossarySourceData(id) {
+            this.clearGlossarySourceData();
+            this.glossarySourceId = Number(id);
+            if(this.glossarySourceId > 0){
+                const formData = new FormData();
+                formData.append('tid', this.glossarySourceId.toString());
+                formData.append('action', 'getGlossarySourceRecord');
+                fetch(glossarySourceApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.json() : null;
+                })
+                .then((data) => {
+                    if(data.hasOwnProperty('tid') && Number(data['tid']) > 0) {
+                        this.glossarySourceData = Object.assign({}, data);
+                        this.glossarySourceEditData = Object.assign({}, this.glossarySourceData);
+                    }
+                });
+            }
+            else{
+                this.glossarySourceEditData = Object.assign({}, this.glossarySourceData);
+            }
         },
         updateGlossarySourceEditData(key, value) {
             this.glossarySourceEditData[key] = value;

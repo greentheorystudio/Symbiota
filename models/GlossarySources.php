@@ -54,6 +54,26 @@ class GlossarySources{
         return $retVal;
     }
 
+    public function getGlossarySourceData($tid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM glossarysources WHERE tid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $row[$name];
+                }
+            }
+        }
+        return $retArr;
+    }
+
     public function updateGlossarySourceRecord($tid, $editData): int
     {
         $retVal = 0;

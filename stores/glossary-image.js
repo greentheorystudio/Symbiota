@@ -42,7 +42,7 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
         }
     },
     actions: {
-        clearGlossaryImageArr() {
+        clearGlossaryImageData() {
             this.glossaryImageArr.length = 0;
         },
         createGlossaryImageRecord(callback) {
