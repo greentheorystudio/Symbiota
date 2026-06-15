@@ -26,20 +26,22 @@ class GlossarySources{
     public function createGlossarySourceRecord($data): int
     {
         $newID = 0;
-        $fieldNameArr = array();
-        $fieldValueArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field !== 'initialtimestamp' && array_key_exists($field, $data)){
-                $fieldNameArr[] = $field;
-                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+        if(array_key_exists('tid', $data) && (int)$data['tid'] > 0){
+            $fieldNameArr = array();
+            $fieldValueArr = array();
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'initialtimestamp' && array_key_exists($field, $data)){
+                    $fieldNameArr[] = $field;
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
             }
-        }
-        $fieldNameArr[] = 'initialtimestamp';
-        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
-        $sql = 'INSERT INTO glossarysources(' . implode(',', $fieldNameArr) . ') '.
-            'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        if($this->conn->query($sql)){
-            $newID = $this->conn->insert_id;
+            $fieldNameArr[] = 'initialtimestamp';
+            $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+            $sql = 'INSERT INTO glossarysources(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            if($this->conn->query($sql)){
+                $newID = (int)$data['tid'];
+            }
         }
         return $newID;
     }

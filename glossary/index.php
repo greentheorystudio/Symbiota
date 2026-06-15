@@ -34,10 +34,10 @@ header('X-Frame-Options: SAMEORIGIN');
                                 <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Create Term" tabindex="0" />
                             </div>
                             <div>
-                                <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Upload Terms" tabindex="0" />
+                                <q-btn color="secondary" @click="showGlossaryBatchLoaderPopup = true" label="Upload Terms" tabindex="0" />
                             </div>
-                            <div v-if="Number(selectedTaxonomicGroupId) > 0 && Number(glossarySourceData.tid) === 0">
-                                <q-btn color="secondary" @click="openChecklistEditorPopup();" label="Add Sources" tabindex="0" />
+                            <div v-if="Number(selectedTaxonomicGroupId) > 0 && glossarySourceId === 0">
+                                <q-btn color="secondary" @click="showGlossarySourceEditorPopup = true" label="Add Sources" tabindex="0" />
                             </div>
                         </template>
                     </div>
@@ -65,7 +65,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     <q-separator></q-separator>
                 </div>
                 <template v-if="glossarySourceData && Number(glossarySourceData.tid) > 0">
-                    <div class="row justify-between q-gutter-sm">
+                    <div class="q-mb-sm row justify-between q-gutter-sm">
                         <div>
                             <template v-if="showSources">
                                 <div class="text-body1 text-bold text-blue cursor-pointer">
@@ -79,7 +79,7 @@ header('X-Frame-Options: SAMEORIGIN');
                             </template>
                         </div>
                         <div>
-                            <q-btn color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showChecklistEditorPopup = true" icon="fas fa-cog" aria-label="Edit sources" dense tabindex="0">
+                            <q-btn v-if="isEditor" color="grey-4" text-color="black" class="black-border cursor-pointer" size="sm" @click="showGlossarySourceEditorPopup = true" icon="far fa-edit" aria-label="Edit sources" dense tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Edit sources
                                 </q-tooltip>
@@ -108,7 +108,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     <div class="q-mb-sm q-px-md full-width row justify-end q-gutter-md">
                         <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Glossary term page navigation"></q-pagination>
                         <div>
-                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="downloadChecklist('csv');" icon="fas fa-download" dense aria-label="Download Checklist CSV" tabindex="0">
+                            <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="showGlossaryDownloadOptionsPopup = true" icon="fas fa-download" dense aria-label="Download Checklist CSV" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
                                     Download Checklist CSV
                                 </q-tooltip>
@@ -122,7 +122,7 @@ header('X-Frame-Options: SAMEORIGIN');
                 <template v-if="activeGlossaryArr.length > 0">
                     <template v-for="glossary in paginatedGlossaryArr">
                         <div class="q-my-xs">
-                            <a class="text-bold" tabindex="0">{{ glossary['term'] }}</a>
+                            <a class="text-bold cursor-pointer" tabindex="0">{{ glossary['term'] }}</a>
                             <template v-if="glossary['definition']">
                                 {{ ' - ' + glossary['definition'] }}
                             </template>
@@ -135,6 +135,37 @@ header('X-Frame-Options: SAMEORIGIN');
                     </div>
                 </template>
             </div>
+            <template v-if="showGlossaryBatchLoaderPopup">
+                <glossary-batch-loader-popup
+                    :show-popup="showGlossaryBatchLoaderPopup"
+                    @close:popup="showGlossaryBatchLoaderPopup = false"
+                ></glossary-batch-loader-popup>
+            </template>
+            <template v-if="showGlossaryDownloadOptionsPopup">
+                <glossary-download-options-popup
+                    :show-popup="showGlossaryDownloadOptionsPopup"
+                    @close:popup="showGlossaryDownloadOptionsPopup = false"
+                ></glossary-download-options-popup>
+            </template>
+            <template v-if="showGlossaryInfoWindowPopup">
+                <glossary-info-window-popup
+                    :show-popup="showGlossaryInfoWindowPopup"
+                    @close:popup="showGlossaryInfoWindowPopup = false"
+                ></glossary-info-window-popup>
+            </template>
+            <template v-if="showGlossarySourceEditorPopup">
+                <glossary-source-editor-popup
+                    :show-popup="showGlossarySourceEditorPopup"
+                    :taxon-id="selectedTaxonomicGroupId"
+                    @close:popup="showGlossarySourceEditorPopup = false"
+                ></glossary-source-editor-popup>
+            </template>
+            <template v-if="showGlossaryTermEditorPopup">
+                <glossary-term-editor-popup
+                    :show-popup="showGlossaryTermEditorPopup"
+                    @close:popup="showGlossaryTermEditorPopup = false"
+                ></glossary-term-editor-popup>
+            </template>
         </div>
         <?php
         include_once(__DIR__ . '/../config/footer-includes.php');
@@ -146,10 +177,23 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/checkboxInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/selectorInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/textFieldInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleLanguageAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/singleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/glossary/glossaryBatchLoaderPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/glossary/glossaryDownloadOptionsPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/glossary/glossaryInfoWindowPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/glossary/glossarySourceEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/glossary/glossaryTermEditorPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script type="text/javascript">
             const glossaryIndexModule = Vue.createApp({
                 components: {
                     'checkbox-input-element': checkboxInputElement,
+                    'glossary-batch-loader-popup': glossaryBatchLoaderPopup,
+                    'glossary-download-options-popup': glossaryDownloadOptionsPopup,
+                    'glossary-info-window-popup': glossaryInfoWindowPopup,
+                    'glossary-source-editor-popup': glossarySourceEditorPopup,
+                    'glossary-term-editor-popup': glossaryTermEditorPopup,
                     'selector-input-element': selectorInputElement,
                     'text-field-input-element': textFieldInputElement
                 },
@@ -189,6 +233,7 @@ header('X-Frame-Options: SAMEORIGIN');
                     const glossaryArr = Vue.computed(() => glossaryStore.getGlossaryArr);
                     const glossaryLanguageArr = Vue.computed(() => glossaryStore.getGlossaryLanguageArr);
                     const glossarySourceData = Vue.computed(() => glossaryStore.getGlossarySourceData);
+                    const glossarySourceId = Vue.computed(() => glossaryStore.getGlossarySourceID);
                     const glossaryTaxaArr = Vue.computed(() => glossaryStore.getGlossaryTaxaArr);
                     const glossaryTaxaOptions = Vue.computed(() => {
                         const returnArr = [];
@@ -240,7 +285,12 @@ header('X-Frame-Options: SAMEORIGIN');
                     const searchTermVal = Vue.ref(null);
                     const searchWithinDefinitionsVal = Vue.ref(false);
                     const selectedLanguage = Vue.ref(null);
-                    const selectedTaxonomicGroupId = Vue.computed(() => glossaryStore.getGlossarySourceID);
+                    const selectedTaxonomicGroupId = Vue.ref(null);
+                    const showGlossaryBatchLoaderPopup = Vue.ref(false);
+                    const showGlossaryDownloadOptionsPopup = Vue.ref(false);
+                    const showGlossaryInfoWindowPopup = Vue.ref(false);
+                    const showGlossarySourceEditorPopup = Vue.ref(false);
+                    const showGlossaryTermEditorPopup = Vue.ref(false);
                     const showSources = Vue.ref(false);
                     const termsPerPage = 100;
 
@@ -257,7 +307,8 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function processTaxonomicGroupChange(id) {
-                        glossaryStore.setGlossarySourceData(id);
+                        selectedTaxonomicGroupId.value = Number(id);
+                        glossaryStore.setGlossarySourceData(selectedTaxonomicGroupId.value);
                     }
 
                     function setEditor() {
@@ -289,6 +340,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         clientRoot,
                         glossaryLanguageArr,
                         glossarySourceData,
+                        glossarySourceId,
                         glossaryTaxaOptions,
                         isEditor,
                         paginatedGlossaryArr,
@@ -298,6 +350,11 @@ header('X-Frame-Options: SAMEORIGIN');
                         searchWithinDefinitionsVal,
                         selectedLanguage,
                         selectedTaxonomicGroupId,
+                        showGlossaryBatchLoaderPopup,
+                        showGlossaryDownloadOptionsPopup,
+                        showGlossaryInfoWindowPopup,
+                        showGlossarySourceEditorPopup,
+                        showGlossaryTermEditorPopup,
                         showSources,
                         termsPerPage,
                         processLanguageChange,

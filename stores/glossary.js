@@ -50,8 +50,14 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         getGlossarySourceData(state) {
             return state.glossarySourceStore.getGlossarySourceData;
         },
+        getGlossarySourceEditsExist(state) {
+            return state.glossarySourceStore.getGlossarySourceEditsExist;
+        },
         getGlossarySourceID(state) {
             return state.glossarySourceStore.getGlossarySourceID;
+        },
+        getGlossarySourceValid(state) {
+            return state.glossarySourceStore.getGlossarySourceValid;
         },
         getGlossaryTaxaArr(state) {
             return state.glossaryTaxaArr;
@@ -81,6 +87,11 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 callback(Number(res));
             });
         },
+        createGlossarySourceRecord(callback) {
+            this.glossarySourceStore.createGlossarySourceRecord((newGlossarySourceId) => {
+                callback(Number(newGlossarySourceId));
+            });
+        },
         deleteGlossaryRecord(callback) {
             const formData = new FormData();
             formData.append('glossid', this.glossaryId.toString());
@@ -94,6 +105,13 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             })
             .then((res) => {
                 callback(Number(res));
+            });
+        },
+        deleteGlossarySourceRecord(callback = null) {
+            this.glossarySourceStore.deleteGlossarySourceRecord((res) => {
+                if(callback){
+                    callback(Number(res));
+                }
             });
         },
         getCurrentGlossaryData() {
@@ -198,6 +216,14 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 if(res && Number(res) === 1){
                     this.glossaryData = Object.assign({}, this.glossaryEditData);
                 }
+            });
+        },
+        updateGlossarySourceEditData(key, value) {
+            this.glossarySourceStore.updateGlossarySourceEditData(key, value);
+        },
+        updateGlossarySourceRecord(callback) {
+            this.glossarySourceStore.updateGlossarySourceRecord((res) => {
+                callback(Number(res));
             });
         }
     }

@@ -29,6 +29,14 @@ const useGlossarySourceStore = Pinia.defineStore('glossary-source', {
         },
         getGlossarySourceID(state) {
             return state.glossarySourceId;
+        },
+        getGlossarySourceValid(state) {
+            return (
+                state.glossarySourceEditData['contributorterm'] ||
+                state.glossarySourceEditData['contributorimage'] ||
+                state.glossarySourceEditData['translator'] ||
+                state.glossarySourceEditData['additionalsources']
+            );
         }
     },
     actions: {
@@ -68,10 +76,9 @@ const useGlossarySourceStore = Pinia.defineStore('glossary-source', {
         },
         setGlossarySourceData(id) {
             this.clearGlossarySourceData();
-            this.glossarySourceId = Number(id);
-            if(this.glossarySourceId > 0){
+            if(Number(id) > 0){
                 const formData = new FormData();
-                formData.append('tid', this.glossarySourceId.toString());
+                formData.append('tid', id.toString());
                 formData.append('action', 'getGlossarySourceRecord');
                 fetch(glossarySourceApiUrl, {
                     method: 'POST',
@@ -82,9 +89,10 @@ const useGlossarySourceStore = Pinia.defineStore('glossary-source', {
                 })
                 .then((data) => {
                     if(data.hasOwnProperty('tid') && Number(data['tid']) > 0) {
+                        this.glossarySourceId = Number(id);
                         this.glossarySourceData = Object.assign({}, data);
-                        this.glossarySourceEditData = Object.assign({}, this.glossarySourceData);
                     }
+                    this.glossarySourceEditData = Object.assign({}, this.glossarySourceData);
                 });
             }
             else{
