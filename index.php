@@ -50,7 +50,7 @@ include(__DIR__ . '/header.php');
     </div>
 
     <div style="margin-top:10px; margin-bottom: 10px;">
-        If you have any questions or would like additional permissions for the Cal-IBIS portal, please <a href="mailto:dknapp@sbbotanicgarden.org">contact Denise Knapp (dknapp@sbbotanicgarden.org)</a>.
+        If you have any questions or would like additional permissions for the Cal-IBIS portal, please <a href="mailto:hschneider@sbbotanicgarden.org">contact Heather Schneider (hschneider@sbbotanicgarden.org)</a>.
     </div>
 </div>
 <?php
