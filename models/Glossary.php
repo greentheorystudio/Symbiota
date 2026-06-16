@@ -106,8 +106,10 @@ class Glossary{
                 $tempArr[] = $nodeArr;
                 unset($rows[$rowIndex]);
             }
+            $glossGrpIdDataArr = $this->getGlossGroupIdArrFromGlossidArr($glossidArr);
             $tidDataArr = $this->getTidArrFromGlossidArr($glossidArr);
             foreach($tempArr as $glossArr){
+                $glossArr['groupIdArr'] = $glossGrpIdDataArr[$glossArr['glossid']] ?? array();
                 $glossArr['tidArr'] = $tidDataArr[$glossArr['glossid']] ?? array();
                 $retArr[] = $glossArr;
             }
@@ -179,6 +181,36 @@ class Glossary{
             }
         }
         return $retArr;
+    }
+
+    public function getGlossGroupIdArrFromGlossidArr($glossidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT glossgrpid, glossid FROM glossarytermlink WHERE glossid IN(' . implode(',', $glossidArr) . ') ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $retArr[$row['glossid']][] = (int)$row['glossgrpid'];
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
+    public function getGlossGroupIdStartIndex(): int
+    {
+        $retVal = 0;
+        $sql = 'SELECT glossgrpid FROM glossarytermlink ORDER BY glossgrpid DESC LIMIT 1 ';
+        if($result = $this->conn->query($sql)){
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                $retVal = (int)$row['glossgrpid'];
+            }
+        }
+        $retVal++;
+        return $retVal;
     }
 
     public function getTaxonGlossary($tid): array

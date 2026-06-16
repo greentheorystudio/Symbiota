@@ -61,7 +61,7 @@ if(!$GLOBALS['SYMB_UID']) {
                             <taxonomy-data-source-import-update-module :kingdom-id="kingdomId" :loading="loading" :required-ranks="requiredRanks" :selected-ranks="selectedRanks" :selected-ranks-high="selectedRanksHigh" :taxonomic-group="taxonomicGroup" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomy-data-source-import-update-module>
                         </q-tab-panel>
                         <q-tab-panel name="fileupload">
-                            <?php include_once(__DIR__ . '/batchloader.php'); ?>
+                            <taxa-batch-loader-module :kingdom-id="kingdomId" :loading="loading" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxa-batch-loader-module>
                         </q-tab-panel>
                         <q-tab-panel name="maintenance">
                             <taxonomic-thesaurus-maintenance-module :loading="loading" :selected-ranks="selectedRanks" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomic-thesaurus-maintenance-module>
@@ -82,6 +82,8 @@ if(!$GLOBALS['SYMB_UID']) {
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaBatchLoaderModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusUSDAIdentifierModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -89,6 +91,7 @@ if(!$GLOBALS['SYMB_UID']) {
             const taxonomicThesaurusManagerModule = Vue.createApp({
                 components: {
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
+                    'taxa-batch-loader-module': taxaBatchLoaderModule,
                     'taxon-rank-checkbox-selector': taxonRankCheckboxSelector,
                     'taxonomic-thesaurus-maintenance-module': taxonomicThesaurusMaintenanceModule,
                     'taxonomic-thesaurus-usda-identifier-module': taxonomicThesaurusUSDAIdentifierModule,

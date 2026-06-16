@@ -37,4 +37,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getGlossaryArr' && array_key_exists('numRows', $_POST) && array_key_exists('index', $_POST)){
         echo json_encode($glossary->getGlossaryArr((int)$_POST['numRows'], (int)$_POST['index']));
     }
+    elseif($action === 'getGlossGroupIdStartIndex'){
+        echo $glossary->getGlossGroupIdStartIndex();
+    }
 }
