@@ -48,6 +48,10 @@ const multipleScientificCommonNameAutoComplete = {
             type: Boolean,
             default: false
         },
+        nameStringMode: {
+            type: Boolean,
+            default: true
+        },
         optionLimit: {
             type: Number,
             default: 10
@@ -226,11 +230,16 @@ const multipleScientificCommonNameAutoComplete = {
         }
 
         function processChange() {
-            const nameArr = [];
-            scinameArr.value.forEach((taxon) => {
-                nameArr.push(taxon.sciname);
-            });
-            context.emit('update:sciname', (nameArr.length > 0 ? nameArr.join(props.concatenator) : null));
+            if(props.nameStringMode){
+                const nameArr = [];
+                scinameArr.value.forEach((taxon) => {
+                    nameArr.push(taxon.sciname);
+                });
+                context.emit('update:sciname', (nameArr.length > 0 ? nameArr.join(props.concatenator) : null));
+            }
+            else{
+                context.emit('update:sciname', scinameArr.value);
+            }
             autocompleteRef.value.updateInputValue('');
         }
 

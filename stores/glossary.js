@@ -8,7 +8,7 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             source: null,
             translator: null,
             author: null,
-            notes: 1,
+            notes: null,
             resourceurl: null,
             uid: null
         },

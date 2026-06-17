@@ -122,9 +122,9 @@ const taxaBatchLoaderModule = {
         'file-picker-input-element': filePickerInputElement
     },
     setup(props, context) {
-        const { getErrorResponseText, showNotification } = useCore();
+        const { csvToArray, parseFile, showNotification } = useCore();
 
-        let abortController = null;
+        const csvDataArr = Vue.ref([]);
         const currentProcess = Vue.ref(null);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
@@ -134,6 +134,7 @@ const taxaBatchLoaderModule = {
         let processorDisplayDataArr = [];
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
+        const rankData = Vue.ref({});
         const scrollProcess = Vue.ref(null);
         const uploadedFile = Vue.ref(null);
 
@@ -165,6 +166,7 @@ const taxaBatchLoaderModule = {
 
         function adjustUIStart() {
             currentProcess.value = null;
+            csvDataArr.value.length = 0;
             processingArr.value = [];
             processorDisplayArr.length = 0;
             processorDisplayDataArr = [];
@@ -175,9 +177,6 @@ const taxaBatchLoaderModule = {
 
         function cancelProcess() {
             processCancelling.value = true;
-            if(abortController){
-                abortController.abort();
-            }
         }
 
         function getNewProcessObject(type, text) {
@@ -233,41 +232,37 @@ const taxaBatchLoaderModule = {
         }
 
         function initializeUpload() {
-            if(props.taxonomicGroupTid && props.selectedRanks.length > 0){
-                adjustUIStart();
-                const text = 'Setting rank data';
-                currentProcess.value = 'setRankArr';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                const url = taxonRankApiUrl + '?action=getRankNameArr';
-                abortController = new AbortController();
-                fetch(url, {
-                    signal: abortController.signal
-                })
-                    .then((response) => {
-                        if(response.status === 200){
-                            response.json().then((resObj) => {
-                                processSuccessResponse('Complete');
-                                rankArr.value = resObj;
-                                if(importCommonNames.value){
-                                    setLanguageArr();
-                                }
-                                else{
-                                    setTargetTaxonLocal();
-                                }
-                            });
-                        }
-                        else{
-                            const text = getErrorResponseText(response.status,response.statusText);
-                            processErrorResponse(text);
-                        }
-                    });
-            }
-            else if(props.taxonomicGroupTid){
-                showNotification('negative', 'Please select the Taxonomic Ranks to be included in the import/update.');
-            }
-            else{
-                showNotification('negative', 'Please enter a Taxonomic Group to start an import/update.');
-            }
+            adjustUIStart();
+            const text = 'Setting rank data';
+            currentProcess.value = 'setRankArr';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const url = taxonRankApiUrl + '?action=getRankNameArr&kingdomid=' + props.kingdomId;
+            fetch(url)
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                if(Object.keys(data).length > 0){
+                    rankData.value = Object.assign({}, data);
+                    processSuccessResponse('Complete');
+                    processCsvData();
+                }
+                else{
+                    processErrorResponse('Taxonomic rank data could not be found.');
+                    adjustUIEnd();
+                }
+            });
+        }
+
+        function processCsvData() {
+            const text = 'Processing CSV data';
+            currentProcess.value = 'processingCsvData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            parseFile(uploadedFile.value, (fileContents) => {
+                csvToArray(fileContents).then((csvData) => {
+                    processFileCsvData(csvData);
+                });
+            });
         }
 
         function processErrorResponse(text) {
@@ -279,6 +274,23 @@ const taxaBatchLoaderModule = {
                     procObj['result'] = 'error';
                     procObj['resultText'] = text;
                 }
+            }
+        }
+
+        function processFileCsvData(csvData) {
+            if(csvData.length > 0){
+                csvData.forEach((dataObj) => {
+                    if(dataObj){
+                        console.log(dataObj);
+                    }
+                });
+                /*if(scinameArr.value.length > 0){
+                    setTaxaIdData();
+                }
+                else{
+                    hideWorking();
+                    showNotification('negative','No scientificname values were found in the csv.');
+                }*/
             }
         }
 

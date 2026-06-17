@@ -186,12 +186,15 @@ class Glossary{
     public function getGlossGroupIdArrFromGlossidArr($glossidArr): array
     {
         $retArr = array();
-        $sql = 'SELECT glossgrpid, glossid FROM glossarytermlink WHERE glossid IN(' . implode(',', $glossidArr) . ') ';
+        $sql = 'SELECT glossgrpid, glossid, relationshiptype FROM glossarytermlink WHERE glossid IN(' . implode(',', $glossidArr) . ') ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $retArr[$row['glossid']][] = (int)$row['glossgrpid'];
+                $nodeArr = array();
+                $nodeArr['glossgrpid']= (int)$row['glossgrpid'];
+                $nodeArr['relationshiptype']= $row['relationshiptype'];
+                $retArr[$row['glossid']][] = $nodeArr;
                 unset($rows[$index]);
             }
         }

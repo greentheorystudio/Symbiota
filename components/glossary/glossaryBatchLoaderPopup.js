@@ -34,13 +34,13 @@ const glossaryBatchLoaderPopup = {
                                                             be added for the uploaded terms by filling in the Enter Sources box below. Please do not use spaces 
                                                             in the column names.
                                                         </div>
-                                                        <div v-if="!uploadedFile || !taxonomicGroupVal" class="text-bold text-red">
+                                                        <div v-if="!uploadedFile || taxonomicGroupVal.length === 0" class="text-bold text-red">
                                                             Please enter at least one Taxonomic Group and choose the CSV data file in the boxes below to continue.
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-grow">
-                                                            <multiple-scientific-common-name-auto-complete label="Enter Taxonomic Groups" :sciname="taxonomicGroupVal" :limit-to-options="true" @update:sciname="processScientificNameChange"></multiple-scientific-common-name-auto-complete>
+                                                            <multiple-scientific-common-name-auto-complete label="Enter Taxonomic Groups" :sciname="taxonomicGroupVal" :limit-to-options="true" :name-string-mode="false" @update:sciname="processScientificNameChange"></multiple-scientific-common-name-auto-complete>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -64,7 +64,7 @@ const glossaryBatchLoaderPopup = {
                                             </div>
                                             <div class="processor-tool-button-container">
                                                 <div>
-                                                    <q-btn :loading="loading" color="secondary" @click="initializeUpload();" label="Start Upload" dense aria-label="Start Upload" :disabled="!uploadedFile || !taxonomicGroupVal" tabindex="0" />
+                                                    <q-btn :loading="loading" color="secondary" @click="initializeUpload();" label="Start Upload" dense aria-label="Start Upload" :disabled="!uploadedFile || taxonomicGroupVal.length === 0" tabindex="0" />
                                                 </div>
                                                 <div>
                                                     <q-btn v-if="loading" :disabled="processCancelling" color="red" @click="cancelProcess();" label="Cancel" dense aria-label="Cancel Import" tabindex="0" />
@@ -139,10 +139,12 @@ const glossaryBatchLoaderPopup = {
         'text-field-input-element': textFieldInputElement
     },
     setup(props, context) {
-        const { getErrorResponseText, showNotification } = useCore();
+        const { csvToArray, parseFile } = useCore();
+        const glossaryStore = useGlossaryStore();
 
-        let abortController = null;
+        const csvDataArr = Vue.ref([]);
         const currentProcess = Vue.ref(null);
+        const glossaryArr = Vue.computed(() => glossaryStore.getGlossaryArr);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
         const processCancelling = Vue.ref(false);
@@ -153,7 +155,7 @@ const glossaryBatchLoaderPopup = {
         const processorDisplayIndex = Vue.ref(0);
         const scrollProcess = Vue.ref(null);
         const sourcesVal = Vue.ref(null);
-        const taxonomicGroupVal = Vue.ref(null);
+        const taxonomicGroupVal = Vue.ref([]);
         const uploadedFile = Vue.ref(null);
 
         function addProcessToProcessorDisplay(processObj) {
@@ -184,6 +186,7 @@ const glossaryBatchLoaderPopup = {
 
         function adjustUIStart() {
             currentProcess.value = null;
+            csvDataArr.value.length = 0;
             processingArr.value = [];
             processorDisplayArr.length = 0;
             processorDisplayDataArr = [];
@@ -194,9 +197,6 @@ const glossaryBatchLoaderPopup = {
 
         function cancelProcess() {
             processCancelling.value = true;
-            if(abortController){
-                abortController.abort();
-            }
         }
 
         function getNewProcessObject(type, text) {
@@ -252,41 +252,15 @@ const glossaryBatchLoaderPopup = {
         }
 
         function initializeUpload() {
-            if(props.taxonomicGroupTid && props.selectedRanks.length > 0){
-                adjustUIStart();
-                const text = 'Setting rank data';
-                currentProcess.value = 'setRankArr';
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                const url = taxonRankApiUrl + '?action=getRankNameArr';
-                abortController = new AbortController();
-                fetch(url, {
-                    signal: abortController.signal
-                })
-                    .then((response) => {
-                        if(response.status === 200){
-                            response.json().then((resObj) => {
-                                processSuccessResponse('Complete');
-                                rankArr.value = resObj;
-                                if(importCommonNames.value){
-                                    setLanguageArr();
-                                }
-                                else{
-                                    setTargetTaxonLocal();
-                                }
-                            });
-                        }
-                        else{
-                            const text = getErrorResponseText(response.status,response.statusText);
-                            processErrorResponse(text);
-                        }
-                    });
-            }
-            else if(props.taxonomicGroupTid){
-                showNotification('negative', 'Please select the Taxonomic Ranks to be included in the import/update.');
-            }
-            else{
-                showNotification('negative', 'Please enter a Taxonomic Group to start an import/update.');
-            }
+            adjustUIStart();
+            const text = 'Processing CSV data';
+            currentProcess.value = 'processingCsvData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            parseFile(uploadedFile.value, (fileContents) => {
+                csvToArray(fileContents).then((csvData) => {
+                    processFileCsvData(csvData);
+                });
+            });
         }
 
         function processErrorResponse(text) {
@@ -297,6 +271,66 @@ const glossaryBatchLoaderPopup = {
                     procObj['loading'] = false;
                     procObj['result'] = 'error';
                     procObj['resultText'] = text;
+                }
+            }
+        }
+
+        function processFileCsvData(csvData) {
+            if(csvData.length > 0){
+                const languageArr = [];
+                Object.keys(csvData[0]).forEach(field => {
+                    if(!field.includes('_')){
+                        languageArr.push(field);
+                    }
+                });
+                csvData.forEach((dataObj) => {
+                    const csvDataObj = {
+                        termObjects: [],
+                    };
+                    languageArr.forEach((language) => {
+                        if(dataObj[language]){
+                            const termObj = {
+                                glossid: null,
+                                term: dataObj[language],
+                                relationship: 'translation',
+                                definition: (dataObj.hasOwnProperty(language + '_definition') ? dataObj[(language + '_definition')] : null),
+                                language: (language.charAt(0).toUpperCase() + language.slice(1)),
+                                source: (dataObj.hasOwnProperty(language + '_source') ? dataObj[(language + '_source')] : null),
+                                translator: (dataObj.hasOwnProperty(language + '_translator') ? dataObj[(language + '_translator')] : null),
+                                author: (dataObj.hasOwnProperty(language + '_author') ? dataObj[(language + '_author')] : null),
+                                notes: (dataObj.hasOwnProperty(language + '_notes') ? dataObj[(language + '_notes')] : null),
+                                resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null)
+                            };
+                            csvDataObj['termObjects'].push(termObj);
+                            if(dataObj.hasOwnProperty(language + '_synonym') && dataObj[language + '_synonym']){
+                                const synObj = {
+                                    glossid: null,
+                                    term: dataObj[language + '_synonym'],
+                                    relationship: 'synonym',
+                                    definition: (dataObj.hasOwnProperty(language + '_definition') ? dataObj[(language + '_definition')] : null),
+                                    language: (language.charAt(0).toUpperCase() + language.slice(1)),
+                                    source: (dataObj.hasOwnProperty(language + '_source') ? dataObj[(language + '_source')] : null),
+                                    translator: (dataObj.hasOwnProperty(language + '_translator') ? dataObj[(language + '_translator')] : null),
+                                    author: (dataObj.hasOwnProperty(language + '_author') ? dataObj[(language + '_author')] : null),
+                                    notes: (dataObj.hasOwnProperty(language + '_notes') ? dataObj[(language + '_notes')] : null),
+                                    resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null)
+                                };
+                                csvDataObj['termObjects'].push(synObj);
+                            }
+                        }
+                    });
+                    if(csvDataObj['termObjects'].length > 0){
+                        csvDataArr.value.push(csvDataObj);
+                    }
+                });
+                if(csvDataArr.value.length > 0){
+                    processSuccessResponse('Complete');
+                    console.log(csvDataArr.value);
+                    //setTaxaIdData();
+                }
+                else{
+                    processErrorResponse('No glossary data was found in the csv.');
+                    adjustUIEnd();
                 }
             }
         }
