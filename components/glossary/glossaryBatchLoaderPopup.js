@@ -155,6 +155,13 @@ const glossaryBatchLoaderPopup = {
         const processorDisplayIndex = Vue.ref(0);
         const scrollProcess = Vue.ref(null);
         const sourcesVal = Vue.ref(null);
+        const taxonomicGroupTidArr = Vue.computed(() => {
+            const returnArr = [];
+            taxonomicGroupVal.value.forEach(taxon => {
+                returnArr.push(Number(taxon.tid))
+            });
+            return returnArr;
+        });
         const taxonomicGroupVal = Vue.ref([]);
         const uploadedFile = Vue.ref(null);
 
