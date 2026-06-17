@@ -322,8 +322,7 @@ const taxaBatchLoaderModule = {
                 });
                 if(csvDataArr.value.length > 0){
                     processSuccessResponse('Complete');
-                    console.log(csvDataArr.value);
-                    //setTaxaIdData();
+                    setTidData();
                 }
                 else{
                     processErrorResponse('No taxa data was found in the csv.');
@@ -417,6 +416,27 @@ const taxaBatchLoaderModule = {
                     procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
                 }
             }
+        }
+
+        function setTidData() {
+            const formData = new FormData();
+            formData.append('taxa', JSON.stringify(Object.keys(scinameTidData.value)));
+            formData.append('kingdomid', props.kingdomId.toString());
+            formData.append('action', 'getTaxaIdDataFromNameArr');
+            fetch(taxaApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                Object.keys(scinameTidData.value).forEach((taxon) => {
+                    if(resObj.hasOwnProperty(taxon.toLowerCase())){
+                        scinameTidData.value[taxon] = resObj[taxon.toLowerCase()];
+                    }
+                });
+            });
         }
 
         return {
