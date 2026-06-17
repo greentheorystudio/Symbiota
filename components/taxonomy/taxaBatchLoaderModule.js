@@ -304,7 +304,7 @@ const taxaBatchLoaderModule = {
                                 family: (dataObj.hasOwnProperty('family') ? dataObj['family'] : null),
                                 parentsciname: dataObj['parent_scientific_name'],
                                 parenttid: null,
-                                acceptedsciname: (dataObj.hasOwnProperty('accepted_scientific_name') ? dataObj['accepted_scientific_name'] : null),
+                                acceptedsciname: ((dataObj.hasOwnProperty('accepted_scientific_name') && dataObj['accepted_scientific_name'] && dataObj['accepted_scientific_name'] !== dataObj['scientific_name']) ? dataObj['accepted_scientific_name'] : null),
                                 tidaccepted: null
                             };
                             csvDataArr.value.push(taxonObj);
