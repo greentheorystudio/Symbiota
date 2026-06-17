@@ -296,8 +296,9 @@ const glossaryBatchLoaderPopup = {
                     };
                     languageArr.forEach((language) => {
                         if(dataObj[language]){
+                            const existingTerm = glossaryArr.value.find(term => (term['term'] === dataObj[language] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1)) && term['tidArr'].filter(tid => taxonomicGroupTidArr.value.includes(tid)).length > 0));
                             const termObj = {
-                                glossid: null,
+                                glossid: (existingTerm ? Number(existingTerm['glossid']) : null),
                                 term: dataObj[language],
                                 relationship: 'translation',
                                 definition: (dataObj.hasOwnProperty(language + '_definition') ? dataObj[(language + '_definition')] : null),
@@ -306,12 +307,15 @@ const glossaryBatchLoaderPopup = {
                                 translator: (dataObj.hasOwnProperty(language + '_translator') ? dataObj[(language + '_translator')] : null),
                                 author: (dataObj.hasOwnProperty(language + '_author') ? dataObj[(language + '_author')] : null),
                                 notes: (dataObj.hasOwnProperty(language + '_notes') ? dataObj[(language + '_notes')] : null),
-                                resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null)
+                                resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null),
+                                groupIdArr: (existingTerm ? existingTerm['groupIdArr'].slice() : []),
+                                tidArr: (existingTerm ? existingTerm['tidArr'].slice() : [])
                             };
                             csvDataObj['termObjects'].push(termObj);
                             if(dataObj.hasOwnProperty(language + '_synonym') && dataObj[language + '_synonym']){
+                                const existingSynonym = glossaryArr.value.find(term => (term['term'] === dataObj[language + '_synonym'] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1)) && term['tidArr'].filter(tid => taxonomicGroupTidArr.value.includes(tid)).length > 0));
                                 const synObj = {
-                                    glossid: null,
+                                    glossid: (existingSynonym ? Number(existingSynonym['glossid']) : null),
                                     term: dataObj[language + '_synonym'],
                                     relationship: 'synonym',
                                     definition: (dataObj.hasOwnProperty(language + '_definition') ? dataObj[(language + '_definition')] : null),
@@ -320,7 +324,9 @@ const glossaryBatchLoaderPopup = {
                                     translator: (dataObj.hasOwnProperty(language + '_translator') ? dataObj[(language + '_translator')] : null),
                                     author: (dataObj.hasOwnProperty(language + '_author') ? dataObj[(language + '_author')] : null),
                                     notes: (dataObj.hasOwnProperty(language + '_notes') ? dataObj[(language + '_notes')] : null),
-                                    resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null)
+                                    resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null),
+                                    groupIdArr: (existingSynonym ? existingTerm['groupIdArr'].slice() : []),
+                                    tidArr: (existingSynonym ? existingTerm['tidArr'].slice() : [])
                                 };
                                 csvDataObj['termObjects'].push(synObj);
                             }

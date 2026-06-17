@@ -192,6 +192,9 @@ class Glossary{
             $result->free();
             foreach($rows as $index => $row){
                 $nodeArr = array();
+                if(!array_key_exists($row['glossid'], $retArr)){
+                    $retArr[$row['glossid']] = array();
+                }
                 $nodeArr['glossgrpid']= (int)$row['glossgrpid'];
                 $nodeArr['relationshiptype']= $row['relationshiptype'];
                 $retArr[$row['glossid']][] = $nodeArr;
@@ -254,6 +257,9 @@ class Glossary{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
+                if(!array_key_exists($row['glossid'], $retArr)){
+                    $retArr[$row['glossid']] = array();
+                }
                 $retArr[$row['glossid']][] = (int)$row['tid'];
                 unset($rows[$index]);
             }
