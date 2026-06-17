@@ -122,7 +122,7 @@ const taxaBatchLoaderModule = {
         'file-picker-input-element': filePickerInputElement
     },
     setup(props, context) {
-        const { csvToArray, parseFile, showNotification } = useCore();
+        const { csvToArray, parseFile } = useCore();
 
         const csvDataArr = Vue.ref([]);
         const currentProcess = Vue.ref(null);
@@ -135,6 +135,7 @@ const taxaBatchLoaderModule = {
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
         const rankData = Vue.ref({});
+        const scinameTidData = Vue.ref({});
         const scrollProcess = Vue.ref(null);
         const uploadedFile = Vue.ref(null);
 
@@ -172,6 +173,8 @@ const taxaBatchLoaderModule = {
             processorDisplayDataArr = [];
             processorDisplayCurrentIndex.value = 0;
             processorDisplayIndex.value = 0;
+            rankData.value = Object.assign({}, {});
+            scinameTidData.value = Object.assign({}, {});
             context.emit('update:loading', true);
         }
 
@@ -280,17 +283,52 @@ const taxaBatchLoaderModule = {
         function processFileCsvData(csvData) {
             if(csvData.length > 0){
                 csvData.forEach((dataObj) => {
-                    if(dataObj){
-                        console.log(dataObj);
+                    if(
+                        dataObj.hasOwnProperty('scientific_name') &&
+                        dataObj['scientific_name'] &&
+                        dataObj.hasOwnProperty('parent_scientific_name') &&
+                        dataObj['parent_scientific_name'] &&
+                        dataObj.hasOwnProperty('rank_name') &&
+                        dataObj['rank_name'] &&
+                        rankData.value.hasOwnProperty(dataObj['rank_name'].toLowerCase()) &&
+                        dataObj['rank_name'].toLowerCase() !== 'kingdom'
+                    ) {
+                        const existingTaxon = csvDataArr.value.find(taxon => taxon['sciname'] === dataObj['scientific_name']);
+                        if(!existingTaxon){
+                            const taxonObj = {
+                                tid: null,
+                                kingdomid: props.kingdomId,
+                                rankid: rankData.value[dataObj['rank_name'].toLowerCase()],
+                                sciname: dataObj['scientific_name'],
+                                author: (dataObj.hasOwnProperty('author') ? dataObj['author'] : null),
+                                family: (dataObj.hasOwnProperty('family') ? dataObj['family'] : null),
+                                parentsciname: dataObj['parent_scientific_name'],
+                                parenttid: null,
+                                acceptedsciname: (dataObj.hasOwnProperty('accepted_scientific_name') ? dataObj['accepted_scientific_name'] : null),
+                                tidaccepted: null
+                            };
+                            csvDataArr.value.push(taxonObj);
+                            if(!scinameTidData.value.hasOwnProperty(dataObj['scientific_name'])) {
+                                scinameTidData.value[dataObj['scientific_name']] = null;
+                            }
+                            if(!scinameTidData.value.hasOwnProperty(dataObj['parent_scientific_name'])) {
+                                scinameTidData.value[dataObj['parent_scientific_name']] = null;
+                            }
+                            if(dataObj.hasOwnProperty('accepted_scientific_name') && dataObj['accepted_scientific_name'] && !scinameTidData.value.hasOwnProperty(dataObj['accepted_scientific_name'])) {
+                                scinameTidData.value[dataObj['accepted_scientific_name']] = null;
+                            }
+                        }
                     }
                 });
-                /*if(scinameArr.value.length > 0){
-                    setTaxaIdData();
+                if(csvDataArr.value.length > 0){
+                    processSuccessResponse('Complete');
+                    console.log(csvDataArr.value);
+                    //setTaxaIdData();
                 }
                 else{
-                    hideWorking();
-                    showNotification('negative','No scientificname values were found in the csv.');
-                }*/
+                    processErrorResponse('No taxa data was found in the csv.');
+                    adjustUIEnd();
+                }
             }
         }
 

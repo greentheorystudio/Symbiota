@@ -69,7 +69,7 @@ class TaxonRanks{
     public function getRankNameArr($kingdomId = null): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT rankname, rankid FROM ';
+        $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ';
         if($kingdomId){
             $sql .= 'WHERE kingdomid = ' . (int)$kingdomId . ' ';
         }
