@@ -269,7 +269,7 @@ const taxaBatchLoaderModule = {
                                 populateTaxonomicHierarchy(callback);
                             }
                             else{
-                                processSuccessResponse('Complete');
+                                processSuccessResponse('Import complete!');
                                 callback();
                             }
                         });

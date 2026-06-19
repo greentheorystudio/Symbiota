@@ -178,15 +178,6 @@ const glossaryBatchLoaderPopup = {
             }
         }
 
-        function addSubprocessToProcessorDisplay(type, text) {
-            const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
-            parentProcObj['subs'].push(getNewSubprocessObject(type,text));
-            const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === currentProcess.value);
-            if(dataParentProcObj){
-                dataParentProcObj['subs'].push(getNewSubprocessObject(type,text));
-            }
-        }
-
         function adjustUIEnd() {
             processCancelling.value = false;
             context.emit('update:loading', false);
@@ -252,14 +243,18 @@ const glossaryBatchLoaderPopup = {
             return procObj;
         }
 
-        function getNewSubprocessObject(type, text) {
-            return {
-                procText: text,
-                type: type,
-                loading: true,
-                result: '',
-                resultText: ''
-            };
+        function getNextSynonymDataFromCsvDataArr() {
+            for (const row of csvDataArr.value) {
+                if(row['synonymGlossidArr'].length > 0){
+                    const newSynonymData = {
+                        glossidArr: row['synonymGlossidArr'].slice(),
+                        groupid: row['synonymGroupId']
+                    };
+                    row['synonymGlossidArr'].length = 0;
+                    return newSynonymData;
+                }
+            }
+            return null;
         }
 
         function getNextTermFromCsvDataArr() {
@@ -271,6 +266,20 @@ const glossaryBatchLoaderPopup = {
                         term: newTerm,
                         row: row
                     }
+                }
+            }
+            return null;
+        }
+
+        function getNextTranslationDataFromCsvDataArr() {
+            for (const row of csvDataArr.value) {
+                if(row['translationGlossidArr'].length > 0){
+                    const newTranslationData = {
+                        glossidArr: row['translationGlossidArr'].slice(),
+                        groupid: row['translationGroupId']
+                    };
+                    row['translationGlossidArr'].length = 0;
+                    return newTranslationData;
                 }
             }
             return null;
@@ -327,7 +336,73 @@ const glossaryBatchLoaderPopup = {
                 });
             }
             else{
+                processCsvDataTranslationArr();
+            }
+        }
 
+        function processCsvDataSynonymArr() {
+            const currentSynonymData = getNextSynonymDataFromCsvDataArr();
+            if(currentSynonymData){
+                if(currentProcess.value !== 'processingSynonymRelationships'){
+                    const text = 'Processing synonym relationship data';
+                    currentProcess.value = 'processingSynonymRelationships';
+                    addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                }
+                const groupIdVal = Number(currentSynonymData['groupid']) > 0 ? currentSynonymData['groupid'] : glossaryStore.getNextGlossGroupIdValue();
+                const formData = new FormData();
+                formData.append('glossIdArr', JSON.stringify(currentSynonymData['glossidArr']));
+                formData.append('groupId', groupIdVal.toString());
+                formData.append('relationType', 'synonym');
+                formData.append('action', 'addGlossaryTermRelationships');
+                fetch(glossaryApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then(() => {
+                    processCsvDataSynonymArr();
+                });
+            }
+            else{
+                if(currentProcess.value === 'processingSynonymRelationships'){
+                    processSuccessResponse('Complete');
+                }
+                processCsvDataSynonymArr();
+            }
+        }
+
+        function processCsvDataTranslationArr() {
+            const currentTranslationData = getNextTranslationDataFromCsvDataArr();
+            if(currentTranslationData){
+                if(currentProcess.value !== 'processingTranslationRelationships'){
+                    const text = 'Processing translation relationship data';
+                    currentProcess.value = 'processingTranslationRelationships';
+                    addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                }
+                const groupIdVal = Number(currentTranslationData['groupid']) > 0 ? currentTranslationData['groupid'] : glossaryStore.getNextGlossGroupIdValue();
+                const formData = new FormData();
+                formData.append('glossIdArr', JSON.stringify(currentTranslationData['glossidArr']));
+                formData.append('groupId', groupIdVal.toString());
+                formData.append('relationType', 'translation');
+                formData.append('action', 'addGlossaryTermRelationships');
+                fetch(glossaryApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then((response) => {
+                        return response.ok ? response.text() : null;
+                    })
+                    .then(() => {
+                        processCsvDataTranslationArr();
+                    });
+            }
+            else{
+                if(currentProcess.value === 'processingTranslationRelationships'){
+                    processSuccessResponse('Complete');
+                }
+                processCsvDataSynonymArr();
             }
         }
 
@@ -508,32 +583,6 @@ const glossaryBatchLoaderPopup = {
 
         function processScientificNameChange(taxonVal) {
             taxonomicGroupVal.value = taxonVal;
-        }
-
-        function processSubprocessErrorResponse(text) {
-            const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
-            if(parentProcObj){
-                parentProcObj['current'] = false;
-                const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
-                if(subProcObj){
-                    subProcObj['loading'] = false;
-                    subProcObj['result'] = 'error';
-                    subProcObj['resultText'] = text;
-                }
-            }
-        }
-
-        function processSubprocessSuccessResponse(complete, text = null) {
-            const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
-            if(parentProcObj){
-                parentProcObj['current'] = !complete;
-                const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
-                if(subProcObj){
-                    subProcObj['loading'] = false;
-                    subProcObj['result'] = 'success';
-                    subProcObj['resultText'] = text;
-                }
-            }
         }
 
         function processSuccessResponse(text = null) {

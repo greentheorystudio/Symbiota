@@ -22,7 +22,7 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         glossarySourceStore: useGlossarySourceStore(),
         glossaryTaxaArr: [],
         glossaryUpdateData: {},
-        glossGroupIdStartIndex: 0
+        glossGroupIdValue: 0
     }),
     getters: {
         getGlossaryArr(state) {
@@ -67,7 +67,7 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             return state.glossaryEditData['term'] && state.glossaryEditData['language'];
         },
         getGlossGroupIdStartIndex(state) {
-            return state.glossGroupIdStartIndex;
+            return state.glossGroupIdValue;
         }
     },
     actions: {
@@ -120,6 +120,11 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         },
         getCurrentGlossaryData() {
             return this.glossaryArr.find(glossary => Number(glossary.glossid) === this.glossaryId);
+        },
+        getNextGlossGroupIdValue() {
+            const returnVal = this.glossGroupIdValue;
+            this.glossGroupIdValue++;
+            return returnVal;
         },
         setCurrentGlossaryRecord(glossid) {
             this.clearGlossaryData();
@@ -211,7 +216,7 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
-                this.glossGroupIdStartIndex = Number(res);
+                this.glossGroupIdValue = Number(res);
             });
         },
         updateGlossaryEditData(key, value) {

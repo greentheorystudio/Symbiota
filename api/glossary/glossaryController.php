@@ -40,4 +40,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getGlossGroupIdStartIndex'){
         echo $glossary->getGlossGroupIdStartIndex();
     }
+    elseif($action === 'addGlossaryTermRelationships' && $isEditor && array_key_exists('glossIdArr', $_POST) && array_key_exists('groupId', $_POST) && array_key_exists('relationType', $_POST)){
+        echo $glossary->batchCreateGlossaryRelationshipRecordsFromGlossidArr($_POST['groupId'], $_POST['relationType'], json_decode($_POST['glossIdArr'], false));
+    }
 }

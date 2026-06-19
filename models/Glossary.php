@@ -30,6 +30,25 @@ class Glossary{
         $this->conn->close();
 	}
 
+    public function batchCreateGlossaryRelationshipRecordsFromGlossidArr($groupid, $relationType, $glossidArr): int
+    {
+        $recordsCreated = 0;
+        $valueArr = array();
+        if((int)$groupid > 0 && $relationType && count($glossidArr) > 0){
+            foreach($glossidArr as $glossid){
+                $valueArr[] = '(' . (int)$groupid . ', ' . (int)$glossid . ', "' . SanitizerService::cleanInStr($this->conn, $relationType) . '")';
+            }
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO glossarytermlink(glossgrpid, glossid, relationshiptype) '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $recordsCreated;
+    }
+
     public function createGlossaryRecord($data): int
     {
         $newID = 0;
