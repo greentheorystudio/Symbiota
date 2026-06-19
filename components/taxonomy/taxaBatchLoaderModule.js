@@ -27,10 +27,7 @@ const taxaBatchLoaderModule = {
                                             <a :href="(clientRoot + '/templates/batchTaxaData.csv')" aria-label="Download batch taxa data template csv" tabindex="0"><span class="text-bold">using the batch taxa data template. </span></a>
                                             In the template, Scientific name  and Rank name values are required for all taxa, and Parent scientific name 
                                             values are required for all taxa above genus rank. Please use standard taxonomic rank names for the Rank name 
-                                            values (e.g., Kingdom, Phylum, Class, Order, etc.) Taxa that have a Parent scientific name value that can be 
-                                            neither found in the Taxonomic Thesaurus or in the CSV data file will be assigned as base taxa in the Taxonomic 
-                                            Group entered above. Taxa that have a Accepted scientific name value that can be neither found in the Taxonomic 
-                                            Thesaurus or in the CSV data file will be uploaded as accepted taxonomic names. Upload the completed template 
+                                            values (e.g., Kingdom, Phylum, Class, Order, etc.) Upload the completed template 
                                             in the box below and then click the Upload Taxa button to process the data.
                                         </div>
                                         <div v-if="!uploadedFile || Number(taxonomicGroupTid) === 0" class="text-bold text-red">
@@ -530,7 +527,7 @@ const taxaBatchLoaderModule = {
             .then((resObj) => {
                 Object.keys(scinameTidData.value).forEach((taxon) => {
                     if(resObj.hasOwnProperty(taxon.toLowerCase())){
-                        scinameTidData.value[taxon] = resObj[taxon.toLowerCase()];
+                        scinameTidData.value[taxon] = resObj[taxon.toLowerCase()]['tid'];
                     }
                 });
                 processSuccessResponse('Complete');

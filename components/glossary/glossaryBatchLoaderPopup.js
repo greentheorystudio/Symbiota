@@ -30,8 +30,7 @@ const glossaryBatchLoaderPopup = {
                                                             English, English_definition, Spanish, Spanish_definition, etc.) Columns can be added for the 
                                                             definition, author, translator, source, notes, and resourceurl. Synonyms can be 
                                                             added by naming the column the language underscore synonym (ex. English_synonym). Please specify 
-                                                            at least one taxonomic group for which the terms are related in the box below. A source can 
-                                                            be added for the uploaded terms by filling in the Enter Sources box below. Please do not use spaces 
+                                                            at least one taxonomic group for which the terms are related in the box below. Please do not use spaces 
                                                             in the column names.
                                                         </div>
                                                         <div v-if="!uploadedFile || taxonomicGroupVal.length === 0" class="text-bold text-red">
@@ -41,11 +40,6 @@ const glossaryBatchLoaderPopup = {
                                                     <div class="row">
                                                         <div class="col-grow">
                                                             <multiple-scientific-common-name-auto-complete label="Enter Taxonomic Groups" :sciname="taxonomicGroupVal" :limit-to-options="true" :name-string-mode="false" @update:sciname="processScientificNameChange"></multiple-scientific-common-name-auto-complete>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-grow">
-                                                            <text-field-input-element data-type="textarea" label="Enter Sources" :value="sourcesVal" @update:value="(value) => sourcesVal = value"></text-field-input-element>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -155,7 +149,6 @@ const glossaryBatchLoaderPopup = {
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
         const scrollProcess = Vue.ref(null);
-        const sourcesVal = Vue.ref(null);
         const taxonomicGroupTidArr = Vue.computed(() => {
             const returnArr = [];
             taxonomicGroupVal.value.forEach(taxon => {
@@ -395,7 +388,7 @@ const glossaryBatchLoaderPopup = {
             const currentTaxaData = getNextTaxaDataFromCsvDataArr();
             if(currentTaxaData){
                 if(currentProcess.value !== 'processingTaxaRelationships'){
-                    const text = 'Processing synonym relationship data';
+                    const text = 'Processing taxa relationship data';
                     currentProcess.value = 'processingTaxaRelationships';
                     addProcessToProcessorDisplay(getNewProcessObject('single', text));
                 }
@@ -418,7 +411,9 @@ const glossaryBatchLoaderPopup = {
                 if(currentProcess.value === 'processingTaxaRelationships'){
                     processSuccessResponse('Import complete!');
                 }
-                adjustUIEnd();
+                glossaryStore.setGlossaryData(() => {
+                    adjustUIEnd();
+                });
             }
         }
 
@@ -677,7 +672,6 @@ const glossaryBatchLoaderPopup = {
             processorDisplayArr,
             processorDisplayCurrentIndex,
             processorDisplayIndex,
-            sourcesVal,
             taxonomicGroupVal,
             uploadedFile,
             cancelProcess,
