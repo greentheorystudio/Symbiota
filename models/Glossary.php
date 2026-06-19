@@ -49,6 +49,25 @@ class Glossary{
         return $recordsCreated;
     }
 
+    public function batchCreateGlossaryTaxonRelationshipRecordsFromGlossidArr($tid, $glossidArr): int
+    {
+        $recordsCreated = 0;
+        $valueArr = array();
+        if((int)$tid > 0 && count($glossidArr) > 0){
+            foreach($glossidArr as $glossid){
+                $valueArr[] = '(' . (int)$glossid . ', ' . (int)$tid . ')';
+            }
+            if(count($valueArr) > 0){
+                $sql = 'INSERT INTO glossarytaxalink(glossid, tid) '.
+                    'VALUES ' . implode(',', $valueArr) . ' ';
+                if($this->conn->query($sql)){
+                    $recordsCreated = $this->conn->affected_rows;
+                }
+            }
+        }
+        return $recordsCreated;
+    }
+
     public function createGlossaryRecord($data): int
     {
         $newID = 0;

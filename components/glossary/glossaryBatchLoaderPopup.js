@@ -257,6 +257,20 @@ const glossaryBatchLoaderPopup = {
             return null;
         }
 
+        function getNextTaxaDataFromCsvDataArr() {
+            for (const taxon of taxonomicGroupVal.value) {
+                if(tidGlossidData.value[taxon.tid].length > 0){
+                    const newTaxaData = {
+                        glossidArr: tidGlossidData.value[taxon.tid].slice(),
+                        tid: taxon.tid
+                    };
+                    tidGlossidData.value[taxon.tid].length = 0;
+                    return newTaxaData;
+                }
+            }
+            return null;
+        }
+
         function getNextTermFromCsvDataArr() {
             for (const row of csvDataArr.value) {
                 if(row['termObjects'].length > 0){
@@ -369,7 +383,38 @@ const glossaryBatchLoaderPopup = {
                 if(currentProcess.value === 'processingSynonymRelationships'){
                     processSuccessResponse('Complete');
                 }
-                processCsvDataSynonymArr();
+                processCsvDataTaxaArr();
+            }
+        }
+
+        function processCsvDataTaxaArr() {
+            const currentTaxaData = getNextTaxaDataFromCsvDataArr();
+            if(currentTaxaData){
+                if(currentProcess.value !== 'processingTaxaRelationships'){
+                    const text = 'Processing synonym relationship data';
+                    currentProcess.value = 'processingTaxaRelationships';
+                    addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                }
+                const formData = new FormData();
+                formData.append('glossIdArr', JSON.stringify(currentTaxaData['glossidArr']));
+                formData.append('tid', currentTaxaData.tid.toString());
+                formData.append('action', 'addGlossaryTaxaRelationships');
+                fetch(glossaryApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then((response) => {
+                        return response.ok ? response.text() : null;
+                    })
+                    .then(() => {
+                        processCsvDataTaxaArr();
+                    });
+            }
+            else{
+                if(currentProcess.value === 'processingTaxaRelationships'){
+                    processSuccessResponse('Import complete!');
+                }
+                adjustUIEnd();
             }
         }
 
