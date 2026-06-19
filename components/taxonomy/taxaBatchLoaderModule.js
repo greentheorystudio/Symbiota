@@ -126,6 +126,7 @@ const taxaBatchLoaderModule = {
 
         const csvDataArr = Vue.ref([]);
         const currentProcess = Vue.ref(null);
+        const newTidArr = Vue.ref([]);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
         const processCancelling = Vue.ref(false);
@@ -135,6 +136,7 @@ const taxaBatchLoaderModule = {
         const processorDisplayCurrentIndex = Vue.ref(0);
         const processorDisplayIndex = Vue.ref(0);
         const rankData = Vue.ref({});
+        const rebuildHierarchyLoop = Vue.ref(0);
         const scinameTidData = Vue.ref({});
         const scrollProcess = Vue.ref(null);
         const uploadedFile = Vue.ref(null);
@@ -147,15 +149,6 @@ const taxaBatchLoaderModule = {
                 processorDisplayArr.splice(0, 100);
                 processorDisplayIndex.value++;
                 processorDisplayCurrentIndex.value = processorDisplayIndex.value;
-            }
-        }
-
-        function addSubprocessToProcessorDisplay(type, text) {
-            const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
-            parentProcObj['subs'].push(getNewSubprocessObject(type,text));
-            const dataParentProcObj = processorDisplayDataArr.find(proc => proc['id'] === currentProcess.value);
-            if(dataParentProcObj){
-                dataParentProcObj['subs'].push(getNewSubprocessObject(type,text));
             }
         }
 
@@ -173,6 +166,8 @@ const taxaBatchLoaderModule = {
             processorDisplayDataArr = [];
             processorDisplayCurrentIndex.value = 0;
             processorDisplayIndex.value = 0;
+            newTidArr.value.length = 0;
+            rebuildHierarchyLoop.value = 0;
             rankData.value = Object.assign({}, {});
             scinameTidData.value = Object.assign({}, {});
             context.emit('update:loading', true);
@@ -224,16 +219,6 @@ const taxaBatchLoaderModule = {
             return procObj;
         }
 
-        function getNewSubprocessObject(type, text) {
-            return {
-                procText: text,
-                type: type,
-                loading: true,
-                result: '',
-                resultText: ''
-            };
-        }
-
         function getNextTaxonFromCsvDataArr() {
             let returnData;
             const nextTaxon = csvDataArr.value.find(taxon => (Number(scinameTidData.value[taxon.parentsciname]) > 0 && (!taxon.acceptedsciname || Number(scinameTidData.value[taxon.acceptedsciname]) > 0)));
@@ -264,6 +249,68 @@ const taxaBatchLoaderModule = {
                 else{
                     processErrorResponse('Taxonomic rank data could not be found.');
                     adjustUIEnd();
+                }
+            });
+        }
+
+        function populateTaxonomicHierarchy(callback) {
+            if(rebuildHierarchyLoop.value < 40){
+                const formData = new FormData();
+                formData.append('action', 'populateHierarchyTable');
+                fetch(taxonHierarchyApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    if(response.status === 200){
+                        response.text().then((res) => {
+                            if(Number(res) > 0){
+                                rebuildHierarchyLoop.value++;
+                                populateTaxonomicHierarchy(callback);
+                            }
+                            else{
+                                processSuccessResponse('Complete');
+                                callback();
+                            }
+                        });
+                    }
+                    else{
+                        processErrorResponse('Error updating the taxonomic hierarchy');
+                        callback('Error updating the taxonomic hierarchy');
+                    }
+                });
+            }
+            else{
+                processErrorResponse('Error updating the taxonomic hierarchy');
+                callback('Error updating the taxonomic hierarchy');
+            }
+        }
+
+        function primeTaxonomicHierarchy(callback) {
+            rebuildHierarchyLoop.value = 0;
+            const formData = new FormData();
+            formData.append('tidarr', JSON.stringify(newTidArr.value));
+            formData.append('action', 'primeHierarchyTable');
+            fetch(taxonHierarchyApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                if(response.status === 200){
+                    response.text().then((res) => {
+                        if(Number(res) > 0){
+                            rebuildHierarchyLoop.value++;
+                            populateTaxonomicHierarchy(callback);
+                        }
+                        else{
+                            processSuccessResponse('Complete');
+                            callback();
+                        }
+                    });
+                }
+                else{
+                    processErrorResponse('Error updating the taxonomic hierarchy');
+                    callback('Error updating the taxonomic hierarchy');
                 }
             });
         }
@@ -302,6 +349,7 @@ const taxaBatchLoaderModule = {
                 .then((res) => {
                     if(res && Number(res) > 0){
                         scinameTidData.value[currentTaxonData.sciname] = Number(res);
+                        newTidArr.value.push(Number(res));
                         processSuccessResponse('Complete');
                     }
                     else{
@@ -310,8 +358,13 @@ const taxaBatchLoaderModule = {
                     processCsvDataArr();
                 });
             }
+            else if(csvDataArr.value.length > 0){
+                processRemainingTaxa();
+            }
             else{
-                console.log('complete')
+                updateTaxonomicHierarchy(() => {
+                    adjustUIEnd();
+                });
             }
         }
 
@@ -409,30 +462,24 @@ const taxaBatchLoaderModule = {
             resetScrollProcess();
         }
 
-        function processSubprocessErrorResponse(text) {
-            const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
-            if(parentProcObj){
-                parentProcObj['current'] = false;
-                const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
-                if(subProcObj){
-                    subProcObj['loading'] = false;
-                    subProcObj['result'] = 'error';
-                    subProcObj['resultText'] = text;
+        function processRemainingTaxa() {
+            csvDataArr.value.forEach((taxon) => {
+                const text = 'Processing ' + taxon.sciname;
+                currentProcess.value = taxon.sciname + '-remaining';
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                let errorText = 'Could not be upload because ';
+                if(Number(scinameTidData.value[taxon.parentsciname]) === 0){
+                    errorText += 'the parent taxon '
                 }
-            }
-        }
-
-        function processSubprocessSuccessResponse(complete, text = null) {
-            const parentProcObj = processorDisplayArr.find(proc => proc['id'] === currentProcess.value);
-            if(parentProcObj){
-                parentProcObj['current'] = !complete;
-                const subProcObj = parentProcObj['subs'].find(subproc => subproc['loading'] === true);
-                if(subProcObj){
-                    subProcObj['loading'] = false;
-                    subProcObj['result'] = 'success';
-                    subProcObj['resultText'] = text;
+                if(taxon.acceptedsciname && Number(scinameTidData.value[taxon.acceptedsciname]) === 0){
+                    errorText += (Number(scinameTidData.value[taxon.parentsciname]) === 0 ? 'and ' : '') + 'the accepted taxon '
                 }
-            }
+                errorText += 'could not be found in either the Taxonomic Thesaurus or in the data uploaded ';
+                processErrorResponse(errorText);
+            });
+            updateTaxonomicHierarchy(() => {
+                adjustUIEnd();
+            });
         }
 
         function processSuccessResponse(text = null) {
@@ -489,6 +536,34 @@ const taxaBatchLoaderModule = {
                 processSuccessResponse('Complete');
                 processCsvDataArr();
             });
+        }
+
+        function updateTaxonomicHierarchy(callback) {
+            if(newTidArr.value.length > 0){
+                const text = 'Updating taxonomic hierarchy table with new taxa';
+                currentProcess.value = 'updateTaxonomicHierarchy';
+                addProcessToProcessorDisplay(getNewProcessObject('single',text));
+                rebuildHierarchyLoop.value = 0;
+                const formData = new FormData();
+                formData.append('tidarr', JSON.stringify(newTidArr.value));
+                formData.append('action', 'clearHierarchyTable');
+                fetch(taxonHierarchyApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    if(response.status === 200){
+                        primeTaxonomicHierarchy(callback);
+                    }
+                    else{
+                        processErrorResponse('Error updating the taxonomic hierarchy');
+                        callback('Error updating the taxonomic hierarchy');
+                    }
+                });
+            }
+            else{
+                callback();
+            }
         }
 
         return {
