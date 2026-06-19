@@ -48,7 +48,8 @@ if($action && SanitizerService::validateInternalRequest()){
     }
     elseif($action === 'getTaxaIdDataFromNameArr' && array_key_exists('taxa', $_POST)){
         $kingdomId = array_key_exists('kingdomid', $_POST) ? (int)$_POST['kingdomid'] : null;
-        echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], false), $kingdomId));
+        $tidaccepted = array_key_exists('tidaccepted', $_POST) && (int)$_POST['tidaccepted'] === 1;
+        echo json_encode($taxa->getTaxaIdDataFromNameArr(json_decode($_POST['taxa'], false), $kingdomId, $tidaccepted));
     }
     elseif($action === 'getTaxonFromTid' && array_key_exists('tid', $_POST)){
         $fullData = !array_key_exists('full', $_POST) || (int)$_POST['full'] === 1;

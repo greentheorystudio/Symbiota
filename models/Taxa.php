@@ -794,10 +794,10 @@ class Taxa{
         return $retArr;
     }
 
-    public function getTaxaIdDataFromNameArr($nameArr, $kingdomId = null): array
+    public function getTaxaIdDataFromNameArr($nameArr, $kingdomId, $tidaccepted): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT tid, sciname FROM taxa  '.
+        $sql = 'SELECT DISTINCT tid, sciname, tidaccepted FROM taxa  '.
             'WHERE sciname IN("' . implode('","', $nameArr) . '") ';
         if($kingdomId){
             $sql .= 'AND kingdomid = ' . (int)$kingdomId . ' ';
@@ -806,7 +806,7 @@ class Taxa{
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
             foreach($rows as $index => $row){
-                $retArr[strtolower($row['sciname'])]['tid'] = $row['tid'];
+                $retArr[strtolower($row['sciname'])]['tid'] = $tidaccepted ? $row['tidaccepted'] : $row['tid'];
                 $retArr[strtolower($row['sciname'])]['sciname'] = $row['sciname'];
                 unset($rows[$index]);
             }

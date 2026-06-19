@@ -521,6 +521,7 @@ const taxaBatchLoaderModule = {
             const formData = new FormData();
             formData.append('taxa', JSON.stringify(Object.keys(scinameTidData.value)));
             formData.append('kingdomid', props.kingdomId.toString());
+            formData.append('tidaccepted', '1');
             formData.append('action', 'getTaxaIdDataFromNameArr');
             fetch(taxaApiUrl, {
                 method: 'POST',
