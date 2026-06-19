@@ -144,6 +144,7 @@ const glossaryBatchLoaderPopup = {
 
         const csvDataArr = Vue.ref([]);
         const currentProcess = Vue.ref(null);
+        const dataLanguageArr = Vue.ref([]);
         const glossaryArr = Vue.computed(() => glossaryStore.getGlossaryArr);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
@@ -158,11 +159,12 @@ const glossaryBatchLoaderPopup = {
         const taxonomicGroupTidArr = Vue.computed(() => {
             const returnArr = [];
             taxonomicGroupVal.value.forEach(taxon => {
-                returnArr.push(Number(taxon.tid))
+                returnArr.push(Number(taxon.tid));
             });
             return returnArr;
         });
         const taxonomicGroupVal = Vue.ref([]);
+        const tidGlossidData = Vue.ref({});
         const uploadedFile = Vue.ref(null);
 
         function addProcessToProcessorDisplay(processObj) {
@@ -199,6 +201,8 @@ const glossaryBatchLoaderPopup = {
             processorDisplayDataArr = [];
             processorDisplayCurrentIndex.value = 0;
             processorDisplayIndex.value = 0;
+            dataLanguageArr.value.length = 0;
+            tidGlossidData.value = Object.assign({}, {});
             context.emit('update:loading', true);
         }
 
@@ -258,8 +262,23 @@ const glossaryBatchLoaderPopup = {
             };
         }
 
+        function getNextTermFromCsvDataArr() {
+            for (const row of csvDataArr.value) {
+                if(row['termObjects'].length > 0){
+                    const newTerm = Object.assign({}, row['termObjects'][0]);
+                    row['termObjects'].splice(0, 1);
+                    return {
+                        term: newTerm,
+                        row: row
+                    }
+                }
+            }
+            return null;
+        }
+
         function initializeUpload() {
             adjustUIStart();
+            setTidGlossidDataKeys();
             const text = 'Processing CSV data';
             currentProcess.value = 'processingCsvData';
             addProcessToProcessorDisplay(getNewProcessObject('single', text));
@@ -268,6 +287,11 @@ const glossaryBatchLoaderPopup = {
                     processFileCsvData(csvData);
                 });
             });
+        }
+
+        function processCsvDataArr() {
+            const currentTermData = getNextTermFromCsvDataArr();
+            console.log(currentTermData);
         }
 
         function processErrorResponse(text) {
@@ -284,51 +308,118 @@ const glossaryBatchLoaderPopup = {
 
         function processFileCsvData(csvData) {
             if(csvData.length > 0){
-                const languageArr = [];
                 Object.keys(csvData[0]).forEach(field => {
                     if(!field.includes('_')){
-                        languageArr.push(field);
+                        dataLanguageArr.value.push(field);
                     }
                 });
                 csvData.forEach((dataObj) => {
                     const csvDataObj = {
                         termObjects: [],
+                        synonymGlossidArr: [],
+                        synonymGroupId: null,
+                        synonymTermArr: [],
+                        translationGlossidArr: [],
+                        translationGroupId: null,
+                        translationTermArr: []
                     };
-                    languageArr.forEach((language) => {
+                    dataLanguageArr.value.forEach((language) => {
                         if(dataObj[language]){
                             const existingTerm = glossaryArr.value.find(term => (term['term'] === dataObj[language] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1)) && term['tidArr'].filter(tid => taxonomicGroupTidArr.value.includes(tid)).length > 0));
-                            const termObj = {
-                                glossid: (existingTerm ? Number(existingTerm['glossid']) : null),
-                                term: dataObj[language],
-                                relationship: 'translation',
-                                definition: (dataObj.hasOwnProperty(language + '_definition') ? dataObj[(language + '_definition')] : null),
-                                language: (language.charAt(0).toUpperCase() + language.slice(1)),
-                                source: (dataObj.hasOwnProperty(language + '_source') ? dataObj[(language + '_source')] : null),
-                                translator: (dataObj.hasOwnProperty(language + '_translator') ? dataObj[(language + '_translator')] : null),
-                                author: (dataObj.hasOwnProperty(language + '_author') ? dataObj[(language + '_author')] : null),
-                                notes: (dataObj.hasOwnProperty(language + '_notes') ? dataObj[(language + '_notes')] : null),
-                                resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null),
-                                groupIdArr: (existingTerm ? existingTerm['groupIdArr'].slice() : []),
-                                tidArr: (existingTerm ? existingTerm['tidArr'].slice() : [])
-                            };
-                            csvDataObj['termObjects'].push(termObj);
-                            if(dataObj.hasOwnProperty(language + '_synonym') && dataObj[language + '_synonym']){
-                                const existingSynonym = glossaryArr.value.find(term => (term['term'] === dataObj[language + '_synonym'] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1)) && term['tidArr'].filter(tid => taxonomicGroupTidArr.value.includes(tid)).length > 0));
-                                const synObj = {
-                                    glossid: (existingSynonym ? Number(existingSynonym['glossid']) : null),
-                                    term: dataObj[language + '_synonym'],
-                                    relationship: 'synonym',
+                            if(existingTerm){
+                                const existingTranslationGroup = existingTerm['groupIdArr'].find(group => group['relationshiptype'] === 'translation');
+                                if(!csvDataObj['translationGroupId'] && existingTranslationGroup){
+                                    csvDataObj['translationGroupId'] = existingTranslationGroup['glossgrpid'];
+                                }
+                                else if(dataLanguageArr.value.length > 1){
+                                    csvDataObj['translationGlossidArr'].push(existingTerm['glossid']);
+                                }
+                                taxonomicGroupTidArr.value.forEach(tid => {
+                                    if(!existingTerm['tidArr'].includes(tid)){
+                                        tidGlossidData.value[tid.toString()].push(existingTerm['glossid']);
+                                    }
+                                });
+                            }
+                            else{
+                                const termObj = {
+                                    glossid: null,
+                                    term: dataObj[language],
+                                    relationship: 'translation',
                                     definition: (dataObj.hasOwnProperty(language + '_definition') ? dataObj[(language + '_definition')] : null),
                                     language: (language.charAt(0).toUpperCase() + language.slice(1)),
                                     source: (dataObj.hasOwnProperty(language + '_source') ? dataObj[(language + '_source')] : null),
                                     translator: (dataObj.hasOwnProperty(language + '_translator') ? dataObj[(language + '_translator')] : null),
                                     author: (dataObj.hasOwnProperty(language + '_author') ? dataObj[(language + '_author')] : null),
                                     notes: (dataObj.hasOwnProperty(language + '_notes') ? dataObj[(language + '_notes')] : null),
-                                    resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null),
-                                    groupIdArr: (existingSynonym ? existingTerm['groupIdArr'].slice() : []),
-                                    tidArr: (existingSynonym ? existingTerm['tidArr'].slice() : [])
+                                    resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null)
                                 };
-                                csvDataObj['termObjects'].push(synObj);
+                                csvDataObj['termObjects'].push(termObj);
+                                if(dataLanguageArr.value.length > 1){
+                                    csvDataObj['translationTermArr'].push({
+                                        term: dataObj[language],
+                                        language: (language.charAt(0).toUpperCase() + language.slice(1))
+                                    });
+                                }
+                            }
+                            if(dataObj.hasOwnProperty(language + '_synonym') && dataObj[language + '_synonym']){
+                                if(existingTerm){
+                                    const existingTermSynonymGroup = existingTerm['groupIdArr'].find(group => group['relationshiptype'] === 'synonym');
+                                    if(!csvDataObj['synonymGroupId'] && existingTermSynonymGroup){
+                                        csvDataObj['synonymGroupId'] = existingTermSynonymGroup['glossgrpid'];
+                                    }
+                                    else{
+                                        csvDataObj['synonymGlossidArr'].push(existingTerm['glossid']);
+                                    }
+                                }
+                                else{
+                                    csvDataObj['synonymTermArr'].push({
+                                        term: dataObj[language],
+                                        language: (language.charAt(0).toUpperCase() + language.slice(1))
+                                    });
+                                }
+                                const existingSynonym = glossaryArr.value.find(term => (term['term'] === dataObj[language + '_synonym'] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1)) && term['tidArr'].filter(tid => taxonomicGroupTidArr.value.includes(tid)).length > 0));
+                                if(existingSynonym){
+                                    const existingSynonymSynonymGroup = existingSynonym['groupIdArr'].find(group => group['relationshiptype'] === 'synonym');
+                                    if(!csvDataObj['synonymGroupId'] && existingSynonymSynonymGroup){
+                                        csvDataObj['synonymGroupId'] = existingSynonymSynonymGroup['glossgrpid'];
+                                    }
+                                    else{
+                                        csvDataObj['synonymGlossidArr'].push(existingSynonym['glossid']);
+                                    }
+                                    const existingSynonymTranslationGroup = existingSynonym['groupIdArr'].find(group => group['relationshiptype'] === 'translation');
+                                    if(!csvDataObj['translationGroupId'] && existingSynonymTranslationGroup){
+                                        csvDataObj['translationGroupId'] = existingSynonymTranslationGroup['glossgrpid'];
+                                    }
+                                    else if(dataLanguageArr.value.length > 1){
+                                        csvDataObj['translationGlossidArr'].push(existingSynonym['glossid']);
+                                    }
+                                    taxonomicGroupTidArr.value.forEach(tid => {
+                                        if(!existingSynonym['tidArr'].includes(tid)){
+                                            tidGlossidData.value[tid.toString()].push(existingSynonym['glossid']);
+                                        }
+                                    });
+                                }
+                                else{
+                                    const synObj = {
+                                        glossid: null,
+                                        term: dataObj[language + '_synonym'],
+                                        relationship: 'synonym',
+                                        definition: (dataObj.hasOwnProperty(language + '_definition') ? dataObj[(language + '_definition')] : null),
+                                        language: (language.charAt(0).toUpperCase() + language.slice(1)),
+                                        source: (dataObj.hasOwnProperty(language + '_source') ? dataObj[(language + '_source')] : null),
+                                        translator: (dataObj.hasOwnProperty(language + '_translator') ? dataObj[(language + '_translator')] : null),
+                                        author: (dataObj.hasOwnProperty(language + '_author') ? dataObj[(language + '_author')] : null),
+                                        notes: (dataObj.hasOwnProperty(language + '_notes') ? dataObj[(language + '_notes')] : null),
+                                        resourceurl: (dataObj.hasOwnProperty(language + '_resourceurl') ? dataObj[(language + '_resourceurl')] : null)
+                                    };
+                                    csvDataObj['termObjects'].push(synObj);
+                                    if(dataLanguageArr.value.length > 1){
+                                        csvDataObj['synonymTermArr'].push({
+                                            term: dataObj[language + '_synonym'],
+                                            language: (language.charAt(0).toUpperCase() + language.slice(1))
+                                        });
+                                    }
+                                }
                             }
                         }
                     });
@@ -338,8 +429,7 @@ const glossaryBatchLoaderPopup = {
                 });
                 if(csvDataArr.value.length > 0){
                     processSuccessResponse('Complete');
-                    console.log(csvDataArr.value);
-                    //setTaxaIdData();
+                    processCsvDataArr();
                 }
                 else{
                     processErrorResponse('No glossary data was found in the csv.');
@@ -437,6 +527,12 @@ const glossaryBatchLoaderPopup = {
                     procDisplayScrollAreaRef.value.setScrollPosition('vertical', info.verticalSize);
                 }
             }
+        }
+
+        function setTidGlossidDataKeys() {
+            taxonomicGroupVal.value.forEach(taxon => {
+                tidGlossidData.value[taxon.tid] = [];
+            });
         }
 
         return {
