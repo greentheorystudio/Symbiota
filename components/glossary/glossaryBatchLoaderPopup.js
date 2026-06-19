@@ -39,7 +39,7 @@ const glossaryBatchLoaderPopup = {
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-grow">
-                                                            <multiple-scientific-common-name-auto-complete label="Enter Taxonomic Groups" :sciname="taxonomicGroupVal" :limit-to-options="true" :name-string-mode="false" @update:sciname="processScientificNameChange"></multiple-scientific-common-name-auto-complete>
+                                                            <multiple-scientific-common-name-auto-complete label="Enter Taxonomic Groups" :sciname="taxonomicGroupVal" :limit-to-options="true" :accepted-taxa-only="true" :name-string-mode="false" @update:sciname="processScientificNameChange"></multiple-scientific-common-name-auto-complete>
                                                         </div>
                                                     </div>
                                                     <div class="row">
