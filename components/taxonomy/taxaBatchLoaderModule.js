@@ -234,6 +234,17 @@ const taxaBatchLoaderModule = {
             };
         }
 
+        function getNextTaxonFromCsvDataArr() {
+            let returnData;
+            const nextTaxon = csvDataArr.value.find(taxon => (Number(scinameTidData.value[taxon.parentsciname]) > 0 && (!taxon.acceptedsciname || Number(scinameTidData.value[taxon.acceptedsciname]) > 0)));
+            if(nextTaxon){
+                returnData = Object.assign({}, nextTaxon);
+                const index = csvDataArr.value.indexOf(nextTaxon);
+                csvDataArr.value.splice(index, 1);
+            }
+            return returnData;
+        }
+
         function initializeUpload() {
             adjustUIStart();
             const text = 'Setting rank data';
@@ -266,6 +277,42 @@ const taxaBatchLoaderModule = {
                     processFileCsvData(csvData);
                 });
             });
+        }
+
+        function processCsvDataArr() {
+            const currentTaxonData = getNextTaxonFromCsvDataArr();
+            if(currentTaxonData){
+                const text = 'Adding ' + currentTaxonData.sciname + ' to Taxonomic Thesaurus';
+                currentProcess.value = currentTaxonData.sciname;
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                currentTaxonData['parenttid'] = Number(scinameTidData.value[currentTaxonData.parentsciname]);
+                if(currentTaxonData.acceptedsciname){
+                    currentTaxonData['tidaccepted'] = Number(scinameTidData.value[currentTaxonData.acceptedsciname]);
+                }
+                const formData = new FormData();
+                formData.append('taxon', JSON.stringify(currentTaxonData));
+                formData.append('action', 'addTaxon');
+                fetch(taxaApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(res && Number(res) > 0){
+                        scinameTidData.value[currentTaxonData.sciname] = Number(res);
+                        processSuccessResponse('Complete');
+                    }
+                    else{
+                        processErrorResponse('An error occurred while adding taxon');
+                    }
+                    processCsvDataArr();
+                });
+            }
+            else{
+                console.log('complete')
+            }
         }
 
         function processErrorResponse(text) {
@@ -419,6 +466,9 @@ const taxaBatchLoaderModule = {
         }
 
         function setTidData() {
+            const text = 'Setting IDs for existing taxa';
+            currentProcess.value = 'setTidArr';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
             const formData = new FormData();
             formData.append('taxa', JSON.stringify(Object.keys(scinameTidData.value)));
             formData.append('kingdomid', props.kingdomId.toString());
@@ -436,6 +486,8 @@ const taxaBatchLoaderModule = {
                         scinameTidData.value[taxon] = resObj[taxon.toLowerCase()];
                     }
                 });
+                processSuccessResponse('Complete');
+                processCsvDataArr();
             });
         }
 

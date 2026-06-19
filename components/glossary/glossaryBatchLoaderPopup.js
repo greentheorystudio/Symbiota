@@ -291,7 +291,44 @@ const glossaryBatchLoaderPopup = {
 
         function processCsvDataArr() {
             const currentTermData = getNextTermFromCsvDataArr();
-            console.log(currentTermData);
+            if(currentTermData){
+                const text = 'Adding ' + currentTermData.term.term + ' (' + currentTermData.term.language + ') to glossary';
+                currentProcess.value = (currentTermData.term.term + '-' + currentTermData.term.language);
+                addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                const formData = new FormData();
+                formData.append('glossary', JSON.stringify(currentTermData.term));
+                formData.append('action', 'createGlossaryRecord');
+                fetch(glossaryApiUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then((res) => {
+                    if(res && Number(res) > 0){
+                        const translationObj = currentTermData.row['translationTermArr'].find(term => (term['term'] === currentTermData.term.term && term['language'] === currentTermData.term.language));
+                        if(translationObj){
+                            currentTermData.row['translationGlossidArr'].push(Number(res));
+                        }
+                        const synonymObj = currentTermData.row['synonymTermArr'].find(term => (term['term'] === currentTermData.term.term && term['language'] === currentTermData.term.language));
+                        if(synonymObj){
+                            currentTermData.row['synonymGlossidArr'].push(Number(res));
+                        }
+                        taxonomicGroupTidArr.value.forEach(tid => {
+                            tidGlossidData.value[tid.toString()].push(Number(res));
+                        });
+                        processSuccessResponse('Complete');
+                    }
+                    else{
+                        processErrorResponse('An error occurred while adding the term');
+                    }
+                    processCsvDataArr();
+                });
+            }
+            else{
+
+            }
         }
 
         function processErrorResponse(text) {
