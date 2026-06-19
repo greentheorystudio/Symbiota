@@ -201,6 +201,10 @@ const glossaryBatchLoaderPopup = {
             processCancelling.value = true;
         }
 
+        function closePopup() {
+            context.emit('close:popup');
+        }
+
         function getNewProcessObject(type, text) {
             if(processorDisplayArr.length > 0){
                 const pastProcObj = processorDisplayArr[(processorDisplayArr.length - 1)];
@@ -677,6 +681,7 @@ const glossaryBatchLoaderPopup = {
             taxonomicGroupVal,
             uploadedFile,
             cancelProcess,
+            closePopup,
             initializeUpload,
             processFileSelection,
             processorDisplayScrollDown,
