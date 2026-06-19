@@ -326,34 +326,39 @@ const taxaBatchLoaderModule = {
         function processCsvDataArr() {
             const currentTaxonData = getNextTaxonFromCsvDataArr();
             if(currentTaxonData){
-                const text = 'Adding ' + currentTaxonData.sciname + ' to Taxonomic Thesaurus';
-                currentProcess.value = currentTaxonData.sciname;
-                addProcessToProcessorDisplay(getNewProcessObject('single', text));
-                currentTaxonData['parenttid'] = Number(scinameTidData.value[currentTaxonData.parentsciname]);
-                if(currentTaxonData.acceptedsciname){
-                    currentTaxonData['tidaccepted'] = Number(scinameTidData.value[currentTaxonData.acceptedsciname]);
+                if(Number(scinameTidData.value[currentTaxonData.sciname]) === 0){
+                    const text = 'Adding ' + currentTaxonData.sciname + ' to Taxonomic Thesaurus';
+                    currentProcess.value = currentTaxonData.sciname;
+                    addProcessToProcessorDisplay(getNewProcessObject('single', text));
+                    currentTaxonData['parenttid'] = Number(scinameTidData.value[currentTaxonData.parentsciname]);
+                    if(currentTaxonData.acceptedsciname){
+                        currentTaxonData['tidaccepted'] = Number(scinameTidData.value[currentTaxonData.acceptedsciname]);
+                    }
+                    const formData = new FormData();
+                    formData.append('taxon', JSON.stringify(currentTaxonData));
+                    formData.append('action', 'addTaxon');
+                    fetch(taxaApiUrl, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then((response) => {
+                        return response.ok ? response.text() : null;
+                    })
+                    .then((res) => {
+                        if(res && Number(res) > 0){
+                            scinameTidData.value[currentTaxonData.sciname] = Number(res);
+                            newTidArr.value.push(Number(res));
+                            processSuccessResponse('Complete');
+                        }
+                        else{
+                            processErrorResponse('An error occurred while adding taxon');
+                        }
+                        processCsvDataArr();
+                    });
                 }
-                const formData = new FormData();
-                formData.append('taxon', JSON.stringify(currentTaxonData));
-                formData.append('action', 'addTaxon');
-                fetch(taxaApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.text() : null;
-                })
-                .then((res) => {
-                    if(res && Number(res) > 0){
-                        scinameTidData.value[currentTaxonData.sciname] = Number(res);
-                        newTidArr.value.push(Number(res));
-                        processSuccessResponse('Complete');
-                    }
-                    else{
-                        processErrorResponse('An error occurred while adding taxon');
-                    }
+                else{
                     processCsvDataArr();
-                });
+                }
             }
             else if(csvDataArr.value.length > 0){
                 processRemainingTaxa();
