@@ -1,5 +1,9 @@
 const glossaryDownloadOptionsPopup = {
     props: {
+        selectedLanguage: {
+            type: String,
+            default: null
+        },
         showPopup: {
             type: Boolean,
             default: false
@@ -14,44 +18,51 @@ const glossaryDownloadOptionsPopup = {
                     </div>
                 </div>
                 <div class="q-mt-sm q-pa-md column q-gutter-sm">
-                    <div class="text-h6 text-bold">Download Occurrence Data</div>
-                    <div class="text-body1">
-                        By downloading data, the user confirms that he/she has read and agrees with the 
-                        <a :href="(clientRoot + '/misc/usagepolicy.php')" target="_blank" aria-label="View usage terms - Opens in separate tab" tabindex="0">general data usage terms</a>.
-                        Note that additional terms of use specific to the individual collections may be distributed with the 
-                        data download. When present, the terms supplied by the owning institution should take precedence over 
-                        the general terms posted on the website.
-                    </div>
-                    <div class="row">
-                        <div class="col-5">
-                            <div class="text-body1 text-bold">Download Type</div>
+                    <div class="text-h6 text-bold">Download Glossary</div>
+                    <template v-if="glossaryLanguageArr.length > 1">
+                        <div v-if="!selectedLanguage" class="q-pa-md text-bold text-red">
+                            Please close this window and select a language in the Language drop-down in order to proceed with the download.
                         </div>
-                        <div class="col-7">
-                            <q-option-group v-model="selectedDownloadType" :options="downloadTypeOptions" color="primary" dense aria-label="Download Type options" tabindex="0"></q-option-group>
+                        <div class="row">
+                            <div class="col-grow">
+                                <selector-input-element label="Download Format" :options="downloadFormatOptions" :value="selectedDownloadFormat" @update:value="(value) => selectedDownloadFormat = value"></selector-input-element>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-5">
-                            <div class="text-body1 text-bold">Data Structure</div>
-                            <a class="q-pa-none" href="https://www.tdwg.org/standards/dwc/" target="_blank">What is Darwin Core?</a>
+                        <template v-if="selectedDownloadFormat === 'singlelanguage'">
+                            <div class="row">
+                                <div class="col-grow q-pl-md">
+                                    <checkbox-input-element label="Include Images" :value="includeImages" @update:value="(value) => includeImages = value"></checkbox-input-element>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="text-body1 text-bold">Translations</div>
+                                </div>
+                                <div class="col-7 column">
+                                    <template v-for="language in glossaryLanguageArr">
+                                        <checkbox-input-element v-if="language !== selectedLanguage" :label="language" :value="selectedLanguages.includes(language)" @update:value="(value) => processTranslationLanguageChange(language, value)"></checkbox-input-element>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="q-mt-sm row justify-start">
+                                <div>
+                                    <q-option-group v-model="selectedDefinitionOption" :options="definitionOptions" color="primary" dense aria-label="Definition options" tabindex="0"></q-option-group>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template v-else>
+                        <div class="row">
+                            <div class="col-grow q-pl-md">
+                                <checkbox-input-element label="Include Images" :value="includeImages" @update:value="(value) => includeImages = value"></checkbox-input-element>
+                            </div>
                         </div>
-                        <div class="col-7">
-                            <q-option-group v-model="selectedDataStructure" :options="dataStructureOptions" color="primary" dense aria-label="Data Structure options" tabindex="0"></q-option-group>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-5">
-                            <div class="text-body1 text-bold">Data Extensions</div>
-                        </div>
-                        <div class="col-7 column">
-                            <checkbox-input-element label="Include Determination History" :value="includeDeterminations" @update:value="(value) => includeDeterminations = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
-                            <checkbox-input-element label="Include Media Records" :value="includeMedia" @update:value="(value) => includeMedia = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
-                            <checkbox-input-element label="Include Measurement or Fact Records" :value="includeMof" @update:value="(value) => includeMof = value" :disabled="selectedDownloadType === 'csv'"></checkbox-input-element>
-                        </div>
-                    </div>
+                    </template>
                     <div class="row justify-end">
                         <div>
-                            <q-btn color="primary" size="md" @click="downloadData();" label="Download Data" dense tabindex="0" />
+                            <q-btn color="primary" size="md" @click="downloadData();" label="Download" dense :disabled="!primaryLanguage" tabindex="0" />
                         </div>
                     </div>
                 </div>
@@ -59,51 +70,70 @@ const glossaryDownloadOptionsPopup = {
         </q-dialog>
     `,
     components: {
-        'checkbox-input-element': checkboxInputElement
+        'checkbox-input-element': checkboxInputElement,
+        'selector-input-element': selectorInputElement
     },
-    setup(_, context) {
+    setup(props, context) {
         const baseStore = useBaseStore();
+        const glossaryStore = useGlossaryStore();
 
         const clientRoot = baseStore.getClientRoot;
-        const dataStructureOptions = Vue.ref([
-            {value: 'native', label: 'Symbiota'},
-            {value: 'dwc', label: 'Darwin Core'}
+        const definitionOptions = Vue.ref([
+            {value: 'nodef', label: 'Without Definitions'},
+            {value: 'onedef', label: 'Primary Definition Only'},
+            {value: 'alldef', label: 'All Definitions'}
         ]);
-        const downloadTypeOptions = Vue.ref([
-            {value: 'csv', label: 'CSV'},
-            {value: 'zip', label: 'ZIP'}
+        const downloadFormatOptions = Vue.ref([
+            {value: 'singlelanguage', label: 'Single Language'},
+            {value: 'translation', label: 'Translation Table'}
         ]);
-        const includeDeterminations = Vue.ref(false);
-        const includeMedia = Vue.ref(false);
-        const includeMof = Vue.ref(false);
-        const selectedDataStructure = Vue.ref('native');
-        const selectedDownloadType = Vue.ref('csv');
+        const glossaryLanguageArr = Vue.computed(() => glossaryStore.getGlossaryLanguageArr);
+        const includeImages = Vue.ref(false);
+        const primaryLanguage = Vue.computed(() => {
+            let returnVal = null;
+            if(glossaryLanguageArr.value.length > 1){
+                returnVal = props.selectedLanguage;
+            }
+            else if(glossaryLanguageArr.value.length > 0){
+                returnVal = glossaryLanguageArr.value[0];
+            }
+            return returnVal;
+        });
+        const selectedDefinitionOption = Vue.ref('nodef');
+        const selectedDownloadFormat = Vue.ref('singlelanguage');
+        const selectedLanguages = Vue.ref([]);
 
         function closePopup() {
             context.emit('close:popup');
         }
 
         function downloadData() {
-            context.emit('update:download-options', {
-                type: selectedDownloadType.value,
-                structure: selectedDataStructure.value,
-                includeDet: includeDeterminations.value,
-                includeMedia: includeMedia.value,
-                includeMof: includeMof.value
-            });
+
+        }
+
+        function processTranslationLanguageChange(language, value) {
+            if(Number(value) === 1){
+                selectedLanguages.value.push(language);
+            }
+            else{
+                const index = selectedLanguages.value.indexOf(language);
+                selectedLanguages.value.splice(index, 1);
+            }
         }
 
         return {
             clientRoot,
-            dataStructureOptions,
-            downloadTypeOptions,
-            includeDeterminations,
-            includeMedia,
-            includeMof,
-            selectedDataStructure,
-            selectedDownloadType,
+            definitionOptions,
+            downloadFormatOptions,
+            glossaryLanguageArr,
+            includeImages,
+            primaryLanguage,
+            selectedDefinitionOption,
+            selectedDownloadFormat,
+            selectedLanguages,
             closePopup,
-            downloadData
+            downloadData,
+            processTranslationLanguageChange
         }
     }
 };

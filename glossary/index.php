@@ -104,9 +104,9 @@ header('X-Frame-Options: SAMEORIGIN');
                         <q-separator></q-separator>
                     </div>
                 </template>
-                <template v-if="activeGlossaryArr.length > termsPerPage">
+                <template v-if="activeGlossaryArr.length > 0">
                     <div class="q-mb-sm q-px-md full-width row justify-end q-gutter-md">
-                        <q-pagination v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Glossary term page navigation"></q-pagination>
+                        <q-pagination v-if="activeGlossaryArr.length > termsPerPage" v-model="paginationPage" :max="paginationLastPageNumber" direction-links flat color="grey" active-color="primary" max-pages="10" aria-label="Glossary term page navigation"></q-pagination>
                         <div>
                             <q-btn color="grey-4" text-color="black" class="black-border" size="sm" @click="showGlossaryDownloadOptionsPopup = true" icon="fas fa-download" dense aria-label="Download Checklist CSV" tabindex="0">
                                 <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
@@ -143,6 +143,7 @@ header('X-Frame-Options: SAMEORIGIN');
             </template>
             <template v-if="showGlossaryDownloadOptionsPopup">
                 <glossary-download-options-popup
+                    :selected-language="selectedLanguage"
                     :show-popup="showGlossaryDownloadOptionsPopup"
                     @close:popup="showGlossaryDownloadOptionsPopup = false"
                 ></glossary-download-options-popup>
