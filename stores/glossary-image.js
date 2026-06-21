@@ -4,7 +4,6 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
             glimgid: 0,
             glossid: null,
             url: null,
-            thumbnailurl: null,
             structures: null,
             notes: null,
             createdby: null,

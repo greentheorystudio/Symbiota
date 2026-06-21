@@ -9,7 +9,6 @@ class GlossaryImages{
         'glimgid' => array('dataType' => 'number', 'length' => 10),
         'glossid' => array('dataType' => 'number', 'length' => 10),
         'url' => array('dataType' => 'string', 'length' => 255),
-        'thumbnailurl' => array('dataType' => 'string', 'length' => 255),
         'structures' => array('dataType' => 'string', 'length' => 150),
         'notes' => array('dataType' => 'string', 'length' => 250),
         'createdby' => array('dataType' => 'string', 'length' => 250),
@@ -57,6 +56,31 @@ class GlossaryImages{
             $retVal = 0;
         }
         return $retVal;
+    }
+
+    public function getGlossaryImageDataFromGlossidArr($glossidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT g.glossid, gi.url, gi.structures, gi.notes, gi.createdby '.
+            'FROM glossary AS g LEFT JOIN glossarytermlink AS gt ON g.glossid = gt.glossid '.
+            'LEFT JOIN glossarytermlink AS gt2 ON gt.glossgrpid = gt2.glossgrpid '.
+            'LEFT JOIN glossaryimages AS gi ON gt2.glossid = gi.glossid '.
+            'WHERE g.glossid IN(' . implode(',', $glossidArr) . ') AND gi.glimgid IS NOT NULL ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[$row['glossid']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 
     public function updateGlossaryImageRecord($glimgid, $editData): int

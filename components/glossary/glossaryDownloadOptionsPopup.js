@@ -28,9 +28,16 @@ const glossaryDownloadOptionsPopup = {
                 <div class="q-mt-sm q-pa-md column q-gutter-sm">
                     <div class="text-h6 text-bold">Download Glossary</div>
                     <template v-if="glossaryLanguageArr.length > 1">
-                        <div v-if="!selectedLanguage" class="q-pa-md text-bold text-red">
-                            Please close this window and select a language in the Language drop-down in order to proceed with the download.
-                        </div>
+                        <template v-if="!selectedLanguage">
+                            <div class="q-pa-md text-bold text-red">
+                                Please close this window and select a language in the Language drop-down in order to proceed with the download.
+                            </div>
+                        </template>
+                        <template v-else-if="selectedDownloadFormat === 'translation' && selectedLanguages.length === 0">
+                            <div class="q-pa-md text-bold text-red">
+                                Please select at least one Translation language below.
+                            </div>
+                        </template>
                         <div class="row">
                             <div class="col-grow">
                                 <selector-input-element label="Download Format" :options="downloadFormatOptions" :value="selectedDownloadFormat" @update:value="(value) => selectedDownloadFormat = value"></selector-input-element>
@@ -54,8 +61,11 @@ const glossaryDownloadOptionsPopup = {
                                     </template>
                                 </div>
                             </div>
-                            <div class="q-mt-sm row justify-start">
-                                <div>
+                            <div class="q-mt-md row justify-start">
+                                <div class="col-5">
+                                    <div class="text-body1 text-bold">Definitions</div>
+                                </div>
+                                <div class="col-7">
                                     <q-option-group v-model="selectedDefinitionOption" :options="definitionOptions" color="primary" dense aria-label="Definition options" tabindex="0"></q-option-group>
                                 </div>
                             </div>
@@ -70,7 +80,7 @@ const glossaryDownloadOptionsPopup = {
                     </template>
                     <div class="row justify-end">
                         <div>
-                            <q-btn color="primary" size="md" @click="downloadData();" label="Download" dense :disabled="!primaryLanguage" tabindex="0" />
+                            <q-btn color="primary" size="md" @click="downloadData();" label="Download" dense :disabled="!primaryLanguage || (selectedDownloadFormat === 'translation' && selectedLanguages.length === 0)" tabindex="0" />
                         </div>
                     </div>
                 </div>

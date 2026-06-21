@@ -60,6 +60,11 @@ class PhpWordService {
         return $section->addHeader();
     }
 
+    public static function getListItemRun($parent, $styleName)
+    {
+        return $parent->addListItemRun(0, null, $styleName);
+    }
+
     public static function getPhpWord(): PhpWord
     {
         return new PhpWord();
