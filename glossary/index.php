@@ -143,7 +143,9 @@ header('X-Frame-Options: SAMEORIGIN');
             </template>
             <template v-if="showGlossaryDownloadOptionsPopup">
                 <glossary-download-options-popup
+                    :gloss-id-arr="activeGlossidArr"
                     :selected-language="selectedLanguage"
+                    :selected-sciname="selectedTaxonomicGroupSciname"
                     :show-popup="showGlossaryDownloadOptionsPopup"
                     @close:popup="showGlossaryDownloadOptionsPopup = false"
                 ></glossary-download-options-popup>
@@ -232,6 +234,13 @@ header('X-Frame-Options: SAMEORIGIN');
                         });
                         return returnArr;
                     });
+                    const activeGlossidArr = Vue.computed(() => {
+                        const returnArr = [];
+                        activeGlossaryArr.value.forEach(glossary => {
+                            returnArr.push(Number(glossary.glossid));
+                        });
+                        return returnArr;
+                    });
                     const clientRoot = baseStore.getClientRoot;
                     const glossaryArr = Vue.computed(() => glossaryStore.getGlossaryArr);
                     const glossaryLanguageArr = Vue.computed(() => glossaryStore.getGlossaryLanguageArr);
@@ -289,6 +298,16 @@ header('X-Frame-Options: SAMEORIGIN');
                     const searchWithinDefinitionsVal = Vue.ref(false);
                     const selectedLanguage = Vue.ref(null);
                     const selectedTaxonomicGroupId = Vue.ref(null);
+                    const selectedTaxonomicGroupSciname = Vue.computed(() => {
+                        let returnVal = null;
+                        if(Number(selectedTaxonomicGroupId.value) > 0){
+                            const selectedTaxon = glossaryTaxaArr.value.find(taxon => Number(taxon['tid']) === Number(selectedTaxonomicGroupId.value));
+                            if(selectedTaxon){
+                                returnVal = selectedTaxon['sciname'];
+                            }
+                        }
+                        return returnVal;
+                    });
                     const showGlossaryBatchLoaderPopup = Vue.ref(false);
                     const showGlossaryDownloadOptionsPopup = Vue.ref(false);
                     const showGlossaryInfoWindowPopup = Vue.ref(false);
@@ -343,6 +362,7 @@ header('X-Frame-Options: SAMEORIGIN');
 
                     return {
                         activeGlossaryArr,
+                        activeGlossidArr,
                         clientRoot,
                         glossaryLanguageArr,
                         glossarySourceData,
@@ -356,6 +376,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         searchWithinDefinitionsVal,
                         selectedLanguage,
                         selectedTaxonomicGroupId,
+                        selectedTaxonomicGroupSciname,
                         showGlossaryBatchLoaderPopup,
                         showGlossaryDownloadOptionsPopup,
                         showGlossaryInfoWindowPopup,

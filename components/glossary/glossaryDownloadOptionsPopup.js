@@ -1,6 +1,14 @@
 const glossaryDownloadOptionsPopup = {
     props: {
+        glossIdArr: {
+            type: Array,
+            default: null
+        },
         selectedLanguage: {
+            type: String,
+            default: null
+        },
+        selectedSciname: {
             type: String,
             default: null
         },
@@ -74,20 +82,53 @@ const glossaryDownloadOptionsPopup = {
         'selector-input-element': selectorInputElement
     },
     setup(props, context) {
-        const baseStore = useBaseStore();
+        const { hideWorking, showWorking } = useCore();
         const glossaryStore = useGlossaryStore();
 
-        const clientRoot = baseStore.getClientRoot;
         const definitionOptions = Vue.ref([
             {value: 'nodef', label: 'Without Definitions'},
             {value: 'onedef', label: 'Primary Definition Only'},
             {value: 'alldef', label: 'All Definitions'}
         ]);
+        const downloadFilename = Vue.computed(() => {
+            let returnVal = downloadTitle.value;
+            if(selectedDownloadFormat.value === 'singlelanguage'){
+                returnVal += '_SingleLanguage.docx';
+            }
+            else{
+                returnVal += '_TranslationTable.docx';
+            }
+            return returnVal;
+        });
         const downloadFormatOptions = Vue.ref([
             {value: 'singlelanguage', label: 'Single Language'},
             {value: 'translation', label: 'Translation Table'}
         ]);
+        const downloadOptions = Vue.computed(() => {
+            return {
+                primaryLanguage: primaryLanguage.value,
+                tid: glossarySourceId.value,
+                sourceData: glossarySourceData.value,
+                includeImages: (includeImages.value ? '1' : '0'),
+                definitionHandling: selectedDefinitionOption.value,
+                downloadFormat: selectedDownloadFormat.value,
+                translationLanguageArr: selectedLanguages.value,
+                downloadTitle: downloadTitle.value,
+            };
+        });
+        const downloadTitle = Vue.computed(() => {
+            let returnVal;
+            if(props.selectedSciname){
+                returnVal = props.selectedSciname.replaceAll(' ', '_');
+            }
+            else{
+                returnVal = props.selectedLanguage.replaceAll(' ', '_');
+            }
+            return returnVal;
+        });
         const glossaryLanguageArr = Vue.computed(() => glossaryStore.getGlossaryLanguageArr);
+        const glossarySourceData = Vue.computed(() => glossaryStore.getGlossarySourceData);
+        const glossarySourceId = Vue.computed(() => glossaryStore.getGlossarySourceID);
         const includeImages = Vue.ref(false);
         const primaryLanguage = Vue.computed(() => {
             let returnVal = null;
@@ -108,7 +149,32 @@ const glossaryDownloadOptionsPopup = {
         }
 
         function downloadData() {
-
+            showWorking();
+            const formData = new FormData();
+            formData.append('glossidArr', JSON.stringify(props.glossIdArr));
+            formData.append('options', JSON.stringify(downloadOptions.value));
+            formData.append('action', 'processDocxDownload');
+            formData.append('filename', downloadFilename.value);
+            fetch(glossaryPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                hideWorking();
+                if(blob !== null){
+                    const objectUrl = window.URL.createObjectURL(blob);
+                    const anchor = document.createElement('a');
+                    anchor.href = objectUrl;
+                    anchor.download = downloadFilename.value;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    anchor.remove();
+                    closePopup();
+                }
+            });
         }
 
         function processTranslationLanguageChange(language, value) {
@@ -122,7 +188,6 @@ const glossaryDownloadOptionsPopup = {
         }
 
         return {
-            clientRoot,
             definitionOptions,
             downloadFormatOptions,
             glossaryLanguageArr,

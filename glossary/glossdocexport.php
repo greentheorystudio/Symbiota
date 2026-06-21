@@ -60,13 +60,7 @@ if($exportType === 'translation'){
 
 		$fileName = $metaArr['sciname'].'_TranslationTable';
 	
-		$header = $section->addHeader();
-		$header->addPreserveText($metaArr['sciname'].' - p.{PAGE} '.date('Y-m-d'),null,array('align'=>'right'));
 		$textrun = $section->addTextRun('titlePara');
-		if(isset($GLOSSARY_BANNER)){
-			$textrun->addImage(SanitizerService::getFullUrlPathPrefix().'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
-			$textrun->addTextBreak();
-		}
 		$textrun->addText(htmlspecialchars('Translation Table for '.$metaArr['sciname']),'titleFont');
 		$textrun->addTextBreak();
 		if($definitions === 'nodef'){
@@ -186,13 +180,7 @@ elseif($exportType === 'singlelanguage'){
 		unset($exportArr['meta']);
 		$fileName = $metaArr['sciname'].'_SingleLanguage';
 	
-		$header = $section->addHeader();
-		$header->addPreserveText($metaArr['sciname'].' - p.{PAGE} '.date('Y-m-d'),null,array('align'=>'right'));
 		$textrun = $section->addTextRun('titlePara');
-		if(isset($GLOSSARY_BANNER)){
-			$textrun->addImage(SanitizerService::getFullUrlPathPrefix().'/images/layout/'.$GLOSSARY_BANNER,array('width'=>500,'align'=>'center'));
-			$textrun->addTextBreak();
-		}
 		$textrun->addText(htmlspecialchars('Single Language Glossary for '.$metaArr['sciname']),'titleFont');
 		$textrun->addTextBreak();
 		foreach($exportArr as $singleEx => $singleExArr){

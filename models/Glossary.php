@@ -118,15 +118,21 @@ class Glossary{
         return $retVal;
     }
 
-    public function getGlossaryArr($recCnt, $index): array
+    public function getGlossaryArr($recCnt, $index, $includeTid = true, $includeGlossGrpId = true, $glossidArr = null): array
     {
         $retArr = array();
         $tempArr = array();
-        $startIndex = (int)$index * (int)$recCnt;
+        $startIndex = (int)$recCnt > 0 ? ((int)$index * (int)$recCnt) : 0;
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
         $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM glossary ORDER BY term '.
-            'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
+            'FROM glossary ';
+        if($glossidArr && count($glossidArr) > 0){
+            $sql .= 'WHERE glossid IN(' . implode(',', $glossidArr) . ') ';
+        }
+        $sql .= 'ORDER BY term  ';
+        if((int)$recCnt > 0){
+            $sql .= 'LIMIT ' . $startIndex . ', ' . (int)$recCnt . ' ';
+        }
         if($result = $this->conn->query($sql)){
             $fields = mysqli_fetch_fields($result);
             $glossidArr = array();
@@ -141,15 +147,30 @@ class Glossary{
                     $name = $val->name;
                     $nodeArr[$name] = $row[$name];
                 }
-                $tempArr[] = $nodeArr;
+                if($includeTid || $includeGlossGrpId){
+                    $tempArr[] = $nodeArr;
+                }
+                else{
+                    $retArr[] = $nodeArr;
+                }
                 unset($rows[$rowIndex]);
             }
-            $glossGrpIdDataArr = $this->getGlossGroupIdArrFromGlossidArr($glossidArr);
-            $tidDataArr = $this->getTidArrFromGlossidArr($glossidArr);
-            foreach($tempArr as $glossArr){
-                $glossArr['groupIdArr'] = $glossGrpIdDataArr[$glossArr['glossid']] ?? array();
-                $glossArr['tidArr'] = $tidDataArr[$glossArr['glossid']] ?? array();
-                $retArr[] = $glossArr;
+            if($includeTid || $includeGlossGrpId){
+                if($includeGlossGrpId){
+                    $glossGrpIdDataArr = $this->getGlossGroupIdArrFromGlossidArr($glossidArr);
+                }
+                if($includeTid){
+                    $tidDataArr = $this->getTidArrFromGlossidArr($glossidArr);
+                }
+                foreach($tempArr as $glossArr){
+                    if($includeGlossGrpId){
+                        $glossArr['groupIdArr'] = $glossGrpIdDataArr[$glossArr['glossid']] ?? array();
+                    }
+                    if($includeTid){
+                        $glossArr['tidArr'] = $tidDataArr[$glossArr['glossid']] ?? array();
+                    }
+                    $retArr[] = $glossArr;
+                }
             }
         }
         return $retArr;
