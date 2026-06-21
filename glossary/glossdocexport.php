@@ -60,9 +60,6 @@ if($exportType === 'translation'){
 
 		$fileName = $metaArr['sciname'].'_TranslationTable';
 	
-		$textrun = $section->addTextRun('titlePara');
-		$textrun->addText(htmlspecialchars('Translation Table for '.$metaArr['sciname']),'titleFont');
-		$textrun->addTextBreak();
 		if($definitions === 'nodef'){
 			$table = $section->addTable('exportTable');
 			$table->addRow();
@@ -133,44 +130,6 @@ if($exportType === 'translation'){
 				}
 			}
 		}
-		if(isset($metaArr['references'])){
-			$section->addTextBreak();
-			$textrun = $section->addTextRun('titlePara');
-			$textrun->addText(htmlspecialchars('References'),'transTransTermDefFont');
-			$referencesArr = $metaArr['references'];
-			ksort($referencesArr);
-			foreach($referencesArr as $ref){
-				$listItemRun = $section->addListItemRun(0,null,'transDefList');
-				$listItemRun->addText(htmlspecialchars($ref),'transDefTextFont');
-			}
-		}
-		if(isset($metaArr['contributors'])){
-			$section->addTextBreak();
-			$textrun = $section->addTextRun('titlePara');
-			$textrun->addText(htmlspecialchars('Contributors'),'transTransTermDefFont');
-			$contributorsArr = $metaArr['contributors'];
-			ksort($contributorsArr);
-			foreach($contributorsArr as $cont){
-				$listItemRun = $section->addListItemRun(0,null,'transDefList');
-				$listItemRun->addText(htmlspecialchars($cont),'transDefTextFont');
-			}
-		}
-		if(isset($metaArr['imgcontributors'])){
-			$section->addTextBreak();
-			$textrun = $section->addTextRun('titlePara');
-			$textrun->addText(htmlspecialchars('Image Contributors'),'transTransTermDefFont');
-			$imgcontributorsArr = $metaArr['imgcontributors'];
-			ksort($imgcontributorsArr);
-			foreach($imgcontributorsArr as $cont){
-				$listItemRun = $section->addListItemRun(0,null,'transDefList');
-				$listItemRun->addText(htmlspecialchars($cont),'transDefTextFont');
-			}
-		}
-		$section->addTextBreak();
-		$textrun = $section->addTextRun('titlePara');
-		$textrun->addText(htmlspecialchars('How to Cite Us'),'transTransTermDefFont');
-		$textrun = $section->addTextRun('transTermPara');
-		$textrun->addText(htmlspecialchars($citationFormat),'transTransTermNodefFont');
 	}
 }
 elseif($exportType === 'singlelanguage'){
@@ -180,9 +139,6 @@ elseif($exportType === 'singlelanguage'){
 		unset($exportArr['meta']);
 		$fileName = $metaArr['sciname'].'_SingleLanguage';
 	
-		$textrun = $section->addTextRun('titlePara');
-		$textrun->addText(htmlspecialchars('Single Language Glossary for '.$metaArr['sciname']),'titleFont');
-		$textrun->addTextBreak();
 		foreach($exportArr as $singleEx => $singleExArr){
 			$textrun = $section->addTextRun('transTermPara');
 			$textrun->addText(htmlspecialchars($singleExArr['term']),'transMainTermDefFont');
@@ -242,44 +198,6 @@ elseif($exportType === 'singlelanguage'){
 				}
 			}
 		}
-		if(isset($metaArr['references'])){
-			$section->addTextBreak();
-			$textrun = $section->addTextRun('titlePara');
-			$textrun->addText(htmlspecialchars('References'),'transTransTermDefFont');
-			$referencesArr = $metaArr['references'];
-			ksort($referencesArr);
-			foreach($referencesArr as $ref){
-				$listItemRun = $section->addListItemRun(0,null,'transDefList');
-				$listItemRun->addText(htmlspecialchars($ref),'transDefTextFont');
-			}
-		}
-		if(isset($metaArr['contributors'])){
-			$section->addTextBreak();
-			$textrun = $section->addTextRun('titlePara');
-			$textrun->addText(htmlspecialchars('Contributors'),'transTransTermDefFont');
-			$contributorsArr = $metaArr['contributors'];
-			ksort($contributorsArr);
-			foreach($contributorsArr as $cont){
-				$listItemRun = $section->addListItemRun(0,null,'transDefList');
-				$listItemRun->addText(htmlspecialchars($cont),'transDefTextFont');
-			}
-		}
-		if(isset($metaArr['imgcontributors'])){
-			$section->addTextBreak();
-			$textrun = $section->addTextRun('titlePara');
-			$textrun->addText(htmlspecialchars('Image Contributors'),'transTransTermDefFont');
-			$imgcontributorsArr = $metaArr['imgcontributors'];
-			ksort($imgcontributorsArr);
-			foreach($imgcontributorsArr as $cont){
-				$listItemRun = $section->addListItemRun(0,null,'transDefList');
-				$listItemRun->addText(htmlspecialchars($cont),'transDefTextFont');
-			}
-		}
-		$section->addTextBreak();
-		$textrun = $section->addTextRun('titlePara');
-		$textrun->addText(htmlspecialchars('How to Cite Us'),'transTransTermDefFont');
-		$textrun = $section->addTextRun('transTermPara');
-		$textrun->addText(htmlspecialchars($citationFormat),'transTransTermNodefFont');
 	}
 }
 
