@@ -211,6 +211,47 @@ class Glossary{
         return $retArr;
     }
 
+    public function getGlossaryRelatedTermsArrFromGlossidArr($glossidArr, $relationType, $languageArr = null): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'g');
+        $fieldNameArr[] = 'gt.glossgrpid';
+        $fieldNameArr[] = 'gt.relationshiptype';
+        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM glossary AS g LEFT JOIN glossarytermlink AS gt ON g.glossid = gt.glossid '.
+            'WHERE gt.glossgrpid IN(SELECT DISTINCT glossgrpid FROM glossarytaxalink WHERE glossid IN(' . implode(',', $glossidArr) . ') ';
+        if($relationType === 'translation'){
+            $sql .= 'AND relationshiptype = "translation" ';
+        }
+        elseif($relationType === 'synonym'){
+            $sql .= 'AND relationshiptype = "synonym" ';
+        }
+        $sql .= ') AND g.glossid NOT IN(' . implode(',', $glossidArr) . ') ';
+        if($languageArr && count($languageArr) > 0){
+            $sql .= 'AND g.`language` IN("' . implode('","', $languageArr) . '") ';
+        }
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                if($relationType === 'translation'){
+                    $retArr[$row['glossgrpid']][$row['language']][] = $nodeArr;
+                }
+                else{
+                    $retArr[$row['glossgrpid']][] = $nodeArr;
+                }
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getGlossaryTaxaArr(): array
     {
         $retArr = array();
@@ -237,35 +278,6 @@ class Glossary{
             foreach($tempArr as $taxonArr){
                 $taxonArr['vernacularData'] = $vernacularDataArr[$taxonArr['tid']] ?? null;
                 $retArr[] = $taxonArr;
-            }
-        }
-        return $retArr;
-    }
-
-    public function getGlossaryTranslationArrFromGlossidArr($glossidArr, $languageArr = null): array
-    {
-        $retArr = array();
-        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'g');
-        $fieldNameArr[] = 'gt.glossgrpid';
-        $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
-            'FROM glossary AS g LEFT JOIN glossarytermlink AS gt ON g.glossid = gt.glossid '.
-            'WHERE gt.glossgrpid IN(SELECT DISTINCT glossgrpid FROM glossarytaxalink WHERE glossid IN(' . implode(',', $glossidArr) . ') AND relationshiptype = "translation" AND glossgrpid IS NOT NULL) '.
-            'AND g.glossid NOT IN(' . implode(',', $glossidArr) . ') ';
-        if($languageArr && count($languageArr) > 0){
-            $sql .= 'AND g.`language` IN("' . implode('","', $languageArr) . '") ';
-        }
-        if($result = $this->conn->query($sql)){
-            $fields = mysqli_fetch_fields($result);
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $nodeArr = array();
-                foreach($fields as $val){
-                    $name = $val->name;
-                    $nodeArr[$name] = $row[$name];
-                }
-                $retArr[$row['glossgrpid']][$row['language']][] = $nodeArr;
-                unset($rows[$index]);
             }
         }
         return $retArr;

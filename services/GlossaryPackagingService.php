@@ -83,7 +83,7 @@ class GlossaryPackagingService {
         $targetPath = FileSystemService::getTempDownloadUploadPath();
         if($glossidArr && $options && $filename && $targetPath){
             $glossaryArr = (new Glossary)->getGlossaryArr(0, 0, false, true, $glossidArr);
-            $translationArr = $options['downloadFormat'] === 'translation' ? (new Glossary)->getGlossaryTranslationArrFromGlossidArr($glossidArr, $options['translationLanguageArr']) : array();
+            $translationArr = $options['downloadFormat'] === 'translation' ? (new Glossary)->getGlossaryRelatedTermsArrFromGlossidArr($glossidArr, 'translation', $options['translationLanguageArr']) : array();
             $imageData = ($options['downloadFormat'] === 'singlelanguage' && (int)$options['includeImages'] === 1) ? (new GlossaryImages)->getGlossaryImageDataFromGlossidArr($glossidArr) : array();
             $summaryData = $this->getGlossarySummaryData($glossaryArr, $translationArr, $options['sourceData']);
             $contentType = (new DataDownloadService)->getContentTypeFromFileType('docx');
