@@ -15,7 +15,7 @@ const glossaryInfoWindowPopup = {
     },
     template: `
         <q-dialog class="z-top" v-model="showPopup" persistent>
-            <q-card class="md-popup overflow-hidden">
+            <q-card class="md-square-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
                         <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
@@ -45,7 +45,7 @@ const glossaryInfoWindowPopup = {
                                     </div>
                                 </div>
                                 <div class="q-mt-sm row justify-between q-pb-md">
-                                    <div class="col-12 col-md-6 q-pl-md column">
+                                    <div class="q-pl-md column">
                                         <div v-if="termData['definition']">
                                             <span class="text-bold">Definition:</span>
                                             <span class="q-ml-sm">{{ termData['definition'] }}</span>
