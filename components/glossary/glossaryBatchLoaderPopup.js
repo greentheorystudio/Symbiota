@@ -400,12 +400,12 @@ const glossaryBatchLoaderPopup = {
                     method: 'POST',
                     body: formData
                 })
-                    .then((response) => {
-                        return response.ok ? response.text() : null;
-                    })
-                    .then(() => {
-                        processCsvDataTaxaArr();
-                    });
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then(() => {
+                    processCsvDataTaxaArr();
+                });
             }
             else{
                 if(currentProcess.value === 'processingTaxaRelationships'){
@@ -435,12 +435,12 @@ const glossaryBatchLoaderPopup = {
                     method: 'POST',
                     body: formData
                 })
-                    .then((response) => {
-                        return response.ok ? response.text() : null;
-                    })
-                    .then(() => {
-                        processCsvDataTranslationArr();
-                    });
+                .then((response) => {
+                    return response.ok ? response.text() : null;
+                })
+                .then(() => {
+                    processCsvDataTranslationArr();
+                });
             }
             else{
                 if(currentProcess.value === 'processingTranslationRelationships'){
