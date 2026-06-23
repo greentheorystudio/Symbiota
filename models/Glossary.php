@@ -211,7 +211,7 @@ class Glossary{
         return $retArr;
     }
 
-    public function getGlossaryRelatedTermsArrFromGlossidArr($glossidArr, $relationType, $languageArr = null): array
+    public function getGlossaryRelatedTermsDataFromGlossidArr($glossidArr, $relationType = null, $languageArr = null): array
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'g');

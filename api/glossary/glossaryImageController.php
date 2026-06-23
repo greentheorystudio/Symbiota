@@ -22,4 +22,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'updateGlossaryImageRecord' && $isEditor && $glimgid && array_key_exists('glossaryImageData', $_POST)){
         echo $glossaryImages->updateGlossaryImageRecord($glimgid, json_decode($_POST['glossaryImageData'], true));
     }
+    elseif($action === 'getGlossaryImageDataFromGlossidArr' && array_key_exists('glossIdArr', $_POST)){
+        echo json_encode($glossaryImages->getGlossaryImageDataFromGlossidArr(json_decode($_POST['glossIdArr'], false)));
+    }
 }

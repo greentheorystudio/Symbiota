@@ -46,4 +46,9 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'addGlossaryTaxaRelationships' && $isEditor && array_key_exists('glossIdArr', $_POST) && array_key_exists('tid', $_POST)){
         echo $glossary->batchCreateGlossaryTaxonRelationshipRecordsFromGlossidArr($_POST['tid'], json_decode($_POST['glossIdArr'], false));
     }
+    elseif($action === 'getGlossaryRelatedTermsDataFromGlossidArr' && array_key_exists('glossIdArr', $_POST)){
+        $relationType = $_POST['relationtype'] ?? null;
+        $languageArr = array_key_exists('languageArr', $_POST) ? json_decode($_POST['languageArr'], false) : null;
+        echo json_encode($glossary->getGlossaryRelatedTermsDataFromGlossidArr(json_decode($_POST['glossIdArr'], false), $relationType, $languageArr));
+    }
 }

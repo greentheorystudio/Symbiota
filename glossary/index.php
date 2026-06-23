@@ -122,10 +122,15 @@ header('X-Frame-Options: SAMEORIGIN');
                 <template v-if="activeGlossaryArr.length > 0">
                     <template v-for="glossary in paginatedGlossaryArr">
                         <div class="q-my-xs">
-                            <a class="text-bold cursor-pointer" tabindex="0">{{ glossary['term'] }}</a>
+                            <a class="text-bold cursor-pointer" @click="openTermInfoPopup(glossary);" tabindex="0">{{ glossary['term'] }}</a>
                             <template v-if="glossary['definition']">
                                 {{ ' - ' + glossary['definition'] }}
                             </template>
+                            <q-btn v-if="isEditor" color="grey-4" text-color="black" class="q-ml-sm black-border cursor-pointer" size="xs" @click="openTermEditorPopup(glossary['glossid']);" icon="far fa-edit" aria-label="Open term editor" dense tabindex="0">
+                                <q-tooltip anchor="top middle" self="bottom middle" class="text-body2" :delay="1000" :offset="[10, 10]">
+                                    Open term editor
+                                </q-tooltip>
+                            </q-btn>
                         </div>
                     </template>
                 </template>
@@ -152,8 +157,11 @@ header('X-Frame-Options: SAMEORIGIN');
             </template>
             <template v-if="showGlossaryInfoWindowPopup">
                 <glossary-info-window-popup
+                    :is-editor="isEditor"
                     :show-popup="showGlossaryInfoWindowPopup"
-                    @close:popup="showGlossaryInfoWindowPopup = false"
+                    :term-data="infoPopupData"
+                    @close:popup="closeTermInfoPopup"
+                    @open:term-editor-popup="openTermEditorPopup"
                 ></glossary-info-window-popup>
             </template>
             <template v-if="showGlossarySourceEditorPopup">
@@ -165,8 +173,9 @@ header('X-Frame-Options: SAMEORIGIN');
             </template>
             <template v-if="showGlossaryTermEditorPopup">
                 <glossary-term-editor-popup
+                    :gloss-id="editGlossId"
                     :show-popup="showGlossaryTermEditorPopup"
-                    @close:popup="showGlossaryTermEditorPopup = false"
+                    @close:popup="closeTermEditorPopup"
                 ></glossary-term-editor-popup>
             </template>
         </div>
@@ -242,6 +251,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         return returnArr;
                     });
                     const clientRoot = baseStore.getClientRoot;
+                    const editGlossId = Vue.ref(null);
                     const glossaryArr = Vue.computed(() => glossaryStore.getGlossaryArr);
                     const glossaryLanguageArr = Vue.computed(() => glossaryStore.getGlossaryLanguageArr);
                     const glossarySourceData = Vue.computed(() => glossaryStore.getGlossarySourceData);
@@ -267,6 +277,7 @@ header('X-Frame-Options: SAMEORIGIN');
                         });
                         return returnArr;
                     });
+                    const infoPopupData = Vue.ref({});
                     const isEditor = Vue.ref(false);
                     const paginatedGlossaryArr = Vue.computed(() => {
                         let returnArr;
@@ -316,6 +327,28 @@ header('X-Frame-Options: SAMEORIGIN');
                     const showSources = Vue.ref(false);
                     const termsPerPage = 100;
 
+                    function closeTermEditorPopup() {
+                        editGlossId.value = 0;
+                        showGlossaryTermEditorPopup.value = false;
+                    }
+
+                    function closeTermInfoPopup() {
+                        infoPopupData.value = Object.assign({}, {});
+                        showGlossaryInfoWindowPopup.value = false;
+                    }
+
+                    function openTermEditorPopup(glossid) {
+                        closeTermInfoPopup();
+                        editGlossId.value = Number(glossid);
+                        showGlossaryTermEditorPopup.value = true;
+                    }
+
+                    function openTermInfoPopup(termObject) {
+                        console.log(termObject);
+                        infoPopupData.value = Object.assign({}, termObject);
+                        //showGlossaryInfoWindowPopup.value = true;
+                    }
+
                     function processLanguageChange(value) {
                         selectedLanguage.value = value;
                     }
@@ -364,10 +397,12 @@ header('X-Frame-Options: SAMEORIGIN');
                         activeGlossaryArr,
                         activeGlossidArr,
                         clientRoot,
+                        editGlossId,
                         glossaryLanguageArr,
                         glossarySourceData,
                         glossarySourceId,
                         glossaryTaxaOptions,
+                        infoPopupData,
                         isEditor,
                         paginatedGlossaryArr,
                         paginationLastPageNumber,
@@ -384,6 +419,10 @@ header('X-Frame-Options: SAMEORIGIN');
                         showGlossaryTermEditorPopup,
                         showSources,
                         termsPerPage,
+                        closeTermEditorPopup,
+                        closeTermInfoPopup,
+                        openTermEditorPopup,
+                        openTermInfoPopup,
                         processLanguageChange,
                         processSearchTermChange,
                         processSearchWithinDefinitionsChange,

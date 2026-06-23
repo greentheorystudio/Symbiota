@@ -1,5 +1,9 @@
 const glossaryTermEditorPopup = {
     props: {
+        glossId: {
+            type: Number,
+            default: 0
+        },
         showPopup: {
             type: Boolean,
             default: false
