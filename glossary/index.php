@@ -344,9 +344,8 @@ header('X-Frame-Options: SAMEORIGIN');
                     }
 
                     function openTermInfoPopup(termObject) {
-                        console.log(termObject);
                         infoPopupData.value = Object.assign({}, termObject);
-                        //showGlossaryInfoWindowPopup.value = true;
+                        showGlossaryInfoWindowPopup.value = true;
                     }
 
                     function processLanguageChange(value) {

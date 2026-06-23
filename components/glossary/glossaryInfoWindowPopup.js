@@ -22,7 +22,7 @@ const glossaryInfoWindowPopup = {
                     </div>
                 </div>
                 <div ref="contentContainerRef" class="fit">
-                    <q-card flat bordered :style="fullWindowMode ? '' : tabCardStyle">
+                    <q-card flat bordered :style="tabCardStyle">
                         <q-tabs v-model="selectedTab" content-class="bg-grey-3" active-bg-color="grey-4" align="left">
                             <q-tab class="bg-grey-3" label="Details" name="details" no-caps />
                             <template v-if="imageArr.length > 0">
@@ -58,7 +58,7 @@ const glossaryInfoWindowPopup = {
                                             <span class="text-bold">Translator:</span>
                                             <span class="q-ml-sm">{{ termData['translator'] }}</span>
                                         </div>
-                                        <div v-if="synonymArr.length > 0" class="text-red">
+                                        <div v-if="synonymArr.length > 0">
                                             <span class="text-bold">Synonyms:</span>
                                             <span class="q-ml-sm">{{ getSynonymStrFromArr(synonymArr) }}</span>
                                         </div>
@@ -270,6 +270,7 @@ const glossaryInfoWindowPopup = {
         return {
             clientRoot,
             contentContainerRef,
+            imageArr,
             imageCardStyle,
             imageWidth,
             relevantTaxaArr,
