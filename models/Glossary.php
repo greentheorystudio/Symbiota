@@ -103,17 +103,23 @@ class Glossary{
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
-        $sql = 'DELETE FROM glossarytaxalink WHERE glossid = ' . (int)$glossid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        if($retVal){
+            $sql = 'DELETE FROM glossarytaxalink WHERE glossid = ' . (int)$glossid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
         }
-        $sql = 'DELETE FROM glossarytermlink WHERE glossid = ' . (int)$glossid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        if($retVal){
+            $sql = 'DELETE FROM glossarytermlink WHERE glossid = ' . (int)$glossid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
         }
-        $sql = 'DELETE FROM glossary WHERE glossid = ' . (int)$glossid . ' ';
-        if(!$this->conn->query($sql)){
-            $retVal = 0;
+        if($retVal){
+            $sql = 'DELETE FROM glossary WHERE glossid = ' . (int)$glossid . ' ';
+            if(!$this->conn->query($sql)){
+                $retVal = 0;
+            }
         }
         return $retVal;
     }

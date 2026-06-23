@@ -45,6 +45,21 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         getGlossaryID(state) {
             return state.glossaryId;
         },
+        getGlossaryImageArr(state) {
+            return state.glossaryImageStore.getGlossaryImageArr;
+        },
+        getGlossaryImageData(state) {
+            return state.glossaryImageStore.getGlossaryImageData;
+        },
+        getGlossaryImageEditsExist(state) {
+            return state.glossaryImageStore.getGlossaryImageEditsExist;
+        },
+        getGlossaryImageID(state) {
+            return state.glossaryImageStore.getGlossaryImageID;
+        },
+        getGlossaryImageValid(state) {
+            return state.glossaryImageStore.getGlossaryImageValid;
+        },
         getGlossaryLanguageArr(state) {
             return state.glossaryLanguageArr;
         },
@@ -88,6 +103,14 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
+                if(Number(res) > 0){
+                    this.glossaryEditData['glossid'] = res;
+                    this.glossaryData = Object.assign({}, this.glossaryEditData);
+                    this.glossaryArr.push(this.glossaryData);
+                    this.glossaryArr.sort((a, b) => {
+                        return a['term'].localeCompare(b['term']);
+                    });
+                }
                 callback(Number(res));
             });
         },
@@ -108,6 +131,11 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 return response.ok ? response.text() : null;
             })
             .then((res) => {
+                if(Number(res) === 1){
+                    const glossaryArrObj = this.glossaryArr.find(term => Number(term.glossid) === Number(this.glossaryId));
+                    const index = this.glossaryArr.indexOf(glossaryArrObj);
+                    this.glossaryArr.splice(index, 1);
+                }
                 callback(Number(res));
             });
         },
@@ -238,6 +266,10 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 callback(Number(res));
                 if(res && Number(res) === 1){
                     this.glossaryData = Object.assign({}, this.glossaryEditData);
+                    this.glossaryArr = this.glossaryArr.map(term => Number(term.glossid) === Number(this.glossaryId) ? this.glossaryData : term);
+                    this.glossaryArr.sort((a, b) => {
+                        return a['term'].localeCompare(b['term']);
+                    });
                 }
             });
         },
