@@ -89,8 +89,8 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
         },
         setGlossaryImageArr(glossid) {
             const formData = new FormData();
-            formData.append('glossid', glossid.toString());
-            formData.append('action', 'getGlossaryImages');
+            formData.append('glossIdArr', JSON.stringify([glossid]));
+            formData.append('action', 'getGlossaryImageDataFromGlossidArr');
             fetch(glossaryImageApiUrl, {
                 method: 'POST',
                 body: formData
@@ -99,7 +99,9 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.glossaryImageArr = data;
+                if(data.hasOwnProperty(glossid)){
+                    this.glossaryImageArr = data[glossid].slice();
+                }
             });
         },
         updateGlossaryImageEditData(key, value) {

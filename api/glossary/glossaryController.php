@@ -51,4 +51,11 @@ if($action && SanitizerService::validateInternalRequest()){
         $languageArr = array_key_exists('languageArr', $_POST) ? json_decode($_POST['languageArr'], false) : null;
         echo json_encode($glossary->getGlossaryRelatedTermsDataFromGlossidArr(json_decode($_POST['glossIdArr'], false), $relationType, $languageArr));
     }
+    elseif(($action === 'getAutocompleteTermList') && $isEditor && array_key_exists('term', $_POST) && array_key_exists('relationtype', $_POST) && array_key_exists('language', $_POST) && array_key_exists('glossIdArr', $_POST)){
+        $glossIdArr = $_POST['glossIdArr'] ? json_decode($_POST['glossIdArr'], false) : array();
+        echo json_encode($glossary->getAutocompleteTermList($_POST['term'], $_POST['relationtype'], $_POST['language'], $glossIdArr));
+    }
+    elseif($action === 'deleteGlossaryRelatedTermRecord' && $isEditor && array_key_exists('gltlinkid', $_POST)){
+        echo $glossary->deleteGlossaryRelatedTermRecord($_POST['gltlinkid']);
+    }
 }

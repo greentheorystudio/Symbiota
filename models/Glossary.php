@@ -68,6 +68,26 @@ class Glossary{
         return $recordsCreated;
     }
 
+    public function clearOrphanGroups(): void
+    {
+        $groupIdArr = array();
+        $sql = 'SELECT DISTINCT gt.glossgrpid FROM glossarytermlink AS gt '.
+            'LEFT JOIN (SELECT glossgrpid, COUNT(glossgrpid) AS cnt FROM glossarytermlink GROUP BY glossgrpid) AS c ON gt.glossgrpid = c.glossgrpid '.
+            'WHERE c.cnt = 1';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $groupIdArr[] = $row['glossgrpid'];
+                unset($rows[$index]);
+            }
+        }
+        if(count($groupIdArr) > 0){
+            $sql = 'DELETE FROM glossarytermlink WHERE glossgrpid IN(' . implode(',', $groupIdArr) . ') ';
+            $this->conn->query($sql);
+        }
+    }
+
     public function createGlossaryRecord($data): int
     {
         $newID = 0;
@@ -111,7 +131,10 @@ class Glossary{
         }
         if($retVal){
             $sql = 'DELETE FROM glossarytermlink WHERE glossid = ' . (int)$glossid . ' ';
-            if(!$this->conn->query($sql)){
+            if($this->conn->query($sql)) {
+                $this->clearOrphanGroups();
+            }
+            else {
                 $retVal = 0;
             }
         }
@@ -122,6 +145,51 @@ class Glossary{
             }
         }
         return $retVal;
+    }
+
+    public function deleteGlossaryRelatedTermRecord($gltlinkid): int
+    {
+        $retVal = 1;
+        $sql = 'DELETE FROM glossarytermlink WHERE gltlinkid = ' . (int)$gltlinkid . ' ';
+        if($this->conn->query($sql)) {
+            $this->clearOrphanGroups();
+        }
+        else {
+            $retVal = 0;
+        }
+        return $retVal;
+    }
+
+    public function getAutocompleteTermList($queryString, $relationType, $language, $glossIdArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT glossid, term, `language` FROM glossary WHERE term LIKE "' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" ';
+        if($language){
+            if($relationType === 'translation'){
+                $sql .= 'AND `language` <> "' . SanitizerService::cleanInStr($this->conn, $language) . '" ';
+            }
+            else{
+                $sql .= 'AND `language` = "' . SanitizerService::cleanInStr($this->conn, $language) . '" ';
+            }
+        }
+        if($glossIdArr && count($glossIdArr) > 0){
+            $sql .= 'AND glossid NOT IN(' . implode(',', $glossIdArr) . ') ';
+        }
+        $sql .= 'ORDER BY term, `language` LIMIT 10 ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $termArr = array();
+                $termArr['glossid'] = $row['glossid'];
+                $termArr['term'] = $row['term'];
+                $termArr['language'] = $row['language'];
+                $termArr['label'] = $row['term'] . ($relationType === 'translation' ? (' (' . $row['language'] . ')') : '');
+                $retArr[] = $termArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 
     public function getGlossaryArr($recCnt, $index, $includeTid = true, $includeGlossGrpId = true, $glossidArr = null): array
@@ -221,11 +289,12 @@ class Glossary{
     {
         $retArr = array();
         $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields, 'g');
+        $fieldNameArr[] = 'gt.gltlinkid';
         $fieldNameArr[] = 'gt.glossgrpid';
         $fieldNameArr[] = 'gt.relationshiptype';
         $sql = 'SELECT DISTINCT ' . implode(',', $fieldNameArr) . ' '.
             'FROM glossary AS g LEFT JOIN glossarytermlink AS gt ON g.glossid = gt.glossid '.
-            'WHERE gt.glossgrpid IN(SELECT DISTINCT glossgrpid FROM glossarytaxalink WHERE glossid IN(' . implode(',', $glossidArr) . ') ';
+            'WHERE gt.glossgrpid IN(SELECT DISTINCT glossgrpid FROM glossarytermlink WHERE glossid IN(' . implode(',', $glossidArr) . ') ';
         if($relationType === 'translation'){
             $sql .= 'AND relationshiptype = "translation" ';
         }

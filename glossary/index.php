@@ -194,6 +194,7 @@ header('X-Frame-Options: SAMEORIGIN');
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/multipleScientificCommonNameAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/confirmationPopup.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/glossaryTermAutoComplete.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/glossary/glossaryFieldModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/glossary/glossaryEditorAdminTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/glossary/glossaryEditorImagesTab.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>

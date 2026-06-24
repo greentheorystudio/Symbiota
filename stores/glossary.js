@@ -90,6 +90,26 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         }
     },
     actions: {
+        addGlossaryTermRelationship(glossIdArr, groupId, relationType, callback) {
+            const formData = new FormData();
+            formData.append('glossIdArr', JSON.stringify(glossIdArr));
+            formData.append('groupId', groupId.toString());
+            formData.append('relationType', relationType);
+            formData.append('action', 'addGlossaryTermRelationships');
+            fetch(glossaryApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) > 0){
+                    this.setGlossaryRelatedTermData(true);
+                }
+                callback(Number(res));
+            });
+        },
         clearGlossaryData() {
             this.glossaryId = 0;
             this.glossaryData = Object.assign({}, this.blankGlossaryRecord);
@@ -144,6 +164,24 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 callback(Number(res));
             });
         },
+        deleteGlossaryRelatedTermRecord(gltlinkid, callback) {
+            const formData = new FormData();
+            formData.append('gltlinkid', gltlinkid.toString());
+            formData.append('action', 'deleteGlossaryRelatedTermRecord');
+            fetch(glossaryApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.text() : null;
+            })
+            .then((res) => {
+                if(Number(res) === 1){
+                    this.setGlossaryRelatedTermData(true);
+                }
+                callback(Number(res));
+            });
+        },
         deleteGlossarySourceRecord(callback = null) {
             this.glossarySourceStore.deleteGlossarySourceRecord((res) => {
                 if(callback){
@@ -153,6 +191,20 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         },
         getCurrentGlossaryData() {
             return this.glossaryArr.find(glossary => Number(glossary.glossid) === this.glossaryId);
+        },
+        getGlossGroupIdArrFromRelatedTermData() {
+            const returnArr = [];
+            const groupIdArr = [];
+            Object.keys(this.glossaryRelatedTermData).forEach(glossgrpid => {
+                if(this.glossaryRelatedTermData.hasOwnProperty(glossgrpid) && this.glossaryRelatedTermData[glossgrpid].length > 0 && !groupIdArr.includes(glossgrpid)) {
+                    groupIdArr.push(glossgrpid);
+                    returnArr.push({
+                        glossgrpid: Number(glossgrpid),
+                        relationshiptype: this.glossaryRelatedTermData[glossgrpid][0]['relationshiptype']
+                    });
+                }
+            });
+            return returnArr;
         },
         getNextGlossGroupIdValue() {
             const returnVal = this.glossGroupIdValue;
@@ -222,7 +274,7 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 this.glossaryLanguageArr = data;
             });
         },
-        setGlossaryRelatedTermData() {
+        setGlossaryRelatedTermData(updateGlossaryArr = false) {
             const formData = new FormData();
             formData.append('glossIdArr', JSON.stringify([this.glossaryId]));
             formData.append('action', 'getGlossaryRelatedTermsDataFromGlossidArr');
@@ -235,6 +287,11 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             })
             .then((data) => {
                 this.glossaryRelatedTermData = Object.assign({}, data);
+                if(updateGlossaryArr){
+                    const glossGrpIdArr = this.getGlossGroupIdArrFromRelatedTermData();
+                    const glossaryArrObj = this.glossaryArr.find(term => Number(term.glossid) === Number(this.glossaryId));
+                    glossaryArrObj['groupIdArr'] = glossGrpIdArr.slice();
+                }
             });
         },
         setGlossarySourceData(id) {

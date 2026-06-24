@@ -141,7 +141,12 @@ const multipleScientificCommonNameAutoComplete = {
         const autocompleteOptions = Vue.ref([]);
         const autocompleteRef = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
+        const propsRefs = Vue.toRefs(props);
         const scinameArr = Vue.ref([]);
+
+        Vue.watch(propsRefs.sciname, () => {
+            setScinameArrFromScinameVal();
+        });
 
         function blurAction(val) {
             if(val.target.value){
@@ -310,6 +315,7 @@ const multipleScientificCommonNameAutoComplete = {
         }
 
         function setScinameArrFromScinameVal() {
+            scinameArr.value.length = 0;
             if(props.sciname && props.sciname.length > 0){
                 const nameArr = props.sciname.split(props.concatenator);
                 nameArr.forEach((sciname) => {
