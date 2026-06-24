@@ -3,16 +3,21 @@ const glossaryFieldModule = {
         <div class="q-pa-md column q-col-gutter-sm">
             <div class="row justify-between">
                 <div>
-                    <template v-if="glossaryId > 0 && editsExist">
-                        <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
+                    <template v-if="glossaryId > 0">
+                        <template v-if="termExists">
+                            <span class="q-ml-md text-h6 text-bold text-red self-center">Term already exists</span>
+                        </template>
+                        <template v-else-if="editsExist">
+                            <span class="q-ml-md text-h6 text-bold text-red self-center">Unsaved Edits</span>
+                        </template>
                     </template>
                 </div>
                 <div class="row justify-end">
                     <template v-if="glossaryId > 0">
-                        <q-btn color="secondary" @click="saveGlossaryEdits();" label="Save Edits" :disabled="!editsExist || !glossaryValid" tabindex="0" />
+                        <q-btn color="secondary" @click="saveGlossaryEdits();" label="Save Edits" :disabled="!editsExist || !glossaryValid || termExists" tabindex="0" />
                     </template>
                     <template v-else>
-                        <q-btn color="secondary" @click="createGlossary();" label="Create" :disabled="!glossaryValid" aria-label="Create glossary term" tabindex="0" />
+                        <q-btn color="secondary" @click="createGlossary();" label="Create" :disabled="!glossaryValid || termExists" aria-label="Create glossary term" tabindex="0" />
                     </template>
                 </div>
             </div>
@@ -67,9 +72,20 @@ const glossaryFieldModule = {
         const glossaryStore = useGlossaryStore();
 
         const editsExist = Vue.computed(() => glossaryStore.getGlossaryEditsExist);
+        const glossaryArr = Vue.computed(() => glossaryStore.getGlossaryArr);
         const glossaryData = Vue.computed(() => glossaryStore.getGlossaryData);
         const glossaryId = Vue.computed(() => glossaryStore.getGlossaryID);
         const glossaryValid = Vue.computed(() => glossaryStore.getGlossaryValid);
+        const termExists = Vue.computed(() => {
+            let returnVal = false;
+            if(glossaryData.value['term'] && glossaryData.value['language']){
+                const existingTerm = glossaryArr.value.find(term => (term['term'] === glossaryData.value['term'] && term['language'] === glossaryData.value['language']));
+                if(existingTerm && Number(glossaryData.value['glossid']) !== Number(existingTerm['glossid'])){
+                    returnVal = true;
+                }
+            }
+            return returnVal;
+        });
         
         function createGlossary() {
             glossaryStore.createGlossaryRecord((newGlossaryId) => {
@@ -109,10 +125,11 @@ const glossaryFieldModule = {
         }
 
         return {
+            editsExist,
             glossaryData,
             glossaryId,
             glossaryValid,
-            editsExist,
+            termExists,
             createGlossary,
             processLanguageChange,
             saveGlossaryEdits,
