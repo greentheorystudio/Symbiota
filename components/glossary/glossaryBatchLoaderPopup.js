@@ -139,6 +139,8 @@ const glossaryBatchLoaderPopup = {
         const csvDataArr = Vue.ref([]);
         const currentProcess = Vue.ref(null);
         const dataLanguageArr = Vue.ref([]);
+        const existingTranslationGlossidArr = Vue.ref([]);
+        const existingTranslationGroupData = Vue.ref({});
         const glossaryArr = Vue.computed(() => glossaryStore.getGlossaryArr);
         const procDisplayScrollAreaRef = Vue.ref(null);
         const procDisplayScrollHeight = Vue.ref(0);
@@ -186,7 +188,9 @@ const glossaryBatchLoaderPopup = {
             processorDisplayCurrentIndex.value = 0;
             processorDisplayIndex.value = 0;
             dataLanguageArr.value.length = 0;
+            existingTranslationGlossidArr.value = 0;
             tidGlossidData.value = Object.assign({}, {});
+            existingTranslationGroupData.value = Object.assign({}, {});
             context.emit('update:loading', true);
         }
 
@@ -196,6 +200,27 @@ const glossaryBatchLoaderPopup = {
 
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function getExistingTranslationGroupData() {
+            const text = 'Validating existing translation group data';
+            currentProcess.value = 'getExistingTranslationGroupData';
+            addProcessToProcessorDisplay(getNewProcessObject('single', text));
+            const formData = new FormData();
+            formData.append('glossIdArr', JSON.stringify(existingTranslationGlossidArr.value));
+            formData.append('relationtype', 'translation');
+            formData.append('action', 'getGlossaryRelatedTermsDataFromGlossidArr');
+            fetch(glossaryApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resData) => {
+                existingTranslationGroupData.value = Object.assign({}, resData);
+                validateExistingTranslationGroups();
+            });
         }
 
         function getNewProcessObject(type, text) {
@@ -481,10 +506,11 @@ const glossaryBatchLoaderPopup = {
                     };
                     dataLanguageArr.value.forEach((language) => {
                         if(dataObj[language]){
-                            const existingTerm = glossaryArr.value.find(term => (term['term'] === dataObj[language] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1)) && term['tidArr'].filter(tid => taxonomicGroupTidArr.value.includes(tid)).length > 0));
+                            const existingTerm = glossaryArr.value.find(term => (term['term'] === dataObj[language] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1))));
                             if(existingTerm){
                                 const existingTranslationGroup = existingTerm['groupIdArr'].find(group => group['relationshiptype'] === 'translation');
                                 if(!csvDataObj['translationGroupId'] && existingTranslationGroup){
+                                    existingTranslationGlossidArr.value.push(existingTerm['glossid']);
                                     csvDataObj['translationGroupId'] = existingTranslationGroup['glossgrpid'];
                                 }
                                 else if(dataLanguageArr.value.length > 1){
@@ -533,7 +559,7 @@ const glossaryBatchLoaderPopup = {
                                         language: (language.charAt(0).toUpperCase() + language.slice(1))
                                     });
                                 }
-                                const existingSynonym = glossaryArr.value.find(term => (term['term'] === dataObj[language + '_synonym'] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1)) && term['tidArr'].filter(tid => taxonomicGroupTidArr.value.includes(tid)).length > 0));
+                                const existingSynonym = glossaryArr.value.find(term => (term['term'] === dataObj[language + '_synonym'] && term['language'] === (language.charAt(0).toUpperCase() + language.slice(1))));
                                 if(existingSynonym){
                                     const existingSynonymSynonymGroup = existingSynonym['groupIdArr'].find(group => group['relationshiptype'] === 'synonym');
                                     if(!csvDataObj['synonymGroupId'] && existingSynonymSynonymGroup){
@@ -544,6 +570,7 @@ const glossaryBatchLoaderPopup = {
                                     }
                                     const existingSynonymTranslationGroup = existingSynonym['groupIdArr'].find(group => group['relationshiptype'] === 'translation');
                                     if(!csvDataObj['translationGroupId'] && existingSynonymTranslationGroup){
+                                        existingTranslationGlossidArr.value.push(existingSynonym['glossid']);
                                         csvDataObj['translationGroupId'] = existingSynonymTranslationGroup['glossgrpid'];
                                     }
                                     else if(dataLanguageArr.value.length > 1){
@@ -585,7 +612,12 @@ const glossaryBatchLoaderPopup = {
                 });
                 if(csvDataArr.value.length > 0){
                     processSuccessResponse('Complete');
-                    processCsvDataArr();
+                    if(existingTranslationGlossidArr.value.length > 0){
+                        getExistingTranslationGroupData();
+                    }
+                    else{
+                        processCsvDataArr();
+                    }
                 }
                 else{
                     processErrorResponse('No glossary data was found in the csv.');
@@ -663,6 +695,20 @@ const glossaryBatchLoaderPopup = {
             taxonomicGroupVal.value.forEach(taxon => {
                 tidGlossidData.value[taxon.tid] = [];
             });
+        }
+
+        function validateExistingTranslationGroups() {
+            for(const row of csvDataArr.value) {
+                if(Number(row['translationGroupId']) > 0 && row['termObjects'].length > 0 && existingTranslationGroupData.value.hasOwnProperty(row['translationGroupId'])){
+                    row['termObjects'].forEach(term => {
+                        if(existingTranslationGroupData.value[row['translationGroupId']].hasOwnProperty(term['language']) && existingTranslationGroupData.value[row['translationGroupId']][term['language']].length > 0){
+                            row['translationGroupId'] = null;
+                        }
+                    });
+                }
+            }
+            processSuccessResponse('Complete');
+            processCsvDataArr();
         }
 
         return {

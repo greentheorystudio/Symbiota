@@ -39,7 +39,7 @@ class Glossary{
                 $valueArr[] = '(' . (int)$groupid . ', ' . (int)$glossid . ', "' . SanitizerService::cleanInStr($this->conn, $relationType) . '")';
             }
             if(count($valueArr) > 0){
-                $sql = 'INSERT INTO glossarytermlink(glossgrpid, glossid, relationshiptype) '.
+                $sql = 'INSERT IGNORE INTO glossarytermlink(glossgrpid, glossid, relationshiptype) '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;
@@ -58,7 +58,7 @@ class Glossary{
                 $valueArr[] = '(' . (int)$glossid . ', ' . (int)$tid . ')';
             }
             if(count($valueArr) > 0){
-                $sql = 'INSERT INTO glossarytaxalink(glossid, tid) '.
+                $sql = 'INSERT IGNORE INTO glossarytaxalink(glossid, tid) '.
                     'VALUES ' . implode(',', $valueArr) . ' ';
                 if($this->conn->query($sql)){
                     $recordsCreated = $this->conn->affected_rows;

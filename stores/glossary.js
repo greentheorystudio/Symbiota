@@ -19,6 +19,7 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         glossaryImageStore: useGlossaryImageStore(),
         glossaryLanguageArr: [],
         glossaryLoadingIndex: 0,
+        glossaryRelatedTermData: {},
         glossarySourceStore: useGlossarySourceStore(),
         glossaryTaxaArr: [],
         glossaryUpdateData: {},
@@ -63,6 +64,9 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         getGlossaryLanguageArr(state) {
             return state.glossaryLanguageArr;
         },
+        getGlossaryRelatedTermData(state) {
+            return state.glossaryRelatedTermData;
+        },
         getGlossarySourceData(state) {
             return state.glossarySourceStore.getGlossarySourceData;
         },
@@ -89,6 +93,7 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         clearGlossaryData() {
             this.glossaryId = 0;
             this.glossaryData = Object.assign({}, this.blankGlossaryRecord);
+            this.glossaryRelatedTermData = Object.assign({}, {});
             this.glossaryImageStore.clearGlossaryImageData();
         },
         createGlossaryRecord(callback) {
@@ -159,6 +164,7 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             this.glossaryId = Number(glossid);
             if(this.glossaryId > 0){
                 this.glossaryData = Object.assign({}, this.getCurrentGlossaryData());
+                this.setGlossaryRelatedTermData();
                 this.glossaryImageStore.setGlossaryImageArr(this.glossaryId);
             }
             else{
@@ -214,6 +220,21 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             })
             .then((data) => {
                 this.glossaryLanguageArr = data;
+            });
+        },
+        setGlossaryRelatedTermData() {
+            const formData = new FormData();
+            formData.append('glossIdArr', JSON.stringify([this.glossaryId]));
+            formData.append('action', 'getGlossaryRelatedTermsDataFromGlossidArr');
+            fetch(glossaryApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((data) => {
+                this.glossaryRelatedTermData = Object.assign({}, data);
             });
         },
         setGlossarySourceData(id) {
