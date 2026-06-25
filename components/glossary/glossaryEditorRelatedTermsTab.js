@@ -230,7 +230,9 @@ const glossaryEditorRelatedTermsTab = {
 
         return {
             addSynonymTerm,
+            addSynonymValue,
             addTranslationTerm,
+            addTranslationValue,
             glossaryData,
             synonymData,
             synonymGlossidFilterArr,
