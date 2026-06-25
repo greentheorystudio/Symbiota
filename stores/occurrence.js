@@ -412,7 +412,7 @@ const useOccurrenceStore = Pinia.defineStore('occurrence', {
             return exist;
         },
         getOccurrenceValid(state) {
-            return (state.occurrenceEditData['sciname']);
+            return !!state.occurrenceEditData['sciname'];
         },
         getTranscriberHideFields(state) {
             return state.collectionStore.getTranscriberHideFields;

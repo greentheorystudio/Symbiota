@@ -48,6 +48,10 @@ const multipleScientificCommonNameAutoComplete = {
             type: Boolean,
             default: false
         },
+        nameStringMode: {
+            type: Boolean,
+            default: true
+        },
         optionLimit: {
             type: Number,
             default: 10
@@ -137,7 +141,12 @@ const multipleScientificCommonNameAutoComplete = {
         const autocompleteOptions = Vue.ref([]);
         const autocompleteRef = Vue.ref(null);
         const displayDefinitionPopup = Vue.ref(false);
+        const propsRefs = Vue.toRefs(props);
         const scinameArr = Vue.ref([]);
+
+        Vue.watch(propsRefs.sciname, () => {
+            setScinameArrFromScinameVal();
+        });
 
         function blurAction(val) {
             if(val.target.value){
@@ -226,11 +235,16 @@ const multipleScientificCommonNameAutoComplete = {
         }
 
         function processChange() {
-            const nameArr = [];
-            scinameArr.value.forEach((taxon) => {
-                nameArr.push(taxon.sciname);
-            });
-            context.emit('update:sciname', (nameArr.length > 0 ? nameArr.join(props.concatenator) : null));
+            if(props.nameStringMode){
+                const nameArr = [];
+                scinameArr.value.forEach((taxon) => {
+                    nameArr.push(taxon.sciname);
+                });
+                context.emit('update:sciname', (nameArr.length > 0 ? nameArr.join(props.concatenator) : null));
+            }
+            else{
+                context.emit('update:sciname', scinameArr.value);
+            }
             autocompleteRef.value.updateInputValue('');
         }
 
@@ -301,6 +315,7 @@ const multipleScientificCommonNameAutoComplete = {
         }
 
         function setScinameArrFromScinameVal() {
+            scinameArr.value.length = 0;
             if(props.sciname && props.sciname.length > 0){
                 const nameArr = props.sciname.split(props.concatenator);
                 nameArr.forEach((sciname) => {

@@ -14,10 +14,10 @@ class ChecklistPackagingService {
 
     private $conn;
 
-    private $blankCellStyle = array('valign' => 'center', 'width' => 2475, 'borderSize' => 15, 'borderColor' => '000000');
-    private $colRowStyle = array('cantSplit' => true, 'exactHeight' => 3750);
-    private $imageCellStyle = array('valign' => 'center', 'width' => 2475, 'borderSize' => 15, 'borderColor' => '808080');
-    private $tableStyle = array('width' => 100);
+    private array $blankCellStyle = array('valign' => 'center', 'width' => 2475, 'borderSize' => 15, 'borderColor' => '000000');
+    private array $colRowStyle = array('cantSplit' => true, 'exactHeight' => 3750);
+    private array $imageCellStyle = array('valign' => 'center', 'width' => 2475, 'borderSize' => 15, 'borderColor' => '808080');
+    private array $tableStyle = array('width' => 100);
 
     public function __construct(){
         $connection = new DbService();

@@ -22,4 +22,7 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'updateGlossarySourceRecord' && $isEditor && $tid && array_key_exists('glossarySourceData', $_POST)){
         echo $glossarySources->updateGlossarySourceRecord($tid, json_decode($_POST['glossarySourceData'], true));
     }
+    elseif($action === 'getGlossarySourceRecord' && $tid){
+        echo json_encode($glossarySources->getGlossarySourceData($tid), JSON_FORCE_OBJECT);
+    }
 }

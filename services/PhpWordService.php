@@ -30,6 +30,11 @@ class PhpWordService {
         $phpWord->addParagraphStyle($name, $styleArr);
     }
 
+    public static function addPreserveText($parent, $text, $styleArr): void
+    {
+        $parent->addPreserveText($text, null, $styleArr);
+    }
+
     public static function addTableRow($parent): void
     {
         $parent->addRow();
@@ -48,6 +53,16 @@ class PhpWordService {
     public static function addTextBreak($parent): void
     {
         $parent->addTextBreak();
+    }
+
+    public static function getHeader($section)
+    {
+        return $section->addHeader();
+    }
+
+    public static function getListItemRun($parent, $styleName)
+    {
+        return $parent->addListItemRun(0, null, $styleName);
     }
 
     public static function getPhpWord(): PhpWord

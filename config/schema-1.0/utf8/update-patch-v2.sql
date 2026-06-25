@@ -533,6 +533,9 @@ ALTER TABLE `users`
     ADD COLUMN `collectorcode` varchar(45) NULL AFTER `lastname`,
     ADD COLUMN `phone` varchar(45) NULL AFTER `email`;
 
+ALTER TABLE `glossarytermlink`
+    ADD INDEX `glossarytermlink_relationshipType`(`relationshipType`);
+
 --AI suggestions
 
 ALTER TABLE `omcollections`
