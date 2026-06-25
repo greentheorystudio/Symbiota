@@ -78,9 +78,7 @@ const mediaFileUploadInputElement = {
                             </div>
                         </div>
                         <div class="full-width row justify-between">
-                            <div>
-                                <checkbox-input-element label="Copy file to server" :value="urlMethodCopyFile" @update:value="(value) => urlMethodCopyFile = value"></checkbox-input-element>
-                            </div>
+                            <div></div>
                             <div>
                                 <q-btn color="primary" @click="processExternalUrl();" label="Process URL" :tabindex="tabindex" />
                             </div>
@@ -285,7 +283,6 @@ const mediaFileUploadInputElement = {
             }
             return path;
         });
-        const urlMethodCopyFile = Vue.ref(true);
         const urlMethodUrl = Vue.ref(null);
         const urlProcessingArr = Vue.ref([]);
 
@@ -293,42 +290,36 @@ const mediaFileUploadInputElement = {
             setOccid();
         });
 
-        function addExternalFileToQueue(url, copyToServer) {
+        function addExternalFileToQueue(url) {
             const imageFile = ((url.toLowerCase().endsWith('.jpg') || url.toLowerCase().endsWith('.jpeg') || url.toLowerCase().endsWith('.png')) ? '1' : '0');
             const file = {
                 name: url,
                 size: 0,
-                externalUrl: url,
-                copyToServer: copyToServer
+                externalUrl: url
             };
-            if(copyToServer){
-                urlProcessingArr.value.push(url);
-                const formData = new FormData();
-                formData.append('url', url);
-                formData.append('image', imageFile);
-                formData.append('action', 'getFileInfoFromUrl');
-                fetch(proxyServiceApiUrl, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => {
-                    return response.ok ? response.json() : null;
-                })
-                .then((resObj) => {
-                    file.height = resObj['fileHeight'];
-                    file.size = resObj['fileSize'];
-                    file.width = resObj['fileWidth'];
-                    validateFiles([file]);
-                    const index = urlProcessingArr.value.indexOf(url);
-                    urlProcessingArr.value.splice(index, 1);
-                    if(urlProcessingArr.value.length === 0){
-                        hideWorking();
-                    }
-                });
-            }
-            else{
+            urlProcessingArr.value.push(url);
+            const formData = new FormData();
+            formData.append('url', url);
+            formData.append('image', imageFile);
+            formData.append('action', 'getFileInfoFromUrl');
+            fetch(proxyServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.json() : null;
+            })
+            .then((resObj) => {
+                file.height = resObj['fileHeight'];
+                file.size = resObj['fileSize'];
+                file.width = resObj['fileWidth'];
                 validateFiles([file]);
-            }
+                const index = urlProcessingArr.value.indexOf(url);
+                urlProcessingArr.value.splice(index, 1);
+                if(urlProcessingArr.value.length === 0){
+                    hideWorking();
+                }
+            });
         }
 
         function cancelUpload() {
@@ -420,7 +411,7 @@ const mediaFileUploadInputElement = {
                 csvFileData.forEach((dataObj, index) => {
                     if(dataObj && dataObj.hasOwnProperty('sourceurl') && dataObj['sourceurl']){
                         dataObj['filename'] = dataObj['sourceurl'];
-                        addExternalFileToQueue(dataObj['sourceurl'], true);
+                        addExternalFileToQueue(dataObj['sourceurl']);
                     }
                     if(dataObj && dataObj.hasOwnProperty('filename') && dataObj['filename']){
                         if(dataObj.hasOwnProperty('scientificname') && dataObj['scientificname'] !== '' && !taxaArr.value.includes(dataObj['scientificname'])){
@@ -449,7 +440,7 @@ const mediaFileUploadInputElement = {
 
         function processExternalUrl() {
             if(urlMethodUrl.value){
-                addExternalFileToQueue(urlMethodUrl.value, urlMethodCopyFile.value);
+                addExternalFileToQueue(urlMethodUrl.value);
                 resetUrlMethodSettings();
             }
         }
@@ -458,12 +449,7 @@ const mediaFileUploadInputElement = {
             let action;
             if(file['uploadMetadata']['sourceurl']){
                 processingArr.value.push({file: file['uploadMetadata']['sourceurl'], status: 'processing'});
-                if(file['copyToServer']){
-                    action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImageFromUrl' : 'addMediaFromUrl';
-                }
-                else{
-                    action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImage' : 'addMedia';
-                }
+                action = file['uploadMetadata']['type'] === 'StillImage' ? 'addImageFromUrl' : 'addMediaFromUrl';
             }
             else{
                 processingArr.value.push({file: file['uploadMetadata']['filename'], status: 'processing'});
@@ -516,7 +502,6 @@ const mediaFileUploadInputElement = {
         function resetUrlMethodSettings() {
             urlMethodUrl.value = null;
             selectedUploadMethod.value = 'upload';
-            urlMethodCopyFile.value = true;
         }
 
         function setEditData() {
@@ -849,9 +834,6 @@ const mediaFileUploadInputElement = {
                                 file['uploadMetadata']['scientificname'] = sciname;
                                 file['uploadMetadata']['tid'] = tid;
                             }
-                            if(!file.hasOwnProperty('copyToServer')){
-                                file['copyToServer'] = false;
-                            }
                             fileArr.push(file);
                             updateQueueSize();
                         }
@@ -895,7 +877,6 @@ const mediaFileUploadInputElement = {
             uploaderStyle,
             uploadMethodOptions,
             uploadPath,
-            urlMethodCopyFile,
             urlMethodUrl,
             cancelUpload,
             getFileErrorMessage,
