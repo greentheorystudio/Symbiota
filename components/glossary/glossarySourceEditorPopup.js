@@ -37,22 +37,22 @@ const glossarySourceEditorPopup = {
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Terms and definitions contributed by" :value="glossarySourceData['contributorterm']" @update:value="(value) => updateGlossarySourceData('contributorterm', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" label="Terms and definitions contributed by" maxlength="1000" :value="glossarySourceData['contributorterm']" @update:value="(value) => updateGlossarySourceData('contributorterm', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Images contributed by" :value="glossarySourceData['contributorimage']" @update:value="(value) => updateGlossarySourceData('contributorimage', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" label="Images contributed by" maxlength="1000" :value="glossarySourceData['contributorimage']" @update:value="(value) => updateGlossarySourceData('contributorimage', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Translations by" :value="glossarySourceData['translator']" @update:value="(value) => updateGlossarySourceData('translator', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" label="Translations by" maxlength="1000" :value="glossarySourceData['translator']" @update:value="(value) => updateGlossarySourceData('translator', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-grow">
-                                    <text-field-input-element data-type="textarea" label="Translations and images were also sourced from the following references" :value="glossarySourceData['additionalsources']" @update:value="(value) => updateGlossarySourceData('additionalsources', value)"></text-field-input-element>
+                                    <text-field-input-element data-type="textarea" label="Translations and images were also sourced from the following references" maxlength="1000" :value="glossarySourceData['additionalsources']" @update:value="(value) => updateGlossarySourceData('additionalsources', value)"></text-field-input-element>
                                 </div>
                             </div>
                             <div v-if="Number(glossarySourceId) > 0" class="row justify-end q-gutter-md">

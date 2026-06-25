@@ -10,7 +10,7 @@ const glossaryTermEditorPopup = {
         }
     },
     template: `
-        <q-dialog class="z-top" v-model="showPopup" persistent>
+        <q-dialog class="z-top" v-model="showPopup" v-if="!showImageEditorPopup" persistent>
             <q-card class="lg-popup overflow-hidden">
                 <div class="row justify-end items-start map-sm-popup">
                     <div>
@@ -35,7 +35,7 @@ const glossaryTermEditorPopup = {
                                     <glossary-editor-related-terms-tab></glossary-editor-related-terms-tab>
                                 </q-tab-panel>
                                 <q-tab-panel class="q-pa-none" name="images">
-                                    <glossary-editor-images-tab></glossary-editor-images-tab>
+                                    <glossary-editor-images-tab @open:image-editor="openImageEditorPopup"></glossary-editor-images-tab>
                                 </q-tab-panel>
                                 <q-tab-panel class="q-pa-none" name="admin">
                                     <glossary-editor-admin-tab @close:popup="closePopup"></glossary-editor-admin-tab>
@@ -49,18 +49,28 @@ const glossaryTermEditorPopup = {
                 </div>
             </q-card>
         </q-dialog>
+        <template v-if="showImageEditorPopup">
+            <glossary-image-editor-popup
+                :image-id="editImageId"
+                :show-popup="showImageEditorPopup"
+                @close:popup="closeImageEditorPopup"
+            ></glossary-image-editor-popup>
+        </template>
     `,
     components: {
         'glossary-editor-admin-tab': glossaryEditorAdminTab,
         'glossary-editor-images-tab': glossaryEditorImagesTab,
         'glossary-editor-related-terms-tab': glossaryEditorRelatedTermsTab,
-        'glossary-field-module': glossaryFieldModule
+        'glossary-field-module': glossaryFieldModule,
+        'glossary-image-editor-popup': glossaryImageEditorPopup
     },
     setup(props, context) {
         const glossaryStore = useGlossaryStore();
 
         const contentRef = Vue.ref(null);
         const contentStyle = Vue.ref(null);
+        const editImageId = Vue.ref(0);
+        const showImageEditorPopup = Vue.ref(false);
         const tab = Vue.ref('details');
         const tabStyle = Vue.ref(null);
 
@@ -68,8 +78,18 @@ const glossaryTermEditorPopup = {
             setContentStyle();
         });
 
+        function closeImageEditorPopup() {
+            editImageId.value = 0;
+            showImageEditorPopup.value = false;
+        }
+
         function closePopup() {
             context.emit('close:popup');
+        }
+
+        function openImageEditorPopup(id) {
+            editImageId.value = id;
+            showImageEditorPopup.value = true;
         }
 
         function setContentStyle() {
@@ -90,9 +110,13 @@ const glossaryTermEditorPopup = {
         return {
             contentRef,
             contentStyle,
+            editImageId,
+            showImageEditorPopup,
             tab,
             tabStyle,
-            closePopup
+            closeImageEditorPopup,
+            closePopup,
+            openImageEditorPopup
         }
     }
 };

@@ -44,10 +44,12 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
         clearGlossaryImageData() {
             this.glossaryImageArr.length = 0;
         },
-        createGlossaryImageRecord(callback) {
+        createGlossaryImageRecord(file, url, callback) {
             const formData = new FormData();
-            formData.append('glossaryImage', JSON.stringify(this.glossaryImageEditData));
-            formData.append('action', 'createGlossaryImageRecord');
+            formData.append('imageFile', file);
+            formData.append('imageUrl', (url ? url.toString() : ''));
+            formData.append('imageData', JSON.stringify(this.glossaryImageEditData));
+            formData.append('action', (file ? 'createGlossaryImageRecordFromFile' : 'createGlossaryImageRecordFromUrl'));
             fetch(glossaryImageApiUrl, {
                 method: 'POST',
                 body: formData

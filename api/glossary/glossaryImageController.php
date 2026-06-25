@@ -25,4 +25,10 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getGlossaryImageDataFromGlossidArr' && array_key_exists('glossIdArr', $_POST)){
         echo json_encode($glossaryImages->getGlossaryImageDataFromGlossidArr(json_decode($_POST['glossIdArr'], false)));
     }
+    elseif($action === 'createGlossaryImageRecordFromFile' && $isEditor && array_key_exists('imageFile', $_FILES)  && array_key_exists('imageData', $_POST)){
+        echo $glossaryImages->createGlossaryImageRecord($_FILES['imageFile'], null, json_decode($_POST['imageData'], true));
+    }
+    elseif($action === 'createGlossaryImageRecordFromUrl' && $isEditor && array_key_exists('imageUrl', $_POST) && array_key_exists('imageData', $_POST)){
+        echo $glossaryImages->createGlossaryImageRecord(null, $_POST['imageUrl'], json_decode($_POST['imageData'], true));
+    }
 }

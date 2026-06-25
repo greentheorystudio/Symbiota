@@ -139,9 +139,28 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
                 callback(Number(res));
             });
         },
+        createGlossaryImageRecord(file, url, callback) {
+            this.updateGlossaryImageEditData('glossid', this.glossaryId);
+            this.glossaryImageStore.createGlossaryImageRecord(file, url, (newImageId) => {
+                callback(Number(newImageId));
+                if(Number(newImageId) > 0){
+                    this.glossaryImageStore.clearGlossaryImageData();
+                    this.glossaryImageStore.setGlossaryImageArr(this.glossaryId);
+                }
+            });
+        },
         createGlossarySourceRecord(callback) {
             this.glossarySourceStore.createGlossarySourceRecord((newGlossarySourceId) => {
                 callback(Number(newGlossarySourceId));
+            });
+        },
+        deleteGlossaryImageRecord(callback) {
+            this.glossaryImageStore.deleteGlossaryImageRecord((res) => {
+                if(Number(res) === 1){
+                    this.glossaryImageStore.clearGlossaryImageData();
+                    this.glossaryImageStore.setGlossaryImageArr(this.glossaryId);
+                }
+                callback(Number(res));
             });
         },
         deleteGlossaryRecord(callback) {
@@ -210,6 +229,9 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
             const returnVal = this.glossGroupIdValue;
             this.glossGroupIdValue++;
             return returnVal;
+        },
+        setCurrentGlossaryImageRecord(glimgid) {
+            this.glossaryImageStore.setCurrentGlossaryImageRecord(glimgid);
         },
         setCurrentGlossaryRecord(glossid) {
             this.clearGlossaryData();
@@ -327,6 +349,14 @@ const useGlossaryStore = Pinia.defineStore('glossary', {
         },
         updateGlossaryEditData(key, value) {
             this.glossaryEditData[key] = value;
+        },
+        updateGlossaryImageEditData(key, value) {
+            this.glossaryImageStore.updateGlossaryImageEditData(key, value);
+        },
+        updateGlossaryImageRecord(callback) {
+            this.glossaryImageStore.updateGlossaryImageRecord((res) => {
+                callback(Number(res));
+            });
         },
         updateGlossaryRecord(callback) {
             const formData = new FormData();

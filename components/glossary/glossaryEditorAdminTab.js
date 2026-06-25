@@ -3,7 +3,7 @@ const glossaryEditorAdminTab = {
         <div class="q-pa-md column q-gutter-sm">
             <q-card flat bordered>
                 <q-card-section class="column q-gutter-sm">
-                    <div class="text-h6 text-bold">Delete checklist</div>
+                    <div class="text-h6 text-bold">Delete glossary term</div>
                     <div v-if="imageArr.length > 0" class="text-red">
                         All images associated with this term must be removed before it can be deleted
                     </div>
