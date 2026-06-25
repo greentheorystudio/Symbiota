@@ -15,6 +15,28 @@ class Languages {
         $this->conn->close();
     }
 
+    public function getAutocompleteLanguageList($queryString): array
+    {
+        $retArr = array();
+        $sql = 'SELECT langid, iso639_1, iso639_2, langname FROM adminlanguages '.
+            'WHERE langname LIKE "%' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" '.
+            'ORDER BY langname LIMIT 10 ';
+        if($result = $this->conn->query($sql)){
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $langArr = array();
+                $langArr['id'] = $row['langid'];
+                $langArr['iso-1'] = $row['iso639_1'];
+                $langArr['iso-2'] = $row['iso639_2'];
+                $langArr['name'] = $row['langname'];
+                $retArr[] = $langArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
+    }
+
     public function getLanguageArr(): array
     {
         $retArr = array();
@@ -71,28 +93,6 @@ class Languages {
                 $retArr['iso-1'] = $row['iso639_1'];
                 $retArr['iso-2'] = $row['iso639_2'];
                 $retArr['name'] = $row['langname'];
-            }
-        }
-        return $retArr;
-    }
-
-    public function getAutocompleteLanguageList($queryString): array
-    {
-        $retArr = array();
-        $sql = 'SELECT langid, iso639_1, iso639_2, langname FROM adminlanguages '.
-            'WHERE langname LIKE "%' . SanitizerService::cleanInStr($this->conn, $queryString) . '%" '.
-            'ORDER BY langname LIMIT 10 ';
-        if($result = $this->conn->query($sql)){
-            $rows = $result->fetch_all(MYSQLI_ASSOC);
-            $result->free();
-            foreach($rows as $index => $row){
-                $langArr = array();
-                $langArr['id'] = $row['langid'];
-                $langArr['iso-1'] = $row['iso639_1'];
-                $langArr['iso-2'] = $row['iso639_2'];
-                $langArr['name'] = $row['langname'];
-                $retArr[] = $langArr;
-                unset($rows[$index]);
             }
         }
         return $retArr;

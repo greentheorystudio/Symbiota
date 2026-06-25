@@ -9,9 +9,9 @@ include_once(__DIR__ . '/../services/UuidService.php');
 
 class Configurations{
 
-    private $conn;
+    private ?mysqli $conn;
 
-    public $coreConfigurations = array(
+    public array $coreConfigurations = array(
         'ACTIVATE_EXSICCATI',
         'ADMIN_EMAIL',
         'APP_ENABLED',
@@ -95,13 +95,13 @@ class Configurations{
         'USERNAME'
     );
 
-    public $defaultTutorials = array(
+    public array $defaultTutorials = array(
         'admin-mapping' => 'admin-mapping.json',
         'collections-taxonomy-management' => 'collections-taxonomy-management.json',
         'spatial-module' => 'spatial-module.json'
     );
 
-    public $rightsTerms = array(
+    public array $rightsTerms = array(
         'http://creativecommons.org/publicdomain/zero/1.0/' => array(
             'title' => 'CC0 1.0 (Public-domain)',
             'url' => 'https://creativecommons.org/publicdomain/zero/1.0/legalcode',
@@ -151,7 +151,7 @@ class Configurations{
     public function addConfiguration($name, $value): int
     {
         $returnVal = 0;
-        if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
+        if(str_contains($name, 'PASSWORD') || str_contains($name, 'USERNAME')){
             $value = EncryptionService::encrypt($value);
         }
         $sql = 'INSERT INTO configurations(configurationname, configurationvalue) '.
@@ -223,7 +223,7 @@ class Configurations{
             $result->free();
             foreach($rows as $index => $row){
                 $value = $row['configurationvalue'];
-                if(strpos($row['configurationname'], 'PASSWORD') !== false || strpos($row['configurationname'], 'USERNAME') !== false){
+                if(str_contains($row['configurationname'], 'PASSWORD') || str_contains($row['configurationname'], 'USERNAME')){
                     $value = EncryptionService::decrypt($value);
                 }
                 elseif(substr_compare($row['configurationname'], '_JSON', -5) === 0){
@@ -258,7 +258,7 @@ class Configurations{
             }
         }
         if($versionStr){
-            if(strpos($versionStr,'MariaDB') !== false){
+            if(str_contains($versionStr, 'MariaDB')){
                 $versionArr['db'] = 'MariaDB';
             }
             else{
@@ -274,7 +274,7 @@ class Configurations{
 
     public function setGlobalCssVersion(): void
     {
-        if(strpos($GLOBALS['CSS_VERSION_LOCAL'], '-') !== false){
+        if(str_contains($GLOBALS['CSS_VERSION_LOCAL'], '-')){
             $versionParts = explode('-', $GLOBALS['CSS_VERSION_LOCAL']);
             if($versionParts && (int)$versionParts[0] > (int)$GLOBALS['CSS_VERSION']){
                 $GLOBALS['CSS_VERSION'] = $GLOBALS['CSS_VERSION_LOCAL'];
@@ -357,7 +357,7 @@ class Configurations{
                 $result->free();
                 foreach($rows as $index => $row){
                     $value = $row['configurationvalue'];
-                    if(strpos($row['configurationname'], 'PASSWORD') !== false || strpos($row['configurationname'], 'USERNAME') !== false){
+                    if(str_contains($row['configurationname'], 'PASSWORD') || str_contains($row['configurationname'], 'USERNAME')){
                         $value = EncryptionService::decrypt($value);
                     }
                     $GLOBALS[$row['configurationname']] = $value;
@@ -369,7 +369,7 @@ class Configurations{
             }
         }
         $GLOBALS['CSS_VERSION'] = '20260331';
-        $GLOBALS['JS_VERSION'] = '2026051011112';
+        $GLOBALS['JS_VERSION'] = '2026051311';
         $GLOBALS['PARAMS_ARR'] = array();
         $GLOBALS['USER_RIGHTS'] = array();
         $this->validateGlobalArr();
@@ -430,7 +430,7 @@ class Configurations{
     public function updateConfigurationValue($name, $value): int
     {
         $returnVal = 0;
-        if(strpos($name, 'PASSWORD') !== false || strpos($name, 'USERNAME') !== false){
+        if(str_contains($name, 'PASSWORD') || str_contains($name, 'USERNAME')){
             $value = EncryptionService::encrypt($value);
         }
         $sql = 'UPDATE configurations '.
@@ -471,7 +471,7 @@ class Configurations{
         }
         $newCssVersion = $this->getCssVersion();
         if($currentCssVersion){
-            if(strpos($currentCssVersion, '-') !== false){
+            if(str_contains($currentCssVersion, '-')){
                 $versionParts = explode('-', $currentCssVersion);
                 if($versionParts){
                     $version = (int)$versionParts[0];
@@ -535,7 +535,7 @@ class Configurations{
         if(!isset($GLOBALS['ADMIN_EMAIL'])){
             $GLOBALS['ADMIN_EMAIL'] = '';
         }
-        if(isset($GLOBALS['CLIENT_ROOT']) && substr($GLOBALS['CLIENT_ROOT'],-1) === '/'){
+        if(isset($GLOBALS['CLIENT_ROOT']) && str_ends_with($GLOBALS['CLIENT_ROOT'], '/')){
             $GLOBALS['CLIENT_ROOT'] = substr($GLOBALS['CLIENT_ROOT'],0, -1);
         }
         if(!isset($GLOBALS['CLIENT_ROOT'])){
@@ -607,7 +607,7 @@ class Configurations{
             $GLOBALS['LOG_PATH'] = FileSystemService::getServerLogFilePath();
             $GLOBALS['IMAGE_ROOT_PATH'] = FileSystemService::getServerMediaBaseUploadPath();
         }
-        if(substr($GLOBALS['SERVER_ROOT'],-1) === '/'){
+        if(str_ends_with($GLOBALS['SERVER_ROOT'], '/')){
             $GLOBALS['SERVER_ROOT'] = substr($GLOBALS['SERVER_ROOT'],0, -1);
         }
         if((!isset($GLOBALS['SMTP_USERNAME']) || $GLOBALS['SMTP_USERNAME'] === '') && (!isset($GLOBALS['SMTP_PASSWORD']) || $GLOBALS['SMTP_PASSWORD'] === '')){

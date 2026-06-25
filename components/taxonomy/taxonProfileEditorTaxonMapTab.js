@@ -98,17 +98,17 @@ const taxonProfileEditorTaxonMapTab = {
         function deleteMapFile() {
             const confirmText = 'Are you sure you want to delete this map? This action cannot be undone.';
             confirmationPopupRef.value.openPopup(confirmText, {cancel: true, falseText: 'No', trueText: 'Yes', callback: (val) => {
-                    if(val){
-                        taxaStore.deleteTaxaMapRecord((res) => {
-                            if(res === 1){
-                                showNotification('positive','Map has been deleted.');
-                            }
-                            else{
-                                showNotification('negative', 'There was an error deleting the map.');
-                            }
-                        });
-                    }
-                }});
+                if(val){
+                    taxaStore.deleteTaxaMapRecord((res) => {
+                        if(res === 1){
+                            showNotification('positive','Map has been deleted.');
+                        }
+                        else{
+                            showNotification('negative', 'There was an error deleting the map.');
+                        }
+                    });
+                }
+            }});
         }
 
         function processUploadImageFile() {
