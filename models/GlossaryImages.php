@@ -1,5 +1,7 @@
 <?php
 include_once(__DIR__ . '/../services/DbService.php');
+include_once(__DIR__ . '/../services/FileSystemService.php');
+include_once(__DIR__ . '/../services/SanitizerService.php');
 
 class GlossaryImages{
 
@@ -9,7 +11,6 @@ class GlossaryImages{
         'glimgid' => array('dataType' => 'number', 'length' => 10),
         'glossid' => array('dataType' => 'number', 'length' => 10),
         'url' => array('dataType' => 'string', 'length' => 255),
-        'thumbnailurl' => array('dataType' => 'string', 'length' => 255),
         'structures' => array('dataType' => 'string', 'length' => 150),
         'notes' => array('dataType' => 'string', 'length' => 250),
         'createdby' => array('dataType' => 'string', 'length' => 250),
@@ -26,25 +27,51 @@ class GlossaryImages{
         $this->conn->close();
 	}
 
-    public function createGlossaryImageRecord($data): int
+    public function createGlossaryImageRecord($imgFile, $url, $data): int
     {
         $newID = 0;
-        $fieldNameArr = array();
-        $fieldValueArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field !== 'glimgid' && $field !== 'uid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
-                $fieldNameArr[] = $field;
-                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+        if(($imgFile || $url) && $data){
+            if($imgFile){
+                $origFilename = $imgFile['name'];
+                if(strtolower(substr($origFilename, -4)) === '.jpg' || strtolower(substr($origFilename, -5)) === '.jpeg' || strtolower(substr($origFilename, -4)) === '.png'){
+                    $targetPath = FileSystemService::getServerMediaUploadPath('glossary');
+                    if($targetPath && $origFilename) {
+                        $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
+                        if($targetFilename && FileSystemService::moveUploadedFileToServer($imgFile, $targetPath, $targetFilename)){
+                            $data['url'] = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+                        }
+                    }
+                }
             }
-        }
-        $fieldNameArr[] = 'uid';
-        $fieldValueArr[] = $GLOBALS['SYMB_UID'];
-        $fieldNameArr[] = 'initialtimestamp';
-        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
-        $sql = 'INSERT INTO glossaryimages(' . implode(',', $fieldNameArr) . ') '.
-            'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        if($this->conn->query($sql)){
-            $newID = $this->conn->insert_id;
+            else{
+                $origFilename = $data['filename'];
+                $targetPath = FileSystemService::getServerMediaUploadPath('glossary');
+                if($targetPath && $origFilename) {
+                    $targetFilename = FileSystemService::getServerUploadFilename($targetPath, $origFilename);
+                    if($targetFilename && FileSystemService::copyFileToTarget($url, $targetPath, $targetFilename)){
+                        $data['url'] = FileSystemService::getUrlPathFromServerPath($targetPath . '/' . $targetFilename);
+                    }
+                }
+            }
+            if($data['url']){
+                $fieldNameArr = array();
+                $fieldValueArr = array();
+                foreach($this->fields as $field => $fieldArr){
+                    if($field !== 'glimgid' && $field !== 'uid' && $field !== 'initialtimestamp' && array_key_exists($field, $data)){
+                        $fieldNameArr[] = $field;
+                        $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                    }
+                }
+                $fieldNameArr[] = 'uid';
+                $fieldValueArr[] = $GLOBALS['SYMB_UID'];
+                $fieldNameArr[] = 'initialtimestamp';
+                $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+                $sql = 'INSERT INTO glossaryimages(' . implode(',', $fieldNameArr) . ') '.
+                    'VALUES (' . implode(',', $fieldValueArr) . ') ';
+                if($this->conn->query($sql)){
+                    $newID = $this->conn->insert_id;
+                }
+            }
         }
         return $newID;
     }
@@ -52,11 +79,61 @@ class GlossaryImages{
     public function deleteGlossaryImageRecord($glimgid): int
     {
         $retVal = 1;
+        $data = $this->getGlossaryImageData($glimgid);
+        if($data && $data['url'] && strncmp($data['url'], '/', 1) === 0){
+            $urlServerPath = FileSystemService::getServerPathFromUrlPath($data['url']);
+            FileSystemService::deleteFile($urlServerPath, true);
+        }
         $sql = 'DELETE FROM glossaryimages WHERE glimgid = ' . (int)$glimgid . ' ';
         if(!$this->conn->query($sql)){
             $retVal = 0;
         }
         return $retVal;
+    }
+
+    public function getGlossaryImageData($id): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM glossaryimages WHERE glimgid = ' . (int)$id . ' ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $row[$name];
+                }
+            }
+        }
+        return $retArr;
+    }
+
+    public function getGlossaryImageDataFromGlossidArr($glossidArr): array
+    {
+        $retArr = array();
+        $sql = 'SELECT DISTINCT g.glossid, gi.url, gi.structures, gi.notes, gi.createdby '.
+            'FROM glossary AS g LEFT JOIN glossarytermlink AS gt ON g.glossid = gt.glossid '.
+            'LEFT JOIN glossarytermlink AS gt2 ON gt.glossgrpid = gt2.glossgrpid '.
+            'LEFT JOIN glossaryimages AS gi ON gt2.glossid = gi.glossid '.
+            'WHERE g.glossid IN(' . implode(',', $glossidArr) . ') AND gi.glimgid IS NOT NULL ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $rows = $result->fetch_all(MYSQLI_ASSOC);
+            $result->free();
+            foreach($rows as $index => $row){
+                $nodeArr = array();
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $nodeArr[$name] = $row[$name];
+                }
+                $retArr[$row['glossid']][] = $nodeArr;
+                unset($rows[$index]);
+            }
+        }
+        return $retArr;
     }
 
     public function updateGlossaryImageRecord($glimgid, $editData): int
