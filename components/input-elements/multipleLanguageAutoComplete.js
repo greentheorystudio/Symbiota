@@ -13,7 +13,7 @@ const multipleLanguageAutoComplete = {
         },
         tabindex: {
             type: Number,
-            default: 1
+            default: 0
         }
     },
     template: `

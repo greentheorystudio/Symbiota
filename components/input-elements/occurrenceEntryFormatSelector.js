@@ -6,7 +6,7 @@ const occurrenceEntryFormatSelector = {
         },
         tabindex: {
             type: Number,
-            default: 1
+            default: 0
         }
     },
     template: `

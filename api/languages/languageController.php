@@ -15,8 +15,8 @@ if($action && SanitizerService::validateInternalRequest()){
     elseif($action === 'getLanguageByName'){
         echo json_encode($languages->getLanguageByName($name));
     }
-    elseif(($action === 'getAutocompleteLanguageList') && $_POST['term']){
-        echo json_encode($languages->getAutocompleteLanguageList(htmlspecialchars($_POST['term'])));
+    elseif(($action === 'getAutocompleteLanguageList') && array_key_exists('term', $_POST)){
+        echo json_encode($languages->getAutocompleteLanguageList($_POST['term']));
     }
     elseif($action === 'getLanguages'){
         echo json_encode($languages->getLanguageArr());

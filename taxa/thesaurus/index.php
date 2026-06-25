@@ -41,7 +41,7 @@ if(!$GLOBALS['SYMB_UID']) {
                 <q-card class="top-tool-container q-mb-md">
                     <q-card-section>
                         <div class="q-my-sm">
-                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Enter Taxonomic Group" :limit-to-options="true" accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                            <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Enter Taxonomic Group" :limit-to-options="true" :accepted-taxa-only="true" rank-low="10" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                         </div>
                         <div class="q-my-sm q-mt-md">
                             <taxon-rank-checkbox-selector :selected-ranks="selectedRanks" :required-ranks="requiredRanks" :kingdom-id="kingdomId" :disable="loading" link-label="Select Taxonomic Ranks" inner-label="Select taxonomic ranks for taxa to be included in import or update" @update:selected-ranks="updateSelectedRanks"></taxon-rank-checkbox-selector>
@@ -61,7 +61,7 @@ if(!$GLOBALS['SYMB_UID']) {
                             <taxonomy-data-source-import-update-module :kingdom-id="kingdomId" :loading="loading" :required-ranks="requiredRanks" :selected-ranks="selectedRanks" :selected-ranks-high="selectedRanksHigh" :taxonomic-group="taxonomicGroup" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomy-data-source-import-update-module>
                         </q-tab-panel>
                         <q-tab-panel name="fileupload">
-                            <?php include_once(__DIR__ . '/batchloader.php'); ?>
+                            <taxa-batch-loader-module :kingdom-id="kingdomId" :loading="loading" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxa-batch-loader-module>
                         </q-tab-panel>
                         <q-tab-panel name="maintenance">
                             <taxonomic-thesaurus-maintenance-module :loading="loading" :selected-ranks="selectedRanks" :taxonomic-group-tid="taxonomicGroupTid" @update:loading="updateLoading"></taxonomic-thesaurus-maintenance-module>
@@ -82,6 +82,8 @@ if(!$GLOBALS['SYMB_UID']) {
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonRankCheckboxSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxonomyDataSourceBulletSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/taxaKingdomSelector.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/input-elements/filePickerInputElement.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
+        <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxaBatchLoaderModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusUSDAIdentifierModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomyDataSourceImportUpdateModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
         <script src="<?php echo $GLOBALS['CLIENT_ROOT']; ?>/components/taxonomy/taxonomicThesaurusMaintenanceModule.js?ver=<?php echo $GLOBALS['JS_VERSION']; ?>" type="text/javascript"></script>
@@ -89,6 +91,7 @@ if(!$GLOBALS['SYMB_UID']) {
             const taxonomicThesaurusManagerModule = Vue.createApp({
                 components: {
                     'single-scientific-common-name-auto-complete': singleScientificCommonNameAutoComplete,
+                    'taxa-batch-loader-module': taxaBatchLoaderModule,
                     'taxon-rank-checkbox-selector': taxonRankCheckboxSelector,
                     'taxonomic-thesaurus-maintenance-module': taxonomicThesaurusMaintenanceModule,
                     'taxonomic-thesaurus-usda-identifier-module': taxonomicThesaurusUSDAIdentifierModule,

@@ -26,20 +26,22 @@ class GlossarySources{
     public function createGlossarySourceRecord($data): int
     {
         $newID = 0;
-        $fieldNameArr = array();
-        $fieldValueArr = array();
-        foreach($this->fields as $field => $fieldArr){
-            if($field !== 'initialtimestamp' && array_key_exists($field, $data)){
-                $fieldNameArr[] = $field;
-                $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+        if(array_key_exists('tid', $data) && (int)$data['tid'] > 0){
+            $fieldNameArr = array();
+            $fieldValueArr = array();
+            foreach($this->fields as $field => $fieldArr){
+                if($field !== 'initialtimestamp' && array_key_exists($field, $data)){
+                    $fieldNameArr[] = $field;
+                    $fieldValueArr[] = SanitizerService::getSqlValueString($this->conn, $data[$field], $fieldArr['dataType']);
+                }
             }
-        }
-        $fieldNameArr[] = 'initialtimestamp';
-        $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
-        $sql = 'INSERT INTO glossarysources(' . implode(',', $fieldNameArr) . ') '.
-            'VALUES (' . implode(',', $fieldValueArr) . ') ';
-        if($this->conn->query($sql)){
-            $newID = $this->conn->insert_id;
+            $fieldNameArr[] = 'initialtimestamp';
+            $fieldValueArr[] = '"' . date('Y-m-d H:i:s') . '"';
+            $sql = 'INSERT INTO glossarysources(' . implode(',', $fieldNameArr) . ') '.
+                'VALUES (' . implode(',', $fieldValueArr) . ') ';
+            if($this->conn->query($sql)){
+                $newID = (int)$data['tid'];
+            }
         }
         return $newID;
     }
@@ -52,6 +54,26 @@ class GlossarySources{
             $retVal = 0;
         }
         return $retVal;
+    }
+
+    public function getGlossarySourceData($tid): array
+    {
+        $retArr = array();
+        $fieldNameArr = (new DbService)->getSqlFieldNameArrFromFieldData($this->fields);
+        $sql = 'SELECT ' . implode(',', $fieldNameArr) . ' '.
+            'FROM glossarysources WHERE tid = ' . (int)$tid . ' ';
+        if($result = $this->conn->query($sql)){
+            $fields = mysqli_fetch_fields($result);
+            $row = $result->fetch_array(MYSQLI_ASSOC);
+            $result->free();
+            if($row){
+                foreach($fields as $val){
+                    $name = $val->name;
+                    $retArr[$name] = $row[$name];
+                }
+            }
+        }
+        return $retArr;
     }
 
     public function updateGlossarySourceRecord($tid, $editData): int
