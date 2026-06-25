@@ -66,10 +66,14 @@ class TaxonRanks{
         return $retArr;
     }
 
-    public function getRankNameArr(): array
+    public function getRankNameArr($kingdomId = null): array
     {
         $retArr = array();
-        $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ORDER BY rankid ';
+        $sql = 'SELECT DISTINCT rankname, rankid FROM taxonunits ';
+        if($kingdomId){
+            $sql .= 'WHERE kingdomid = ' . (int)$kingdomId . ' ';
+        }
+        $sql .= 'ORDER BY rankid ';
         if($result = $this->conn->query($sql)){
             $rows = $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
