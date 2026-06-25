@@ -1,0 +1,214 @@
+const glossaryDownloadOptionsPopup = {
+    props: {
+        glossIdArr: {
+            type: Array,
+            default: null
+        },
+        selectedLanguage: {
+            type: String,
+            default: null
+        },
+        selectedSciname: {
+            type: String,
+            default: null
+        },
+        showPopup: {
+            type: Boolean,
+            default: false
+        }
+    },
+    template: `
+        <q-dialog class="z-top" v-model="showPopup" persistent>
+            <q-card class="sm-popup">
+                <div class="row justify-end items-start map-sm-popup">
+                    <div>
+                        <q-btn square dense color="red" text-color="white" icon="fas fa-times" @click="closePopup();" aria-label="Close window" tabindex="0"></q-btn>
+                    </div>
+                </div>
+                <div class="q-mt-sm q-pa-md column q-gutter-sm">
+                    <div class="text-h6 text-bold">Download Glossary</div>
+                    <template v-if="glossaryLanguageArr.length > 1">
+                        <template v-if="!selectedLanguage">
+                            <div class="q-pa-md text-bold text-red">
+                                Please close this window and select a language in the Language drop-down in order to proceed with the download.
+                            </div>
+                        </template>
+                        <template v-else-if="selectedDownloadFormat === 'translation' && selectedLanguages.length === 0">
+                            <div class="q-pa-md text-bold text-red">
+                                Please select at least one Translation language below.
+                            </div>
+                        </template>
+                        <div class="row">
+                            <div class="col-grow">
+                                <selector-input-element label="Download Format" :options="downloadFormatOptions" :value="selectedDownloadFormat" @update:value="(value) => selectedDownloadFormat = value"></selector-input-element>
+                            </div>
+                        </div>
+                        <template v-if="selectedDownloadFormat === 'singlelanguage'">
+                            <div class="row">
+                                <div class="col-grow q-pl-md">
+                                    <checkbox-input-element label="Include Images" :value="includeImages" @update:value="(value) => includeImages = value"></checkbox-input-element>
+                                </div>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="text-body1 text-bold">Translations</div>
+                                </div>
+                                <div class="col-7 column">
+                                    <template v-for="language in glossaryLanguageArr">
+                                        <checkbox-input-element v-if="language !== selectedLanguage" :label="language" :value="selectedLanguages.includes(language)" @update:value="(value) => processTranslationLanguageChange(language, value)"></checkbox-input-element>
+                                    </template>
+                                </div>
+                            </div>
+                            <div class="q-mt-md row justify-start">
+                                <div class="col-5">
+                                    <div class="text-body1 text-bold">Definitions</div>
+                                </div>
+                                <div class="col-7">
+                                    <q-option-group v-model="selectedDefinitionOption" :options="definitionOptions" color="primary" dense aria-label="Definition options" tabindex="0"></q-option-group>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template v-else>
+                        <div class="row">
+                            <div class="col-grow q-pl-md">
+                                <checkbox-input-element label="Include Images" :value="includeImages" @update:value="(value) => includeImages = value"></checkbox-input-element>
+                            </div>
+                        </div>
+                    </template>
+                    <div class="row justify-end">
+                        <div>
+                            <q-btn color="primary" size="md" @click="downloadData();" label="Download" dense :disabled="!primaryLanguage || (selectedDownloadFormat === 'translation' && selectedLanguages.length === 0)" tabindex="0" />
+                        </div>
+                    </div>
+                </div>
+            </q-card>
+        </q-dialog>
+    `,
+    components: {
+        'checkbox-input-element': checkboxInputElement,
+        'selector-input-element': selectorInputElement
+    },
+    setup(props, context) {
+        const { hideWorking, showWorking } = useCore();
+        const glossaryStore = useGlossaryStore();
+
+        const definitionOptions = Vue.ref([
+            {value: 'nodef', label: 'Without Definitions'},
+            {value: 'onedef', label: 'Primary Definition Only'},
+            {value: 'alldef', label: 'All Definitions'}
+        ]);
+        const downloadFilename = Vue.computed(() => {
+            let returnVal = downloadTitle.value;
+            if(selectedDownloadFormat.value === 'singlelanguage'){
+                returnVal += '_SingleLanguage.docx';
+            }
+            else{
+                returnVal += '_TranslationTable.docx';
+            }
+            return returnVal;
+        });
+        const downloadFormatOptions = Vue.ref([
+            {value: 'singlelanguage', label: 'Single Language'},
+            {value: 'translation', label: 'Translation Table'}
+        ]);
+        const downloadOptions = Vue.computed(() => {
+            return {
+                primaryLanguage: primaryLanguage.value,
+                tid: glossarySourceId.value,
+                sourceData: glossarySourceData.value,
+                includeImages: (includeImages.value ? '1' : '0'),
+                definitionHandling: selectedDefinitionOption.value,
+                downloadFormat: selectedDownloadFormat.value,
+                translationLanguageArr: selectedLanguages.value,
+                downloadTitle: downloadTitle.value,
+            };
+        });
+        const downloadTitle = Vue.computed(() => {
+            let returnVal;
+            if(props.selectedSciname){
+                returnVal = props.selectedSciname.replaceAll(' ', '_');
+            }
+            else{
+                returnVal = props.selectedLanguage.replaceAll(' ', '_');
+            }
+            return returnVal;
+        });
+        const glossaryLanguageArr = Vue.computed(() => glossaryStore.getGlossaryLanguageArr);
+        const glossarySourceData = Vue.computed(() => glossaryStore.getGlossarySourceData);
+        const glossarySourceId = Vue.computed(() => glossaryStore.getGlossarySourceID);
+        const includeImages = Vue.ref(false);
+        const primaryLanguage = Vue.computed(() => {
+            let returnVal = null;
+            if(glossaryLanguageArr.value.length > 1){
+                returnVal = props.selectedLanguage;
+            }
+            else if(glossaryLanguageArr.value.length > 0){
+                returnVal = glossaryLanguageArr.value[0];
+            }
+            return returnVal;
+        });
+        const selectedDefinitionOption = Vue.ref('nodef');
+        const selectedDownloadFormat = Vue.ref('singlelanguage');
+        const selectedLanguages = Vue.ref([]);
+
+        function closePopup() {
+            context.emit('close:popup');
+        }
+
+        function downloadData() {
+            showWorking();
+            const formData = new FormData();
+            formData.append('glossidArr', JSON.stringify(props.glossIdArr));
+            formData.append('options', JSON.stringify(downloadOptions.value));
+            formData.append('action', 'processDocxDownload');
+            formData.append('filename', downloadFilename.value);
+            fetch(glossaryPackagingServiceApiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then((response) => {
+                return response.ok ? response.blob() : null;
+            })
+            .then((blob) => {
+                hideWorking();
+                if(blob !== null){
+                    const objectUrl = window.URL.createObjectURL(blob);
+                    const anchor = document.createElement('a');
+                    anchor.href = objectUrl;
+                    anchor.download = downloadFilename.value;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    anchor.remove();
+                    closePopup();
+                }
+            });
+        }
+
+        function processTranslationLanguageChange(language, value) {
+            if(Number(value) === 1){
+                selectedLanguages.value.push(language);
+            }
+            else{
+                const index = selectedLanguages.value.indexOf(language);
+                selectedLanguages.value.splice(index, 1);
+            }
+        }
+
+        return {
+            definitionOptions,
+            downloadFormatOptions,
+            glossaryLanguageArr,
+            includeImages,
+            primaryLanguage,
+            selectedDefinitionOption,
+            selectedDownloadFormat,
+            selectedLanguages,
+            closePopup,
+            downloadData,
+            processTranslationLanguageChange
+        }
+    }
+};

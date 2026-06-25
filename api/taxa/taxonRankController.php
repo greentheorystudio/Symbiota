@@ -14,7 +14,7 @@ if($GLOBALS['IS_ADMIN'] || isset($GLOBALS['USER_RIGHTS']['CollAdmin'])  || array
 if($action && SanitizerService::validateInternalRequest()){
     $taxonRanks = new TaxonRanks();
     if($action === 'getRankNameArr'){
-        echo json_encode($taxonRanks->getRankNameArr());
+        echo json_encode($taxonRanks->getRankNameArr($kingdomid));
     }
     elseif($action === 'getRankArr'){
         echo json_encode($taxonRanks->getRankArr($kingdomid));

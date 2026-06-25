@@ -37,7 +37,7 @@ if(!$GLOBALS['SYMB_UID']) {
                             <q-card class="processor-control-card">
                                 <q-card-section>
                                     <div class="q-my-sm">
-                                        <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Taxonomic Group" :limit-to-options="true" accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
+                                        <single-scientific-common-name-auto-complete :sciname="taxonomicGroup" :disabled="loading" label="Taxonomic Group" :limit-to-options="true" :accepted-taxa-only="true" rank-low="10" rank-high="190" @update:sciname="updateTaxonomicGroup"></single-scientific-common-name-auto-complete>
                                     </div>
                                     <q-card class="q-my-sm" flat bordered>
                                         <q-card-section>
@@ -168,6 +168,7 @@ if(!$GLOBALS['SYMB_UID']) {
                     let abortController = null;
                     const clientRoot = baseStore.getClientRoot;
                     const currentTaxon = Vue.ref(null);
+                    const currentUploadPath = Vue.ref(null);
                     const descriptionLanguage = Vue.ref(null);
                     const descriptionSaveOptions = [
                         { label: 'Save descriptions under a single Encyclopedia of Life tab', value: 'singletab' },
@@ -279,6 +280,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         identifierImportIndex.value = 1;
                         mediaCountImportIndex.value = 1;
                         currentTaxon.value = null;
+                        currentUploadPath.value = null;
                         loading.value = false;
                         processorDisplayDataArr = processorDisplayDataArr.concat(processorDisplayArr);
                     }
@@ -288,6 +290,7 @@ if(!$GLOBALS['SYMB_UID']) {
                         processorDisplayDataArr = [];
                         processorDisplayCurrentIndex.value = 0;
                         processorDisplayIndex.value = 0;
+                        currentUploadPath.value = null;
                         loading.value = true;
                     }
 
@@ -451,7 +454,7 @@ if(!$GLOBALS['SYMB_UID']) {
                                 processErrorResponse(text);
                             }
                         })
-                        .catch((err) => {});
+                        .catch(() => {});
                     }
 
                     function initializeEOLImport() {
@@ -542,8 +545,8 @@ if(!$GLOBALS['SYMB_UID']) {
                             else{
                                 const newImageObj = {};
                                 newImageObj['tid'] = currentTaxon.value['tid'];
-                                newImageObj['url'] = mediaRecord['eolMediaURL'];
-                                newImageObj['thumbnailurl'] = mediaRecord['eolMediaURL'];
+                                newImageObj['sourceurl'] = mediaRecord['eolMediaURL'];
+                                newImageObj['filename'] = mediaRecord['eolMediaURL'].split('/').pop();
                                 newImageObj['photographer'] = mediaRecord.hasOwnProperty('rightsHolder') ? mediaRecord['rightsHolder'] : null;
                                 newImageObj['format'] = mediaRecord.hasOwnProperty('mimeType') ? mediaRecord['mimeType'] : null;
                                 newImageObj['caption'] = mediaRecord.hasOwnProperty('title') ? mediaRecord['title'] : null;
@@ -555,7 +558,8 @@ if(!$GLOBALS['SYMB_UID']) {
                                 newImageObj['sortsequence'] = '20';
                                 const formData = new FormData();
                                 formData.append('image', JSON.stringify(newImageObj));
-                                formData.append('action', 'addImage');
+                                formData.append('uploadpath', currentUploadPath.value);
+                                formData.append('action', 'addImageFromUrl');
                                 fetch(imageApiUrl, {
                                     method: 'POST',
                                     body: formData
@@ -588,7 +592,8 @@ if(!$GLOBALS['SYMB_UID']) {
                             else{
                                 const newMediaObj = {};
                                 newMediaObj['tid'] = currentTaxon.value['tid'];
-                                newMediaObj['accessuri'] = mediaRecord['mediaURL'];
+                                newMediaObj['sourceurl'] = mediaRecord['mediaURL'];
+                                newMediaObj['filename'] = mediaRecord['mediaURL'].split('/').pop();
                                 newMediaObj['creator'] = mediaRecord.hasOwnProperty('rightsHolder') ? mediaRecord['rightsHolder'] : null;
                                 newMediaObj['type'] = mediaRecord.hasOwnProperty('mediumType') ? mediaRecord['mediumType'] : null;
                                 newMediaObj['format'] = mediaRecord.hasOwnProperty('mimeType') ? mediaRecord['mimeType'] : null;
@@ -599,7 +604,8 @@ if(!$GLOBALS['SYMB_UID']) {
                                 newMediaObj['sortsequence'] = '20';
                                 const formData = new FormData();
                                 formData.append('media', JSON.stringify(newMediaObj));
-                                formData.append('action', 'addMedia');
+                                formData.append('uploadpath', currentUploadPath.value);
+                                formData.append('action', 'addMediaFromUrl');
                                 fetch(mediaApiUrl, {
                                     method: 'POST',
                                     body: formData
@@ -724,6 +730,7 @@ if(!$GLOBALS['SYMB_UID']) {
                             eolMedia.value = [];
                             taxonUploadCount.value = 0;
                             currentTaxon.value = taxaMediaArr.value[0];
+                            currentUploadPath.value = currentTaxon.value['family'] ? currentTaxon.value['family'] : currentTaxon.value['unitname1'];
                             taxaMediaArr.value.splice(0, 1);
                             const text = 'Searching for ' + currentTaxon.value['sciname'];
                             addProcessToProcessorDisplay(getNewProcessObject(currentTaxon.value['sciname'],'multi',text));

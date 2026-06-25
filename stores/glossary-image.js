@@ -4,7 +4,6 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
             glimgid: 0,
             glossid: null,
             url: null,
-            thumbnailurl: null,
             structures: null,
             notes: null,
             createdby: null,
@@ -42,13 +41,15 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
         }
     },
     actions: {
-        clearGlossaryImageArr() {
+        clearGlossaryImageData() {
             this.glossaryImageArr.length = 0;
         },
-        createGlossaryImageRecord(callback) {
+        createGlossaryImageRecord(file, url, callback) {
             const formData = new FormData();
-            formData.append('glossaryImage', JSON.stringify(this.glossaryImageEditData));
-            formData.append('action', 'createGlossaryImageRecord');
+            formData.append('imageFile', file);
+            formData.append('imageUrl', (url ? url.toString() : ''));
+            formData.append('imageData', JSON.stringify(this.glossaryImageEditData));
+            formData.append('action', (file ? 'createGlossaryImageRecordFromFile' : 'createGlossaryImageRecordFromUrl'));
             fetch(glossaryImageApiUrl, {
                 method: 'POST',
                 body: formData
@@ -90,8 +91,8 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
         },
         setGlossaryImageArr(glossid) {
             const formData = new FormData();
-            formData.append('glossid', glossid.toString());
-            formData.append('action', 'getGlossaryImages');
+            formData.append('glossIdArr', JSON.stringify([glossid]));
+            formData.append('action', 'getGlossaryImageDataFromGlossidArr');
             fetch(glossaryImageApiUrl, {
                 method: 'POST',
                 body: formData
@@ -100,7 +101,9 @@ const useGlossaryImageStore = Pinia.defineStore('glossary-image', {
                 return response.ok ? response.json() : null;
             })
             .then((data) => {
-                this.glossaryImageArr = data;
+                if(data.hasOwnProperty(glossid)){
+                    this.glossaryImageArr = data[glossid].slice();
+                }
             });
         },
         updateGlossaryImageEditData(key, value) {

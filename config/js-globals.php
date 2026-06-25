@@ -69,6 +69,7 @@
     const geographyApiUrl = CLIENT_ROOT + '/api/geography/geographyController.php';
     const glossaryApiUrl = CLIENT_ROOT + '/api/glossary/glossaryController.php';
     const glossaryImageApiUrl = CLIENT_ROOT + '/api/glossary/glossaryImageController.php';
+    const glossaryPackagingServiceApiUrl = CLIENT_ROOT + '/api/services/glossaryPackagingServiceController.php';
     const glossarySourceApiUrl = CLIENT_ROOT + '/api/glossary/glossarySourceController.php';
     const imageApiUrl = CLIENT_ROOT + '/api/images/imageController.php';
     const institutionsApiUrl = CLIENT_ROOT + '/api/institutions/instutitutionsController.php';
